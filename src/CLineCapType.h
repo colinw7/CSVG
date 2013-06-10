@@ -1,0 +1,11 @@
+#ifndef CLINE_CAP_TYPE_H
+#define CLINE_CAP_TYPE_H
+
+enum CLineCapType {
+  LINE_CAP_TYPE_NONE  =0,
+  LINE_CAP_TYPE_BUTT  =1,
+  LINE_CAP_TYPE_ROUND =2,
+  LINE_CAP_TYPE_SQUARE=3
+};
+
+#endif
