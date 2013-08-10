@@ -77,6 +77,8 @@ $(CDEBUG) \
 -I../../CConfig/include \
 -I../../CImageLib/include \
 -I../../CFile/include \
+-I../../CFont/include \
+-I../../CRegExp/include \
 -I../../CStrUtil/include \
 -I../../COS/include \
 -I../../CMath/include \
