@@ -83,6 +83,7 @@ $(CDEBUG) \
 -I../../COS/include \
 -I../../CMath/include \
 -I../../CUtil/include \
+-I../../CRGBName/include \
 -I. \
 
 clean:
