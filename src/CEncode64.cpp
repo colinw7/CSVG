@@ -1,5 +1,5 @@
-#include <CEncode/CEncode64.h>
-#include <CFile/CFile.h>
+#include <CEncode64.h>
+#include <CFile.h>
 #include <cstring>
 
 #define BASE_64_LINE_MAX   60

@@ -1,7 +1,7 @@
-#include <CCSS/CCSS.h>
-#include <CFile/CFile.h>
-#include <CStrUtil/CStrUtil.h>
-#include <CStrParse/CStrParse.h>
+#include <CCSS.h>
+#include <CFile.h>
+#include <CStrUtil.h>
+#include <CStrParse.h>
 #include <cassert>
 
 CCSS::

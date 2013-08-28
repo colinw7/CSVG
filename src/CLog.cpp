@@ -1,4 +1,4 @@
-#include <CLogBuffer/CLog.h>
+#include <CLog.h>
 #include <iostream>
 
 std::string &
