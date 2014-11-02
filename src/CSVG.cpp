@@ -1027,11 +1027,11 @@ drawRoundedRectangle(const CBBox2D &bbox, double rx, double ry)
   buffer_->pathLineTo(ur.x - rx, ll.y);
   buffer_->pathArcTo (ur.x - rx, ll.y + ry, rx, ry, 3*M_PI/2, 2*M_PI);
   buffer_->pathLineTo(ur.x, ll.y + ry);
-  buffer_->pathArcTo (ur.x - rx, ur.y - ry, rx, ry, 0        , M_PI/2.0);
+  buffer_->pathArcTo (ur.x - rx, ur.y - ry, rx, ry, 0       , M_PI/2.0);
   buffer_->pathLineTo(ur.x - rx, ur.y);
-  buffer_->pathArcTo (ll.x + rx, ur.y - ry, rx, ry, M_PI/2.0 , M_PI);
+  buffer_->pathArcTo (ll.x + rx, ur.y - ry, rx, ry, M_PI/2.0, M_PI);
   buffer_->pathLineTo(ll.x, ur.y - ry);
-  buffer_->pathArcTo (ll.x + rx, ll.y + ry, rx, ry, M_PI     , 3*M_PI/2);
+  buffer_->pathArcTo (ll.x + rx, ll.y + ry, rx, ry, M_PI    , 3*M_PI/2);
 
   buffer_->pathClose();
 
@@ -1053,11 +1053,11 @@ fillRoundedRectangle(const CBBox2D &bbox, double rx, double ry)
   buffer_->pathLineTo(ur.x - rx, ll.y);
   buffer_->pathArcTo (ur.x - rx, ll.y + ry, rx, ry, 3*M_PI/2, 2*M_PI);
   buffer_->pathLineTo(ur.x, ll.y + ry);
-  buffer_->pathArcTo (ur.x - rx, ur.y - ry, rx, ry, 0        , M_PI/2.0);
+  buffer_->pathArcTo (ur.x - rx, ur.y - ry, rx, ry, 0       , M_PI/2.0);
   buffer_->pathLineTo(ur.x - rx, ur.y);
-  buffer_->pathArcTo (ll.x + rx, ur.y - ry, rx, ry, M_PI/2.0 , M_PI);
+  buffer_->pathArcTo (ll.x + rx, ur.y - ry, rx, ry, M_PI/2.0, M_PI);
   buffer_->pathLineTo(ll.x, ur.y - ry);
-  buffer_->pathArcTo (ll.x + rx, ll.y + ry, rx, ry, M_PI     , 3*M_PI/2);
+  buffer_->pathArcTo (ll.x + rx, ll.y + ry, rx, ry, M_PI    , 3*M_PI/2);
 
   buffer_->pathClose();
 

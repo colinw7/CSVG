@@ -1,4 +1,4 @@
-#include "CSVGI.h"
+#include <CSVGI.h>
 
 CSVGFeOffset::
 CSVGFeOffset(CSVG &svg) :

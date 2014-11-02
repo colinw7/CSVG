@@ -1,4 +1,4 @@
-#include "CSVGI.h"
+#include <CSVGI.h>
 
 CSVGGroup::
 CSVGGroup(CSVG &svg) :
