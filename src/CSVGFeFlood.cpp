@@ -1,4 +1,4 @@
-#include "CSVGI.h"
+#include <CSVGI.h>
 
 CSVGFeFlood::
 CSVGFeFlood(CSVG &svg) :
@@ -39,9 +39,8 @@ processOption(const string &opt_name, const string &opt_value)
     filter_in_ = str;
   else if (svg_.stringOption(opt_name, opt_value, "result", str))
     filter_out_ = str;
-  else if (svg_.stringOption(opt_name, opt_value, "flood-color", str)) {
+  else if (svg_.stringOption(opt_name, opt_value, "flood-color", str))
     color_ = CRGBName::toRGBA(str);
-  }
   else if (svg_.realOption(opt_name, opt_value, "flood-opacity", &real))
     color_.setAlpha(real);
   else

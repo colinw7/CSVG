@@ -1,4 +1,4 @@
-#include "CSVGI.h"
+#include <CSVGI.h>
 
 CSVGTSpan::
 CSVGTSpan(CSVG &svg) :

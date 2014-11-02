@@ -1,4 +1,4 @@
-#include "CSVGI.h"
+#include <CSVGI.h>
 #include <CFontMgr.h>
 #include <CEncode64.h>
 #include <CRegExp.h>

@@ -1,4 +1,4 @@
-#include "CSVGI.h"
+#include <CSVGI.h>
 
 CSVGFontFace::
 CSVGFontFace(CSVG &svg) :
