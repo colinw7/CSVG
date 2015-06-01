@@ -6,7 +6,7 @@ getAlphaColor() const
 {
   CRGBA rgba;
 
-  if (color_.getValid()) {
+  if (color_.isValid()) {
     rgba = color_.getValue();
 
     if (getOpacityValid())
@@ -43,7 +43,7 @@ double
 CSVGStroke::
 getOpacity() const
 {
-  if (opacity_.getValid())
+  if (opacity_.isValid())
     return opacity_.getValue();
   else
     return 1.0;
@@ -62,7 +62,7 @@ double
 CSVGStroke::
 getWidth() const
 {
-  if (width_.getValid())
+  if (width_.isValid())
     return width_.getValue();
   else
     return 1.0;
@@ -81,7 +81,7 @@ const CLineDash &
 CSVGStroke::
 getDash() const
 {
-  if (dash_.getValid())
+  if (dash_.isValid())
     return dash_.getValue();
   else {
     static CLineDash dash;
@@ -123,7 +123,7 @@ CLineCapType
 CSVGStroke::
 getLineCap() const
 {
-  if (cap_.getValid())
+  if (cap_.isValid())
     return cap_.getValue();
   else
     return LINE_CAP_TYPE_BUTT;
@@ -153,7 +153,7 @@ CLineJoinType
 CSVGStroke::
 getLineJoin() const
 {
-  if (join_.getValid())
+  if (join_.isValid())
     return join_.getValue();
   else
     return LINE_JOIN_TYPE_MITRE;
@@ -183,7 +183,7 @@ double
 CSVGStroke::
 getMitreLimit() const
 {
-  if (mlimit_.getValid())
+  if (mlimit_.isValid())
     return mlimit_.getValue();
   else
     return 0.0;

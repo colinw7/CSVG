@@ -297,7 +297,7 @@ pathText(const string &text, CFontPtr font, CHAlignType align)
 
   renderer_->textBounds(text, box);
 
-  int dx;
+  int dx = 0;
 
   if      (align == CHALIGN_TYPE_LEFT)
     dx = 0;

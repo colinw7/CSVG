@@ -8,7 +8,7 @@ getAlphaColor() const
 {
   CRGBA rgba;
 
-  if (color_.getValid()) {
+  if (color_.isValid()) {
     rgba = color_.getValue();
 
     if (getOpacityValid())
@@ -133,16 +133,16 @@ bool
 CSVGFill::
 getFillObjectValid() const
 {
-  return url_.getValid() || fill_object_.getValid();
+  return url_.isValid() || fill_object_.isValid();
 }
 
 CSVGObject *
 CSVGFill::
 getFillObject() const
 {
-  if      (url_.getValid())
+  if      (url_.isValid())
     return svg_.lookupObjectById(url_.getValue());
-  else if (fill_object_.getValid())
+  else if (fill_object_.isValid())
     return fill_object_.getValue();
   else
     return NULL;
@@ -172,9 +172,9 @@ update(const CSVGFill &fill)
   if (fill.getRuleValid())
     setRule(fill.getRule());
 
-  if (fill.url_.getValid())
+  if (fill.url_.isValid())
     setUrl(fill.url_.getValue());
 
-  if (fill.fill_object_.getValid())
+  if (fill.fill_object_.isValid())
     setFillObject(fill.fill_object_.getValue());
 }

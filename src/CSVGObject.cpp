@@ -147,7 +147,7 @@ CSVGObject::
 getOpacity() const
 {
   // TODO: inherit ?
-  if (opacity_.getValid())
+  if (opacity_.isValid())
     return opacity_.getValue();
   else
     return 1.0;
@@ -181,12 +181,12 @@ getStrokeColor() const
     }
   }
 
-  if (! color.getValid()) {
+  if (! color.isValid()) {
     if (stroke_.getDefColorValid())
       color.setValue(stroke_.getDefColor());
   }
 
-  if (! color.getValid()) {
+  if (! color.isValid()) {
     CRGBA rgba(0,0,0);
 
     if (svg_.getStyleStrokeColor(getObjName(), rgba))
@@ -226,7 +226,7 @@ getStrokeOpacity() const
     }
   }
 
-  if (! opacity.getValid()) {
+  if (! opacity.isValid()) {
     double opacity1 = 0.0;
 
     if (svg_.getStyleStrokeOpacity(getObjName(), opacity1))
@@ -328,12 +328,12 @@ getFillColor() const
     }
   }
 
-  if (! color.getValid()) {
+  if (! color.isValid()) {
     if (fill_.getDefColorValid())
       color.setValue(fill_.getDefColor());
   }
 
-  if (! color.getValid()) {
+  if (! color.isValid()) {
     CRGBA rgba(0,0,0);
 
     if (svg_.getStyleFillColor(getObjName(), rgba))
@@ -373,7 +373,7 @@ getFillOpacity() const
     }
   }
 
-  if (! opacity.getValid())
+  if (! opacity.isValid())
     opacity.setValue(1.0);
 
   return opacity.getValue();

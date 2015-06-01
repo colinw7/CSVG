@@ -1870,7 +1870,7 @@ pathStringToParts(const string &data, CSVG::PartList &parts)
 
       if (! parse.readReal(&y2)) { flag = false; break; }
 
-      if (bezier2_x2.getValid()) {
+      if (bezier2_x2.isValid()) {
         double x1 = 2*bezier2_x3.getValue() - bezier2_x2.getValue();
         double y1 = 2*bezier2_y3.getValue() - bezier2_y2.getValue();
 
@@ -1888,7 +1888,7 @@ pathStringToParts(const string &data, CSVG::PartList &parts)
 
       if (! parse.readReal(&y2)) { flag = false; break; }
 
-      if (bezier2_x2.getValid()) {
+      if (bezier2_x2.isValid()) {
         double x1 = 2*bezier2_x3.getValue() - bezier2_x2.getValue();
         double y1 = 2*bezier2_y3.getValue() - bezier2_y2.getValue();
 
@@ -2041,7 +2041,7 @@ pathStringToParts(const string &data, CSVG::PartList &parts)
 
       if (! parse.readReal(&y3)) { flag = false; break; }
 
-      if (bezier3_x2.getValid()) {
+      if (bezier3_x2.isValid()) {
         double x1 = 2*bezier3_x3.getValue() - bezier3_x2.getValue();
         double y1 = 2*bezier3_y3.getValue() - bezier3_y2.getValue();
 
@@ -2070,7 +2070,7 @@ pathStringToParts(const string &data, CSVG::PartList &parts)
 
       if (! parse.readReal(&y3)) { flag = false; break; }
 
-      if (bezier3_x2.getValid()) {
+      if (bezier3_x2.isValid()) {
         double x1 = 2*bezier3_x3.getValue() - bezier3_x2.getValue();
         double y1 = 2*bezier3_y3.getValue() - bezier3_y2.getValue();
 

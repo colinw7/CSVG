@@ -259,7 +259,7 @@ class CSVGObject {
   // opacity
   void   setOpacity     (const std::string &opacity_str);
   void   setOpacity     (double opacity) { opacity_.setValue(opacity); }
-  bool   getOpacityValid() const { return opacity_.getValid(); }
+  bool   getOpacityValid() const { return opacity_.isValid(); }
   double getOpacity     () const;
 
   // stroke

@@ -5,14 +5,6 @@ class CSVG;
 class CSVGObject;
 
 class CSVGFill {
- private:
-  CSVG &                 svg_;
-  COptValT<CRGBA>        color_;  // inherited
-  COptValT<double>       opacity_;  // inherited
-  COptValT<CFillType>    rule_;  // inherited
-  COptValT<std::string>  url_;
-  COptValT<CSVGObject *> fill_object_;
-
  public:
   CSVGFill(CSVG &svg) :
    svg_        (svg),
@@ -41,24 +33,26 @@ class CSVGFill {
   // color
   CRGBA getAlphaColor() const;
 
-  bool  getColorValid   () const { return color_.getValid(); }
-  CRGBA getColor        () const { return color_.getValue(); }
-  bool  getDefColorValid() const { return color_.getDefValid(); }
-  CRGBA getDefColor     () const { return color_.getDefValue(); }
+  bool  getColorValid() const { return color_.isValid(); }
+  CRGBA getColor() const { return color_.getValue(); }
 
-  void setColor   (const std::string &color_str);
-  void setColor   (const CRGBA &rgba) { color_.setValue(rgba); }
-  void setDefColor(const CRGBA &rgba) { color_.setDefValue(rgba); }
+  void setColor(const std::string &color_str);
+  void setColor(const CRGBA &rgba) { color_.setValue(rgba); }
+
+  bool  getDefColorValid() const { return defColor_.isValid(); }
+  CRGBA getDefColor() const { return defColor_.getValue(); }
+
+  void setDefColor(const CRGBA &rgba) { defColor_.setValue(rgba); }
 
   // opacity
-  bool   getOpacityValid() const { return opacity_.getValid(); }
+  bool   getOpacityValid() const { return opacity_.isValid(); }
   double getOpacity     () const;
 
   void setOpacity(const std::string &opacity_str);
   void setOpacity(double opacity) { opacity_.setValue(opacity); }
 
   // rule
-  bool      getRuleValid() const { return rule_.getValid(); }
+  bool      getRuleValid() const { return rule_.isValid(); }
   CFillType getRule     () const;
 
   void setRule(const std::string &rule_str);
@@ -78,6 +72,15 @@ class CSVGFill {
 
   // update
   void update(const CSVGFill &fill);
+
+ private:
+  CSVG &                 svg_;
+  COptValT<CRGBA>        color_;  // inherited
+  COptValT<CRGBA>        defColor_;  // inherited
+  COptValT<double>       opacity_;  // inherited
+  COptValT<CFillType>    rule_;  // inherited
+  COptValT<std::string>  url_;
+  COptValT<CSVGObject *> fill_object_;
 };
 
 #endif

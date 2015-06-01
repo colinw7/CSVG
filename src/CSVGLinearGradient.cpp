@@ -29,10 +29,10 @@ CSVGLinearGradient(CSVG &svg) :
  units_     (),
  spread_    ()
 {
-  x1_.setDefValue(0.0);
-  y1_.setDefValue(0.0);
-  x2_.setDefValue(1.0);
-  y2_.setDefValue(0.0);
+  //x1_.setDefValue(0.0);
+  //y1_.setDefValue(0.0);
+  //x2_.setDefValue(1.0);
+  //y2_.setDefValue(0.0);
 }
 
 CSVGLinearGradient::

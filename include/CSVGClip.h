@@ -25,11 +25,11 @@ class CSVGClip {
   void setRule(CFillType rule) { rule_.setValue(rule); }
 
   bool getRuleValid() const {
-    return rule_.getValid();
+    return rule_.isValid();
   }
 
   CFillType getRule() const {
-    if (rule_.getValid())
+    if (rule_.isValid())
       return rule_.getValue();
     else
       return FILL_TYPE_EVEN_ODD;
