@@ -57,11 +57,11 @@ dup() const
 */
 bool
 CSVGBlock::
-processOption(const string &opt_name, const string &opt_value)
+processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  string  str;
-  double  real;
-  CBBox2D bbox;
+  std::string str;
+  double      real;
+  CBBox2D     bbox;
 
   if (processCoreOption           (opt_name, opt_value)) return true;
   if (processConditionalOption    (opt_name, opt_value)) return true;
@@ -182,13 +182,13 @@ getBBox(CBBox2D &bbox) const
 
 void
 CSVGBlock::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   os << "svg " << getWidth() << " " << getHeight();
 }
 
-ostream &
-operator<<(ostream &os, const CSVGBlock &block)
+std::ostream &
+operator<<(std::ostream &os, const CSVGBlock &block)
 {
   block.print(os);
 
