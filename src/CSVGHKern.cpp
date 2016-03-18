@@ -27,10 +27,10 @@ dup() const
 
 bool
 CSVGHKern::
-processOption(const string &opt_name, const string &opt_value)
+processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  string str;
-  long   integer;
+  std::string str;
+  long        integer;
 
   if      (svg_.stringOption(opt_name, opt_value, "u1", str)) {
     ;
@@ -61,13 +61,13 @@ draw()
 
 void
 CSVGHKern::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   os << "glyph";
 }
 
-ostream &
-operator<<(ostream &os, const CSVGHKern &glyph)
+std::ostream &
+operator<<(std::ostream &os, const CSVGHKern &glyph)
 {
   glyph.print(os);
 

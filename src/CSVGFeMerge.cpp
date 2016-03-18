@@ -25,9 +25,9 @@ dup() const
 
 bool
 CSVGFeMerge::
-processOption(const string &opt_name, const string &opt_value)
+processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  string str;
+  std::string str;
 
   if      (svg_.stringOption(opt_name, opt_value, "in", str))
     filter_in_ = str;
@@ -54,18 +54,18 @@ CImagePtr
 CSVGFeMerge::
 filterImage(CImagePtr)
 {
-  vector<CSVGObject *> objects;
+  std::vector<CSVGObject *> objects;
 
   getChildrenOfType(CSVG_OBJ_TYPE_FE_MERGE_NODE, objects);
 
   uint w = 0, h = 0;
 
-  vector<CSVGObject *>::iterator p1, p2;
+  std::vector<CSVGObject *>::iterator p1, p2;
 
   for (p1 = objects.begin(), p2 = objects.end(); p1 != p2; ++p1) {
     CSVGFeMergeNode *node = dynamic_cast<CSVGFeMergeNode *>(*p1);
 
-    const string &filter_in = node->getFilterIn();
+    const std::string &filter_in = node->getFilterIn();
 
     CImagePtr image_in = svg_.getBufferImage(filter_in);
 
@@ -84,7 +84,7 @@ filterImage(CImagePtr)
   for (p1 = objects.begin(), p2 = objects.end(); p1 != p2; ++p1) {
     CSVGFeMergeNode *node = dynamic_cast<CSVGFeMergeNode *>(*p1);
 
-    const string &filter_in = node->getFilterIn();
+    const std::string &filter_in = node->getFilterIn();
 
     CImagePtr image_in = svg_.getBufferImage(filter_in);
 
@@ -96,13 +96,13 @@ filterImage(CImagePtr)
 
 void
 CSVGFeMerge::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   os << "feMerge";
 }
 
-ostream &
-operator<<(ostream &os, const CSVGFeMerge &filter)
+std::ostream &
+operator<<(std::ostream &os, const CSVGFeMerge &filter)
 {
   filter.print(os);
 

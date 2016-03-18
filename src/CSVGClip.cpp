@@ -2,7 +2,7 @@
 
 void
 CSVGClip::
-setRule(const string &rule_def)
+setRule(const std::string &rule_def)
 {
   CFillType rule = svg_.decodeFillRuleString(rule_def);
 

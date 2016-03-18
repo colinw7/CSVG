@@ -9,7 +9,11 @@ OBJ_DIR = ../obj
 LIB_DIR = ../lib
 BIN_DIR = ../bin
 
-all: $(LIB_DIR)/libCSVG.a
+all: dirs $(LIB_DIR)/libCSVG.a
+
+dirs:
+	@if [ ! -e ../obj ]; then mkdir ../obj; fi
+	@if [ ! -e ../lib ]; then mkdir ../lib; fi
 
 SRC = \
 CSVGBlock.cpp \
@@ -67,10 +71,17 @@ CSVGText.cpp \
 CSVGTitle.cpp \
 CSVGTSpan.cpp \
 CSVGUse.cpp \
+\
+CSVGRenderer.cpp \
+\
+CCSS.cpp \
+CLog.cpp \
+CEncode64.cpp \
 
 OBJS = $(patsubst %.cpp,$(OBJ_DIR)/%.o,$(SRC))
 
 CPPFLAGS = \
+-std=c++11 \
 $(CDEBUG) \
 -I$(INC_DIR) \
 -I../../CXML/include \

@@ -22,14 +22,14 @@ getAlphaColor() const
 
 void
 CSVGFill::
-setColor(const string &color_def)
+setColor(const std::string &color_def)
 {
   CStrParse parse(color_def);
 
   parse.skipSpace();
 
   while (true) {
-    string word;
+    std::string word;
 
     if (parse.isChar('#')) {
       word += '#';
@@ -62,7 +62,7 @@ setColor(const string &color_def)
 
     //------
 
-    vector<string> match_strs;
+    std::vector<std::string> match_strs;
 
     if      (word == "none") {
       setColor(CRGBA(0,0,0,0));
@@ -103,7 +103,7 @@ getOpacity() const
 
 void
 CSVGFill::
-setOpacity(const string &opacity_def)
+setOpacity(const std::string &opacity_def)
 {
   double opacity = svg_.decodeOpacityString(opacity_def);
 
@@ -112,7 +112,7 @@ setOpacity(const string &opacity_def)
 
 void
 CSVGFill::
-setRule(const string &rule_def)
+setRule(const std::string &rule_def)
 {
   CFillType rule = svg_.decodeFillRuleString(rule_def);
 
@@ -145,7 +145,7 @@ getFillObject() const
   else if (fill_object_.isValid())
     return fill_object_.getValue();
   else
-    return NULL;
+    return 0;
 }
 
 void

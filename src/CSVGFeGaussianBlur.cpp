@@ -30,10 +30,10 @@ dup() const
 
 bool
 CSVGFeGaussianBlur::
-processOption(const string &opt_name, const string &opt_value)
+processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  string str;
-  double real;
+  std::string str;
+  double      real;
 
   if      (svg_.stringOption(opt_name, opt_value, "in", str))
     filter_in_ = str;
@@ -71,13 +71,13 @@ filterImage(CImagePtr src_image)
 
 void
 CSVGFeGaussianBlur::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   os << "feGaussianBlur ";
 }
 
-ostream &
-operator<<(ostream &os, const CSVGFeGaussianBlur &filter)
+std::ostream &
+operator<<(std::ostream &os, const CSVGFeGaussianBlur &filter)
 {
   filter.print(os);
 

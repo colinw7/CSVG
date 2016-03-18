@@ -26,9 +26,9 @@ dup() const
 */
 bool
 CSVGStyle::
-processOption(const string &opt_name, const string &opt_value)
+processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  string str;
+  std::string str;
 
   if (svg_.stringOption(opt_name, opt_value, "type", str)) {
     if (str == "text/css")
@@ -44,7 +44,7 @@ processOption(const string &opt_name, const string &opt_value)
 
 void
 CSVGStyle::
-setText(const string &text)
+setText(const std::string &text)
 {
   CStrParse parse(text);
 
@@ -55,8 +55,8 @@ setText(const string &text)
 
     parse.skipSpace();
 
-    string str;
-    bool   space = false;
+    std::string str;
+    bool        space = false;
 
     while (! parse.eof() && ! parse.isString("]]>")) {
       char c;
@@ -86,14 +86,14 @@ setText(const string &text)
 
 bool
 CSVGStyle::
-parseCSS(const string &str)
+parseCSS(const std::string &str)
 {
   CCSS css;
 
   if (! css.processLine(str))
     return false;
 
-  vector<string> ids;
+  std::vector<std::string> ids;
 
   css.getIds(ids);
 
@@ -124,13 +124,13 @@ draw()
 
 void
 CSVGStyle::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   os << "style";
 }
 
-ostream &
-operator<<(ostream &os, const CSVGStyle &style)
+std::ostream &
+operator<<(std::ostream &os, const CSVGStyle &style)
 {
   style.print(os);
 

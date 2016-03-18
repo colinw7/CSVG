@@ -39,7 +39,7 @@ reset()
   style_ .setInvalid();
 }
 
-string
+std::string
 CSVGFontDef::
 getFamily() const
 {
@@ -51,7 +51,7 @@ getFamily() const
 
 void
 CSVGFontDef::
-setFamily(const string &family)
+setFamily(const std::string &family)
 {
   family_ = family;
 }
@@ -75,7 +75,7 @@ setSize(double size)
 
 void
 CSVGFontDef::
-setWeight(const string &weight_def)
+setWeight(const std::string &weight_def)
 {
   CFontStyles weight = svg_.decodeFontWeightString(weight_def);
 
@@ -97,7 +97,7 @@ getStyle() const
 
 void
 CSVGFontDef::
-setStyle(const string &style_def)
+setStyle(const std::string &style_def)
 {
   CFontStyles style = svg_.decodeFontStyleString(style_def);
 

@@ -20,7 +20,7 @@ getAlphaColor() const
 
 void
 CSVGStroke::
-setColor(const string &color_def)
+setColor(const std::string &color_def)
 {
   if (color_def == "none") {
     setColor(CRGBA(0,0,0,0));
@@ -51,7 +51,7 @@ getOpacity() const
 
 void
 CSVGStroke::
-setOpacity(const string &opacity_def)
+setOpacity(const std::string &opacity_def)
 {
   double opacity = svg_.decodeOpacityString(opacity_def);
 
@@ -70,7 +70,7 @@ getWidth() const
 
 void
 CSVGStroke::
-setWidth(const string &width_def)
+setWidth(const std::string &width_def)
 {
   double width = svg_.decodeWidthString(width_def);
 
@@ -92,7 +92,7 @@ getDash() const
 
 void
 CSVGStroke::
-setDash(const string &dash_str)
+setDash(const std::string &dash_str)
 {
   CLineDash dash;
 
@@ -103,7 +103,7 @@ setDash(const string &dash_str)
 
 void
 CSVGStroke::
-setDashOffset(const string &offset_str)
+setDashOffset(const std::string &offset_str)
 {
   double offset;
 
@@ -131,7 +131,7 @@ getLineCap() const
 
 void
 CSVGStroke::
-setLineCap(const string &cap_str)
+setLineCap(const std::string &cap_str)
 {
   CLineCapType cap = LINE_CAP_TYPE_NONE;
 
@@ -161,7 +161,7 @@ getLineJoin() const
 
 void
 CSVGStroke::
-setLineJoin(const string &join_str)
+setLineJoin(const std::string &join_str)
 {
   CLineJoinType join = LINE_JOIN_TYPE_NONE;
 
@@ -191,7 +191,7 @@ getMitreLimit() const
 
 void
 CSVGStroke::
-setMitreLimit(const string &limit_str)
+setMitreLimit(const std::string &limit_str)
 {
   double limit;
 

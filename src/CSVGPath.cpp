@@ -25,9 +25,9 @@ dup() const
 
 bool
 CSVGPath::
-processOption(const string &opt_name, const string &opt_value)
+processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  string str;
+  std::string str;
 
   if (svg_.stringOption(opt_name, opt_value, "d", str)) {
     if (! svg_.pathStringToParts(str, parts_))
@@ -51,7 +51,7 @@ draw()
 
 void
 CSVGPath::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   os << "path (";
 
@@ -73,8 +73,8 @@ getBBox(CBBox2D &bbox) const
   }
 }
 
-ostream &
-operator<<(ostream &os, const CSVGPath &path)
+std::ostream &
+operator<<(std::ostream &os, const CSVGPath &path)
 {
   path.print(os);
 
@@ -98,7 +98,7 @@ draw()
 
 void
 CSVGPathMoveTo::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   os << "M " << point_.x << " " << point_.y;
 }
@@ -118,7 +118,7 @@ draw()
 
 void
 CSVGPathLineTo::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   os << "L " << point_.x << " " << point_.y;
 }
@@ -138,7 +138,7 @@ draw()
 
 void
 CSVGPathRLineTo::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   os << "l " << point_.x << " " << point_.y;
 }
@@ -162,7 +162,7 @@ draw()
 
 void
 CSVGPathHLineTo::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   os << "H " << d_;
 }
@@ -186,7 +186,7 @@ draw()
 
 void
 CSVGPathVLineTo::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   os << "V " << d_;
 }
@@ -225,7 +225,7 @@ draw()
 
 void
 CSVGPathArcTo::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   os << "A " << rx_ << " " << ry_ << " " << xa_ << " " <<
         fa_ << " " << fs_ << " " << point2_.x << " " << point2_.y;
@@ -265,7 +265,7 @@ draw()
 
 void
 CSVGPathRArcTo::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   os << "a " << rx_ << " " << ry_ << " " << xa_ << " " <<
         fa_ << " " << fs_ << " " << point2_.x << " " << point2_.y;
@@ -286,7 +286,7 @@ draw()
 
 void
 CSVGPathBezier2To::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   os << "Q " << point1_.x << " " << point1_.y << " " <<
                 point2_.x << " " << point2_.y;
@@ -307,7 +307,7 @@ draw()
 
 void
 CSVGPathRBezier2To::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   os << "q " << point1_.x << " " << point1_.y << " " <<
                 point2_.x << " " << point2_.y;
@@ -328,7 +328,7 @@ draw()
 
 void
 CSVGPathBezier3To::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   os << "C " << point1_.x << " " << point1_.y << " " <<
                 point2_.x << " " << point2_.y <<
@@ -350,7 +350,7 @@ draw()
 
 void
 CSVGPathRBezier3To::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   os << "c " << point1_.x << " " << point1_.y << " " <<
                 point2_.x << " " << point2_.y << point3_.x << " " << point3_.y;
@@ -371,7 +371,7 @@ draw()
 
 void
 CSVGPathClosePath::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   os << "z";
 }

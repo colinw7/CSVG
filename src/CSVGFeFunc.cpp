@@ -37,11 +37,11 @@ dup() const
 
 bool
 CSVGFeFunc::
-processOption(const string &opt_name, const string &opt_value)
+processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  string         str;
-  double         real;
-  vector<double> reals;
+  std::string         str;
+  double              real;
+  std::vector<double> reals;
 
   if      (svg_.stringOption(opt_name, opt_value, "type", str)) {
     if      (str == "identity") type_ = IDENTITY;
@@ -97,13 +97,13 @@ filterImage(CImagePtr src_image)
 
 void
 CSVGFeFunc::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   os << "feFunc";
 }
 
-ostream &
-operator<<(ostream &os, const CSVGFeFunc &filter)
+std::ostream &
+operator<<(std::ostream &os, const CSVGFeFunc &filter)
 {
   filter.print(os);
 

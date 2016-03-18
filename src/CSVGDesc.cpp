@@ -26,7 +26,7 @@ dup() const
 */
 bool
 CSVGDesc::
-processOption(const string &opt_name, const string &opt_value)
+processOption(const std::string &opt_name, const std::string &opt_value)
 {
   return CSVGObject::processOption(opt_name, opt_value);
 }
@@ -39,13 +39,13 @@ draw()
 
 void
 CSVGDesc::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   os << "desc";
 }
 
-ostream &
-operator<<(ostream &os, const CSVGDesc &desc)
+std::ostream &
+operator<<(std::ostream &os, const CSVGDesc &desc)
 {
   desc.print(os);
 

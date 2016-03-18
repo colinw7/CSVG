@@ -44,16 +44,16 @@ dup() const
 
 bool
 CSVGMarker::
-processOption(const string &opt_name, const string &opt_value)
+processOption(const std::string &opt_name, const std::string &opt_value)
 {
   if (processCoreOption        (opt_name, opt_value)) return true;
   if (processStyleOption       (opt_name, opt_value)) return true;
   if (processPresentationOption(opt_name, opt_value)) return true;
   if (processExternalOption    (opt_name, opt_value)) return true;
 
-  string  str;
-  double  real;
-  CBBox2D bbox;
+  std::string str;
+  double      real;
+  CBBox2D     bbox;
 
   if      (svg_.coordOption (opt_name, opt_value, "refX", &real))
     refX_ = real;
@@ -132,13 +132,13 @@ drawMarker(double x, double y, double angle)
 
 void
 CSVGMarker::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   os << "marker";
 }
 
-ostream &
-operator<<(ostream &os, const CSVGMarker &marker)
+std::ostream &
+operator<<(std::ostream &os, const CSVGMarker &marker)
 {
   marker.print(os);
 

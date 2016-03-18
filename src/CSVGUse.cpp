@@ -51,10 +51,10 @@ dup() const
 
 bool
 CSVGUse::
-processOption(const string &opt_name, const string &opt_value)
+processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  string str;
-  double real;
+  std::string str;
+  double      real;
 
   if      (svg_.coordOption (opt_name, opt_value, "x", &real))
     x_ = real;
@@ -109,7 +109,7 @@ termParse()
 
       addChildObject(object1);
 
-      xlink_.setObject(NULL);
+      xlink_.setObject(0);
     }
   }
   else {
@@ -161,7 +161,7 @@ draw()
 
   CSVGObject *object = getObject();
 
-  if (object != NULL)
+  if (object != 0)
     object->drawObject();
 
   if (xlink_.isImage())
@@ -170,13 +170,13 @@ draw()
 
 void
 CSVGUse::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   os << "use";
 }
 
-ostream &
-operator<<(ostream &os, const CSVGUse &use)
+std::ostream &
+operator<<(std::ostream &os, const CSVGUse &use)
 {
   use.print(os);
 
@@ -187,7 +187,7 @@ CSVGObject *
 CSVGUse::
 getObject() const
 {
-  CSVGObject *object = NULL;
+  CSVGObject *object = 0;
 
   if (xlink_.isObject())
     object = xlink_.getObject();

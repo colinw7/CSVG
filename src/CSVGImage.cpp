@@ -55,10 +55,10 @@ dup() const
 */
 bool
 CSVGImage::
-processOption(const string &opt_name, const string &opt_value)
+processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  string str;
-  double real;
+  std::string str;
+  double      real;
 
   if      (svg_.coordOption (opt_name, opt_value, "x", &real))
     pos_.x = real;
@@ -94,7 +94,7 @@ getImage() const
 
     CImagePtr image = xlink_.getObject()->toImage();
 
-    th->xlink_.setObject(NULL);
+    th->xlink_.setObject(0);
     th->xlink_.setImage (image);
   }
 
@@ -120,7 +120,7 @@ setSize(const CSize2D &size)
 
 void
 CSVGImage::
-setImage(const string &filename)
+setImage(const std::string &filename)
 {
   CImageFileSrc src(filename);
 
@@ -175,13 +175,13 @@ resizeTo(const CSize2D &size)
 
 void
 CSVGImage::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   os << "image " << pos_ << " " << size_;
 }
 
-ostream &
-operator<<(ostream &os, const CSVGImage &image)
+std::ostream &
+operator<<(std::ostream &os, const CSVGImage &image)
 {
   image.print(os);
 

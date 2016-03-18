@@ -28,7 +28,7 @@ dup() const
 
 bool
 CSVGTitle::
-processOption(const string &opt_name, const string &opt_value)
+processOption(const std::string &opt_name, const std::string &opt_value)
 {
   return CSVGObject::processOption(opt_name, opt_value);
 }

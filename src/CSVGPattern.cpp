@@ -3,7 +3,7 @@
 CSVGPattern::
 CSVGPattern(CSVG &svg) :
  CSVGObject    (svg),
- object_       (NULL),
+ object_       (0),
  x_            (0),
  y_            (0),
  width_        (1),
@@ -16,7 +16,7 @@ CSVGPattern(CSVG &svg) :
 CSVGPattern::
 CSVGPattern(const CSVGPattern &pattern) :
  CSVGObject    (pattern),
- object_       (NULL),
+ object_       (0),
  x_            (pattern.x_),
  y_            (pattern.y_),
  width_        (pattern.width_),
@@ -35,10 +35,10 @@ dup() const
 
 bool
 CSVGPattern::
-processOption(const string &opt_name, const string &opt_value)
+processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  string str;
-  double real;
+  std::string str;
+  double      real;
 
   if      (svg_.realOption(opt_name, opt_value, "x", &real))
     x_ = real;
@@ -59,10 +59,10 @@ processOption(const string &opt_name, const string &opt_value)
     if (! decodeXLink(opt_value, &object, image))
       return false;
 
-    if  (object != NULL) {
+    if  (object != 0) {
       CSVGPattern *p = dynamic_cast<CSVGPattern *>(object);
 
-      if (p != NULL) {
+      if (p != 0) {
         x_             = p->x_;
         y_             = p->y_;
         width_         = p->width_;
@@ -94,7 +94,7 @@ draw()
 
 void
 CSVGPattern::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   os << "pattern ";
 }
@@ -117,7 +117,7 @@ getImage(double w, double h, double *w1, double *h1)
     *h1 = height_;
   }
 
-  string old_buffer = svg_.getBufferName();
+  std::string old_buffer = svg_.getBufferName();
 
   svg_.setBuffer("_pattern");
 
@@ -134,8 +134,8 @@ getImage(double w, double h, double *w1, double *h1)
   return image;
 }
 
-ostream &
-operator<<(ostream &os, const CSVGPattern &pattern)
+std::ostream &
+operator<<(std::ostream &os, const CSVGPattern &pattern)
 {
   pattern.print(os);
 

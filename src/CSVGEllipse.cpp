@@ -48,7 +48,7 @@ dup() const
 
 bool
 CSVGEllipse::
-processOption(const string &opt_name, const string &opt_value)
+processOption(const std::string &opt_name, const std::string &opt_value)
 {
   if (processCoreOption           (opt_name, opt_value)) return true;
   if (processConditionalOption    (opt_name, opt_value)) return true;
@@ -64,8 +64,8 @@ processOption(const string &opt_name, const string &opt_value)
   if (processCursorOption         (opt_name, opt_value)) return true;
   if (processExternalOption       (opt_name, opt_value)) return true;
 
-  double real;
-  string str;
+  double      real;
+  std::string str;
 
   if      (svg_.coordOption (opt_name, opt_value, "cx", &real))
     center_.x = real;
@@ -129,13 +129,13 @@ resizeTo(const CSize2D &size)
 
 void
 CSVGEllipse::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   os << "ellipse " << center_ << " radius " << rx_ << " " << ry_;
 }
 
-ostream &
-operator<<(ostream &os, const CSVGEllipse &ellipse)
+std::ostream &
+operator<<(std::ostream &os, const CSVGEllipse &ellipse)
 {
   ellipse.print(os);
 

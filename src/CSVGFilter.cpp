@@ -3,14 +3,14 @@
 CSVGFilter::
 CSVGFilter(CSVG &svg) :
  CSVGObject(svg),
- object_   (NULL)
+ object_   (0)
 {
 }
 
 CSVGFilter::
 CSVGFilter(const CSVGFilter &filter) :
  CSVGObject(filter),
- object_   (NULL)
+ object_   (0)
 {
 }
 
@@ -23,9 +23,9 @@ dup() const
 
 bool
 CSVGFilter::
-processOption(const string &opt_name, const string &opt_value)
+processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  string str;
+  std::string str;
 
   if      (svg_.stringOption(opt_name, opt_value, "filterUnits", str))
     ;
@@ -79,13 +79,13 @@ filterImage(CImagePtr image)
 
 void
 CSVGFilter::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   os << "filter ";
 }
 
-ostream &
-operator<<(ostream &os, const CSVGFilter &filter)
+std::ostream &
+operator<<(std::ostream &os, const CSVGFilter &filter)
 {
   filter.print(os);
 

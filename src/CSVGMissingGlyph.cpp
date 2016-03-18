@@ -8,7 +8,7 @@ CSVGMissingGlyph(CSVG &svg) :
 
 bool
 CSVGMissingGlyph::
-processOption(const string &opt_name, const string &opt_value)
+processOption(const std::string &opt_name, const std::string &opt_value)
 {
   return CSVGGlyph::processOption(opt_name, opt_value);
 }
@@ -21,13 +21,13 @@ draw()
 
 void
 CSVGMissingGlyph::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   os << "missing-glyph";
 }
 
-ostream &
-operator<<(ostream &os, const CSVGMissingGlyph &glyph)
+std::ostream &
+operator<<(std::ostream &os, const CSVGMissingGlyph &glyph)
 {
   glyph.print(os);
 

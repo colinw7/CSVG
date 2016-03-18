@@ -12,7 +12,3 @@
 #include <CXMLLib.h>
 #include <CSVGLib.h>
 #include <CSVGRenderer.h>
-
-using std::string;
-using std::vector;
-using std::ostream;

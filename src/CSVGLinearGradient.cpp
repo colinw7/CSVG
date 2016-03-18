@@ -58,10 +58,10 @@ dup() const
 
 bool
 CSVGLinearGradient::
-processOption(const string &opt_name, const string &opt_value)
+processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  string str;
-  double real;
+  std::string str;
+  double      real;
 
   if      (svg_.stringOption(opt_name, opt_value, "x1", str)) {
     if (! svg_.decodePercentString(str, &real))
@@ -120,11 +120,11 @@ processOption(const string &opt_name, const string &opt_value)
     if (! decodeXLink(opt_value, &object, image))
       return false;
 
-    if  (object != NULL) {
+    if  (object != 0) {
       CSVGRadialGradient *rg = dynamic_cast<CSVGRadialGradient *>(object);
       CSVGLinearGradient *lg = dynamic_cast<CSVGLinearGradient *>(object);
 
-      if      (lg != NULL) {
+      if      (lg != 0) {
         if (lg->x1_.isValid()) x1_ = lg->x1_;
         if (lg->y1_.isValid()) y1_ = lg->y1_;
         if (lg->x2_.isValid()) x2_ = lg->x2_;
@@ -144,7 +144,7 @@ processOption(const string &opt_name, const string &opt_value)
             addStop(*p1);
         }
       }
-      else if (rg != NULL) {
+      else if (rg != 0) {
         if (rg->getGTransformValid()) gtransform_ = rg->getGTransform();
         if (rg->getUnitsValid     ()) units_      = rg->getUnits();
         if (rg->getSpreadValid    ()) spread_     = rg->getSpread();
@@ -171,17 +171,17 @@ void
 CSVGLinearGradient::
 termParse()
 {
-  vector<CSVGObject *> objects;
+  std::vector<CSVGObject *> objects;
 
   getChildrenOfType(CSVG_OBJ_TYPE_STOP, objects);
 
-  vector<CSVGObject *>::iterator p1 = objects.begin();
-  vector<CSVGObject *>::iterator p2 = objects.end  ();
+  std::vector<CSVGObject *>::iterator p1 = objects.begin();
+  std::vector<CSVGObject *>::iterator p2 = objects.end  ();
 
   for ( ; p1 != p2; ++p1) {
     CSVGStop *stop = dynamic_cast<CSVGStop *>(*p1);
 
-    if (stop != NULL)
+    if (stop != 0)
       addStop(stop);
   }
 }
@@ -194,7 +194,7 @@ draw()
 
 void
 CSVGLinearGradient::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   os << "linearGradient ";
 }
@@ -260,8 +260,8 @@ createGradient()
   return gradient;
 }
 
-ostream &
-operator<<(ostream &os, const CSVGLinearGradient &gradient)
+std::ostream &
+operator<<(std::ostream &os, const CSVGLinearGradient &gradient)
 {
   gradient.print(os);
 

@@ -17,7 +17,7 @@
 CSVGMask::
 CSVGMask(CSVG &svg) :
  CSVGObject(svg),
- object_   (NULL),
+ object_   (0),
  x_        (0),
  y_        (0),
  width_    (1),
@@ -29,7 +29,7 @@ CSVGMask(CSVG &svg) :
 CSVGMask::
 CSVGMask(const CSVGMask &mask) :
  CSVGObject(mask),
- object_   (NULL),
+ object_   (0),
  x_        (mask.x_),
  y_        (mask.y_),
  width_    (mask.width_),
@@ -47,10 +47,10 @@ dup() const
 
 bool
 CSVGMask::
-processOption(const string &opt_name, const string &opt_value)
+processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  string str;
-  double real;
+  std::string str;
+  double      real;
 
   if      (svg_.coordOption (opt_name, opt_value, "x", &real))
     x_ = real;
@@ -78,7 +78,7 @@ void
 CSVGMask::
 objectDraw(const CSVGObject &object)
 {
-  string old_buffer = svg_.getBufferName();
+  std::string old_buffer = svg_.getBufferName();
 
   svg_.setBuffer("_mask");
 
@@ -116,20 +116,20 @@ objectDraw(const CSVGObject &object)
   CImagePtr mask_image1 = mask_image->createRGBAMask();
   CImagePtr dest_image  = svg_.getBufferImage(old_buffer);
 
-  dest_image->combineAlpha(mask_image1, 0, 0);
+  dest_image->copyAlpha(mask_image1, 0, 0);
 
   svg_.setBuffer(old_buffer);
 }
 
 void
 CSVGMask::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   os << "mask ";
 }
 
-ostream &
-operator<<(ostream &os, const CSVGMask &mask)
+std::ostream &
+operator<<(std::ostream &os, const CSVGMask &mask)
 {
   mask.print(os);
 

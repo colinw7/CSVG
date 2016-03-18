@@ -18,19 +18,19 @@ CSVGBufferMgr::
 
 CSVGBuffer *
 CSVGBufferMgr::
-lookupBuffer(const string &name)
+lookupBuffer(const std::string &name)
 {
   BufferMap::iterator p = buffer_map_.find(name);
 
   if (p != buffer_map_.end())
     return (*p).second;
 
-  return NULL;
+  return 0;
 }
 
 CSVGBuffer *
 CSVGBufferMgr::
-createBuffer(const string &name)
+createBuffer(const std::string &name)
 {
   CSVGBuffer *buffer = new CSVGBuffer(svg_, name);
 
@@ -51,8 +51,8 @@ addBuffer(CSVGBuffer *buffer)
 //------------
 
 CSVGBuffer::
-CSVGBuffer(CSVG &svg, const string &name) :
- svg_(svg), name_(name), renderer_(NULL), lineDash_()
+CSVGBuffer(CSVG &svg, const std::string &name) :
+ svg_(svg), name_(name), renderer_(0), lineDash_()
 {
 }
 
@@ -289,7 +289,7 @@ drawImage(const CBBox2D &bbox, CImagePtr image)
 
 void
 CSVGBuffer::
-pathText(const string &text, CFontPtr font, CHAlignType align)
+pathText(const std::string &text, CFontPtr font, CHAlignType align)
 {
   renderer_->setFont(font);
 

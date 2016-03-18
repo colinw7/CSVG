@@ -9,8 +9,8 @@ CSVGFont(CSVG &svg) :
  vxo_              (0),
  vyo_              (0),
  vdy_              (0),
- font_face_        (NULL),
- missing_glyph_    (NULL),
+ font_face_        (0),
+ missing_glyph_    (0),
  char_glyph_map_   (),
  unicode_glyph_map_()
 {
@@ -41,7 +41,7 @@ dup() const
 
 bool
 CSVGFont::
-processOption(const string &opt_name, const string &opt_value)
+processOption(const std::string &opt_name, const std::string &opt_value)
 {
   long integer;
 
@@ -67,7 +67,7 @@ void
 CSVGFont::
 termParse()
 {
-  vector<CSVGObject *> objects;
+  std::vector<CSVGObject *> objects;
 
   getChildrenOfType(CSVG_OBJ_TYPE_FONT_FACE, objects);
 
@@ -93,13 +93,13 @@ termParse()
 
   getChildrenOfType(CSVG_OBJ_TYPE_GLYPH, objects);
 
-  vector<CSVGObject *>::iterator p1 = objects.begin();
-  vector<CSVGObject *>::iterator p2 = objects.end  ();
+  std::vector<CSVGObject *>::iterator p1 = objects.begin();
+  std::vector<CSVGObject *>::iterator p2 = objects.end  ();
 
   for ( ; p1 != p2; ++p1) {
     CSVGGlyph *glyph = dynamic_cast<CSVGGlyph *>(*p1);
 
-    string unicode = glyph->getUnicode();
+    std::string unicode = glyph->getUnicode();
 
     unicode_glyph_map_[unicode] = glyph;
 
@@ -132,7 +132,7 @@ getCharGlyph(char c) const
 
 CSVGGlyph *
 CSVGFont::
-getUnicodeGlyph(const string &unicode) const
+getUnicodeGlyph(const std::string &unicode) const
 {
   UnicodeGlyphMap::const_iterator p = unicode_glyph_map_.find(unicode);
 
@@ -144,13 +144,13 @@ getUnicodeGlyph(const string &unicode) const
 
 void
 CSVGFont::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   os << "font";
 }
 
-ostream &
-operator<<(ostream &os, const CSVGFont &font)
+std::ostream &
+operator<<(std::ostream &os, const CSVGFont &font)
 {
   font.print(os);
 

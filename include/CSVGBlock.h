@@ -1,13 +1,10 @@
-class CSVGBlock : public CSVGObject {
- private:
-  COptValT<double> x_;
-  COptValT<double> y_;
-  COptValT<double> width_;
-  COptValT<double> height_;
-  CHAlignType      halign_;
-  CVAlignType      valign_;
-  CSVGScale        scale_;
+#ifndef CSVGBlock_H
+#define CSVGBlock_H
 
+#include <CSVGObject.h>
+#include <CSVGTypes.h>
+
+class CSVGBlock : public CSVGObject {
  public:
   CSVG_OBJECT_DEF("block", CSVG_OBJ_TYPE_BLOCK)
 
@@ -37,4 +34,15 @@ class CSVGBlock : public CSVGObject {
   void print(std::ostream &os) const;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGBlock &block);
+
+ private:
+  COptValT<double> x_;
+  COptValT<double> y_;
+  COptValT<double> width_;
+  COptValT<double> height_;
+  CHAlignType      halign_ { CHALIGN_TYPE_CENTER };
+  CVAlignType      valign_ { CVALIGN_TYPE_CENTER };
+  CSVGScale        scale_  { CSVG_SCALE_FREE };
 };
+
+#endif

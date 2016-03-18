@@ -25,7 +25,7 @@ dup() const
 
 bool
 CSVGLine::
-processOption(const string &opt_name, const string &opt_value)
+processOption(const std::string &opt_name, const std::string &opt_value)
 {
   if (processCoreOption           (opt_name, opt_value)) return true;
   if (processConditionalOption    (opt_name, opt_value)) return true;
@@ -42,8 +42,8 @@ processOption(const string &opt_name, const string &opt_value)
   if (processCursorOption         (opt_name, opt_value)) return true;
   if (processExternalOption       (opt_name, opt_value)) return true;
 
-  double real;
-  string str;
+  std::string str;
+  double      real;
 
   if      (svg_.coordOption(opt_name, opt_value, "x1", &real))
     point1_.x = real;
@@ -116,13 +116,13 @@ resizeTo(const CSize2D &size)
 
 void
 CSVGLine::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   os << "line " << point1_<< " " << point2_;
 }
 
-ostream &
-operator<<(ostream &os, const CSVGLine &line)
+std::ostream &
+operator<<(std::ostream &os, const CSVGLine &line)
 {
   line.print(os);
 

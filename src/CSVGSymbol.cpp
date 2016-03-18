@@ -30,7 +30,7 @@ dup() const
 */
 bool
 CSVGSymbol::
-processOption(const string &opt_name, const string &opt_value)
+processOption(const std::string &opt_name, const std::string &opt_value)
 {
   return CSVGObject::processOption(opt_name, opt_value);
 }
@@ -73,13 +73,13 @@ draw()
 
 void
 CSVGSymbol::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   os << "symbol";
 }
 
-ostream &
-operator<<(ostream &os, const CSVGSymbol &group)
+std::ostream &
+operator<<(std::ostream &os, const CSVGSymbol &group)
 {
   group.print(os);
 

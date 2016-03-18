@@ -271,7 +271,7 @@ decodeChar(char c, int *pos)
 {
   char *p = strchr(base_64_chars_, c);
 
-  if (p == NULL) return false;
+  if (p == 0) return false;
 
   *pos = p - base_64_chars_;
 

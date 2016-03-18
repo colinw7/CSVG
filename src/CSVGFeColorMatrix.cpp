@@ -33,10 +33,10 @@ dup() const
 
 bool
 CSVGFeColorMatrix::
-processOption(const string &opt_name, const string &opt_value)
+processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  string         str;
-  vector<double> reals;
+  std::string         str;
+  std::vector<double> reals;
 
   if      (svg_.stringOption(opt_name, opt_value, "in", str))
     filter_in_ = str;
@@ -101,13 +101,13 @@ filterImage(CImagePtr src_image)
 
 void
 CSVGFeColorMatrix::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   os << "feColorMatrix ";
 }
 
-ostream &
-operator<<(ostream &os, const CSVGFeColorMatrix &filter)
+std::ostream &
+operator<<(std::ostream &os, const CSVGFeColorMatrix &filter)
 {
   filter.print(os);
 

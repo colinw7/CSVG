@@ -1,0 +1,10 @@
+#ifndef CORIENTATION_H
+#define CORIENTATION_H
+
+enum COrientation {
+  CORIENTATION_NONE      =0,
+  CORIENTATION_HORIZONTAL=(1<<0),
+  CORIENTATION_VERTICAL  =(1<<1)
+};
+
+#endif

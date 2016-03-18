@@ -21,9 +21,9 @@ dup() const
 
 bool
 CSVGFePointLight::
-processOption(const string &opt_name, const string &opt_value)
+processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  string str;
+  std::string str;
 
   if      (svg_.stringOption(opt_name, opt_value, "x", str))
     ;
@@ -45,13 +45,13 @@ draw()
 
 void
 CSVGFePointLight::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   os << "fePointLight ";
 }
 
-ostream &
-operator<<(ostream &os, const CSVGFePointLight &fe)
+std::ostream &
+operator<<(std::ostream &os, const CSVGFePointLight &fe)
 {
   fe.print(os);
 

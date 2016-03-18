@@ -42,9 +42,9 @@ dup() const
 
 bool
 CSVGPolyLine::
-processOption(const string &opt_name, const string &opt_value)
+processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  vector<CPoint2D> points;
+  std::vector<CPoint2D> points;
 
   if      (svg_.pointListOption(opt_name, opt_value, "points", points)) {
     points_.clear();
@@ -162,7 +162,7 @@ rotateBy(double da, const CPoint2D &c)
 
 void
 CSVGPolyLine::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   os << "polyline ";
 
@@ -176,8 +176,8 @@ print(ostream &os) const
   }
 }
 
-ostream &
-operator<<(ostream &os, const CSVGPolyLine &polyline)
+std::ostream &
+operator<<(std::ostream &os, const CSVGPolyLine &polyline)
 {
   polyline.print(os);
 

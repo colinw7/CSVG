@@ -42,7 +42,7 @@ dup() const
 
 bool
 CSVGPolygon::
-processOption(const string &opt_name, const string &opt_value)
+processOption(const std::string &opt_name, const std::string &opt_value)
 {
   if (processCoreOption           (opt_name, opt_value)) return true;
   if (processConditionalOption    (opt_name, opt_value)) return true;
@@ -59,8 +59,8 @@ processOption(const string &opt_name, const string &opt_value)
   if (processCursorOption         (opt_name, opt_value)) return true;
   if (processExternalOption       (opt_name, opt_value)) return true;
 
-  vector<CPoint2D> points;
-  string           str;
+  std::vector<CPoint2D> points;
+  std::string           str;
 
   if      (svg_.pointListOption(opt_name, opt_value, "points", points)) {
     points_.clear();
@@ -175,7 +175,7 @@ rotateBy(double da, const CPoint2D &c)
 
 void
 CSVGPolygon::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   os << "polygon ";
 
@@ -189,8 +189,8 @@ print(ostream &os) const
   }
 }
 
-ostream &
-operator<<(ostream &os, const CSVGPolygon &polygon)
+std::ostream &
+operator<<(std::ostream &os, const CSVGPolygon &polygon)
 {
   polygon.print(os);
 

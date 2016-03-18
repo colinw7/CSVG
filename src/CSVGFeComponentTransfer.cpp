@@ -27,9 +27,9 @@ dup() const
 
 bool
 CSVGFeComponentTransfer::
-processOption(const string &opt_name, const string &opt_value)
+processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  string str;
+  std::string str;
 
   if      (svg_.stringOption(opt_name, opt_value, "in", str))
     filter_in_ = str;
@@ -72,13 +72,13 @@ filterImage(CImagePtr src_image)
 
 void
 CSVGFeComponentTransfer::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   os << "feComponentTransfer ";
 }
 
-ostream &
-operator<<(ostream &os, const CSVGFeComponentTransfer &fe)
+std::ostream &
+operator<<(std::ostream &os, const CSVGFeComponentTransfer &fe)
 {
   fe.print(os);
 

@@ -52,7 +52,7 @@ dup() const
 
 bool
 CSVGText::
-processOption(const string &opt_name, const string &opt_value)
+processOption(const std::string &opt_name, const std::string &opt_value)
 {
   if (processCoreOption           (opt_name, opt_value)) return true;
   if (processConditionalOption    (opt_name, opt_value)) return true;
@@ -71,8 +71,8 @@ processOption(const string &opt_name, const string &opt_value)
   if (processCursorOption         (opt_name, opt_value)) return true;
   if (processExternalOption       (opt_name, opt_value)) return true;
 
-  string str;
-  double real;
+  std::string str;
+  double      real;
 
   if      (svg_.coordOption (opt_name, opt_value, "x", &real))
     position_.x = real;
@@ -134,13 +134,13 @@ draw()
 
 void
 CSVGText::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   os << "text " << position_ << " " << CStrUtil::single_quote(text_);
 }
 
-ostream &
-operator<<(ostream &os, const CSVGText &text)
+std::ostream &
+operator<<(std::ostream &os, const CSVGText &text)
 {
   text.print(os);
 

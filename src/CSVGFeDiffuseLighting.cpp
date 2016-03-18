@@ -27,9 +27,9 @@ dup() const
 
 bool
 CSVGFeDiffuseLighting::
-processOption(const string &opt_name, const string &opt_value)
+processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  string str;
+  std::string str;
 
   if      (svg_.stringOption(opt_name, opt_value, "in", str))
     filter_in_ = str;
@@ -69,13 +69,13 @@ filterImage(CImagePtr src_image)
 
 void
 CSVGFeDiffuseLighting::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   os << "feDiffuseLighting ";
 }
 
-ostream &
-operator<<(ostream &os, const CSVGFeDiffuseLighting &fe)
+std::ostream &
+operator<<(std::ostream &os, const CSVGFeDiffuseLighting &fe)
 {
   fe.print(os);
 

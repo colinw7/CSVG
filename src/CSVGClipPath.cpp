@@ -23,9 +23,9 @@ dup() const
 
 bool
 CSVGClipPath::
-processOption(const string &opt_name, const string &opt_value)
+processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  string str;
+  std::string str;
 
   if      (svg_.stringOption(opt_name, opt_value, "d", str)) {
     if (! svg_.pathStringToParts(str, parts_))
@@ -49,15 +49,15 @@ draw()
 
 void
 CSVGClipPath::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   os << "clipPath (";
 
   os << ")";
 }
 
-ostream &
-operator<<(ostream &os, const CSVGClipPath &path)
+std::ostream &
+operator<<(std::ostream &os, const CSVGClipPath &path)
 {
   path.print(os);
 

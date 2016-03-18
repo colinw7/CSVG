@@ -38,10 +38,10 @@ getAlphaColor() const
 
 bool
 CSVGStop::
-processOption(const string &opt_name, const string &opt_value)
+processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  string str;
-  double real;
+  std::string str;
+  double      real;
 
   if      (svg_.stringOption(opt_name, opt_value, "offset", str)) {
     if (! svg_.decodePercentString(str, &real))
@@ -74,13 +74,13 @@ draw()
 
 void
 CSVGStop::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   os << "stop " << offset_;
 }
 
-ostream &
-operator<<(ostream &os, const CSVGStop &stop)
+std::ostream &
+operator<<(std::ostream &os, const CSVGStop &stop)
 {
   stop.print(os);
 

@@ -5,7 +5,7 @@ CSVGTSpan(CSVG &svg) :
  CSVGObject(svg),
  position_ (0, 0),
  text_     (),
- font_     (NULL)
+ font_     (0)
 {
 }
 
@@ -27,10 +27,10 @@ dup() const
 
 bool
 CSVGTSpan::
-processOption(const string &opt_name, const string &opt_value)
+processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  string str;
-  double real;
+  std::string str;
+  double      real;
 
   if      (svg_.stringOption(opt_name, opt_value, "x", str)) {
     if (CStrUtil::isReal(str) && CStrUtil::toReal(str, &real))
@@ -62,13 +62,13 @@ draw()
 
 void
 CSVGTSpan::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   os << "tspan " << position_ << " " << CStrUtil::single_quote(text_);
 }
 
-ostream &
-operator<<(ostream &os, const CSVGTSpan &tspan)
+std::ostream &
+operator<<(std::ostream &os, const CSVGTSpan &tspan)
 {
   tspan.print(os);
 

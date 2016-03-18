@@ -25,9 +25,9 @@ dup() const
 
 bool
 CSVGFeImage::
-processOption(const string &opt_name, const string &opt_value)
+processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  string str;
+  std::string str;
 
   if      (svg_.stringOption(opt_name, opt_value, "xlink:href", str))
     xlink_ = CSVGXLink(this, str);
@@ -63,14 +63,14 @@ filterImage(CImagePtr src_image)
 
   CImagePtr dst_image = src_image->dup();
 
-  CSVGFilter *filter = NULL;
+  CSVGFilter *filter = 0;
 
   CSVGObject *parent = parent_;
 
-  while (parent != NULL) {
+  while (parent != 0) {
     filter = dynamic_cast<CSVGFilter *>(parent);
 
-    if (filter != NULL) break;
+    if (filter != 0) break;
   }
 
   if (filter) {
@@ -87,13 +87,13 @@ filterImage(CImagePtr src_image)
 
 void
 CSVGFeImage::
-print(ostream &os) const
+print(std::ostream &os) const
 {
   os << "feImage ";
 }
 
-ostream &
-operator<<(ostream &os, const CSVGFeImage &filter)
+std::ostream &
+operator<<(std::ostream &os, const CSVGFeImage &filter)
 {
   filter.print(os);
 
