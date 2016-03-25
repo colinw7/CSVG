@@ -1,27 +1,34 @@
-class CSVGFontFace : public CSVGObject {
- private:
-  std::string family_;
-  int         units_;
-  std::string panose_;
-  int         ascent_;
-  int         descent_;
-  bool        alphabetic_;
+#ifndef CSVGFontFace_H
+#define CSVGFontFace_H
 
+#include <CSVGObject.h>
+
+class CSVGFontFace : public CSVGObject {
  public:
-  CSVG_OBJECT_DEF("font-face", CSVG_OBJ_TYPE_FONT_FACE)
+  CSVG_OBJECT_DEF("font-face", CSVGObjTypeId::FONT_FACE)
 
   CSVGFontFace(CSVG &svg);
   CSVGFontFace(const CSVGFontFace &font_face);
 
-  CSVGFontFace *dup() const;
+  CSVGFontFace *dup() const override;
 
-  int getUnits() const { return units_; }
+  int getUnits() const { return units_.getValue(0); }
 
-  bool processOption(const std::string &name, const std::string &value);
+  bool processOption(const std::string &name, const std::string &value) override;
 
-  void draw();
+  void draw() override;
 
-  void print(std::ostream &os) const;
+  void print(std::ostream &os, bool hier) const override;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGFontFace &face);
+
+ private:
+  COptValT<std::string> family_;
+  COptValT<int>         units_;
+  COptValT<std::string> panose_;
+  COptValT<int>         ascent_;
+  COptValT<int>         descent_;
+  COptValT<bool>        alphabetic_;
 };
+
+#endif

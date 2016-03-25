@@ -1,13 +1,11 @@
-#include <CSVGI.h>
+#include <CSVGFeComponentTransfer.h>
+#include <CSVGFeFunc.h>
+#include <CSVG.h>
 
 CSVGFeComponentTransfer::
 CSVGFeComponentTransfer(CSVG &svg) :
- CSVGFilter (svg),
- filter_in_ (),
- filter_out_()
+ CSVGFilter(svg)
 {
-  filter_in_  = "SourceGraphic";
-  filter_out_ = "SourceGraphic";
 }
 
 CSVGFeComponentTransfer::
@@ -45,11 +43,11 @@ void
 CSVGFeComponentTransfer::
 draw()
 {
-  CImagePtr src_image = svg_.getBufferImage(filter_in_);
+  CImagePtr src_image = svg_.getBufferImage(filter_in_.getValue("SourceGraphic"));
 
   CImagePtr dst_image = filterImage(src_image);
 
-  svg_.setBufferImage(filter_out_, dst_image);
+  svg_.setBufferImage(filter_out_.getValue("SourceGraphic"), dst_image);
 }
 
 CImagePtr
@@ -58,10 +56,8 @@ filterImage(CImagePtr src_image)
 {
   CImagePtr dst_image = src_image->dup();
 
-  ObjectList::const_iterator p1, p2;
-
-  for (p1 = childrenBegin(), p2 = childrenEnd(); p1 != p2; ++p1) {
-    CSVGFeFunc *func = dynamic_cast<CSVGFeFunc *>(*p1);
+  for (const auto &c : children()) {
+    CSVGFeFunc *func = dynamic_cast<CSVGFeFunc *>(c);
 
     if (func)
       dst_image = func->filterImage(dst_image);
@@ -72,15 +68,31 @@ filterImage(CImagePtr src_image)
 
 void
 CSVGFeComponentTransfer::
-print(std::ostream &os) const
+print(std::ostream &os, bool hier) const
 {
-  os << "feComponentTransfer ";
+  if (hier) {
+    os << "<feComponentTransfer";
+
+    printNameValue(os, "id", id_);
+
+    printNameValue(os, "in"    , filter_in_ );
+    printNameValue(os, "result", filter_out_);
+
+    os << ">" << std::endl;
+
+    for (const auto &o : objects_)
+      o->print(os, hier);
+
+    os << "</feComponentTransfer>" << std::endl;
+  }
+  else
+    os << "feComponentTransfer ";
 }
 
 std::ostream &
 operator<<(std::ostream &os, const CSVGFeComponentTransfer &fe)
 {
-  fe.print(os);
+  fe.print(os, false);
 
   return os;
 }

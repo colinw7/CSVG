@@ -1,4 +1,6 @@
-#include <CSVGI.h>
+#include <CSVGEllipse.h>
+#include <CSVG.h>
+#include <CSVGLog.h>
 
 /* Attributes:
     <Core>
@@ -23,17 +25,15 @@
 
 CSVGEllipse::
 CSVGEllipse(CSVG &svg) :
- CSVGObject(svg),
- center_   (0,0),
- rx_       (1),
- ry_       (1)
+ CSVGObject(svg)
 {
 }
 
 CSVGEllipse::
 CSVGEllipse(const CSVGEllipse &ellipse) :
  CSVGObject(ellipse),
- center_   (ellipse.center_),
+ cx_       (ellipse.cx_),
+ cy_       (ellipse.cy_),
  rx_       (ellipse.rx_),
  ry_       (ellipse.ry_)
 {
@@ -64,17 +64,18 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   if (processCursorOption         (opt_name, opt_value)) return true;
   if (processExternalOption       (opt_name, opt_value)) return true;
 
-  double      real;
-  std::string str;
+  double          real;
+  std::string     str;
+  CSVGLengthValue length;
 
   if      (svg_.coordOption (opt_name, opt_value, "cx", &real))
-    center_.x = real;
+    cx_ = real;
   else if (svg_.coordOption (opt_name, opt_value, "cy", &real))
-    center_.y = real;
-  else if (svg_.lengthOption(opt_name, opt_value, "rx" , &real))
-    rx_ = real;
-  else if (svg_.lengthOption(opt_name, opt_value, "ry" , &real))
-    ry_ = real;
+    cy_ = real;
+  else if (svg_.lengthOption(opt_name, opt_value, "rx" , length))
+    rx_ = length.value();
+  else if (svg_.lengthOption(opt_name, opt_value, "ry" , length))
+    ry_ = length.value();
   else if (svg_.stringOption(opt_name, opt_value, "transform", str)) {
     CMatrix2D transform;
 
@@ -96,18 +97,18 @@ draw()
   if (svg_.getDebug())
     CSVGLog() << *this;
 
-  svg_.drawEllipse(center_.x, center_.y, rx_, ry_);
+  svg_.drawEllipse(getCenterX(), getCenterY(), getRadiusX(), getRadiusY());
 }
 
 bool
 CSVGEllipse::
 getBBox(CBBox2D &bbox) const
 {
-  if (! view_box_.isSet())
-    bbox = CBBox2D(center_.x - rx_, center_.y - ry_,
-                   center_.x + rx_, center_.y + ry_);
+  if (! viewBox_.isSet())
+    bbox = CBBox2D(getCenterX() - getRadiusX(), getCenterY() - getRadiusY(),
+                   getCenterX() + getRadiusX(), getCenterY() + getRadiusY());
   else
-    bbox = view_box_;
+    bbox = viewBox_;
 
   return true;
 }
@@ -116,28 +117,46 @@ void
 CSVGEllipse::
 moveBy(const CVector2D &delta)
 {
-  center_ += delta;
+  CPoint2D c = getCenter();
+
+  c += delta;
+
+  setCenter(c);
 }
 
 void
 CSVGEllipse::
 resizeTo(const CSize2D &size)
 {
-  rx_ = size.getWidth ()/2.0;
-  ry_ = size.getHeight()/2.0;
+  setRadius(size.getWidth()/2.0, size.getHeight()/2.0);
 }
 
 void
 CSVGEllipse::
-print(std::ostream &os) const
+print(std::ostream &os, bool hier) const
 {
-  os << "ellipse " << center_ << " radius " << rx_ << " " << ry_;
+  if (hier) {
+    os << "<ellipse";
+
+    printNameValue(os, "id", id_);
+
+    printNameValue(os, "cx", cx_);
+    printNameValue(os, "cy", cy_);
+    printNameValue(os, "rx", rx_);
+    printNameValue(os, "ry", ry_);
+
+    printStyle(os);
+
+    os << "/>" << std::endl;
+  }
+  else
+    os << "ellipse " << getCenter() << " radius " << getRadiusX() << " " << getRadiusY();
 }
 
 std::ostream &
 operator<<(std::ostream &os, const CSVGEllipse &ellipse)
 {
-  ellipse.print(os);
+  ellipse.print(os, false);
 
   return os;
 }

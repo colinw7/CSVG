@@ -31,6 +31,7 @@ CArcToBezier.cpp \
 OBJS = $(patsubst %.cpp,$(OBJ_DIR)/%.o,$(SRC))
 
 CPPFLAGS = \
+$(CDEBUG) \
 -std=c++11 \
 -I. \
 -I$(INC_DIR) \
@@ -44,6 +45,7 @@ CPPFLAGS = \
 -I/usr/include/freetype2 \
 
 LFLAGS = \
+$(LDEBUG) \
 -L$(LIB_DIR) \
 -L../../CSVG/lib \
 -L../../CXML/lib \

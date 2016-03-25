@@ -1,25 +1,23 @@
+#ifndef CSVGRadialGradient_H
+#define CSVGRadialGradient_H
+
+#include <CSVGObject.h>
+#include <CSVGTypes.h>
+#include <CRadialGradient.h>
+
 class CSVGStop;
 
 class CSVGRadialGradient : public CSVGObject {
  public:
   typedef std::vector<CSVGStop *> StopList;
 
- private:
-  COptValT<CPoint2D>            center_;
-  COptValT<double>              radius_;
-  COptValT<CPoint2D>            focus_;
-  StopList                      stops_;
-  COptValT<CMatrix2D>           gtransform_;
-  COptValT<CSVGCoordUnits>      units_;
-  COptValT<CGradientSpreadType> spread_;
-
  public:
-  CSVG_OBJECT_DEF("radial_gradient", CSVG_OBJ_TYPE_RADIAL_GRADIENT)
+  CSVG_OBJECT_DEF("radial_gradient", CSVGObjTypeId::RADIAL_GRADIENT)
 
   CSVGRadialGradient(CSVG &svg);
   CSVGRadialGradient(const CSVGRadialGradient &rg);
 
-  CSVGRadialGradient *dup() const;
+  CSVGRadialGradient *dup() const override;
 
   const CPoint2D &getCenter() { return center_.getValue(); }
 
@@ -76,45 +74,50 @@ class CSVGRadialGradient : public CSVGObject {
   }
 
   bool getGTransformValid() const { return gtransform_.isValid(); }
-
   CMatrix2D getGTransform() const { return gtransform_.getValue(); }
-
   void setGTransform(const CMatrix2D &gtransform) { gtransform_ = gtransform; }
 
   bool getUnitsValid() const { return units_.isValid(); }
-
-  CSVGCoordUnits getUnits() const { return units_.getValue(); }
-
+  CSVGCoordUnits getUnits() const { return units_.getValue(CSVGCoordUnits::USER_SPACE); }
   void setUnits(CSVGCoordUnits units) { units_ = units; }
 
   bool getSpreadValid() const { return spread_.isValid(); }
-
   CGradientSpreadType getSpread() const { return spread_.getValue(); }
-
   void setSpread(CGradientSpreadType spread) { spread_ = spread; }
 
-  void addStop(CSVGStop *stop) {
-    stops_.push_back(stop);
-  }
+  void addStop(CSVGStop *stop) { stops_.push_back(stop); }
 
   bool anyStops() const { return ! stops_.empty(); }
 
-  StopList::const_iterator beginStops() const { return stops_.begin(); }
-  StopList::const_iterator endStops  () const { return stops_.end  (); }
+  const StopList &stops() const { return stops_; }
 
-  bool processOption(const std::string &name, const std::string &value);
+  //StopList::const_iterator beginStops() const { return stops_.begin(); }
+  //StopList::const_iterator endStops  () const { return stops_.end  (); }
+
+  bool processOption(const std::string &name, const std::string &value) override;
 
   void termParse();
 
-  bool isDrawable() { return false; }
+  bool isDrawable() const override { return false; }
 
-  void draw();
+  void draw() override;
 
-  void print(std::ostream &os) const;
+  void print(std::ostream &os, bool hier) const override;
 
   CImagePtr getImage(CBBox2D &bbox);
 
   CRadialGradient *createGradient();
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGRadialGradient &gradient);
+
+ private:
+  COptValT<CPoint2D>            center_;
+  COptValT<double>              radius_;
+  COptValT<CPoint2D>            focus_;
+  StopList                      stops_;
+  COptValT<CMatrix2D>           gtransform_;
+  COptValT<CSVGCoordUnits>      units_;
+  COptValT<CGradientSpreadType> spread_;
 };
+
+#endif

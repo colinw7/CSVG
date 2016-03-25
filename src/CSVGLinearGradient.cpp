@@ -1,4 +1,7 @@
-#include <CSVGI.h>
+#include <CSVGLinearGradient.h>
+#include <CSVGRadialGradient.h>
+#include <CSVGStop.h>
+#include <CSVG.h>
 #include <CLinearGradient.h>
 
 /* Attributes:
@@ -19,15 +22,7 @@
 
 CSVGLinearGradient::
 CSVGLinearGradient(CSVG &svg) :
- CSVGObject (svg),
- x1_        (),
- y1_        (),
- x2_        (),
- y2_        (),
- stops_     (),
- gtransform_(),
- units_     (),
- spread_    ()
+ CSVGObject(svg)
 {
   //x1_.setDefValue(0.0);
   //y1_.setDefValue(0.0);
@@ -60,32 +55,21 @@ bool
 CSVGLinearGradient::
 processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  std::string str;
-  double      real;
+  std::string     str;
+  CSVGCoordUnits  units;
+  CSVGLengthValue length;
 
-  if      (svg_.stringOption(opt_name, opt_value, "x1", str)) {
-    if (! svg_.decodePercentString(str, &real))
-      return false;
-
-    setX1(real);
+  if      (svg_.percentOption(opt_name, opt_value, "x1", length)) {
+    setX1(length.value());
   }
-  else if (svg_.stringOption(opt_name, opt_value, "y1", str)) {
-    if (! svg_.decodePercentString(str, &real))
-      return false;
-
-    setY1(real);
+  else if (svg_.percentOption(opt_name, opt_value, "y1", length)) {
+    setY1(length.value());
   }
-  else if (svg_.stringOption(opt_name, opt_value, "x2", str)) {
-    if (! svg_.decodePercentString(str, &real))
-      return false;
-
-    setX2(real);
+  else if (svg_.percentOption(opt_name, opt_value, "x2", length)) {
+    setX2(length.value());
   }
-  else if (svg_.stringOption(opt_name, opt_value, "y2", str)) {
-    if (! svg_.decodePercentString(str, &real))
-      return false;
-
-    setY2(real);
+  else if (svg_.percentOption(opt_name, opt_value, "y2", length)) {
+    setY2(length.value());
   }
   else if (svg_.stringOption(opt_name, opt_value, "gradientTransform", str)) {
     CMatrix2D gtransform;
@@ -97,18 +81,13 @@ processOption(const std::string &opt_name, const std::string &opt_value)
 
     setGTransform(gtransform);
   }
-  else if (svg_.stringOption(opt_name, opt_value, "gradientUnits", str)) {
-    CSVGCoordUnits units;
-
-    if (! svg_.decodeUnitsString(str, &units))
-      return false;
-
+  else if (svg_.coordUnitsOption(opt_name, opt_value, "gradientUnits", units)) {
     setUnits(units);
   }
   else if (svg_.stringOption(opt_name, opt_value, "spreadMethod", str)) {
     CGradientSpreadType spread;
 
-    if (! svg_.decodeGradientSpread(str, &spread))
+    if (! svg_.decodeGradientSpread(str, spread))
       return false;
 
     setSpread(spread);
@@ -137,11 +116,8 @@ processOption(const std::string &opt_name, const std::string &opt_value)
         if (lg->anyStops()) {
           stops_.clear();
 
-          StopList::const_iterator p1 = lg->beginStops();
-          StopList::const_iterator p2 = lg->endStops  ();
-
-          for ( ; p1 != p2; ++p1)
-            addStop(*p1);
+          for (const auto &s : lg->stops())
+            addStop(s);
         }
       }
       else if (rg != 0) {
@@ -152,11 +128,8 @@ processOption(const std::string &opt_name, const std::string &opt_value)
         if (rg->anyStops()) {
           stops_.clear();
 
-          StopList::const_iterator p1 = rg->beginStops();
-          StopList::const_iterator p2 = rg->endStops  ();
-
-          for ( ; p1 != p2; ++p1)
-            addStop(*p1);
+          for (const auto &s : rg->stops())
+            addStop(s);
         }
       }
     }
@@ -173,13 +146,10 @@ termParse()
 {
   std::vector<CSVGObject *> objects;
 
-  getChildrenOfType(CSVG_OBJ_TYPE_STOP, objects);
+  getChildrenOfType(CSVGObjTypeId::STOP, objects);
 
-  std::vector<CSVGObject *>::iterator p1 = objects.begin();
-  std::vector<CSVGObject *>::iterator p2 = objects.end  ();
-
-  for ( ; p1 != p2; ++p1) {
-    CSVGStop *stop = dynamic_cast<CSVGStop *>(*p1);
+  for (const auto &o : objects) {
+    CSVGStop *stop = dynamic_cast<CSVGStop *>(o);
 
     if (stop != 0)
       addStop(stop);
@@ -194,9 +164,40 @@ draw()
 
 void
 CSVGLinearGradient::
-print(std::ostream &os) const
+print(std::ostream &os, bool hier) const
 {
-  os << "linearGradient ";
+  if (hier) {
+    os << "<linearGradient";
+
+    printNameValue(os, "id", id_);
+    printNameValue(os, "x1", x1_);
+    printNameValue(os, "y1", y1_);
+    printNameValue(os, "x2", x2_);
+    printNameValue(os, "y2", y2_);
+
+    if (gtransform_.isValid() && ! gtransform_.getValue().isIdentity()) {
+      os << " gradientTransform=\"";
+
+      printTransform(os, gtransform_.getValue());
+
+      os << "\"";
+    }
+
+    if (getUnitsValid())
+      os << " gradientUnits=\"" << CSVG::encodeUnitsString(getUnits()) << "\"";
+
+    if (getSpreadValid())
+      os << " spreadMethod=\"" << CSVG::encodeGradientSpread(getSpread()) << "\"";
+
+    os << ">" << std::endl;
+
+    for (const auto &o : objects_)
+      o->print(os, hier);
+
+    os << "</linearGradient>" << std::endl;
+  }
+  else
+    os << "linearGradient ";
 }
 
 CImagePtr
@@ -227,11 +228,8 @@ getImage(CBBox2D &bbox)
 
   gradient.setSpread(getSpread());
 
-  StopList::const_iterator p1 = stops_.begin();
-  StopList::const_iterator p2 = stops_.end  ();
-
-  for ( ; p1 != p2; ++p1)
-    gradient.addStop((*p1)->getOffset(), (*p1)->getColor());
+  for (const auto &s : stops())
+    gradient.addStop(s->getOffset(), s->getColor());
 
   image->linearGradient(gradient);
 
@@ -249,11 +247,8 @@ createGradient()
   if (spread_.isValid())
     gradient->setSpread(getSpread());
 
-  StopList::const_iterator p1 = beginStops();
-  StopList::const_iterator p2 = endStops  ();
-
-  for ( ; p1 != p2; ++p1)
-    gradient->addStop((*p1)->getOffset(), (*p1)->getColor());
+  for (const auto &s : stops())
+    gradient->addStop(s->getOffset(), s->getColor());
 
   gradient->init(1, 1);
 
@@ -263,7 +258,7 @@ createGradient()
 std::ostream &
 operator<<(std::ostream &os, const CSVGLinearGradient &gradient)
 {
-  gradient.print(os);
+  gradient.print(os, false);
 
   return os;
 }

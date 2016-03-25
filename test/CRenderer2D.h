@@ -41,22 +41,6 @@ class CRenderer2D : public CPath2DRenderer, public CPath2DFlattener {
   typedef std::vector<C3Bezier2D> BezierList;
 
  protected:
-  bool                         enabled_;
-  CPixelRenderer              *pixel_renderer_;
-  CDisplayRange2D              display_range_;
-  CMatrix2D                    view_matrix_;
-  CMatrix2D                    view_imatrix_;
-  bool                         transform_flag_;
-  bool                         anti_alias_;
-  CPen                         pen_;
-  CBrush                       brush_;
-  CAutoPtr<CPath2D>            path_;
-  PathStack                    path_stack_;
-  CAutoPtr<CRendererRegion2D>  region_;
-  CSymbolType                  symbol_;
-  CPixelRendererPath           ppath_;
-
- protected:
   CRenderer2D();
 
  public:
@@ -617,6 +601,22 @@ class CRenderer2D : public CPath2DRenderer, public CPath2DFlattener {
 
  public:
   void drawFunction(const CRenderer2DFunc &func);
+
+ protected:
+  bool                         enabled_ { false };
+  CPixelRenderer              *pixel_renderer_ { 0 };
+  CDisplayRange2D              display_range_;
+  CMatrix2D                    view_matrix_;
+  CMatrix2D                    view_imatrix_;
+  bool                         transform_flag_ { false };
+  bool                         anti_alias_ { false };
+  CPen                         pen_;
+  CBrush                       brush_;
+  CAutoPtr<CPath2D>            path_;
+  PathStack                    path_stack_;
+  CAutoPtr<CRendererRegion2D>  region_;
+  CSymbolType                  symbol_ { CSYMBOL_NONE };
+  CPixelRendererPath           ppath_;
 };
 
 #endif

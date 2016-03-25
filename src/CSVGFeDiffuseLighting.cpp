@@ -1,19 +1,16 @@
-#include <CSVGI.h>
+#include <CSVGFeDiffuseLighting.h>
+#include <CSVG.h>
 
 CSVGFeDiffuseLighting::
 CSVGFeDiffuseLighting(CSVG &svg) :
- CSVGFilter (svg),
- filter_in_ (),
- filter_out_()
+ CSVGFilter(svg)
 {
-  filter_in_  = "SourceGraphic";
-  filter_out_ = "SourceGraphic";
 }
 
 CSVGFeDiffuseLighting::
 CSVGFeDiffuseLighting(const CSVGFeDiffuseLighting &fe) :
  CSVGFilter (fe),
- filter_in_ (fe.filter_in_ ),
+ filter_in_ (fe.filter_in_),
  filter_out_(fe.filter_out_)
 {
 }
@@ -51,11 +48,11 @@ void
 CSVGFeDiffuseLighting::
 draw()
 {
-  CImagePtr src_image = svg_.getBufferImage(filter_in_);
+  CImagePtr src_image = svg_.getBufferImage(filter_in_.getValue("SourceGraphic"));
 
   CImagePtr dst_image = filterImage(src_image);
 
-  svg_.setBufferImage(filter_out_, dst_image);
+  svg_.setBufferImage(filter_out_.getValue("SourceGraphic"), dst_image);
 }
 
 CImagePtr
@@ -69,15 +66,26 @@ filterImage(CImagePtr src_image)
 
 void
 CSVGFeDiffuseLighting::
-print(std::ostream &os) const
+print(std::ostream &os, bool hier) const
 {
-  os << "feDiffuseLighting ";
+  if (hier) {
+    os << "<feDiffuseLighting";
+
+    printNameValue(os, "id", id_);
+
+    printNameValue(os, "in"    , filter_in_ );
+    printNameValue(os, "result", filter_out_);
+
+    os << "/>" << std::endl;
+  }
+  else
+    os << "feDiffuseLighting ";
 }
 
 std::ostream &
 operator<<(std::ostream &os, const CSVGFeDiffuseLighting &fe)
 {
-  fe.print(os);
+  fe.print(os, false);
 
   return os;
 }

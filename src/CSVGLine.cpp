@@ -1,18 +1,20 @@
-#include <CSVGI.h>
+#include <CSVGLine.h>
+#include <CSVG.h>
+#include <CSVGLog.h>
 
 CSVGLine::
 CSVGLine(CSVG &svg) :
- CSVGObject(svg),
- point1_   (0,0),
- point2_   (0,0)
+ CSVGObject(svg)
 {
 }
 
 CSVGLine::
 CSVGLine(const CSVGLine &line) :
  CSVGObject(line),
- point1_   (line.point1_),
- point2_   (line.point2_)
+ x1_       (line.x1_),
+ y1_       (line.y1_),
+ x2_       (line.x2_),
+ y2_       (line.y2_)
 {
 }
 
@@ -42,17 +44,17 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   if (processCursorOption         (opt_name, opt_value)) return true;
   if (processExternalOption       (opt_name, opt_value)) return true;
 
-  std::string str;
-  double      real;
+  std::string     str;
+  CSVGLengthValue length;
 
-  if      (svg_.coordOption(opt_name, opt_value, "x1", &real))
-    point1_.x = real;
-  else if (svg_.coordOption(opt_name, opt_value, "y1", &real))
-    point1_.y = real;
-  else if (svg_.coordOption(opt_name, opt_value, "x2", &real))
-    point2_.x = real;
-  else if (svg_.coordOption(opt_name, opt_value, "y2", &real))
-    point2_.y = real;
+  if      (svg_.coordOption(opt_name, opt_value, "x1", length))
+    x1_ = length;
+  else if (svg_.coordOption(opt_name, opt_value, "y1", length))
+    y1_ = length;
+  else if (svg_.coordOption(opt_name, opt_value, "x2", length))
+    x2_ = length;
+  else if (svg_.coordOption(opt_name, opt_value, "y2", length))
+    y2_ = length;
   else if (svg_.stringOption(opt_name, opt_value, "transform", str)) {
     CMatrix2D transform;
 
@@ -76,8 +78,8 @@ draw()
 
   svg_.pathInit();
 
-  svg_.pathMoveTo(point1_.x, point1_.y);
-  svg_.pathLineTo(point2_.x, point2_.y);
+  svg_.pathMoveTo(getX1(), getY1());
+  svg_.pathLineTo(getX2(), getY2());
 
   if (svg_.isFilled())
     svg_.pathFill();
@@ -90,10 +92,10 @@ bool
 CSVGLine::
 getBBox(CBBox2D &bbox) const
 {
-  if (! view_box_.isSet())
-    bbox = CBBox2D(point1_, point2_);
+  if (! viewBox_.isSet())
+    bbox = CBBox2D(getStart(), getEnd());
   else
-    bbox = view_box_;
+    bbox = viewBox_;
 
   return true;
 }
@@ -102,29 +104,44 @@ void
 CSVGLine::
 moveBy(const CVector2D &delta)
 {
-  point1_ += delta;
-  point2_ += delta;
+  setStart(getStart() + delta);
+  setEnd  (getEnd  () + delta);
 }
 
 void
 CSVGLine::
 resizeTo(const CSize2D &size)
 {
-  point2_.x = point1_.x + size.width ;
-  point2_.y = point1_.y + size.height;
+  setX2(getX1() + size.width );
+  setY2(getY1() + size.height);
 }
 
 void
 CSVGLine::
-print(std::ostream &os) const
+print(std::ostream &os, bool hier) const
 {
-  os << "line " << point1_<< " " << point2_;
+  if (hier) {
+    os << "<line";
+
+    printNameValue(os, "id", id_);
+
+    printNameLength(os, "x1", x1_);
+    printNameLength(os, "y1", y1_);
+    printNameLength(os, "x2", x2_);
+    printNameLength(os, "y2", y2_);
+
+    printStyle(os);
+
+    os << "/>" << std::endl;
+  }
+  else
+    os << "line " << getStart() << " " << getEnd();
 }
 
 std::ostream &
 operator<<(std::ostream &os, const CSVGLine &line)
 {
-  line.print(os);
+  line.print(os, false);
 
   return os;
 }

@@ -1,4 +1,5 @@
-#include <CSVGI.h>
+#include <CSVGSymbol.h>
+#include <CSVG.h>
 
 CSVGSymbol::
 CSVGSymbol(CSVG &svg) :
@@ -39,30 +40,24 @@ void
 CSVGSymbol::
 moveBy(const CVector2D &delta)
 {
-  ObjectList::iterator po1, po2;
-
-  for (po1 = childrenBegin(), po2 = childrenEnd(); po1 != po2; ++po1)
-    (*po1)->moveBy(delta);
+  for (auto &c : children())
+    c->moveBy(delta);
 }
 
 void
 CSVGSymbol::
 resizeTo(const CSize2D &size)
 {
-  ObjectList::iterator po1, po2;
-
-  for (po1 = childrenBegin(), po2 = childrenEnd(); po1 != po2; ++po1)
-    (*po1)->resizeTo(size);
+  for (auto &c : children())
+    c->resizeTo(size);
 }
 
 void
 CSVGSymbol::
-rotateBy(double da, const CPoint2D &c)
+rotateBy(double da, const CPoint2D &origin)
 {
-  ObjectList::iterator po1, po2;
-
-  for (po1 = childrenBegin(), po2 = childrenEnd(); po1 != po2; ++po1)
-    (*po1)->rotateBy(da, c);
+  for (auto &c : children())
+    c->rotateBy(da, origin);
 }
 
 void
@@ -73,15 +68,33 @@ draw()
 
 void
 CSVGSymbol::
-print(std::ostream &os) const
+print(std::ostream &os, bool hier) const
 {
-  os << "symbol";
+  if (hier) {
+    if (! objects_.empty()) {
+      os << "<symbol";
+
+      std::string id = getId();
+
+      if (id != "")
+        os << " id=\"" << id << "\"";
+
+      os << ">" << std::endl;
+
+      for (const auto &o : objects_)
+        o->print(os, hier);
+
+      os << "</symbol>" << std::endl;
+    }
+  }
+  else
+    os << "symbol";
 }
 
 std::ostream &
 operator<<(std::ostream &os, const CSVGSymbol &group)
 {
-  group.print(os);
+  group.print(os, false);
 
   return os;
 }

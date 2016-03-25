@@ -1,4 +1,6 @@
-#include <CSVGI.h>
+#include <CSVGUse.h>
+#include <CSVG.h>
+#include <CSVGLog.h>
 
 CSVGUse::
 CSVGUse(CSVG &svg) :
@@ -53,17 +55,18 @@ bool
 CSVGUse::
 processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  std::string str;
-  double      real;
+  std::string     str;
+  double          real;
+  CSVGLengthValue length;
 
   if      (svg_.coordOption (opt_name, opt_value, "x", &real))
     x_ = real;
   else if (svg_.coordOption (opt_name, opt_value, "y", &real))
     y_ = real;
-  else if (svg_.lengthOption(opt_name, opt_value, "width", &real))
-    width_  = real;
-  else if (svg_.lengthOption(opt_name, opt_value, "height", &real))
-    height_ = real;
+  else if (svg_.lengthOption(opt_name, opt_value, "width", length))
+    width_ = length.value();
+  else if (svg_.lengthOption(opt_name, opt_value, "height", length))
+    height_ = length.value();
   else if (svg_.stringOption(opt_name, opt_value, "xlink:href", str))
     xlink_ = CSVGXLink(this, str);
   else
@@ -146,10 +149,8 @@ moveBy(const CVector2D &delta)
   if (object)
     object->moveBy(delta);
 
-  ObjectList::iterator po1, po2;
-
-  for (po1 = childrenBegin(), po2 = childrenEnd(); po1 != po2; ++po1)
-    (*po1)->moveBy(delta);
+  for (auto &c : children())
+    c->moveBy(delta);
 }
 
 void
@@ -170,15 +171,30 @@ draw()
 
 void
 CSVGUse::
-print(std::ostream &os) const
+print(std::ostream &os, bool hier) const
 {
-  os << "use";
+  if (hier) {
+    os << "<use";
+
+    std::string xn = xlink_.str();
+
+    if (xn != "")
+      os << " xlink:href=\"" << xn << "\"";
+
+    printStyle(os);
+
+    printTransform(os);
+
+    os << "/>" << std::endl;
+  }
+  else
+    os << "use";
 }
 
 std::ostream &
 operator<<(std::ostream &os, const CSVGUse &use)
 {
-  use.print(os);
+  use.print(os, false);
 
   return os;
 }

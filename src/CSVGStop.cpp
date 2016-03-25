@@ -1,11 +1,9 @@
-#include <CSVGI.h>
+#include <CSVGStop.h>
+#include <CSVG.h>
 
 CSVGStop::
 CSVGStop(CSVG &svg) :
- CSVGObject(svg),
- offset_   (0),
- color_    (1,1,1),
- opacity_  (1)
+ CSVGObject(svg)
 {
 }
 
@@ -29,9 +27,10 @@ CRGBA
 CSVGStop::
 getAlphaColor() const
 {
-  CRGBA rgba = color_;
+  CRGBA rgba = getColor();
 
-  rgba.setAlpha(opacity_);
+  if (opacity_.isValid())
+    rgba.setAlpha(opacity_.getValue());
 
   return rgba;
 }
@@ -40,14 +39,15 @@ bool
 CSVGStop::
 processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  std::string str;
-  double      real;
+  std::string     str;
+  double          real;
+  CSVGLengthValue length;
 
-  if      (svg_.stringOption(opt_name, opt_value, "offset", str)) {
-    if (! svg_.decodePercentString(str, &real))
-      return false;
+  if      (svg_.percentOption(opt_name, opt_value, "offset", length)) {
+    if (length.value() < 0.0 || length.value() > 1)
+      length = CSVGLengthValue(std::min(std::max(length.value(), 0.0), 1.0));
 
-    offset_ = std::min(std::max(real, 0.0), 1.0);
+    offset_ = length;
   }
   else if (svg_.stringOption(opt_name, opt_value, "stop-color", str)) {
     CRGBA rgba;
@@ -74,15 +74,31 @@ draw()
 
 void
 CSVGStop::
-print(std::ostream &os) const
+print(std::ostream &os, bool hier) const
 {
-  os << "stop " << offset_;
+  if (hier) {
+    os << "<stop";
+
+    if (offset_.isValid()) {
+      os << " offset=\""; printLength(os, offset_.getValue()); os << "\"";
+    }
+
+    if (color_.isValid())
+      os << " stop-color=\"" << color_.getValue().getRGB().stringEncode() << "\"";
+
+    if (opacity_.isValid())
+      os << " stop-opacity=\"" << opacity_.getValue() << "\"";
+
+    os << "/>" << std::endl;
+  }
+  else
+    os << "stop " << getOffset();
 }
 
 std::ostream &
 operator<<(std::ostream &os, const CSVGStop &stop)
 {
-  stop.print(os);
+  stop.print(os, false);
 
   return os;
 }

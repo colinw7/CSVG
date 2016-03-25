@@ -1,9 +1,11 @@
-#include <CSVGI.h>
+#include <CSVGClipPath.h>
+#include <CSVG.h>
+#include <CSVGLog.h>
 #include <CStrParse.h>
 
 CSVGClipPath::
 CSVGClipPath(CSVG &svg) :
- CSVGObject(svg), parts_()
+ CSVGObject(svg)
 {
 }
 
@@ -31,6 +33,8 @@ processOption(const std::string &opt_name, const std::string &opt_value)
     if (! svg_.pathStringToParts(str, parts_))
       return false;
   }
+  else if (svg_.stringOption(opt_name, opt_value, "clipPathUnits", str))
+    ;
   else if (svg_.stringOption(opt_name, opt_value, "marker-end", str))
     ;
   else
@@ -49,17 +53,36 @@ draw()
 
 void
 CSVGClipPath::
-print(std::ostream &os) const
+print(std::ostream &os, bool hier) const
 {
-  os << "clipPath (";
+  if (hier) {
+    if (! objects_.empty()) {
+      os << "<clipPath";
 
-  os << ")";
+      std::string id = getId();
+
+      if (id != "")
+        os << " id=\"" << id << "\"";
+
+      os << ">" << std::endl;
+
+      for (const auto &o : objects_)
+        o->print(os, hier);
+
+      os << "</clipPath>" << std::endl;
+    }
+  }
+  else {
+    os << "clipPath (";
+
+    os << ")";
+  }
 }
 
 std::ostream &
 operator<<(std::ostream &os, const CSVGClipPath &path)
 {
-  path.print(os);
+  path.print(os, false);
 
   return os;
 }

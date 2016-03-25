@@ -16,12 +16,12 @@ dirs:
 	@if [ ! -e ../lib ]; then mkdir ../lib; fi
 
 SRC = \
+CSVG.cpp \
 CSVGBlock.cpp \
 CSVGBuffer.cpp \
 CSVGCircle.cpp \
 CSVGClip.cpp \
 CSVGClipPath.cpp \
-CSVG.cpp \
 CSVGDefs.cpp \
 CSVGDesc.cpp \
 CSVGEllipse.cpp \
@@ -51,8 +51,8 @@ CSVGGlyph.cpp \
 CSVGGroup.cpp \
 CSVGHKern.cpp \
 CSVGImage.cpp \
-CSVGLinearGradient.cpp \
 CSVGLine.cpp \
+CSVGLinearGradient.cpp \
 CSVGMarker.cpp \
 CSVGMask.cpp \
 CSVGMissingGlyph.cpp \
@@ -66,11 +66,17 @@ CSVGRect.cpp \
 CSVGStop.cpp \
 CSVGStroke.cpp \
 CSVGStyle.cpp \
+CSVGStyleData.cpp \
 CSVGSymbol.cpp \
 CSVGText.cpp \
 CSVGTitle.cpp \
 CSVGTSpan.cpp \
 CSVGUse.cpp \
+CSVGUtil.cpp \
+CSVGXLink.cpp \
+\
+CSVGTempStroke.cpp \
+CSVGTempFont.cpp \
 \
 CSVGRenderer.cpp \
 \

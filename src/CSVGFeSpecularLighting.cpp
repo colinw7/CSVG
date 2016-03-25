@@ -1,13 +1,10 @@
-#include <CSVGI.h>
+#include <CSVGFeSpecularLighting.h>
+#include <CSVG.h>
 
 CSVGFeSpecularLighting::
 CSVGFeSpecularLighting(CSVG &svg) :
- CSVGFilter (svg),
- filter_in_ (),
- filter_out_()
+ CSVGFilter(svg)
 {
-  filter_in_  = "SourceGraphic";
-  filter_out_ = "SourceGraphic";
 }
 
 CSVGFeSpecularLighting::
@@ -45,11 +42,11 @@ void
 CSVGFeSpecularLighting::
 draw()
 {
-  CImagePtr src_image = svg_.getBufferImage(filter_in_);
+  CImagePtr src_image = svg_.getBufferImage(filter_in_.getValue("SourceGraphic"));
 
   CImagePtr dst_image = filterImage(src_image);
 
-  svg_.setBufferImage(filter_out_, dst_image);
+  svg_.setBufferImage(filter_out_.getValue("SourceGraphic"), dst_image);
 }
 
 CImagePtr
@@ -63,15 +60,26 @@ filterImage(CImagePtr src_image)
 
 void
 CSVGFeSpecularLighting::
-print(std::ostream &os) const
+print(std::ostream &os, bool hier) const
 {
-  os << "feSpecularLighting ";
+  if (hier) {
+    os << "<feSpecularLighting";
+
+    printNameValue(os, "id", id_);
+
+    printNameValue(os, "in"    , filter_in_ );
+    printNameValue(os, "result", filter_out_);
+
+    os << "</>" << std::endl;
+  }
+  else
+    os << "feSpecularLighting ";
 }
 
 std::ostream &
 operator<<(std::ostream &os, const CSVGFeSpecularLighting &fe)
 {
-  fe.print(os);
+  fe.print(os, false);
 
   return os;
 }

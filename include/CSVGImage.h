@@ -1,40 +1,65 @@
-class CSVGImage : public CSVGObject {
- private:
-  CSVGXLink xlink_;
-  CPoint2D  pos_;
-  CSize2D   size_;
+#ifndef CSVGImage_H
+#define CSVGImage_H
 
+#include <CSVGObject.h>
+#include <CSVGXLink.h>
+
+class CSVGImage : public CSVGObject {
  public:
-  CSVG_OBJECT_DEF("image", CSVG_OBJ_TYPE_IMAGE)
+  CSVG_OBJECT_DEF("image", CSVGObjTypeId::IMAGE)
 
   CSVGImage(CSVG &svg);
   CSVGImage(const CSVGImage &image);
 
  ~CSVGImage();
 
-  CSVGImage *dup() const;
+  CSVGImage *dup() const override;
 
   CImagePtr getImage() const;
 
-  CPoint2D getPosition() const { return pos_; }
+  double getX() const { return x_.getValue(0); }
+  void setX(double x) { x_ = x; }
 
-  bool processOption(const std::string &name, const std::string &value);
+  double getY() const { return y_.getValue(0); }
+  void setY(double y) { y_ = y; }
 
-  bool getSize(CSize2D &size) const;
+  double getWidth () const { return w_.getValue(CSVGLengthValue(100)).value(); }
+  void setWidth(double w) { w_ = w; }
+
+  double getHeight() const { return h_.getValue(CSVGLengthValue(100)).value(); }
+  void setHeight(double h) { h_ = h; }
+
+  CPoint2D getPosition() const { return CPoint2D(getX(), getY()); }
+
+  bool getSize(CSize2D &size) const override;
 
   void setOrigin(const CPoint2D &point);
   void setSize(const CSize2D &size);
 
   void setImage(const std::string &filename);
 
-  void draw();
+  bool processOption(const std::string &name, const std::string &value) override;
 
-  bool getBBox(CBBox2D &bbox) const;
+  void draw() override;
 
-  void moveBy(const CVector2D &delta);
-  void resizeTo(const CSize2D &size);
+  bool getBBox(CBBox2D &bbox) const override;
 
-  void print(std::ostream &os) const;
+  void moveBy(const CVector2D &delta) override;
+  void resizeTo(const CSize2D &size) override;
+
+  void print(std::ostream &os, bool hier) const override;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGImage &image);
+
+ private:
+  CSize2D getSizeInternal() const { return CSize2D(getWidth(), getHeight()); }
+
+ private:
+  CSVGXLink                 xlink_;
+  COptValT<double>          x_;
+  COptValT<double>          y_;
+  COptValT<CSVGLengthValue> w_;
+  COptValT<CSVGLengthValue> h_;
 };
+
+#endif

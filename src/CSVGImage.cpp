@@ -1,11 +1,11 @@
-#include <CSVGI.h>
+#include <CSVGImage.h>
+#include <CSVG.h>
+#include <CSVGLog.h>
 
 CSVGImage::
 CSVGImage(CSVG &svg) :
  CSVGObject(svg),
- xlink_    (this),
- pos_      (0, 0),
- size_     (100, 100)
+ xlink_    (this)
 {
 }
 
@@ -13,8 +13,10 @@ CSVGImage::
 CSVGImage(const CSVGImage &image) :
  CSVGObject(image),
  xlink_    (image.xlink_),
- pos_      (image.pos_),
- size_     (image.size_)
+ x_        (image.x_),
+ y_        (image.y_),
+ w_        (image.w_),
+ h_        (image.h_)
 {
 }
 
@@ -57,17 +59,18 @@ bool
 CSVGImage::
 processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  std::string str;
-  double      real;
+  std::string     str;
+  double          real;
+  CSVGLengthValue length;
 
   if      (svg_.coordOption (opt_name, opt_value, "x", &real))
-    pos_.x = real;
+    x_ = real;
   else if (svg_.coordOption (opt_name, opt_value, "y", &real))
-    pos_.y = real;
-  else if (svg_.lengthOption(opt_name, opt_value, "width", &real))
-    size_.width = real;
-  else if (svg_.lengthOption(opt_name, opt_value, "height", &real))
-    size_.height = real;
+    y_ = real;
+  else if (svg_.lengthOption(opt_name, opt_value, "width", length))
+    w_ = length;
+  else if (svg_.lengthOption(opt_name, opt_value, "height", length))
+    h_ = length;
   else if (svg_.stringOption(opt_name, opt_value, "xlink:href", str))
     xlink_ = CSVGXLink(this, str);
   else
@@ -80,7 +83,7 @@ bool
 CSVGImage::
 getSize(CSize2D &size) const
 {
-  size = size_;
+  size = CSize2D(getWidth(), getHeight());
 
   return true;
 }
@@ -108,14 +111,16 @@ void
 CSVGImage::
 setOrigin(const CPoint2D &pos)
 {
-  pos_ = pos;
+  x_ = pos.x;
+  y_ = pos.y;
 }
 
 void
 CSVGImage::
 setSize(const CSize2D &size)
 {
-  size_ = size;
+  w_ = size.width;
+  h_ = size.height;
 }
 
 void
@@ -151,10 +156,10 @@ bool
 CSVGImage::
 getBBox(CBBox2D &bbox) const
 {
-  if (! view_box_.isSet())
-    bbox = CBBox2D(pos_, pos_ + size_);
+  if (! viewBox_.isSet())
+    bbox = CBBox2D(getPosition(), getPosition() + getSizeInternal());
   else
-    bbox = view_box_;
+    bbox = viewBox_;
 
   return true;
 }
@@ -163,27 +168,49 @@ void
 CSVGImage::
 moveBy(const CVector2D &delta)
 {
-  pos_ += delta;
+  CPoint2D p = getPosition();
+
+  p += delta;
+
+  x_ = p.x;
+  y_ = p.y;
 }
 
 void
 CSVGImage::
 resizeTo(const CSize2D &size)
 {
-  size_ = size;
+  setSize(size);
 }
 
 void
 CSVGImage::
-print(std::ostream &os) const
+print(std::ostream &os, bool hier) const
 {
-  os << "image " << pos_ << " " << size_;
+  if (hier) {
+    os << "<image";
+
+    printNameValue (os, "id"    , id_);
+    printNameValue (os, "x"     , x_ );
+    printNameValue (os, "y"     , y_ );
+    printNameLength(os, "width" , w_ );
+    printNameLength(os, "height", h_ );
+
+    std::string xn = xlink_.str();
+
+    if (xn != "")
+      os << " xlink:href=\"" << xn << "\"";
+
+    os << "/>" << std::endl;
+  }
+  else
+    os << "image " << getPosition() << " " << getSizeInternal();
 }
 
 std::ostream &
 operator<<(std::ostream &os, const CSVGImage &image)
 {
-  image.print(os);
+  image.print(os, false);
 
   return os;
 }

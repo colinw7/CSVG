@@ -6,43 +6,54 @@
 
 class CSVGBlock : public CSVGObject {
  public:
-  CSVG_OBJECT_DEF("block", CSVG_OBJ_TYPE_BLOCK)
+  CSVG_OBJECT_DEF("block", CSVGObjTypeId::BLOCK)
 
   CSVGBlock(CSVG &svg);
   CSVGBlock(const CSVGBlock &block);
 
-  CSVGBlock *dup() const;
+  CSVGBlock *dup() const override;
 
   double getX() const;
+  void setX(double x) { x_ = x; }
+
   double getY() const;
+  void setY(double y) { y_ = y; }
 
   double getWidth() const;
-  double getHeight() const;
+  void setWidth(double w) { width_ = w; }
 
-  CHAlignType getHAlign() const { return halign_; }
-  CVAlignType getVAlign() const { return valign_; }
-  CSVGScale   getScale () const { return scale_ ; }
+  double getHeight() const;
+  void setHeight(double h) { height_ = h; }
+
+  CHAlignType getHAlign() const { return halign_.getValue(CHALIGN_TYPE_CENTER); }
+  void setHAlign(const CHAlignType &a) { halign_ = a; }
+
+  CVAlignType getVAlign() const { return valign_.getValue(CVALIGN_TYPE_CENTER); }
+  void setVAlign(const CVAlignType &a) { valign_ = a; }
+
+  CSVGScale getScale() const { return scale_.getValue(CSVGScale::FREE); }
+  void setScale(const CSVGScale &s) { scale_ = s; }
 
   void setSize(const CSize2D &size);
 
-  bool processOption(const std::string &name, const std::string &value);
+  bool processOption(const std::string &name, const std::string &value) override;
 
-  void draw();
+  void draw() override;
 
-  bool getBBox(CBBox2D &bbox) const;
+  bool getBBox(CBBox2D &bbox) const override;
 
-  void print(std::ostream &os) const;
+  void print(std::ostream &os, bool hier) const override;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGBlock &block);
 
  private:
-  COptValT<double> x_;
-  COptValT<double> y_;
-  COptValT<double> width_;
-  COptValT<double> height_;
-  CHAlignType      halign_ { CHALIGN_TYPE_CENTER };
-  CVAlignType      valign_ { CVALIGN_TYPE_CENTER };
-  CSVGScale        scale_  { CSVG_SCALE_FREE };
+  COptValT<double>          x_;
+  COptValT<double>          y_;
+  COptValT<CSVGLengthValue> width_;
+  COptValT<CSVGLengthValue> height_;
+  COptValT<CHAlignType>     halign_ { CHALIGN_TYPE_CENTER };
+  COptValT<CVAlignType>     valign_ { CVALIGN_TYPE_CENTER };
+  COptValT<CSVGScale>       scale_  { CSVGScale::FREE };
 };
 
 #endif

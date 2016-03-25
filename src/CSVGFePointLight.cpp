@@ -1,4 +1,5 @@
-#include <CSVGI.h>
+#include <CSVGFePointLight.h>
+#include <CSVG.h>
 
 CSVGFePointLight::
 CSVGFePointLight(CSVG &svg) :
@@ -45,15 +46,19 @@ draw()
 
 void
 CSVGFePointLight::
-print(std::ostream &os) const
+print(std::ostream &os, bool hier) const
 {
-  os << "fePointLight ";
+  if (hier) {
+    os << "<fePointLight/>" << std::endl;
+  }
+  else
+    os << "fePointLight ";
 }
 
 std::ostream &
 operator<<(std::ostream &os, const CSVGFePointLight &fe)
 {
-  fe.print(os);
+  fe.print(os, false);
 
   return os;
 }

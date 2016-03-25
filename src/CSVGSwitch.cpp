@@ -1,4 +1,5 @@
-#include <CSVGI.h>
+#include <CSVGSwitch.h>
+#include <CSVG.h>
 
 CSVGSwitch::
 CSVGSwitch(CSVG &svg) :
@@ -21,15 +22,19 @@ draw()
 
 void
 CSVGSwitch::
-print(std::ostream &os) const
+print(std::ostream &os, bool hier) const
 {
-  os << "switch";
+  if (hier) {
+    os << "<switch/>" << std::endl;
+  }
+  else
+    os << "switch";
 }
 
 std::ostream &
 operator<<(std::ostream &os, const CSVGSwitch &sw)
 {
-  sw.print(os);
+  sw.print(os, false);
 
   return os;
 }

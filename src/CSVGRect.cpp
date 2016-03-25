@@ -1,4 +1,6 @@
-#include <CSVGI.h>
+#include <CSVGRect.h>
+#include <CSVG.h>
+#include <CSVGLog.h>
 
 /* Attributes:
     <Core>
@@ -25,28 +27,21 @@
 
 CSVGRect::
 CSVGRect(CSVG &svg) :
- CSVGObject(svg),
- bbox_     (),
- x_        (0),
- y_        (0),
- width_    (1),
- height_   (1),
- rx_       (0),
- ry_       (0)
+ CSVGObject(svg)
 {
-  bbox_ = CBBox2D(CPoint2D(x_, y_), CPoint2D(x_ + width_, y_ + height_));
+  updateBBox();
 }
 
 CSVGRect::
 CSVGRect(const CSVGRect &rect) :
  CSVGObject(rect),
- bbox_     (rect.bbox_),
  x_        (rect.x_),
  y_        (rect.y_),
  width_    (rect.width_),
  height_   (rect.height_),
  rx_       (rect.rx_),
- ry_       (rect.ry_)
+ ry_       (rect.ry_),
+ bbox_     (rect.bbox_)
 {
 }
 
@@ -75,21 +70,22 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   if (processCursorOption         (opt_name, opt_value)) return true;
   if (processExternalOption       (opt_name, opt_value)) return true;
 
-  std::string str;
-  double      real;
+  std::string     str;
+  double          real;
+  CSVGLengthValue length;
 
   if      (svg_.coordOption (opt_name, opt_value, "x", &real))
     x_ = real;
   else if (svg_.coordOption (opt_name, opt_value, "y", &real))
     y_ = real;
-  else if (svg_.lengthOption(opt_name, opt_value, "width", &real))
-    width_ = real;
-  else if (svg_.lengthOption(opt_name, opt_value, "height", &real))
-    height_ = real;
-  else if (svg_.lengthOption(opt_name, opt_value, "rx", &real))
-    rx_ = real;
-  else if (svg_.lengthOption(opt_name, opt_value, "ry", &real))
-    ry_ = real;
+  else if (svg_.lengthOption(opt_name, opt_value, "width", length))
+    width_ = length.value();
+  else if (svg_.lengthOption(opt_name, opt_value, "height", length))
+    height_ = length.value();
+  else if (svg_.lengthOption(opt_name, opt_value, "rx", length))
+    rx_ = length.value();
+  else if (svg_.lengthOption(opt_name, opt_value, "ry", length))
+    ry_ = length.value();
   else if (svg_.stringOption(opt_name, opt_value, "transform", str)) {
     CMatrix2D transform;
 
@@ -101,9 +97,19 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   else
     return false;
 
-  bbox_ = CBBox2D(CPoint2D(x_, y_), CPoint2D(x_ + width_, y_ + height_));
+  updateBBox();
 
   return true;
+}
+
+void
+CSVGRect::
+updateBBox()
+{
+  CPoint2D p1(getX()             , getY());
+  CPoint2D p2(getX() + getWidth(), getY() + getHeight());
+
+  bbox_ = CBBox2D(p1, p2);
 }
 
 void
@@ -113,15 +119,18 @@ draw()
   if (svg_.getDebug())
     CSVGLog() << *this;
 
-  if (rx_ > 0 || ry_ > 0) {
-    if (rx_ <= 0) rx_ = ry_;
-    if (ry_ <= 0) ry_ = rx_;
+  double rx = getRX();
+  double ry = getRY();
+
+  if (rx > 0 || ry > 0) {
+    if (rx <= 0) rx = ry;
+    if (ry <= 0) ry = rx;
 
     if (svg_.isFilled())
-      svg_.fillRoundedRectangle(bbox_, rx_, ry_);
+      svg_.fillRoundedRectangle(bbox_, rx, ry);
 
     if (svg_.isStroked())
-      svg_.drawRoundedRectangle(bbox_, rx_, ry_);
+      svg_.drawRoundedRectangle(bbox_, rx, ry);
   }
   else {
     if (svg_.isFilled())
@@ -136,39 +145,84 @@ bool
 CSVGRect::
 getBBox(CBBox2D &bbox) const
 {
-  if (! view_box_.isSet())
+  if (! viewBox_.isSet())
     bbox = bbox_;
   else
-    bbox = view_box_;
+    bbox = viewBox_;
 
   return true;
 }
 
 void
 CSVGRect::
+setOrigin(const CPoint2D &point)
+{
+  x_ = point.x;
+  y_ = point.y;
+
+  updateBBox();
+}
+
+void
+CSVGRect::
+setSize(const CSize2D &size)
+{
+  width_  = size.width ;
+  height_ = size.height;
+
+  updateBBox();
+}
+
+void
+CSVGRect::
 moveBy(const CVector2D &delta)
 {
-  bbox_.moveBy(delta);
+  x_ = getX() + delta.x();
+  y_ = getX() + delta.y();
+
+  updateBBox();
 }
 
 void
 CSVGRect::
 resizeTo(const CSize2D &size)
 {
-  bbox_.setSize(size);
+  width_  = size.width ;
+  height_ = size.height;
+
+  updateBBox();
 }
 
 void
 CSVGRect::
-print(std::ostream &os) const
+print(std::ostream &os, bool hier) const
 {
-  os << "rect " << bbox_;
+  if (hier) {
+    os << "<rect";
+
+    printNameValue(os, "id", id_);
+
+    printNameValue(os, "x", x_ );
+    printNameValue(os, "y", y_ );
+
+    printNameValue(os, "width" , width_ );
+    printNameValue(os, "height", height_);
+
+    printNameValue(os, "rx", rx_ );
+    printNameValue(os, "ry", ry_ );
+
+    printStyle(os);
+
+    os << "/>" << std::endl;
+  }
+  else
+    os << "rect " << bbox_;
 }
 
 std::ostream &
 operator<<(std::ostream &os, const CSVGRect &rect)
 {
-  rect.print(os);
+  rect.print(os, false);
 
   return os;
 }

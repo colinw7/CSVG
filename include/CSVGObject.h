@@ -1,65 +1,72 @@
 #ifndef CSVG_OBJECT_H
 #define CSVG_OBJECT_H
 
+#include <CSVGStroke.h>
+#include <CSVGLengthValue.h>
+#include <CBBox2D.h>
 #include <CMatrix2D.h>
+#include <COptVal.h>
+#include <CImagePtr.h>
+#include <CAlignType.h>
+#include <list>
 
-enum CSVGObjectId {
-  CSVG_OBJ_TYPE_BLOCK=1,
-  CSVG_OBJ_TYPE_CIRCLE,
-  CSVG_OBJ_TYPE_CLIP_PATH,
-  CSVG_OBJ_TYPE_DEFS,
-  CSVG_OBJ_TYPE_DESC,
-  CSVG_OBJ_TYPE_ELLIPSE,
-  CSVG_OBJ_TYPE_FE_BLEND,
-  CSVG_OBJ_TYPE_FE_COLOR_MATRIX,
-  CSVG_OBJ_TYPE_FE_COMPONENT_TRANSFER,
-  CSVG_OBJ_TYPE_FE_COMPOSITE,
-  CSVG_OBJ_TYPE_FE_DIFFUSE_LIGHTING,
-  CSVG_OBJ_TYPE_FE_DISTANT_LIGHT,
-  CSVG_OBJ_TYPE_FE_FLOOD,
-  CSVG_OBJ_TYPE_FE_FUNC,
-  CSVG_OBJ_TYPE_FE_GAUSSIAN_BLUR,
-  CSVG_OBJ_TYPE_FE_IMAGE,
-  CSVG_OBJ_TYPE_FE_MERGE,
-  CSVG_OBJ_TYPE_FE_MERGE_NODE,
-  CSVG_OBJ_TYPE_FE_OFFSET,
-  CSVG_OBJ_TYPE_FE_POINT_LIGHT,
-  CSVG_OBJ_TYPE_FE_SPECULAR_LIGHTING,
-  CSVG_OBJ_TYPE_FE_TILE,
-  CSVG_OBJ_TYPE_FE_TURBULENCE,
-  CSVG_OBJ_TYPE_FILTER,
-  CSVG_OBJ_TYPE_FONT,
-  CSVG_OBJ_TYPE_FONT_FACE,
-  CSVG_OBJ_TYPE_GLYPH,
-  CSVG_OBJ_TYPE_GROUP,
-  CSVG_OBJ_TYPE_HKERN,
-  CSVG_OBJ_TYPE_IMAGE,
-  CSVG_OBJ_TYPE_LINEAR_GRADIENT,
-  CSVG_OBJ_TYPE_LINE,
-  CSVG_OBJ_TYPE_MARKER,
-  CSVG_OBJ_TYPE_MASK,
-  CSVG_OBJ_TYPE_MISSING_GLYPH,
-  CSVG_OBJ_TYPE_PATH,
-  CSVG_OBJ_TYPE_PATTERN,
-  CSVG_OBJ_TYPE_POLYGON,
-  CSVG_OBJ_TYPE_POLYLINE,
-  CSVG_OBJ_TYPE_RADIAL_GRADIENT,
-  CSVG_OBJ_TYPE_RECT,
-  CSVG_OBJ_TYPE_STOP,
-  CSVG_OBJ_TYPE_STYLE,
-  CSVG_OBJ_TYPE_SYMBOL,
-  CSVG_OBJ_TYPE_TEXT,
-  CSVG_OBJ_TYPE_TITLE,
-  CSVG_OBJ_TYPE_TSPAN,
-  CSVG_OBJ_TYPE_USE
+enum class CSVGObjTypeId {
+  BLOCK=1,
+  CIRCLE,
+  CLIP_PATH,
+  DEFS,
+  DESC,
+  ELLIPSE,
+  FE_BLEND,
+  FE_COLOR_MATRIX,
+  FE_COMPONENT_TRANSFER,
+  FE_COMPOSITE,
+  FE_DIFFUSE_LIGHTING,
+  FE_DISTANT_LIGHT,
+  FE_FLOOD,
+  FE_FUNC,
+  FE_GAUSSIAN_BLUR,
+  FE_IMAGE,
+  FE_MERGE,
+  FE_MERGE_NODE,
+  FE_OFFSET,
+  FE_POINT_LIGHT,
+  FE_SPECULAR_LIGHTING,
+  FE_TILE,
+  FE_TURBULENCE,
+  FILTER,
+  FONT,
+  FONT_FACE,
+  GLYPH,
+  GROUP,
+  HKERN,
+  IMAGE,
+  LINEAR_GRADIENT,
+  LINE,
+  MARKER,
+  MASK,
+  MISSING_GLYPH,
+  PATH,
+  PATTERN,
+  POLYGON,
+  POLYLINE,
+  RADIAL_GRADIENT,
+  RECT,
+  STOP,
+  STYLE,
+  SYMBOL,
+  TEXT,
+  TITLE,
+  TSPAN,
+  USE
 };
 
 #include <CObjTypeOld.h>
 
 #define CSVG_OBJECT_DEF(name,id) \
 const CObjType &getObjType() const { \
-  static CObjType obj_type(getTypeMgr(), name, id); \
-  return obj_type; \
+  static CObjType objType(getTypeMgr(), name, uint(id)); \
+  return objType; \
 }
 
 class CXMLTag;
@@ -68,48 +75,23 @@ class CSVGObject;
 class CSVGFilter;
 
 struct CSVGObjectMarker {
-  CSVGObject *start;
-  CSVGObject *mid;
-  CSVGObject *end;
+  CSVGObject *start { 0 };
+  CSVGObject *mid   { 0 };
+  CSVGObject *end   { 0 };
 
-  CSVGObjectMarker() :
-   start(NULL),
-   mid  (NULL),
-   end  (NULL) {
-  }
+  CSVGObjectMarker() { }
 };
 
 class CSVGObject {
  public:
-  typedef std::list<CSVGObject *> ObjectList;
-
- protected:
-  CSVG                 &svg_;
-  std::string           id_;
-  std::string           class_;
-  CSVGObject           *parent_;
-  COptValT<double>      opacity_;
-  CSVGStroke            stroke_;
-  CSVGFill              fill_;
-  CSVGClip              clip_;
-  CSVGFontDef           font_def_;
-  COptValT<CHAlignType> text_anchor_;
-  std::string           shape_rendering_;
-  CMatrix2D             transform_;
-  ObjectList            objects_;
-  CSVGFilter           *filter_;
-  CSVGObject           *mask_;
-  CSVGObject           *clip_path_;
-  CSVGObjectMarker      marker_;
-  CBBox2D               view_box_;
-  bool                  selected_;
-  CXMLTag              *xml_tag_;
+  typedef std::list<CSVGObject *>   ObjectList;
+  typedef std::vector<CSVGObject *> ObjectArray;
 
  protected:
   CObjTypeMgr &getTypeMgr() const {
-    static CObjTypeMgr type_mgr_;
+    static CObjTypeMgr typeMgr_;
 
-    return type_mgr_;
+    return typeMgr_;
   }
 
  public:
@@ -122,25 +104,29 @@ class CSVGObject {
 
   CSVG &getSVG() const { return svg_; }
 
-  const std::string &getId() const { return id_; }
-
+  std::string getId() const { return id_.getValue(""); }
   void setId(const std::string &id);
 
   const std::string &getClass() const { return class_; }
-
   void setClass(const std::string &name);
 
   CSVGObject *getParent() const { return parent_; }
-
   void setParent(CSVGObject *parent);
+
+  uint getInd() const { return ind_; }
 
   void autoName();
 
-  const CSVGStroke  &getStroke () const { return stroke_  ; }
-  const CSVGFill    &getFill   () const { return fill_    ; }
-  const CSVGClip    &getClip   () const { return clip_    ; }
-  const CSVGFontDef &getFontDef() const { return font_def_; }
+  const CSVGStroke &getStroke() const { return stroke_; }
+  void setStroke(const CSVGStroke &s) { stroke_ = s; }
 
+  const CSVGFill &getFill() const { return fill_; }
+  void setFill(const CSVGFill &f) { fill_ = f; }
+
+  const CSVGClip    &getClip   () const { return clip_   ; }
+  const CSVGFontDef &getFontDef() const { return fontDef_; }
+
+  virtual std::string getText() const { return ""; }
   virtual void setText(const std::string &);
 
   void updateStroke(const CSVGStroke &stroke, bool recurse=false);
@@ -148,27 +134,26 @@ class CSVGObject {
 
   virtual const CObjType &getObjType() const = 0;
 
+  CSVGObjTypeId getObjTypeId() const { return (CSVGObjTypeId) getObjType().getId(); }
+
   std::string getObjName() const { return getObjType().getName(); }
 
-  bool isObjType(uint id) const { return (getObjType().getId() == id); }
+  bool isObjType(CSVGObjTypeId id) const { return (getObjType().getId() == uint(id)); }
 
   bool isObjType(const std::string &name) const { return (getObjName() == name); }
 
   CSVGFilter *getFilter() const { return filter_; }
-
   void setFilter(CSVGFilter *filter) { filter_ = filter; }
 
   bool getSelected() const { return selected_; }
-
   void setSelected(bool selected, bool children=false);
 
-  void setXMLTag(CXMLTag *tag) { xml_tag_ = tag; }
+  void setXMLTag(CXMLTag *tag) { xmlTag_ = tag; }
 
-  const CBBox2D &getViewBox() const { return view_box_; }
+  const CBBox2D &getViewBox() const { return viewBox_; }
+  void setViewBox(const CBBox2D &box) { viewBox_ = box; }
 
-  void setViewBox(const CBBox2D &box) { view_box_ = box; }
-
-  CXMLTag *getXMLTag() const { return xml_tag_; }
+  CXMLTag *getXMLTag() const { return xmlTag_; }
 
   virtual void initParse() { }
   virtual void termParse() { }
@@ -207,23 +192,31 @@ class CSVGObject {
 
   void deleteChildObject(CSVGObject *object);
 
-  void getAllChildrenOfType(uint id, std::vector<CSVGObject *> &objects);
-  void getChildrenOfType   (uint id, std::vector<CSVGObject *> &objects);
+  void getAllChildrenOfType(CSVGObjTypeId id, ObjectArray &objects);
+  void getChildrenOfType   (CSVGObjTypeId id, ObjectArray &objects);
 
-  void getAllChildrenOfId(const std::string &id, std::vector<CSVGObject *> &objects);
-  void getChildrenOfId   (const std::string &id, std::vector<CSVGObject *> &objects);
+  void getAllChildrenOfId(const std::string &id, ObjectArray &objects);
+  void getChildrenOfId   (const std::string &id, ObjectArray &objects);
 
   bool hasChildren() const { return ! objects_.empty(); }
 
-  ObjectList::iterator childrenBegin() { return objects_.begin(); }
-  ObjectList::iterator childrenEnd  () { return objects_.end  (); }
+  const ObjectList &children() const { return objects_; }
 
-  ObjectList::const_iterator childrenBegin() const { return objects_.begin(); }
-  ObjectList::const_iterator childrenEnd  () const { return objects_.end  (); }
+  //ObjectList::iterator childrenBegin() { return objects_.begin(); }
+  //ObjectList::iterator childrenEnd  () { return objects_.end  (); }
 
-  virtual bool isDrawable() { return true; }
+  //ObjectList::const_iterator childrenBegin() const { return objects_.begin(); }
+  //ObjectList::const_iterator childrenEnd  () const { return objects_.end  (); }
+
+  virtual bool isDrawable() const { return true; }
+
+  virtual bool hasFont() const { return false; }
+
+  virtual void drawInit() { }
 
   virtual void draw() = 0;
+
+  virtual void drawTerm() { }
 
   virtual bool getBBox(CBBox2D &bbox) const;
 
@@ -257,7 +250,7 @@ class CSVGObject {
   void drawObject();
 
   // opacity
-  void   setOpacity     (const std::string &opacity_str);
+  void   setOpacity     (const std::string &opacityStr);
   void   setOpacity     (double opacity) { opacity_.setValue(opacity); }
   bool   getOpacityValid() const { return opacity_.isValid(); }
   double getOpacity     () const;
@@ -273,6 +266,7 @@ class CSVGObject {
   double getStrokeOpacity() const;
 
   void setStrokeOpacity(const std::string &opacity) { stroke_.setOpacity(opacity); }
+  void setStrokeOpacity(double t) { stroke_.setOpacity(t); }
 
   double getStrokeWidth() const;
 
@@ -281,40 +275,39 @@ class CSVGObject {
 
   const CLineDash &getStrokeLineDash();
 
-  void setStrokeDash(const std::string &dash_str) { stroke_.setDash(dash_str); }
+  void setStrokeDash(const std::string &dashStr) { stroke_.setDash(dashStr); }
+  void setStrokeDash(const CLineDash &dash) { stroke_.setDash(dash); }
 
-  void setStrokeDashOffset(const std::string &offset_str) { stroke_.setDashOffset(offset_str); }
+  void setStrokeDashOffset(const std::string &offsetStr) { stroke_.setDashOffset(offsetStr); }
 
   CLineCapType getStrokeLineCap();
 
-  void setStrokeLineCap(const std::string &cap_str) { stroke_.setLineCap(cap_str); }
+  void setStrokeLineCap(const std::string &capStr) { stroke_.setLineCap(capStr); }
+  void setStrokeLineCap(const CLineCapType &cap) { stroke_.setLineCap(cap); }
 
   CLineJoinType getStrokeLineJoin();
 
-  void setStrokeLineJoin(const std::string &join_str) { stroke_.setLineJoin(join_str); }
+  void setStrokeLineJoin(const std::string &joinStr) { stroke_.setLineJoin(joinStr); }
+  void setStrokeLineJoin(const CLineJoinType &join) { stroke_.setLineJoin(join); }
 
-  void setStrokeMitreLimit(const std::string &limit_str) { stroke_.setMitreLimit(limit_str); }
+  void setStrokeMitreLimit(const std::string &limitStr) { stroke_.setMitreLimit(limitStr); }
 
   // fill
   bool getFillColorValid() const;
 
   CRGBA getFillColor() const;
-
-  CFillType getFillRule() const;
-
-  CSVGObject *getFillObject() const;
-
   void setFillColor(const std::string &color) { fill_.setColor(color); }
   void setFillColor(const CRGBA  &color) { fill_.setColor(color); }
 
-  void setFillOpacity(const std::string &opacity) { fill_.setOpacity(opacity); }
-
-  bool getFillOpacityValid() const;
-
   double getFillOpacity() const;
+  bool getFillOpacityValid() const;
+  void setFillOpacity(const std::string &opacity) { fill_.setOpacity(opacity); }
+  void setFillOpacity(double r) { fill_.setOpacity(r); }
 
-  void setFillRule(const std::string &rule) { fill_.setRule   (rule   ); }
+  CFillType getFillRule() const;
+  void setFillRule(const std::string &rule) { fill_.setRule(rule); }
 
+  CSVGObject *getFillObject() const;
   void setFillObject(CSVGObject *object) { fill_.setFillObject(object); }
 
   // font
@@ -326,6 +319,7 @@ class CSVGObject {
 
   void setFontFamily(const std::string &family);
   void setFontSize  (double size);
+  void setFontSize  (const CSVGLengthValue &lvalue);
   void setFontWeight(const std::string &weight);
   void setFontStyle (const std::string &style );
 
@@ -333,7 +327,6 @@ class CSVGObject {
   void setClipRule(const std::string &rule) { clip_.setRule(rule); }
 
   // transform
-
   const CMatrix2D &getTransform() const { return transform_; }
 
   void setTransform(const CMatrix2D &transform) { transform_ = transform; }
@@ -353,7 +346,9 @@ class CSVGObject {
 
   static CSVGObject *lookupById(const std::string &id);
 
-  virtual void print(std::ostream &os) const;
+  void getObjectsAtPoint(const CPoint2D &p, ObjectArray &objects) const;
+
+  virtual void print(std::ostream &os, bool hier=false) const;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGObject &object) {
     object.print(os);
@@ -361,32 +356,54 @@ class CSVGObject {
     return os;
   }
 
+  void printFilter     (std::ostream &os) const;
+  void printStyle      (std::ostream &os) const;
+  void printTextContent(std::ostream &os) const;
+  void printFontDef    (std::ostream &os) const;
+  void printTransform  (std::ostream &os) const;
+
+  void printTransform(std::ostream &os, const CMatrix2D &m) const;
+
+  static void printLength(std::ostream &os, const CSVGLengthValue &l);
+
+  template<typename T>
+  void printNameValue(std::ostream &os, const std::string &name, const COptValT<T> &value) const {
+    if (value.isValid())
+      os << " " << name << "=\"" << value.getValue() << "\"";
+  }
+
+  void printNameLength(std::ostream &os, const std::string &name,
+                       const COptValT<CSVGLengthValue> &length) const {
+    if (length.isValid()) {
+      os << " " << name << "=\""; printLength(os, length.getValue()); os << "\"";
+    }
+  }
+
  private:
   CSVGObject &operator=(const CSVGObject &rhs);
-};
 
-//------------
-
-class CSVGTempStroke {
- private:
-  CSVGObject &object_;
-  CSVGStroke  stroke_;
-  CSVGFill    fill_;
-  CSVGClip    clip_;
-
- public:
-  CSVGTempStroke(CSVGObject &object);
- ~CSVGTempStroke();
-};
-
-class CSVGTempFont {
- private:
-  CSVGObject  &object_;
-  CSVGFontDef  font_def_;
-
- public:
-  CSVGTempFont(CSVGObject &object);
- ~CSVGTempFont();
+ protected:
+  CSVG&                 svg_;
+  COptValT<std::string> id_;
+  std::string           class_;
+  CSVGObject*           parent_ { 0 };
+  uint                  ind_;
+  COptValT<double>      opacity_;
+  CSVGStroke            stroke_;
+  CSVGFill              fill_;
+  CSVGClip              clip_;
+  CSVGFontDef           fontDef_;
+  COptValT<CHAlignType> textAnchor_;
+  COptValT<std::string> shapeRendering_;
+  CMatrix2D             transform_;
+  ObjectList            objects_;
+  CSVGFilter*           filter_   { 0 };
+  CSVGObject*           mask_     { 0 };
+  CSVGObject*           clipPath_ { 0 };
+  CSVGObjectMarker      marker_;
+  CBBox2D               viewBox_;
+  bool                  selected_ { false };
+  CXMLTag*              xmlTag_   { 0 };
 };
 
 #endif

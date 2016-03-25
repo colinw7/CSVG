@@ -1,4 +1,5 @@
-#include <CSVGI.h>
+#include <CSVGMarker.h>
+#include <CSVG.h>
 
 /* Attributes:
     <Core>
@@ -17,11 +18,7 @@
 
 CSVGMarker::
 CSVGMarker(CSVG &svg) :
- CSVGObject   (svg),
- refX_        (0),
- refY_        (0),
- markerWidth_ (1),
- markerHeight_(1)
+ CSVGObject(svg)
 {
 }
 
@@ -51,26 +48,27 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   if (processPresentationOption(opt_name, opt_value)) return true;
   if (processExternalOption    (opt_name, opt_value)) return true;
 
-  std::string str;
-  double      real;
-  CBBox2D     bbox;
+  std::string     str;
+  double          real;
+  CSVGLengthValue length;
+  CBBox2D         bbox;
 
   if      (svg_.coordOption (opt_name, opt_value, "refX", &real))
     refX_ = real;
   else if (svg_.coordOption (opt_name, opt_value, "refY", &real))
     refY_ = real;
   else if (svg_.stringOption(opt_name, opt_value, "markerUnits", str))
-    ;
-  else if (svg_.lengthOption(opt_name, opt_value, "markerWidth", &real) ||
-           svg_.lengthOption(opt_name, opt_value, "marker-width", &real))
-    markerWidth_ = real;
-  else if (svg_.lengthOption(opt_name, opt_value, "markerHeight", &real) ||
-           svg_.lengthOption(opt_name, opt_value, "marker-height", &real))
-    markerHeight_ = real;
+    markerUnits_ = str;
+  else if (svg_.lengthOption(opt_name, opt_value, "markerWidth", length) ||
+           svg_.lengthOption(opt_name, opt_value, "marker-width", length))
+    markerWidth_ = length.value();
+  else if (svg_.lengthOption(opt_name, opt_value, "markerHeight", length) ||
+           svg_.lengthOption(opt_name, opt_value, "marker-height", length))
+    markerHeight_ = length.value();
   else if (svg_.stringOption(opt_name, opt_value, "orient", str))
-    ;
+    orient_ = str;
   else if (svg_.bboxOption  (opt_name, opt_value, "viewBox", &bbox))
-    view_box_ = bbox;
+    viewBox_ = bbox;
   else if (svg_.stringOption(opt_name, opt_value, "preserveAspectRatio", str)) {
     //if (! svg_.decodePreserveAspectRatio(opt_value, &halign_, &valign_, &scale_))
     //  return false;
@@ -109,9 +107,9 @@ drawMarker(double x, double y, double angle)
 
   CMatrix2D matrix1, matrix2, matrix3, matrix4, matrix5;
 
-  matrix1.setTranslation(x - refX_, y - refY_);
+  matrix1.setTranslation(x - refX_.getValue(0), y - refY_.getValue(0));
 
-  matrix2.setScale(markerWidth_/w1, markerHeight_/h1);
+  matrix2.setScale(markerWidth_.getValue(1)/w1, markerHeight_.getValue(1)/h1);
 
   matrix3.setTranslation(w1/2, h1/2);
 
@@ -132,15 +130,39 @@ drawMarker(double x, double y, double angle)
 
 void
 CSVGMarker::
-print(std::ostream &os) const
+print(std::ostream &os, bool hier) const
 {
-  os << "marker";
+  if (hier) {
+    os << "<marker";
+
+    printNameValue(os, "id"          , id_          );
+    printNameValue(os, "refX"        , refX_        );
+    printNameValue(os, "refY"        , refY_        );
+    printNameValue(os, "markerWidth" , markerWidth_ );
+    printNameValue(os, "markerHeight", markerHeight_);
+    printNameValue(os, "orient"      , orient_      );
+
+    if (viewBox_.isSet())
+      os << " viewBox=\"" << viewBox_.getXMin() << " " << viewBox_.getYMin() <<
+            " " << viewBox_.getXMax() << " " << viewBox_.getYMax() << "\"";
+
+    printTransform(os);
+
+    os << ">" << std::endl;
+
+    for (const auto &o : objects_)
+      o->print(os, hier);
+
+    os << "</marker>" << std::endl;
+  }
+  else
+    os << "marker";
 }
 
 std::ostream &
 operator<<(std::ostream &os, const CSVGMarker &marker)
 {
-  marker.print(os);
+  marker.print(os, false);
 
   return os;
 }

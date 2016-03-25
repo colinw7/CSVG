@@ -1,18 +1,13 @@
-#include <CSVGI.h>
+#include <CSVGFont.h>
+#include <CSVGGlyph.h>
+#include <CSVGFontFace.h>
+#include <CSVGMissingGlyph.h>
+#include <CSVG.h>
+#include <CSVGLog.h>
 
 CSVGFont::
 CSVGFont(CSVG &svg) :
- CSVGObject(svg),
- hxo_              (0),
- hyo_              (0),
- hdx_              (0),
- vxo_              (0),
- vyo_              (0),
- vdy_              (0),
- font_face_        (0),
- missing_glyph_    (0),
- char_glyph_map_   (),
- unicode_glyph_map_()
+ CSVGObject(svg)
 {
 }
 
@@ -22,9 +17,9 @@ CSVGFont(const CSVGFont &font) :
  hxo_              (font.hxo_),
  hyo_              (font.hyo_),
  hdx_              (font.hdx_),
+ vdy_              (font.vdy_),
  vxo_              (font.vxo_),
  vyo_              (font.vyo_),
- vdy_              (font.vdy_),
  font_face_        (font.font_face_),
  missing_glyph_    (font.missing_glyph_),
  char_glyph_map_   (font.char_glyph_map_),
@@ -51,12 +46,12 @@ processOption(const std::string &opt_name, const std::string &opt_value)
     hyo_ = integer;
   else if (svg_.integerOption(opt_name, opt_value, "horiz-adv-x", &integer))
     hdx_ = integer;
+  else if (svg_.integerOption(opt_name, opt_value, "vert-adv-y", &integer))
+    vdy_ = integer;
   else if (svg_.integerOption(opt_name, opt_value, "vert-origin-x", &integer))
     vxo_ = integer;
   else if (svg_.integerOption(opt_name, opt_value, "vert-origin-y", &integer))
     vyo_ = integer;
-  else if (svg_.integerOption(opt_name, opt_value, "vert-adv-y", &integer))
-    vdy_ = integer;
   else
     return CSVGObject::processOption(opt_name, opt_value);
 
@@ -69,7 +64,7 @@ termParse()
 {
   std::vector<CSVGObject *> objects;
 
-  getChildrenOfType(CSVG_OBJ_TYPE_FONT_FACE, objects);
+  getChildrenOfType(CSVGObjTypeId::FONT_FACE, objects);
 
   if (objects.empty()) {
     CSVGLog() << "No font face for font";
@@ -80,7 +75,7 @@ termParse()
 
   //------
 
-  getChildrenOfType(CSVG_OBJ_TYPE_MISSING_GLYPH, objects);
+  getChildrenOfType(CSVGObjTypeId::MISSING_GLYPH, objects);
 
   if (objects.empty()) {
     CSVGLog() << "No default glyph for font";
@@ -91,13 +86,11 @@ termParse()
 
   //------
 
-  getChildrenOfType(CSVG_OBJ_TYPE_GLYPH, objects);
+  getChildrenOfType(CSVGObjTypeId::GLYPH, objects);
 
-  std::vector<CSVGObject *>::iterator p1 = objects.begin();
-  std::vector<CSVGObject *>::iterator p2 = objects.end  ();
-
-  for ( ; p1 != p2; ++p1) {
-    CSVGGlyph *glyph = dynamic_cast<CSVGGlyph *>(*p1);
+  for (const auto &o : objects) {
+    CSVGGlyph *glyph = dynamic_cast<CSVGGlyph *>(o);
+    if (! glyph) continue;
 
     std::string unicode = glyph->getUnicode();
 
@@ -122,7 +115,7 @@ CSVGGlyph *
 CSVGFont::
 getCharGlyph(char c) const
 {
-  CharGlyphMap::const_iterator p = char_glyph_map_.find(c);
+  auto p = char_glyph_map_.find(c);
 
   if (p != char_glyph_map_.end())
     return (*p).second;
@@ -134,7 +127,7 @@ CSVGGlyph *
 CSVGFont::
 getUnicodeGlyph(const std::string &unicode) const
 {
-  UnicodeGlyphMap::const_iterator p = unicode_glyph_map_.find(unicode);
+  auto p = unicode_glyph_map_.find(unicode);
 
   if (p != unicode_glyph_map_.end())
     return (*p).second;
@@ -144,15 +137,33 @@ getUnicodeGlyph(const std::string &unicode) const
 
 void
 CSVGFont::
-print(std::ostream &os) const
+print(std::ostream &os, bool hier) const
 {
-  os << "font";
+  if (hier) {
+    os << "<font";
+
+    printNameValue(os, "horiz-origin-x", hxo_);
+    printNameValue(os, "horiz-origin-y", hyo_);
+    printNameValue(os, "horiz-adv-x"   , hdx_);
+    printNameValue(os, "vert-adv-y"    , vdy_);
+    printNameValue(os, "vert-origin-x" , vxo_);
+    printNameValue(os, "vert-origin-y" , vyo_);
+
+    os << ">" << std::endl;
+
+    for (const auto &o : objects_)
+      o->print(os, hier);
+
+    os << "</font>" << std::endl;
+  }
+  else
+    os << "font";
 }
 
 std::ostream &
 operator<<(std::ostream &os, const CSVGFont &font)
 {
-  font.print(os);
+  font.print(os, false);
 
   return os;
 }

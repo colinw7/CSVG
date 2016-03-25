@@ -1,4 +1,6 @@
-#include <CSVGI.h>
+#include <CSVGStroke.h>
+#include <CSVG.h>
+#include <CSVGLog.h>
 
 CRGBA
 CSVGStroke::
@@ -23,18 +25,21 @@ CSVGStroke::
 setColor(const std::string &color_def)
 {
   if (color_def == "none") {
-    setColor(CRGBA(0,0,0,0));
+    noColor_ = true;
 
-    setOpacity(0.0);
+    resetColor();
+
+    resetOpacity();
   }
   else {
+    noColor_ = false;
+
     CRGBA rgba;
 
     if (svg_.decodeColorString(color_def, rgba)) {
       setColor(rgba);
 
-      if (! getOpacityValid())
-        setOpacity(1.0);
+      resetOpacity();
     }
   }
 }
@@ -105,10 +110,12 @@ void
 CSVGStroke::
 setDashOffset(const std::string &offset_str)
 {
-  double offset;
+  CSVGLengthValue lvalue;
 
-  if (svg_.lengthToReal(offset_str, &offset))
-    setDashOffset(offset);
+  if (! svg_.decodeLengthValue(offset_str, lvalue))
+    return;
+
+  setDashOffset(lvalue.value());
 }
 
 void
@@ -193,10 +200,12 @@ void
 CSVGStroke::
 setMitreLimit(const std::string &limit_str)
 {
-  double limit;
+  CSVGLengthValue lvalue;
 
-  if (svg_.lengthToReal(limit_str, &limit))
-    setMitreLimit(limit);
+  if (! svg_.decodeLengthValue(limit_str, lvalue))
+    return;
+
+  setMitreLimit(lvalue.value());
 }
 
 void
@@ -236,4 +245,50 @@ update(const CSVGStroke &stroke)
 
   if (stroke.getMitreLimitValid())
     setMitreLimit(stroke.getMitreLimit());
+}
+
+void
+CSVGStroke::
+print(std::ostream &os) const
+{
+  if (noColor_)
+    os << "stroke: none;";
+
+  if (color_.isValid())
+    os << "stroke: " << color_.getValue().getRGB().stringEncode() << ";";
+
+  if (width_.isValid())
+    os << " stroke-width: " << width_.getValue() << ";";
+
+  if (dash_.isValid()) {
+    os << " stroke-dasharray: " << dash_.getValue().toString() << ";"; // TODO: no offset, format
+
+    if (dash_.getValue().getOffset() != 0)
+      os << " stroke-dashoffset: " << dash_.getValue().getOffset() << ";";
+  }
+
+  if (cap_.isValid()) {
+    os << " stroke-linecap: ";
+
+    if      (cap_.getValue() == LINE_CAP_TYPE_BUTT  ) os << "butt";
+    else if (cap_.getValue() == LINE_CAP_TYPE_ROUND ) os << "round";
+    else if (cap_.getValue() == LINE_CAP_TYPE_SQUARE) os << "square";
+    else os << int(cap_.getValue());
+
+    os << ";";
+  }
+
+  if (join_.isValid()) {
+    os << " stroke-linejoin: ";
+
+    if      (join_.getValue() == LINE_JOIN_TYPE_MITRE) os << "miter";
+    else if (join_.getValue() == LINE_JOIN_TYPE_ROUND) os << "round";
+    else if (join_.getValue() == LINE_JOIN_TYPE_BEVEL) os << "bevel";
+    else os << int(join_.getValue());
+
+    os << ";";
+  }
+
+  if (mlimit_.isValid())
+    os << " stroke-miterlimit: " << mlimit_.getValue() << ";";
 }

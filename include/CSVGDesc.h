@@ -1,24 +1,32 @@
-class CSVGDesc : public CSVGObject {
- private:
-  std::string text_;
+#ifndef CSVGDesc_H
+#define CSVGDesc_H
 
+#include <CSVGObject.h>
+
+class CSVGDesc : public CSVGObject {
  public:
-  CSVG_OBJECT_DEF("desc", CSVG_OBJ_TYPE_DESC)
+  CSVG_OBJECT_DEF("desc", CSVGObjTypeId::DESC)
 
   CSVGDesc(CSVG &svg);
   CSVGDesc(const CSVGDesc &desc);
 
-  CSVGDesc *dup() const;
+  CSVGDesc *dup() const override;
 
-  void setText(const std::string &text) { text_ = text; }
+  std::string getText() const override { return text_.getValue(""); }
+  void setText(const std::string &text) override;
 
-  bool processOption(const std::string &name, const std::string &value);
+  bool processOption(const std::string &name, const std::string &value) override;
 
-  bool isDrawable() { return false; }
+  bool isDrawable() const override { return false; }
 
-  void draw();
+  void draw() override;
 
-  void print(std::ostream &os) const;
+  void print(std::ostream &os, bool hier) const override;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGDesc &desc);
+
+ private:
+  COptValT<std::string> text_;
 };
+
+#endif

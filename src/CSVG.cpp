@@ -1,34 +1,79 @@
-#include <CSVGI.h>
+#include <CSVG.h>
+#include <CSVGBuffer.h>
+#include <CSVGCircle.h>
+#include <CSVGClipPath.h>
+#include <CSVGDefs.h>
+#include <CSVGDesc.h>
+#include <CSVGEllipse.h>
+#include <CSVGFeBlend.h>
+#include <CSVGFeColorMatrix.h>
+#include <CSVGFeComponentTransfer.h>
+#include <CSVGFeComposite.h>
+#include <CSVGFeDiffuseLighting.h>
+#include <CSVGFeDistantLight.h>
+#include <CSVGFeFlood.h>
+#include <CSVGFeFunc.h>
+#include <CSVGFeGaussianBlur.h>
+#include <CSVGFeImage.h>
+#include <CSVGFeMerge.h>
+#include <CSVGFeMergeNode.h>
+#include <CSVGFeOffset.h>
+#include <CSVGFePointLight.h>
+#include <CSVGFeSpecularLighting.h>
+#include <CSVGFeTile.h>
+#include <CSVGFeTurbulence.h>
+#include <CSVGFont.h>
+#include <CSVGFontFace.h>
+#include <CSVGGroup.h>
+#include <CSVGHKern.h>
+#include <CSVGImage.h>
+#include <CSVGLine.h>
+#include <CSVGLinearGradient.h>
+#include <CSVGLog.h>
+#include <CSVGMask.h>
+#include <CSVGMarker.h>
+#include <CSVGMissingGlyph.h>
+#include <CSVGPath.h>
+#include <CSVGPathPart.h>
+#include <CSVGPattern.h>
+#include <CSVGPolygon.h>
+#include <CSVGPolyLine.h>
+#include <CSVGRadialGradient.h>
+#include <CSVGRect.h>
+#include <CSVGRenderer.h>
+#include <CSVGStop.h>
+#include <CSVGStyle.h>
+#include <CSVGStyleData.h>
+#include <CSVGSymbol.h>
+#include <CSVGText.h>
+#include <CSVGTitle.h>
+#include <CSVGTSpan.h>
+#include <CSVGUse.h>
+
+#include <CRadialGradient.h>
+#include <CLinearGradient.h>
 #include <CConfig.h>
 #include <CCSS.h>
+#include <CXML.h>
+#include <CXMLToken.h>
+#include <CXMLExecute.h>
+#include <CXMLText.h>
 #include <CRegExp.h>
 #include <CStrParse.h>
+#include <CRGBName.h>
 
 CSVG::
 CSVG(CSVGRenderer *renderer) :
- renderer_     (renderer),
- buffer_mgr_   (0),
- buffer_       (0),
- view_matrix_  (),
- transform_    (),
- block_        (0),
- xml_          (0),
- xml_tag_      (0),
- stroke_       (*this),
- fill_         (*this),
- clip_         (*this),
- font_def_     (*this),
- font_list_    (),
- id_object_map_(),
- styleData_    (),
- uniquify_     (false),
- autoName_     (false),
- debug_        (false)
+ renderer_(renderer),
+ stroke_  (*this),
+ fill_    (*this),
+ clip_    (*this),
+ font_def_(*this)
 {
   view_matrix_.setIdentity();
   transform_  .setIdentity();
 
-  block_ = new CSVGBlock(*this);
+  block_ = createBlock();
 
   xml_ = new CXML();
 
@@ -141,13 +186,9 @@ read(const std::string &filename, CSVGObject *object)
   //------
 
   // Process svg options
-
-  CXMLTag::OptionArray::iterator poption1 = xml_tag_->getOptionsBegin();
-  CXMLTag::OptionArray::iterator poption2 = xml_tag_->getOptionsEnd  ();
-
-  for ( ; poption1 < poption2; ++poption1) {
-    const std::string &opt_name  = (*poption1)->getName ();
-    const std::string &opt_value = (*poption1)->getValue();
+  for (const auto &opt : xml_tag_->getOptions()) {
+    const std::string &opt_name  = opt->getName ();
+    const std::string &opt_value = opt->getValue();
 
     if (! object->processOption(opt_name, opt_value))
       CSVGLog() << "Invalid option " << opt_name << "=" << opt_value <<
@@ -157,20 +198,12 @@ read(const std::string &filename, CSVGObject *object)
   //------
 
   // Process svg children
-
   object->setXMLTag(xml_tag_);
 
-  CXMLTag::TokenArray children = xml_tag_->getChildren();
-
-  CXMLTag::TokenArray::const_iterator pchild1 = children.begin();
-  CXMLTag::TokenArray::const_iterator pchild2 = children.end  ();
-
-  for ( ; pchild1 != pchild2; ++pchild1) {
-    const CXMLToken *token = *pchild1;
-
+  for (const auto &token : xml_tag_->getChildren()) {
     CSVGObject *object1 = tokenToObject(token);
 
-    if (object1 != 0)
+    if (object1)
       object->addChildObject(object1);
   }
 
@@ -305,7 +338,7 @@ createObjectByName(const std::string &name)
   CSVGObject *object;
 
   if      (name == "svg")
-    object = new CSVGBlock(*this);
+    object = createBlock();
   else if (name == "circle")
     object = createCircle();
   else if (name == "clipPath")
@@ -365,7 +398,7 @@ createObjectByName(const std::string &name)
   else if (name == "glyph")
     object = new CSVGGlyph(*this);
   else if (name == "g")
-    object = new CSVGGroup(*this);
+    object = createGroup();
   else if (name == "hkern")
     object = new CSVGHKern(*this);
   else if (name == "image")
@@ -375,13 +408,13 @@ createObjectByName(const std::string &name)
   else if (name == "linearGradient")
     object = createLinearGradient();
   else if (name == "marker")
-    object = new CSVGMarker(*this);
+    object = createMarker();
   else if (name == "mask")
     object = new CSVGMask(*this);
   else if (name == "missing-glyph")
     object = new CSVGMissingGlyph(*this);
   else if (name == "path")
-    object = new CSVGPath(*this);
+    object = createPath();
   else if (name == "pattern")
     object = new CSVGPattern(*this);
   else if (name == "polygon")
@@ -395,11 +428,11 @@ createObjectByName(const std::string &name)
   else if (name == "stop")
     object = createStop();
   else if (name == "symbol")
-    object = new CSVGSymbol(*this);
+    object = createSymbol();
   else if (name == "style")
     object = new CSVGStyle(*this);
   else if (name == "text")
-    object = new CSVGText(*this);
+    object = createText();
   else if (name == "title")
     object = new CSVGTitle(*this);
   else if (name == "tspan")
@@ -419,6 +452,13 @@ createObjectByName(const std::string &name)
   return object;
 }
 
+CSVGBlock *
+CSVG::
+createBlock()
+{
+  return new CSVGBlock(*this);
+}
+
 CSVGCircle *
 CSVG::
 createCircle()
@@ -431,6 +471,13 @@ CSVG::
 createEllipse()
 {
   return new CSVGEllipse(*this);
+}
+
+CSVGGroup *
+CSVG::
+createGroup()
+{
+  return new CSVGGroup(*this);
 }
 
 CSVGImage *
@@ -452,6 +499,20 @@ CSVG::
 createLinearGradient()
 {
   return new CSVGLinearGradient(*this);
+}
+
+CSVGMarker *
+CSVG::
+createMarker()
+{
+  return new CSVGMarker(*this);
+}
+
+CSVGPath *
+CSVG::
+createPath()
+{
+  return new CSVGPath(*this);
 }
 
 CSVGPolygon *
@@ -487,6 +548,20 @@ CSVG::
 createStop()
 {
   return new CSVGStop(*this);
+}
+
+CSVGSymbol *
+CSVG::
+createSymbol()
+{
+  return new CSVGSymbol(*this);
+}
+
+CSVGText *
+CSVG::
+createText()
+{
+  return new CSVGText(*this);
 }
 
 void
@@ -739,8 +814,8 @@ beginDrawBuffer()
 
   buffer_->setAlign(block_->getHAlign(), block_->getVAlign());
 
-  buffer_->setEqualScale(block_->getScale() != CSVG_SCALE_FREE);
-  buffer_->setScaleMin  (block_->getScale() == CSVG_SCALE_FIXED_MEET);
+  buffer_->setEqualScale(block_->getScale() != CSVGScale::FREE);
+  buffer_->setScaleMin  (block_->getScale() == CSVGScale::FIXED_MEET);
 }
 
 void
@@ -779,9 +854,9 @@ CSVG::
 isStroked() const
 {
   if (stroke_.getColorValid()) {
-    CRGBA stroke_color = stroke_.getAlphaColor();
+    CRGBA strokeColor = stroke_.getAlphaColor();
 
-    return (stroke_color.getAlpha() > 0);
+    return (strokeColor.getAlpha() > 0);
   }
 
   return false;
@@ -789,20 +864,20 @@ isStroked() const
 
 void
 CSVG::
-setStroke()
+setStrokeBuffer()
 {
   if (stroke_.getColorValid()) {
-    CRGBA stroke_color = stroke_.getAlphaColor();
+    CRGBA strokeColor = stroke_.getAlphaColor();
 
     if (stroke_.getOpacityValid()) {
-      CRGBA stroke_color1(stroke_color);
+      CRGBA strokeColor1(strokeColor);
 
-      stroke_color1.setAlpha(stroke_.getOpacity());
+      strokeColor1.setAlpha(stroke_.getOpacity());
 
-      buffer_->setStrokeColor(stroke_color1);
+      buffer_->setStrokeColor(strokeColor1);
     }
     else
-      buffer_->setStrokeColor(stroke_color);
+      buffer_->setStrokeColor(strokeColor);
   }
   else
     buffer_->setStrokeColor(CRGBA(0,0,0));
@@ -855,9 +930,9 @@ isFilled() const
     return true;
 
   if (fill_.getColorValid()) {
-    CRGBA fill_color = fill_.getAlphaColor();
+    CRGBA fillColor = fill_.getAlphaColor();
 
-    return (fill_color.getAlpha() > 0);
+    return (fillColor.getAlpha() > 0);
   }
 
   return false;
@@ -865,7 +940,7 @@ isFilled() const
 
 void
 CSVG::
-setFill()
+setFillBuffer()
 {
   CSVGObject *fill_object = fill_.getFillObject();
 
@@ -1002,7 +1077,7 @@ void
 CSVG::
 drawLine(double x1, double y1, double x2, double y2)
 {
-  setStroke();
+  setStrokeBuffer();
 
   buffer_->pathInit();
 
@@ -1016,7 +1091,7 @@ void
 CSVG::
 drawRoundedRectangle(const CBBox2D &bbox, double rx, double ry)
 {
-  setStroke();
+  setStrokeBuffer();
 
   const CPoint2D &ll = bbox.getLL();
   const CPoint2D &ur = bbox.getUR();
@@ -1042,7 +1117,7 @@ void
 CSVG::
 fillRoundedRectangle(const CBBox2D &bbox, double rx, double ry)
 {
-  setFill();
+  setFillBuffer();
 
   const CPoint2D &ll = bbox.getLL();
   const CPoint2D &ur = bbox.getUR();
@@ -1068,7 +1143,7 @@ void
 CSVG::
 drawRectangle(const CBBox2D &bbox)
 {
-  setStroke();
+  setStrokeBuffer();
 
   buffer_->pathInit();
 
@@ -1086,7 +1161,7 @@ void
 CSVG::
 fillRectangle(const CBBox2D &bbox)
 {
-  setFill();
+  setFillBuffer();
 
   buffer_->pathInit();
 
@@ -1113,13 +1188,13 @@ drawCircle(double x, double y, double r)
   buffer_->pathClose();
 
   if (isFilled()) {
-    setFill();
+    setFillBuffer();
 
     buffer_->pathFill();
   }
 
   if (isStroked()) {
-    setStroke();
+    setStrokeBuffer();
 
     buffer_->pathStroke();
   }
@@ -1138,13 +1213,13 @@ drawEllipse(double x, double y, double rx, double ry)
   buffer_->pathClose();
 
   if (isFilled()) {
-    setFill();
+    setFillBuffer();
 
     buffer_->pathFill();
   }
 
   if (isStroked()) {
-    setStroke();
+    setStrokeBuffer();
 
     buffer_->pathStroke();
   }
@@ -1154,7 +1229,7 @@ void
 CSVG::
 drawArc(double xc, double yc, double xr, double yr, double angle1, double angle2)
 {
-  setStroke();
+  setStrokeBuffer();
 
   buffer_->pathInit();
 
@@ -1167,7 +1242,7 @@ void
 CSVG::
 fillArc(double xc, double yc, double xr, double yr, double angle1, double angle2)
 {
-  setFill();
+  setFillBuffer();
 
   buffer_->pathInit();
 
@@ -1184,7 +1259,7 @@ drawPolygon(const std::vector<CPoint2D> &points)
 
   if (num_points == 0) return;
 
-  setStroke();
+  setStrokeBuffer();
 
   buffer_->pathInit();
 
@@ -1206,7 +1281,7 @@ fillPolygon(const std::vector<CPoint2D> &points)
 
   if (num_points == 0) return;
 
-  setFill();
+  setFillBuffer();
 
   buffer_->pathInit();
 
@@ -1224,7 +1299,7 @@ void
 CSVG::
 drawText(double x, double y, const std::string &text, CFontPtr font, CHAlignType align)
 {
-  setStroke();
+  setStrokeBuffer();
 
   CSVGFont *svg_font = getFont();
 
@@ -1283,7 +1358,7 @@ void
 CSVG::
 fillText(double x, double y, const std::string &text, CFontPtr font, CHAlignType align)
 {
-  setFill();
+  setFillBuffer();
 
   CSVGFont *svg_font = getFont();
 
@@ -1459,7 +1534,7 @@ void
 CSVG::
 pathStroke()
 {
-  setStroke();
+  setStrokeBuffer();
 
   buffer_->pathStroke();
 }
@@ -1468,7 +1543,7 @@ void
 CSVG::
 pathFill()
 {
-  setFill();
+  setFillBuffer();
 
   buffer_->pathFill();
 }
@@ -2115,8 +2190,8 @@ drawParts(const CSVG::PartList &parts, CSVGObjectMarker *omarker)
 
   buffer_->pathInit();
 
-  PartList::const_iterator p1 = parts.begin();
-  PartList::const_iterator p2 = parts.end  ();
+  auto p1 = parts.begin();
+  auto p2 = parts.end  ();
 
   while (p1 != p2 && ! pathGetCurrentPoint(&x1, &y1)) {
     (*p1)->draw();
@@ -2228,7 +2303,8 @@ getPartsBBox(const CSVG::PartList &parts, CBBox2D &bbox) const
 
   th->buffer_->pathInit();
 
-  CAux::for_each(parts.begin(), parts.end(), &CSVGPathPart::draw);
+  for (const auto &p : parts)
+    p->draw();
 
   th->pathBBox(bbox);
 
@@ -2239,10 +2315,55 @@ void
 CSVG::
 printParts(std::ostream &os, const CSVG::PartList &parts) const
 {
-  for_each(parts.begin(), parts.end(), bind2nd(mem_fun(&CSVGPathPart::printp), &os));
+  int i = 0;
+
+  for (const auto &p : parts) {
+    if (i > 0) os << " ";
+
+    p->print(os);
+
+    ++i;
+  }
 }
 
 //--------------
+
+bool
+CSVG::
+coordOption(const std::string &opt_name, const std::string &opt_value,
+            const std::string &name, CSVGLengthValue &length)
+{
+  if (opt_name != name)
+    return false;
+
+  bool flag = true;
+
+  std::vector<std::string> match_strs;
+
+  if (CRegExpUtil::parse(opt_value, "\\(.*\\)%", match_strs)) {
+    double value;
+
+    if (! CStrUtil::toReal(match_strs[0], &value)) {
+      value = 0.0;
+      flag = false;
+    }
+
+    length = CSVGLengthValue(CSVGLengthValue::Type::PERCENT, value/100.0);
+  }
+  else {
+    CSVGLengthValue length1;
+
+    if (! decodeLengthValue(opt_value, length1)) {
+      CSVGLog() << "Illegal value for " << name;
+      length = CSVGLengthValue();
+      flag = false;
+    }
+
+    length = length1;
+  }
+
+  return flag;
+}
 
 bool
 CSVG::
@@ -2265,11 +2386,15 @@ coordOption(const std::string &opt_name, const std::string &opt_value,
     *value /= 100;
   }
   else {
-    if (! lengthToReal(opt_value, value)) {
+    CSVGLengthValue lvalue;
+
+    if (! decodeLengthValue(opt_value, lvalue)) {
       CSVGLog() << "Illegal value for " << name;
       *value = 0;
       flag = false;
     }
+
+    *value = lvalue.value();
   }
 
   return flag;
@@ -2278,22 +2403,26 @@ coordOption(const std::string &opt_name, const std::string &opt_value,
 bool
 CSVG::
 lengthOption(const std::string &opt_name, const std::string &opt_value,
-             const std::string &name, double *value)
+             const std::string &name, CSVGLengthValue &length)
 {
   if (opt_name != name)
     return false;
 
-  if (! lengthToReal(opt_value, value)) {
+  CSVGLengthValue length1;
+
+  if (! decodeLengthValue(opt_value, length1)) {
     CSVGLog() << "Illegal value for " << name;
     return false;
   }
+
+  length = length1;
 
   return true;
 }
 
 bool
 CSVG::
-lengthToReal(const std::string &str, double *value)
+decodeLengthValue(const std::string &str, CSVGLengthValue &lvalue)
 {
   static CRegExp em_pattern("\\(.*\\)em");
   static CRegExp ex_pattern("\\(.*\\)ex");
@@ -2305,58 +2434,87 @@ lengthToReal(const std::string &str, double *value)
   static CRegExp px_pattern("\\(.*\\)px");
 
   // TODO: handle %
+  double value;
 
   std::vector<std::string> match_strs;
 
   if      (CRegExpUtil::parse(str, em_pattern, match_strs)) {
-    if (! CStrUtil::toReal(match_strs[0], value))
+    if (! CStrUtil::toReal(match_strs[0], &value))
       return false;
+
+    lvalue = CSVGLengthValue(CSVGLengthValue::Type::EM, value);
 
     CSVGLog() << "em conversion not handled";
   }
   else if (CRegExpUtil::parse(str, ex_pattern, match_strs)) {
-    if (! CStrUtil::toReal(match_strs[0], value))
+    if (! CStrUtil::toReal(match_strs[0], &value))
       return false;
+
+    lvalue = CSVGLengthValue(CSVGLengthValue::Type::EX, value);
 
     CSVGLog() << "ex conversion not handled";
   }
   else if (CRegExpUtil::parse(str, pt_pattern, match_strs)) {
-    if (! CStrUtil::toReal(match_strs[0], value))
+    if (! CStrUtil::toReal(match_strs[0], &value))
       return false;
 
-    mmToPixel(25.4*(*value)/72.0, value);
+    double ivalue = value;
+
+    mmToPixel((25.4*value)/72.0, &value);
+
+    lvalue = CSVGLengthValue(CSVGLengthValue::Type::PT, ivalue, value);
   }
   else if (CRegExpUtil::parse(str, pc_pattern, match_strs)) {
-    if (! CStrUtil::toReal(match_strs[0], value))
+    if (! CStrUtil::toReal(match_strs[0], &value))
       return false;
 
-    mmToPixel(25.4*(*value)/6.0, value);
+    double ivalue = value;
+
+    mmToPixel((25.4*value)/6.0, &value);
+
+    lvalue = CSVGLengthValue(CSVGLengthValue::Type::PC, ivalue, value);
   }
   else if (CRegExpUtil::parse(str, cm_pattern, match_strs)) {
-    if (! CStrUtil::toReal(match_strs[0], value))
+    if (! CStrUtil::toReal(match_strs[0], &value))
       return false;
 
-    mmToPixel(10*(*value), value);
+    double ivalue = value;
+
+    mmToPixel(10*value, &value);
+
+    lvalue = CSVGLengthValue(CSVGLengthValue::Type::CM, ivalue, value);
   }
   else if (CRegExpUtil::parse(str, mm_pattern, match_strs)) {
-    if (! CStrUtil::toReal(match_strs[0], value))
+    if (! CStrUtil::toReal(match_strs[0], &value))
       return false;
 
-    mmToPixel(*value, value);
+    double ivalue = value;
+
+    mmToPixel(value, &value);
+
+    lvalue = CSVGLengthValue(CSVGLengthValue::Type::MM, ivalue, value);
   }
   else if (CRegExpUtil::parse(str, in_pattern, match_strs)) {
-    if (! CStrUtil::toReal(match_strs[0], value))
+    if (! CStrUtil::toReal(match_strs[0], &value))
       return false;
 
-    mmToPixel(25.4*(*value), value);
+    double ivalue = value;
+
+    mmToPixel(25.4*value, &value);
+
+    lvalue = CSVGLengthValue(CSVGLengthValue::Type::IN, ivalue, value);
   }
   else if (CRegExpUtil::parse(str, px_pattern, match_strs)) {
-    if (! CStrUtil::toReal(match_strs[0], value))
+    if (! CStrUtil::toReal(match_strs[0], &value))
       return false;
+
+    lvalue = CSVGLengthValue(CSVGLengthValue::Type::PX, value);
   }
   else {
-    if (! CStrUtil::toReal(str, value))
+    if (! CStrUtil::toReal(str, &value))
       return false;
+
+    lvalue = CSVGLengthValue(CSVGLengthValue::Type::NONE, value);
   }
 
   return true;
@@ -2423,6 +2581,38 @@ stringOption(const std::string &opt_name, const std::string &opt_value,
     return false;
 
   value = opt_value;
+
+  return true;
+}
+
+bool
+CSVG::
+percentOption(const std::string &opt_name, const std::string &opt_value,
+              const std::string &name, CSVGLengthValue &length)
+{
+  std::string str;
+
+  if (! stringOption(opt_name, opt_value, name, str))
+    return false;
+
+  if (! decodePercentString(str, length))
+    return false;
+
+  return true;
+}
+
+bool
+CSVG::
+coordUnitsOption(const std::string &opt_name, const std::string &opt_value,
+                 const std::string &name, CSVGCoordUnits &units)
+{
+  std::string str;
+
+  if (! stringOption(opt_name, opt_value, name, str))
+    return false;
+
+  if (! decodeUnitsString(str, units))
+    return false;
 
   return true;
 }
@@ -2849,7 +3039,7 @@ decodePreserveAspectRatio(const std::string &str, CHAlignType *halign,
 {
   *halign = CHALIGN_TYPE_CENTER;
   *valign = CVALIGN_TYPE_CENTER;
-  *scale  = CSVG_SCALE_FREE;
+  *scale  = CSVGScale::FREE;
 
   std::vector<std::string> words;
 
@@ -2873,11 +3063,11 @@ decodePreserveAspectRatio(const std::string &str, CHAlignType *halign,
       else if (rword == "YMax") *valign = CVALIGN_TYPE_TOP;
     }
     else if (words[i] == "meet")
-      *scale = CSVG_SCALE_FIXED_MEET;
+      *scale = CSVGScale::FIXED_MEET;
     else if (words[i] == "slice")
-      *scale = CSVG_SCALE_FIXED_SLICE;
+      *scale = CSVGScale::FIXED_SLICE;
     else if (words[i] == "none")
-      *scale = CSVG_SCALE_FREE;
+      *scale = CSVGScale::FREE;
   }
 
   return true;
@@ -3072,25 +3262,31 @@ decodeFontStyleString(const std::string &font_style_str)
 
 bool
 CSVG::
-decodePercentString(const std::string &str, double *real)
+decodePercentString(const std::string &str, CSVGLengthValue &length)
 {
   bool flag = true;
 
   std::vector<std::string> match_strs;
 
   if (CRegExpUtil::parse(str, "\\(.*\\)%", match_strs)) {
-    if (! CStrUtil::toReal(match_strs[0], real)) {
-      *real = 0;
+    double value;
+
+    if (! CStrUtil::toReal(match_strs[0], &value)) {
+      value = 0.0;
       flag = false;
     }
 
-    *real /= 100;
+    length = CSVGLengthValue(CSVGLengthValue::Type::PERCENT, value/100.0);
   }
   else {
-    if (! CStrUtil::toReal(str, real)) {
-      *real = 0;
+    double value;
+
+    if (! CStrUtil::toReal(str, &value)) {
+      value = 0.0;
       flag = false;
     }
+
+    length = CSVGLengthValue(value);
   }
 
   return flag;
@@ -3098,32 +3294,58 @@ decodePercentString(const std::string &str, double *real)
 
 bool
 CSVG::
-decodeUnitsString(const std::string &str, CSVGCoordUnits *units)
+decodeUnitsString(const std::string &str, CSVGCoordUnits &units)
 {
   if      (str == "objectBoundingBox")
-    *units = CSVG_COORD_UNITS_OBJECT_BBOX;
+    units = CSVGCoordUnits::OBJECT_BBOX;
   else if (str == "userSpaceOnUse")
-    *units = CSVG_COORD_UNITS_USER_SPACE;
+    units = CSVGCoordUnits::USER_SPACE;
   else
     return false;
 
   return true;
 }
 
+std::string
+CSVG::
+encodeUnitsString(const CSVGCoordUnits &units)
+{
+  if      (units == CSVGCoordUnits::OBJECT_BBOX)
+    return "objectBoundingBox";
+  else if (units == CSVGCoordUnits::USER_SPACE)
+    return "userSpaceOnUse";
+  else
+    return "??";
+}
+
 bool
 CSVG::
-decodeGradientSpread(const std::string &str, CGradientSpreadType *spread)
+decodeGradientSpread(const std::string &str, CGradientSpreadType &spread)
 {
   if      (str == "pad")
-    *spread = CGRADIENT_SPREAD_PAD;
+    spread = CGRADIENT_SPREAD_PAD;
   else if (str == "repeat")
-    *spread = CGRADIENT_SPREAD_REPEAT;
+    spread = CGRADIENT_SPREAD_REPEAT;
   else if (str == "reflect")
-    *spread = CGRADIENT_SPREAD_REFLECT;
+    spread = CGRADIENT_SPREAD_REFLECT;
   else
     return false;
 
   return true;
+}
+
+std::string
+CSVG::
+encodeGradientSpread(const CGradientSpreadType &spread)
+{
+  if      (spread == CGRADIENT_SPREAD_PAD)
+    return "pad";
+  else if (spread == CGRADIENT_SPREAD_REPEAT)
+    return "repeat";
+  else if (spread == CGRADIENT_SPREAD_REFLECT)
+    return "reflect";
+  else
+    return "??";
 }
 
 bool
@@ -3180,7 +3402,7 @@ getTitle(std::string &str)
 {
   std::vector<CSVGObject *> objects;
 
-  block_->getChildrenOfType(CSVG_OBJ_TYPE_TITLE, objects);
+  block_->getChildrenOfType(CSVGObjTypeId::TITLE, objects);
 
   if (objects.empty())
     return false;
@@ -3223,7 +3445,7 @@ CSVGObject *
 CSVG::
 lookupObjectById(const std::string &id) const
 {
-  NameObjectMap::const_iterator p = id_object_map_.find(id);
+  auto p = id_object_map_.find(id);
 
   if (p != id_object_map_.end())
     return (*p).second;
@@ -3267,7 +3489,7 @@ CSVGStyleData &
 CSVG::
 getStyleData(const std::string &id)
 {
-  StyleDataMap::iterator p = styleData_.find(id);
+  auto p = styleData_.find(id);
 
   if (p == styleData_.end())
     p = styleData_.insert(p, StyleDataMap::value_type(id, CSVGStyleData(*this, id)));
@@ -3347,225 +3569,16 @@ getStyleFillColor(const std::string &id, CRGBA &rgba)
   return true;
 }
 
-//----------
-
 void
-CSVGUtil::
-convertArcCoords(double x1, double y1, double x2, double y2, double phi,
-                 double rx, double ry, int fa, int fs, bool unit_circle,
-                 double *cx, double *cy, double *rx1, double *ry1,
-                 double *theta, double *delta)
+CSVG::
+getObjectsAtPoint(const CPoint2D &p, ObjectList &objects) const
 {
-  // start and end are the same so it's a complete ellipse
-  if (fabs(x2 - x1) < 1E-6 && fabs(y2 - y1) < 1E-6) {
-    if (fs == 1) {
-      *cx = x1 + rx;
-      *cy = y1;
-    }
-    else {
-      *cx = x1 - rx;
-      *cy = y1;
-    }
-
-    *rx1 = rx;
-    *ry1 = ry;
-
-    *theta = 0;
-    *delta = 360;
-
-    return;
-  }
-
-  rx = fabs(rx);
-  ry = fabs(ry);
-
-  phi = CMathGen::DegToRad(phi);
-
-  double sin_phi = sin(phi);
-  double cos_phi = cos(phi);
-
-  double dx = (x1 - x2)/2.0;
-  double dy = (y1 - y2)/2.0;
-
-  double dx1 =  cos_phi*dx + sin_phi*dy;
-  double dy1 = -sin_phi*dx + cos_phi*dy;
-
-  double rxx = rx*rx;
-  double ryy = ry*ry;
-
-  double dxx1 = dx1*dx1;
-  double dyy1 = dy1*dy1;
-
-  // Fix radii
-  double rcheck = dxx1/rxx + dyy1/ryy;
-
-  if (rcheck > 1) {
-    double s = sqrt(rcheck);
-
-    rx *= s;
-    ry *= s;
-
-    rxx = rx*rx;
-    ryy = ry*ry;
-  }
-
-  if (unit_circle) {
-    double a00 =  cos_phi/rx;
-    double a01 =  sin_phi/rx;
-    double a10 = -sin_phi/ry;
-    double a11 =  cos_phi/ry;
-
-    /* (xt1, yt1) is current point in transformed coordinate space.
-       (xt2, yt2) is new point in transformed coordinate space.
-
-       The arc fits a unit-radius circle in this space.
-    */
-    double xt1 = a00*x1 + a01*y1;
-    double yt1 = a10*x1 + a11*y1;
-    double xt2 = a00*x2 + a01*y2;
-    double yt2 = a10*x2 + a11*y2;
-
-    double d = (xt2 - xt1)*(xt2 - xt1) + (yt2 - yt1)*(yt2 - yt1);
-
-    double sfactor_sq = 1.0 / d - 0.25;
-
-    if (sfactor_sq < 0) sfactor_sq = 0;
-
-    double sfactor = sqrt(sfactor_sq);
-
-    if (fa == fs) sfactor = -sfactor;
-
-    // (cx, cy) is center of the circle.
-    *cx = 0.5*(xt1 + xt2) - sfactor*(yt2 - yt1);
-    *cy = 0.5*(yt1 + yt2) + sfactor*(xt2 - xt1);
-
-    // Calculate angles
-    *theta = atan2(yt1 - *cy, xt1 - *cx);
-
-    double theta1 = atan2(yt2 - *cy, xt2 - *cx);
-
-    *delta = theta1 - *theta;
-
-    if      (fs == 0 && *delta > 0)
-      *delta -= 2*M_PI;
-    else if (fs == 1 && *delta < 0)
-      *delta += 2*M_PI;
-
-    *theta = CMathGen::RadToDeg(*theta);
-    *delta = CMathGen::RadToDeg(*delta);
-  }
-  else {
-    // Calculate center of arc
-    double sfactor_sq = (rxx*ryy - rxx*dyy1 - ryy*dxx1)/(rxx*dyy1 + ryy*dxx1);
-
-    if (sfactor_sq < 0) sfactor_sq = 0;
-
-    double sfactor = sqrt(sfactor_sq);
-
-    if (fa == fs) sfactor = -sfactor;
-
-    double cx1 =  sfactor*((rx*dy1)/ry);
-    double cy1 = -sfactor*((ry*dx1)/rx);
-
-    double sx2 = (x1 + x2)/2.0;
-    double sy2 = (y1 + y2)/2.0;
-
-    *cx = sx2 + cos_phi*cx1 - sin_phi*cy1;
-    *cy = sy2 + sin_phi*cx1 + cos_phi*cy1;
-
-    // Calculate arc angles
-    double ux = ( dx1 - cx1)/rx;
-    double uy = ( dy1 - cy1)/ry;
-
-    double vx = (-dx1 - cx1)/rx;
-    double vy = (-dy1 - cy1)/ry;
-
-    double mod_u = sqrt(ux*ux + uy*uy);
-    double mod_v = ux;
-
-    int sign = (uy < 0) ? -1 : 1;
-
-    *theta = sign*acos(mod_v/mod_u);
-    *theta = CMathGen::RadToDeg(*theta);
-
-    while (*theta >=  360) *theta -= 360;
-    while (*theta <= -360) *theta += 360;
-
-    mod_u = sqrt((ux*ux + uy*uy) * (vx*vx + vy*vy));
-    mod_v = ux*vx + uy*vy;
-
-    sign = ((ux*vy - uy*vx) < 0) ? -1 : 1;
-
-    *delta = sign*acos(mod_v/mod_u);
-    *delta = CMathGen::RadToDeg(*delta);
-
-    if      (fs == 0 && *delta > 0)
-      *delta -= 360;
-    else if (fs == 1 && *delta < 0)
-      *delta += 360;
-
-    while (*delta >=  360) *delta -= 360;
-    while (*delta <= -360) *delta += 360;
-  }
-
-  *rx1 = rx;
-  *ry1 = ry;
-}
-
-//-------
-
-CSVGXLink::
-CSVGXLink(const CSVGXLink &xlink) :
- parent_  (xlink.parent_),
- resolved_(xlink.resolved_),
- str_     (xlink.str_),
- object_  (xlink.object_),
- image_   (xlink.image_)
-{
-}
-
-CSVGXLink &
-CSVGXLink::
-operator=(const CSVGXLink &xlink)
-{
-  parent_   = xlink.parent_;
-  resolved_ = xlink.resolved_;
-  str_      = xlink.str_;
-  object_   = xlink.object_;
-  image_    = xlink.image_;
-
-  return *this;
+  block_->getObjectsAtPoint(p, objects);
 }
 
 void
-CSVGXLink::
-resolve() const
+CSVG::
+print(std::ostream &os, bool hier) const
 {
-  if (resolved_) return;
-
-  CSVGXLink *th = const_cast<CSVGXLink *>(this);
-
-  parent_->decodeXLink(str_, &th->object_, th->image_);
-
-  th->resolved_ = true;
-}
-
-//------
-
-void
-CSVGStyleData::
-setValue(const std::string &name, const std::string &value)
-{
-  if      (name == "fill")
-    fill_.setColor(value);
-  else if (name == "fill-opacity")
-    fill_.setOpacity(value);
-  else if (name == "stroke")
-    stroke_.setColor(value);
-  else if (name == "stroke-width")
-    stroke_.setWidth(value);
-  else if (name == "stroke-dasharray")
-    stroke_.setDash(value);
-  else
-    std::cerr << "Unhandled: " << name << ":" << value << std::endl;
+  block_->print(os, hier);
 }

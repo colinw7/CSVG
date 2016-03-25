@@ -1,4 +1,7 @@
-#include <CSVGI.h>
+#include <CSVGRadialGradient.h>
+#include <CSVGLinearGradient.h>
+#include <CSVGStop.h>
+#include <CSVG.h>
 #include <CMathGen.h>
 #include <CRadialGradient.h>
 
@@ -21,14 +24,7 @@
 
 CSVGRadialGradient::
 CSVGRadialGradient(CSVG &svg) :
- CSVGObject (svg),
- center_    (),
- radius_    (),
- focus_     (),
- stops_     (),
- gtransform_(),
- units_     (),
- spread_    ()
+ CSVGObject(svg)
 {
 }
 
@@ -56,25 +52,18 @@ bool
 CSVGRadialGradient::
 processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  std::string str;
-  double      real;
+  std::string     str;
+  double          real;
+  CSVGCoordUnits  units;
+  CSVGLengthValue length;
 
-  if      (svg_.stringOption(opt_name, opt_value, "cx", str)) {
-    if (! svg_.decodePercentString(str, &real))
-      return false;
-
+  if      (svg_.percentOption(opt_name, opt_value, "cx", length)) {
     setCenterX(real);
   }
-  else if (svg_.stringOption(opt_name, opt_value, "cy", str)) {
-    if (! svg_.decodePercentString(str, &real))
-      return false;
-
+  else if (svg_.percentOption(opt_name, opt_value, "cy", length)) {
     setCenterY(real);
   }
-  else if (svg_.stringOption(opt_name, opt_value, "r" , str)) {
-    if (! svg_.decodePercentString(str, &real))
-      return false;
-
+  else if (svg_.percentOption(opt_name, opt_value, "r" , length)) {
     setRadius(real);
   }
   else if (svg_.coordOption(opt_name, opt_value, "fx", &real)) {
@@ -93,18 +82,13 @@ processOption(const std::string &opt_name, const std::string &opt_value)
 
     setGTransform(gtransform);
   }
-  else if (svg_.stringOption(opt_name, opt_value, "gradientUnits", str)) {
-    CSVGCoordUnits units;
-
-    if (! svg_.decodeUnitsString(str, &units))
-      return false;
-
+  else if (svg_.coordUnitsOption(opt_name, opt_value, "gradientUnits", units)) {
     setUnits(units);
   }
   else if (svg_.stringOption(opt_name, opt_value, "spreadMethod", str)) {
     CGradientSpreadType spread;
 
-    if (! svg_.decodeGradientSpread(str, &spread))
+    if (! svg_.decodeGradientSpread(str, spread))
       return false;
 
     setSpread(spread);
@@ -132,11 +116,8 @@ processOption(const std::string &opt_name, const std::string &opt_value)
         if (rg->anyStops()) {
           stops_.clear();
 
-          StopList::const_iterator p1 = rg->beginStops();
-          StopList::const_iterator p2 = rg->endStops  ();
-
-          for ( ; p1 != p2; ++p1)
-            addStop(*p1);
+          for (const auto &s : rg->stops())
+            addStop(s);
         }
       }
       else if (lg != 0) {
@@ -147,11 +128,8 @@ processOption(const std::string &opt_name, const std::string &opt_value)
         if (lg->anyStops()) {
           stops_.clear();
 
-          StopList::const_iterator p1 = lg->beginStops();
-          StopList::const_iterator p2 = lg->endStops  ();
-
-          for ( ; p1 != p2; ++p1)
-            addStop(*p1);
+          for (const auto &s : lg->stops())
+            addStop(s);
         }
       }
     }
@@ -168,13 +146,10 @@ termParse()
 {
   std::vector<CSVGObject *> objects;
 
-  getChildrenOfType(CSVG_OBJ_TYPE_STOP, objects);
+  getChildrenOfType(CSVGObjTypeId::STOP, objects);
 
-  std::vector<CSVGObject *>::iterator p1 = objects.begin();
-  std::vector<CSVGObject *>::iterator p2 = objects.end  ();
-
-  for ( ; p1 != p2; ++p1) {
-    CSVGStop *stop = dynamic_cast<CSVGStop *>(*p1);
+  for (const auto &o : objects) {
+    CSVGStop *stop = dynamic_cast<CSVGStop *>(o);
 
     stops_.push_back(stop);
   }
@@ -188,9 +163,41 @@ draw()
 
 void
 CSVGRadialGradient::
-print(std::ostream &os) const
+print(std::ostream &os, bool hier) const
 {
-  os << "radialGradient ";
+  if (hier) {
+    os << "<radialGradient";
+
+    printNameValue(os, "id", id_);
+
+    if (center_.isValid())
+      os << " cx=\"" << center_.getValue().x << "\" cy=\"" << center_.getValue().y << "\"";
+
+    printNameValue(os, "r", radius_);
+
+    if (gtransform_.isValid() && ! gtransform_.getValue().isIdentity()) {
+      os << " gradientTransform=\"";
+
+      printTransform(os, gtransform_.getValue());
+
+      os << "\"";
+    }
+
+    if (getUnitsValid())
+      os << " gradientUnits=\"" << CSVG::encodeUnitsString(getUnits()) << "\"";
+
+    if (getSpreadValid())
+      os << " spreadMethod=\"" << CSVG::encodeGradientSpread(getSpread()) << "\"";
+
+    os << ">" << std::endl;
+
+    for (const auto &o : objects_)
+      o->print(os, hier);
+
+    os << "</radialGradient>" << std::endl;
+  }
+  else
+    os << "radialGradient ";
 }
 
 CImagePtr
@@ -228,11 +235,8 @@ getImage(CBBox2D &bbox)
 
   gradient.setSpread(getSpread());
 
-  StopList::const_iterator p1 = stops_.begin();
-  StopList::const_iterator p2 = stops_.end  ();
-
-  for ( ; p1 != p2; ++p1)
-    gradient.addStop((*p1)->getOffset(), (*p1)->getColor());
+  for (const auto &s : stops())
+    gradient.addStop(s->getOffset(), s->getColor());
 
   image->radialGradient(gradient);
 
@@ -265,17 +269,13 @@ createGradient()
   if (spread_.isValid())
     gradient->setSpread(getSpread());
 
-  StopList::const_iterator p1 = beginStops();
-  StopList::const_iterator p2 = endStops  ();
-
-  for ( ; p1 != p2; ++p1) {
-    CRGBA rgba = (*p1)->getColor();
-
-    double alpha = (*p1)->getOpacity();
+  for (const auto &s : stops()) {
+    CRGBA  rgba  = s->getColor ();
+    double alpha = s->getOpacity();
 
     rgba.setAlpha(alpha);
 
-    gradient->addStop((*p1)->getOffset(), rgba);
+    gradient->addStop(s->getOffset(), rgba);
   }
 
   gradient->init(1, 1);
@@ -286,7 +286,7 @@ createGradient()
 std::ostream &
 operator<<(std::ostream &os, const CSVGRadialGradient &gradient)
 {
-  gradient.print(os);
+  gradient.print(os, false);
 
   return os;
 }

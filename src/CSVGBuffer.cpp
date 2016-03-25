@@ -1,26 +1,25 @@
-#include <CSVGI.h>
+#include <CSVGBuffer.h>
+#include <CSVG.h>
+#include <CSVGRenderer.h>
 
 CSVGBufferMgr::
 CSVGBufferMgr(CSVG &svg) :
- svg_(svg), anti_alias_(true), buffer_map_()
+ svg_(svg)
 {
 }
 
 CSVGBufferMgr::
 ~CSVGBufferMgr()
 {
-  BufferMap::iterator p1 = buffer_map_.begin();
-  BufferMap::iterator p2 = buffer_map_.end  ();
-
-  for ( ; p1 != p2; ++p1)
-    delete (*p1).second;
+  for (const auto &b : buffer_map_)
+    delete b.second;
 }
 
 CSVGBuffer *
 CSVGBufferMgr::
 lookupBuffer(const std::string &name)
 {
-  BufferMap::iterator p = buffer_map_.find(name);
+  auto p = buffer_map_.find(name);
 
   if (p != buffer_map_.end())
     return (*p).second;
@@ -52,7 +51,7 @@ addBuffer(CSVGBuffer *buffer)
 
 CSVGBuffer::
 CSVGBuffer(CSVG &svg, const std::string &name) :
- svg_(svg), name_(name), renderer_(0), lineDash_()
+ svg_(svg), name_(name)
 {
 }
 

@@ -1,4 +1,5 @@
-#include <CSVGI.h>
+#include <CSVGFontDef.h>
+#include <CSVG.h>
 #include <CFontMgr.h>
 
 CSVGFontDef::
@@ -61,16 +62,23 @@ CSVGFontDef::
 getSize() const
 {
   if (hasSize())
-    return size_.getValue();
+    return size_.getValue().value();
   else
     return 10;
 }
 
 void
 CSVGFontDef::
-setSize(double size)
+setSize(const CSVGLengthValue &size)
 {
   size_ = size;
+}
+
+void
+CSVGFontDef::
+setSize(double size)
+{
+  size_ = CSVGLengthValue(CSVGLengthValue::Type::NONE, size);
 }
 
 void
@@ -105,4 +113,31 @@ setStyle(const std::string &style_def)
     style_.setValue(style_.getValue() | style);
   else
     style_.setValue(style);
+}
+
+void
+CSVGFontDef::
+print(std::ostream &os) const
+{
+  bool output = false;
+
+  if (family_.isValid()) {
+    os << "font-family: " << family_.getValue() << ";";
+
+    output = true;
+  }
+
+  if (size_.isValid()) {
+    if (output) os << " ";
+
+    os << "font-size: "; CSVGObject::printLength(os, size_.getValue()); os << ";";
+
+    output = true;
+  }
+
+  if (style_.isValid()) {
+    // TODO:
+
+    output = true;
+  }
 }

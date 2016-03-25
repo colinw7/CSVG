@@ -1,4 +1,6 @@
-#include <CSVGI.h>
+#include <CSVGMask.h>
+#include <CSVGBuffer.h>
+#include <CSVG.h>
 
 /* Attributes:
     <Core>
@@ -16,20 +18,13 @@
 
 CSVGMask::
 CSVGMask(CSVG &svg) :
- CSVGObject(svg),
- object_   (0),
- x_        (0),
- y_        (0),
- width_    (1),
- height_   (1),
- units_    (CSVG_COORD_UNITS_USER_SPACE)
+ CSVGObject(svg)
 {
 }
 
 CSVGMask::
 CSVGMask(const CSVGMask &mask) :
  CSVGObject(mask),
- object_   (0),
  x_        (mask.x_),
  y_        (mask.y_),
  width_    (mask.width_),
@@ -49,19 +44,21 @@ bool
 CSVGMask::
 processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  std::string str;
-  double      real;
+  std::string     str;
+  double          real;
+  CSVGLengthValue length;
+  CSVGCoordUnits  units;
 
   if      (svg_.coordOption (opt_name, opt_value, "x", &real))
     x_ = real;
   else if (svg_.coordOption (opt_name, opt_value, "y", &real))
     y_ = real;
-  else if (svg_.lengthOption(opt_name, opt_value, "width", &real))
-    width_ = real;
-  else if (svg_.lengthOption(opt_name, opt_value, "height", &real))
-    height_ = real;
-  else if (svg_.stringOption(opt_name, opt_value, "maskContentUnits", str))
-    svg_.decodeUnitsString(str, &units_);
+  else if (svg_.lengthOption(opt_name, opt_value, "width", length))
+    width_ = length.value();
+  else if (svg_.lengthOption(opt_name, opt_value, "height", length))
+    height_ = length.value();
+  else if (svg_.coordUnitsOption(opt_name, opt_value, "maskContentUnits", units))
+    units_ = units;
   else
     return CSVGObject::processOption(opt_name, opt_value);
 
@@ -86,7 +83,7 @@ objectDraw(const CSVGObject &object)
 
   CMatrix2D transform;
 
-  if (units_ == CSVG_COORD_UNITS_OBJECT_BBOX) {
+  if (getUnits() == CSVGCoordUnits::OBJECT_BBOX) {
     CBBox2D bbox;
 
     if (! object.getBBox(bbox))
@@ -99,8 +96,8 @@ objectDraw(const CSVGObject &object)
 
     CMatrix2D matrix1, matrix2;
 
-    matrix1.setTranslation(x - x_, y - y_);
-    matrix2.setScale      (w/width_, h/height_);
+    matrix1.setTranslation(x - x_.getValue(0), y - y_.getValue(0));
+    matrix2.setScale      (w/width_.getValue(1), h/height_.getValue(1));
 
     svg_.getTransform(transform);
 
@@ -109,7 +106,7 @@ objectDraw(const CSVGObject &object)
 
   drawObject();
 
-  if (units_ == CSVG_COORD_UNITS_OBJECT_BBOX)
+  if (getUnits() == CSVGCoordUnits::OBJECT_BBOX)
     svg_.setTransform(transform);
 
   CImagePtr mask_image  = svg_.getBufferImage("_mask");
@@ -123,15 +120,35 @@ objectDraw(const CSVGObject &object)
 
 void
 CSVGMask::
-print(std::ostream &os) const
+print(std::ostream &os, bool hier) const
 {
-  os << "mask ";
+  if (hier) {
+    os << "<mask";
+
+    printNameValue(os, "id"    , id_    );
+    printNameValue(os, "x"     , x_     );
+    printNameValue(os, "y"     , y_     );
+    printNameValue(os, "width" , width_ );
+    printNameValue(os, "height", height_);
+
+    if (getUnitsValid())
+      os << " maskContentUnits=\"" << CSVG::encodeUnitsString(getUnits()) << "\"";
+
+    os << ">" << std::endl;
+
+    for (const auto &o : objects_)
+      o->print(os, hier);
+
+    os << "</mask>" << std::endl;
+  }
+  else
+    os << "mask ";
 }
 
 std::ostream &
 operator<<(std::ostream &os, const CSVGMask &mask)
 {
-  mask.print(os);
+  mask.print(os, false);
 
   return os;
 }

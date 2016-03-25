@@ -1,11 +1,9 @@
-#include <CSVGI.h>
+#include <CSVGHKern.h>
+#include <CSVG.h>
 
 CSVGHKern::
 CSVGHKern(CSVG &svg) :
- CSVGObject(svg),
- glyph1_   (),
- glyph2_   (),
- k_        ()
+ CSVGObject(svg)
 {
 }
 
@@ -61,15 +59,26 @@ draw()
 
 void
 CSVGHKern::
-print(std::ostream &os) const
+print(std::ostream &os, bool hier) const
 {
-  os << "glyph";
+  if (hier) {
+    os << "<hkern";
+
+    printNameValue(os, "id", id_);
+    printNameValue(os, "g1", glyph1_);
+    printNameValue(os, "g2", glyph2_);
+    printNameValue(os, "k" , k_);
+
+    os << "/>" << std::endl;
+  }
+  else
+    os << "hkern";
 }
 
 std::ostream &
 operator<<(std::ostream &os, const CSVGHKern &glyph)
 {
-  glyph.print(os);
+  glyph.print(os, false);
 
   return os;
 }

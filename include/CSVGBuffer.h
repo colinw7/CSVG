@@ -2,18 +2,23 @@
 #define CSVG_BUFFER_H
 
 #include <CImage.h>
+#include <CFont.h>
+#include <CBBox2D.h>
+#include <CMatrix2D.h>
+#include <CLineDash.h>
+#include <CLineCapType.h>
+#include <CLineJoinType.h>
+#include <CFillType.h>
+#include <map>
 
+class CSVG;
 class CSVGRenderer;
 class CSVGBuffer;
+class CGenGradient;
+
+//------
 
 class CSVGBufferMgr {
- private:
-  typedef std::map<std::string,CSVGBuffer*> BufferMap;
-
-  CSVG      &svg_;
-  bool       anti_alias_;
-  BufferMap  buffer_map_;
-
  public:
   CSVGBufferMgr(CSVG &svg);
  ~CSVGBufferMgr();
@@ -25,15 +30,18 @@ class CSVGBufferMgr {
 
  private:
   void addBuffer(CSVGBuffer *buffer);
+
+ private:
+  typedef std::map<std::string,CSVGBuffer*> BufferMap;
+
+  CSVG      &svg_;
+  bool       anti_alias_ { true };
+  BufferMap  buffer_map_;
 };
 
-class CSVGBuffer {
- private:
-  CSVG         &svg_;
-  std::string   name_;
-  CSVGRenderer *renderer_;
-  CLineDash     lineDash_;
+//------
 
+class CSVGBuffer {
  public:
   CSVGBuffer(CSVG &svg, const std::string &name);
  ~CSVGBuffer();
@@ -113,6 +121,12 @@ class CSVGBuffer {
  private:
   CSVGBuffer(const CSVGBuffer &rhs);
   CSVGBuffer &operator=(const CSVGBuffer &rhs);
+
+ private:
+  CSVG         &svg_;
+  std::string   name_;
+  CSVGRenderer *renderer_ { 0 };
+  CLineDash     lineDash_;
 };
 
 #endif

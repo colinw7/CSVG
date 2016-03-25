@@ -1,3 +1,8 @@
+#ifndef CSVGClipPath_H
+#define CSVGClipPath_H
+
+#include <CSVGObject.h>
+
 class CStrParse;
 class CSVGPathPart;
 
@@ -5,22 +10,24 @@ class CSVGClipPath : public CSVGObject {
  public:
   typedef std::vector<CSVGPathPart *> PartList;
 
- private:
-  PartList parts_;
-
  public:
-  CSVG_OBJECT_DEF("clipPath", CSVG_OBJ_TYPE_CLIP_PATH)
+  CSVG_OBJECT_DEF("clipPath", CSVGObjTypeId::CLIP_PATH)
 
   CSVGClipPath(CSVG &svg);
   CSVGClipPath(const CSVGClipPath &path);
 
-  CSVGClipPath *dup() const;
+  CSVGClipPath *dup() const override;
 
-  bool processOption(const std::string &name, const std::string &value);
+  bool processOption(const std::string &name, const std::string &value) override;
 
-  void draw();
+  void draw() override;
 
-  void print(std::ostream &os) const;
+  void print(std::ostream &os, bool hier) const override;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGClipPath &path);
+
+ private:
+  PartList parts_;
 };
+
+#endif

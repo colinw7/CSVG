@@ -1,14 +1,9 @@
-#include <CSVGI.h>
+#include <CSVGFontFace.h>
+#include <CSVG.h>
 
 CSVGFontFace::
 CSVGFontFace(CSVG &svg) :
- CSVGObject(svg),
- family_    ("courier"),
- units_     (0),
- panose_    (""),
- ascent_    (0),
- descent_   (0),
- alphabetic_(false)
+ CSVGObject(svg)
 {
 }
 
@@ -118,15 +113,28 @@ draw()
 
 void
 CSVGFontFace::
-print(std::ostream &os) const
+print(std::ostream &os, bool hier) const
 {
-  os << "font-face";
+  if (hier) {
+    os << "<font-face";
+
+    printNameValue(os, "font-family" , family_);
+    printNameValue(os, "units-per-em", units_);
+    printNameValue(os, "panose-1"    , panose_);
+    printNameValue(os, "ascent"      , ascent_);
+    printNameValue(os, "descent"     , descent_);
+    printNameValue(os, "alphabetic"  , alphabetic_);
+
+    os << "/>" << std::endl;
+  }
+  else
+    os << "font-face";
 }
 
 std::ostream &
 operator<<(std::ostream &os, const CSVGFontFace &face)
 {
-  face.print(os);
+  face.print(os, false);
 
   return os;
 }

@@ -1,4 +1,6 @@
-#include <CSVGI.h>
+#include <CSVGCircle.h>
+#include <CSVG.h>
+#include <CSVGLog.h>
 
 /* Attributes:
     <Core>
@@ -22,16 +24,15 @@
 
 CSVGCircle::
 CSVGCircle(CSVG &svg) :
- CSVGObject(svg),
- center_   (0,0),
- radius_   (1)
+ CSVGObject(svg)
 {
 }
 
 CSVGCircle::
 CSVGCircle(const CSVGCircle &circle) :
  CSVGObject(circle),
- center_   (circle.center_),
+ cx_       (circle.cx_),
+ cy_       (circle.cy_),
  radius_   (circle.radius_)
 {
 }
@@ -61,15 +62,16 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   if (processCursorOption         (opt_name, opt_value)) return true;
   if (processExternalOption       (opt_name, opt_value)) return true;
 
-  double      real;
-  std::string str;
+  double          real;
+  std::string     str;
+  CSVGLengthValue length;
 
   if      (svg_.coordOption (opt_name, opt_value, "cx"       , &real))
-    center_.x = real;
+    cx_ = real;
   else if (svg_.coordOption (opt_name, opt_value, "cy"       , &real))
-    center_.y = real;
-  else if (svg_.lengthOption(opt_name, opt_value, "r"        , &real))
-    radius_ = real;
+    cy_ = real;
+  else if (svg_.lengthOption(opt_name, opt_value, "r"        , length))
+    radius_ = length.value();
   else if (svg_.stringOption(opt_name, opt_value, "transform", str)) {
     CMatrix2D transform;
 
@@ -91,18 +93,18 @@ draw()
   if (svg_.getDebug())
     CSVGLog() << *this;
 
-  svg_.drawCircle(center_.x, center_.y, radius_);
+  svg_.drawCircle(getCenterX(), getCenterY(), getRadius());
 }
 
 bool
 CSVGCircle::
 getBBox(CBBox2D &bbox) const
 {
-  if (! view_box_.isSet())
-    bbox = CBBox2D(center_.x - radius_, center_.y - radius_,
-                   center_.x + radius_, center_.y + radius_);
+  if (! viewBox_.isSet())
+    bbox = CBBox2D(getCenterX() - getRadius(), getCenterY() - getRadius(),
+                   getCenterX() + getRadius(), getCenterY() + getRadius());
   else
-    bbox = view_box_;
+    bbox = viewBox_;
 
   return true;
 }
@@ -111,27 +113,45 @@ void
 CSVGCircle::
 moveBy(const CVector2D &delta)
 {
-  center_ += delta;
+  CPoint2D c = getCenter();
+
+  c += delta;
+
+  setCenter(c);
 }
 
 void
 CSVGCircle::
 resizeTo(const CSize2D &size)
 {
-  radius_ = std::min(size.getWidth(), size.getHeight())/2.0;
+  setRadius(std::min(size.getWidth(), size.getHeight())/2.0);
 }
 
 void
 CSVGCircle::
-print(std::ostream &os) const
+print(std::ostream &os, bool hier) const
 {
-  os << "circle " << center_ << " radius " << radius_;
+  if (hier) {
+    os << "<circle";
+
+    printNameValue(os, "id", id_);
+
+    printNameValue(os, "cx", cx_);
+    printNameValue(os, "cy", cy_);
+    printNameValue(os, "r" , radius_);
+
+    printStyle(os);
+
+    os << "/>" << std::endl;
+  }
+  else
+    os << "circle " << getCenter() << " radius " << getRadius();
 }
 
 std::ostream &
 operator<<(std::ostream &os, const CSVGCircle &circle)
 {
-  circle.print(os);
+  circle.print(os, false);
 
   return os;
 }

@@ -1,11 +1,10 @@
-#include <CSVGI.h>
+#include <CSVGTSpan.h>
+#include <CSVG.h>
+#include <CSVGLog.h>
 
 CSVGTSpan::
 CSVGTSpan(CSVG &svg) :
- CSVGObject(svg),
- position_ (0, 0),
- text_     (),
- font_     (0)
+ CSVGObject(svg)
 {
 }
 
@@ -13,8 +12,7 @@ CSVGTSpan::
 CSVGTSpan(const CSVGTSpan &span) :
  CSVGObject(span),
  position_ (span.position_),
- text_     (span.text_),
- font_     (span.font_)
+ text_     (span.text_)
 {
 }
 
@@ -62,15 +60,31 @@ draw()
 
 void
 CSVGTSpan::
-print(std::ostream &os) const
+print(std::ostream &os, bool hier) const
 {
-  os << "tspan " << position_ << " " << CStrUtil::single_quote(text_);
+  if (hier) {
+    os << "<tspan";
+
+    os << " x=\"" << position_.x << "\"";
+    os << " y=\"" << position_.y << "\"";
+
+    if (hasFont())
+      printFontDef(os);
+
+    os << ">";
+
+    os << text_;
+
+    os << "</tspan>" << std::endl;
+  }
+  else
+    os << "tspan " << position_ << " " << CStrUtil::single_quote(text_);
 }
 
 std::ostream &
 operator<<(std::ostream &os, const CSVGTSpan &tspan)
 {
-  tspan.print(os);
+  tspan.print(os, false);
 
   return os;
 }

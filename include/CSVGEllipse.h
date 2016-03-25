@@ -1,39 +1,53 @@
-class CSVGEllipse : public CSVGObject {
- private:
-  CPoint2D center_;
-  double   rx_, ry_;
+#ifndef CSVGEllipse_H
+#define CSVGEllipse_H
 
+#include <CSVGObject.h>
+
+class CSVGEllipse : public CSVGObject {
  public:
-  CSVG_OBJECT_DEF("ellipse", CSVG_OBJ_TYPE_ELLIPSE)
+  CSVG_OBJECT_DEF("ellipse", CSVGObjTypeId::ELLIPSE)
 
   CSVGEllipse(CSVG &svg);
   CSVGEllipse(const CSVGEllipse &ellipse);
 
-  CSVGEllipse *dup() const;
+  CSVGEllipse *dup() const override;
 
-  const CPoint2D &getCenter() const { return center_; }
+  double getCenterX() const { return cx_.getValue(0); }
+  void setCenterX(double x) { cx_ = x; }
 
-  double getRX() const { return rx_; }
-  double getRY() const { return ry_; }
+  double getCenterY() const { return cy_.getValue(0); }
+  void setCenterY(double y) { cy_ = y; }
 
-  void setCenter(const CPoint2D &center) { center_ = center; }
+  double getRadiusX() const { return rx_.getValue(1); }
+  void setRadiusX(double r) { rx_ = r; }
 
-  void setCenterX(double x) { center_.x = x; }
-  void setCenterY(double y) { center_.y = y; }
+  double getRadiusY() const { return ry_.getValue(1); }
+  void setRadiusY(double r) { ry_ = r; }
+
+  void setCenter(const CPoint2D &center) { setCenterX(center.x); setCenterY(center.y); }
+  CPoint2D getCenter() const { return CPoint2D(getCenterX(), getCenterY()); }
 
   void setRadius(double rx, double ry) { rx_ = rx; ry_ = ry; }
 
-  bool processOption(const std::string &name, const std::string &value);
+  bool processOption(const std::string &name, const std::string &value) override;
 
-  void draw();
+  void draw() override;
 
-  bool getBBox(CBBox2D &bbox) const;
+  bool getBBox(CBBox2D &bbox) const override;
 
-  void moveBy(const CVector2D &delta);
+  void moveBy(const CVector2D &delta) override;
 
-  void resizeTo(const CSize2D &size);
+  void resizeTo(const CSize2D &size) override;
 
-  void print(std::ostream &os) const;
+  void print(std::ostream &os, bool hier) const override;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGEllipse &ellipse);
+
+ private:
+  COptValT<double> cx_;
+  COptValT<double> cy_;
+  COptValT<double> rx_;
+  COptValT<double> ry_;
 };
+
+#endif

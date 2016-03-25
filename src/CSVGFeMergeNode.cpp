@@ -1,10 +1,9 @@
-#include <CSVGI.h>
+#include <CSVGFeMergeNode.h>
+#include <CSVG.h>
 
 CSVGFeMergeNode::
 CSVGFeMergeNode(CSVG &svg) :
- CSVGObject (svg),
- filter_in_ ("SourceGraphic"),
- filter_out_("SourceGraphic")
+ CSVGObject(svg)
 {
 }
 
@@ -43,8 +42,8 @@ void
 CSVGFeMergeNode::
 draw()
 {
-  CImagePtr src_image = svg_.getBufferImage(filter_in_);
-  CImagePtr dst_image = svg_.getBufferImage(filter_out_);
+  CImagePtr src_image = svg_.getBufferImage(filter_in_ .getValue("SourceGraphic"));
+  CImagePtr dst_image = svg_.getBufferImage(filter_out_.getValue("SourceGraphic"));
 
   CImagePtr dst_image1 = dst_image;
 
@@ -62,15 +61,27 @@ draw()
 
 void
 CSVGFeMergeNode::
-print(std::ostream &os) const
+print(std::ostream &os, bool hier) const
 {
-  os << "feMergeNode";
+  if (hier) {
+    os << "<feMergeNode";
+
+    if (filter_in_.isValid())
+      os << " in=\"" << filter_in_.getValue() << "\"";
+
+    if (filter_out_.isValid())
+      os << " result=\"" << filter_out_.getValue() << "\"";
+
+    os << "/>" << std::endl;
+  }
+  else
+    os << "feMergeNode";
 }
 
 std::ostream &
 operator<<(std::ostream &os, const CSVGFeMergeNode &filter)
 {
-  filter.print(os);
+  filter.print(os, false);
 
   return os;
 }

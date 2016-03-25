@@ -1,10 +1,10 @@
-#include <CSVGI.h>
+#include <CSVGFeMerge.h>
+#include <CSVGFeMergeNode.h>
+#include <CSVG.h>
 
 CSVGFeMerge::
 CSVGFeMerge(CSVG &svg) :
- CSVGFilter (svg),
- filter_in_ ("SourceGraphic"),
- filter_out_("SourceGraphic")
+ CSVGFilter(svg)
 {
 }
 
@@ -47,7 +47,7 @@ draw()
 
   CImagePtr dst_image = filterImage(src_image);
 
-  svg_.setBufferImage(filter_out_, dst_image);
+  svg_.setBufferImage(filter_out_.getValue("SourceGraphic"), dst_image);
 }
 
 CImagePtr
@@ -56,14 +56,12 @@ filterImage(CImagePtr)
 {
   std::vector<CSVGObject *> objects;
 
-  getChildrenOfType(CSVG_OBJ_TYPE_FE_MERGE_NODE, objects);
+  getChildrenOfType(CSVGObjTypeId::FE_MERGE_NODE, objects);
 
   uint w = 0, h = 0;
 
-  std::vector<CSVGObject *>::iterator p1, p2;
-
-  for (p1 = objects.begin(), p2 = objects.end(); p1 != p2; ++p1) {
-    CSVGFeMergeNode *node = dynamic_cast<CSVGFeMergeNode *>(*p1);
+  for (const auto &o : objects) {
+    CSVGFeMergeNode *node = dynamic_cast<CSVGFeMergeNode *>(o);
 
     const std::string &filter_in = node->getFilterIn();
 
@@ -81,8 +79,8 @@ filterImage(CImagePtr)
 
   dst_image->setRGBAData(CRGBA(1,1,1,1));
 
-  for (p1 = objects.begin(), p2 = objects.end(); p1 != p2; ++p1) {
-    CSVGFeMergeNode *node = dynamic_cast<CSVGFeMergeNode *>(*p1);
+  for (const auto &o : objects) {
+    CSVGFeMergeNode *node = dynamic_cast<CSVGFeMergeNode *>(o);
 
     const std::string &filter_in = node->getFilterIn();
 
@@ -96,15 +94,32 @@ filterImage(CImagePtr)
 
 void
 CSVGFeMerge::
-print(std::ostream &os) const
+print(std::ostream &os, bool hier) const
 {
-  os << "feMerge";
+  if (hier) {
+    os << "<feMerge";
+
+    if (filter_in_.isValid())
+      os << " in=\"" << filter_in_.getValue() << "\"";
+
+    if (filter_out_.isValid())
+      os << " result=\"" << filter_out_.getValue() << "\"";
+
+    os << ">" << std::endl;
+
+    for (const auto &o : objects_)
+      o->print(os, hier);
+
+    os << "</feMerge>" << std::endl;
+  }
+  else
+    os << "feMerge";
 }
 
 std::ostream &
 operator<<(std::ostream &os, const CSVGFeMerge &filter)
 {
-  filter.print(os);
+  filter.print(os, false);
 
   return os;
 }

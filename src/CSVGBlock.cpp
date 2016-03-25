@@ -1,16 +1,11 @@
-#include <CSVGI.h>
+#include <CSVGBlock.h>
+#include <CSVG.h>
+#include <CSVGLog.h>
 #include <CRegExp.h>
 
 CSVGBlock::
 CSVGBlock(CSVG &svg) :
- CSVGObject(svg),
- x_        (),
- y_        (),
- width_    (),
- height_   (),
- halign_   (CHALIGN_TYPE_CENTER),
- valign_   (CVALIGN_TYPE_CENTER),
- scale_    (CSVG_SCALE_FREE)
+ CSVGObject(svg)
 {
 }
 
@@ -59,9 +54,10 @@ bool
 CSVGBlock::
 processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  std::string str;
-  double      real;
-  CBBox2D     bbox;
+  std::string     str;
+  double          real;
+  CBBox2D         bbox;
+  CSVGLengthValue length;
 
   if (processCoreOption           (opt_name, opt_value)) return true;
   if (processConditionalOption    (opt_name, opt_value)) return true;
@@ -78,16 +74,23 @@ processOption(const std::string &opt_name, const std::string &opt_value)
     x_.setValue(real);
   else if (svg_.coordOption (opt_name, opt_value, "y", &real))
     y_.setValue(real);
-  else if (svg_.lengthOption(opt_name, opt_value, "width", &real))
-    width_.setValue(real);
-  else if (svg_.lengthOption(opt_name, opt_value, "height", &real))
-    height_.setValue(real);
+  else if (svg_.lengthOption(opt_name, opt_value, "width", length))
+    width_.setValue(length);
+  else if (svg_.lengthOption(opt_name, opt_value, "height", length))
+    height_.setValue(length);
   else if (svg_.bboxOption  (opt_name, opt_value, "viewBox", &bbox))
-    view_box_ = bbox;
+    viewBox_ = bbox;
   else if (svg_.stringOption(opt_name, opt_value, "preserveAspectRatio", str)) {
-    if (! svg_.decodePreserveAspectRatio(opt_value, &halign_, &valign_,
-                                         &scale_))
+    CHAlignType halign;
+    CVAlignType valign;
+    CSVGScale   scale;
+
+    if (! svg_.decodePreserveAspectRatio(opt_value, &halign, &valign, &scale))
       return false;
+
+    halign_ = halign;
+    valign_ = valign;
+    scale_  = scale;
   }
   else if (svg_.stringOption(opt_name, opt_value, "zoomAndPan", str))
     ;
@@ -133,9 +136,9 @@ CSVGBlock::
 getWidth() const
 {
   if      (width_.isValid())
-    return width_.getValue();
+    return width_.getValue().value();
   else if (height_.isValid())
-    return height_.getValue();
+    return height_.getValue().value();
   else
     return 400;
 }
@@ -145,9 +148,9 @@ CSVGBlock::
 getHeight() const
 {
   if      (height_.isValid())
-    return height_.getValue();
+    return height_.getValue().value();
   else if (width_.isValid())
-    return width_.getValue();
+    return width_.getValue().value();
   else
     return 400;
 }
@@ -156,8 +159,8 @@ void
 CSVGBlock::
 setSize(const CSize2D &size)
 {
-  width_ .setValue(size.getWidth ());
-  height_.setValue(size.getHeight());
+  width_ .setValue(CSVGLengthValue(size.getWidth ()));
+  height_.setValue(CSVGLengthValue(size.getHeight()));
 }
 
 void
@@ -172,25 +175,65 @@ bool
 CSVGBlock::
 getBBox(CBBox2D &bbox) const
 {
-  if (! view_box_.isSet())
+  if (! viewBox_.isSet())
     bbox = CBBox2D(getX(), getY(), getWidth(), getHeight());
   else
-    bbox = view_box_;
+    bbox = viewBox_;
 
   return true;
 }
 
 void
 CSVGBlock::
-print(std::ostream &os) const
+print(std::ostream &os, bool hier) const
 {
-  os << "svg " << getWidth() << " " << getHeight();
+  if (hier) {
+    os << "<svg";
+
+    printNameValue(os, "id", id_);
+
+    printNameLength(os, "width" , width_ );
+    printNameLength(os, "height", height_);
+
+    if (viewBox_.isSet())
+      os << " viewBox=\"" << viewBox_.getXMin() << " " << viewBox_.getYMin() <<
+            " " << viewBox_.getXMax() << " " << viewBox_.getYMax() << "\"";
+
+    if (halign_.isValid()) {
+      os << " preserveAspectRatio=\"";
+
+      if      (getHAlign() == CHALIGN_TYPE_LEFT  ) os << "xMin";
+      else if (getHAlign() == CHALIGN_TYPE_CENTER) os << "xMid";
+      else if (getHAlign() == CHALIGN_TYPE_RIGHT ) os << "xMax";
+
+      if      (getVAlign() == CVALIGN_TYPE_BOTTOM) os << "YMin";
+      else if (getVAlign() == CVALIGN_TYPE_CENTER) os << "YMid";
+      else if (getVAlign() == CVALIGN_TYPE_TOP   ) os << "YMax";
+
+      os << " ";
+
+      if      (getScale() == CSVGScale::FIXED_MEET ) os << "meet";
+      else if (getScale() == CSVGScale::FIXED_SLICE) os << "slice";
+      else if (getScale() == CSVGScale::FREE       ) os << "none";
+
+      os << "\"";
+    }
+
+    os << ">" << std::endl;
+
+    for (auto &o : objects_)
+      o->print(os, hier);
+
+    os << "</svg>" << std::endl;
+  }
+  else
+    os << "svg " << getWidth() << " " << getHeight();
 }
 
 std::ostream &
 operator<<(std::ostream &os, const CSVGBlock &block)
 {
-  block.print(os);
+  block.print(os, false);
 
   return os;
 }

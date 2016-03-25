@@ -1,4 +1,8 @@
-#include <CSVGI.h>
+#include <CSVGPath.h>
+#include <CSVGPathPart.h>
+#include <CSVG.h>
+#include <CSVGLog.h>
+#include <CSVGUtil.h>
 #include <CStrParse.h>
 
 CSVGPath::
@@ -6,7 +10,7 @@ CSVGPath(CSVG &svg) :
  CSVGObject(svg),
  parts_    ()
 {
-  fill_.setDefColor(CRGBA(0,0,0));
+  //fill_.setDefColor(CRGBA(0,0,0));
 }
 
 CSVGPath::
@@ -51,23 +55,43 @@ draw()
 
 void
 CSVGPath::
-print(std::ostream &os) const
+print(std::ostream &os, bool hier) const
 {
-  os << "path (";
+  if (hier) {
+    os << "<path";
 
-  svg_.printParts(os, parts_);
+    std::string id = getId();
 
-  os << ")";
+    if (id != "")
+      os << " id=\"" << id << "\"";
+
+    os << " d=\"";
+
+    svg_.printParts(os, parts_);
+
+    os << "\"";
+
+    printStyle(os);
+
+    os << "/>" << std::endl;
+  }
+  else {
+    os << "path (";
+
+    svg_.printParts(os, parts_);
+
+    os << ")";
+  }
 }
 
 bool
 CSVGPath::
 getBBox(CBBox2D &bbox) const
 {
-  if (! view_box_.isSet())
+  if (! viewBox_.isSet())
     return svg_.getPartsBBox(parts_, bbox);
   else {
-    bbox = view_box_;
+    bbox = viewBox_;
 
     return true;
   }
@@ -76,7 +100,7 @@ getBBox(CBBox2D &bbox) const
 std::ostream &
 operator<<(std::ostream &os, const CSVGPath &path)
 {
-  path.print(os);
+  path.print(os, false);
 
   return os;
 }
@@ -85,7 +109,7 @@ operator<<(std::ostream &os, const CSVGPath &path)
 
 CSVGPathMoveTo::
 CSVGPathMoveTo(CSVG &svg, double x, double y) :
- CSVGPathPart(svg, CSVG_PATH_PART_MOVE_TO), point_(x, y)
+ CSVGPathPart(svg, CSVGPathPartType::MOVE_TO), point_(x, y)
 {
 }
 
@@ -105,7 +129,7 @@ print(std::ostream &os) const
 
 CSVGPathLineTo::
 CSVGPathLineTo(CSVG &svg, double x, double y) :
- CSVGPathPart(svg, CSVG_PATH_PART_LINE_TO), point_(x, y)
+ CSVGPathPart(svg, CSVGPathPartType::LINE_TO), point_(x, y)
 {
 }
 
@@ -125,7 +149,7 @@ print(std::ostream &os) const
 
 CSVGPathRLineTo::
 CSVGPathRLineTo(CSVG &svg, double x, double y) :
- CSVGPathPart(svg, CSVG_PATH_PART_RLINE_TO), point_(x, y)
+ CSVGPathPart(svg, CSVGPathPartType::RLINE_TO), point_(x, y)
 {
 }
 
@@ -145,7 +169,7 @@ print(std::ostream &os) const
 
 CSVGPathHLineTo::
 CSVGPathHLineTo(CSVG &svg, double d) :
- CSVGPathPart(svg, CSVG_PATH_PART_HLINE_TO), d_(d)
+ CSVGPathPart(svg, CSVGPathPartType::HLINE_TO), d_(d)
 {
 }
 
@@ -169,7 +193,7 @@ print(std::ostream &os) const
 
 CSVGPathVLineTo::
 CSVGPathVLineTo(CSVG &svg, double d) :
- CSVGPathPart(svg, CSVG_PATH_PART_VLINE_TO), d_(d)
+ CSVGPathPart(svg, CSVGPathPartType::VLINE_TO), d_(d)
 {
 }
 
@@ -193,7 +217,7 @@ print(std::ostream &os) const
 
 CSVGPathArcTo::
 CSVGPathArcTo(CSVG &svg, double rx, double ry, double xa, int fa, int fs, double x2, double y2) :
- CSVGPathPart(svg, CSVG_PATH_PART_ARC_TO), rx_(rx), ry_(ry), xa_(xa),
+ CSVGPathPart(svg, CSVGPathPartType::ARC_TO), rx_(rx), ry_(ry), xa_(xa),
  fa_(fa), fs_(fs), point2_(x2, y2)
 {
 }
@@ -233,7 +257,7 @@ print(std::ostream &os) const
 
 CSVGPathRArcTo::
 CSVGPathRArcTo(CSVG &svg, double rx, double ry, double xa, int fa, int fs, double x2, double y2) :
- CSVGPathPart(svg, CSVG_PATH_PART_RARC_TO), rx_(rx), ry_(ry), xa_(xa),
+ CSVGPathPart(svg, CSVGPathPartType::RARC_TO), rx_(rx), ry_(ry), xa_(xa),
  fa_(fa), fs_(fs), point2_(x2, y2)
 {
 }
@@ -273,7 +297,7 @@ print(std::ostream &os) const
 
 CSVGPathBezier2To::
 CSVGPathBezier2To(CSVG &svg, double x1, double y1, double x2, double y2) :
- CSVGPathPart(svg, CSVG_PATH_PART_BEZIER2_TO), point1_(x1, y1), point2_(x2, y2)
+ CSVGPathPart(svg, CSVGPathPartType::BEZIER2_TO), point1_(x1, y1), point2_(x2, y2)
 {
 }
 
@@ -294,7 +318,7 @@ print(std::ostream &os) const
 
 CSVGPathRBezier2To::
 CSVGPathRBezier2To(CSVG &svg, double x1, double y1, double x2, double y2) :
- CSVGPathPart(svg, CSVG_PATH_PART_RBEZIER2_TO), point1_(x1, y1), point2_(x2, y2)
+ CSVGPathPart(svg, CSVGPathPartType::RBEZIER2_TO), point1_(x1, y1), point2_(x2, y2)
 {
 }
 
@@ -315,7 +339,8 @@ print(std::ostream &os) const
 
 CSVGPathBezier3To::
 CSVGPathBezier3To(CSVG &svg, double x1, double y1, double x2, double y2, double x3, double y3) :
- CSVGPathPart(svg, CSVG_PATH_PART_BEZIER3_TO), point1_(x1, y1), point2_(x2, y2), point3_(x3, y3)
+ CSVGPathPart(svg, CSVGPathPartType::BEZIER3_TO),
+ point1_(x1, y1), point2_(x2, y2), point3_(x3, y3)
 {
 }
 
@@ -331,13 +356,14 @@ CSVGPathBezier3To::
 print(std::ostream &os) const
 {
   os << "C " << point1_.x << " " << point1_.y << " " <<
-                point2_.x << " " << point2_.y <<
+                point2_.x << " " << point2_.y << " " <<
                 point3_.x << " " << point3_.y;
 }
 
 CSVGPathRBezier3To::
 CSVGPathRBezier3To(CSVG &svg, double x1, double y1, double x2, double y2, double x3, double y3) :
- CSVGPathPart(svg, CSVG_PATH_PART_RBEZIER3_TO), point1_(x1, y1), point2_(x2, y2), point3_(x3, y3)
+ CSVGPathPart(svg, CSVGPathPartType::RBEZIER3_TO),
+ point1_(x1, y1), point2_(x2, y2), point3_(x3, y3)
 {
 }
 
@@ -353,12 +379,13 @@ CSVGPathRBezier3To::
 print(std::ostream &os) const
 {
   os << "c " << point1_.x << " " << point1_.y << " " <<
-                point2_.x << " " << point2_.y << point3_.x << " " << point3_.y;
+                point2_.x << " " << point2_.y << " " <<
+                point3_.x << " " << point3_.y;
 }
 
 CSVGPathClosePath::
 CSVGPathClosePath(CSVG &svg) :
- CSVGPathPart(svg, CSVG_PATH_PART_CLOSE_PATH)
+ CSVGPathPart(svg, CSVGPathPartType::CLOSE_PATH)
 {
 }
 

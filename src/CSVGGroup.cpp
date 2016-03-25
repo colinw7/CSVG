@@ -1,4 +1,5 @@
-#include <CSVGI.h>
+#include <CSVGGroup.h>
+#include <CSVG.h>
 
 CSVGGroup::
 CSVGGroup(CSVG &svg) :
@@ -39,30 +40,24 @@ void
 CSVGGroup::
 moveBy(const CVector2D &delta)
 {
-  ObjectList::iterator po1, po2;
-
-  for (po1 = childrenBegin(), po2 = childrenEnd(); po1 != po2; ++po1)
-    (*po1)->moveBy(delta);
+  for (auto &c : children())
+    c->moveBy(delta);
 }
 
 void
 CSVGGroup::
 resizeTo(const CSize2D &size)
 {
-  ObjectList::iterator po1, po2;
-
-  for (po1 = childrenBegin(), po2 = childrenEnd(); po1 != po2; ++po1)
-    (*po1)->resizeTo(size);
+  for (auto &c : children())
+    c->resizeTo(size);
 }
 
 void
 CSVGGroup::
-rotateBy(double da, const CPoint2D &c)
+rotateBy(double da, const CPoint2D &origin)
 {
-  ObjectList::iterator po1, po2;
-
-  for (po1 = childrenBegin(), po2 = childrenEnd(); po1 != po2; ++po1)
-    (*po1)->rotateBy(da, c);
+  for (auto &c : children())
+    c->rotateBy(da, origin);
 }
 
 void
@@ -73,15 +68,34 @@ draw()
 
 void
 CSVGGroup::
-print(std::ostream &os) const
+print(std::ostream &os, bool hier) const
 {
-  os << "group";
+  if (hier) {
+    os << "<g";
+
+    printNameValue(os, "id", id_);
+
+    printTextContent(os);
+
+    printStyle(os);
+
+    printTransform(os);
+
+    os << ">" << std::endl;
+
+    for (const auto &o : objects_)
+      o->print(os, hier);
+
+    os << "</g>" << std::endl;
+  }
+  else
+    os << "group";
 }
 
 std::ostream &
 operator<<(std::ostream &os, const CSVGGroup &group)
 {
-  group.print(os);
+  group.print(os, false);
 
   return os;
 }

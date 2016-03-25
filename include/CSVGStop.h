@@ -1,20 +1,20 @@
-class CSVGStop : public CSVGObject {
- private:
-  double offset_;
-  CRGBA  color_;
-  double opacity_;
+#ifndef CSVGStop_H
+#define CSVGStop_H
 
+#include <CSVGObject.h>
+
+class CSVGStop : public CSVGObject {
  public:
-  CSVG_OBJECT_DEF("stop", CSVG_OBJ_TYPE_STOP)
+  CSVG_OBJECT_DEF("stop", CSVGObjTypeId::STOP)
 
   CSVGStop(CSVG &svg);
   CSVGStop(const CSVGStop &stop);
 
-  CSVGStop *dup() const;
+  CSVGStop *dup() const override;
 
-  double getOffset () const { return offset_ ; }
-  CRGBA  getColor  () const { return color_  ; }
-  double getOpacity() const { return opacity_; }
+  double getOffset () const { return offset_ .getValue(CSVGLengthValue()).value(); }
+  CRGBA  getColor  () const { return color_  .getValue(CRGBA(1,1,1)); }
+  double getOpacity() const { return opacity_.getValue(1); }
 
   CRGBA getAlphaColor() const;
 
@@ -22,13 +22,20 @@ class CSVGStop : public CSVGObject {
   void setColor  (const CRGBA &color) { color_   = color  ; }
   void setOpacity(double opacity    ) { opacity_ = opacity; }
 
-  bool processOption(const std::string &name, const std::string &value);
+  bool processOption(const std::string &name, const std::string &value) override;
 
-  bool isDrawable() { return false; }
+  bool isDrawable() const override { return false; }
 
-  void draw();
+  void draw() override;
 
-  void print(std::ostream &os) const;
+  void print(std::ostream &os, bool hier) const override;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGStop &stop);
+
+ private:
+  COptValT<CSVGLengthValue> offset_;
+  COptValT<CRGBA>           color_;
+  COptValT<double>          opacity_;
 };
+
+#endif

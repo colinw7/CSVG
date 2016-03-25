@@ -1,34 +1,42 @@
+#ifndef CSVGPolygon_H
+#define CSVGPolygon_H
+
+#include <CSVGObject.h>
+
 class CSVGPolygon : public CSVGObject {
  public:
   typedef std::vector<CPoint2D> PointList;
 
- private:
-  PointList points_;
-
  public:
-  CSVG_OBJECT_DEF("polygon", CSVG_OBJ_TYPE_POLYGON)
+  CSVG_OBJECT_DEF("polygon", CSVGObjTypeId::POLYGON)
 
   CSVGPolygon(CSVG &svg);
   CSVGPolygon(const CSVGPolygon &poly);
 
-  CSVGPolygon *dup() const;
-
-  bool processOption(const std::string &name, const std::string &value);
+  CSVGPolygon *dup() const override;
 
   const PointList &getPoints() const { return points_; }
+  void setPoints(const PointList &p) { points_ = p; }
 
   void addPoint(const CPoint2D &point);
 
-  void draw();
+  bool processOption(const std::string &name, const std::string &value) override;
 
-  bool getBBox(CBBox2D &bbox) const;
+  void draw() override;
 
-  void moveBy(const CVector2D &delta);
-  void resizeTo(const CSize2D &size);
+  bool getBBox(CBBox2D &bbox) const override;
 
-  void rotateBy(double da, const CPoint2D &point);
+  void moveBy(const CVector2D &delta) override;
+  void resizeTo(const CSize2D &size) override;
 
-  void print(std::ostream &os) const;
+  void rotateBy(double da, const CPoint2D &point) override;
+
+  void print(std::ostream &os, bool hier) const override;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGPolygon &polygon);
+
+ private:
+  PointList points_;
 };
+
+#endif

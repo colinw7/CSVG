@@ -1,217 +1,65 @@
 #ifndef CSVG_H
 #define CSVG_H
 
-#include <COptVal.h>
-#include <CRGBA.h>
-#include <CLineDash.h>
-#include <CLineCapType.h>
-#include <CLineJoinType.h>
-#include <CAlignType.h>
-#include <CFillType.h>
-#include <CLog.h>
-#include <CFontStyle.h>
-#include <CPoint2D.h>
-#include <CMatrix2D.h>
-#include <CSize2D.h>
-#include <CBBox2D.h>
-#include <CLinearGradient.h>
-#include <CRadialGradient.h>
-#include <CConfig.h>
-
-enum CSVGScale {
-  CSVG_SCALE_FREE,
-  CSVG_SCALE_FIXED_MEET,
-  CSVG_SCALE_FIXED_SLICE
-};
-
-enum CSVGCoordUnits {
-  CSVG_COORD_UNITS_OBJECT_BBOX,
-  CSVG_COORD_UNITS_USER_SPACE
-};
-
-class CSVG;
-
 #include <CSVGStroke.h>
 #include <CSVGFill.h>
 #include <CSVGClip.h>
 #include <CSVGFontDef.h>
-
-#include <CSVGBuffer.h>
-#include <CSVGObject.h>
-
-class CSVGXLink {
- private:
-  CSVGObject  *parent_;
-  bool         resolved_;
-  std::string  str_;
-  CSVGObject  *object_;
-  CImagePtr    image_;
-
- public:
-  CSVGXLink(CSVGObject *parent, const std::string &str="") :
-   parent_(parent), resolved_(false), str_(str), object_(NULL), image_() {
-  }
-
-  CSVGXLink(CSVGObject *parent, CSVGObject *object) :
-   parent_(parent), resolved_(true), str_(), object_(object), image_() {
-  }
-
-  CSVGXLink(CSVGObject *parent, CImagePtr image) :
-   parent_(parent), resolved_(true), str_(), object_(NULL), image_(image) {
-  }
-
-  CSVGXLink(const CSVGXLink &xlink);
-
-  CSVGXLink &operator=(const CSVGXLink &xlink);
-
-  bool isResolved() const { return resolved_; }
-
-  bool isObject() const {
-    resolve();
-
-    return (object_ != NULL);
-  }
-
-  CSVGObject *getObject() const {
-    return object_;
-  }
-
-  void setObject(CSVGObject *object) {
-    object_ = object;
-  }
-
-  bool isImage() const {
-    resolve();
-
-    return (image_.isValid());
-  }
-
-  CImagePtr getImage() const {
-    return image_;
-  }
-
-  void setImage(CImagePtr image) {
-    image_ = image;
-  }
-
- private:
-  void resolve() const;
-};
-
 #include <CSVGBlock.h>
-#include <CSVGCircle.h>
-#include <CSVGClipPath.h>
-#include <CSVGDefs.h>
-#include <CSVGDesc.h>
-#include <CSVGEllipse.h>
-#include <CSVGFeBlend.h>
-#include <CSVGFeColorMatrix.h>
-#include <CSVGFeComponentTransfer.h>
-#include <CSVGFeComposite.h>
-#include <CSVGFeDiffuseLighting.h>
-#include <CSVGFeDistantLight.h>
-#include <CSVGFeFlood.h>
-#include <CSVGFeFunc.h>
-#include <CSVGFeGaussianBlur.h>
-#include <CSVGFeImage.h>
-#include <CSVGFeMerge.h>
-#include <CSVGFeMergeNode.h>
-#include <CSVGFeOffset.h>
-#include <CSVGFePointLight.h>
-#include <CSVGFeSpecularLighting.h>
-#include <CSVGFeTile.h>
-#include <CSVGFeTurbulence.h>
-#include <CSVGFilter.h>
-#include <CSVGFont.h>
-#include <CSVGFontFace.h>
-#include <CSVGGlyph.h>
-#include <CSVGGroup.h>
-#include <CSVGHKern.h>
-#include <CSVGImage.h>
-#include <CSVGLine.h>
-#include <CSVGLinearGradient.h>
-#include <CSVGMarker.h>
-#include <CSVGMask.h>
-#include <CSVGMissingGlyph.h>
-#include <CSVGPath.h>
-#include <CSVGPattern.h>
-#include <CSVGPolygon.h>
-#include <CSVGPolyLine.h>
-#include <CSVGRadialGradient.h>
-#include <CSVGRect.h>
-#include <CSVGStop.h>
-#include <CSVGStyle.h>
-#include <CSVGSymbol.h>
-#include <CSVGText.h>
-#include <CSVGTitle.h>
-#include <CSVGTSpan.h>
-#include <CSVGUse.h>
+#include <CSVGLengthValue.h>
 
+#include <CImageLib.h>
+#include <CFont.h>
+#include <CMatrix2D.h>
+#include <CBBox2D.h>
+#include <CFillType.h>
+#include <CLineDash.h>
+#include <CAutoPtr.h>
+#include <CGenGradient.h>
+
+class CSVGPathPart;
+class CSVGRenderer;
+class CSVGBlock;
+class CSVGBuffer;
+class CSVGObject;
+
+class CSVGCircle;
+class CSVGEllipse;
+class CSVGGroup;
+class CSVGImage;
+class CSVGLine;
+class CSVGLinearGradient;
+class CSVGMarker;
+class CSVGPath;
+class CSVGPolygon;
+class CSVGPolyLine;
+class CSVGRadialGradient;
+class CSVGRect;
+class CSVGStop;
+class CSVGSymbol;
+class CSVGText;
+
+class CSVGFont;
+class CSVGGlyph;
+class CSVGObjectMarker;
+class CSVGStyleData;
+class CSVGBufferMgr;
+
+class CStrParse;
+class CConfig;
 class CXML;
 class CXMLTag;
 class CXMLToken;
-class CSVGRenderer;
-
-class CSVGPathPart;
-
-class CSVGStyleData {
- private:
-  std::string id_;
-  CSVGStroke  stroke_;
-  CSVGFill    fill_;
-
- public:
-  CSVGStyleData(CSVG &svg, const std::string &id) :
-   id_(id), stroke_(svg), fill_(svg) {
-  }
-
-  void setValue(const std::string &name, const std::string &value);
-
-  bool      getStrokeColorValid  () const { return stroke_.getColorValid(); }
-  CRGBA     getStrokeColor       () const { return stroke_.getColor(); }
-  bool      getStrokeOpacityValid() const { return stroke_.getOpacityValid(); }
-  double    getStrokeOpacity     () const { return stroke_.getOpacity(); }
-  bool      getStrokeWidthValid  () const { return stroke_.getWidthValid(); }
-  double    getStrokeWidth       () const { return stroke_.getWidth(); }
-  bool      getStrokeDashValid   () const { return stroke_.getDashValid(); }
-  CLineDash getStrokeDash        () const { return stroke_.getDash(); }
-  bool      getFillColorValid    () const { return fill_  .getColorValid(); }
-  CRGBA     getFillColor         () const { return fill_  .getColor(); }
-};
-
-class CSVGLog : public CLog { };
 
 class CSVG {
- private:
-  typedef std::vector<CSVGObject *>            ObjectList;
-  typedef std::vector<CSVGFont *>              FontList;
-  typedef std::map<std::string, CSVGObject *>  NameObjectMap;
-  typedef std::vector<CSVGPathPart *>          PartList;
-  typedef std::map<std::string, CSVGStyleData> StyleDataMap;
-
-  CSVGRenderer            *renderer_;
-  CAutoPtr<CSVGBufferMgr>  buffer_mgr_;
-  CSVGBuffer              *buffer_;
-  CMatrix2D                view_matrix_;
-  CMatrix2D                transform_;
-  CAutoPtr<CSVGBlock>      block_;
-  CAutoPtr<CXML>           xml_;
-  CXMLTag                 *xml_tag_;
-  CSVGStroke               stroke_;
-  CSVGFill                 fill_;
-  CSVGClip                 clip_;
-  CSVGFontDef              font_def_;
-  FontList                 font_list_;
-  NameObjectMap            id_object_map_;
-  StyleDataMap             styleData_;
-  bool                     uniquify_;
-  bool                     autoName_;
-  bool                     debug_;
+ public:
+  typedef std::vector<CSVGObject *>   ObjectList;
+  typedef std::vector<CSVGPathPart *> PartList;
 
  public:
-  CSVG(CSVGRenderer *renderer=NULL);
+  CSVG(CSVGRenderer *renderer=0);
 
- ~CSVG();
+  virtual ~CSVG();
 
   void          setRenderer(CSVGRenderer *renderer);
   CSVGRenderer *getRenderer() const { return renderer_; }
@@ -251,18 +99,24 @@ class CSVG {
   bool read(const std::string &filename);
   bool read(const std::string &filename, CSVGObject *object);
 
-  CSVGObject *createObjectByName(const std::string &name);
+  virtual CSVGObject *createObjectByName(const std::string &name);
 
-  CSVGCircle         *createCircle();
-  CSVGEllipse        *createEllipse();
-  CSVGImage          *createImage();
-  CSVGLine           *createLine();
-  CSVGLinearGradient *createLinearGradient();
-  CSVGPolygon        *createPolygon();
-  CSVGPolyLine       *createPolyLine();
-  CSVGRadialGradient *createRadialGradient();
-  CSVGRect           *createRect();
-  CSVGStop           *createStop();
+  virtual CSVGBlock          *createBlock();
+  virtual CSVGCircle         *createCircle();
+  virtual CSVGEllipse        *createEllipse();
+  virtual CSVGGroup          *createGroup();
+  virtual CSVGImage          *createImage();
+  virtual CSVGLine           *createLine();
+  virtual CSVGLinearGradient *createLinearGradient();
+  virtual CSVGMarker         *createMarker();
+  virtual CSVGPath           *createPath();
+  virtual CSVGPolygon        *createPolygon();
+  virtual CSVGPolyLine       *createPolyLine();
+  virtual CSVGRadialGradient *createRadialGradient();
+  virtual CSVGRect           *createRect();
+  virtual CSVGStop           *createStop();
+  virtual CSVGSymbol         *createSymbol();
+  virtual CSVGText           *createText();
 
   double getXMin() const { return block_->getXMin(); }
   double getYMin() const { return block_->getYMin(); }
@@ -278,10 +132,10 @@ class CSVG {
   const CSVGClip    &getClip   () const { return clip_    ; }
   const CSVGFontDef &getFontDef() const { return font_def_; }
 
-  void setStroke (CSVGStroke  &stroke  ) { stroke_   = stroke  ; }
-  void setFill   (CSVGFill    &fill    ) { fill_     = fill    ; }
-  void setClip   (CSVGClip    &clip    ) { clip_     = clip    ; }
-  void setFontDef(CSVGFontDef &font_def) { font_def_ = font_def; }
+  void setStroke (const CSVGStroke  &stroke  ) { stroke_   = stroke  ; }
+  void setFill   (const CSVGFill    &fill    ) { fill_     = fill    ; }
+  void setClip   (const CSVGClip    &clip    ) { clip_     = clip    ; }
+  void setFontDef(const CSVGFontDef &font_def) { font_def_ = font_def; }
 
   bool processOption(const std::string &opt_name, const std::string &opt_value);
 
@@ -304,12 +158,13 @@ class CSVG {
   void updateStroke(const CSVGStroke &stroke);
   void setSelectedStroke();
   bool isStroked() const;
-  void setStroke();
 
   void resetFill();
   void updateFill(const CSVGFill &fill);
   bool isFilled() const;
-  void setFill();
+
+  void setStrokeBuffer();
+  void setFillBuffer();
 
   void resetClip();
   void updateClip(const CSVGClip &clip);
@@ -372,16 +227,17 @@ class CSVG {
                        double *x1, double *y1, double *x2, double *y2) const;
 
   bool pathStringToParts(const std::string &data, PartList &parts);
-  void drawParts(const PartList &parts, CSVGObjectMarker *marker=NULL);
+  void drawParts(const PartList &parts, CSVGObjectMarker *marker=0);
 
   bool getPartsBBox(const PartList &parts, CBBox2D &bbox) const;
   void printParts(std::ostream &os, const PartList &parts) const;
 
   bool coordOption(const std::string &opt_name, const std::string &opt_value,
+                   const std::string &name, CSVGLengthValue &length);
+  bool coordOption(const std::string &opt_name, const std::string &opt_value,
                    const std::string &name, double *real);
   bool lengthOption(const std::string &opt_name, const std::string &opt_value,
-                    const std::string &name, double *real);
-  bool lengthToReal(const std::string &str, double *real);
+                    const std::string &name, CSVGLengthValue &length);
   bool angleOption(const std::string &opt_name, const std::string &opt_value,
                    const std::string &name, double *real);
   bool realOption(const std::string &opt_name, const std::string &opt_value,
@@ -390,12 +246,18 @@ class CSVG {
                      const std::string &name, long *integer);
   bool stringOption(const std::string &opt_name, const std::string &opt_value,
                     const std::string &name, std::string &str);
+  bool percentOption(const std::string &opt_name, const std::string &opt_value,
+                     const std::string &name, CSVGLengthValue &length);
+  bool coordUnitsOption(const std::string &opt_name, const std::string &opt_value,
+                        const std::string &name, CSVGCoordUnits &units);
   bool bboxOption(const std::string &opt_name, const std::string &opt_value,
                   const std::string &name, CBBox2D *bbox);
   bool pointListOption(const std::string &opt_name, const std::string &opt_value,
                        const std::string &name, std::vector<CPoint2D> &points);
   bool realListOption(const std::string &opt_name, const std::string &opt_value,
                       const std::string &name, std::vector<double> &reals);
+
+  bool decodeLengthValue(const std::string &str, CSVGLengthValue &lvalue);
 
   bool decodeTransform(const std::string &str, CMatrix2D &matrix);
 
@@ -409,10 +271,15 @@ class CSVG {
   bool       decodeColorString(const std::string &color_str, CRGBA &rgba);
   CFontStyle decodeFontWeightString(const std::string &weight_str);
   CFontStyle decodeFontStyleString(const std::string &style_str);
-  bool       decodePercentString(const std::string &str, double *real);
-  bool       decodeUnitsString(const std::string &str, CSVGCoordUnits *units);
-  bool       decodeGradientSpread(const std::string &str, CGradientSpreadType *spread);
-  bool       decodeUrlObject(const std::string &str, CSVGObject **object);
+  bool       decodePercentString(const std::string &str, CSVGLengthValue &length);
+
+  static bool decodeUnitsString(const std::string &str, CSVGCoordUnits &units);
+  static std::string encodeUnitsString(const CSVGCoordUnits &units);
+
+  static bool decodeGradientSpread(const std::string &str, CGradientSpreadType &spread);
+  static std::string encodeGradientSpread(const CGradientSpreadType &spread);
+
+  bool decodeUrlObject(const std::string &str, CSVGObject **object);
 
   bool mmToPixel(double mm, double *pixel);
 
@@ -437,6 +304,10 @@ class CSVG {
   bool getStyleStrokeDash   (const std::string &id, CLineDash &dash);
   bool getStyleFillColor    (const std::string &id, CRGBA &rgba);
 
+  void getObjectsAtPoint(const CPoint2D &p, ObjectList &objects) const;
+
+  void print(std::ostream &os, bool hier=false) const;
+
  private:
   CConfig *getConfig();
 
@@ -445,15 +316,30 @@ class CSVG {
  private:
   CSVG(const CSVG &rhs);
   CSVG &operator=(const CSVG &rhs);
+
+ private:
+  typedef std::vector<CSVGFont *>              FontList;
+  typedef std::map<std::string, CSVGObject *>  NameObjectMap;
+  typedef std::map<std::string, CSVGStyleData> StyleDataMap;
+
+  CSVGRenderer            *renderer_      { 0 };
+  CAutoPtr<CSVGBufferMgr>  buffer_mgr_;
+  CSVGBuffer              *buffer_        { 0 };
+  CMatrix2D                view_matrix_;
+  CMatrix2D                transform_;
+  CAutoPtr<CSVGBlock>      block_;
+  CAutoPtr<CXML>           xml_;
+  CXMLTag                 *xml_tag_       { 0 };
+  CSVGStroke               stroke_;
+  CSVGFill                 fill_;
+  CSVGClip                 clip_;
+  CSVGFontDef              font_def_;
+  FontList                 font_list_;
+  NameObjectMap            id_object_map_;
+  StyleDataMap             styleData_;
+  bool                     uniquify_      { false };
+  bool                     autoName_      { false };
+  bool                     debug_         { false };
 };
-
-namespace CSVGUtil {
-  void convertArcCoords(double x1, double y1, double x2, double y2, double phi,
-                        double rx, double ry, int fa, int fs, bool unit_circle,
-                        double *cx, double *cy, double *xr, double *yr,
-                        double *theta, double *delta);
-}
-
-#include <CSVGPathPart.h>
 
 #endif

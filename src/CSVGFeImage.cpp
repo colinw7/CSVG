@@ -1,10 +1,9 @@
-#include <CSVGI.h>
+#include <CSVGFeImage.h>
+#include <CSVG.h>
 
 CSVGFeImage::
 CSVGFeImage(CSVG &svg) :
- CSVGFilter (svg),
- xlink_     (this),
- filter_out_("SourceGraphic")
+ CSVGFilter(svg), xlink_(this)
 {
 }
 
@@ -52,7 +51,7 @@ draw()
 
   CImagePtr dst_image = filterImage(src_image);
 
-  svg_.setBufferImage(filter_out_, dst_image);
+  svg_.setBufferImage(filter_out_.getValue("SourceGraphic"), dst_image);
 }
 
 CImagePtr
@@ -87,15 +86,27 @@ filterImage(CImagePtr src_image)
 
 void
 CSVGFeImage::
-print(std::ostream &os) const
+print(std::ostream &os, bool hier) const
 {
-  os << "feImage ";
+  if (hier) {
+    os << "<feImage";
+
+    if (xlink_.str() != "")
+      os << " xlink:href=\"" << xlink_.str() << "\"";
+
+    if (filter_out_.isValid())
+      os << " result=\"" << filter_out_.getValue() << "\"";
+
+    os << "/>" << std::endl;
+  }
+  else
+    os << "feImage ";
 }
 
 std::ostream &
 operator<<(std::ostream &os, const CSVGFeImage &filter)
 {
-  filter.print(os);
+  filter.print(os, false);
 
   return os;
 }

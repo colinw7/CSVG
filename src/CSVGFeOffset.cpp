@@ -1,12 +1,9 @@
-#include <CSVGI.h>
+#include <CSVGFeOffset.h>
+#include <CSVG.h>
 
 CSVGFeOffset::
 CSVGFeOffset(CSVG &svg) :
- CSVGFilter (svg),
- filter_in_ ("SourceGraphic"),
- filter_out_("SourceGraphic"),
- dx_        (0),
- dy_        (0)
+ CSVGFilter(svg)
 {
 }
 
@@ -52,11 +49,11 @@ void
 CSVGFeOffset::
 draw()
 {
-  CImagePtr src_image = svg_.getBufferImage(filter_in_);
+  CImagePtr src_image = svg_.getBufferImage(filter_in_.getValue("SourceGraphic"));
 
   CImagePtr dst_image = filterImage(src_image);
 
-  svg_.setBufferImage(filter_out_, dst_image);
+  svg_.setBufferImage(filter_out_.getValue("SourceGraphic"), dst_image);
 }
 
 CImagePtr
@@ -69,7 +66,7 @@ filterImage(CImagePtr src_image)
 
   int dx, dy;
 
-  svg_.lengthToPixel(dx_, dy_, &dx, &dy);
+  svg_.lengthToPixel(dx_.getValue(0), dy_.getValue(0), &dx, &dy);
 
   dst_image->subCopyFrom(src_image, 0, 0, -1, -1, dx, dy);
 
@@ -78,15 +75,33 @@ filterImage(CImagePtr src_image)
 
 void
 CSVGFeOffset::
-print(std::ostream &os) const
+print(std::ostream &os, bool hier) const
 {
-  os << "feOffset ";
+  if (hier) {
+    os << "<feOffset";
+
+    if (filter_in_.isValid())
+      os << " in=\"" << filter_in_.getValue() << "\"";
+
+    if (filter_out_.isValid())
+      os << " result=\"" << filter_out_.getValue() << "\"";
+
+    if (dx_.isValid())
+      os << " dx=\"" << dx_.getValue() << "\"";
+
+    if (dy_.isValid())
+      os << " dy=\"" << dy_.getValue() << "\"";
+
+    os << "/>" << std::endl;
+  }
+  else
+    os << "feOffset ";
 }
 
 std::ostream &
 operator<<(std::ostream &os, const CSVGFeOffset &filter)
 {
-  filter.print(os);
+  filter.print(os, false);
 
   return os;
 }

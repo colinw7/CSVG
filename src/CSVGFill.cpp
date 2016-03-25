@@ -1,4 +1,6 @@
-#include <CSVGI.h>
+#include <CSVGFill.h>
+#include <CSVG.h>
+#include <CSVGLog.h>
 #include <CRegExp.h>
 #include <CStrParse.h>
 
@@ -65,9 +67,11 @@ setColor(const std::string &color_def)
     std::vector<std::string> match_strs;
 
     if      (word == "none") {
-      setColor(CRGBA(0,0,0,0));
+      noColor_ = true;
 
-      setOpacity(0.0);
+      resetColor();
+
+      resetOpacity();
     }
     else if (word == "currentColor") {
       CSVGLog() << "currentColor not supported";
@@ -80,8 +84,7 @@ setColor(const std::string &color_def)
       if (svg_.decodeColorString(word, rgba)) {
         setColor(rgba);
 
-        if (! getOpacityValid())
-          setOpacity(1.0);
+        resetOpacity();
       }
     }
 
@@ -89,16 +92,6 @@ setColor(const std::string &color_def)
 
     parse.skipSpace();
   }
-}
-
-double
-CSVGFill::
-getOpacity() const
-{
-  if (getOpacityValid())
-    return opacity_.getValue();
-  else
-    return 1.0;
 }
 
 void
@@ -119,21 +112,11 @@ setRule(const std::string &rule_def)
   setRule(rule);
 }
 
-CFillType
-CSVGFill::
-getRule() const
-{
-  if (getRuleValid())
-    return rule_.getValue();
-  else
-    return FILL_TYPE_EVEN_ODD;
-}
-
 bool
 CSVGFill::
 getFillObjectValid() const
 {
-  return url_.isValid() || fill_object_.isValid();
+  return url_.isValid() || fillObject_.isValid();
 }
 
 CSVGObject *
@@ -142,8 +125,8 @@ getFillObject() const
 {
   if      (url_.isValid())
     return svg_.lookupObjectById(url_.getValue());
-  else if (fill_object_.isValid())
-    return fill_object_.getValue();
+  else if (fillObject_.isValid())
+    return fillObject_.getValue();
   else
     return 0;
 }
@@ -152,11 +135,11 @@ void
 CSVGFill::
 reset()
 {
-  color_      .setInvalid();
-  opacity_    .setInvalid();
-  rule_       .setInvalid();
-  url_        .setInvalid();
-  fill_object_.setInvalid();
+  color_     .setInvalid();
+  opacity_   .setInvalid();
+  rule_      .setInvalid();
+  url_       .setInvalid();
+  fillObject_.setInvalid();
 }
 
 void
@@ -175,6 +158,23 @@ update(const CSVGFill &fill)
   if (fill.url_.isValid())
     setUrl(fill.url_.getValue());
 
-  if (fill.fill_object_.isValid())
-    setFillObject(fill.fill_object_.getValue());
+  if (fill.fillObject_.isValid())
+    setFillObject(fill.fillObject_.getValue());
+}
+
+void
+CSVGFill::
+print(std::ostream &os) const
+{
+  if (noColor_)
+    os << "fill: none;";
+
+  if (color_.isValid())
+    os << "fill: " << color_.getValue().getRGB().stringEncode() << ";";
+
+  if (opacity_.isValid())
+    os << " fill-opacity: " << opacity_.getValue() << ";";
+
+  if (url_.isValid())
+    os << "fill: url(#" << url_.getValue() << ");";
 }

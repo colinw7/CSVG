@@ -1,12 +1,10 @@
-#include <CSVGI.h>
+#include <CSVGGlyph.h>
+#include <CSVG.h>
+#include <CSVGLog.h>
 
 CSVGGlyph::
 CSVGGlyph(CSVG &svg) :
- CSVGObject(svg),
- unicode_  (),
- name_     (),
- dx_       (),
- parts_    ()
+ CSVGObject(svg)
 {
 }
 
@@ -83,19 +81,36 @@ draw()
 
 void
 CSVGGlyph::
-print(std::ostream &os) const
+print(std::ostream &os, bool hier) const
 {
-  os << "glyph " << unicode_ << " " << name_ << "(";
+  if (hier) {
+    os << "<glyph";
 
-  svg_.printParts(os, parts_);
+    printNameValue(os, "unicode"    , unicode_);
+    printNameValue(os, "glyph-name" , name_   );
+    printNameValue(os, "horiz-adv-x", dx_     );
 
-  os << ")";
+    os << " d=\"";
+
+    svg_.printParts(os, parts_);
+
+    os << "\"";
+
+    os << "/>" << std::endl;
+  }
+  else {
+    os << "glyph " << unicode_ << " " << name_ << "(";
+
+    svg_.printParts(os, parts_);
+
+    os << ")";
+  }
 }
 
 std::ostream &
 operator<<(std::ostream &os, const CSVGGlyph &glyph)
 {
-  glyph.print(os);
+  glyph.print(os, false);
 
   return os;
 }

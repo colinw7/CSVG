@@ -1,4 +1,5 @@
-#include <CSVGI.h>
+#include <CSVGClip.h>
+#include <CSVG.h>
 
 void
 CSVGClip::

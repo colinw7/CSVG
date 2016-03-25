@@ -1,10 +1,13 @@
-#include <CSVGI.h>
+#include <CSVGStyle.h>
+#include <CSVG.h>
+#include <CSVGStyleData.h>
+
 #include <CStrParse.h>
 #include <CCSS.h>
 
 CSVGStyle::
 CSVGStyle(CSVG &svg) :
- CSVGObject(svg), type_(STYLE_NONE)
+ CSVGObject(svg), type_(StyleType::NONE)
 {
 }
 
@@ -32,7 +35,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
 
   if (svg_.stringOption(opt_name, opt_value, "type", str)) {
     if (str == "text/css")
-      type_ = STYLE_TEXT_CSS;
+      type_ = StyleType::TEXT_CSS;
     else
       std::cerr << "Invalid type " << str << std::endl;
 
@@ -124,15 +127,21 @@ draw()
 
 void
 CSVGStyle::
-print(std::ostream &os) const
+print(std::ostream &os, bool hier) const
 {
-  os << "style";
+  if (hier) {
+    os << "<style>";
+    os << getText();
+    os << "</style>" << std::endl;
+  }
+  else
+    os << "style";
 }
 
 std::ostream &
 operator<<(std::ostream &os, const CSVGStyle &style)
 {
-  style.print(os);
+  style.print(os, false);
 
   return os;
 }

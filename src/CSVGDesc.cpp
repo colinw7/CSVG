@@ -1,8 +1,9 @@
-#include <CSVGI.h>
+#include <CSVGDesc.h>
+#include <CSVG.h>
 
 CSVGDesc::
 CSVGDesc(CSVG &svg) :
- CSVGObject(svg), text_()
+ CSVGObject(svg)
 {
 }
 
@@ -18,6 +19,13 @@ CSVGDesc::
 dup() const
 {
   return new CSVGDesc(*this);
+}
+
+void
+CSVGDesc::
+setText(const std::string &text)
+{
+  text_ = CStrUtil::stripSpaces(text);
 }
 
 /* Attributes:
@@ -39,15 +47,27 @@ draw()
 
 void
 CSVGDesc::
-print(std::ostream &os) const
+print(std::ostream &os, bool hier) const
 {
-  os << "desc";
+  if (hier) {
+    os << "<desc";
+
+    printNameValue(os, "id", id_);
+
+    os << ">";
+
+    os << getText();
+
+    os << "</desc>" << std::endl;
+  }
+  else
+    os << "desc";
 }
 
 std::ostream &
 operator<<(std::ostream &os, const CSVGDesc &desc)
 {
-  desc.print(os);
+  desc.print(os, false);
 
   return os;
 }

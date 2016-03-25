@@ -1,4 +1,5 @@
-#include <CSVGI.h>
+#include <CSVGFeDistantLight.h>
+#include <CSVG.h>
 
 CSVGFeDistantLight::
 CSVGFeDistantLight(CSVG &svg) :
@@ -43,15 +44,19 @@ draw()
 
 void
 CSVGFeDistantLight::
-print(std::ostream &os) const
+print(std::ostream &os, bool hier) const
 {
-  os << "feDistantLight ";
+  if (hier) {
+    os << "<feDistantLight/>" << std::endl;
+  }
+  else
+    os << "feDistantLight ";
 }
 
 std::ostream &
 operator<<(std::ostream &os, const CSVGFeDistantLight &fe)
 {
-  fe.print(os);
+  fe.print(os, false);
 
   return os;
 }

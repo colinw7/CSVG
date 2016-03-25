@@ -1,9 +1,9 @@
-#include <CSVGI.h>
+#include <CSVGDefs.h>
+#include <CSVG.h>
 
 CSVGDefs::
 CSVGDefs(CSVG &svg) :
- CSVGObject(svg),
- tokens_   ()
+ CSVGObject(svg)
 {
 }
 
@@ -46,15 +46,26 @@ draw()
 
 void
 CSVGDefs::
-print(std::ostream &os) const
+print(std::ostream &os, bool hier) const
 {
-  os << "defs";
+  if (hier) {
+    if (! objects_.empty()) {
+      os << "<defs>" << std::endl;
+
+      for (const auto &o : objects_)
+        o->print(os, hier);
+
+      os << "</defs>" << std::endl;
+    }
+  }
+  else
+    os << "defs";
 }
 
 std::ostream &
 operator<<(std::ostream &os, const CSVGDefs &defs)
 {
-  defs.print(os);
+  defs.print(os, false);
 
   return os;
 }

@@ -1,32 +1,44 @@
-class CSVGText : public CSVGObject {
- private:
-  CPoint2D    position_;
-  std::string text_;
+#ifndef CSVGText_H
+#define CSVGText_H
 
+#include <CSVGObject.h>
+
+class CSVGText : public CSVGObject {
  public:
-  CSVG_OBJECT_DEF("text", CSVG_OBJ_TYPE_TEXT)
+  CSVG_OBJECT_DEF("text", CSVGObjTypeId::TEXT)
 
   CSVGText(CSVG &svg);
   CSVGText(const CSVGText &text);
 
-  CSVGText *dup() const;
+  CSVGText *dup() const override;
 
-  const CPoint2D &getPosition() const { return position_; }
+  double getX() const { return x_.getValue(0); }
+  void setX(double x) { x_ = x; }
 
-  const std::string &getText() const { return text_; }
+  double getY() const { return y_.getValue(0); }
+  void setY(double y) { y_ = y; }
 
-  void setX(double x) { position_.x = x; }
-  void setY(double y) { position_.y = y; }
+  std::string getText() const override { return text_.getValue(""); }
+  void setText(const std::string &text) override;
 
-  void setText(const std::string &text) { text_ = text; }
+  CPoint2D getPosition() const { return CPoint2D(getX(), getY()); }
 
-  bool processOption(const std::string &name, const std::string &value);
+  bool hasFont() const override { return true; }
 
-  void draw();
+  bool processOption(const std::string &name, const std::string &value) override;
 
-  bool getBBox(CBBox2D &bbox) const;
+  void draw() override;
 
-  void print(std::ostream &os) const;
+  bool getBBox(CBBox2D &bbox) const override;
+
+  void print(std::ostream &os, bool hier) const override;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGText &text);
+
+ private:
+  COptValT<double>      x_;
+  COptValT<double>      y_;
+  COptValT<std::string> text_;
 };
+
+#endif

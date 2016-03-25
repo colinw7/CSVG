@@ -1,61 +1,68 @@
-#include <CSVGI.h>
+#include <CSVGObject.h>
+#include <CSVGFilter.h>
+#include <CSVGStop.h>
+#include <CSVGMask.h>
+#include <CSVGBuffer.h>
+#include <CSVG.h>
+#include <CSVGLog.h>
+#include <CSVGTempStroke.h>
+#include <CSVGTempFont.h>
+
 #include <CFontMgr.h>
 #include <CEncode64.h>
 #include <CRegExp.h>
+//#include <CFuncs.h>
+
+namespace {
+
+static uint s_ObjectInd;
+
+uint nextInd() {
+  ++s_ObjectInd;
+
+  return s_ObjectInd;
+}
+
+}
 
 CSVGObject::
 CSVGObject(CSVG &svg) :
- svg_            (svg),
- id_             (""),
- class_          (),
- parent_         (0),
- opacity_        (),
- stroke_         (svg),
- fill_           (svg),
- clip_           (svg),
- font_def_       (svg),
- text_anchor_    (),
- shape_rendering_(""),
- transform_      (),
- objects_        (),
- filter_         (0),
- mask_           (0),
- clip_path_      (0),
- marker_         (),
- view_box_       (),
- selected_       (false),
- xml_tag_        (0)
+ svg_    (svg),
+ ind_    (nextInd()),
+ stroke_ (svg),
+ fill_   (svg),
+ clip_   (svg),
+ fontDef_(svg)
 {
   transform_.setIdentity();
 }
 
 CSVGObject::
 CSVGObject(const CSVGObject &obj) :
- svg_            (obj.svg_),
- id_             (obj.id_),
- class_          (obj.class_),
- parent_         (obj.parent_),
- opacity_        (obj.opacity_),
- stroke_         (obj.stroke_),
- fill_           (obj.fill_),
- clip_           (obj.clip_),
- font_def_       (obj.font_def_),
- text_anchor_    (obj.text_anchor_),
- shape_rendering_(obj.shape_rendering_),
- transform_      (obj.transform_),
- objects_        (),
- filter_         (obj.filter_),
- mask_           (obj.mask_),
- clip_path_      (obj.clip_path_),
- marker_         (obj.marker_),
- view_box_       (obj.view_box_),
- selected_       (obj.selected_),
- xml_tag_        (obj.xml_tag_)
+ svg_           (obj.svg_),
+ id_            (obj.id_),
+ class_         (obj.class_),
+ parent_        (obj.parent_),
+ ind_           (nextInd()),
+ opacity_       (obj.opacity_),
+ stroke_        (obj.stroke_),
+ fill_          (obj.fill_),
+ clip_          (obj.clip_),
+ fontDef_       (obj.fontDef_),
+ textAnchor_    (obj.textAnchor_),
+ shapeRendering_(obj.shapeRendering_),
+ transform_     (obj.transform_),
+ objects_       (),
+ filter_        (obj.filter_),
+ mask_          (obj.mask_),
+ clipPath_      (obj.clipPath_),
+ marker_        (obj.marker_),
+ viewBox_       (obj.viewBox_),
+ selected_      (obj.selected_),
+ xmlTag_        (obj.xmlTag_)
 {
-  ObjectList::const_iterator po1, po2;
-
-  for (po1 = obj.objects_.begin(), po2 = obj.objects_.end(); po1 != po2; ++po1) {
-    CSVGObject *child = (*po1)->dup();
+  for (const auto &o : obj.children()) {
+    CSVGObject *child = o->dup();
 
     addChildObject(child);
   }
@@ -64,7 +71,8 @@ CSVGObject(const CSVGObject &obj) :
 CSVGObject::
 ~CSVGObject()
 {
-  for_each(objects_.begin(), objects_.end(), CDeletePointer());
+  for (auto &o : objects_)
+    delete o;
 }
 
 void
@@ -84,7 +92,7 @@ autoName()
 
   std::string typeName = getObjType().getName();
 
-  IdMap::iterator p = idMap.find(typeName);
+  auto p = idMap.find(typeName);
 
   if (p == idMap.end())
     p = idMap.insert(p, IdMap::value_type(typeName, 1));
@@ -107,9 +115,9 @@ setText(const std::string &str)
 
 void
 CSVGObject::
-setOpacity(const std::string &opacity_def)
+setOpacity(const std::string &opacityDef)
 {
-  double opacity = svg_.decodeOpacityString(opacity_def);
+  double opacity = svg_.decodeOpacityString(opacityDef);
 
   setOpacity(opacity);
 }
@@ -121,10 +129,8 @@ updateStroke(const CSVGStroke &stroke, bool recurse)
   stroke_.update(stroke);
 
   if (recurse) {
-    ObjectList::iterator p1, p2;
-
-    for (p1 = objects_.begin(), p2 = objects_.end(); p1 != p2; ++p1)
-      (*p1)->updateStroke(stroke, recurse);
+    for (auto &c : children())
+      c->updateStroke(stroke, recurse);
   }
 }
 
@@ -135,10 +141,8 @@ updateFill(const CSVGFill &fill, bool recurse)
   fill_.update(fill);
 
   if (recurse) {
-    ObjectList::iterator p1, p2;
-
-    for (p1 = objects_.begin(), p2 = objects_.end(); p1 != p2; ++p1)
-      (*p1)->updateFill(fill, recurse);
+    for (auto &c : children())
+      c->updateFill(fill, recurse);
   }
 }
 
@@ -397,13 +401,13 @@ std::string
 CSVGObject::
 getFontFamily() const
 {
-  if (font_def_.hasFamily())
-    return font_def_.getFamily();
+  if (fontDef_.hasFamily())
+    return fontDef_.getFamily();
 
   CSVGObject *parent = getParent();
 
   while (parent) {
-    if (parent->font_def_.hasFamily())
+    if (parent->fontDef_.hasFamily())
       return parent->getFontFamily();
 
     parent = parent->getParent();
@@ -416,13 +420,13 @@ CFontStyles
 CSVGObject::
 getFontStyle() const
 {
-  if (font_def_.hasStyle())
-    return font_def_.getStyle();
+  if (fontDef_.hasStyle())
+    return fontDef_.getStyle();
 
   CSVGObject *parent = getParent();
 
   while (parent) {
-    if (parent->font_def_.hasStyle())
+    if (parent->fontDef_.hasStyle())
       return parent->getFontStyle();
 
     parent = parent->getParent();
@@ -435,13 +439,13 @@ double
 CSVGObject::
 getFontSize() const
 {
-  if (font_def_.hasSize())
-    return font_def_.getSize();
+  if (fontDef_.hasSize())
+    return fontDef_.getSize();
 
   CSVGObject *parent = getParent();
 
   while (parent) {
-    if (parent->font_def_.hasSize())
+    if (parent->fontDef_.hasSize())
       return parent->getFontSize();
 
     parent = parent->getParent();
@@ -461,28 +465,35 @@ void
 CSVGObject::
 setFontFamily(const std::string &family)
 {
-  font_def_.setFamily(family);
+  fontDef_.setFamily(family);
 }
 
 void
 CSVGObject::
 setFontSize(double size)
 {
-  font_def_.setSize(size);
+  fontDef_.setSize(size);
+}
+
+void
+CSVGObject::
+setFontSize(const CSVGLengthValue &size)
+{
+  fontDef_.setSize(size);
 }
 
 void
 CSVGObject::
 setFontWeight(const std::string &weight)
 {
-  font_def_.setWeight(weight);
+  fontDef_.setWeight(weight);
 }
 
 void
 CSVGObject::
 setFontStyle(const std::string &style)
 {
-  font_def_.setStyle(style);
+  fontDef_.setStyle(style);
 }
 
 CMatrix2D
@@ -541,46 +552,43 @@ setStyle(const std::string &style)
 
 void
 CSVGObject::
-setSelected(bool selected, bool children)
+setSelected(bool selected, bool hier)
 {
   selected_ = selected;
 
-  if (children) {
-    ObjectList::iterator p1 = objects_.begin();
-    ObjectList::iterator p2 = objects_.end  ();
-
-    for ( ; p1 != p2; ++p1)
-      (*p1)->setSelected(selected, children);
+  if (hier) {
+    for (auto &c : children())
+      c->setSelected(selected, hier);
   }
 }
 
 bool
 CSVGObject::
-processOption(const std::string &opt_name, const std::string &opt_value)
+processOption(const std::string &optName, const std::string &optValue)
 {
-  if (processCoreOption           (opt_name, opt_value)) return true;
-  if (processConditionalOption    (opt_name, opt_value)) return true;
-  if (processStyleOption          (opt_name, opt_value)) return true;
-  if (processPaintOption          (opt_name, opt_value)) return true;
-  if (processColorOption          (opt_name, opt_value)) return true;
-  if (processOpacityOption        (opt_name, opt_value)) return true;
-  if (processGraphicsOption       (opt_name, opt_value)) return true;
-  if (processMarkerOption         (opt_name, opt_value)) return true;
-  if (processClipOption           (opt_name, opt_value)) return true;
-  if (processMaskOption           (opt_name, opt_value)) return true;
-  if (processFilterOption         (opt_name, opt_value)) return true;
-  if (processGradientOption       (opt_name, opt_value)) return true;
-  if (processGraphicalEventsOption(opt_name, opt_value)) return true;
-  if (processCursorOption         (opt_name, opt_value)) return true;
-  if (processExternalOption       (opt_name, opt_value)) return true;
-  if (processFontOption           (opt_name, opt_value)) return true;
-  if (processTextContentOption    (opt_name, opt_value)) return true;
+  if (processCoreOption           (optName, optValue)) return true;
+  if (processConditionalOption    (optName, optValue)) return true;
+  if (processStyleOption          (optName, optValue)) return true;
+  if (processPaintOption          (optName, optValue)) return true;
+  if (processColorOption          (optName, optValue)) return true;
+  if (processOpacityOption        (optName, optValue)) return true;
+  if (processGraphicsOption       (optName, optValue)) return true;
+  if (processMarkerOption         (optName, optValue)) return true;
+  if (processClipOption           (optName, optValue)) return true;
+  if (processMaskOption           (optName, optValue)) return true;
+  if (processFilterOption         (optName, optValue)) return true;
+  if (processGradientOption       (optName, optValue)) return true;
+  if (processGraphicalEventsOption(optName, optValue)) return true;
+  if (processCursorOption         (optName, optValue)) return true;
+  if (processExternalOption       (optName, optValue)) return true;
+  if (processFontOption           (optName, optValue)) return true;
+  if (processTextContentOption    (optName, optValue)) return true;
 
   std::string str;
   CBBox2D     bbox;
 
   // Other properties
-  if      (svg_.stringOption(opt_name, opt_value, "transform", str)) {
+  if      (svg_.stringOption(optName, optValue, "transform", str)) {
     CMatrix2D transform;
 
     if (! svg_.decodeTransform(str, transform))
@@ -589,21 +597,21 @@ processOption(const std::string &opt_name, const std::string &opt_value)
     setTransform(transform);
   }
 
-  else if (svg_.bboxOption(opt_name, opt_value, "viewBox", &bbox))
-    view_box_ = bbox;
+  else if (svg_.bboxOption(optName, optValue, "viewBox", &bbox))
+    viewBox_ = bbox;
 
   // xmlns
-  else if (CRegExpUtil::parse(opt_name, "xmlns:.*")) {
-    //notHandled(opt_name, opt_value);
+  else if (CRegExpUtil::parse(optName, "xmlns:.*")) {
+    //notHandled(optName, optValue);
   }
-  else if (CRegExpUtil::parse(opt_name, "sodipodi:.*")) {
-    //notHandled(opt_name, opt_value);
+  else if (CRegExpUtil::parse(optName, "sodipodi:.*")) {
+    //notHandled(optName, optValue);
   }
-  else if (CRegExpUtil::parse(opt_name, "inkscape:.*")) {
-    //notHandled(opt_name, opt_value);
+  else if (CRegExpUtil::parse(optName, "inkscape:.*")) {
+    //notHandled(optName, optValue);
   }
   else {
-    CSVGLog() << "Unhandled option " << opt_name << " for " << getObjName();
+    CSVGLog() << "Unhandled option " << optName << " for " << getObjName();
     return false;
   }
 
@@ -612,20 +620,20 @@ processOption(const std::string &opt_name, const std::string &opt_value)
 
 bool
 CSVGObject::
-processCoreOption(const std::string &opt_name, const std::string &opt_value)
+processCoreOption(const std::string &optName, const std::string &optValue)
 {
   std::string str;
 
   // Core Attributes
-  if      (svg_.stringOption(opt_name, opt_value, "id", str))
+  if      (svg_.stringOption(optName, optValue, "id", str))
     setId(str);
-  else if (svg_.stringOption(opt_name, opt_value, "class", str))
+  else if (svg_.stringOption(optName, optValue, "class", str))
     setClass(str);
-  else if (svg_.stringOption(opt_name, opt_value, "xml:base", str))
-    notHandled(opt_name, opt_value);
-  else if (svg_.stringOption(opt_name, opt_value, "xml:lang", str))
-    notHandled(opt_name, opt_value);
-  else if (svg_.stringOption(opt_name, opt_value, "xml:space", str))
+  else if (svg_.stringOption(optName, optValue, "xml:base", str))
+    notHandled(optName, optValue);
+  else if (svg_.stringOption(optName, optValue, "xml:lang", str))
+    notHandled(optName, optValue);
+  else if (svg_.stringOption(optName, optValue, "xml:space", str))
     /* default or preserve */;
   else
     return false;
@@ -635,17 +643,17 @@ processCoreOption(const std::string &opt_name, const std::string &opt_value)
 
 bool
 CSVGObject::
-processConditionalOption(const std::string &opt_name, const std::string &opt_value)
+processConditionalOption(const std::string &optName, const std::string &optValue)
 {
   std::string str;
 
   // Conditional Attributes
-  if      (svg_.stringOption(opt_name, opt_value, "requiredFeatures", str))
+  if      (svg_.stringOption(optName, optValue, "requiredFeatures", str))
     setId(str);
-  else if (svg_.stringOption(opt_name, opt_value, "requiredExtensions", str))
-    notHandled(opt_name, opt_value);
-  else if (svg_.stringOption(opt_name, opt_value, "systemLanguage", str))
-    notHandled(opt_name, opt_value);
+  else if (svg_.stringOption(optName, optValue, "requiredExtensions", str))
+    notHandled(optName, optValue);
+  else if (svg_.stringOption(optName, optValue, "systemLanguage", str))
+    notHandled(optName, optValue);
   else
     return false;
 
@@ -654,15 +662,15 @@ processConditionalOption(const std::string &opt_name, const std::string &opt_val
 
 bool
 CSVGObject::
-processStyleOption(const std::string &opt_name, const std::string &opt_value)
+processStyleOption(const std::string &optName, const std::string &optValue)
 {
   std::string str;
 
   // Style Attributes
-  if      (svg_.stringOption(opt_name, opt_value, "style", str))
+  if      (svg_.stringOption(optName, optValue, "style", str))
     setStyle(str);
-  else if (svg_.stringOption(opt_name, opt_value, "class", str))
-    notHandled(opt_name, opt_value);
+  else if (svg_.stringOption(optName, optValue, "class", str))
+    notHandled(optName, optValue);
   else
     return false;
 
@@ -671,34 +679,34 @@ processStyleOption(const std::string &opt_name, const std::string &opt_value)
 
 bool
 CSVGObject::
-processPaintOption(const std::string &opt_name, const std::string &opt_value)
+processPaintOption(const std::string &optName, const std::string &optValue)
 {
   std::string str;
 
   // Paint Attributes
-  if      (svg_.stringOption(opt_name, opt_value, "fill", str))
+  if      (svg_.stringOption(optName, optValue, "fill", str))
     setFillColor(str);
-  else if (svg_.stringOption(opt_name, opt_value, "fill-rule", str))
+  else if (svg_.stringOption(optName, optValue, "fill-rule", str))
     setFillRule(str);
-  else if (svg_.stringOption(opt_name, opt_value, "stroke", str))
+  else if (svg_.stringOption(optName, optValue, "stroke", str))
     setStrokeColor(str);
-  else if (svg_.stringOption(opt_name, opt_value, "stroke-dasharray", str))
+  else if (svg_.stringOption(optName, optValue, "stroke-dasharray", str))
     setStrokeDash(str);
-  else if (svg_.stringOption(opt_name, opt_value, "stroke-dashoffset", str))
+  else if (svg_.stringOption(optName, optValue, "stroke-dashoffset", str))
     setStrokeDashOffset(str);
-  else if (svg_.stringOption(opt_name, opt_value, "stroke-linecap", str))
+  else if (svg_.stringOption(optName, optValue, "stroke-linecap", str))
     setStrokeLineCap(str);
-  else if (svg_.stringOption(opt_name, opt_value, "stroke-linejoin", str))
+  else if (svg_.stringOption(optName, optValue, "stroke-linejoin", str))
     setStrokeLineJoin(str);
-  else if (svg_.stringOption(opt_name, opt_value, "stroke-miterlimit", str))
+  else if (svg_.stringOption(optName, optValue, "stroke-miterlimit", str))
     setStrokeMitreLimit(str);
-  else if (svg_.stringOption(opt_name, opt_value, "stroke-width", str))
+  else if (svg_.stringOption(optName, optValue, "stroke-width", str))
     setStrokeWidth(str);
-  else if (svg_.stringOption(opt_name, opt_value, "overflow", str))
+  else if (svg_.stringOption(optName, optValue, "overflow", str))
     ;
-  else if (svg_.stringOption(opt_name, opt_value, "visibility", str))
+  else if (svg_.stringOption(optName, optValue, "visibility", str))
     ;
-  else if (svg_.stringOption(opt_name, opt_value, "display", str))
+  else if (svg_.stringOption(optName, optValue, "display", str))
     ;
   else
     return false;
@@ -708,17 +716,17 @@ processPaintOption(const std::string &opt_name, const std::string &opt_value)
 
 bool
 CSVGObject::
-processColorOption(const std::string &opt_name, const std::string &opt_value)
+processColorOption(const std::string &optName, const std::string &optValue)
 {
   std::string str;
 
   // Color Attributes
-  if      (svg_.stringOption(opt_name, opt_value, "color", str))
-    notHandled(opt_name, opt_value);
-  else if (svg_.stringOption(opt_name, opt_value, "color-interpolation", str))
-    notHandled(opt_name, opt_value);
-  else if (svg_.stringOption(opt_name, opt_value, "color-rendering", str))
-    notHandled(opt_name, opt_value);
+  if      (svg_.stringOption(optName, optValue, "color", str))
+    notHandled(optName, optValue);
+  else if (svg_.stringOption(optName, optValue, "color-interpolation", str))
+    notHandled(optName, optValue);
+  else if (svg_.stringOption(optName, optValue, "color-rendering", str))
+    notHandled(optName, optValue);
   else
     return false;
 
@@ -727,13 +735,13 @@ processColorOption(const std::string &opt_name, const std::string &opt_value)
 
 bool
 CSVGObject::
-processColorProfileOption(const std::string &opt_name, const std::string &opt_value)
+processColorProfileOption(const std::string &optName, const std::string &optValue)
 {
   std::string str;
 
   // Color Profile
-  if (svg_.stringOption(opt_name, opt_value, "color-profile", str))
-    notHandled(opt_name, opt_value);
+  if (svg_.stringOption(optName, optValue, "color-profile", str))
+    notHandled(optName, optValue);
   else
     return false;
 
@@ -742,13 +750,13 @@ processColorProfileOption(const std::string &opt_name, const std::string &opt_va
 
 bool
 CSVGObject::
-processFilterColorOption(const std::string &opt_name, const std::string &opt_value)
+processFilterColorOption(const std::string &optName, const std::string &optValue)
 {
   std::string str;
 
   // Filter Color
-  if (svg_.stringOption(opt_name, opt_value, "color-interpolation-filters", str))
-    notHandled(opt_name, opt_value);
+  if (svg_.stringOption(optName, optValue, "color-interpolation-filters", str))
+    notHandled(optName, optValue);
   else
     return false;
 
@@ -757,16 +765,16 @@ processFilterColorOption(const std::string &opt_name, const std::string &opt_val
 
 bool
 CSVGObject::
-processOpacityOption(const std::string &opt_name, const std::string &opt_value)
+processOpacityOption(const std::string &optName, const std::string &optValue)
 {
   std::string str;
 
   // Opacity Attributes
-  if      (svg_.stringOption(opt_name, opt_value, "opacity", str))
+  if      (svg_.stringOption(optName, optValue, "opacity", str))
     setOpacity(str);
-  else if (svg_.stringOption(opt_name, opt_value, "fill-opacity", str))
+  else if (svg_.stringOption(optName, optValue, "fill-opacity", str))
     setFillOpacity(str);
-  else if (svg_.stringOption(opt_name, opt_value, "stroke-opacity", str))
+  else if (svg_.stringOption(optName, optValue, "stroke-opacity", str))
     setStrokeOpacity(str);
   else
     return false;
@@ -776,35 +784,35 @@ processOpacityOption(const std::string &opt_name, const std::string &opt_value)
 
 bool
 CSVGObject::
-processGraphicsOption(const std::string &opt_name, const std::string &opt_value)
+processGraphicsOption(const std::string &optName, const std::string &optValue)
 {
   std::string str;
 
   // Graphics Attributes
-  if      (svg_.stringOption(opt_name, opt_value, "display", str))
+  if      (svg_.stringOption(optName, optValue, "display", str))
     // inline | block | list-item | run-in | compact | marker |
     // table | inline-table | table-row-group | table-header-group |
     // table-footer-group | table-row | table-column-group |
     // table-column | table-cell | table-caption | none | inherit
-    notHandled(opt_name, opt_value);
-  else if (svg_.stringOption(opt_name, opt_value, "image-rendering", str))
+    notHandled(optName, optValue);
+  else if (svg_.stringOption(optName, optValue, "image-rendering", str))
     // auto | optimizeSpeed | optimizeQuality | inherit
-    notHandled(opt_name, opt_value);
-  else if (svg_.stringOption(opt_name, opt_value, "pointer-events", str))
+    notHandled(optName, optValue);
+  else if (svg_.stringOption(optName, optValue, "pointer-events", str))
     // visiblePainted | visibleFill | visibleStroke | visible |
     // painted | fill | stroke | all | none | inherit
-    notHandled(opt_name, opt_value);
-  else if (svg_.stringOption(opt_name, opt_value, "shape-rendering", str))
+    notHandled(optName, optValue);
+  else if (svg_.stringOption(optName, optValue, "shape-rendering", str))
     // auto | optimizeSpeed | crispEdges | geometricPrecision |
     // inherit
     setShapeRendering(str);
-  else if (svg_.stringOption(opt_name, opt_value, "text-renderer", str))
+  else if (svg_.stringOption(optName, optValue, "text-renderer", str))
     // auto | optimizeSpeed | optimizeLegibility |
     // geometricPrecision | inherit
-    notHandled(opt_name, opt_value);
-  else if (svg_.stringOption(opt_name, opt_value, "visibility", str))
+    notHandled(optName, optValue);
+  else if (svg_.stringOption(optName, optValue, "visibility", str))
     // visible | hidden | inherit
-    notHandled(opt_name, opt_value);
+    notHandled(optName, optValue);
   else
     return false;
 
@@ -813,31 +821,31 @@ processGraphicsOption(const std::string &opt_name, const std::string &opt_value)
 
 bool
 CSVGObject::
-processMarkerOption(const std::string &opt_name, const std::string &opt_value)
+processMarkerOption(const std::string &optName, const std::string &optValue)
 {
   std::string str;
 
   // Marker
-  if      (svg_.stringOption(opt_name, opt_value, "marker", str)) {
+  if      (svg_.stringOption(optName, optValue, "marker", str)) {
     if (str != "none") {
-      if (! svg_.decodeUrlObject(opt_value, &marker_.start))
-        CSVGLog() << "Unknown marker start " << opt_value << " for " << getObjName();
+      if (! svg_.decodeUrlObject(optValue, &marker_.start))
+        CSVGLog() << "Unknown marker start " << optValue << " for " << getObjName();
 
       marker_.mid = marker_.start;
       marker_.end = marker_.start;
     }
   }
-  else if (svg_.stringOption(opt_name, opt_value, "marker-start", str)) {
-    if (! svg_.decodeUrlObject(opt_value, &marker_.start))
-      CSVGLog() << "Unknown marker start " << opt_value << " for " << getObjName();
+  else if (svg_.stringOption(optName, optValue, "marker-start", str)) {
+    if (! svg_.decodeUrlObject(optValue, &marker_.start))
+      CSVGLog() << "Unknown marker start " << optValue << " for " << getObjName();
   }
-  else if (svg_.stringOption(opt_name, opt_value, "marker-mid", str)) {
-    if (! svg_.decodeUrlObject(opt_value, &marker_.mid))
-      CSVGLog() << "Unknown marker mid " << opt_value << " for " << getObjName();
+  else if (svg_.stringOption(optName, optValue, "marker-mid", str)) {
+    if (! svg_.decodeUrlObject(optValue, &marker_.mid))
+      CSVGLog() << "Unknown marker mid " << optValue << " for " << getObjName();
   }
-  else if (svg_.stringOption(opt_name, opt_value, "marker-end", str)) {
-    if (! svg_.decodeUrlObject(opt_value, &marker_.end))
-      CSVGLog() << "Unknown marker end " << opt_value << " for " << getObjName();
+  else if (svg_.stringOption(optName, optValue, "marker-end", str)) {
+    if (! svg_.decodeUrlObject(optValue, &marker_.end))
+      CSVGLog() << "Unknown marker end " << optValue << " for " << getObjName();
   }
   else
     return false;
@@ -847,15 +855,15 @@ processMarkerOption(const std::string &opt_name, const std::string &opt_value)
 
 bool
 CSVGObject::
-processClipOption(const std::string &opt_name, const std::string &opt_value)
+processClipOption(const std::string &optName, const std::string &optValue)
 {
   std::string str;
 
-  if      (svg_.stringOption(opt_name, opt_value, "clip-path", str)) {
-    if (! svg_.decodeUrlObject(opt_value, &clip_path_))
-      CSVGLog() << "Unknown clip path " << opt_value << " for " << getObjName();
+  if      (svg_.stringOption(optName, optValue, "clip-path", str)) {
+    if (! svg_.decodeUrlObject(optValue, &clipPath_))
+      CSVGLog() << "Unknown clip path " << optValue << " for " << getObjName();
   }
-  else if (svg_.stringOption(opt_name, opt_value, "clip-rule", str)) {
+  else if (svg_.stringOption(optName, optValue, "clip-rule", str)) {
     setClipRule(str);
   }
   else
@@ -866,35 +874,35 @@ processClipOption(const std::string &opt_name, const std::string &opt_value)
 
 bool
 CSVGObject::
-processPresentationOption(const std::string &opt_name, const std::string &opt_value)
+processPresentationOption(const std::string &optName, const std::string &optValue)
 {
   std::string str;
 
-  if (processContainerOption   (opt_name, opt_value)) return true;
-  if (processViewportOption    (opt_name, opt_value)) return true;
-  if (processTextOption        (opt_name, opt_value)) return true;
-  if (processTextContentOption (opt_name, opt_value)) return true;
-  if (processFontOption        (opt_name, opt_value)) return true;
-  if (processPaintOption       (opt_name, opt_value)) return true;
-  if (processColorOption       (opt_name, opt_value)) return true;
-  if (processOpacityOption     (opt_name, opt_value)) return true;
-  if (processGraphicsOption    (opt_name, opt_value)) return true;
-  if (processMarkerOption      (opt_name, opt_value)) return true;
-  if (processColorProfileOption(opt_name, opt_value)) return true;
-  if (processGradientOption    (opt_name, opt_value)) return true;
-  if (processClipOption        (opt_name, opt_value)) return true;
-  if (processMaskOption        (opt_name, opt_value)) return true;
-  if (processFilterOption      (opt_name, opt_value)) return true;
-  if (processFilterColorOption (opt_name, opt_value)) return true;
-  if (processCursorOption      (opt_name, opt_value)) return true;
+  if (processContainerOption   (optName, optValue)) return true;
+  if (processViewportOption    (optName, optValue)) return true;
+  if (processTextOption        (optName, optValue)) return true;
+  if (processTextContentOption (optName, optValue)) return true;
+  if (processFontOption        (optName, optValue)) return true;
+  if (processPaintOption       (optName, optValue)) return true;
+  if (processColorOption       (optName, optValue)) return true;
+  if (processOpacityOption     (optName, optValue)) return true;
+  if (processGraphicsOption    (optName, optValue)) return true;
+  if (processMarkerOption      (optName, optValue)) return true;
+  if (processColorProfileOption(optName, optValue)) return true;
+  if (processGradientOption    (optName, optValue)) return true;
+  if (processClipOption        (optName, optValue)) return true;
+  if (processMaskOption        (optName, optValue)) return true;
+  if (processFilterOption      (optName, optValue)) return true;
+  if (processFilterColorOption (optName, optValue)) return true;
+  if (processCursorOption      (optName, optValue)) return true;
 
   // Presentation
-  if      (svg_.stringOption(opt_name, opt_value, "flood-color", str))
-    notHandled(opt_name, opt_value);
-  else if (svg_.stringOption(opt_name, opt_value, "flood-opacity", str))
-    notHandled(opt_name, opt_value);
-  else if (svg_.stringOption(opt_name, opt_value, "lighting-color", str))
-    notHandled(opt_name, opt_value);
+  if      (svg_.stringOption(optName, optValue, "flood-color", str))
+    notHandled(optName, optValue);
+  else if (svg_.stringOption(optName, optValue, "flood-opacity", str))
+    notHandled(optName, optValue);
+  else if (svg_.stringOption(optName, optValue, "lighting-color", str))
+    notHandled(optName, optValue);
   else
     return false;
 
@@ -903,13 +911,13 @@ processPresentationOption(const std::string &opt_name, const std::string &opt_va
 
 bool
 CSVGObject::
-processMaskOption(const std::string &opt_name, const std::string &opt_value)
+processMaskOption(const std::string &optName, const std::string &optValue)
 {
   std::string str;
 
-  if (svg_.stringOption(opt_name, opt_value, "mask", str)) {
-    if (! svg_.decodeUrlObject(opt_value, &mask_))
-      CSVGLog() << "Unknown mask " << opt_value << " for " << getObjName();
+  if (svg_.stringOption(optName, optValue, "mask", str)) {
+    if (! svg_.decodeUrlObject(optValue, &mask_))
+      CSVGLog() << "Unknown mask " << optValue << " for " << getObjName();
   }
   else
     return false;
@@ -919,16 +927,16 @@ processMaskOption(const std::string &opt_name, const std::string &opt_value)
 
 bool
 CSVGObject::
-processFilterOption(const std::string &opt_name, const std::string &opt_value)
+processFilterOption(const std::string &optName, const std::string &optValue)
 {
   std::string str;
 
   // Filter Attributes
-  if (svg_.stringOption(opt_name, opt_value, "filter", str)) {
+  if (svg_.stringOption(optName, optValue, "filter", str)) {
     CSVGObject *object;
 
-    if (! svg_.decodeUrlObject(opt_value, &object))
-      CSVGLog() << "Unknown filter " << opt_value << " for " << getObjName();
+    if (! svg_.decodeUrlObject(optValue, &object))
+      CSVGLog() << "Unknown filter " << optValue << " for " << getObjName();
 
     filter_ = dynamic_cast<CSVGFilter *>(object);
   }
@@ -940,14 +948,14 @@ processFilterOption(const std::string &opt_name, const std::string &opt_value)
 
 bool
 CSVGObject::
-processViewportOption(const std::string &opt_name, const std::string &opt_value)
+processViewportOption(const std::string &optName, const std::string &optValue)
 {
   std::string str;
 
-  if      (svg_.stringOption(opt_name, opt_value, "clip", str))
-    notHandled(opt_name, opt_value);
-  else if (svg_.stringOption(opt_name, opt_value, "overflow", str))
-    notHandled(opt_name, opt_value);
+  if      (svg_.stringOption(optName, optValue, "clip", str))
+    notHandled(optName, optValue);
+  else if (svg_.stringOption(optName, optValue, "overflow", str))
+    notHandled(optName, optValue);
   else
     return false;
 
@@ -956,26 +964,26 @@ processViewportOption(const std::string &opt_name, const std::string &opt_value)
 
 bool
 CSVGObject::
-processGradientOption(const std::string &opt_name, const std::string &opt_value)
+processGradientOption(const std::string &optName, const std::string &optValue)
 {
   std::string str;
 
   // Gradient Properties
-  if      (svg_.stringOption(opt_name, opt_value, "stop-color", str)) {
+  if      (svg_.stringOption(optName, optValue, "stop-color", str)) {
     CSVGStop *stop = dynamic_cast<CSVGStop *>(this);
 
     if (stop != 0)
-      stop->processOption(opt_name, opt_value);
+      stop->processOption(optName, optValue);
     else
-      notHandled(opt_name, opt_value);
+      notHandled(optName, optValue);
   }
-  else if (svg_.stringOption(opt_name, opt_value, "stop-opacity", str)) {
+  else if (svg_.stringOption(optName, optValue, "stop-opacity", str)) {
     CSVGStop *stop = dynamic_cast<CSVGStop *>(this);
 
     if (stop != 0)
-      stop->processOption(opt_name, opt_value);
+      stop->processOption(optName, optValue);
     else
-      notHandled(opt_name, opt_value);
+      notHandled(optName, optValue);
   }
   else
     return false;
@@ -985,13 +993,13 @@ processGradientOption(const std::string &opt_name, const std::string &opt_value)
 
 bool
 CSVGObject::
-processContainerOption(const std::string &opt_name, const std::string &opt_value)
+processContainerOption(const std::string &optName, const std::string &optValue)
 {
   std::string str;
 
   // Container Properties
-  if (svg_.stringOption(opt_name, opt_value, "enable-background", str))
-    notHandled(opt_name, opt_value);
+  if (svg_.stringOption(optName, optValue, "enable-background", str))
+    notHandled(optName, optValue);
   else
     return false;
 
@@ -1000,30 +1008,30 @@ processContainerOption(const std::string &opt_name, const std::string &opt_value
 
 bool
 CSVGObject::
-processGraphicalEventsOption(const std::string &opt_name, const std::string &opt_value)
+processGraphicalEventsOption(const std::string &optName, const std::string &optValue)
 {
   std::string str;
 
-  if      (svg_.stringOption(opt_name, opt_value, "onfocusin", str))
-    notHandled(opt_name, opt_value);
-  else if (svg_.stringOption(opt_name, opt_value, "onfocusout", str))
-    notHandled(opt_name, opt_value);
-  else if (svg_.stringOption(opt_name, opt_value, "onactivate", str))
-    notHandled(opt_name, opt_value);
-  else if (svg_.stringOption(opt_name, opt_value, "onclick", str))
-    notHandled(opt_name, opt_value);
-  else if (svg_.stringOption(opt_name, opt_value, "onmousedown", str))
-    notHandled(opt_name, opt_value);
-  else if (svg_.stringOption(opt_name, opt_value, "onmouseup", str))
-    notHandled(opt_name, opt_value);
-  else if (svg_.stringOption(opt_name, opt_value, "onmouseover", str))
-    notHandled(opt_name, opt_value);
-  else if (svg_.stringOption(opt_name, opt_value, "onmousemove", str))
-    notHandled(opt_name, opt_value);
-  else if (svg_.stringOption(opt_name, opt_value, "onmouseout", str))
-    notHandled(opt_name, opt_value);
-  else if (svg_.stringOption(opt_name, opt_value, "onload", str))
-    notHandled(opt_name, opt_value);
+  if      (svg_.stringOption(optName, optValue, "onfocusin", str))
+    notHandled(optName, optValue);
+  else if (svg_.stringOption(optName, optValue, "onfocusout", str))
+    notHandled(optName, optValue);
+  else if (svg_.stringOption(optName, optValue, "onactivate", str))
+    notHandled(optName, optValue);
+  else if (svg_.stringOption(optName, optValue, "onclick", str))
+    notHandled(optName, optValue);
+  else if (svg_.stringOption(optName, optValue, "onmousedown", str))
+    notHandled(optName, optValue);
+  else if (svg_.stringOption(optName, optValue, "onmouseup", str))
+    notHandled(optName, optValue);
+  else if (svg_.stringOption(optName, optValue, "onmouseover", str))
+    notHandled(optName, optValue);
+  else if (svg_.stringOption(optName, optValue, "onmousemove", str))
+    notHandled(optName, optValue);
+  else if (svg_.stringOption(optName, optValue, "onmouseout", str))
+    notHandled(optName, optValue);
+  else if (svg_.stringOption(optName, optValue, "onload", str))
+    notHandled(optName, optValue);
   else
     return false;
 
@@ -1032,22 +1040,22 @@ processGraphicalEventsOption(const std::string &opt_name, const std::string &opt
 
 bool
 CSVGObject::
-processDocumentEventsOption(const std::string &opt_name, const std::string &opt_value)
+processDocumentEventsOption(const std::string &optName, const std::string &optValue)
 {
   std::string str;
 
-  if      (svg_.stringOption(opt_name, opt_value, "onunload", str))
-    notHandled(opt_name, opt_value);
-  else if (svg_.stringOption(opt_name, opt_value, "onabort", str))
-    notHandled(opt_name, opt_value);
-  else if (svg_.stringOption(opt_name, opt_value, "onerror", str))
-    notHandled(opt_name, opt_value);
-  else if (svg_.stringOption(opt_name, opt_value, "onresize", str))
-    notHandled(opt_name, opt_value);
-  else if (svg_.stringOption(opt_name, opt_value, "onscroll", str))
-    notHandled(opt_name, opt_value);
-  else if (svg_.stringOption(opt_name, opt_value, "onzoom", str))
-    notHandled(opt_name, opt_value);
+  if      (svg_.stringOption(optName, optValue, "onunload", str))
+    notHandled(optName, optValue);
+  else if (svg_.stringOption(optName, optValue, "onabort", str))
+    notHandled(optName, optValue);
+  else if (svg_.stringOption(optName, optValue, "onerror", str))
+    notHandled(optName, optValue);
+  else if (svg_.stringOption(optName, optValue, "onresize", str))
+    notHandled(optName, optValue);
+  else if (svg_.stringOption(optName, optValue, "onscroll", str))
+    notHandled(optName, optValue);
+  else if (svg_.stringOption(optName, optValue, "onzoom", str))
+    notHandled(optName, optValue);
   else
     return false;
 
@@ -1056,18 +1064,18 @@ processDocumentEventsOption(const std::string &opt_name, const std::string &opt_
 
 bool
 CSVGObject::
-processAnimationEventsOption(const std::string &opt_name, const std::string &opt_value)
+processAnimationEventsOption(const std::string &optName, const std::string &optValue)
 {
   std::string str;
 
-  if      (svg_.stringOption(opt_name, opt_value, "onbegin", str))
-    notHandled(opt_name, opt_value);
-  else if (svg_.stringOption(opt_name, opt_value, "onend", str))
-    notHandled(opt_name, opt_value);
-  else if (svg_.stringOption(opt_name, opt_value, "onrepeat", str))
-    notHandled(opt_name, opt_value);
-  else if (svg_.stringOption(opt_name, opt_value, "onload", str))
-    notHandled(opt_name, opt_value);
+  if      (svg_.stringOption(optName, optValue, "onbegin", str))
+    notHandled(optName, optValue);
+  else if (svg_.stringOption(optName, optValue, "onend", str))
+    notHandled(optName, optValue);
+  else if (svg_.stringOption(optName, optValue, "onrepeat", str))
+    notHandled(optName, optValue);
+  else if (svg_.stringOption(optName, optValue, "onload", str))
+    notHandled(optName, optValue);
   else
     return false;
 
@@ -1076,12 +1084,12 @@ processAnimationEventsOption(const std::string &opt_name, const std::string &opt
 
 bool
 CSVGObject::
-processCursorOption(const std::string &opt_name, const std::string &opt_value)
+processCursorOption(const std::string &optName, const std::string &optValue)
 {
   std::string str;
 
-  if (svg_.stringOption(opt_name, opt_value, "cursor", str))
-    notHandled(opt_name, opt_value);
+  if (svg_.stringOption(optName, optValue, "cursor", str))
+    notHandled(optName, optValue);
   else
     return false;
 
@@ -1090,12 +1098,12 @@ processCursorOption(const std::string &opt_name, const std::string &opt_value)
 
 bool
 CSVGObject::
-processExternalOption(const std::string &opt_name, const std::string &opt_value)
+processExternalOption(const std::string &optName, const std::string &optValue)
 {
   std::string str;
 
-  if (svg_.stringOption(opt_name, opt_value, "externalResourcesRequired", str))
-    notHandled(opt_name, opt_value);
+  if (svg_.stringOption(optName, optValue, "externalResourcesRequired", str))
+    notHandled(optName, optValue);
   else
     return false;
 
@@ -1104,31 +1112,33 @@ processExternalOption(const std::string &opt_name, const std::string &opt_value)
 
 bool
 CSVGObject::
-processFontOption(const std::string &opt_name, const std::string &opt_value)
+processFontOption(const std::string &optName, const std::string &optValue)
 {
   std::string str;
 
-  if      (svg_.stringOption(opt_name, opt_value, "font", str))
-    notHandled(opt_name, opt_value); //setFont(str)
+  if      (svg_.stringOption(optName, optValue, "font", str))
+    notHandled(optName, optValue); //setFont(str)
 
   // Font properties
-  if      (svg_.stringOption(opt_name, opt_value, "font-family", str))
+  if      (svg_.stringOption(optName, optValue, "font-family", str))
     setFontFamily(str);
-  else if (svg_.stringOption(opt_name, opt_value, "font-size", str)) {
-    double size;
+  else if (svg_.stringOption(optName, optValue, "font-size", str)) {
+    CSVGLengthValue lvalue;
 
-    if (svg_.lengthToReal(str, &size))
-      setFontSize(size);
+    if (! svg_.decodeLengthValue(str, lvalue))
+      return false;
+
+    setFontSize(lvalue);
   }
-  else if (svg_.stringOption(opt_name, opt_value, "font-size-adjust", str))
-    notHandled(opt_name, opt_value); //setFontSizeAdjust(str)
-  else if (svg_.stringOption(opt_name, opt_value, "font-stretch", str))
-    notHandled(opt_name, opt_value); //setFontStretch(str)
-  else if (svg_.stringOption(opt_name, opt_value, "font-style", str))
+  else if (svg_.stringOption(optName, optValue, "font-size-adjust", str))
+    notHandled(optName, optValue); //setFontSizeAdjust(str)
+  else if (svg_.stringOption(optName, optValue, "font-stretch", str))
+    notHandled(optName, optValue); //setFontStretch(str)
+  else if (svg_.stringOption(optName, optValue, "font-style", str))
     setFontStyle(str);
-  else if (svg_.stringOption(opt_name, opt_value, "font-variant", str))
-    notHandled(opt_name, opt_value); //setFontVariant(str)
-  else if (svg_.stringOption(opt_name, opt_value, "font-weight", str))
+  else if (svg_.stringOption(optName, optValue, "font-variant", str))
+    notHandled(optName, optValue); //setFontVariant(str)
+  else if (svg_.stringOption(optName, optValue, "font-weight", str))
     setFontWeight(str);
   else
     return false;
@@ -1138,13 +1148,13 @@ processFontOption(const std::string &opt_name, const std::string &opt_value)
 
 bool
 CSVGObject::
-processTextOption(const std::string &opt_name, const std::string &opt_value)
+processTextOption(const std::string &optName, const std::string &optValue)
 {
   std::string str;
 
   // Text properties
-  if (svg_.stringOption(opt_name, opt_value, "writing-mode", str))
-    notHandled(opt_name, opt_value);
+  if (svg_.stringOption(optName, optValue, "writing-mode", str))
+    notHandled(optName, optValue);
   else
     return false;
 
@@ -1153,35 +1163,35 @@ processTextOption(const std::string &opt_name, const std::string &opt_value)
 
 bool
 CSVGObject::
-processTextContentOption(const std::string &opt_name, const std::string &opt_value)
+processTextContentOption(const std::string &optName, const std::string &optValue)
 {
   std::string str;
 
   // Text content propeties
-  if      (svg_.stringOption(opt_name, opt_value, "alignment-baseline", str))
-    notHandled(opt_name, opt_value);
-  else if (svg_.stringOption(opt_name, opt_value, "baseline-shift", str))
-    notHandled(opt_name, opt_value);
-  else if (svg_.stringOption(opt_name, opt_value, "direction", str))
-    notHandled(opt_name, opt_value);
-  else if (svg_.stringOption(opt_name, opt_value, "dominant-baseline", str))
-    notHandled(opt_name, opt_value);
-  else if (svg_.stringOption(opt_name, opt_value, "glyph-orientation-horizontal", str))
-    notHandled(opt_name, opt_value);
-  else if (svg_.stringOption(opt_name, opt_value, "glyph-orientation-vertical", str))
-    notHandled(opt_name, opt_value);
-  else if (svg_.stringOption(opt_name, opt_value, "kerning", str))
-    notHandled(opt_name, opt_value);
-  else if (svg_.stringOption(opt_name, opt_value, "letter-spacing", str))
-    notHandled(opt_name, opt_value);
-  else if (svg_.stringOption(opt_name, opt_value, "text-anchor", str))
+  if      (svg_.stringOption(optName, optValue, "alignment-baseline", str))
+    notHandled(optName, optValue);
+  else if (svg_.stringOption(optName, optValue, "baseline-shift", str))
+    notHandled(optName, optValue);
+  else if (svg_.stringOption(optName, optValue, "direction", str))
+    notHandled(optName, optValue);
+  else if (svg_.stringOption(optName, optValue, "dominant-baseline", str))
+    notHandled(optName, optValue);
+  else if (svg_.stringOption(optName, optValue, "glyph-orientation-horizontal", str))
+    notHandled(optName, optValue);
+  else if (svg_.stringOption(optName, optValue, "glyph-orientation-vertical", str))
+    notHandled(optName, optValue);
+  else if (svg_.stringOption(optName, optValue, "kerning", str))
+    notHandled(optName, optValue);
+  else if (svg_.stringOption(optName, optValue, "letter-spacing", str))
+    notHandled(optName, optValue);
+  else if (svg_.stringOption(optName, optValue, "text-anchor", str))
     setTextAnchor(str);
-  else if (svg_.stringOption(opt_name, opt_value, "text-decoration", str))
-    notHandled(opt_name, opt_value);
-  else if (svg_.stringOption(opt_name, opt_value, "unicode-bidi", str))
-    notHandled(opt_name, opt_value);
-  else if (svg_.stringOption(opt_name, opt_value, "word-spacing", str))
-    notHandled(opt_name, opt_value);
+  else if (svg_.stringOption(optName, optValue, "text-decoration", str))
+    notHandled(optName, optValue);
+  else if (svg_.stringOption(optName, optValue, "unicode-bidi", str))
+    notHandled(optName, optValue);
+  else if (svg_.stringOption(optName, optValue, "word-spacing", str))
+    notHandled(optName, optValue);
   else
     return false;
 
@@ -1190,9 +1200,9 @@ processTextContentOption(const std::string &opt_name, const std::string &opt_val
 
 void
 CSVGObject::
-notHandled(const std::string &opt_name, const std::string &opt_value)
+notHandled(const std::string &optName, const std::string &optValue)
 {
-  CSVGLog() << "Option " << opt_name << ":" << opt_value << " not handled " <<
+  CSVGLog() << "Option " << optName << ":" << optValue << " not handled " <<
                "for " << getObjName();
 }
 
@@ -1200,9 +1210,9 @@ void
 CSVGObject::
 setTextAnchor(const std::string &anchor)
 {
-  if      (anchor == "start" ) text_anchor_ = CHALIGN_TYPE_LEFT;
-  else if (anchor == "middle") text_anchor_ = CHALIGN_TYPE_CENTER;
-  else if (anchor == "end"   ) text_anchor_ = CHALIGN_TYPE_RIGHT;
+  if      (anchor == "start" ) textAnchor_ = CHALIGN_TYPE_LEFT;
+  else if (anchor == "middle") textAnchor_ = CHALIGN_TYPE_CENTER;
+  else if (anchor == "end"   ) textAnchor_ = CHALIGN_TYPE_RIGHT;
   else                         notHandled("text-anchor", anchor);
 }
 
@@ -1210,13 +1220,13 @@ CHAlignType
 CSVGObject::
 getTextAnchor() const
 {
-  if (text_anchor_.isValid())
-    return text_anchor_.getValue();
+  if (textAnchor_.isValid())
+    return textAnchor_.getValue();
 
   CSVGObject *parent = getParent();
 
   while (parent) {
-    if (parent->text_anchor_.isValid())
+    if (parent->textAnchor_.isValid())
       return parent->getTextAnchor();
 
     parent = parent->getParent();
@@ -1229,7 +1239,7 @@ void
 CSVGObject::
 setShapeRendering(const std::string &rendering)
 {
-  shape_rendering_ = rendering;
+  shapeRendering_ = rendering;
 }
 
 void
@@ -1252,25 +1262,21 @@ deleteChildObject(CSVGObject *object)
 
 void
 CSVGObject::
-getAllChildrenOfType(uint id, std::vector<CSVGObject *> &objects)
+getAllChildrenOfType(CSVGObjTypeId id, std::vector<CSVGObject *> &objects)
 {
   getChildrenOfType(id, objects);
 
-  ObjectList::iterator p1, p2;
-
-  for (p1 = objects_.begin(), p2 = objects_.end(); p1 != p2; ++p1)
-    (*p1)->getAllChildrenOfType(id, objects);
+  for (const auto &c : children())
+    c->getAllChildrenOfType(id, objects);
 }
 
 void
 CSVGObject::
-getChildrenOfType(uint id, std::vector<CSVGObject *> &objects)
+getChildrenOfType(CSVGObjTypeId id, std::vector<CSVGObject *> &objects)
 {
-  ObjectList::iterator p1, p2;
-
-  for (p1 = objects_.begin(), p2 = objects_.end(); p1 != p2; ++p1)
-    if ((*p1)->isObjType(id))
-      objects.push_back(*p1);
+  for (const auto &c : children())
+    if (c->isObjType(id))
+      objects.push_back(c);
 }
 
 void
@@ -1279,28 +1285,25 @@ getAllChildrenOfId(const std::string &id, std::vector<CSVGObject *> &objects)
 {
   getChildrenOfId(id, objects);
 
-  ObjectList::iterator p1, p2;
-
-  for (p1 = objects_.begin(), p2 = objects_.end(); p1 != p2; ++p1)
-    (*p1)->getAllChildrenOfId(id, objects);
+  for (const auto &c : children())
+    c->getAllChildrenOfId(id, objects);
 }
 
 void
 CSVGObject::
 getChildrenOfId(const std::string &id, std::vector<CSVGObject *> &objects)
 {
-  ObjectList::iterator p1, p2;
-
-  for (p1 = objects_.begin(), p2 = objects_.end(); p1 != p2; ++p1)
-    if ((*p1)->getId() == id)
-      objects.push_back(*p1);
+  for (const auto &c : children())
+    if (c->getId() == id)
+      objects.push_back(c);
 }
 
 void
 CSVGObject::
 drawObjects()
 {
-  CAux::for_each(objects_.begin(), objects_.end(), &CSVGObject::drawObject);
+  for (const auto &o : objects_)
+    o->drawObject();
 }
 
 void
@@ -1312,24 +1315,26 @@ drawObject()
   //------
 
   // set current transform and stroke
-
   CMatrix2D transform;
 
   svg_.getTransform(transform);
 
   svg_.setTransform(transform*getTransform());
 
-  CSVGTempStroke temp_stroke(*this);
-  CSVGTempFont   temp_font  (*this);
+  CSVGTempStroke tempStroke(*this);
+  CSVGTempFont   tempFont  (*this);
+
+  //------
+
+  drawInit();
 
   //------
 
   // draw clip path if specified
-
-  if (clip_path_ != 0) {
+  if (clipPath_ != 0) {
     svg_.pathInit();
 
-    clip_path_->drawObject();
+    clipPath_->drawObject();
 
     if (clip_.getRule() == FILL_TYPE_EVEN_ODD)
       svg_.pathEoClip();
@@ -1340,13 +1345,11 @@ drawObject()
   //------
 
   // draw object (virtual)
-
   draw();
 
   //------
 
   // draw children
-
   drawObjects();
 
   //------
@@ -1357,7 +1360,7 @@ drawObject()
     filter_->drawObject();
   }
 
-  if (clip_path_ != 0)
+  if (clipPath_ != 0)
     svg_.initClip();
 
   if (mask_ != 0) {
@@ -1365,6 +1368,10 @@ drawObject()
 
     mask->objectDraw(*this);
   }
+
+  //------
+
+  drawTerm();
 
   //------
 
@@ -1380,7 +1387,7 @@ toImage()
   if (! getBBox(bbox))
     return CImagePtr();
 
-  std::string old_buffer = svg_.getBufferName();
+  std::string oldBuffer = svg_.getBufferName();
 
   svg_.setBuffer("SourceGraphic");
 
@@ -1392,7 +1399,7 @@ toImage()
 
   CImagePtr image = svg_.getBufferImage("SourceGraphic");
 
-  svg_.setBuffer(old_buffer);
+  svg_.setBuffer(oldBuffer);
 
   return image;
 }
@@ -1440,7 +1447,7 @@ bool
 CSVGObject::
 getBBox(CBBox2D &bbox) const
 {
-  if (! view_box_.isSet()) {
+  if (! viewBox_.isSet()) {
     CBBox2D bbox1;
 
     if (! getChildrenBBox(bbox1))
@@ -1449,7 +1456,7 @@ getBBox(CBBox2D &bbox) const
     bbox += bbox1;
   }
   else
-    bbox = view_box_;
+    bbox = viewBox_;
 
   return bbox.isSet();
 }
@@ -1520,10 +1527,8 @@ getChildrenBBox(CBBox2D &bbox) const
 {
   CBBox2D bbox1;
 
-  ObjectList::const_iterator p1, p2;
-
-  for (p1 = childrenBegin(), p2 = childrenEnd(); p1 != p2; ++p1) {
-    if ((*p1)->getBBox(bbox1))
+  for (const auto &c  : children()) {
+    if (c->getBBox(bbox1))
       bbox.add(bbox1);
   }
 
@@ -1598,7 +1603,7 @@ decodeXLink(const std::string &str, CSVGObject **object, CImagePtr &image)
     std::string rhs = str.substr(pos + 1);
 
     if (lhs != "") {
-      CSVGBlock *block = new CSVGBlock(svg_);
+      CSVGBlock *block = svg_.createBlock();
 
       svg_.read(lhs, block);
 
@@ -1662,7 +1667,7 @@ decodeXLink(const std::string &str, CSVGObject **object, CImagePtr &image)
       }
     }
     else if (type == CFILE_TYPE_TEXT_HTML) {
-      CSVGBlock *block = new CSVGBlock(svg_);
+      CSVGBlock *block = svg_.createBlock();
 
       svg_.read(str, block);
 
@@ -1683,58 +1688,190 @@ decodeXLink(const std::string &str, CSVGObject **object, CImagePtr &image)
 
 void
 CSVGObject::
-print(std::ostream &os) const
+getObjectsAtPoint(const CPoint2D &p, ObjectArray &objects) const
 {
-  os << getObjName() << ": '" << getId() << "'";
+  if (inside(p))
+    objects.push_back(const_cast<CSVGObject *>(this));
+
+  for (const auto &c : children())
+    c->getObjectsAtPoint(p, objects);
 }
 
-//-----------
-
-CSVGTempStroke::
-CSVGTempStroke(CSVGObject &object) :
- object_(object),
- stroke_(object_.getSVG()),
- fill_  (object_.getSVG()),
- clip_  (object_.getSVG())
+void
+CSVGObject::
+print(std::ostream &os, bool hier) const
 {
-  stroke_ = object_.getSVG().getStroke();
-  fill_   = object_.getSVG().getFill  ();
-  clip_   = object_.getSVG().getClip  ();
+  if (hier) {
+    std::string s = getText();
 
-  if (! object.getSelected())
-    object_.getSVG().updateStroke(object_.getStroke());
+    if (! objects_.empty()) {
+      os << "<" << getObjName() << ">" << std::endl;
+
+      if (s != "")
+        os << s << std::endl;
+
+      for (const auto &o : objects_)
+        o->print(os, hier);
+
+      os << "</" << getObjName() << ">" << std::endl;
+    }
+    else if (s != "") {
+      os << "<" << getObjName() << ">" << s;
+      os << "</" << getObjName() << ">" << std::endl;
+    }
+    else
+      os << "<" << getObjName() << "/>" << std::endl;
+  }
   else
-    object_.getSVG().setSelectedStroke();
-
-  object_.getSVG().updateFill(object_.getFill());
-
-  object_.getSVG().updateClip(object_.getClip());
+    os << getObjName() << ": '" << getId() << "'";
 }
 
-CSVGTempStroke::
-~CSVGTempStroke()
+void
+CSVGObject::
+printFilter(std::ostream &os) const
 {
-  object_.getSVG().resetStroke();
-  object_.getSVG().resetFill  ();
-  object_.getSVG().resetClip  ();
-
-  object_.getSVG().updateStroke(stroke_);
-  object_.getSVG().updateFill  (fill_  );
-  object_.getSVG().updateClip  (clip_  );
+  if (filter_)
+    os << " filter=\"url(#" << filter_->getId() << ")\"";
 }
 
-CSVGTempFont::
-CSVGTempFont(CSVGObject &object) :
- object_  (object),
- font_def_(object_.getFontDef())
+void
+CSVGObject::
+printStyle(std::ostream &os) const
 {
-  font_def_ = object_.getSVG().getFontDef();
+  if (! fontDef_.isSet() && ! stroke_.isSet() && ! fill_.isSet())
+    return;
 
-  object_.getSVG().updateFontDef(object_.getFontDef());
+  os << " style=\"";
+
+  bool output = false;
+
+  if (fontDef_.isSet()) {
+    printFontDef(os);
+
+    output = true;
+  }
+
+  if (stroke_.isSet()) {
+    if (output)
+      os << " ";
+
+    stroke_.print(os);
+
+    output = true;
+  }
+
+  if (fill_.isSet()) {
+    if (output)
+      os << " ";
+
+    fill_.print(os);
+
+    output = true;
+  }
+
+  os << "\"";
 }
 
-CSVGTempFont::
-~CSVGTempFont()
+void
+CSVGObject::
+printTextContent(std::ostream &os) const
 {
-  object_.getSVG().updateFontDef(font_def_);
+  if (textAnchor_.isValid()) {
+    os << " text-anchor=\"";
+
+    if      (textAnchor_.getValue() == CHALIGN_TYPE_LEFT  ) os << "start";
+    else if (textAnchor_.getValue() == CHALIGN_TYPE_CENTER) os << "middle";
+    else if (textAnchor_.getValue() == CHALIGN_TYPE_RIGHT ) os << "end";
+
+    os << "\"";
+  }
+}
+
+void
+CSVGObject::
+printFontDef(std::ostream &os) const
+{
+  fontDef_.print(os);
+}
+
+void
+CSVGObject::
+printTransform(std::ostream &os) const
+{
+  if (! transform_.isIdentity()) {
+    os << " transform=\"";
+
+    printTransform(os, transform_);
+
+    os << "\"";
+  }
+}
+
+void
+CSVGObject::
+printTransform(std::ostream &os, const CMatrix2D &m) const
+{
+  if (! m.isIdentity()) {
+    bool output = false;
+
+    if (m.isInnerRotation()) {
+      double a = m.getAngle();
+
+      os << "rotate(" << a << ")";
+
+      output = true;
+    }
+
+    if (! m.isInnerIdentity()) {
+      if (output)
+        os << " ";
+
+      double sx, sy;
+
+      m.getSize(&sx, &sy);
+
+      os << "scale(" << sx << " " << sy << ")";
+
+      output = true;
+    }
+
+    if (! m.isTranslateIdentity()) {
+      if (output)
+        os << " ";
+
+      double tx, ty;
+
+      m.getTranslate(&tx, &ty);
+
+      os << "translate(" << tx << " " << ty << ")";
+
+      output = true;
+    }
+  }
+}
+
+void
+CSVGObject::
+printLength(std::ostream &os, const CSVGLengthValue &l)
+{
+  if      (l.type() == CSVGLengthValue::Type::EM)
+    os << l.ivalue() << "em";
+  else if (l.type() == CSVGLengthValue::Type::EX)
+    os << l.ivalue() << "ex";
+  else if (l.type() == CSVGLengthValue::Type::PT)
+    os << l.ivalue() << "pt";
+  else if (l.type() == CSVGLengthValue::Type::PC)
+    os << l.ivalue() << "pc";
+  else if (l.type() == CSVGLengthValue::Type::CM)
+    os << l.ivalue() << "cm";
+  else if (l.type() == CSVGLengthValue::Type::MM)
+    os << l.ivalue() << "mm";
+  else if (l.type() == CSVGLengthValue::Type::IN)
+    os << l.ivalue() << "in";
+  else if (l.type() == CSVGLengthValue::Type::PX)
+    os << l.ivalue() << "px";
+  else if (l.type() == CSVGLengthValue::Type::PERCENT)
+    os << 100*l.ivalue() << "%";
+  else
+    os << l.value();
 }

@@ -1,10 +1,12 @@
+#ifndef CSVGClip_H
+#define CSVGClip_H
+
+#include <COptVal.h>
+#include <CFillType.h>
+
 class CSVG;
 
 class CSVGClip {
- private:
-  CSVG                &svg_;
-  COptValT<CFillType>  rule_;
-
  public:
   CSVGClip(CSVG &svg) :
    svg_(svg), rule_() {
@@ -38,4 +40,10 @@ class CSVGClip {
   void reset() {
     rule_.setInvalid();
   }
+
+ private:
+  CSVG                &svg_;
+  COptValT<CFillType>  rule_;
 };
+
+#endif

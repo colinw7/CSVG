@@ -38,8 +38,7 @@ class GenGradient2DFill : public CRenderer2DFiller {
 //--------------
 
 CRenderer2D::
-CRenderer2D() :
- enabled_(false), pixel_renderer_(NULL), path_(NULL), region_(NULL), symbol_(CSYMBOL_NONE)
+CRenderer2D()
 {
   display_range_.setPixelRange (0, 0, 100, 100);
   display_range_.setWindowRange(0, 0, 1, 1);
@@ -61,7 +60,7 @@ CRenderer2D() :
 
 CRenderer2D::
 CRenderer2D(CPixelRenderer *renderer) :
- enabled_(false), pixel_renderer_(renderer), symbol_(CSYMBOL_NONE)
+ pixel_renderer_(renderer)
 {
   display_range_.setPixelRange (0, 0, 100, 100);
   display_range_.setWindowRange(0, 0, 1, 1);
@@ -107,8 +106,8 @@ operator=(const CRenderer2D &renderer)
 {
   pixel_renderer_ = renderer.pixel_renderer_->dup();
 
-  path_   = NULL;
-  region_ = NULL;
+  path_   = 0;
+  region_ = 0;
 
   enabled_        = true;
   display_range_  = renderer.display_range_;
@@ -568,7 +567,7 @@ void
 CRenderer2D::
 setBackground(const CRGBA &rgba)
 {
-  if (pixel_renderer_ != NULL)
+  if (pixel_renderer_ != 0)
     pixel_renderer_->setBackground(rgba);
 }
 
@@ -576,7 +575,7 @@ void
 CRenderer2D::
 setForeground(const CRGBA &rgba)
 {
-  if (pixel_renderer_ != NULL)
+  if (pixel_renderer_ != 0)
     pixel_renderer_->setForeground(rgba);
 }
 
@@ -928,7 +927,7 @@ void
 CRenderer2D::
 clipPolygons()
 {
-  if (! enabled_ || pixel_renderer_ == NULL)
+  if (! enabled_ || pixel_renderer_ == 0)
     return;
 
   pixel_renderer_->clipPolygons(ppath_.getIPolygons());
@@ -938,7 +937,7 @@ void
 CRenderer2D::
 eoclipPolygons()
 {
-  if (! enabled_ || pixel_renderer_ == NULL)
+  if (! enabled_ || pixel_renderer_ == 0)
     return;
 
   pixel_renderer_->eoclipPolygons(ppath_.getIPolygons());
@@ -948,7 +947,7 @@ uint
 CRenderer2D::
 getNumClipPolygons()
 {
-  if (! enabled_ || pixel_renderer_ == NULL)
+  if (! enabled_ || pixel_renderer_ == 0)
     return 0;
 
   return pixel_renderer_->getNumClipPolygons();
@@ -960,7 +959,7 @@ getClipPolygons(uint i)
 {
   static PointListList poly_points_list;
 
-  if (! enabled_ || pixel_renderer_ == NULL)
+  if (! enabled_ || pixel_renderer_ == 0)
     return poly_points_list;
 
   const CPixelRenderer::IPointListList &ipolygon_points =
@@ -988,7 +987,7 @@ void
 CRenderer2D::
 initPolygons()
 {
-  if (! enabled_ || pixel_renderer_ == NULL)
+  if (! enabled_ || pixel_renderer_ == 0)
     return;
 
   ppath_.initPolygons();
@@ -998,7 +997,7 @@ void
 CRenderer2D::
 addPolygon(const RPointList &points)
 {
-  if (! enabled_ || pixel_renderer_ == NULL)
+  if (! enabled_ || pixel_renderer_ == 0)
     return;
 
   uint num_points = points.size();
@@ -1039,7 +1038,7 @@ void
 CRenderer2D::
 fillPolygons()
 {
-  if (! enabled_ || pixel_renderer_ == NULL)
+  if (! enabled_ || pixel_renderer_ == 0)
     return;
 
   CImagePtr image;
@@ -1051,7 +1050,7 @@ void
 CRenderer2D::
 fillPolygons(CImagePtr image)
 {
-  if (! enabled_ || pixel_renderer_ == NULL)
+  if (! enabled_ || pixel_renderer_ == 0)
     return;
 
   pixel_renderer_->fillPathPolygons(ppath_.getIPolygons(), image, FILL_TYPE_WINDING);
@@ -1062,7 +1061,7 @@ void
 CRenderer2D::
 eofillPolygons()
 {
-  if (! enabled_ || pixel_renderer_ == NULL)
+  if (! enabled_ || pixel_renderer_ == 0)
     return;
 
   CImagePtr image;
@@ -1074,7 +1073,7 @@ void
 CRenderer2D::
 eofillPolygons(CImagePtr image)
 {
-  if (! enabled_ || pixel_renderer_ == NULL)
+  if (! enabled_ || pixel_renderer_ == 0)
     return;
 
   pixel_renderer_->fillPathPolygons(ppath_.getIPolygons(), image, FILL_TYPE_EVEN_ODD);
@@ -3543,7 +3542,7 @@ void
 CRenderer2D::
 initClip()
 {
-  if (! enabled_ || pixel_renderer_ == NULL)
+  if (! enabled_ || pixel_renderer_ == 0)
     return;
 
   pixel_renderer_->resetClip();
@@ -3822,7 +3821,10 @@ createPath() const
 
   CPath2DRenderer *renderer = th->createPathRenderer();
 
-  path->setRenderer(renderer);
+  if (renderer)
+    path->setRenderer(renderer);
+  else
+    path->setRenderer(const_cast<CRenderer2D *>(this));
 
   return path;
 }
@@ -3838,9 +3840,7 @@ CPath2DRenderer *
 CRenderer2D::
 createPathRenderer() const
 {
-  assert(false);
-
-  return NULL;
+  return 0;
 }
 
 void

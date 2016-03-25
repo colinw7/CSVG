@@ -1,4 +1,6 @@
-#include <CSVGI.h>
+#include <CSVGPolyLine.h>
+#include <CSVG.h>
+#include <CSVGLog.h>
 
 /* Attributes:
     <Core>
@@ -96,7 +98,7 @@ bool
 CSVGPolyLine::
 getBBox(CBBox2D &bbox) const
 {
-  if (! view_box_.isSet()) {
+  if (! viewBox_.isSet()) {
     CBBox2D bbox1;
 
     uint num_points = points_.size();
@@ -107,7 +109,7 @@ getBBox(CBBox2D &bbox) const
     bbox = bbox1;
   }
   else
-    bbox = view_box_;
+    bbox = viewBox_;
 
   return true;
 }
@@ -162,24 +164,46 @@ rotateBy(double da, const CPoint2D &c)
 
 void
 CSVGPolyLine::
-print(std::ostream &os) const
+print(std::ostream &os, bool hier) const
 {
-  os << "polyline ";
+  int i = 0;
 
-  uint num_points = points_.size();
+  if (hier) {
+    os << "<polyline points=\"";
 
-  for (uint i = 0; i < num_points; ++i) {
-    if (i > 0)
-      os << " ";
+    printNameValue(os, "id", id_);
 
-    os << points_[i];
+    for (const auto &p : points_) {
+      if (i > 0) os << ", ";
+
+      os << p.x << " " << p.y;
+
+      ++i;
+    }
+
+    os << "\"";
+
+    printStyle(os);
+
+    os << "/>" << std::endl;
+  }
+  else {
+    os << "polyline ";
+
+    for (const auto &p : points_) {
+      if (i > 0) os << " ";
+
+      os << p;
+
+      ++i;
+    }
   }
 }
 
 std::ostream &
 operator<<(std::ostream &os, const CSVGPolyLine &polyline)
 {
-  polyline.print(os);
+  polyline.print(os, false);
 
   return os;
 }

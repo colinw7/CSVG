@@ -1,4 +1,6 @@
-#include <CSVGI.h>
+#include <CSVGPolygon.h>
+#include <CSVG.h>
+#include <CSVGLog.h>
 
 /* Attributes:
     <Core>
@@ -109,7 +111,7 @@ bool
 CSVGPolygon::
 getBBox(CBBox2D &bbox) const
 {
-  if (! view_box_.isSet()) {
+  if (! viewBox_.isSet()) {
     CBBox2D bbox1;
 
     uint num_points = points_.size();
@@ -120,7 +122,7 @@ getBBox(CBBox2D &bbox) const
     bbox = bbox1;
   }
   else
-    bbox = view_box_;
+    bbox = viewBox_;
 
   return true;
 }
@@ -175,24 +177,40 @@ rotateBy(double da, const CPoint2D &c)
 
 void
 CSVGPolygon::
-print(std::ostream &os) const
+print(std::ostream &os, bool hier) const
 {
-  os << "polygon ";
+  if (hier) {
+    os << "<polygon points=\"";
 
-  uint num_points = points_.size();
+    for (uint i = 0; i < points_.size(); ++i) {
+      if (i > 0)
+        os << " ";
 
-  for (uint i = 0; i < num_points; ++i) {
-    if (i > 0)
-      os << " ";
+      os << points_[i].x << "," << points_[i].y;
+    }
 
-    os << points_[i];
+    os << "\"";
+
+    printStyle(os);
+
+    os << "/>" << std::endl;
+  }
+  else {
+    os << "polygon ";
+
+    for (uint i = 0; i < points_.size(); ++i) {
+      if (i > 0)
+        os << " ";
+
+      os << points_[i];
+    }
   }
 }
 
 std::ostream &
 operator<<(std::ostream &os, const CSVGPolygon &polygon)
 {
-  polygon.print(os);
+  polygon.print(os, false);
 
   return os;
 }

@@ -1,15 +1,10 @@
-#include <CSVGI.h>
+#include <CSVGFeGaussianBlur.h>
+#include <CSVG.h>
 
 CSVGFeGaussianBlur::
 CSVGFeGaussianBlur(CSVG &svg) :
- CSVGFilter (svg),
- filter_in_ (),
- filter_out_(),
- std_dev_   ()
+ CSVGFilter(svg)
 {
-  std_dev_    = 0;
-  filter_in_  = "SourceGraphic";
-  filter_out_ = "SourceGraphic";
 }
 
 CSVGFeGaussianBlur::
@@ -51,11 +46,11 @@ void
 CSVGFeGaussianBlur::
 draw()
 {
-  CImagePtr src_image = svg_.getBufferImage(filter_in_);
+  CImagePtr src_image = svg_.getBufferImage(filter_in_.getValue("SourceGraphic"));
 
   CImagePtr dst_image = filterImage(src_image);
 
-  svg_.setBufferImage(filter_out_, dst_image);
+  svg_.setBufferImage(filter_out_.getValue("SourceGraphic"), dst_image);
 }
 
 CImagePtr
@@ -64,22 +59,32 @@ filterImage(CImagePtr src_image)
 {
   CImagePtr dst_image = src_image->dup();
 
-  src_image->gaussianBlur(dst_image, std_dev_, std_dev_);
+  src_image->gaussianBlur(dst_image, std_dev_.getValue(0), std_dev_.getValue(0));
 
   return dst_image;
 }
 
 void
 CSVGFeGaussianBlur::
-print(std::ostream &os) const
+print(std::ostream &os, bool hier) const
 {
-  os << "feGaussianBlur ";
+  if (hier) {
+    os << "<feGaussianBlur";
+
+    printNameValue(os, "in"          , filter_in_ );
+    printNameValue(os, "result"      , filter_out_);
+    printNameValue(os, "stdDeviation", std_dev_   );
+
+    os << "/>" << std::endl;
+  }
+  else
+    os << "feGaussianBlur ";
 }
 
 std::ostream &
 operator<<(std::ostream &os, const CSVGFeGaussianBlur &filter)
 {
-  filter.print(os);
+  filter.print(os, false);
 
   return os;
 }
