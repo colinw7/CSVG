@@ -33,6 +33,8 @@ class CSVGLogRenderer : public CSVGRenderer {
     *xmax = xmax_; *ymax = ymax_;
   }
 
+  void setBackground(const CRGBA &) { logNL("setBackground"); }
+
   void setAntiAlias(bool) { logNL("setAntiAlias"); }
 
   void setEqualScale(bool) { logNL("setEqualScale"); }

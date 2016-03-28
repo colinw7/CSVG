@@ -30,7 +30,7 @@ class CSVGFilter : public CSVGObject {
   CSVGFilter &operator=(const CSVGFilter &rhs);
 
  private:
-  CSVGObject*           object_;
+  CSVGObject*           object_ { 0 };
   COptValT<std::string> units_;
   COptValT<std::string> primitiveUnits_;
   COptValT<std::string> x_;

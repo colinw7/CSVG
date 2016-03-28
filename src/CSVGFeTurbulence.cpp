@@ -90,7 +90,7 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<feTurbulence";
 
-    printNameValue(os, "id", id_);
+    CSVGObject::printValues(os);
 
     printNameValue(os, "type"         , type_);
     printNameValue(os, "baseFrequency", baseFreq_);

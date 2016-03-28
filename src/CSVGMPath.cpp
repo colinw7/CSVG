@@ -1,0 +1,104 @@
+#include <CSVGMPath.h>
+#include <CSVG.h>
+#include <CSVGLog.h>
+#include <CSVGUtil.h>
+
+CSVGMPath::
+CSVGMPath(CSVG &svg) :
+ CSVGObject(svg),
+ parts_    ()
+{
+  //fill_.setDefColor(CRGBA(0,0,0));
+}
+
+CSVGMPath::
+CSVGMPath(const CSVGMPath &path) :
+ CSVGObject(path),
+ parts_    (path.parts_)
+{
+}
+
+CSVGMPath *
+CSVGMPath::
+dup() const
+{
+  return new CSVGMPath(*this);
+}
+
+bool
+CSVGMPath::
+processOption(const std::string &opt_name, const std::string &opt_value)
+{
+  PartList    parts;
+  std::string str;
+
+  if      (svg_.pathOption  (opt_name, opt_value, "d", parts))
+    parts_ = parts;
+  else if (svg_.stringOption(opt_name, opt_value, "xlink:href", str))
+    xlink_ = str;
+  else
+    return CSVGObject::processOption(opt_name, opt_value);
+
+  return true;
+}
+
+void
+CSVGMPath::
+draw()
+{
+  if (svg_.getDebug())
+    CSVGLog() << *this;
+}
+
+void
+CSVGMPath::
+print(std::ostream &os, bool hier) const
+{
+  if (hier) {
+    os << "<mpath";
+
+    CSVGObject::printValues(os);
+
+    printNameValue(os, "xlink:href", xlink_);
+
+    printNameParts(os, "d", parts_);
+
+    if (hasChildren()) {
+      os << ">" << std::endl;
+
+      printChildren(os, hier);
+
+      os << "</mpath>" << std::endl;
+    }
+    else
+      os << "/>" << std::endl;
+  }
+  else {
+    os << "mpath (";
+
+    svg_.printParts(os, parts_);
+
+    os << ")";
+  }
+}
+
+bool
+CSVGMPath::
+getBBox(CBBox2D &bbox) const
+{
+  if (! viewBox_.isSet())
+    return svg_.getPartsBBox(parts_, bbox);
+  else {
+    bbox = viewBox_;
+
+    return true;
+  }
+}
+
+std::ostream &
+operator<<(std::ostream &os, const CSVGMPath &path)
+{
+  path.print(os, false);
+
+  return os;
+}

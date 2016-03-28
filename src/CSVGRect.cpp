@@ -175,10 +175,20 @@ setSize(const CSize2D &size)
 
 void
 CSVGRect::
+moveTo(const CPoint2D &p)
+{
+  x_ = p.x;
+  y_ = p.y;
+
+  updateBBox();
+}
+
+void
+CSVGRect::
 moveBy(const CVector2D &delta)
 {
   x_ = getX() + delta.x();
-  y_ = getX() + delta.y();
+  y_ = getY() + delta.y();
 
   updateBBox();
 }
@@ -200,20 +210,26 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<rect";
 
-    printNameValue(os, "id", id_);
+    CSVGObject::printValues(os);
 
-    printNameValue(os, "x", x_ );
-    printNameValue(os, "y", y_ );
+    printNameValue(os, "x", x_);
+    printNameValue(os, "y", y_);
 
     printNameValue(os, "width" , width_ );
     printNameValue(os, "height", height_);
 
-    printNameValue(os, "rx", rx_ );
-    printNameValue(os, "ry", ry_ );
+    printNameValue(os, "rx", rx_);
+    printNameValue(os, "ry", ry_);
 
-    printStyle(os);
+    if (hasChildren()) {
+      os << ">" << std::endl;
 
-    os << "/>" << std::endl;
+      printChildren(os, hier);
+
+      os << "</rect>" << std::endl;
+    }
+    else
+      os << "/>" << std::endl;
   }
   else
     os << "rect " << bbox_;

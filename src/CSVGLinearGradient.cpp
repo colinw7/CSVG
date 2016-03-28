@@ -169,7 +169,8 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<linearGradient";
 
-    printNameValue(os, "id", id_);
+    CSVGObject::printValues(os);
+
     printNameValue(os, "x1", x1_);
     printNameValue(os, "y1", y1_);
     printNameValue(os, "x2", x2_);
@@ -191,8 +192,7 @@ print(std::ostream &os, bool hier) const
 
     os << ">" << std::endl;
 
-    for (const auto &o : objects_)
-      o->print(os, hier);
+    printChildren(os, hier);
 
     os << "</linearGradient>" << std::endl;
   }

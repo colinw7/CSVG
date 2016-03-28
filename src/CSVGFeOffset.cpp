@@ -80,6 +80,8 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<feOffset";
 
+    CSVGObject::printValues(os);
+
     if (filter_in_.isValid())
       os << " in=\"" << filter_in_.getValue() << "\"";
 

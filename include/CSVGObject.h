@@ -1,8 +1,12 @@
 #ifndef CSVG_OBJECT_H
 #define CSVG_OBJECT_H
 
+#include <CSVGTypes.h>
 #include <CSVGStroke.h>
 #include <CSVGLengthValue.h>
+#include <CSVGTimeValue.h>
+#include <CSVGEventValue.h>
+#include <CSVGAnimation.h>
 #include <CBBox2D.h>
 #include <CMatrix2D.h>
 #include <COptVal.h>
@@ -11,7 +15,12 @@
 #include <list>
 
 enum class CSVGObjTypeId {
-  BLOCK=1,
+  ANIMATE=1,
+  ANIMATE_BASE,
+  ANIMATE_COLOR,
+  ANIMATE_MOTION,
+  ANIMATE_TRANSFORM,
+  BLOCK,
   CIRCLE,
   CLIP_PATH,
   DEFS,
@@ -46,12 +55,14 @@ enum class CSVGObjTypeId {
   MARKER,
   MASK,
   MISSING_GLYPH,
+  MPATH,
   PATH,
   PATTERN,
   POLYGON,
   POLYLINE,
   RADIAL_GRADIENT,
   RECT,
+  SET,
   STOP,
   STYLE,
   SYMBOL,
@@ -73,6 +84,7 @@ class CXMLTag;
 class CSVG;
 class CSVGObject;
 class CSVGFilter;
+class CSVGPathPart;
 
 struct CSVGObjectMarker {
   CSVGObject *start { 0 };
@@ -142,11 +154,16 @@ class CSVGObject {
 
   bool isObjType(const std::string &name) const { return (getObjName() == name); }
 
+  const CSVGAnimation &getAnimation() const { return animation_; }
+
   CSVGFilter *getFilter() const { return filter_; }
   void setFilter(CSVGFilter *filter) { filter_ = filter; }
 
   bool getSelected() const { return selected_; }
   void setSelected(bool selected, bool children=false);
+
+  bool getInside() const { return inside_; }
+  void setInside(bool inside) { inside_ = inside; }
 
   void setXMLTag(CXMLTag *tag) { xmlTag_ = tag; }
 
@@ -192,13 +209,15 @@ class CSVGObject {
 
   void deleteChildObject(CSVGObject *object);
 
+  void getAllChildren(ObjectArray &objects);
+
   void getAllChildrenOfType(CSVGObjTypeId id, ObjectArray &objects);
   void getChildrenOfType   (CSVGObjTypeId id, ObjectArray &objects);
 
   void getAllChildrenOfId(const std::string &id, ObjectArray &objects);
   void getChildrenOfId   (const std::string &id, ObjectArray &objects);
 
-  bool hasChildren() const { return ! objects_.empty(); }
+  bool hasChildren(bool includeAnimated=true) const;
 
   const ObjectList &children() const { return objects_; }
 
@@ -212,31 +231,32 @@ class CSVGObject {
 
   virtual bool hasFont() const { return false; }
 
+  virtual bool isAnimated() const { return false; }
+
   virtual void drawInit() { }
 
-  virtual void draw() = 0;
+  virtual void draw() { }
 
   virtual void drawTerm() { }
 
+  bool isVisible() const;
+
   virtual bool getBBox(CBBox2D &bbox) const;
 
-  virtual bool inside(const CPoint2D &pos) const {
-    CBBox2D bbox;
+  bool getTransformedBBox(CBBox2D &bbox) const;
 
-    if (! getBBox(bbox)) return false;
-
-    return bbox.inside(pos);
-  }
+  virtual bool inside(const CPoint2D &pos) const;
 
   virtual bool getSize(CSize2D &size) const;
 
-  void moveTo(const CPoint2D &point);
-
   virtual CImagePtr toImage();
 
+  virtual void moveTo  (const CPoint2D &point);
   virtual void moveBy  (const CVector2D &delta);
   virtual void resizeTo(const CSize2D &size);
   virtual void rotateBy(double da, const CPoint2D &c);
+  virtual void rotateTo(double a, const CPoint2D &c);
+  virtual void scaleTo (double xs, double ys);
 
   double getXMin() const;
   double getYMin() const;
@@ -323,6 +343,10 @@ class CSVGObject {
   void setFontWeight(const std::string &weight);
   void setFontStyle (const std::string &style );
 
+  // visible
+  const std::string &getVisibility() const { return visibility_; }
+  void setVisibility(const std::string &str) { visibility_ = str; }
+
   // clip
   void setClipRule(const std::string &rule) { clip_.setRule(rule); }
 
@@ -332,6 +356,11 @@ class CSVGObject {
   void setTransform(const CMatrix2D &transform) { transform_ = transform; }
 
   CMatrix2D getFlatTransform() const;
+
+  //---
+
+  virtual bool interpValue(const std::string &name, const std::string &from,
+                           const std::string &to, double x, std::string &ystr) const;
 
   //---
 
@@ -348,6 +377,16 @@ class CSVGObject {
 
   void getObjectsAtPoint(const CPoint2D &p, ObjectArray &objects) const;
 
+  //---
+
+  virtual void tick(double dt);
+
+  virtual void handleEvent(CSVGEventType type, const std::string &id="",
+                           const std::string &data="");
+
+  //---
+
+  // print
   virtual void print(std::ostream &os, bool hier=false) const;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGObject &object) {
@@ -355,6 +394,10 @@ class CSVGObject {
 
     return os;
   }
+
+  void printValues(std::ostream &os) const;
+
+  void printChildren(std::ostream &os, bool hier) const;
 
   void printFilter     (std::ostream &os) const;
   void printStyle      (std::ostream &os) const;
@@ -364,18 +407,39 @@ class CSVGObject {
 
   void printTransform(std::ostream &os, const CMatrix2D &m) const;
 
-  static void printLength(std::ostream &os, const CSVGLengthValue &l);
-
   template<typename T>
   void printNameValue(std::ostream &os, const std::string &name, const COptValT<T> &value) const {
     if (value.isValid())
       os << " " << name << "=\"" << value.getValue() << "\"";
   }
 
+  void printNameParts(std::ostream &os, const std::string &name,
+                      const std::vector<CSVGPathPart *> &parts) const;
+
+  static void printLength(std::ostream &os, const CSVGLengthValue &l);
+
   void printNameLength(std::ostream &os, const std::string &name,
                        const COptValT<CSVGLengthValue> &length) const {
     if (length.isValid()) {
       os << " " << name << "=\""; printLength(os, length.getValue()); os << "\"";
+    }
+  }
+
+  static void printTime(std::ostream &os, const CSVGTimeValue &l);
+
+  void printNameTime(std::ostream &os, const std::string &name,
+                     const COptValT<CSVGTimeValue> &time) const {
+    if (time.isValid()) {
+      os << " " << name << "=\""; printTime(os, time.getValue()); os << "\"";
+    }
+  }
+
+  static void printEvent(std::ostream &os, const CSVGEventValue &l);
+
+  void printNameEvent(std::ostream &os, const std::string &name,
+                      const COptValT<CSVGEventValue> &event) const {
+    if (event.isValid()) {
+      os << " " << name << "=\""; printEvent(os, event.getValue()); os << "\"";
     }
   }
 
@@ -391,18 +455,21 @@ class CSVGObject {
   COptValT<double>      opacity_;
   CSVGStroke            stroke_;
   CSVGFill              fill_;
+  std::string           visibility_;
   CSVGClip              clip_;
   CSVGFontDef           fontDef_;
   COptValT<CHAlignType> textAnchor_;
   COptValT<std::string> shapeRendering_;
   CMatrix2D             transform_;
   ObjectList            objects_;
+  CSVGAnimation         animation_;
   CSVGFilter*           filter_   { 0 };
   CSVGObject*           mask_     { 0 };
   CSVGObject*           clipPath_ { 0 };
   CSVGObjectMarker      marker_;
   CBBox2D               viewBox_;
   bool                  selected_ { false };
+  bool                  inside_   { false };
   CXMLTag*              xmlTag_   { 0 };
 };
 

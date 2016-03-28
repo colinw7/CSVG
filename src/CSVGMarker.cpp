@@ -135,23 +135,17 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<marker";
 
-    printNameValue(os, "id"          , id_          );
+    CSVGObject::printValues(os);
+
     printNameValue(os, "refX"        , refX_        );
     printNameValue(os, "refY"        , refY_        );
     printNameValue(os, "markerWidth" , markerWidth_ );
     printNameValue(os, "markerHeight", markerHeight_);
     printNameValue(os, "orient"      , orient_      );
 
-    if (viewBox_.isSet())
-      os << " viewBox=\"" << viewBox_.getXMin() << " " << viewBox_.getYMin() <<
-            " " << viewBox_.getXMax() << " " << viewBox_.getYMax() << "\"";
-
-    printTransform(os);
-
     os << ">" << std::endl;
 
-    for (const auto &o : objects_)
-      o->print(os, hier);
+    printChildren(os, hier);
 
     os << "</marker>" << std::endl;
   }

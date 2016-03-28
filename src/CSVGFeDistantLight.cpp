@@ -47,7 +47,11 @@ CSVGFeDistantLight::
 print(std::ostream &os, bool hier) const
 {
   if (hier) {
-    os << "<feDistantLight/>" << std::endl;
+    os << "<feDistantLight";
+
+    CSVGObject::printValues(os);
+
+    os << "/>" << std::endl;
   }
   else
     os << "feDistantLight ";

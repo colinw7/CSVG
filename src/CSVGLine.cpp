@@ -123,14 +123,12 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<line";
 
-    printNameValue(os, "id", id_);
+    CSVGObject::printValues(os);
 
     printNameLength(os, "x1", x1_);
     printNameLength(os, "y1", y1_);
     printNameLength(os, "x2", x2_);
     printNameLength(os, "y2", y2_);
-
-    printStyle(os);
 
     os << "/>" << std::endl;
   }

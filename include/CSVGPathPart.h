@@ -1,6 +1,10 @@
 #ifndef CSVGPathPart_H
 #define CSVGPathPart_H
 
+#include <CBBox2D.h>
+
+class CSVG;
+
 enum class CSVGPathPartType {
   MOVE_TO,
   LINE_TO,
@@ -28,11 +32,15 @@ class CSVGPathPart {
 
   virtual ~CSVGPathPart() { }
 
-  virtual void draw() = 0;
-
   CSVGPathPartType getType() const { return type_; }
 
-  bool getBBox(CBBox2D &bbox);
+  //bool getBBox(CBBox2D &bbox);
+
+  virtual void moveBy(const CVector2D &d) = 0;
+
+  virtual void draw() = 0;
+
+  virtual double interp(double xi, const CPoint2D &p1, const CPoint2D &p2, double &a) const;
 
   virtual void print(std::ostream &os) const = 0;
 };
@@ -42,6 +50,8 @@ class CSVGPathMoveTo : public CSVGPathPart {
   CSVGPathMoveTo(CSVG &svg, double x, double y);
 
   const CPoint2D &getPoint() const { return point_; }
+
+  void moveBy(const CVector2D &d) override;
 
   void draw() override;
 
@@ -57,6 +67,8 @@ class CSVGPathLineTo : public CSVGPathPart {
 
   const CPoint2D &getPoint() const { return point_; }
 
+  void moveBy(const CVector2D &d) override;
+
   void draw() override;
 
   void print(std::ostream &os) const override;
@@ -70,6 +82,8 @@ class CSVGPathRLineTo : public CSVGPathPart {
   CSVGPathRLineTo(CSVG &svg, double x, double y);
 
   const CPoint2D &getPoint() const { return point_; }
+
+  void moveBy(const CVector2D &d) override;
 
   void draw() override;
 
@@ -85,6 +99,8 @@ class CSVGPathHLineTo : public CSVGPathPart {
 
   double getLength() const { return d_; }
 
+  void moveBy(const CVector2D &d) override;
+
   void draw() override;
 
   void print(std::ostream &os) const override;
@@ -98,6 +114,8 @@ class CSVGPathVLineTo : public CSVGPathPart {
   CSVGPathVLineTo(CSVG &svg, double d);
 
   double getLength() const { return d_; }
+
+  void moveBy(const CVector2D &d) override;
 
   void draw() override;
 
@@ -121,6 +139,8 @@ class CSVGPathArcTo : public CSVGPathPart {
   int getFS() const { return fs_; }
 
   const CPoint2D &getPoint2() const { return point2_; }
+
+  void moveBy(const CVector2D &d) override;
 
   void draw() override;
 
@@ -147,6 +167,8 @@ class CSVGPathRArcTo : public CSVGPathPart {
 
   const CPoint2D &getPoint2() const { return point2_; }
 
+  void moveBy(const CVector2D &d) override;
+
   void draw() override;
 
   void print(std::ostream &os) const override;
@@ -164,7 +186,11 @@ class CSVGPathBezier2To : public CSVGPathPart {
   const CPoint2D &getPoint1() const { return point1_; }
   const CPoint2D &getPoint2() const { return point2_; }
 
+  void moveBy(const CVector2D &d) override;
+
   void draw() override;
+
+  double interp(double xi, const CPoint2D &p1, const CPoint2D &p2, double &a) const override;
 
   void print(std::ostream &os) const override;
 
@@ -179,7 +205,11 @@ class CSVGPathRBezier2To : public CSVGPathPart {
   const CPoint2D &getPoint1() const { return point1_; }
   const CPoint2D &getPoint2() const { return point2_; }
 
+  void moveBy(const CVector2D &d) override;
+
   void draw() override;
+
+  double interp(double xi, const CPoint2D &p1, const CPoint2D &p2, double &a) const override;
 
   void print(std::ostream &os) const override;
 
@@ -196,7 +226,11 @@ class CSVGPathBezier3To : public CSVGPathPart {
   const CPoint2D &getPoint2() const { return point2_; }
   const CPoint2D &getPoint3() const { return point3_; }
 
+  void moveBy(const CVector2D &d) override;
+
   void draw() override;
+
+  double interp(double xi, const CPoint2D &p1, const CPoint2D &p2, double &a) const override;
 
   void print(std::ostream &os) const override;
 
@@ -213,7 +247,11 @@ class CSVGPathRBezier3To : public CSVGPathPart {
   const CPoint2D &getPoint2() const { return point2_; }
   const CPoint2D &getPoint3() const { return point3_; }
 
+  void moveBy(const CVector2D &d) override;
+
   void draw() override;
+
+  double interp(double xi, const CPoint2D &p1, const CPoint2D &p2, double &a) const override;
 
   void print(std::ostream &os) const override;
 
@@ -224,6 +262,8 @@ class CSVGPathRBezier3To : public CSVGPathPart {
 class CSVGPathClosePath : public CSVGPathPart {
  public:
   CSVGPathClosePath(CSVG &svg);
+
+  void moveBy(const CVector2D &d) override;
 
   void draw() override;
 

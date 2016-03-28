@@ -28,15 +28,14 @@ CSVGClipPath::
 processOption(const std::string &opt_name, const std::string &opt_value)
 {
   std::string str;
+  PartList    parts;
 
-  if      (svg_.stringOption(opt_name, opt_value, "d", str)) {
-    if (! svg_.pathStringToParts(str, parts_))
-      return false;
-  }
+  if      (svg_.pathOption  (opt_name, opt_value, "d", parts))
+    parts_ = parts;
   else if (svg_.stringOption(opt_name, opt_value, "clipPathUnits", str))
-    ;
+    clipPathUnits_ = str;
   else if (svg_.stringOption(opt_name, opt_value, "marker-end", str))
-    ;
+    markerEnd_ = str;
   else
     return CSVGObject::processOption(opt_name, opt_value);
 
@@ -56,21 +55,23 @@ CSVGClipPath::
 print(std::ostream &os, bool hier) const
 {
   if (hier) {
-    if (! objects_.empty()) {
-      os << "<clipPath";
+    os << "<clipPath";
 
-      std::string id = getId();
+    CSVGObject::printValues(os);
 
-      if (id != "")
-        os << " id=\"" << id << "\"";
+    printNameParts(os, "d"            , parts_        );
+    printNameValue(os, "clipPathUnits", clipPathUnits_);
+    printNameValue(os, "marker-end"   , markerEnd_    );
 
+    if (hasChildren()) {
       os << ">" << std::endl;
 
-      for (const auto &o : objects_)
-        o->print(os, hier);
+      printChildren(os, hier);
 
       os << "</clipPath>" << std::endl;
     }
+    else
+      os << "/>" << std::endl;
   }
   else {
     os << "clipPath (";

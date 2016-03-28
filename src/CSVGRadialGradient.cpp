@@ -168,7 +168,7 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<radialGradient";
 
-    printNameValue(os, "id", id_);
+    CSVGObject::printValues(os);
 
     if (center_.isValid())
       os << " cx=\"" << center_.getValue().x << "\" cy=\"" << center_.getValue().y << "\"";
@@ -191,8 +191,7 @@ print(std::ostream &os, bool hier) const
 
     os << ">" << std::endl;
 
-    for (const auto &o : objects_)
-      o->print(os, hier);
+    printChildren(os, hier);
 
     os << "</radialGradient>" << std::endl;
   }

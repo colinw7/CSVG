@@ -73,15 +73,14 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<feComponentTransfer";
 
-    printNameValue(os, "id", id_);
+    CSVGObject::printValues(os);
 
     printNameValue(os, "in"    , filter_in_ );
     printNameValue(os, "result", filter_out_);
 
     os << ">" << std::endl;
 
-    for (const auto &o : objects_)
-      o->print(os, hier);
+    printChildren(os, hier);
 
     os << "</feComponentTransfer>" << std::endl;
   }

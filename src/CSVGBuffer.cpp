@@ -140,6 +140,8 @@ void
 CSVGBuffer::
 beginDraw(int w, int h, const CBBox2D &bbox)
 {
+  renderer_->setBackground(svg_.background());
+
   renderer_->setSize(w, h);
 
   renderer_->beginDraw();
@@ -384,6 +386,9 @@ bool
 CSVGBuffer::
 pathGetCurrentPoint(double *x, double *y)
 {
+  *x = 0;
+  *y = 0;
+
   CPoint2D p;
 
   if (! renderer_->pathGetCurrentPoint(p))

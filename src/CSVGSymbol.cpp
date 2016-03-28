@@ -71,21 +71,19 @@ CSVGSymbol::
 print(std::ostream &os, bool hier) const
 {
   if (hier) {
-    if (! objects_.empty()) {
-      os << "<symbol";
+    os << "<symbol";
 
-      std::string id = getId();
+    CSVGObject::printValues(os);
 
-      if (id != "")
-        os << " id=\"" << id << "\"";
-
+    if (hasChildren()) {
       os << ">" << std::endl;
 
-      for (const auto &o : objects_)
-        o->print(os, hier);
+      printChildren(os, hier);
 
       os << "</symbol>" << std::endl;
     }
+    else
+      os << "/>" << std::endl;
   }
   else
     os << "symbol";

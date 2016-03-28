@@ -31,6 +31,9 @@ class CSVGText : public CSVGObject {
 
   bool getBBox(CBBox2D &bbox) const override;
 
+  void moveTo(const CPoint2D &p) override;
+  void moveBy(const CVector2D &delta) override;
+
   void print(std::ostream &os, bool hier) const override;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGText &text);

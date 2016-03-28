@@ -36,6 +36,8 @@ class CSVGRenderer {
 
   virtual void setViewMatrix(const CMatrix2D &m) = 0;
 
+  virtual void setBackground(const CRGBA &c) = 0;
+
   virtual void clear(const CRGBA &bg) = 0;
 
   virtual void pathInit() = 0;

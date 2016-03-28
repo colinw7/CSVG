@@ -7,6 +7,8 @@
 #include <CSVGFontDef.h>
 #include <CSVGBlock.h>
 #include <CSVGLengthValue.h>
+#include <CSVGEventValue.h>
+#include <CSVGTimeValue.h>
 
 #include <CImageLib.h>
 #include <CFont.h>
@@ -30,11 +32,13 @@ class CSVGImage;
 class CSVGLine;
 class CSVGLinearGradient;
 class CSVGMarker;
+class CSVGMPath;
 class CSVGPath;
 class CSVGPolygon;
 class CSVGPolyLine;
 class CSVGRadialGradient;
 class CSVGRect;
+class CSVGSet;
 class CSVGStop;
 class CSVGSymbol;
 class CSVGText;
@@ -109,14 +113,18 @@ class CSVG {
   virtual CSVGLine           *createLine();
   virtual CSVGLinearGradient *createLinearGradient();
   virtual CSVGMarker         *createMarker();
+  virtual CSVGMPath          *createMPath();
   virtual CSVGPath           *createPath();
   virtual CSVGPolygon        *createPolygon();
   virtual CSVGPolyLine       *createPolyLine();
   virtual CSVGRadialGradient *createRadialGradient();
   virtual CSVGRect           *createRect();
+  virtual CSVGSet            *createSet();
   virtual CSVGStop           *createStop();
   virtual CSVGSymbol         *createSymbol();
   virtual CSVGText           *createText();
+
+  virtual void redraw() { }
 
   double getXMin() const { return block_->getXMin(); }
   double getYMin() const { return block_->getYMin(); }
@@ -126,6 +134,9 @@ class CSVG {
 
   int getIWidth () const { return int(getWidth ()); }
   int getIHeight() const { return int(getHeight()); }
+
+  const CRGBA &background() const { return background_; }
+  void setBackground(const CRGBA &v) { background_ = v; }
 
   const CSVGStroke  &getStroke () const { return stroke_  ; }
   const CSVGFill    &getFill   () const { return fill_    ; }
@@ -226,8 +237,12 @@ class CSVG {
   void addWidthToPoint(double x, double y, double angle, double width,
                        double *x1, double *y1, double *x2, double *y2) const;
 
+  bool pathOption(const std::string &opt_name, const std::string &opt_value,
+                  const std::string &name, CSVG::PartList &parts);
   bool pathStringToParts(const std::string &data, PartList &parts);
+
   void drawParts(const PartList &parts, CSVGObjectMarker *marker=0);
+  bool interpParts(double s, const CSVG::PartList &parts, double *xi, double *yi, double *a);
 
   bool getPartsBBox(const PartList &parts, CBBox2D &bbox) const;
   void printParts(std::ostream &os, const PartList &parts) const;
@@ -254,8 +269,17 @@ class CSVG {
                   const std::string &name, CBBox2D *bbox);
   bool pointListOption(const std::string &opt_name, const std::string &opt_value,
                        const std::string &name, std::vector<CPoint2D> &points);
+
   bool realListOption(const std::string &opt_name, const std::string &opt_value,
                       const std::string &name, std::vector<double> &reals);
+  bool stringToReals(const std::string &str, std::vector<double> &reals);
+
+  bool eventValueOption(const std::string &opt_name, const std::string &opt_value,
+                        const std::string &name, CSVGEventValue &event);
+  bool timeValueOption(const std::string &opt_name, const std::string &opt_value,
+                       const std::string &name, CSVGTimeValue &time);
+
+  bool stringToTime(const std::string &str, CSVGTimeValue &time) const;
 
   bool decodeLengthValue(const std::string &str, CSVGLengthValue &lvalue);
 
@@ -306,12 +330,14 @@ class CSVG {
 
   void getObjectsAtPoint(const CPoint2D &p, ObjectList &objects) const;
 
+  void sendEvent(CSVGEventType type, const std::string &id="", const std::string &data="");
+
   void print(std::ostream &os, bool hier=false) const;
 
  private:
   CConfig *getConfig();
 
-  CSVGObject *tokenToObject(const CXMLToken *token);
+  CSVGObject *tokenToObject(CSVGObject *parent, const CXMLToken *token);
 
  private:
   CSVG(const CSVG &rhs);
@@ -330,6 +356,7 @@ class CSVG {
   CAutoPtr<CSVGBlock>      block_;
   CAutoPtr<CXML>           xml_;
   CXMLTag                 *xml_tag_       { 0 };
+  CRGBA                    background_ { 1, 1, 1};
   CSVGStroke               stroke_;
   CSVGFill                 fill_;
   CSVGClip                 clip_;

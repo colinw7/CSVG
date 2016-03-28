@@ -102,7 +102,7 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<" << name;
 
-    printNameValue(os, "id", id_);
+    CSVGObject::printValues(os);
 
     if (type_.isValid()) {
       os << " type=\"";

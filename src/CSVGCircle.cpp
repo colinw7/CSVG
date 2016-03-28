@@ -134,15 +134,21 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<circle";
 
-    printNameValue(os, "id", id_);
+    CSVGObject::printValues(os);
 
     printNameValue(os, "cx", cx_);
     printNameValue(os, "cy", cy_);
     printNameValue(os, "r" , radius_);
 
-    printStyle(os);
+    if (hasChildren()) {
+      os << ">" << std::endl;
 
-    os << "/>" << std::endl;
+      printChildren(os, hier);
+
+      os << "</circle>" << std::endl;
+    }
+    else
+      os << "/>" << std::endl;
   }
   else
     os << "circle " << getCenter() << " radius " << getRadius();

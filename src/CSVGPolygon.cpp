@@ -180,7 +180,11 @@ CSVGPolygon::
 print(std::ostream &os, bool hier) const
 {
   if (hier) {
-    os << "<polygon points=\"";
+    os << "<polygon";
+
+    CSVGObject::printValues(os);
+
+    os << " points=\"";
 
     for (uint i = 0; i < points_.size(); ++i) {
       if (i > 0)
@@ -190,8 +194,6 @@ print(std::ostream &os, bool hier) const
     }
 
     os << "\"";
-
-    printStyle(os);
 
     os << "/>" << std::endl;
   }

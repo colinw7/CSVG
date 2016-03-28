@@ -79,6 +79,8 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<stop";
 
+    CSVGObject::printValues(os);
+
     if (offset_.isValid()) {
       os << " offset=\""; printLength(os, offset_.getValue()); os << "\"";
     }

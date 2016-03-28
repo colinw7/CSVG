@@ -51,9 +51,9 @@ class CSVGBlock : public CSVGObject {
   COptValT<double>          y_;
   COptValT<CSVGLengthValue> width_;
   COptValT<CSVGLengthValue> height_;
-  COptValT<CHAlignType>     halign_ { CHALIGN_TYPE_CENTER };
-  COptValT<CVAlignType>     valign_ { CVALIGN_TYPE_CENTER };
-  COptValT<CSVGScale>       scale_  { CSVGScale::FREE };
+  COptValT<CHAlignType>     halign_;
+  COptValT<CVAlignType>     valign_;
+  COptValT<CSVGScale>       scale_;
 };
 
 #endif

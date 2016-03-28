@@ -190,14 +190,10 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<svg";
 
-    printNameValue(os, "id", id_);
+    CSVGObject::printValues(os);
 
     printNameLength(os, "width" , width_ );
     printNameLength(os, "height", height_);
-
-    if (viewBox_.isSet())
-      os << " viewBox=\"" << viewBox_.getXMin() << " " << viewBox_.getYMin() <<
-            " " << viewBox_.getXMax() << " " << viewBox_.getYMax() << "\"";
 
     if (halign_.isValid()) {
       os << " preserveAspectRatio=\"";
@@ -221,8 +217,7 @@ print(std::ostream &os, bool hier) const
 
     os << ">" << std::endl;
 
-    for (auto &o : objects_)
-      o->print(os, hier);
+    printChildren(os, hier);
 
     os << "</svg>" << std::endl;
   }

@@ -50,10 +50,13 @@ print(std::ostream &os, bool hier) const
 {
   if (hier) {
     if (! objects_.empty()) {
-      os << "<defs>" << std::endl;
+      os << "<defs" << std::endl;
 
-      for (const auto &o : objects_)
-        o->print(os, hier);
+      CSVGObject::printValues(os);
+
+      os << ">" << std::endl;
+
+      printChildren(os, hier);
 
       os << "</defs>" << std::endl;
     }

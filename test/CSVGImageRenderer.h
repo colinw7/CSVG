@@ -31,6 +31,8 @@ class CSVGImageRenderer : public CSVGRenderer {
     renderer_->getDataRange(xmin, ymin, xmax, ymax);
   }
 
+  void setBackground(const CRGBA &) { }
+
   void setAntiAlias(bool b) { renderer_->setAntiAlias(b); }
 
   void setEqualScale(bool b) { renderer_->setEqualScale(b); }

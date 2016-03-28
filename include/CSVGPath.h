@@ -22,6 +22,8 @@ class CSVGPath : public CSVGObject {
 
   const PartList &getPartList() const { return parts_; }
 
+  void moveBy(const CVector2D &d);
+
   void draw() override;
 
   bool getBBox(CBBox2D &bbox) const override;

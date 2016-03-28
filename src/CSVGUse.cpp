@@ -5,11 +5,7 @@
 CSVGUse::
 CSVGUse(CSVG &svg) :
  CSVGObject(svg),
- xlink_    (this),
- x_        (0),
- y_        (0),
- width_    (1),
- height_   (1)
+ xlink_    (this)
 {
 }
 
@@ -176,14 +172,12 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<use";
 
+    CSVGObject::printValues(os);
+
     std::string xn = xlink_.str();
 
     if (xn != "")
       os << " xlink:href=\"" << xn << "\"";
-
-    printStyle(os);
-
-    printTransform(os);
 
     os << "/>" << std::endl;
   }

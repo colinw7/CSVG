@@ -71,7 +71,7 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<feDiffuseLighting";
 
-    printNameValue(os, "id", id_);
+    CSVGObject::printValues(os);
 
     printNameValue(os, "in"    , filter_in_ );
     printNameValue(os, "result", filter_out_);

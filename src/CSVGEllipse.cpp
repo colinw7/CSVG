@@ -138,14 +138,12 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<ellipse";
 
-    printNameValue(os, "id", id_);
+    CSVGObject::printValues(os);
 
     printNameValue(os, "cx", cx_);
     printNameValue(os, "cy", cy_);
     printNameValue(os, "rx", rx_);
     printNameValue(os, "ry", ry_);
-
-    printStyle(os);
 
     os << "/>" << std::endl;
   }

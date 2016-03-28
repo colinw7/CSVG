@@ -91,6 +91,8 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<feImage";
 
+    CSVGObject::printValues(os);
+
     if (xlink_.str() != "")
       os << " xlink:href=\"" << xlink_.str() << "\"";
 

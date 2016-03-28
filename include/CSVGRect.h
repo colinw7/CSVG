@@ -41,7 +41,9 @@ class CSVGRect : public CSVGObject {
 
   bool getBBox(CBBox2D &bbox) const override;
 
+  void moveTo(const CPoint2D &p) override;
   void moveBy(const CVector2D &delta) override;
+
   void resizeTo(const CSize2D &size) override;
 
   void print(std::ostream &os, bool hier) const override;

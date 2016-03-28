@@ -49,7 +49,11 @@ CSVGFePointLight::
 print(std::ostream &os, bool hier) const
 {
   if (hier) {
-    os << "<fePointLight/>" << std::endl;
+    os << "<fePointLight";
+
+    CSVGObject::printValues(os);
+
+    os << "/>" << std::endl;
   }
   else
     os << "fePointLight ";

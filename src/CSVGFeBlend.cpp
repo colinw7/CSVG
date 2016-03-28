@@ -79,6 +79,8 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<feBlend";
 
+    CSVGObject::printValues(os);
+
     if (type_.isValid()) {
       Type type = type_.getValue();
 

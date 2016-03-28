@@ -7,6 +7,7 @@
 #include <CSVGLog.h>
 #include <CSVGTempStroke.h>
 #include <CSVGTempFont.h>
+#include <CSVGUtil.h>
 
 #include <CFontMgr.h>
 #include <CEncode64.h>
@@ -34,6 +35,8 @@ CSVGObject(CSVG &svg) :
  clip_   (svg),
  fontDef_(svg)
 {
+  animation_.setParent(const_cast<CSVGObject *>(this));
+
   transform_.setIdentity();
 }
 
@@ -53,6 +56,7 @@ CSVGObject(const CSVGObject &obj) :
  shapeRendering_(obj.shapeRendering_),
  transform_     (obj.transform_),
  objects_       (),
+ animation_     (),
  filter_        (obj.filter_),
  mask_          (obj.mask_),
  clipPath_      (obj.clipPath_),
@@ -61,6 +65,8 @@ CSVGObject(const CSVGObject &obj) :
  selected_      (obj.selected_),
  xmlTag_        (obj.xmlTag_)
 {
+  animation_.setParent(const_cast<CSVGObject *>(this));
+
   for (const auto &o : obj.children()) {
     CSVGObject *child = o->dup();
 
@@ -528,9 +534,9 @@ setStyle(const std::string &style)
 
     uint num_words1 = words1.size();
 
-    if (num_words1 == 2) {
-      words1[0] = CStrUtil::stripSpaces(words1[0]);
-      words1[1] = CStrUtil::stripSpaces(words1[1]);
+    if (num_words1 >= 2) {
+      words1[0] = CStrUtil::stripSpaces(words1[num_words1 - 2]);
+      words1[1] = CStrUtil::stripSpaces(words1[num_words1 - 1]);
 
       if (! processPaintOption      (words1[0], words1[1]) &&
           ! processColorOption      (words1[0], words1[1]) &&
@@ -703,11 +709,11 @@ processPaintOption(const std::string &optName, const std::string &optValue)
   else if (svg_.stringOption(optName, optValue, "stroke-width", str))
     setStrokeWidth(str);
   else if (svg_.stringOption(optName, optValue, "overflow", str))
-    ;
+    notHandled(optName, optValue);
   else if (svg_.stringOption(optName, optValue, "visibility", str))
-    ;
+    setVisibility(str); // visible | hidden | inherit
   else if (svg_.stringOption(optName, optValue, "display", str))
-    ;
+    notHandled(optName, optValue);
   else
     return false;
 
@@ -790,29 +796,25 @@ processGraphicsOption(const std::string &optName, const std::string &optValue)
 
   // Graphics Attributes
   if      (svg_.stringOption(optName, optValue, "display", str))
-    // inline | block | list-item | run-in | compact | marker |
-    // table | inline-table | table-row-group | table-header-group |
-    // table-footer-group | table-row | table-column-group |
-    // table-column | table-cell | table-caption | none | inherit
+    // inline | block | list-item | run-in | compact | marker | table | inline-table |
+    // table-row-group | table-header-group | table-footer-group | table-row |
+    // table-column-group | table-column | table-cell | table-caption | none | inherit
     notHandled(optName, optValue);
   else if (svg_.stringOption(optName, optValue, "image-rendering", str))
     // auto | optimizeSpeed | optimizeQuality | inherit
     notHandled(optName, optValue);
   else if (svg_.stringOption(optName, optValue, "pointer-events", str))
-    // visiblePainted | visibleFill | visibleStroke | visible |
-    // painted | fill | stroke | all | none | inherit
+    // visiblePainted | visibleFill | visibleStroke | visible | painted | fill |
+    // stroke | all | none | inherit
     notHandled(optName, optValue);
   else if (svg_.stringOption(optName, optValue, "shape-rendering", str))
-    // auto | optimizeSpeed | crispEdges | geometricPrecision |
-    // inherit
+    // auto | optimizeSpeed | crispEdges | geometricPrecision | inherit
     setShapeRendering(str);
   else if (svg_.stringOption(optName, optValue, "text-renderer", str))
-    // auto | optimizeSpeed | optimizeLegibility |
-    // geometricPrecision | inherit
+    // auto | optimizeSpeed | optimizeLegibility | geometricPrecision | inherit
     notHandled(optName, optValue);
   else if (svg_.stringOption(optName, optValue, "visibility", str))
-    // visible | hidden | inherit
-    notHandled(optName, optValue);
+    setVisibility(str); // visible | hidden | inherit
   else
     return false;
 
@@ -1012,25 +1014,25 @@ processGraphicalEventsOption(const std::string &optName, const std::string &optV
 {
   std::string str;
 
-  if      (svg_.stringOption(optName, optValue, "onfocusin", str))
+  if      (svg_.stringOption(optName, optValue, "onfocusin"  , str))
     notHandled(optName, optValue);
-  else if (svg_.stringOption(optName, optValue, "onfocusout", str))
+  else if (svg_.stringOption(optName, optValue, "onfocusout" , str))
     notHandled(optName, optValue);
-  else if (svg_.stringOption(optName, optValue, "onactivate", str))
+  else if (svg_.stringOption(optName, optValue, "onactivate" , str))
     notHandled(optName, optValue);
-  else if (svg_.stringOption(optName, optValue, "onclick", str))
+  else if (svg_.stringOption(optName, optValue, "onclick"    , str))
     notHandled(optName, optValue);
   else if (svg_.stringOption(optName, optValue, "onmousedown", str))
     notHandled(optName, optValue);
-  else if (svg_.stringOption(optName, optValue, "onmouseup", str))
+  else if (svg_.stringOption(optName, optValue, "onmouseup"  , str))
     notHandled(optName, optValue);
   else if (svg_.stringOption(optName, optValue, "onmouseover", str))
     notHandled(optName, optValue);
   else if (svg_.stringOption(optName, optValue, "onmousemove", str))
     notHandled(optName, optValue);
-  else if (svg_.stringOption(optName, optValue, "onmouseout", str))
+  else if (svg_.stringOption(optName, optValue, "onmouseout" , str))
     notHandled(optName, optValue);
-  else if (svg_.stringOption(optName, optValue, "onload", str))
+  else if (svg_.stringOption(optName, optValue, "onload"     , str))
     notHandled(optName, optValue);
   else
     return false;
@@ -1172,8 +1174,6 @@ processTextContentOption(const std::string &optName, const std::string &optValue
     notHandled(optName, optValue);
   else if (svg_.stringOption(optName, optValue, "baseline-shift", str))
     notHandled(optName, optValue);
-  else if (svg_.stringOption(optName, optValue, "direction", str))
-    notHandled(optName, optValue);
   else if (svg_.stringOption(optName, optValue, "dominant-baseline", str))
     notHandled(optName, optValue);
   else if (svg_.stringOption(optName, optValue, "glyph-orientation-horizontal", str))
@@ -1182,10 +1182,13 @@ processTextContentOption(const std::string &optName, const std::string &optValue
     notHandled(optName, optValue);
   else if (svg_.stringOption(optName, optValue, "kerning", str))
     notHandled(optName, optValue);
-  else if (svg_.stringOption(optName, optValue, "letter-spacing", str))
-    notHandled(optName, optValue);
   else if (svg_.stringOption(optName, optValue, "text-anchor", str))
     setTextAnchor(str);
+
+  else if (svg_.stringOption(optName, optValue, "direction", str))
+    notHandled(optName, optValue);
+  else if (svg_.stringOption(optName, optValue, "letter-spacing", str))
+    notHandled(optName, optValue);
   else if (svg_.stringOption(optName, optValue, "text-decoration", str))
     notHandled(optName, optValue);
   else if (svg_.stringOption(optName, optValue, "unicode-bidi", str))
@@ -1204,6 +1207,49 @@ notHandled(const std::string &optName, const std::string &optValue)
 {
   CSVGLog() << "Option " << optName << ":" << optValue << " not handled " <<
                "for " << getObjName();
+}
+
+bool
+CSVGObject::
+interpValue(const std::string &name, const std::string &from, const std::string &to,
+            double x, std::string &ystr) const
+{
+  if (name == "fill") {
+    CRGBA fromColor;
+
+    if (! svg_.decodeColorString(from, fromColor))
+      return false;
+
+    CRGBA toColor;
+
+    if (! svg_.decodeColorString(to, toColor))
+      return false;
+
+    CRGBA c = fromColor*(1 - x) + toColor*x;
+
+    ystr = CStrUtil::strprintf("rgb(%d,%d,%d)", c.getRedI(), c.getGreenI(), c.getBlueI());
+
+    return true;
+  }
+  else {
+    double fromVal = 0;
+    uint   fromPos = 0;
+
+    if (! CStrUtil::readReal(from, &fromPos, &fromVal))
+      return false;
+
+    double toVal = 0;
+    uint   toPos = 0;
+
+    if (! CStrUtil::readReal(to, &toPos, &toVal))
+      return false;
+
+    double y = CSVGUtil::map(x, 0, 1, fromVal, toVal);
+
+    ystr = std::to_string(y);
+
+    return true;
+  }
 }
 
 void
@@ -1248,7 +1294,10 @@ addChildObject(CSVGObject *object)
 {
   object->setParent(this);
 
-  objects_.push_back(object);
+  if (object->isAnimated())
+    animation_.addObject(object);
+  else
+    objects_.push_back(object);
 }
 
 void
@@ -1257,7 +1306,21 @@ deleteChildObject(CSVGObject *object)
 {
   object->setParent(0);
 
-  objects_.remove(object);
+  if (object->isAnimated())
+    animation_.removeObject(object);
+  else
+    objects_.remove(object);
+}
+
+void
+CSVGObject::
+getAllChildren(std::vector<CSVGObject *> &objects)
+{
+  for (const auto &c : children())
+    objects.push_back(c);
+
+  for (const auto &c : children())
+    c->getAllChildren(objects);
 }
 
 void
@@ -1302,8 +1365,8 @@ void
 CSVGObject::
 drawObjects()
 {
-  for (const auto &o : objects_)
-    o->drawObject();
+  for (const auto &c : children())
+    c->drawObject();
 }
 
 void
@@ -1345,7 +1408,8 @@ drawObject()
   //------
 
   // draw object (virtual)
-  draw();
+  if (isVisible())
+    draw();
 
   //------
 
@@ -1376,6 +1440,16 @@ drawObject()
   //------
 
   svg_.setTransform(transform);
+}
+
+bool
+CSVGObject::
+isVisible() const
+{
+  if (visibility_ == "hidden")
+    return false;
+
+  return true;
 }
 
 CImagePtr
@@ -1443,6 +1517,30 @@ rotateBy(double da, const CPoint2D &)
   setTransform(m*getTransform());
 }
 
+void
+CSVGObject::
+rotateTo(double a, const CPoint2D &c)
+{
+  CMatrix2D m1, m2, m3;
+
+  m1.setTranslation(-c.x, -c.y);
+  m2.setRotation(a);
+  m3.setTranslation( c.x,  c.y);
+
+  setTransform(m3*m2*m1);
+}
+
+void
+CSVGObject::
+scaleTo(double xs, double ys)
+{
+  CMatrix2D m;
+
+  m.setScale(xs, ys);
+
+  setTransform(m);
+}
+
 bool
 CSVGObject::
 getBBox(CBBox2D &bbox) const
@@ -1459,6 +1557,42 @@ getBBox(CBBox2D &bbox) const
     bbox = viewBox_;
 
   return bbox.isSet();
+}
+
+bool
+CSVGObject::
+getTransformedBBox(CBBox2D &bbox) const
+{
+  CMatrix2D m = getFlatTransform();
+
+  if (! getBBox(bbox))
+    return false;
+
+  CPoint2D p1, p2, p3, p4;
+
+  m.multiplyPoint(bbox.getLL(), p1);
+  m.multiplyPoint(bbox.getLR(), p2);
+  m.multiplyPoint(bbox.getUL(), p3);
+  m.multiplyPoint(bbox.getUR(), p4);
+
+  bbox = CBBox2D(p1, p2);
+
+  bbox += p3;
+  bbox += p4;
+
+  return true;
+}
+
+bool
+CSVGObject::
+inside(const CPoint2D &pos) const
+{
+  CBBox2D bbox;
+
+  if (! getTransformedBBox(bbox))
+    return false;
+
+  return bbox.inside(pos);
 }
 
 bool
@@ -1527,12 +1661,22 @@ getChildrenBBox(CBBox2D &bbox) const
 {
   CBBox2D bbox1;
 
-  for (const auto &c  : children()) {
+  for (const auto &c : children()) {
     if (c->getBBox(bbox1))
       bbox.add(bbox1);
   }
 
   return bbox.isSet();
+}
+
+void
+CSVGObject::
+tick(double dt)
+{
+  for (const auto &c : children())
+    c->tick(dt);
+
+  animation_.tick(dt);
 }
 
 void
@@ -1699,31 +1843,87 @@ getObjectsAtPoint(const CPoint2D &p, ObjectArray &objects) const
 
 void
 CSVGObject::
+handleEvent(CSVGEventType type, const std::string &id, const std::string &data)
+{
+  for (const auto &c : children())
+    c->handleEvent(type, id, data);
+
+  if (! animation_.objects().empty())
+    animation_.handleEvent(type, id, data);
+}
+
+void
+CSVGObject::
 print(std::ostream &os, bool hier) const
 {
   if (hier) {
     std::string s = getText();
 
-    if (! objects_.empty()) {
-      os << "<" << getObjName() << ">" << std::endl;
+    os << "<" << getObjName();
+
+    printValues(os);
+
+    if (hasChildren()) {
+      os << ">" << std::endl;
 
       if (s != "")
         os << s << std::endl;
 
-      for (const auto &o : objects_)
-        o->print(os, hier);
+      printChildren(os, hier);
 
       os << "</" << getObjName() << ">" << std::endl;
     }
     else if (s != "") {
-      os << "<" << getObjName() << ">" << s;
+      os << ">" << s;
       os << "</" << getObjName() << ">" << std::endl;
     }
     else
-      os << "<" << getObjName() << "/>" << std::endl;
+      os << "/>" << std::endl;
   }
   else
     os << getObjName() << ": '" << getId() << "'";
+}
+
+void
+CSVGObject::
+printValues(std::ostream &os) const
+{
+  printNameValue(os, "id", id_);
+
+  if (viewBox_.isSet())
+    os << " viewBox=\"" << viewBox_.getXMin() << " " << viewBox_.getYMin() <<
+          " " << viewBox_.getXMax() << " " << viewBox_.getYMax() << "\"";
+
+  printTransform(os);
+
+  printFilter(os);
+
+  printStyle(os);
+
+  printTextContent(os);
+
+  printFontDef(os);
+}
+
+bool
+CSVGObject::
+hasChildren(bool includeAnimated) const
+{
+  if (includeAnimated)
+    return (! children().empty() || ! animation_.objects().empty());
+  else
+    return ! children().empty();
+}
+
+void
+CSVGObject::
+printChildren(std::ostream &os, bool hier) const
+{
+  for (const auto &c : children())
+    c->print(os, hier);
+
+  for (const auto &o : animation_.objects())
+    o->print(os, hier);
 }
 
 void
@@ -1791,7 +1991,8 @@ void
 CSVGObject::
 printFontDef(std::ostream &os) const
 {
-  fontDef_.print(os);
+  if (hasFont())
+    fontDef_.print(os);
 }
 
 void
@@ -1852,6 +2053,20 @@ printTransform(std::ostream &os, const CMatrix2D &m) const
 
 void
 CSVGObject::
+printNameParts(std::ostream &os, const std::string &name,
+               const std::vector<CSVGPathPart *> &parts) const
+{
+  if (! parts.empty()) {
+    os << " " << name << "=\"";
+
+    svg_.printParts(os, parts);
+
+    os << "\"";
+  }
+}
+
+void
+CSVGObject::
 printLength(std::ostream &os, const CSVGLengthValue &l)
 {
   if      (l.type() == CSVGLengthValue::Type::EM)
@@ -1874,4 +2089,55 @@ printLength(std::ostream &os, const CSVGLengthValue &l)
     os << 100*l.ivalue() << "%";
   else
     os << l.value();
+}
+
+void
+CSVGObject::
+printTime(std::ostream &os, const CSVGTimeValue &t)
+{
+  if      (t.type() == CSVGTimeValue::Type::HOURS)
+    os << t.value() << "h";
+  else if (t.type() == CSVGTimeValue::Type::MINUTES)
+    os << t.value() << "min";
+  else if (t.type() == CSVGTimeValue::Type::SECONDS)
+    os << t.value() << "s";
+  else if (t.type() == CSVGTimeValue::Type::MILLISECONDS)
+    os << t.value() << "ms";
+  else
+    os << t.value();
+}
+
+void
+CSVGObject::
+printEvent(std::ostream &os, const CSVGEventValue &e)
+{
+  if      (e.type() == CSVGEventType::TIMEOUT)
+    printTime(os, e.time());
+  else if (e.type() == CSVGEventType::CLICK)
+    os << "click";
+  else if (e.type() == CSVGEventType::MOUSE_DOWN)
+    os << "mousedown";
+  else if (e.type() == CSVGEventType::MOUSE_UP)
+    os << "mouseup";
+  else if (e.type() == CSVGEventType::MOUSE_OVER)
+    os << "mouseover";
+  else if (e.type() == CSVGEventType::MOUSE_OUT)
+    os << "mouseout";
+  else if (e.type() == CSVGEventType::ANIMATE_BEGIN)
+    os << e.id() << ".begin";
+  else if (e.type() == CSVGEventType::ANIMATE_END)
+    os << e.id() << ".end";
+  else if (e.type() == CSVGEventType::ANIMATE_REPEAT)
+    os << e.id() << ".repeat";
+
+  if (e.type() != CSVGEventType::TIMEOUT) {
+    if (e.args() != "")
+      os << "(" << e.args() << ")";
+
+    if (e.time().type() != CSVGTimeValue::Type::NONE) {
+      os << "+";
+
+      printTime(os, e.time());
+    }
+  }
 }

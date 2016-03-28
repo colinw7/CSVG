@@ -12,10 +12,13 @@ class CSVGTSpan : public CSVGObject {
 
   CSVGTSpan *dup() const override;
 
-  void setX(double x) { position_.x = x; }
-  void setY(double y) { position_.y = y; }
+  double getX() const { return x_.getValue(0); }
+  void setX(double x) { x_ = x; }
 
-  std::string getText() const override { return text_; }
+  double getY() const { return y_.getValue(0); }
+  void setY(double y) { y_ = y; }
+
+  std::string getText() const override { return text_.getValue(""); }
   void setText(const std::string &text) override { text_ = text; }
 
   bool processOption(const std::string &name, const std::string &value) override;
@@ -30,8 +33,9 @@ class CSVGTSpan : public CSVGObject {
   CSVGTSpan &operator=(const CSVGTSpan &rhs);
 
  private:
-  CPoint2D    position_;
-  std::string text_;
+  COptValT<double>      x_;
+  COptValT<double>      y_;
+  COptValT<std::string> text_;
 };
 
 #endif

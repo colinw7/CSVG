@@ -11,7 +11,8 @@ CSVGTSpan(CSVG &svg) :
 CSVGTSpan::
 CSVGTSpan(const CSVGTSpan &span) :
  CSVGObject(span),
- position_ (span.position_),
+ x_        (span.x_),
+ y_        (span.y_),
  text_     (span.text_)
 {
 }
@@ -32,11 +33,11 @@ processOption(const std::string &opt_name, const std::string &opt_value)
 
   if      (svg_.stringOption(opt_name, opt_value, "x", str)) {
     if (CStrUtil::isReal(str) && CStrUtil::toReal(str, &real))
-      position_.x = real;
+      x_ = real;
   }
   else if (svg_.stringOption(opt_name, opt_value, "y", str)) {
     if (CStrUtil::isReal(str) && CStrUtil::toReal(str, &real))
-      position_.y = real;
+      y_ = real;
   }
   else
     return CSVGObject::processOption(opt_name, opt_value);
@@ -52,10 +53,10 @@ draw()
     CSVGLog() << *this;
 
   if (svg_.isFilled())
-    svg_.fillText(position_.x, position_.y, text_, getFont(), getTextAnchor());
+    svg_.fillText(getX(), getY(), getText(), getFont(), getTextAnchor());
 
   if (svg_.isStroked())
-    svg_.drawText(position_.x, position_.y, text_, getFont(), getTextAnchor());
+    svg_.drawText(getX(), getY(), getText(), getFont(), getTextAnchor());
 }
 
 void
@@ -65,20 +66,19 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<tspan";
 
-    os << " x=\"" << position_.x << "\"";
-    os << " y=\"" << position_.y << "\"";
+    CSVGObject::printValues(os);
 
-    if (hasFont())
-      printFontDef(os);
+    printNameValue(os, "x", x_);
+    printNameValue(os, "y", y_);
 
     os << ">";
 
-    os << text_;
+    os << getText();
 
     os << "</tspan>" << std::endl;
   }
   else
-    os << "tspan " << position_ << " " << CStrUtil::single_quote(text_);
+    os << "tspan " << getX() << getY() << " " << CStrUtil::single_quote(getText());
 }
 
 std::ostream &

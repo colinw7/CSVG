@@ -12,4 +12,16 @@ enum class CSVGCoordUnits {
   USER_SPACE
 };
 
+enum class CSVGEventType {
+  CLICK,
+  MOUSE_DOWN,
+  MOUSE_UP,
+  MOUSE_OVER,
+  MOUSE_OUT,
+  ANIMATE_BEGIN,
+  ANIMATE_END,
+  ANIMATE_REPEAT,
+  TIMEOUT
+};
+
 #endif

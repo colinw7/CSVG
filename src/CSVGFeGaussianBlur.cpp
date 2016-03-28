@@ -71,6 +71,8 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<feGaussianBlur";
 
+    CSVGObject::printValues(os);
+
     printNameValue(os, "in"          , filter_in_ );
     printNameValue(os, "result"      , filter_out_);
     printNameValue(os, "stdDeviation", std_dev_   );

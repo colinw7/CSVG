@@ -129,6 +129,22 @@ getBBox(CBBox2D &bbox) const
 
 void
 CSVGText::
+moveTo(const CPoint2D &p)
+{
+  x_ = p.x;
+  y_ = p.y;
+}
+
+void
+CSVGText::
+moveBy(const CVector2D &delta)
+{
+  x_ = getX() + delta.x();
+  y_ = getY() + delta.y();
+}
+
+void
+CSVGText::
 draw()
 {
   if (svg_.getDebug())
@@ -148,17 +164,23 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<text";
 
-    printNameValue(os, "id", id_);
-    printNameValue(os, "x" , x_ );
-    printNameValue(os, "y" , y_ );
+    CSVGObject::printValues(os);
 
-    printFilter(os);
-
-    printStyle(os);
+    printNameValue(os, "x", x_);
+    printNameValue(os, "y", y_);
 
     os << ">";
 
-    os << getText();
+    if (hasChildren()) {
+      os << std::endl;
+
+      os << getText() << std::endl;
+
+      printChildren(os, hier);
+    }
+    else {
+      os << getText();
+    }
 
     os << "</text>" << std::endl;
   }

@@ -98,7 +98,7 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<feComposite";
 
-    printNameValue(os, "id", id_);
+    CSVGObject::printValues(os);
 
     printNameValue(os, "in"    , filter_in1_);
     printNameValue(os, "in2"   , filter_in2_);

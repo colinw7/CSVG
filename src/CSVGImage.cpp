@@ -190,7 +190,8 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<image";
 
-    printNameValue (os, "id"    , id_);
+    CSVGObject::printValues(os);
+
     printNameValue (os, "x"     , x_ );
     printNameValue (os, "y"     , y_ );
     printNameLength(os, "width" , w_ );

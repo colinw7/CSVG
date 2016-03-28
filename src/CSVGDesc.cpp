@@ -52,7 +52,7 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<desc";
 
-    printNameValue(os, "id", id_);
+    CSVGObject::printValues(os);
 
     os << ">";
 

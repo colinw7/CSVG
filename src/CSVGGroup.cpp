@@ -73,18 +73,11 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<g";
 
-    printNameValue(os, "id", id_);
-
-    printTextContent(os);
-
-    printStyle(os);
-
-    printTransform(os);
+    CSVGObject::printValues(os);
 
     os << ">" << std::endl;
 
-    for (const auto &o : objects_)
-      o->print(os, hier);
+    printChildren(os, hier);
 
     os << "</g>" << std::endl;
   }

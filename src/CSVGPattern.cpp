@@ -11,7 +11,6 @@ CSVGPattern(CSVG &svg) :
 CSVGPattern::
 CSVGPattern(const CSVGPattern &pattern) :
  CSVGObject   (pattern),
- object_      (0),
  x_           (pattern.x_),
  y_           (pattern.y_),
  width_       (pattern.width_),
@@ -94,7 +93,8 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<pattern";
 
-    printNameValue(os, "id", id_);
+    CSVGObject::printValues(os);
+
     printNameValue(os, "x" , x_ );
     printNameValue(os, "y" , y_ );
 
@@ -110,12 +110,9 @@ print(std::ostream &os, bool hier) const
     if (getContentsUnitsValid())
       os << " patternContentUnits=\"" << CSVG::encodeUnitsString(getContentsUnits()) << "\"";
 
-    printTransform(os);
-
     os << ">" << std::endl;
 
-    for (const auto &o : objects_)
-      o->print(os, hier);
+    printChildren(os, hier);
 
     os << "</pattern>" << std::endl;
   }

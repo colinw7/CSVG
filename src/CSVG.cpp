@@ -1,9 +1,15 @@
 #include <CSVG.h>
+#include <CSVGAnimate.h>
+#include <CSVGAnimateColor.h>
+#include <CSVGAnimateMotion.h>
+#include <CSVGAnimateTransform.h>
 #include <CSVGBuffer.h>
 #include <CSVGCircle.h>
 #include <CSVGClipPath.h>
 #include <CSVGDefs.h>
 #include <CSVGDesc.h>
+#include <CSVGUtil.h>
+
 #include <CSVGEllipse.h>
 #include <CSVGFeBlend.h>
 #include <CSVGFeColorMatrix.h>
@@ -33,6 +39,7 @@
 #include <CSVGMask.h>
 #include <CSVGMarker.h>
 #include <CSVGMissingGlyph.h>
+#include <CSVGMPath.h>
 #include <CSVGPath.h>
 #include <CSVGPathPart.h>
 #include <CSVGPattern.h>
@@ -41,6 +48,7 @@
 #include <CSVGRadialGradient.h>
 #include <CSVGRect.h>
 #include <CSVGRenderer.h>
+#include <CSVGSet.h>
 #include <CSVGStop.h>
 #include <CSVGStyle.h>
 #include <CSVGStyleData.h>
@@ -201,7 +209,7 @@ read(const std::string &filename, CSVGObject *object)
   object->setXMLTag(xml_tag_);
 
   for (const auto &token : xml_tag_->getChildren()) {
-    CSVGObject *object1 = tokenToObject(token);
+    CSVGObject *object1 = tokenToObject(object, token);
 
     if (object1)
       object->addChildObject(object1);
@@ -212,7 +220,7 @@ read(const std::string &filename, CSVGObject *object)
 
 CSVGObject *
 CSVG::
-tokenToObject(const CXMLToken *token)
+tokenToObject(CSVGObject *parent, const CXMLToken *token)
 {
   if (! token->isTag())
     return 0;
@@ -227,10 +235,12 @@ tokenToObject(const CXMLToken *token)
 
   CSVGObject *object = createObjectByName(tag_name);
 
-  if (object == 0) {
+  if (! object) {
     CSVGLog() << "Unknown tag " << tag_name;
     return 0;
   }
+
+  object->setParent(parent);
 
   //-----
 
@@ -262,7 +272,7 @@ tokenToObject(const CXMLToken *token)
       if (tag_name == "tspan") {
         CAutoPtr<CSVGObject> to;
 
-        to = tokenToObject(token);
+        to = tokenToObject(object, token);
 
         CSVGTSpan *ts = dynamic_cast<CSVGTSpan *>(to.get());
 
@@ -285,7 +295,6 @@ tokenToObject(const CXMLToken *token)
   //-----
 
   // process tag options
-
   uint num_options = tag->getNumOptions();
 
   const CXMLTag::OptionArray &options = tag->getOptions();
@@ -306,13 +315,12 @@ tokenToObject(const CXMLToken *token)
   //-----
 
   // process tag children
-
   CXMLTag::TokenArray children = tag->getChildren();
 
   uint num_children = children.size();
 
   for (uint i = 0; i < num_children; ++i) {
-    CSVGObject *object1 = tokenToObject(children[i]);
+    CSVGObject *object1 = tokenToObject(object, children[i]);
 
     if (object1 != 0)
       object->addChildObject(object1);
@@ -339,6 +347,14 @@ createObjectByName(const std::string &name)
 
   if      (name == "svg")
     object = createBlock();
+  else if (name == "animate")
+    object = new CSVGAnimate(*this);
+  else if (name == "animateColor")
+    object = new CSVGAnimateColor(*this);
+  else if (name == "animateMotion")
+    object = new CSVGAnimateMotion(*this);
+  else if (name == "animateTransform")
+    object = new CSVGAnimateTransform(*this);
   else if (name == "circle")
     object = createCircle();
   else if (name == "clipPath")
@@ -413,6 +429,8 @@ createObjectByName(const std::string &name)
     object = new CSVGMask(*this);
   else if (name == "missing-glyph")
     object = new CSVGMissingGlyph(*this);
+  else if (name == "mpath")
+    object = createMPath();
   else if (name == "path")
     object = createPath();
   else if (name == "pattern")
@@ -425,6 +443,8 @@ createObjectByName(const std::string &name)
     object = createRadialGradient();
   else if (name == "rect")
     object = createRect();
+  else if (name == "set")
+    object = createSet();
   else if (name == "stop")
     object = createStop();
   else if (name == "symbol")
@@ -508,6 +528,13 @@ createMarker()
   return new CSVGMarker(*this);
 }
 
+CSVGMPath *
+CSVG::
+createMPath()
+{
+  return new CSVGMPath(*this);
+}
+
 CSVGPath *
 CSVG::
 createPath()
@@ -541,6 +568,13 @@ CSVG::
 createRect()
 {
   return new CSVGRect(*this);
+}
+
+CSVGSet *
+CSVG::
+createSet()
+{
+  return new CSVGSet(*this);
 }
 
 CSVGStop *
@@ -1524,9 +1558,6 @@ bool
 CSVG::
 pathGetCurrentPoint(double *x, double *y)
 {
-  *x = 0;
-  *y = 0;
-
   return buffer_->pathGetCurrentPoint(x, y);
 }
 
@@ -1580,12 +1611,28 @@ initClip()
 
 bool
 CSVG::
+pathOption(const std::string &opt_name, const std::string &opt_value,
+           const std::string &name, CSVG::PartList &parts)
+{
+  if (opt_name != name)
+    return false;
+
+  if (! pathStringToParts(opt_value, parts))
+    return false;
+
+  return true;
+}
+
+bool
+CSVG::
 pathStringToParts(const std::string &data, CSVG::PartList &parts)
 {
   COptValT<double> bezier2_x2, bezier2_y2, bezier2_x3, bezier2_y3;
   COptValT<double> bezier3_x2, bezier3_y2, bezier3_x3, bezier3_y3;
 
-  char c;
+  char c = '\0', lastC = '\0';
+
+  bool rereadCmd = false;
 
   CStrParse parse(data);
 
@@ -1594,9 +1641,14 @@ pathStringToParts(const std::string &data, CSVG::PartList &parts)
   bool flag = true;
 
   while (! parse.eof()) {
-    parse.readChar(&c);
+    if (! rereadCmd)
+      parse.readChar(&c);
+    else
+      rereadCmd = false;
 
     if      (c == 'm') {
+      lastC = c;
+
       double x, y;
 
       parse.skipSpace();
@@ -1624,6 +1676,8 @@ pathStringToParts(const std::string &data, CSVG::PartList &parts)
       }
     }
     else if (c == 'M') {
+      lastC = c;
+
       double x, y;
 
       parse.skipSpace();
@@ -1651,6 +1705,8 @@ pathStringToParts(const std::string &data, CSVG::PartList &parts)
       }
     }
     else if (c == 'l') {
+      lastC = c;
+
       double x, y;
 
       parse.skipSpace();
@@ -1678,6 +1734,8 @@ pathStringToParts(const std::string &data, CSVG::PartList &parts)
       }
     }
     else if (c == 'L') {
+      lastC = c;
+
       double x, y;
 
       parse.skipSpace();
@@ -1705,6 +1763,8 @@ pathStringToParts(const std::string &data, CSVG::PartList &parts)
       }
     }
     else if (c == 'h') {
+      lastC = c;
+
       double d;
 
       parse.skipSpace();
@@ -1714,6 +1774,8 @@ pathStringToParts(const std::string &data, CSVG::PartList &parts)
       parts.push_back(new CSVGPathRLineTo(*this, d, 0));
     }
     else if (c == 'H') {
+      lastC = c;
+
       double d;
 
       parse.skipSpace();
@@ -1723,6 +1785,8 @@ pathStringToParts(const std::string &data, CSVG::PartList &parts)
       parts.push_back(new CSVGPathHLineTo(*this, d));
     }
     else if (c == 'v') {
+      lastC = c;
+
       double d;
 
       parse.skipSpace();
@@ -1732,6 +1796,8 @@ pathStringToParts(const std::string &data, CSVG::PartList &parts)
       parts.push_back(new CSVGPathRLineTo(*this, 0, d));
     }
     else if (c == 'V') {
+      lastC = c;
+
       double d;
 
       parse.skipSpace();
@@ -1741,6 +1807,8 @@ pathStringToParts(const std::string &data, CSVG::PartList &parts)
       parts.push_back(new CSVGPathVLineTo(*this, d));
     }
     else if (c == 'a') {
+      lastC = c;
+
       int    fa, fs;
       double rx, ry, xa, x2, y2;
 
@@ -1809,6 +1877,8 @@ pathStringToParts(const std::string &data, CSVG::PartList &parts)
       }
     }
     else if (c == 'A') {
+      lastC = c;
+
       int    fa, fs;
       double rx, ry, xa, x2, y2;
 
@@ -1843,6 +1913,8 @@ pathStringToParts(const std::string &data, CSVG::PartList &parts)
       parts.push_back(new CSVGPathArcTo(*this, rx, ry, xa, fa, fs, x2, y2));
     }
     else if (c == 'q') { // Quadratic Bezier (Relative)
+      lastC = c;
+
       double x1, y1, x2, y2;
 
       parse.skipSpace();
@@ -1886,6 +1958,8 @@ pathStringToParts(const std::string &data, CSVG::PartList &parts)
       }
     }
     else if (c == 'Q') { // Quadratic Bezier (Absolute)
+      lastC = c;
+
       double x1, y1, x2, y2;
 
       parse.skipSpace();
@@ -1935,6 +2009,8 @@ pathStringToParts(const std::string &data, CSVG::PartList &parts)
       }
     }
     else if (c == 't') {
+      lastC = c;
+
       double x2, y2;
 
       parse.skipSpace();
@@ -1953,6 +2029,8 @@ pathStringToParts(const std::string &data, CSVG::PartList &parts)
       }
     }
     else if (c == 'T') {
+      lastC = c;
+
       double x2, y2;
 
       parse.skipSpace();
@@ -1974,6 +2052,8 @@ pathStringToParts(const std::string &data, CSVG::PartList &parts)
       }
     }
     else if (c == 'c') { // Cubic Bezier (Relative)
+      lastC = c;
+
       double x1, y1, x2, y2, x3, y3;
 
       parse.skipSpace();
@@ -2033,6 +2113,8 @@ pathStringToParts(const std::string &data, CSVG::PartList &parts)
       }
     }
     else if (c == 'C') { // Cubic Bezier (Absolute)
+      lastC = c;
+
       double x1, y1, x2, y2, x3, y3;
 
       parse.skipSpace();
@@ -2098,6 +2180,8 @@ pathStringToParts(const std::string &data, CSVG::PartList &parts)
       }
     }
     else if (c == 's') {
+      lastC = c;
+
       double x2, y2, x3, y3;
 
       parse.skipSpace();
@@ -2127,6 +2211,8 @@ pathStringToParts(const std::string &data, CSVG::PartList &parts)
       }
     }
     else if (c == 'S') {
+      lastC = c;
+
       double x2, y2, x3, y3;
 
       parse.skipSpace();
@@ -2156,13 +2242,29 @@ pathStringToParts(const std::string &data, CSVG::PartList &parts)
       }
     }
     else if (c == 'z') {
+      lastC = c;
+
       parts.push_back(new CSVGPathClosePath(*this));
     }
     else if (c == 'Z') {
+      lastC = c;
+
       parts.push_back(new CSVGPathClosePath(*this));
     }
     else {
+      // repeat last command if any
+      if (isdigit(c) && lastC != '\0') {
+        parse.unreadChar();
+
+        c = lastC;
+
+        rereadCmd = true;
+
+        continue;
+      }
+
       CSVGLog() << "Invalid path command " << c;
+
       return false;
     }
 
@@ -2186,14 +2288,15 @@ drawParts(const CSVG::PartList &parts, CSVGObjectMarker *omarker)
 {
   std::vector<CPoint2D> points;
 
-  double x1, y1, x2, y2, x3, y3;
-
+  // add path parts and same path part points for markers (if any)
   buffer_->pathInit();
 
   auto p1 = parts.begin();
   auto p2 = parts.end  ();
 
-  while (p1 != p2 && ! pathGetCurrentPoint(&x1, &y1)) {
+  double x1, y1;
+
+  while (p1 != p2 && ! buffer_->pathGetCurrentPoint(&x1, &y1)) {
     (*p1)->draw();
 
     ++p1;
@@ -2209,7 +2312,9 @@ drawParts(const CSVG::PartList &parts, CSVGObjectMarker *omarker)
 
     ++p1;
 
-    pathGetCurrentPoint(&x2, &y2);
+    double x2, y2;
+
+    buffer_->pathGetCurrentPoint(&x2, &y2);
 
     if (! REAL_EQ(x1, x2) || ! REAL_EQ(y1, y2)) {
       points.push_back(CPoint2D(x2, y2));
@@ -2219,6 +2324,7 @@ drawParts(const CSVG::PartList &parts, CSVGObjectMarker *omarker)
     }
   }
 
+  // fill and/or stroke path
   if (isFilled())
     pathFill();
 
@@ -2227,72 +2333,150 @@ drawParts(const CSVG::PartList &parts, CSVGObjectMarker *omarker)
 
   //------
 
-  uint num = points.size();
+  // draw markers
+  if (omarker->start || omarker->mid || omarker->end) {
+    uint num = points.size();
 
-  if (num <= 0)
-    return;
+    if (num <= 0)
+      return;
 
-  x1 = points[0].x; y1 = points[0].y;
+    double x1 = points[0].x;
+    double y1 = points[0].y;
 
-  x2 = x1; y2 = y1;
+    double x2 = x1;
+    double y2 = y1;
 
-  if (num > 1) {
-    x2 = points[1].x; y2 = points[1].y;
-  }
-
-  x3 = x2; y3 = y2;
-
-  if (num > 2) {
-    x3 = points[2].x; y3 = points[2].y;
-  }
-
-  double g1, g2;
-
-  g1 = atan2(y2 - y1, x2 - x1);
-  g2 = atan2(y3 - y2, x3 - x2);
-
-  if (omarker->start != 0) {
-    CSVGMarker *marker = dynamic_cast<CSVGMarker *>(omarker->start);
-
-    if (marker != 0)
-      marker->drawMarker(x1, y1, (g1 + g2)/2);
-  }
-
-  for (uint i = 1; i < num; ++i) {
-    x2 = points[i].x; y2 = points[i].y;
-
-    if (i != num - 1) {
-      x3 = points[i + 1].x; y3 = points[i + 1].y;
+    if (num > 1) {
+      x2 = points[1].x; y2 = points[1].y;
     }
-    else {
-      x3 = x2; y3 = y2;
+
+    double x3 = x2;
+    double y3 = y2;
+
+    if (num > 2) {
+      x3 = points[2].x; y3 = points[2].y;
     }
+
+    double g1, g2;
 
     g1 = atan2(y2 - y1, x2 - x1);
     g2 = atan2(y3 - y2, x3 - x2);
 
-    if (i != num - 1) {
-      if (omarker->mid != 0) {
-        CSVGMarker *marker = dynamic_cast<CSVGMarker *>(omarker->mid);
+    if (omarker->start != 0) {
+      CSVGMarker *marker = dynamic_cast<CSVGMarker *>(omarker->start);
 
-        if (marker != 0)
-          marker->drawMarker(x2, y2, (g1 + g2)/2);
-      }
-    }
-    else {
-      if (omarker->end != 0) {
-        CSVGMarker *marker = dynamic_cast<CSVGMarker *>(omarker->end);
-
-        if (marker != 0)
-          marker->drawMarker(x2, y2, g1);
-      }
+      if (marker != 0)
+        marker->drawMarker(x1, y1, (g1 + g2)/2);
     }
 
-    g1 = g2;
+    for (uint i = 1; i < num; ++i) {
+      x2 = points[i].x; y2 = points[i].y;
 
-    x1 = x2; y1 = y2;
-    x2 = x3; y2 = y3;
+      if (i != num - 1) {
+        x3 = points[i + 1].x; y3 = points[i + 1].y;
+      }
+      else {
+        x3 = x2; y3 = y2;
+      }
+
+      g1 = atan2(y2 - y1, x2 - x1);
+      g2 = atan2(y3 - y2, x3 - x2);
+
+      if (i != num - 1) {
+        if (omarker->mid != 0) {
+          CSVGMarker *marker = dynamic_cast<CSVGMarker *>(omarker->mid);
+
+          if (marker != 0)
+            marker->drawMarker(x2, y2, (g1 + g2)/2);
+        }
+      }
+      else {
+        if (omarker->end != 0) {
+          CSVGMarker *marker = dynamic_cast<CSVGMarker *>(omarker->end);
+
+          if (marker != 0)
+            marker->drawMarker(x2, y2, g1);
+        }
+      }
+
+      g1 = g2;
+
+      x1 = x2; y1 = y2;
+      x2 = x3; y2 = y3;
+    }
   }
+}
+
+bool
+CSVG::
+interpParts(double s, const CSVG::PartList &parts, double *xi, double *yi, double *a)
+{
+  *xi = 0;
+  *yi = 0;
+
+  std::vector<CPoint2D>       points;
+  std::vector<CSVGPathPart *> pparts;
+
+  // add path points
+  buffer_->pathInit();
+
+  auto p1 = parts.begin();
+  auto p2 = parts.end  ();
+
+  double x1, y1;
+
+  while (p1 != p2 && ! buffer_->pathGetCurrentPoint(&x1, &y1)) {
+    (*p1)->draw();
+
+    ++p1;
+  }
+
+  *xi = x1;
+  *yi = y1;
+
+  if (p1 == p2)
+    return false;
+
+  points.push_back(CPoint2D(x1, y1));
+  pparts.push_back(*p1);
+
+  while (p1 != p2) {
+    auto pt = p1;
+
+    (*p1)->draw();
+
+    ++p1;
+
+    double x2, y2;
+
+    buffer_->pathGetCurrentPoint(&x2, &y2);
+
+    if (! REAL_EQ(x1, x2) || ! REAL_EQ(y1, y2)) {
+      points.push_back(CPoint2D(x2, y2));
+      pparts.push_back(*pt);
+
+      x1 = x2;
+      y1 = y2;
+    }
+  }
+
+  // interp points
+  int num = points.size();
+
+  double xmin = points[0      ].x;
+  double xmax = points[num - 1].x;
+
+  *xi = CSVGUtil::map(s, 0, 1, xmin, xmax);
+
+  for (int i = 0; i < num - 1; ++i) {
+    if (*xi >= points[i].x && *xi <= points[i + 1].x) {
+      *yi = pparts[i + 1]->interp(*xi, points[i], points[i + 1], *a);
+
+      break;
+    }
+  }
+
+  return true;
 }
 
 bool
@@ -2687,9 +2871,16 @@ realListOption(const std::string &opt_name, const std::string &opt_value,
   if (opt_name != name)
     return false;
 
+  return stringToReals(opt_value, reals);
+}
+
+bool
+CSVG::
+stringToReals(const std::string &str, std::vector<double> &reals)
+{
   std::vector<std::string> words;
 
-  CStrUtil::addWords(opt_value, words, " ,\n\t");
+  CStrUtil::addWords(str, words, " ,\n\t");
 
   uint num_reals = words.size();
 
@@ -2701,6 +2892,153 @@ realListOption(const std::string &opt_name, const std::string &opt_value,
     if (! CStrUtil::toReal(word, &reals[i]))
       return false;
   }
+
+  return true;
+}
+
+bool
+CSVG::
+eventValueOption(const std::string &opt_name, const std::string &opt_value,
+                 const std::string &name, CSVGEventValue &event)
+{
+  if (opt_name != name)
+    return false;
+
+  uint   pos = 0;
+  double r   = 0.0;
+
+  if (CStrUtil::readReal(opt_value, &pos, &r)) {
+    CSVGTimeValue time;
+
+    std::string units = opt_value.substr(pos);
+
+    if      (units == "h")
+      time = CSVGTimeValue(CSVGTimeValue::Type::HOURS, r);
+    else if (units == "min")
+      time = CSVGTimeValue(CSVGTimeValue::Type::MINUTES, r);
+    else if (units == "s")
+      time = CSVGTimeValue(CSVGTimeValue::Type::SECONDS, r);
+    else if (units == "ms")
+      time = CSVGTimeValue(CSVGTimeValue::Type::MILLISECONDS, r);
+    else
+      time = CSVGTimeValue(r);
+
+    event = CSVGEventValue(time);
+  }
+  else {
+    std::string id, eventName;
+
+    auto p = opt_value.find('.');
+
+    if (p != std::string::npos) {
+      id        = CStrUtil::stripSpaces(opt_value.substr(0, p));
+      eventName = CStrUtil::stripSpaces(opt_value.substr(p + 1));
+    }
+    else
+      eventName = opt_value;
+
+    auto p1 = eventName.find('+');
+
+    std::string timeStr;
+
+    if (p1 != std::string::npos) {
+      timeStr   = CStrUtil::stripSpaces(eventName.substr(p1 + 1));
+      eventName = CStrUtil::stripSpaces(eventName.substr(0, p1));
+    }
+
+    CSVGTimeValue time;
+
+    if (timeStr != "") {
+      if (! stringToTime(timeStr, time))
+        return false;
+    }
+
+    std::string args;
+
+    auto p2 = eventName.find('(');
+
+    if (p2 != std::string::npos) {
+      args      = CStrUtil::stripSpaces(eventName.substr(p2 + 1));
+      eventName = CStrUtil::stripSpaces(eventName.substr(0, p2));
+
+      auto p3 = args.find(')');
+
+      if (p3 != std::string::npos)
+        args = CStrUtil::stripSpaces(args.substr(0, p3));
+    }
+
+    if      (eventName == "click")
+      event = CSVGEventValue(CSVGEventType::CLICK, id, time);
+    else if (eventName == "mousedown")
+      event = CSVGEventValue(CSVGEventType::MOUSE_DOWN, id, time);
+    else if (eventName == "mouseup")
+      event = CSVGEventValue(CSVGEventType::MOUSE_UP, id, time);
+    else if (eventName == "mouseover")
+      event = CSVGEventValue(CSVGEventType::MOUSE_OVER, id, time);
+    else if (eventName == "mouseout")
+      event = CSVGEventValue(CSVGEventType::MOUSE_OUT, id, time);
+    else if (eventName == "begin")
+      event = CSVGEventValue(CSVGEventType::ANIMATE_BEGIN, id, time);
+    else if (eventName == "end")
+      event = CSVGEventValue(CSVGEventType::ANIMATE_END, id, time);
+    else if (eventName == "repeat")
+      event = CSVGEventValue(CSVGEventType::ANIMATE_REPEAT, id, time, args);
+    else
+      return false;
+  }
+
+  return true;
+}
+
+bool
+CSVG::
+timeValueOption(const std::string &opt_name, const std::string &opt_value,
+                const std::string &name, CSVGTimeValue &time)
+{
+  if (opt_name != name)
+    return false;
+
+  if (! stringToTime(opt_value, time))
+    return false;
+
+  return true;
+}
+
+bool
+CSVG::
+stringToTime(const std::string &str, CSVGTimeValue &time) const
+{
+  // Clock-val         ::= Full-clock-val | Partial-clock-val | Timecount-val
+  // Full-clock-val    ::= Hours ":" Minutes ":" Seconds ("." Fraction)?
+  // Partial-clock-val ::= Minutes ":" Seconds ("." Fraction)?
+  // Timecount-val     ::= Timecount ("." Fraction)? (Metric)?
+  // Metric            ::= "h" | "min" | "s" | "ms"
+  // Hours             ::= DIGIT+; any positive number
+  // Minutes           ::= 2DIGIT; range from 00 to 59
+  // Seconds           ::= 2DIGIT; range from 00 to 59
+  // Fraction          ::= DIGIT+
+  // Timecount         ::= DIGIT+
+  // 2DIGIT            ::= DIGIT DIGIT
+  // DIGIT             ::= [0-9]
+
+  uint   pos = 0;
+  double r   = 0.0;
+
+  if (! CStrUtil::readReal(str, &pos, &r))
+    return false;
+
+  std::string units = str.substr(pos);
+
+  if      (units == "h")
+    time = CSVGTimeValue(CSVGTimeValue::Type::HOURS, r);
+  else if (units == "min")
+    time = CSVGTimeValue(CSVGTimeValue::Type::MINUTES, r);
+  else if (units == "s")
+    time = CSVGTimeValue(CSVGTimeValue::Type::SECONDS, r);
+  else if (units == "ms")
+    time = CSVGTimeValue(CSVGTimeValue::Type::MILLISECONDS, r);
+  else
+    time = CSVGTimeValue(r);
 
   return true;
 }
@@ -3574,6 +3912,13 @@ CSVG::
 getObjectsAtPoint(const CPoint2D &p, ObjectList &objects) const
 {
   block_->getObjectsAtPoint(p, objects);
+}
+
+void
+CSVG::
+sendEvent(CSVGEventType type, const std::string &id, const std::string &data)
+{
+  block_->handleEvent(type, id, data);
 }
 
 void

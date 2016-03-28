@@ -3,15 +3,13 @@
 
 CSVGFilter::
 CSVGFilter(CSVG &svg) :
- CSVGObject(svg),
- object_   (0)
+ CSVGObject(svg)
 {
 }
 
 CSVGFilter::
 CSVGFilter(const CSVGFilter &filter) :
- CSVGObject(filter),
- object_   (0)
+ CSVGObject(filter)
 {
 }
 
@@ -83,7 +81,7 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<filter";
 
-    printNameValue(os, "id", id_);
+    CSVGObject::printValues(os);
 
     printNameValue(os, "filterUnits"                , units_);
     printNameValue(os, "primitiveUnits"             , primitiveUnits_);
@@ -95,12 +93,9 @@ print(std::ostream &os, bool hier) const
     printNameValue(os, "color-interpolation-filters", colorInterFilters_);
     printNameValue(os, "xlink:href"                 , xlink_);
 
-    printTransform(os);
-
     os << ">" << std::endl;
 
-    for (const auto &o : objects_)
-      o->print(os, hier);
+    printChildren(os, hier);
 
     os << "</filter>" << std::endl;
   }

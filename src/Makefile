@@ -17,6 +17,12 @@ dirs:
 
 SRC = \
 CSVG.cpp \
+CSVGAnimateBase.cpp \
+CSVGAnimate.cpp \
+CSVGAnimateColor.cpp \
+CSVGAnimateMotion.cpp \
+CSVGAnimateTransform.cpp \
+CSVGAnimation.cpp \
 CSVGBlock.cpp \
 CSVGBuffer.cpp \
 CSVGCircle.cpp \
@@ -56,13 +62,16 @@ CSVGLinearGradient.cpp \
 CSVGMarker.cpp \
 CSVGMask.cpp \
 CSVGMissingGlyph.cpp \
+CSVGMPath.cpp \
 CSVGObject.cpp \
 CSVGPath.cpp \
+CSVGPathPart.cpp \
 CSVGPattern.cpp \
 CSVGPolygon.cpp \
 CSVGPolyLine.cpp \
 CSVGRadialGradient.cpp \
 CSVGRect.cpp \
+CSVGSet.cpp \
 CSVGStop.cpp \
 CSVGStroke.cpp \
 CSVGStyle.cpp \

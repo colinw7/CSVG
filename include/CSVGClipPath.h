@@ -27,7 +27,9 @@ class CSVGClipPath : public CSVGObject {
   friend std::ostream &operator<<(std::ostream &os, const CSVGClipPath &path);
 
  private:
-  PartList parts_;
+  PartList              parts_;
+  COptValT<std::string> clipPathUnits_;
+  COptValT<std::string> markerEnd_;
 };
 
 #endif

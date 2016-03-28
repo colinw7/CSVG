@@ -169,9 +169,11 @@ print(std::ostream &os, bool hier) const
   int i = 0;
 
   if (hier) {
-    os << "<polyline points=\"";
+    os << "<polyline";
 
-    printNameValue(os, "id", id_);
+    CSVGObject::printValues(os);
+
+    os << " points=\"";
 
     for (const auto &p : points_) {
       if (i > 0) os << ", ";
@@ -182,8 +184,6 @@ print(std::ostream &os, bool hier) const
     }
 
     os << "\"";
-
-    printStyle(os);
 
     os << "/>" << std::endl;
   }
