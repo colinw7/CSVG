@@ -40,17 +40,11 @@ processOption(const std::string &opt_name, const std::string &opt_value)
 
 void
 CSVGDefs::
-draw()
-{
-}
-
-void
-CSVGDefs::
 print(std::ostream &os, bool hier) const
 {
   if (hier) {
     if (! objects_.empty()) {
-      os << "<defs" << std::endl;
+      os << "<defs";
 
       CSVGObject::printValues(os);
 

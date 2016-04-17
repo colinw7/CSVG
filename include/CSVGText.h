@@ -18,9 +18,6 @@ class CSVGText : public CSVGObject {
   double getY() const { return y_.getValue(0); }
   void setY(double y) { y_ = y; }
 
-  std::string getText() const override { return text_.getValue(""); }
-  void setText(const std::string &text) override;
-
   CPoint2D getPosition() const { return CPoint2D(getX(), getY()); }
 
   bool hasFont() const override { return true; }
@@ -34,14 +31,22 @@ class CSVGText : public CSVGObject {
   void moveTo(const CPoint2D &p) override;
   void moveBy(const CVector2D &delta) override;
 
+  const CPoint2D &lastPos() const { return lastPos_; }
+  void setLastPos(const CPoint2D &p) { lastPos_ = p; }
+
   void print(std::ostream &os, bool hier) const override;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGText &text);
 
  private:
-  COptValT<double>      x_;
-  COptValT<double>      y_;
-  COptValT<std::string> text_;
+  COptValT<double>          x_;
+  COptValT<double>          y_;
+  COptValT<CSVGLengthValue> dx_;
+  COptValT<CSVGLengthValue> dy_;
+  COptValT<std::string>     rotate_;
+  COptValT<std::string>     textLength_;
+  COptValT<CSVGLengthValue> lengthAdjust_;
+  CPoint2D                  lastPos_;
 };
 
 #endif

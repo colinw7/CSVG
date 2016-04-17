@@ -5,15 +5,6 @@
 
 class CSVGFeFunc : public CSVGObject {
  public:
-  enum class Type {
-    IDENTITY,
-    LINEAR,
-    GAMMA,
-    TABLE,
-    DISCRETE
-  };
-
- public:
   CSVG_OBJECT_DEF("feFunc", CSVGObjTypeId::FE_FUNC)
 
   CSVGFeFunc(CSVG &svg, CColorComponent component);
@@ -21,7 +12,7 @@ class CSVGFeFunc : public CSVGObject {
 
   CSVGFeFunc *dup() const override;
 
-  Type getType() const { return type_.getValue(Type::LINEAR); }
+  CSVGFilterFuncType getType() const { return type_.getValue(CSVGFilterFuncType::LINEAR); }
 
   double getSlope() const { return slope_.getValue(1); }
 
@@ -35,7 +26,7 @@ class CSVGFeFunc : public CSVGObject {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  void draw() override;
+  bool isDrawable() const override { return false; }
 
   CImagePtr filterImage(CImagePtr src_image);
 
@@ -46,17 +37,17 @@ class CSVGFeFunc : public CSVGObject {
  private:
   typedef std::vector<double> ValueTable;
 
-  CColorComponent  component_;
-  COptValT<Type>   type_;
+  CColorComponent              component_;
+  COptValT<CSVGFilterFuncType> type_;
   // linear
-  COptValT<double> slope_;
-  COptValT<double> intercept_;
+  COptValT<double>             slope_;
+  COptValT<double>             intercept_;
   // gamma
-  COptValT<double> amplitude_;
-  COptValT<double> exponent_;
-  COptValT<double> offset_;
+  COptValT<double>             amplitude_;
+  COptValT<double>             exponent_;
+  COptValT<double>             offset_;
   // table/discrete
-  ValueTable       table_;
+  ValueTable                   table_;
 };
 
 #endif

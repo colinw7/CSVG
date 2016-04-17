@@ -1,0 +1,65 @@
+#ifndef CSVGFeDisplacementMap_H
+#define CSVGFeDisplacementMap_H
+
+#include <CSVGFilterBase.h>
+
+class CSVGBuffer;
+
+class CSVGFeDisplacementMap : public CSVGFilterBase {
+ public:
+  typedef std::vector<double> Reals;
+
+ public:
+  CSVG_OBJECT_DEF("feDisplacementMap", CSVGObjTypeId::FE_DISPLACEMENT_MAP)
+
+  CSVGFeDisplacementMap(CSVG &svg);
+  CSVGFeDisplacementMap(const CSVGFeDisplacementMap &merge);
+
+  CSVGFeDisplacementMap *dup() const override;
+
+  std::string getClass() const { return class_.getValue(""); }
+  void setClass(const std::string &c) { class_ = c; }
+
+  std::string getStyle() const { return style_.getValue(""); }
+  void setStyle(const std::string &c) { style_ = c; }
+
+  std::string getFilterIn1() const { return filterIn1_.getValue("SourceGraphic"); }
+  void setFilterIn1(const std::string &s) { filterIn1_ = s; }
+
+  std::string getFilterIn2() const { return filterIn2_.getValue("SourceGraphic"); }
+  void setFilterIn2(const std::string &s) { filterIn2_ = s; }
+
+  std::string getFilterOut() const { return filterOut_.getValue("SourceGraphic"); }
+  void setFilterOut(const std::string &s) { filterOut_ = s; }
+
+  double getScale() const { return scale_.getValue(1); }
+  void setScale(double r) { scale_ = r; }
+
+  std::string getXChannel() const { return xChannelSelector_.getValue("R"); }
+  void setXChannel(const std::string &c) { xChannelSelector_ = c; }
+
+  std::string getYChannel() const { return yChannelSelector_.getValue("R"); }
+  void setYChannel(const std::string &c) { yChannelSelector_ = c; }
+
+  bool processOption(const std::string &name, const std::string &value) override;
+
+  void draw() override;
+
+  void filterImage(CSVGBuffer *inBuffer1, CSVGBuffer *inBuffer2, CSVGBuffer *outBuffer);
+
+  void print(std::ostream &os, bool hier) const override;
+
+  friend std::ostream &operator<<(std::ostream &os, const CSVGFeDisplacementMap &filter);
+
+ private:
+  COptValT<std::string> class_;
+  COptValT<std::string> style_;
+  COptValT<std::string> filterIn1_;
+  COptValT<std::string> filterIn2_;
+  COptValT<std::string> filterOut_;
+  COptValT<double>      scale_;
+  COptValT<std::string> xChannelSelector_;
+  COptValT<std::string> yChannelSelector_;
+};
+
+#endif

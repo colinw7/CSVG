@@ -64,28 +64,31 @@ setColor(const std::string &color_def)
 
     //------
 
+    noColor_     .setInvalid();
+    currentColor_.setInvalid();
+
+    resetColor     ();
+  //resetUrl       ();
+  //resetFillObject();
+
     std::vector<std::string> match_strs;
 
     if      (word == "none") {
       noColor_ = true;
 
-      resetColor();
-
       resetOpacity();
     }
     else if (word == "currentColor") {
-      CSVGLog() << "currentColor not supported";
+      currentColor_ = true;
     }
-    else if (CRegExpUtil::parse(word, "url(#\\(.*\\))", match_strs))
+    else if (CRegExpUtil::parse(word, "url(#\\(.*\\))", match_strs)) {
       setUrl(match_strs[0]);
+    }
     else {
       CRGBA rgba;
 
-      if (svg_.decodeColorString(word, rgba)) {
+      if (svg_.decodeColorString(word, rgba))
         setColor(rgba);
-
-        resetOpacity();
-      }
     }
 
     //------
@@ -135,46 +138,73 @@ void
 CSVGFill::
 reset()
 {
-  color_     .setInvalid();
-  opacity_   .setInvalid();
-  rule_      .setInvalid();
-  url_       .setInvalid();
-  fillObject_.setInvalid();
+  noColor_     .setInvalid();
+  currentColor_.setInvalid();
+  color_       .setInvalid();
+  opacity_     .setInvalid();
+  rule_        .setInvalid();
+  url_         .setInvalid();
+  fillObject_  .setInvalid();
 }
 
 void
 CSVGFill::
 update(const CSVGFill &fill)
 {
-  if (fill.getColorValid())
-    setColor(fill.getColor());
+  if (fill.noColor_.isValid())
+    noColor_ = fill.noColor_;
 
-  if (fill.getOpacityValid())
-    setOpacity(fill.getOpacity());
+  if (fill.currentColor_.isValid()) {
+    currentColor_ = fill.currentColor_;
 
-  if (fill.getRuleValid())
-    setRule(fill.getRule());
+    noColor_.setInvalid();
+  }
 
-  if (fill.url_.isValid())
-    setUrl(fill.url_.getValue());
+  if (fill.color_.isValid()) {
+    color_ = fill.color_;
 
-  if (fill.fillObject_.isValid())
-    setFillObject(fill.fillObject_.getValue());
+    noColor_.setInvalid();
+  }
+
+  if (fill.opacity_.isValid())
+    opacity_ = fill.opacity_;
+
+  if (fill.rule_.isValid())
+    rule_ = fill.rule_;
+
+  if (fill.url_.isValid()) {
+    url_ = fill.url_;
+
+    noColor_.setInvalid();
+  }
+
+  if (fill.fillObject_.isValid()) {
+    fillObject_ = fill.fillObject_;
+
+    noColor_.setInvalid();
+  }
 }
 
 void
 CSVGFill::
 print(std::ostream &os) const
 {
-  if (noColor_)
-    os << "fill: none;";
+  std::stringstream ss;
+
+  if (noColor_.isValid())
+    ss << "fill: none;";
 
   if (color_.isValid())
-    os << "fill: " << color_.getValue().getRGB().stringEncode() << ";";
+    ss << "fill: " << color_.getValue().getRGB().stringEncode() << ";";
 
-  if (opacity_.isValid())
-    os << " fill-opacity: " << opacity_.getValue() << ";";
+  if (opacity_.isValid()) {
+    if (ss.str() != "") ss << " ";
+
+    ss << "fill-opacity: " << opacity_.getValue() << ";";
+  }
 
   if (url_.isValid())
-    os << "fill: url(#" << url_.getValue() << ");";
+    ss << "fill: url(#" << url_.getValue() << ");";
+
+  os << ss.str();
 }

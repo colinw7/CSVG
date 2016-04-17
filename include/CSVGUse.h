@@ -21,6 +21,8 @@ class CSVGUse : public CSVGObject {
 
   void termParse();
 
+  bool getBBox(CBBox2D &bbox) const override;
+
   void moveBy(const CVector2D &delta) override;
 
   void draw() override;
@@ -30,11 +32,11 @@ class CSVGUse : public CSVGObject {
   friend std::ostream &operator<<(std::ostream &os, const CSVGUse &use);
 
  private:
-  CSVGXLink        xlink_;
-  COptValT<double> x_;
-  COptValT<double> y_;
-  COptValT<double> width_;
-  COptValT<double> height_;
+  COptValT<CSVGXLink> xlink_;
+  COptValT<double>    x_;
+  COptValT<double>    y_;
+  COptValT<double>    width_;
+  COptValT<double>    height_;
 };
 
 #endif

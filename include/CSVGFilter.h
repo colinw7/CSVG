@@ -2,6 +2,7 @@
 #define CSVG_FILTER_H
 
 #include <CSVGObject.h>
+#include <CSVGXLink.h>
 
 class CSVGFilter : public CSVGObject {
  public:
@@ -11,6 +12,32 @@ class CSVGFilter : public CSVGObject {
   CSVGFilter(const CSVGFilter &filter);
 
   CSVGFilter *dup() const override;
+
+  CSVGCoordUnits getUnits() const {
+    return units_.getValue(CSVGCoordUnits::USER_SPACE); }
+  void setUnits(CSVGCoordUnits units) { units_ = units; }
+
+  CSVGCoordUnits getPrimitiveUnits() const {
+    return primitiveUnits_.getValue(CSVGCoordUnits::USER_SPACE); }
+  void setPrimitiveUnits(CSVGCoordUnits units) { primitiveUnits_ = units; }
+
+  bool hasX() const { return x_.isValid(); }
+  double getX(double x=0) const { return hasX() ? x_.getValue().value() : x; }
+  void setX(double x) { x_ = x; }
+
+  bool hasY() const { return y_.isValid(); }
+  double getY(double y=0) const { return y_.isValid() ? y_.getValue().value() : y; }
+  void setY(double y) { y_ = y; }
+
+  bool hasWidth() const { return width_.isValid(); }
+  double getWidth(double w=100) const {
+    return width_.getValue(CSVGLengthValue(w)).calcValue(w); }
+  void setWidth(double w) { width_ = w; }
+
+  bool hasHeight() const { return height_.isValid(); }
+  double getHeight(double h=100) const {
+    return height_.getValue(CSVGLengthValue(h)).calcValue(h); }
+  void setHeight(double h) { height_ = h; }
 
   bool processOption(const std::string &name, const std::string &value) override;
 
@@ -30,16 +57,15 @@ class CSVGFilter : public CSVGObject {
   CSVGFilter &operator=(const CSVGFilter &rhs);
 
  private:
-  CSVGObject*           object_ { 0 };
-  COptValT<std::string> units_;
-  COptValT<std::string> primitiveUnits_;
-  COptValT<std::string> x_;
-  COptValT<std::string> y_;
-  COptValT<std::string> width_;
-  COptValT<std::string> height_;
-  COptValT<std::string> filterRes_;
-  COptValT<std::string> colorInterFilters_;
-  COptValT<std::string> xlink_;
+  CSVGObject*               object_ { 0 };
+  COptValT<CSVGCoordUnits>  units_;
+  COptValT<CSVGCoordUnits>  primitiveUnits_;
+  COptValT<CSVGLengthValue> x_;
+  COptValT<CSVGLengthValue> y_;
+  COptValT<CSVGLengthValue> width_;
+  COptValT<CSVGLengthValue> height_;
+  COptValT<std::string>     filterRes_;
+  COptValT<CSVGXLink>       xlink_;
 };
 
 #endif

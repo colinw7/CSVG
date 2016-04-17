@@ -1,19 +1,20 @@
 #include <CSVGFeBlend.h>
+#include <CSVGBuffer.h>
 #include <CSVG.h>
 
 CSVGFeBlend::
 CSVGFeBlend(CSVG &svg) :
- CSVGFilter(svg)
+ CSVGFilterBase(svg)
 {
 }
 
 CSVGFeBlend::
 CSVGFeBlend(const CSVGFeBlend &fe) :
- CSVGFilter (fe),
- type_      (fe.type_),
- filter_in1_(fe.filter_in1_),
- filter_in2_(fe.filter_in2_),
- filter_out_(fe.filter_out_)
+ CSVGFilterBase(fe),
+ mode_     (fe.mode_),
+ filterIn1_(fe.filterIn1_),
+ filterIn2_(fe.filterIn2_),
+ filterOut_(fe.filterOut_)
 {
 }
 
@@ -31,20 +32,20 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   std::string str;
 
   if      (svg_.stringOption(opt_name, opt_value, "in", str))
-    filter_in1_ = str;
+    filterIn1_ = str;
   else if (svg_.stringOption(opt_name, opt_value, "in2", str))
-    filter_in2_ = str;
+    filterIn2_ = str;
   else if (svg_.stringOption(opt_name, opt_value, "result", str))
-    filter_out_ = str;
+    filterOut_ = str;
   else if (svg_.stringOption(opt_name, opt_value, "mode", str)) {
-    if      (str == "normal"  ) type_ = Type::NORMAL;
-    else if (str == "multiply") type_ = Type::MULTIPLY;
-    else if (str == "screen"  ) type_ = Type::SCREEN;
-    else if (str == "darken"  ) type_ = Type::DARKEN;
-    else if (str == "lighten" ) type_ = Type::LIGHTEN;
+    if      (str == "normal"  ) mode_ = CSVGBlendMode::NORMAL;
+    else if (str == "multiply") mode_ = CSVGBlendMode::MULTIPLY;
+    else if (str == "screen"  ) mode_ = CSVGBlendMode::SCREEN;
+    else if (str == "darken"  ) mode_ = CSVGBlendMode::DARKEN;
+    else if (str == "lighten" ) mode_ = CSVGBlendMode::LIGHTEN;
   }
   else
-    return CSVGObject::processOption(opt_name, opt_value);
+    return CSVGFilterBase::processOption(opt_name, opt_value);
 
   return true;
 }
@@ -53,23 +54,56 @@ void
 CSVGFeBlend::
 draw()
 {
-  CImagePtr src_image1 = svg_.getBufferImage(filter_in1_.getValue("SourceGraphic"));
-  CImagePtr src_image2 = svg_.getBufferImage(filter_in2_.getValue("SourceGraphic"));
+  CSVGBuffer *inBuffer1 = svg_.getBuffer(getFilterIn1());
+  CSVGBuffer *inBuffer2 = svg_.getBuffer(getFilterIn2());
+  CSVGBuffer *outBuffer = svg_.getBuffer(getFilterOut());
 
-  CImagePtr dst_image = filterImage2(src_image1, src_image2);
+  if (svg_.getDebugFilter()) {
+    std::string objectBufferName = "_" + getUniqueName();
 
-  svg_.setBufferImage(filter_out_.getValue("SourceGraphic"), dst_image);
+    CSVGBuffer *buffer1 = svg_.getBuffer(objectBufferName + "_in1");
+    CSVGBuffer *buffer2 = svg_.getBuffer(objectBufferName + "_in2");
+
+    buffer1->setImage(inBuffer1->getImage());
+    buffer2->setImage(inBuffer2->getImage());
+  }
+
+  filterImage(inBuffer1, inBuffer2, outBuffer);
+
+  if (svg_.getDebugFilter()) {
+    std::string objectBufferName = "_" + getUniqueName();
+
+    CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_out");
+
+    buffer->setImage(outBuffer->getImage());
+  }
 }
 
-CImagePtr
+void
 CSVGFeBlend::
-filterImage2(CImagePtr src_image1, CImagePtr src_image2)
+filterImage(CSVGBuffer *inBuffer1, CSVGBuffer *inBuffer2, CSVGBuffer *outBuffer)
 {
+  CImagePtr src_image1 = inBuffer1->getImage();
+  CImagePtr src_image2 = inBuffer2->getImage();
+
   CImagePtr dst_image = src_image1->dup();
 
-  dst_image->combine(src_image2);
+  CRGBABlendMode mode;
 
-  return dst_image;
+  if      (mode_ == CSVGBlendMode::NORMAL)
+    mode = CRGBA_BLEND_NORMAL;
+  else if (mode_ == CSVGBlendMode::MULTIPLY)
+    mode = CRGBA_BLEND_MULTIPLY;
+  else if (mode_ == CSVGBlendMode::SCREEN)
+    mode = CRGBA_BLEND_SCREEN;
+  else if (mode_ == CSVGBlendMode::DARKEN)
+    mode = CRGBA_BLEND_DARKEN;
+  else if (mode_ == CSVGBlendMode::LIGHTEN)
+    mode = CRGBA_BLEND_LIGHTEN;
+
+  dst_image->combine(src_image2, mode);
+
+  outBuffer->setImage(dst_image);
 }
 
 void
@@ -81,19 +115,19 @@ print(std::ostream &os, bool hier) const
 
     CSVGObject::printValues(os);
 
-    if (type_.isValid()) {
-      Type type = type_.getValue();
+    if (mode_.isValid()) {
+      CSVGBlendMode mode = getMode();
 
-      if      (type == Type::NORMAL  ) os << " mode=\"normal\"";
-      else if (type == Type::MULTIPLY) os << " mode=\"multiply\"";
-      else if (type == Type::SCREEN  ) os << " mode=\"screen\"";
-      else if (type == Type::DARKEN  ) os << " mode=\"darken\"";
-      else if (type == Type::LIGHTEN ) os << " mode=\"lighten\"";
+      if      (mode == CSVGBlendMode::NORMAL  ) os << " mode=\"normal\"";
+      else if (mode == CSVGBlendMode::MULTIPLY) os << " mode=\"multiply\"";
+      else if (mode == CSVGBlendMode::SCREEN  ) os << " mode=\"screen\"";
+      else if (mode == CSVGBlendMode::DARKEN  ) os << " mode=\"darken\"";
+      else if (mode == CSVGBlendMode::LIGHTEN ) os << " mode=\"lighten\"";
     }
 
-    printNameValue(os, "in"    , filter_in1_);
-    printNameValue(os, "in2"   , filter_in2_);
-    printNameValue(os, "result", filter_out_);
+    printNameValue(os, "in"    , filterIn1_);
+    printNameValue(os, "in2"   , filterIn2_);
+    printNameValue(os, "result", filterOut_);
 
     os << "/>" << std::endl;
   }

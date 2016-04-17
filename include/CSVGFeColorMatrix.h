@@ -1,16 +1,13 @@
 #ifndef CSVGFeColorMatrix_H
 #define CSVGFeColorMatrix_H
 
-#include <CSVGFilter.h>
+#include <CSVGFilterBase.h>
 
-class CSVGFeColorMatrix : public CSVGFilter {
+class CSVGBuffer;
+
+class CSVGFeColorMatrix : public CSVGFilterBase {
  public:
-  enum class Type {
-    MATRIX_TYPE,
-    SATURATE_TYPE,
-    HUE_ROTATE_TYPE,
-    LUMINANCE_TO_ALPHA_TYPE
-  };
+  typedef std::vector<double> ValueList;
 
  public:
   CSVG_OBJECT_DEF("feColorMatrix", CSVGObjTypeId::FE_COLOR_MATRIX)
@@ -20,25 +17,33 @@ class CSVGFeColorMatrix : public CSVGFilter {
 
   CSVGFeColorMatrix *dup() const override;
 
-  Type getType() const { return type_.getValue(Type::MATRIX_TYPE); }
+  std::string getFilterIn() const { return filterIn_.getValue("SourceGraphic"); }
+  void setFilterIn(const std::string &s) { filterIn_ = s; }
+
+  std::string getFilterOut() const { return filterOut_.getValue("SourceGraphic"); }
+  void setFilterOut(const std::string &s) { filterOut_ = s; }
+
+  CSVGColorMatrixType getType() const { return type_.getValue(CSVGColorMatrixType::MATRIX); }
+  void setType(CSVGColorMatrixType t) { type_ = t; }
+
+  const ValueList &getValues() const { return values_; }
+  void setValues(const ValueList &values) { values_ = values; }
 
   bool processOption(const std::string &name, const std::string &value) override;
 
   void draw() override;
 
-  CImagePtr filterImage(CImagePtr src_image);
+  void filterImage(CSVGBuffer *inBuffer, CSVGBuffer *outBuffer);
 
   void print(std::ostream &os, bool hier) const override;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGFeColorMatrix &filter);
 
  private:
-  typedef std::vector<double> ValueList;
-
-  COptValT<std::string> filter_in_;
-  COptValT<std::string> filter_out_;
-  COptValT<Type>        type_;
-  ValueList             values_;
+  COptValT<std::string>         filterIn_;
+  COptValT<std::string>         filterOut_;
+  COptValT<CSVGColorMatrixType> type_;
+  ValueList                     values_;
 };
 
 #endif

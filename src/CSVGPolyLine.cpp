@@ -87,18 +87,22 @@ draw()
       svg_.pathLineTo(points_[i].x, points_[i].y);
   }
 
-  if (svg_.isFilled())
-    svg_.pathFill();
+  if (svg_.isFilled() || svg_.isStroked()) {
+    if (svg_.isFilled())
+      svg_.pathFill();
 
-  if (svg_.isStroked())
-    svg_.pathStroke();
+    if (svg_.isStroked())
+      svg_.pathStroke();
+  }
+  else
+    svg_.pathFill();
 }
 
 bool
 CSVGPolyLine::
 getBBox(CBBox2D &bbox) const
 {
-  if (! viewBox_.isSet()) {
+  if (! viewBox_.isValid()) {
     CBBox2D bbox1;
 
     uint num_points = points_.size();
@@ -109,7 +113,7 @@ getBBox(CBBox2D &bbox) const
     bbox = bbox1;
   }
   else
-    bbox = viewBox_;
+    bbox = getViewBox();
 
   return true;
 }

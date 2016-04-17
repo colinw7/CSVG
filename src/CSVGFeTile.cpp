@@ -1,17 +1,19 @@
 #include <CSVGFeTile.h>
+#include <CSVGFilter.h>
+#include <CSVGBuffer.h>
 #include <CSVG.h>
 
 CSVGFeTile::
 CSVGFeTile(CSVG &svg) :
- CSVGFilter(svg)
+ CSVGFilterBase(svg)
 {
 }
 
 CSVGFeTile::
 CSVGFeTile(const CSVGFeTile &fe) :
- CSVGFilter (fe),
- filter_in_ (fe.filter_in_),
- filter_out_(fe.filter_out_)
+ CSVGFilterBase(fe),
+ filterIn_ (fe.filterIn_),
+ filterOut_(fe.filterOut_)
 {
 }
 
@@ -29,11 +31,11 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   std::string str;
 
   if      (svg_.stringOption(opt_name, opt_value, "in", str))
-    filter_in_ = str;
+    filterIn_ = str;
   else if (svg_.stringOption(opt_name, opt_value, "result", str))
-    filter_out_ = str;
+    filterOut_ = str;
   else
-    return CSVGObject::processOption(opt_name, opt_value);
+    return CSVGFilterBase::processOption(opt_name, opt_value);
 
   return true;
 }
@@ -42,20 +44,66 @@ void
 CSVGFeTile::
 draw()
 {
-  CImagePtr src_image = svg_.getBufferImage(filter_in_.getValue("SourceGraphic"));
+  CSVGBuffer *inBuffer  = svg_.getBuffer(getFilterIn ());
+  CSVGBuffer *outBuffer = svg_.getBuffer(getFilterOut());
 
-  CImagePtr dst_image = filterImage(src_image);
+  if (svg_.getDebugFilter()) {
+    std::string objectBufferName = "_" + getUniqueName();
 
-  svg_.setBufferImage(filter_out_.getValue("SourceGraphic"), dst_image);
+    CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_in");
+
+    buffer->setImage(inBuffer->getImage());
+    buffer->setBBox (inBuffer->bbox());
+  }
+
+  filterImage(inBuffer, outBuffer);
+
+  if (svg_.getDebugFilter()) {
+    std::string objectBufferName = "_" + getUniqueName();
+
+    CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_out");
+
+    buffer->setImage(outBuffer->getImage());
+    buffer->setBBox (outBuffer->bbox());
+  }
 }
 
-CImagePtr
+void
 CSVGFeTile::
-filterImage(CImagePtr src_image)
+filterImage(CSVGBuffer *inBuffer, CSVGBuffer *outBuffer)
 {
-  CImagePtr dst_image = src_image->dup();
+  CImagePtr inImage = inBuffer->getImage();
 
-  return dst_image;
+  CBBox2D inBBox = inBuffer->bbox();
+
+  if (inBBox.isSet()) {
+    double pw, ph;
+
+    svg_.lengthToPixel(inBBox.getWidth(), inBBox.getHeight(), &pw, &ph);
+
+    inImage = inImage->subImage(0, 0, pw, ph);
+  }
+
+  // get filtered object size
+  int w = inImage->getWidth ();
+  int h = inImage->getHeight();
+
+  CBBox2D bbox;
+
+  if (getParentBBox(bbox)) {
+    double pw, ph;
+
+    svg_.lengthToPixel(bbox.getWidth(), bbox.getHeight(), &pw, &ph);
+
+    w = pw;
+    h = ph;
+  }
+
+  // tile
+  CImagePtr outImage = inImage->tile(w, h);
+
+  outBuffer->setImage(outImage);
+  outBuffer->setBBox (bbox);
 }
 
 void
@@ -67,8 +115,8 @@ print(std::ostream &os, bool hier) const
 
     CSVGObject::printValues(os);
 
-    printNameValue(os, "in"    , filter_in_ );
-    printNameValue(os, "result", filter_out_);
+    printNameValue(os, "in"    , filterIn_ );
+    printNameValue(os, "result", filterOut_);
 
     os << "/>" << std::endl;
   }

@@ -1,17 +1,25 @@
 #include <CSVGFeSpecularLighting.h>
+#include <CSVGFePointLight.h>
+#include <CSVGBuffer.h>
 #include <CSVG.h>
+#include <CRGBName.h>
+#include <CVector3D.h>
 
 CSVGFeSpecularLighting::
 CSVGFeSpecularLighting(CSVG &svg) :
- CSVGFilter(svg)
+ CSVGFilterBase(svg)
 {
 }
 
 CSVGFeSpecularLighting::
 CSVGFeSpecularLighting(const CSVGFeSpecularLighting &fe) :
- CSVGFilter (fe),
- filter_in_ (fe.filter_in_ ),
- filter_out_(fe.filter_out_)
+ CSVGFilterBase(fe),
+ filterIn_        (fe.filterIn_),
+ filterOut_       (fe.filterOut_),
+ lightingColor_   (fe.lightingColor_),
+ specularConstant_(fe.specularConstant_),
+ specularExponent_(fe.specularExponent_),
+ surfaceScale_    (fe.surfaceScale_)
 {
 }
 
@@ -26,14 +34,23 @@ bool
 CSVGFeSpecularLighting::
 processOption(const std::string &opt_name, const std::string &opt_value)
 {
+  double      r;
   std::string str;
 
   if      (svg_.stringOption(opt_name, opt_value, "in", str))
-    filter_in_ = str;
+    filterIn_ = str;
   else if (svg_.stringOption(opt_name, opt_value, "result", str))
-    filter_out_ = str;
+    filterOut_ = str;
+  else if (svg_.stringOption(opt_name, opt_value, "lighting-color", str))
+    lightingColor_ = CRGBName::toRGBA(str);
+  else if (svg_.realOption(opt_name, opt_value, "specularConstant", &r))
+    specularConstant_ = r;
+  else if (svg_.realOption(opt_name, opt_value, "specularExponent", &r))
+    specularExponent_ = r;
+  else if (svg_.realOption(opt_name, opt_value, "surfaceScale", &r))
+    surfaceScale_ = r;
   else
-    return CSVGObject::processOption(opt_name, opt_value);
+    return CSVGFilterBase::processOption(opt_name, opt_value);
 
   return true;
 }
@@ -42,20 +59,94 @@ void
 CSVGFeSpecularLighting::
 draw()
 {
-  CImagePtr src_image = svg_.getBufferImage(filter_in_.getValue("SourceGraphic"));
+  CSVGBuffer *inBuffer  = svg_.getBuffer(getFilterIn ());
+  CSVGBuffer *outBuffer = svg_.getBuffer(getFilterOut());
 
-  CImagePtr dst_image = filterImage(src_image);
+  if (svg_.getDebugFilter()) {
+    std::string objectBufferName = "_" + getUniqueName();
 
-  svg_.setBufferImage(filter_out_.getValue("SourceGraphic"), dst_image);
+    CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_in");
+
+    buffer->setImage(inBuffer->getImage());
+  }
+
+  filterImage(inBuffer, outBuffer);
+
+  if (svg_.getDebugFilter()) {
+    std::string objectBufferName = "_" + getUniqueName();
+
+    CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_out");
+
+    buffer->setImage(outBuffer->getImage());
+  }
 }
 
-CImagePtr
+void
 CSVGFeSpecularLighting::
-filterImage(CImagePtr src_image)
+filterImage(CSVGBuffer *inBuffer, CSVGBuffer *outBuffer)
 {
+  CImagePtr src_image = inBuffer->getImage();
   CImagePtr dst_image = src_image->dup();
 
-  return dst_image;
+  for (const auto &c : children()) {
+    CSVGFePointLight *pl = dynamic_cast<CSVGFePointLight *>(c);
+    if (! pl) continue;
+
+    pointLight(dst_image, pl);
+  }
+
+  outBuffer->setImage(dst_image);
+}
+
+void
+CSVGFeSpecularLighting::
+pointLight(CImagePtr image, CSVGFePointLight *pl)
+{
+  lpoint_ = pl->getPoint();
+  lcolor_ = getLightingColor();
+
+  specConstant_ = getSpecularConstant();
+  specExponent_ = getSpecularExponent();
+
+  int w = image->getWidth ();
+  int h = image->getHeight();
+
+  for (int y = 0; y < h; ++y) {
+    for (int x = 0; x < w; ++x) {
+      CRGBA rgba;
+
+      image->getRGBAPixel(x, y, rgba);
+
+      CRGBA rgba1 = lightPoint(rgba, CPoint3D(x, y, 0));
+
+      image->setRGBAPixel(x, y, rgba1);
+    }
+  }
+}
+
+CRGBA
+CSVGFeSpecularLighting::
+lightPoint(CRGBA &rgba, const CPoint3D &point) const
+{
+  CVector3D normal(0, 0, 1);
+
+  // Light vector
+  CVector3D dlight(point, lpoint_);
+
+  dlight.normalize();
+
+  // normal.light
+  double dot = dlight.dotProduct(normal);
+
+  if (dot < 0.0)
+    dot = 0.0;
+
+  double sr = specConstant_*pow(dot, specExponent_)*rgba.getRed  ();
+  double sg = specConstant_*pow(dot, specExponent_)*rgba.getGreen();
+  double sb = specConstant_*pow(dot, specExponent_)*rgba.getBlue ();
+  double sa = std::max(sr, std::max(sg, sb));
+
+  return CRGBA(sr, sg, sb, sa).clamp();
 }
 
 void
@@ -67,10 +158,22 @@ print(std::ostream &os, bool hier) const
 
     CSVGObject::printValues(os);
 
-    printNameValue(os, "in"    , filter_in_ );
-    printNameValue(os, "result", filter_out_);
+    printNameValue(os, "in"              , filterIn_ );
+    printNameValue(os, "result"          , filterOut_);
+    printNameValue(os, "lighting-color"  , lightingColor_);
+    printNameValue(os, "specularConstant", specularConstant_);
+    printNameValue(os, "specularExponent", specularExponent_);
+    printNameValue(os, "surfaceScale"    , surfaceScale_);
 
-    os << "/>" << std::endl;
+    if (hasChildren()) {
+      os << ">" << std::endl;
+
+      printChildren(os, hier);
+
+      os << "</feSpecularLighting>" << std::endl;
+    }
+    else
+      os << "/>" << std::endl;
   }
   else
     os << "feSpecularLighting ";

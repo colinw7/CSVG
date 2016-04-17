@@ -12,13 +12,11 @@ CSVGBlock(CSVG &svg) :
 CSVGBlock::
 CSVGBlock(const CSVGBlock &block) :
  CSVGObject(block),
- x_        (block.x_),
- y_        (block.y_),
- width_    (block.width_),
- height_   (block.height_),
- halign_   (block.halign_),
- valign_   (block.valign_),
- scale_    (block.scale_)
+ x_             (block.x_),
+ y_             (block.y_),
+ width_         (block.width_),
+ height_        (block.height_),
+ preserveAspect_(block.preserveAspect_)
 {
 }
 
@@ -43,7 +41,7 @@ dup() const
     width <Length>
     height <Length>
     viewBox <ViewBoxSpec>
-    preserveAspectRatio <PreserveAspectRatioSpec> 'xMidYMid meet'
+    preserveAspectRatio <PreserveAspectRatioSpec>
     zoomAndPan ( disable | magnify ) 'magnify'
     version <Number>
     baseProfile <Text>
@@ -54,10 +52,11 @@ bool
 CSVGBlock::
 processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  std::string     str;
-  double          real;
-  CBBox2D         bbox;
-  CSVGLengthValue length;
+  std::string        str;
+  double             real;
+  CBBox2D            bbox;
+  CSVGLengthValue    length;
+  CSVGPreserveAspect preserveAspect;
 
   if (processCoreOption           (opt_name, opt_value)) return true;
   if (processConditionalOption    (opt_name, opt_value)) return true;
@@ -80,18 +79,8 @@ processOption(const std::string &opt_name, const std::string &opt_value)
     height_.setValue(length);
   else if (svg_.bboxOption  (opt_name, opt_value, "viewBox", &bbox))
     viewBox_ = bbox;
-  else if (svg_.stringOption(opt_name, opt_value, "preserveAspectRatio", str)) {
-    CHAlignType halign;
-    CVAlignType valign;
-    CSVGScale   scale;
-
-    if (! svg_.decodePreserveAspectRatio(opt_value, &halign, &valign, &scale))
-      return false;
-
-    halign_ = halign;
-    valign_ = valign;
-    scale_  = scale;
-  }
+  else if (svg_.preserveAspectOption(opt_name, opt_value, "preserveAspectRatio", preserveAspect))
+    preserveAspect_ = preserveAspect;
   else if (svg_.stringOption(opt_name, opt_value, "zoomAndPan", str))
     ;
   else if (svg_.stringOption(opt_name, opt_value, "version", str))
@@ -175,10 +164,10 @@ bool
 CSVGBlock::
 getBBox(CBBox2D &bbox) const
 {
-  if (! viewBox_.isSet())
+  if (! viewBox_.isValid())
     bbox = CBBox2D(getX(), getY(), getWidth(), getHeight());
   else
-    bbox = viewBox_;
+    bbox = getViewBox();
 
   return true;
 }
@@ -192,28 +181,12 @@ print(std::ostream &os, bool hier) const
 
     CSVGObject::printValues(os);
 
+    printNameValue (os, "x"     , x_     );
+    printNameValue (os, "y"     , y_     );
     printNameLength(os, "width" , width_ );
     printNameLength(os, "height", height_);
 
-    if (halign_.isValid()) {
-      os << " preserveAspectRatio=\"";
-
-      if      (getHAlign() == CHALIGN_TYPE_LEFT  ) os << "xMin";
-      else if (getHAlign() == CHALIGN_TYPE_CENTER) os << "xMid";
-      else if (getHAlign() == CHALIGN_TYPE_RIGHT ) os << "xMax";
-
-      if      (getVAlign() == CVALIGN_TYPE_BOTTOM) os << "YMin";
-      else if (getVAlign() == CVALIGN_TYPE_CENTER) os << "YMid";
-      else if (getVAlign() == CVALIGN_TYPE_TOP   ) os << "YMax";
-
-      os << " ";
-
-      if      (getScale() == CSVGScale::FIXED_MEET ) os << "meet";
-      else if (getScale() == CSVGScale::FIXED_SLICE) os << "slice";
-      else if (getScale() == CSVGScale::FREE       ) os << "none";
-
-      os << "\"";
-    }
+    printNamePreserveAspect(os, "preserveAspectRatio", preserveAspect_);
 
     os << ">" << std::endl;
 

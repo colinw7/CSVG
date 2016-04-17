@@ -26,6 +26,7 @@ class CSVGRenderer {
   virtual void setDataRange(double xmin, double ymin, double xmax, double ymax) = 0;
   virtual void getDataRange(double *xmin, double *ymin, double *xmax, double *ymax) const = 0;
 
+  virtual bool isAntiAlias() const = 0;
   virtual void setAntiAlias(bool aa) = 0;
 
   virtual void setEqualScale(bool eq) = 0;
@@ -33,6 +34,9 @@ class CSVGRenderer {
 
   virtual void beginDraw() { }
   virtual void endDraw  () { }
+
+  virtual void startDraw() { }
+  virtual void stopDraw () { }
 
   virtual void setViewMatrix(const CMatrix2D &m) = 0;
 
@@ -57,8 +61,9 @@ class CSVGRenderer {
 
   virtual void pathStroke() = 0;
   virtual void pathFill() = 0;
-  virtual void pathClip() = 0;
-  virtual void pathEoclip() = 0;
+
+  virtual void pathClip  (CSVGRenderer *renderer=0) = 0;
+  virtual void pathEoclip(CSVGRenderer *renderer=0) = 0;
 
   virtual void initClip() = 0;
 
@@ -69,6 +74,7 @@ class CSVGRenderer {
   virtual void setFont(CFontPtr bg) = 0;
 
   virtual void setStrokeColor(const CRGBA &fg) = 0;
+
   virtual void setLineWidth(double w) = 0;
   virtual void setLineDash(const CLineDash &dash) = 0;
   virtual void setLineCap(const CLineCapType &cap) = 0;
@@ -76,7 +82,6 @@ class CSVGRenderer {
   virtual void setMitreLimit(double limit) = 0;
 
   virtual void setFillType(CFillType fillType) = 0;
-
   virtual void setFillColor(const CRGBA &bg) = 0;
   virtual void setFillGradient(CGenGradient *g) = 0;
   virtual void setFillImage(CImagePtr image) = 0;
@@ -84,8 +89,11 @@ class CSVGRenderer {
   virtual void setAlign(CHAlignType halign, CVAlignType valign) = 0;
 
   virtual void windowToPixel(const CPoint2D &w, CPoint2D &p) = 0;
+  virtual void pixelToWindow(const CPoint2D &p, CPoint2D &w) = 0;
 
   virtual void textBounds(const std::string &str, CBBox2D &bbox) = 0;
+
+  virtual CISize2D getImageSize() const = 0;
 
   virtual CImagePtr getImage() const = 0;
   virtual void      setImage(CImagePtr image) = 0;

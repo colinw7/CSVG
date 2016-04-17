@@ -16,10 +16,10 @@ dirs:
 	@if [ ! -e ../lib ]; then mkdir ../lib; fi
 
 SRC = \
-CSVG.cpp \
+CSVGAnchor.cpp \
 CSVGAnimateBase.cpp \
-CSVGAnimate.cpp \
 CSVGAnimateColor.cpp \
+CSVGAnimate.cpp \
 CSVGAnimateMotion.cpp \
 CSVGAnimateTransform.cpp \
 CSVGAnimation.cpp \
@@ -28,6 +28,7 @@ CSVGBuffer.cpp \
 CSVGCircle.cpp \
 CSVGClip.cpp \
 CSVGClipPath.cpp \
+CSVG.cpp \
 CSVGDefs.cpp \
 CSVGDesc.cpp \
 CSVGEllipse.cpp \
@@ -35,7 +36,9 @@ CSVGFeBlend.cpp \
 CSVGFeColorMatrix.cpp \
 CSVGFeComponentTransfer.cpp \
 CSVGFeComposite.cpp \
+CSVGFeConvolveMatrix.cpp \
 CSVGFeDiffuseLighting.cpp \
+CSVGFeDisplacementMap.cpp \
 CSVGFeDistantLight.cpp \
 CSVGFeFlood.cpp \
 CSVGFeFunc.cpp \
@@ -43,22 +46,27 @@ CSVGFeGaussianBlur.cpp \
 CSVGFeImage.cpp \
 CSVGFeMerge.cpp \
 CSVGFeMergeNode.cpp \
+CSVGFeMorphology.cpp \
 CSVGFeOffset.cpp \
 CSVGFePointLight.cpp \
 CSVGFeSpecularLighting.cpp \
+CSVGFeSpotLight.cpp \
 CSVGFeTile.cpp \
 CSVGFeTurbulence.cpp \
 CSVGFill.cpp \
+CSVGFilterBase.cpp \
 CSVGFilter.cpp \
 CSVGFont.cpp \
 CSVGFontDef.cpp \
 CSVGFontFace.cpp \
+CSVGFontFaceSrc.cpp \
+CSVGFontFaceUri.cpp \
 CSVGGlyph.cpp \
 CSVGGroup.cpp \
 CSVGHKern.cpp \
 CSVGImage.cpp \
-CSVGLine.cpp \
 CSVGLinearGradient.cpp \
+CSVGLine.cpp \
 CSVGMarker.cpp \
 CSVGMask.cpp \
 CSVGMissingGlyph.cpp \
@@ -71,23 +79,24 @@ CSVGPolygon.cpp \
 CSVGPolyLine.cpp \
 CSVGRadialGradient.cpp \
 CSVGRect.cpp \
+CSVGRenderer.cpp \
+CSVGScript.cpp \
 CSVGSet.cpp \
 CSVGStop.cpp \
 CSVGStroke.cpp \
 CSVGStyle.cpp \
 CSVGStyleData.cpp \
+CSVGSwitch.cpp \
 CSVGSymbol.cpp \
+CSVGTempFont.cpp \
+CSVGTempStroke.cpp \
 CSVGText.cpp \
+CSVGTextPath.cpp \
 CSVGTitle.cpp \
 CSVGTSpan.cpp \
 CSVGUse.cpp \
 CSVGUtil.cpp \
 CSVGXLink.cpp \
-\
-CSVGTempStroke.cpp \
-CSVGTempFont.cpp \
-\
-CSVGRenderer.cpp \
 \
 CCSS.cpp \
 CLog.cpp \

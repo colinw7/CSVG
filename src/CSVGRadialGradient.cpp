@@ -3,6 +3,7 @@
 #include <CSVGStop.h>
 #include <CSVG.h>
 #include <CMathGen.h>
+#include <CSVGUtil.h>
 #include <CRadialGradient.h>
 
 /* Attributes:
@@ -31,9 +32,11 @@ CSVGRadialGradient(CSVG &svg) :
 CSVGRadialGradient::
 CSVGRadialGradient(const CSVGRadialGradient &rg) :
  CSVGObject (rg),
- center_    (rg.center_    ),
+ cx_        (rg.cx_        ),
+ cy_        (rg.cy_        ),
  radius_    (rg.radius_    ),
- focus_     (rg.focus_     ),
+ focusX_    (rg.focusX_    ),
+ focusY_    (rg.focusY_    ),
  stops_     (rg.stops_     ),
  gtransform_(rg.gtransform_),
  units_     (rg.units_     ),
@@ -56,32 +59,20 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   double          real;
   CSVGCoordUnits  units;
   CSVGLengthValue length;
+  CMatrix2D       transform;
 
-  if      (svg_.percentOption(opt_name, opt_value, "cx", length)) {
-    setCenterX(real);
-  }
-  else if (svg_.percentOption(opt_name, opt_value, "cy", length)) {
-    setCenterY(real);
-  }
-  else if (svg_.percentOption(opt_name, opt_value, "r" , length)) {
-    setRadius(real);
-  }
-  else if (svg_.coordOption(opt_name, opt_value, "fx", &real)) {
-    setFocusX(real);
-  }
-  else if (svg_.coordOption(opt_name, opt_value, "fy", &real)) {
-    setFocusY(real);
-  }
-  else if (svg_.stringOption(opt_name, opt_value, "gradientTransform", str)) {
-    CMatrix2D gtransform;
-
-    gtransform.setIdentity();
-
-    if (! svg_.decodeTransform(str, gtransform))
-      return false;
-
-    setGTransform(gtransform);
-  }
+  if      (svg_.percentOption(opt_name, opt_value, "cx", length))
+    cx_ = length;
+  else if (svg_.percentOption(opt_name, opt_value, "cy", length))
+    cy_ = length;
+  else if (svg_.percentOption(opt_name, opt_value, "r" , length))
+    radius_ = length;
+  else if (svg_.coordOption(opt_name, opt_value, "fx", &real))
+    focusX_ = real;
+  else if (svg_.coordOption(opt_name, opt_value, "fy", &real))
+    focusY_ = real;
+  else if (svg_.transformOption(opt_name, opt_value, "gradientTransform", transform))
+    setGTransform(transform);
   else if (svg_.coordUnitsOption(opt_name, opt_value, "gradientUnits", units)) {
     setUnits(units);
   }
@@ -105,9 +96,11 @@ processOption(const std::string &opt_name, const std::string &opt_value)
       CSVGLinearGradient *lg = dynamic_cast<CSVGLinearGradient *>(object);
 
       if      (rg != 0) {
-        if (rg->center_.isValid()) center_ = rg->center_;
+        if (rg->cx_    .isValid()) cx_     = rg->cx_;
+        if (rg->cy_    .isValid()) cy_     = rg->cy_;
         if (rg->radius_.isValid()) radius_ = rg->radius_;
-        if (rg->focus_ .isValid()) focus_  = rg->focus_;
+        if (rg->focusX_.isValid()) focusX_ = rg->focusX_;
+        if (rg->focusY_.isValid()) focusY_ = rg->focusY_;
 
         if (rg->getGTransformValid()) gtransform_ = rg->getGTransform();
         if (rg->getUnitsValid     ()) units_      = rg->getUnits();
@@ -157,12 +150,6 @@ termParse()
 
 void
 CSVGRadialGradient::
-draw()
-{
-}
-
-void
-CSVGRadialGradient::
 print(std::ostream &os, bool hier) const
 {
   if (hier) {
@@ -170,18 +157,11 @@ print(std::ostream &os, bool hier) const
 
     CSVGObject::printValues(os);
 
-    if (center_.isValid())
-      os << " cx=\"" << center_.getValue().x << "\" cy=\"" << center_.getValue().y << "\"";
+    printNameLength(os, "cx", cx_    );
+    printNameLength(os, "cy", cy_    );
+    printNameLength(os, "r" , radius_);
 
-    printNameValue(os, "r", radius_);
-
-    if (gtransform_.isValid() && ! gtransform_.getValue().isIdentity()) {
-      os << " gradientTransform=\"";
-
-      printTransform(os, gtransform_.getValue());
-
-      os << "\"";
-    }
+    printNameTransform(os, "gradientTransform", gtransform_);
 
     if (getUnitsValid())
       os << " gradientUnits=\"" << CSVG::encodeUnitsString(getUnits()) << "\"";
@@ -210,7 +190,7 @@ getImage(CBBox2D &bbox)
   double width  = bbox.getWidth ();
   double height = bbox.getHeight();
 
-  int pwidth, pheight;
+  double pwidth, pheight;
 
   svg_.lengthToPixel(width, height, &pwidth, &pheight);
 
@@ -218,15 +198,11 @@ getImage(CBBox2D &bbox)
 
   CRadialGradient gradient;
 
-  int pxc, pyc, prx, pry, pxf, pyf;
+  double pxc, pyc, prx, pry, pxf, pyf;
 
   svg_.windowToPixel(getCenterX(), getCenterY(), &pxc, &pyc);
-  svg_.lengthToPixel(getRadius(), getRadius(), &prx, &pry);
-
-  if (focus_.isValid())
-    svg_.windowToPixel(getFocusX(), getFocusY(), &pxf, &pyf);
-  else
-    svg_.windowToPixel(getCenterX(), getCenterY(), &pxf, &pyf);
+  svg_.lengthToPixel(getRadius (), getRadius (), &prx, &pry);
+  svg_.windowToPixel(getFocusX (), getFocusY (), &pxf, &pyf);
 
   gradient.setCenter(pxc, pyc);
   gradient.setRadius(std::max(prx, pry));
@@ -244,26 +220,48 @@ getImage(CBBox2D &bbox)
 
 CRadialGradient *
 CSVGRadialGradient::
-createGradient()
+createGradient(CSVGObject *obj)
 {
   CRadialGradient *gradient = new CRadialGradient;
 
-  if (center_.isValid())
-    gradient->setCenter(getCenterX(), getCenterY());
-  else
-    gradient->setCenter(0.5, 0.5);
+  double xc = getCenterX();
+  double yc = getCenterX();
+  double r  = getRadius();
+  double xf = getFocusX();
+  double yf = getFocusY();
 
-  if (radius_.isValid())
-    gradient->setRadius(getRadius());
-  else
-    gradient->setRadius(0.5);
+  //---
 
-  if (focus_.isValid())
-    gradient->setFocus(getFocusX(), getFocusY());
-  else if (center_.isValid())
-    gradient->setFocus(getCenterX(), getCenterY());
-  else
-    gradient->setFocus(0.5, 0.5);
+  // remap points to absolute
+  if      (getUnits() == CSVGCoordUnits::USER_SPACE) {
+    CMatrix2D m;
+
+    svg_.getTransform(m);
+
+    // radius ?
+    CPoint2D p1(xc, yc);
+    CPoint2D p2(xf, yf);
+
+    m.multiplyPoint(p1.x, p1.y, &xc, &yc);
+    m.multiplyPoint(p2.x, p2.y, &xf, &yf);
+  }
+  else if (getUnits() == CSVGCoordUnits::OBJECT_BBOX) {
+    CBBox2D bbox;
+
+    obj->getBBox(bbox);
+
+    // radius ?
+    xc = CSVGUtil::map(xc, 0, 1, bbox.getXMin(), bbox.getXMax());
+    yc = CSVGUtil::map(yc, 0, 1, bbox.getYMin(), bbox.getYMax());
+    xf = CSVGUtil::map(xf, 0, 1, bbox.getXMin(), bbox.getXMax());
+    yf = CSVGUtil::map(yf, 0, 1, bbox.getYMin(), bbox.getYMax());
+  }
+
+  //---
+
+  gradient->setCenter(xc, yc);
+  gradient->setRadius(r);
+  gradient->setFocus (xf, yf);
 
   if (spread_.isValid())
     gradient->setSpread(getSpread());

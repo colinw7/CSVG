@@ -92,10 +92,10 @@ bool
 CSVGPath::
 getBBox(CBBox2D &bbox) const
 {
-  if (! viewBox_.isSet())
+  if (! viewBox_.isValid())
     return svg_.getPartsBBox(parts_, bbox);
   else {
-    bbox = viewBox_;
+    bbox = getViewBox();
 
     return true;
   }

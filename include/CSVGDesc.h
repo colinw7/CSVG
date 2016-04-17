@@ -12,9 +12,6 @@ class CSVGDesc : public CSVGObject {
 
   CSVGDesc *dup() const override;
 
-  std::string getText() const override { return text_.getValue(""); }
-  void setText(const std::string &text) override;
-
   bool processOption(const std::string &name, const std::string &value) override;
 
   bool isDrawable() const override { return false; }
@@ -24,9 +21,6 @@ class CSVGDesc : public CSVGObject {
   void print(std::ostream &os, bool hier) const override;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGDesc &desc);
-
- private:
-  COptValT<std::string> text_;
 };
 
 #endif

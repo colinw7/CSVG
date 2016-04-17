@@ -4,10 +4,10 @@
 
 CSVGTempFont::
 CSVGTempFont(CSVGObject &object) :
- object_  (object),
- font_def_(object_.getFontDef())
+ object_ (object),
+ fontDef_(object_.getFontDef())
 {
-  font_def_ = object_.getSVG().getFontDef();
+  fontDef_ = object_.getSVG().getFontDef();
 
   object_.getSVG().updateFontDef(object_.getFontDef());
 }
@@ -15,5 +15,5 @@ CSVGTempFont(CSVGObject &object) :
 CSVGTempFont::
 ~CSVGTempFont()
 {
-  object_.getSVG().updateFontDef(font_def_);
+  object_.getSVG().updateFontDef(fontDef_);
 }

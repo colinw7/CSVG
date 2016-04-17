@@ -1,9 +1,10 @@
 #ifndef CSVGFePointLight_H
 #define CSVGFePointLight_H
 
-#include <CSVGFilter.h>
+#include <CSVGFilterBase.h>
+#include <CPoint3D.h>
 
-class CSVGFePointLight : public CSVGFilter {
+class CSVGFePointLight : public CSVGFilterBase {
  public:
   CSVG_OBJECT_DEF("fePointLight", CSVGObjTypeId::FE_POINT_LIGHT)
 
@@ -12,13 +13,27 @@ class CSVGFePointLight : public CSVGFilter {
 
   CSVGFePointLight *dup() const override;
 
-  bool processOption(const std::string &name, const std::string &value) override;
+  double getX() const { return x_.getValue(0); }
+  void setX(double r) { x_ = r; }
 
-  void draw() override;
+  double getY() const { return y_.getValue(0); }
+  void setY(double r) { y_ = r; }
+
+  double getZ() const { return z_.getValue(0); }
+  void setZ(double r) { z_ = r; }
+
+  CPoint3D getPoint() const { return CPoint3D(getX(), getY(), getZ()); }
+
+  bool processOption(const std::string &name, const std::string &value) override;
 
   void print(std::ostream &os, bool hier) const override;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGFePointLight &fe);
+
+ private:
+  COptValT<double> x_;
+  COptValT<double> y_;
+  COptValT<double> z_;
 };
 
 #endif

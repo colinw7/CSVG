@@ -34,11 +34,14 @@ class CSVGXLink {
   }
 
   CSVGObject *getObject() const {
+    resolve();
+
     return object_;
   }
 
   void setObject(CSVGObject *object) {
-    object_ = object;
+    object_   = object;
+    resolved_ = true;
   }
 
   bool isImage() const {
@@ -48,11 +51,14 @@ class CSVGXLink {
   }
 
   CImagePtr getImage() const {
+    resolve();
+
     return image_;
   }
 
   void setImage(CImagePtr image) {
-    image_ = image;
+    image_    = image;
+    resolved_ = true;
   }
 
  private:

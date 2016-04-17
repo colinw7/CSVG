@@ -29,10 +29,10 @@ class CSVGLinearGradient : public CSVGObject {
     return true;
   }
 
-  double getX1() const { return x1_.getValue(0); }
-  double getY1() const { return y1_.getValue(0); }
-  double getX2() const { return x2_.getValue(1); }
-  double getY2() const { return y2_.getValue(1); }
+  double getX1() const { return x1_.isValid() ? x1_.getValue().value() : 0; }
+  double getY1() const { return y1_.isValid() ? y1_.getValue().value() : 0; }
+  double getX2() const { return x2_.isValid() ? x2_.getValue().value() : 1; }
+  double getY2() const { return x2_.isValid() ? y2_.getValue().value() : 0; }
 
   void setX1(double x1) { x1_.setValue(x1); }
   void setY1(double y1) { y1_.setValue(y1); }
@@ -51,7 +51,7 @@ class CSVGLinearGradient : public CSVGObject {
   void setGTransform(const CMatrix2D &gtransform) { gtransform_ = gtransform; }
 
   bool getUnitsValid() const { return units_.isValid(); }
-  CSVGCoordUnits getUnits() const { return units_.getValue(CSVGCoordUnits::USER_SPACE); }
+  CSVGCoordUnits getUnits() const { return units_.getValue(CSVGCoordUnits::OBJECT_BBOX); }
   void setUnits(CSVGCoordUnits units) { units_ = units; }
 
   bool getSpreadValid() const { return spread_.isValid(); }
@@ -73,21 +73,19 @@ class CSVGLinearGradient : public CSVGObject {
 
   bool isDrawable() const override { return false; }
 
-  void draw() override;
-
   void print(std::ostream &os, bool hier) const override;
 
   CImagePtr getImage(CBBox2D &bbox);
 
-  CLinearGradient *createGradient();
+  CLinearGradient *createGradient(CSVGObject *);
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGLinearGradient &gradient);
 
  private:
-  COptValT<double>              x1_;
-  COptValT<double>              y1_;
-  COptValT<double>              x2_;
-  COptValT<double>              y2_;
+  COptValT<CSVGLengthValue>     x1_;
+  COptValT<CSVGLengthValue>     y1_;
+  COptValT<CSVGLengthValue>     x2_;
+  COptValT<CSVGLengthValue>     y2_;
   StopList                      stops_;
   COptValT<CMatrix2D>           gtransform_;
   COptValT<CSVGCoordUnits>      units_;

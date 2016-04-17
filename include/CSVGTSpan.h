@@ -3,7 +3,12 @@
 
 #include <CSVGObject.h>
 
+class CSVGText;
+
 class CSVGTSpan : public CSVGObject {
+ public:
+  typedef std::vector<double> Reals;
+
  public:
   CSVG_OBJECT_DEF("tspan", CSVGObjTypeId::TSPAN)
 
@@ -18,24 +23,40 @@ class CSVGTSpan : public CSVGObject {
   double getY() const { return y_.getValue(0); }
   void setY(double y) { y_ = y; }
 
-  std::string getText() const override { return text_.getValue(""); }
-  void setText(const std::string &text) override { text_ = text; }
+  Reals getDX() const { return dx_.isValid() ? dx_.getValue() : Reals(); }
+  void setDX(const Reals &x) { dx_ = x; }
+
+  Reals getDY() const { return dy_.isValid() ? dy_.getValue() : Reals(); }
+  void setDY(const Reals &y) { dy_ = y; }
+
+  bool hasFont() const override { return true; }
 
   bool processOption(const std::string &name, const std::string &value) override;
 
   void draw() override;
+
+  bool getBBox(CBBox2D &bbox) const override;
+
+  void moveTo(const CPoint2D &p) override;
+  void moveBy(const CVector2D &delta) override;
 
   void print(std::ostream &os, bool hier) const override;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGTSpan &tspan);
 
  private:
+  void getDrawPos(double &x, double &y) const;
+
+  CSVGText *getParentText() const;
+
+ private:
   CSVGTSpan &operator=(const CSVGTSpan &rhs);
 
  private:
-  COptValT<double>      x_;
-  COptValT<double>      y_;
-  COptValT<std::string> text_;
+  COptValT<double> x_;
+  COptValT<double> y_;
+  COptValT<Reals>  dx_;
+  COptValT<Reals>  dy_;
 };
 
 #endif

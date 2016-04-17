@@ -63,6 +63,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
 
   std::vector<CPoint2D> points;
   std::string           str;
+  CMatrix2D             transform;
 
   if      (svg_.pointListOption(opt_name, opt_value, "points", points)) {
     points_.clear();
@@ -72,14 +73,8 @@ processOption(const std::string &opt_name, const std::string &opt_value)
     for (uint i = 0; i < num_points; ++i)
       addPoint(points[i]);
   }
-  else if (svg_.stringOption(opt_name, opt_value, "transform", str)) {
-    CMatrix2D transform;
-
-    if (! svg_.decodeTransform(str, transform))
-      return false;
-
+  else if (svg_.transformOption(opt_name, opt_value, "transform", transform))
     setTransform(transform);
-  }
   else
     return false;
 
@@ -100,18 +95,22 @@ draw()
   if (svg_.getDebug())
     CSVGLog() << *this;
 
-  if (svg_.isFilled())
-    svg_.fillPolygon(points_);
+  if (svg_.isFilled() || svg_.isStroked()) {
+    if (svg_.isFilled())
+      svg_.fillPolygon(points_);
 
-  if (svg_.isStroked())
-    svg_.drawPolygon(points_);
+    if (svg_.isStroked())
+      svg_.drawPolygon(points_);
+  }
+  else
+    svg_.fillPolygon(points_);
 }
 
 bool
 CSVGPolygon::
 getBBox(CBBox2D &bbox) const
 {
-  if (! viewBox_.isSet()) {
+  if (! viewBox_.isValid()) {
     CBBox2D bbox1;
 
     uint num_points = points_.size();
@@ -122,7 +121,7 @@ getBBox(CBBox2D &bbox) const
     bbox = bbox1;
   }
   else
-    bbox = viewBox_;
+    bbox = getViewBox();
 
   return true;
 }

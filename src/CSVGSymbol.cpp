@@ -9,7 +9,8 @@ CSVGSymbol(CSVG &svg) :
 
 CSVGSymbol::
 CSVGSymbol(const CSVGSymbol &symbol) :
- CSVGObject(symbol)
+ CSVGObject(symbol),
+ preserveAspect_(symbol.preserveAspect_)
 {
 }
 
@@ -33,7 +34,14 @@ bool
 CSVGSymbol::
 processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  return CSVGObject::processOption(opt_name, opt_value);
+  CSVGPreserveAspect preserveAspect;
+
+  if (svg_.preserveAspectOption(opt_name, opt_value, "preserveAspectRatio", preserveAspect))
+    preserveAspect_ = preserveAspect;
+  else
+    return CSVGObject::processOption(opt_name, opt_value);
+
+  return true;
 }
 
 void
@@ -74,6 +82,8 @@ print(std::ostream &os, bool hier) const
     os << "<symbol";
 
     CSVGObject::printValues(os);
+
+    printNamePreserveAspect(os, "preserveAspectRatio", preserveAspect_);
 
     if (hasChildren()) {
       os << ">" << std::endl;

@@ -9,8 +9,7 @@ CSVGDesc(CSVG &svg) :
 
 CSVGDesc::
 CSVGDesc(const CSVGDesc &desc) :
- CSVGObject(desc),
- text_     (desc.text_)
+ CSVGObject(desc)
 {
 }
 
@@ -19,13 +18,6 @@ CSVGDesc::
 dup() const
 {
   return new CSVGDesc(*this);
-}
-
-void
-CSVGDesc::
-setText(const std::string &text)
-{
-  text_ = CStrUtil::stripSpaces(text);
 }
 
 /* Attributes:
@@ -57,6 +49,8 @@ print(std::ostream &os, bool hier) const
     os << ">";
 
     os << getText();
+
+    printChildren(os, hier);
 
     os << "</desc>" << std::endl;
   }

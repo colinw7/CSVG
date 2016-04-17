@@ -33,6 +33,7 @@ class CSVGImageRenderer : public CSVGRenderer {
 
   void setBackground(const CRGBA &) { }
 
+  bool isAntiAlias() const { return renderer_->isAntiAlias(); }
   void setAntiAlias(bool b) { renderer_->setAntiAlias(b); }
 
   void setEqualScale(bool b) { renderer_->setEqualScale(b); }
@@ -73,8 +74,9 @@ class CSVGImageRenderer : public CSVGRenderer {
 
   void pathStroke() { renderer_->pathStroke(); }
   void pathFill  () { renderer_->pathFill  (); }
-  void pathClip  () { renderer_->pathClip  (); }
-  void pathEoclip() { renderer_->pathEoclip(); }
+
+  void pathClip  (CSVGRenderer *) { renderer_->pathClip  (); }
+  void pathEoclip(CSVGRenderer *) { renderer_->pathEoclip(); }
 
   void initClip() { renderer_->initClip(); }
 
@@ -100,15 +102,19 @@ class CSVGImageRenderer : public CSVGRenderer {
   void setAlign(CHAlignType halign, CVAlignType valign) { renderer_->setAlign(halign, valign); }
 
   void windowToPixel(const CPoint2D &w, CPoint2D &p) { renderer_->windowToPixel(w, p); }
+  void pixelToWindow(const CPoint2D &p, CPoint2D &w) { renderer_->pixelToWindow(p, w); }
 
   void textBounds(const std::string &text, CBBox2D &bbox) { renderer_->textBounds(text, bbox); }
 
-  CImagePtr getImage() const { return renderer_->getImage(); }
+  CISize2D getImageSize() const { return
+    CISize2D(renderer_->getPixelWidth(), renderer_->getPixelHeight());
+  }
 
+  CImagePtr getImage() const { return renderer_->getImage(); }
   void setImage(CImagePtr image) { return renderer_->setImage(image); }
 
  private:
-  CImageRenderer2D *renderer_;
+  CImageRenderer2D *renderer_ { 0 };
 };
 
 #endif

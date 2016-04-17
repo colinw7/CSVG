@@ -24,11 +24,14 @@ CSVGMarker(CSVG &svg) :
 
 CSVGMarker::
 CSVGMarker(const CSVGMarker &marker) :
- CSVGObject   (marker),
- refX_        (marker.refX_),
- refY_        (marker.refY_),
- markerWidth_ (marker.markerWidth_),
- markerHeight_(marker.markerHeight_)
+ CSVGObject     (marker),
+ refX_          (marker.refX_),
+ refY_          (marker.refY_),
+ markerUnits_   (marker.markerUnits_),
+ markerWidth_   (marker.markerWidth_),
+ markerHeight_  (marker.markerHeight_),
+ orient_        (marker.orient_),
+ preserveAspect_(marker.preserveAspect_)
 {
 }
 
@@ -48,10 +51,11 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   if (processPresentationOption(opt_name, opt_value)) return true;
   if (processExternalOption    (opt_name, opt_value)) return true;
 
-  std::string     str;
-  double          real;
-  CSVGLengthValue length;
-  CBBox2D         bbox;
+  std::string        str;
+  double             real;
+  CSVGLengthValue    length;
+  CBBox2D            bbox;
+  CSVGPreserveAspect preserveAspect;
 
   if      (svg_.coordOption (opt_name, opt_value, "refX", &real))
     refX_ = real;
@@ -69,10 +73,8 @@ processOption(const std::string &opt_name, const std::string &opt_value)
     orient_ = str;
   else if (svg_.bboxOption  (opt_name, opt_value, "viewBox", &bbox))
     viewBox_ = bbox;
-  else if (svg_.stringOption(opt_name, opt_value, "preserveAspectRatio", str)) {
-    //if (! svg_.decodePreserveAspectRatio(opt_value, &halign_, &valign_, &scale_))
-    //  return false;
-  }
+  else if (svg_.preserveAspectOption(opt_name, opt_value, "preserveAspectRatio", preserveAspect))
+    preserveAspect_ = preserveAspect;
   else
     return false;
 
@@ -113,7 +115,7 @@ drawMarker(double x, double y, double angle)
 
   matrix3.setTranslation(w1/2, h1/2);
 
-  matrix4.setRotation(-angle);
+  matrix4.setRotation(angle);
 
   matrix5.setTranslation(-xm, -ym);
 
@@ -123,7 +125,13 @@ drawMarker(double x, double y, double angle)
 
   svg_.setTransform(transform*matrix1*matrix2*matrix3*matrix4*matrix5);
 
-  drawObjects();
+  //---
+
+  // draw children
+  for (const auto &c : children())
+    c->drawObject();
+
+  //---
 
   svg_.setTransform(transform);
 }
@@ -139,9 +147,12 @@ print(std::ostream &os, bool hier) const
 
     printNameValue(os, "refX"        , refX_        );
     printNameValue(os, "refY"        , refY_        );
+    printNameValue(os, "markerUnits" , markerUnits_ );
     printNameValue(os, "markerWidth" , markerWidth_ );
     printNameValue(os, "markerHeight", markerHeight_);
     printNameValue(os, "orient"      , orient_      );
+
+    printNamePreserveAspect(os, "preserveAspectRatio", preserveAspect_);
 
     os << ">" << std::endl;
 

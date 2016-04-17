@@ -73,6 +73,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   std::string     str;
   double          real;
   CSVGLengthValue length;
+  CMatrix2D       transform;
 
   if      (svg_.coordOption (opt_name, opt_value, "x", &real))
     x_ = real;
@@ -86,14 +87,8 @@ processOption(const std::string &opt_name, const std::string &opt_value)
     rx_ = length.value();
   else if (svg_.lengthOption(opt_name, opt_value, "ry", length))
     ry_ = length.value();
-  else if (svg_.stringOption(opt_name, opt_value, "transform", str)) {
-    CMatrix2D transform;
-
-    if (! svg_.decodeTransform(str, transform))
-      return false;
-
+  else if (svg_.transformOption(opt_name, opt_value, "transform", transform))
     setTransform(transform);
-  }
   else
     return false;
 
@@ -126,18 +121,27 @@ draw()
     if (rx <= 0) rx = ry;
     if (ry <= 0) ry = rx;
 
-    if (svg_.isFilled())
-      svg_.fillRoundedRectangle(bbox_, rx, ry);
+    if (svg_.isFilled() || svg_.isStroked()) {
+      if (svg_.isFilled())
+        svg_.fillRoundedRectangle(bbox_, rx, ry);
 
-    if (svg_.isStroked())
-      svg_.drawRoundedRectangle(bbox_, rx, ry);
+      if (svg_.isStroked())
+        svg_.drawRoundedRectangle(bbox_, rx, ry);
+    }
+    else
+      svg_.fillRoundedRectangle(bbox_, rx, ry);
   }
   else {
-    if (svg_.isFilled())
-      svg_.fillRectangle(bbox_);
+    if (svg_.isFilled() || svg_.isStroked()) {
+      if (svg_.isFilled())
+        svg_.fillRectangle(bbox_);
 
-    if (svg_.isStroked())
-      svg_.drawRectangle(bbox_);
+      if (svg_.isStroked())
+        svg_.drawRectangle(bbox_);
+    }
+    else {
+      svg_.fillRectangle(bbox_);
+    }
   }
 }
 
@@ -145,10 +149,10 @@ bool
 CSVGRect::
 getBBox(CBBox2D &bbox) const
 {
-  if (! viewBox_.isSet())
+  if (! viewBox_.isValid())
     bbox = bbox_;
   else
-    bbox = viewBox_;
+    bbox = getViewBox();
 
   return true;
 }
@@ -210,8 +214,6 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<rect";
 
-    CSVGObject::printValues(os);
-
     printNameValue(os, "x", x_);
     printNameValue(os, "y", y_);
 
@@ -220,6 +222,8 @@ print(std::ostream &os, bool hier) const
 
     printNameValue(os, "rx", rx_);
     printNameValue(os, "ry", ry_);
+
+    CSVGObject::printValues(os);
 
     if (hasChildren()) {
       os << ">" << std::endl;

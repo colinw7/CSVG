@@ -1,18 +1,19 @@
 #include <CSVGFeMerge.h>
 #include <CSVGFeMergeNode.h>
 #include <CSVG.h>
+#include <CSVGBuffer.h>
 
 CSVGFeMerge::
 CSVGFeMerge(CSVG &svg) :
- CSVGFilter(svg)
+ CSVGFilterBase(svg)
 {
 }
 
 CSVGFeMerge::
 CSVGFeMerge(const CSVGFeMerge &merge) :
- CSVGFilter (merge),
- filter_in_ (merge.filter_in_),
- filter_out_(merge.filter_out_)
+ CSVGFilterBase(merge),
+ filterIn_ (merge.filterIn_),
+ filterOut_(merge.filterOut_)
 {
 }
 
@@ -30,11 +31,11 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   std::string str;
 
   if      (svg_.stringOption(opt_name, opt_value, "in", str))
-    filter_in_ = str;
+    filterIn_ = str;
   else if (svg_.stringOption(opt_name, opt_value, "result", str))
-    filter_out_ = str;
+    filterOut_ = str;
   else
-    return CSVGFilter::processOption(opt_name, opt_value);
+    return CSVGFilterBase::processOption(opt_name, opt_value);
 
   return true;
 }
@@ -43,53 +44,92 @@ void
 CSVGFeMerge::
 draw()
 {
-  CImagePtr src_image;
+  CSVGBuffer *outBuffer = svg_.getBuffer(getFilterOut());
 
-  CImagePtr dst_image = filterImage(src_image);
+  filterImage(outBuffer);
 
-  svg_.setBufferImage(filter_out_.getValue("SourceGraphic"), dst_image);
+  if (svg_.getDebugFilter()) {
+    std::string objectBufferName = "_" + getUniqueName();
+
+    CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_out");
+
+    buffer->setImage(outBuffer->getImage());
+  }
 }
 
-CImagePtr
+void
 CSVGFeMerge::
-filterImage(CImagePtr)
+filterImage(CSVGBuffer *outBuffer)
 {
   std::vector<CSVGObject *> objects;
 
   getChildrenOfType(CSVGObjTypeId::FE_MERGE_NODE, objects);
 
-  uint w = 0, h = 0;
+  // get max image size
+  int w = 0, h = 0;
 
   for (const auto &o : objects) {
     CSVGFeMergeNode *node = dynamic_cast<CSVGFeMergeNode *>(o);
 
-    const std::string &filter_in = node->getFilterIn();
+    std::string filterIn = node->getFilterIn();
+    CSVGBuffer* bufferIn = svg_.getBuffer(filterIn);
 
-    CImagePtr image_in = svg_.getBufferImage(filter_in);
+    CISize2D size = bufferIn->getImageSize();
 
-    w = std::max(w, image_in->getWidth ());
-    h = std::max(h, image_in->getHeight());
+    w = std::max(w, size.getWidth ());
+    h = std::max(h, size.getHeight());
   }
 
+  //---
+
+  // create image to merge into
   CImageNoSrc src;
 
   CImagePtr dst_image = CImageMgrInst->createImage(src);
 
   dst_image->setDataSize(w, h);
 
-  dst_image->setRGBAData(CRGBA(1,1,1,1));
+  dst_image->setRGBAData(CRGBA(0,0,0,0));
+
+  //---
+
+  // add merge node images
+  int i = 1;
 
   for (const auto &o : objects) {
     CSVGFeMergeNode *node = dynamic_cast<CSVGFeMergeNode *>(o);
 
-    const std::string &filter_in = node->getFilterIn();
+    std::string filterIn = node->getFilterIn();
+    CSVGBuffer* bufferIn = svg_.getBuffer(filterIn);
 
-    CImagePtr image_in = svg_.getBufferImage(filter_in);
+    if (svg_.getDebugFilter()) {
+      std::string objectBufferName = "_" + getUniqueName();
 
-    dst_image->combine(image_in);
+      CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_node_" + std::to_string(i) + "_in");
+
+      buffer->setImage(bufferIn->getImage());
+    }
+
+    //---
+
+    CImagePtr imageIn = bufferIn->getImage();
+
+    dst_image->combine(imageIn);
+
+    //---
+
+    if (svg_.getDebugFilter()) {
+      std::string objectBufferName = "_" + getUniqueName();
+
+      CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_node_" + std::to_string(i) + "_out");
+
+      buffer->setImage(dst_image);
+    }
+
+    ++i;
   }
 
-  return dst_image;
+  outBuffer->setImage(dst_image);
 }
 
 void
@@ -101,11 +141,8 @@ print(std::ostream &os, bool hier) const
 
     CSVGObject::printValues(os);
 
-    if (filter_in_.isValid())
-      os << " in=\"" << filter_in_.getValue() << "\"";
-
-    if (filter_out_.isValid())
-      os << " result=\"" << filter_out_.getValue() << "\"";
+    printNameValue(os, "in"    , filterIn_ );
+    printNameValue(os, "result", filterOut_);
 
     os << ">" << std::endl;
 

@@ -2,6 +2,7 @@
 #define CSVGMPath_H
 
 #include <CSVGObject.h>
+#include <CSVGXLink.h>
 
 class CStrParse;
 class CSVGPathPart;
@@ -22,6 +23,8 @@ class CSVGMPath : public CSVGObject {
 
   const PartList &getPartList() const { return parts_; }
 
+  const CSVGXLink &xlink() const { return xlink_.getValue(); }
+
   void draw() override;
 
   bool getBBox(CBBox2D &bbox) const override;
@@ -31,8 +34,8 @@ class CSVGMPath : public CSVGObject {
   friend std::ostream &operator<<(std::ostream &os, const CSVGMPath &path);
 
  protected:
-  PartList              parts_;
-  COptValT<std::string> xlink_;
+  PartList            parts_;
+  COptValT<CSVGXLink> xlink_;
 };
 
 #endif

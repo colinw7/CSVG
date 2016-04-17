@@ -6,12 +6,6 @@
 class CSVGStyleData;
 
 class CSVGStyle : public CSVGObject {
- private:
-  enum class StyleType {
-    NONE,
-    TEXT_CSS
-  };
-
  public:
   CSVG_OBJECT_DEF("style", CSVGObjTypeId::STYLE)
 
@@ -34,7 +28,7 @@ class CSVGStyle : public CSVGObject {
   bool parseCSS(const std::string &str);
 
  private:
-  StyleType type_;
+  CSVGStyleType type_;
 };
 
 #endif

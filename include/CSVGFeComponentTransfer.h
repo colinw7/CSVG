@@ -1,9 +1,11 @@
 #ifndef CSVGFeComponentTransfer_H
 #define CSVGFeComponentTransfer_H
 
-#include <CSVGFilter.h>
+#include <CSVGFilterBase.h>
 
-class CSVGFeComponentTransfer : public CSVGFilter {
+class CSVGBuffer;
+
+class CSVGFeComponentTransfer : public CSVGFilterBase {
  public:
   CSVG_OBJECT_DEF("feComponentTransfer", CSVGObjTypeId::FE_COMPONENT_TRANSFER)
 
@@ -12,19 +14,25 @@ class CSVGFeComponentTransfer : public CSVGFilter {
 
   CSVGFeComponentTransfer *dup() const override;
 
+  std::string getFilterIn() const { return filterIn_.getValue("SourceGraphic"); }
+  void setFilterIn(const std::string &s) { filterIn_ = s; }
+
+  std::string getFilterOut() const { return filterOut_.getValue("SourceGraphic"); }
+  void setFilterOut(const std::string &s) { filterOut_ = s; }
+
   bool processOption(const std::string &name, const std::string &value) override;
 
   void draw() override;
 
-  CImagePtr filterImage(CImagePtr src_image);
+  void filterImage(CSVGBuffer *inBuffer, CSVGBuffer *outBuffer);
 
   void print(std::ostream &os, bool hier) const override;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGFeComponentTransfer &fe);
 
  private:
-  COptValT<std::string> filter_in_;
-  COptValT<std::string> filter_out_;
+  COptValT<std::string> filterIn_;
+  COptValT<std::string> filterOut_;
 };
 
 #endif

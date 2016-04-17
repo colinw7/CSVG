@@ -25,14 +25,32 @@ class CSVGBlock : public CSVGObject {
   double getHeight() const;
   void setHeight(double h) { height_ = h; }
 
-  CHAlignType getHAlign() const { return halign_.getValue(CHALIGN_TYPE_CENTER); }
-  void setHAlign(const CHAlignType &a) { halign_ = a; }
+  CHAlignType getHAlign() const {
+    return preserveAspect_.getValue(CSVGPreserveAspect()).getHAlign();
+  }
+  void setHAlign(const CHAlignType &a) {
+    CSVGPreserveAspect preserveAspect = preserveAspect_.getValue(CSVGPreserveAspect());
+    preserveAspect.setHAlign(a);
+    preserveAspect_ = preserveAspect;
+  }
 
-  CVAlignType getVAlign() const { return valign_.getValue(CVALIGN_TYPE_CENTER); }
-  void setVAlign(const CVAlignType &a) { valign_ = a; }
+  CVAlignType getVAlign() const {
+    return preserveAspect_.getValue(CSVGPreserveAspect()).getVAlign();
+  }
+  void setVAlign(const CVAlignType &a) {
+    CSVGPreserveAspect preserveAspect = preserveAspect_.getValue(CSVGPreserveAspect());
+    preserveAspect.setVAlign(a);
+    preserveAspect_ = preserveAspect;
+  }
 
-  CSVGScale getScale() const { return scale_.getValue(CSVGScale::FREE); }
-  void setScale(const CSVGScale &s) { scale_ = s; }
+  CSVGScale getScale() const {
+    return preserveAspect_.getValue(CSVGPreserveAspect()).getScale();
+  }
+  void setScale(const CSVGScale &s) {
+    CSVGPreserveAspect preserveAspect = preserveAspect_.getValue(CSVGPreserveAspect());
+    preserveAspect.setScale(s);
+    preserveAspect_ = preserveAspect;
+  }
 
   void setSize(const CSize2D &size);
 
@@ -47,13 +65,11 @@ class CSVGBlock : public CSVGObject {
   friend std::ostream &operator<<(std::ostream &os, const CSVGBlock &block);
 
  private:
-  COptValT<double>          x_;
-  COptValT<double>          y_;
-  COptValT<CSVGLengthValue> width_;
-  COptValT<CSVGLengthValue> height_;
-  COptValT<CHAlignType>     halign_;
-  COptValT<CVAlignType>     valign_;
-  COptValT<CSVGScale>       scale_;
+  COptValT<double>             x_;
+  COptValT<double>             y_;
+  COptValT<CSVGLengthValue>    width_;
+  COptValT<CSVGLengthValue>    height_;
+  COptValT<CSVGPreserveAspect> preserveAspect_;
 };
 
 #endif

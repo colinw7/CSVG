@@ -1,19 +1,20 @@
 #include <CSVGFeComposite.h>
+#include <CSVGBuffer.h>
 #include <CSVG.h>
 
 CSVGFeComposite::
 CSVGFeComposite(CSVG &svg) :
- CSVGFilter(svg)
+ CSVGFilterBase(svg)
 {
 }
 
 CSVGFeComposite::
 CSVGFeComposite(const CSVGFeComposite &fe) :
- CSVGFilter (fe),
- type_      (fe.type_),
- filter_in1_(fe.filter_in1_),
- filter_in2_(fe.filter_in2_),
- filter_out_(fe.filter_out_)
+ CSVGFilterBase (fe),
+ type_     (fe.type_),
+ filterIn1_(fe.filterIn1_),
+ filterIn2_(fe.filterIn2_),
+ filterOut_(fe.filterOut_)
 {
 }
 
@@ -32,11 +33,11 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   double      real;
 
   if      (svg_.stringOption(opt_name, opt_value, "in", str))
-    filter_in1_ = str;
+    filterIn1_ = str;
   else if (svg_.stringOption(opt_name, opt_value, "in2", str))
-    filter_in2_ = str;
+    filterIn2_ = str;
   else if (svg_.stringOption(opt_name, opt_value, "result", str))
-    filter_out_ = str;
+    filterOut_ = str;
   else if (svg_.stringOption(opt_name, opt_value, "operator", str)) {
     if      (str == "over"      ) type_ = CRGBA_COMBINE_OVER;
     else if (str == "in"        ) type_ = CRGBA_COMBINE_IN;
@@ -54,7 +55,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   else if (svg_.realOption(opt_name, opt_value, "k4", &real))
     k4_ = real;
   else
-    return CSVGObject::processOption(opt_name, opt_value);
+    return CSVGFilterBase::processOption(opt_name, opt_value);
 
   return true;
 }
@@ -63,32 +64,59 @@ void
 CSVGFeComposite::
 draw()
 {
-  CImagePtr src_image1 = svg_.getBufferImage(filter_in1_.getValue("SourceGraphic"));
-  CImagePtr src_image2 = svg_.getBufferImage(filter_in2_.getValue("SourceGraphic"));
+  CSVGBuffer *inBuffer1 = svg_.getBuffer(getFilterIn1());
+  CSVGBuffer *inBuffer2 = svg_.getBuffer(getFilterIn2());
 
-  CImagePtr dst_image = filterImage2(src_image1, src_image2);
+  if (svg_.getDebugFilter()) {
+    std::string objectBufferName = "_" + getUniqueName();
 
-  svg_.setBufferImage(filter_out_.getValue("SourceGraphic"), dst_image);
+    CSVGBuffer *buffer1 = svg_.getBuffer(objectBufferName + "_in1");
+
+    buffer1->setImage(inBuffer1->getImage());
+
+    CSVGBuffer *buffer2 = svg_.getBuffer(objectBufferName + "_in2");
+
+    buffer2->setImage(inBuffer2->getImage());
+  }
+
+  CSVGBuffer *outBuffer = svg_.getBuffer(getFilterOut());
+
+  filterImage(inBuffer1, inBuffer2, outBuffer);
+
+  if (svg_.getDebugFilter()) {
+    std::string objectBufferName = "_" + getUniqueName();
+
+    CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_out");
+
+    buffer->setImage(outBuffer->getImage());
+  }
 }
 
-CImagePtr
+void
 CSVGFeComposite::
-filterImage2(CImagePtr src_image1, CImagePtr src_image2)
+filterImage(CSVGBuffer *inBuffer1, CSVGBuffer *inBuffer2, CSVGBuffer *outBuffer)
 {
-  if (! src_image1.isValid() || ! src_image2.isValid())
-    return CImagePtr();
+  CImagePtr src_image1 = inBuffer1->getImage();
+  CImagePtr src_image2 = inBuffer2->getImage();
 
-  CImagePtr dst_image2 = src_image2->dup();
+  if (! src_image1.isValid() || ! src_image2.isValid())
+    return;
+
+  CImagePtr dst_image = src_image1->dup();
 
   CRGBACombineDef def;
 
   def.src_mode = CRGBA_COMBINE_ONE;
   def.dst_mode = CRGBA_COMBINE_ONE;
-  def.func     = type_.getValue(CRGBA_COMBINE_OVER);
+  def.func     = getType();
+  def.k1       = getK1();
+  def.k2       = getK2();
+  def.k3       = getK3();
+  def.k4       = getK4();
 
-  dst_image2->combine(src_image1, def);
+  dst_image->combine(src_image2, def);
 
-  return dst_image2;
+  outBuffer->setImage(dst_image);
 }
 
 void
@@ -100,9 +128,9 @@ print(std::ostream &os, bool hier) const
 
     CSVGObject::printValues(os);
 
-    printNameValue(os, "in"    , filter_in1_);
-    printNameValue(os, "in2"   , filter_in2_);
-    printNameValue(os, "result", filter_out_);
+    printNameValue(os, "in"    , filterIn1_);
+    printNameValue(os, "in2"   , filterIn2_);
+    printNameValue(os, "result", filterOut_);
 
     if (type_.isValid()) {
       os << " operator=\"";
@@ -116,6 +144,11 @@ print(std::ostream &os, bool hier) const
 
       os << "\"";
     }
+
+    printNameValue(os, "k1", k1_);
+    printNameValue(os, "k2", k2_);
+    printNameValue(os, "k3", k3_);
+    printNameValue(os, "k4", k4_);
 
     os << "/>" << std::endl;
   }

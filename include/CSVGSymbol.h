@@ -23,6 +23,9 @@ class CSVGSymbol : public CSVGObject {
   void print(std::ostream &os, bool hier) const override;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGSymbol &group);
+
+ private:
+  COptValT<CSVGPreserveAspect> preserveAspect_;
 };
 
 #endif

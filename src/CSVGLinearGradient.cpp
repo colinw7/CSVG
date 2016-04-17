@@ -2,6 +2,7 @@
 #include <CSVGRadialGradient.h>
 #include <CSVGStop.h>
 #include <CSVG.h>
+#include <CSVGUtil.h>
 #include <CLinearGradient.h>
 
 /* Attributes:
@@ -24,10 +25,6 @@ CSVGLinearGradient::
 CSVGLinearGradient(CSVG &svg) :
  CSVGObject(svg)
 {
-  //x1_.setDefValue(0.0);
-  //y1_.setDefValue(0.0);
-  //x2_.setDefValue(1.0);
-  //y2_.setDefValue(0.0);
 }
 
 CSVGLinearGradient::
@@ -58,32 +55,20 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   std::string     str;
   CSVGCoordUnits  units;
   CSVGLengthValue length;
+  CMatrix2D       transform;
 
-  if      (svg_.percentOption(opt_name, opt_value, "x1", length)) {
-    setX1(length.value());
-  }
-  else if (svg_.percentOption(opt_name, opt_value, "y1", length)) {
-    setY1(length.value());
-  }
-  else if (svg_.percentOption(opt_name, opt_value, "x2", length)) {
-    setX2(length.value());
-  }
-  else if (svg_.percentOption(opt_name, opt_value, "y2", length)) {
-    setY2(length.value());
-  }
-  else if (svg_.stringOption(opt_name, opt_value, "gradientTransform", str)) {
-    CMatrix2D gtransform;
-
-    gtransform.setIdentity();
-
-    if (! svg_.decodeTransform(str, gtransform))
-      return false;
-
-    setGTransform(gtransform);
-  }
-  else if (svg_.coordUnitsOption(opt_name, opt_value, "gradientUnits", units)) {
+  if      (svg_.percentOption(opt_name, opt_value, "x1", length))
+    x1_ = length;
+  else if (svg_.percentOption(opt_name, opt_value, "y1", length))
+    y1_ = length;
+  else if (svg_.percentOption(opt_name, opt_value, "x2", length))
+    x2_ = length;
+  else if (svg_.percentOption(opt_name, opt_value, "y2", length))
+    y2_ = length;
+  else if (svg_.transformOption(opt_name, opt_value, "gradientTransform", transform))
+    setGTransform(transform);
+  else if (svg_.coordUnitsOption(opt_name, opt_value, "gradientUnits", units))
     setUnits(units);
-  }
   else if (svg_.stringOption(opt_name, opt_value, "spreadMethod", str)) {
     CGradientSpreadType spread;
 
@@ -158,37 +143,25 @@ termParse()
 
 void
 CSVGLinearGradient::
-draw()
-{
-}
-
-void
-CSVGLinearGradient::
 print(std::ostream &os, bool hier) const
 {
   if (hier) {
     os << "<linearGradient";
 
-    CSVGObject::printValues(os);
+    printNameLength(os, "x1", x1_);
+    printNameLength(os, "y1", y1_);
+    printNameLength(os, "x2", x2_);
+    printNameLength(os, "y2", y2_);
 
-    printNameValue(os, "x1", x1_);
-    printNameValue(os, "y1", y1_);
-    printNameValue(os, "x2", x2_);
-    printNameValue(os, "y2", y2_);
-
-    if (gtransform_.isValid() && ! gtransform_.getValue().isIdentity()) {
-      os << " gradientTransform=\"";
-
-      printTransform(os, gtransform_.getValue());
-
-      os << "\"";
-    }
+    printNameTransform(os, "gradientTransform", gtransform_);
 
     if (getUnitsValid())
       os << " gradientUnits=\"" << CSVG::encodeUnitsString(getUnits()) << "\"";
 
     if (getSpreadValid())
       os << " spreadMethod=\"" << CSVG::encodeGradientSpread(getSpread()) << "\"";
+
+    CSVGObject::printValues(os);
 
     os << ">" << std::endl;
 
@@ -211,7 +184,7 @@ getImage(CBBox2D &bbox)
   double width  = bbox.getWidth ();
   double height = bbox.getHeight();
 
-  int pwidth, pheight;
+  double pwidth, pheight;
 
   svg_.lengthToPixel(width, height, &pwidth, &pheight);
 
@@ -219,7 +192,7 @@ getImage(CBBox2D &bbox)
 
   CLinearGradient gradient;
 
-  int px1, py1, px2, py2;
+  double px1, py1, px2, py2;
 
   svg_.windowToPixel(getXMin(), getYMin(), &px1, &py1);
   svg_.windowToPixel(getXMax(), getYMax(), &px2, &py2);
@@ -238,17 +211,53 @@ getImage(CBBox2D &bbox)
 
 CLinearGradient *
 CSVGLinearGradient::
-createGradient()
+createGradient(CSVGObject *obj)
 {
   CLinearGradient *gradient = new CLinearGradient;
 
-  gradient->setLine(getX1(), getY1(), getX2(), getY2());
+  double x1 = getX1(), y1 = getY1();
+  double x2 = getX2(), y2 = getY2();
+
+  //---
+
+  // remap points to absolute
+  if      (getUnits() == CSVGCoordUnits::USER_SPACE) {
+    CMatrix2D m;
+
+    svg_.getTransform(m);
+
+    CPoint2D p1(x1, y1);
+    CPoint2D p2(x2, y2);
+
+    m.multiplyPoint(p1.x, p1.y, &x1, &y1);
+    m.multiplyPoint(p2.x, p2.y, &x2, &y2);
+  }
+  else if (getUnits() == CSVGCoordUnits::OBJECT_BBOX) {
+    CBBox2D bbox;
+
+    obj->getBBox(bbox);
+
+    x1 = CSVGUtil::map(x1, 0, 1, bbox.getXMin(), bbox.getXMax());
+    y1 = CSVGUtil::map(y1, 0, 1, bbox.getYMin(), bbox.getYMax());
+    x2 = CSVGUtil::map(x2, 0, 1, bbox.getXMin(), bbox.getXMax());
+    y2 = CSVGUtil::map(y2, 0, 1, bbox.getYMin(), bbox.getYMax());
+  }
+
+  //---
+
+  gradient->setLine(x1, y1, x2, y2);
 
   if (spread_.isValid())
     gradient->setSpread(getSpread());
 
-  for (const auto &s : stops())
-    gradient->addStop(s->getOffset(), s->getColor());
+  for (const auto &s : stops()) {
+    CRGBA  rgba  = s->getColor ();
+    double alpha = s->getOpacity();
+
+    rgba.setAlpha(alpha);
+
+    gradient->addStop(s->getOffset(), rgba);
+  }
 
   gradient->init(1, 1);
 

@@ -78,7 +78,7 @@ void
 CSVGFontDef::
 setSize(double size)
 {
-  size_ = CSVGLengthValue(CSVGLengthValue::Type::NONE, size);
+  size_ = CSVGLengthValue(CSVGLengthType::NONE, size);
 }
 
 void

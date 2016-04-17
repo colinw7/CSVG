@@ -9,7 +9,7 @@ CSVGFeFunc(CSVG &svg, CColorComponent component) :
 
 CSVGFeFunc::
 CSVGFeFunc(const CSVGFeFunc &fe) :
- CSVGObject (fe),
+ CSVGObject(fe),
  component_ (fe.component_),
  type_      (fe.type_),
  slope_     (fe.slope_),
@@ -37,11 +37,11 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   std::vector<double> reals;
 
   if      (svg_.stringOption(opt_name, opt_value, "type", str)) {
-    if      (str == "identity") type_ = Type::IDENTITY;
-    else if (str == "linear"  ) type_ = Type::LINEAR;
-    else if (str == "gamma"   ) type_ = Type::GAMMA;
-    else if (str == "table"   ) type_ = Type::TABLE;
-    else if (str == "discrete") type_ = Type::DISCRETE;
+    if      (str == "identity") type_ = CSVGFilterFuncType::IDENTITY;
+    else if (str == "linear"  ) type_ = CSVGFilterFuncType::LINEAR;
+    else if (str == "gamma"   ) type_ = CSVGFilterFuncType::GAMMA;
+    else if (str == "table"   ) type_ = CSVGFilterFuncType::TABLE;
+    else if (str == "discrete") type_ = CSVGFilterFuncType::DISCRETE;
     else std::cerr << "Unrecognised type " << str << std::endl;
   }
   else if (svg_.realOption(opt_name, opt_value, "slope", &real))
@@ -62,27 +62,21 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   return true;
 }
 
-void
-CSVGFeFunc::
-draw()
-{
-}
-
 CImagePtr
 CSVGFeFunc::
 filterImage(CImagePtr src_image)
 {
   CImagePtr dst_image = src_image->dup();
 
-  if      (getType() == Type::IDENTITY) {
+  if      (getType() == CSVGFilterFuncType::IDENTITY) {
   }
-  else if (getType() == Type::LINEAR)
+  else if (getType() == CSVGFilterFuncType::LINEAR)
     dst_image->linearFunc(component_, getSlope(), getIntercept());
-  else if (getType() == Type::GAMMA)
+  else if (getType() == CSVGFilterFuncType::GAMMA)
     dst_image->gammaFunc(component_, getAmplitude(), getExponent(), getOffset());
-  else if (getType() == Type::TABLE)
+  else if (getType() == CSVGFilterFuncType::TABLE)
     dst_image->tableFunc(component_, table_);
-  else if (getType() == Type::DISCRETE)
+  else if (getType() == CSVGFilterFuncType::DISCRETE)
     dst_image->discreteFunc(component_, table_);
 
   return dst_image;
@@ -107,11 +101,11 @@ print(std::ostream &os, bool hier) const
     if (type_.isValid()) {
       os << " type=\"";
 
-      if      (getType() == Type::IDENTITY) os << "identity";
-      else if (getType() == Type::LINEAR  ) os << "linear";
-      else if (getType() == Type::GAMMA   ) os << "gamma";
-      else if (getType() == Type::TABLE   ) os << "table";
-      else if (getType() == Type::DISCRETE) os << "discrete";
+      if      (getType() == CSVGFilterFuncType::IDENTITY) os << "identity";
+      else if (getType() == CSVGFilterFuncType::LINEAR  ) os << "linear";
+      else if (getType() == CSVGFilterFuncType::GAMMA   ) os << "gamma";
+      else if (getType() == CSVGFilterFuncType::TABLE   ) os << "table";
+      else if (getType() == CSVGFilterFuncType::DISCRETE) os << "discrete";
 
       os << "\"";
     }

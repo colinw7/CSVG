@@ -3037,6 +3037,13 @@ getTextLimits(const std::string &, double *text_x, double *text_y)
 
 //-------
 
+bool
+CRenderer2D::
+isAntiAlias() const
+{
+  return anti_alias_;
+}
+
 void
 CRenderer2D::
 setAntiAlias(bool flag)

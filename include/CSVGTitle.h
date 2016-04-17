@@ -12,15 +12,11 @@ class CSVGTitle : public CSVGObject {
 
   CSVGTitle *dup() const override;
 
-  std::string getText() const override { return text_; }
-  void setText(const std::string &text) override;
+  bool getBBox(CBBox2D &) const override { return false; }
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  void draw() override;
-
- private:
-  std::string text_;
+  bool isDrawable() const { return false; }
 };
 
 #endif

@@ -34,6 +34,8 @@ class CSVGLine : public CSVGObject {
 
   bool getBBox(CBBox2D &bbox) const override;
 
+  bool inside(const CPoint2D &pos) const override;
+
   void moveBy(const CVector2D &delta) override;
   void resizeTo(const CSize2D &size) override;
 

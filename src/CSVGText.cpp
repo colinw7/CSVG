@@ -38,9 +38,13 @@ CSVGText(CSVG &svg) :
 CSVGText::
 CSVGText(const CSVGText &text) :
  CSVGObject(text),
- x_        (text.x_),
- y_        (text.y_),
- text_     (text.text_)
+ x_           (text.x_),
+ y_           (text.y_),
+ dx_          (text.dx_),
+ dy_          (text.dy_),
+ rotate_      (text.rotate_),
+ textLength_  (text.textLength_),
+ lengthAdjust_(text.lengthAdjust_)
 {
 }
 
@@ -49,13 +53,6 @@ CSVGText::
 dup() const
 {
   return new CSVGText(*this);
-}
-
-void
-CSVGText::
-setText(const std::string &text)
-{
-  text_ = CStrUtil::stripSpaces(text);
 }
 
 bool
@@ -82,29 +79,24 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   std::string     str;
   double          real;
   CSVGLengthValue length;
+  CMatrix2D       transform;
 
   if      (svg_.coordOption (opt_name, opt_value, "x", &real))
     x_ = real;
   else if (svg_.coordOption (opt_name, opt_value, "y", &real))
     y_ = real;
   else if (svg_.lengthOption(opt_name, opt_value, "dx", length))
-    notHandled(opt_name, opt_value);
+    dx_ = length;
   else if (svg_.lengthOption(opt_name, opt_value, "dy", length))
-    notHandled(opt_name, opt_value);
+    dy_ = length;
   else if (svg_.stringOption(opt_name, opt_value, "rotate", str))
-    notHandled(opt_name, opt_value);
+    rotate_ = str;
   else if (svg_.stringOption(opt_name, opt_value, "textLength", str))
-    notHandled(opt_name, opt_value);
+    textLength_ = str;
   else if (svg_.lengthOption(opt_name, opt_value, "lengthAdjust", length))
-    notHandled(opt_name, opt_value);
-  else if (svg_.stringOption(opt_name, opt_value, "transform", str)) {
-    CMatrix2D transform;
-
-    if (! svg_.decodeTransform(str, transform))
-      return false;
-
+    lengthAdjust_ = length;
+  else if (svg_.transformOption(opt_name, opt_value, "transform", transform))
     setTransform(transform);
-  }
   else
     return false;
 
@@ -115,14 +107,24 @@ bool
 CSVGText::
 getBBox(CBBox2D &bbox) const
 {
-  if (! viewBox_.isSet()) {
-    double w = 10;
-    double h = 10;
+  if (! viewBox_.isValid()) {
+    double x = getX();
+    double y = getY();
+    double w = 8;
+    double a = 10;
+    double d = 2;
 
-    bbox = CBBox2D(getX(), getY(), getX() + w, getY() + h);
+    svg_.textSize(getText(), getFont(), &w, &a, &d);
+
+    bbox = CBBox2D(x, y + d, x + w, y - a);
+
+    CBBox2D bbox1;
+
+    if (getChildrenBBox(bbox1))
+      bbox += bbox1;
   }
   else
-    bbox = viewBox_;
+    bbox = getViewBox();
 
   return true;
 }
@@ -150,11 +152,24 @@ draw()
   if (svg_.getDebug())
     CSVGLog() << *this;
 
-  if (svg_.isFilled())
-    svg_.fillText(getX(), getY(), getText(), getFont(), getTextAnchor());
+  double x = getX();
+  double y = getY();
 
-  if (svg_.isStroked())
-    svg_.drawText(getX(), getY(), getText(), getFont(), getTextAnchor());
+  if (svg_.isFilled() || svg_.isStroked()) {
+    if (svg_.isFilled())
+      svg_.fillText(x, y, getText(), getFont(), getTextAnchor());
+
+    if (svg_.isStroked())
+      svg_.drawText(x, y, getText(), getFont(), getTextAnchor());
+  }
+  else
+    svg_.fillText(x, y, getText(), getFont(), getTextAnchor());
+
+  double w, a, d;
+
+  svg_.textSize(getText(), getFont(), &w, &a, &d);
+
+  setLastPos(CPoint2D(x + w, y));
 }
 
 void
@@ -166,15 +181,23 @@ print(std::ostream &os, bool hier) const
 
     CSVGObject::printValues(os);
 
-    printNameValue(os, "x", x_);
-    printNameValue(os, "y", y_);
+    printNameValue (os, "x" , x_ );
+    printNameValue (os, "y" , y_ );
+    printNameLength(os, "dx", dx_);
+    printNameLength(os, "dy", dy_);
+
+    printNameValue (os, "rotate", rotate_);
+
+    printNameValue (os, "textLength"  , textLength_  );
+    printNameLength(os, "lengthAdjust", lengthAdjust_);
 
     os << ">";
 
     if (hasChildren()) {
       os << std::endl;
 
-      os << getText() << std::endl;
+      if (hasText())
+        os << getText() << std::endl;
 
       printChildren(os, hier);
     }

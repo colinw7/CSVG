@@ -33,7 +33,10 @@ bool
 CSVGGroup::
 processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  return CSVGObject::processOption(opt_name, opt_value);
+  if (processPresentationOption(opt_name, opt_value))
+    return true;
+  else
+    return CSVGObject::processOption(opt_name, opt_value);
 }
 
 void
@@ -58,12 +61,6 @@ rotateBy(double da, const CPoint2D &origin)
 {
   for (auto &c : children())
     c->rotateBy(da, origin);
-}
-
-void
-CSVGGroup::
-draw()
-{
 }
 
 void

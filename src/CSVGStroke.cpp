@@ -39,7 +39,7 @@ setColor(const std::string &color_def)
     if (svg_.decodeColorString(color_def, rgba)) {
       setColor(rgba);
 
-      resetOpacity();
+      //resetOpacity();
     }
   }
 }

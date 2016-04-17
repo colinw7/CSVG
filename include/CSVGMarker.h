@@ -23,12 +23,13 @@ class CSVGMarker : public CSVGObject {
   friend std::ostream &operator<<(std::ostream &os, const CSVGMarker &marker);
 
  private:
-  COptValT<double>      refX_;
-  COptValT<double>      refY_;
-  COptValT<std::string> markerUnits_;
-  COptValT<double>      markerWidth_;
-  COptValT<double>      markerHeight_;
-  COptValT<std::string> orient_;
+  COptValT<double>             refX_;
+  COptValT<double>             refY_;
+  COptValT<std::string>        markerUnits_;
+  COptValT<double>             markerWidth_;
+  COptValT<double>             markerHeight_;
+  COptValT<std::string>        orient_;
+  COptValT<CSVGPreserveAspect> preserveAspect_;
 };
 
 #endif

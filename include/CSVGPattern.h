@@ -13,6 +13,18 @@ class CSVGPattern : public CSVGObject {
 
   CSVGPattern *dup() const override;
 
+  double getX() const { return x_.getValue(0); }
+  void setX(double x) { x_ = x; }
+
+  double getY() const { return y_.getValue(0); }
+  void setY(double y) { y_ = y; }
+
+  double getWidth() const { return width_.isValid() ? width_.getValue().value() : 1; }
+  void setWidth(double w) { width_ = w; }
+
+  double getHeight() const { return height_.isValid() ? height_.getValue().value() : 1; }
+  void setHeight(double h) { height_ = h; }
+
   bool getUnitsValid() const { return units_.isValid(); }
   CSVGCoordUnits getUnits() const { return units_.getValue(CSVGCoordUnits::USER_SPACE); }
   void setUnits(CSVGCoordUnits units) { units_ = units; }
@@ -26,25 +38,23 @@ class CSVGPattern : public CSVGObject {
 
   void draw() override;
 
-  void fillRectangle(double x1, double y1, double x2, double y2);
-
   void print(std::ostream &os, bool hier) const override;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGPattern &pattern);
 
-  CImagePtr getImage(double w, double h, double *w1, double *h1);
+  CImagePtr getImage(CSVGObject *parent, double *w1, double *h1);
 
  private:
   CSVGPattern &operator=(const CSVGPattern &rhs);
 
  private:
-  CSVGObject*              object_ { 0 };
-  COptValT<double>         x_;
-  COptValT<double>         y_;
-  COptValT<double>         width_;
-  COptValT<double>         height_;
-  COptValT<CSVGCoordUnits> units_;
-  COptValT<CSVGCoordUnits> contentUnits_;
+  COptValT<double>          x_;
+  COptValT<double>          y_;
+  COptValT<CSVGLengthValue> width_;
+  COptValT<CSVGLengthValue> height_;
+  COptValT<CSVGCoordUnits>  units_;
+  COptValT<CSVGCoordUnits>  contentUnits_;
+  COptValT<CMatrix2D>       patternTransform_;
 };
 
 #endif

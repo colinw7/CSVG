@@ -65,21 +65,16 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   double          real;
   std::string     str;
   CSVGLengthValue length;
+  CMatrix2D       transform;
 
-  if      (svg_.coordOption (opt_name, opt_value, "cx"       , &real))
+  if      (svg_.coordOption    (opt_name, opt_value, "cx"       , &real))
     cx_ = real;
-  else if (svg_.coordOption (opt_name, opt_value, "cy"       , &real))
+  else if (svg_.coordOption    (opt_name, opt_value, "cy"       , &real))
     cy_ = real;
-  else if (svg_.lengthOption(opt_name, opt_value, "r"        , length))
+  else if (svg_.lengthOption   (opt_name, opt_value, "r"        , length))
     radius_ = length.value();
-  else if (svg_.stringOption(opt_name, opt_value, "transform", str)) {
-    CMatrix2D transform;
-
-    if (! svg_.decodeTransform(str, transform))
-      return false;
-
+  else if (svg_.transformOption(opt_name, opt_value, "transform", transform))
     setTransform(transform);
-  }
   else
     return false;
 
@@ -100,11 +95,11 @@ bool
 CSVGCircle::
 getBBox(CBBox2D &bbox) const
 {
-  if (! viewBox_.isSet())
+  if (! viewBox_.isValid())
     bbox = CBBox2D(getCenterX() - getRadius(), getCenterY() - getRadius(),
                    getCenterX() + getRadius(), getCenterY() + getRadius());
   else
-    bbox = viewBox_;
+    bbox = getViewBox();
 
   return true;
 }

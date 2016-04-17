@@ -430,6 +430,7 @@ class CRenderer2D : public CPath2DRenderer, public CPath2DFlattener {
                          CPoint2D &point1, CPoint2D &point2);
 
  public:
+  virtual bool isAntiAlias() const;
   virtual void setAntiAlias(bool flag);
 
   virtual void adjustPoint(CPoint2D &p);

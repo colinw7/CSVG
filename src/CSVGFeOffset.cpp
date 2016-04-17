@@ -1,19 +1,20 @@
 #include <CSVGFeOffset.h>
+#include <CSVGBuffer.h>
 #include <CSVG.h>
 
 CSVGFeOffset::
 CSVGFeOffset(CSVG &svg) :
- CSVGFilter(svg)
+ CSVGFilterBase(svg)
 {
 }
 
 CSVGFeOffset::
 CSVGFeOffset(const CSVGFeOffset &offset) :
- CSVGFilter (offset),
- filter_in_ (offset.filter_in_),
- filter_out_(offset.filter_out_),
- dx_        (offset.dx_),
- dy_        (offset.dy_)
+ CSVGFilterBase(offset),
+ filterIn_ (offset.filterIn_),
+ filterOut_(offset.filterOut_),
+ dx_       (offset.dx_),
+ dy_       (offset.dy_)
 {
 }
 
@@ -32,15 +33,15 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   double      real;
 
   if      (svg_.stringOption(opt_name, opt_value, "in", str))
-    filter_in_ = str;
+    filterIn_ = str;
   else if (svg_.stringOption(opt_name, opt_value, "result", str))
-    filter_out_ = str;
+    filterOut_ = str;
   else if (svg_.realOption  (opt_name, opt_value, "dx", &real))
     dx_ = real;
   else if (svg_.realOption  (opt_name, opt_value, "dy", &real))
     dy_ = real;
   else
-    return CSVGFilter::processOption(opt_name, opt_value);
+    return CSVGFilterBase::processOption(opt_name, opt_value);
 
   return true;
 }
@@ -49,28 +50,45 @@ void
 CSVGFeOffset::
 draw()
 {
-  CImagePtr src_image = svg_.getBufferImage(filter_in_.getValue("SourceGraphic"));
+  CSVGBuffer *inBuffer  = svg_.getBuffer(getFilterIn ());
+  CSVGBuffer *outBuffer = svg_.getBuffer(getFilterOut());
 
-  CImagePtr dst_image = filterImage(src_image);
+  if (svg_.getDebugFilter()) {
+    std::string objectBufferName = "_" + getUniqueName();
 
-  svg_.setBufferImage(filter_out_.getValue("SourceGraphic"), dst_image);
+    CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_in");
+
+    buffer->setImage(inBuffer->getImage());
+  }
+
+  filterImage(inBuffer, outBuffer);
+
+  if (svg_.getDebugFilter()) {
+    std::string objectBufferName = "_" + getUniqueName();
+
+    CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_out");
+
+    buffer->setImage(outBuffer->getImage());
+  }
 }
 
-CImagePtr
+void
 CSVGFeOffset::
-filterImage(CImagePtr src_image)
+filterImage(CSVGBuffer *inBuffer, CSVGBuffer *outBuffer)
 {
+  CImagePtr src_image = inBuffer->getImage();
+
   CImagePtr dst_image = src_image->dup();
 
-  dst_image->setRGBAData(CRGBA(1,1,1,1));
+  dst_image->setRGBAData(CRGBA(0,0,0,0));
 
-  int dx, dy;
+  double dx, dy;
 
-  svg_.lengthToPixel(dx_.getValue(0), dy_.getValue(0), &dx, &dy);
+  svg_.lengthToPixel(getDX(), getDY(), &dx, &dy);
 
   dst_image->subCopyFrom(src_image, 0, 0, -1, -1, dx, dy);
 
-  return dst_image;
+  outBuffer->setImage(dst_image);
 }
 
 void
@@ -82,17 +100,10 @@ print(std::ostream &os, bool hier) const
 
     CSVGObject::printValues(os);
 
-    if (filter_in_.isValid())
-      os << " in=\"" << filter_in_.getValue() << "\"";
-
-    if (filter_out_.isValid())
-      os << " result=\"" << filter_out_.getValue() << "\"";
-
-    if (dx_.isValid())
-      os << " dx=\"" << dx_.getValue() << "\"";
-
-    if (dy_.isValid())
-      os << " dy=\"" << dy_.getValue() << "\"";
+    printNameValue(os, "in"    , filterIn_ );
+    printNameValue(os, "result", filterOut_);
+    printNameValue(os, "dx"    , dx_       );
+    printNameValue(os, "dy"    , dy_       );
 
     os << "/>" << std::endl;
   }

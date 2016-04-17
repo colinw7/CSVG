@@ -12,22 +12,23 @@ class CSVGFeMergeNode : public CSVGObject {
 
   CSVGFeMergeNode *dup() const override;
 
-  std::string getFilterIn () const { return filter_in_ .getValue("SourceGraphic"); }
-  std::string getFilterOut() const { return filter_out_.getValue("SourceGraphic"); }
+  std::string getFilterIn() const { return filterIn_.getValue("SourceGraphic"); }
+  void setFilterIn(const std::string &s) { filterIn_ = s; }
+
+  std::string getFilterOut() const { return filterOut_.getValue("SourceGraphic"); }
+  void setFilterOut(const std::string &s) { filterOut_ = s; }
 
   bool processOption(const std::string &name, const std::string &value) override;
 
   bool isDrawable() const override { return false; }
-
-  void draw() override;
 
   void print(std::ostream &os, bool hier) const override;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGFeMergeNode &filter);
 
  private:
-  COptValT<std::string> filter_in_;
-  COptValT<std::string> filter_out_;
+  COptValT<std::string> filterIn_;
+  COptValT<std::string> filterOut_;
 };
 
 #endif

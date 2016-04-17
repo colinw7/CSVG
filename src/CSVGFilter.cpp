@@ -1,15 +1,18 @@
 #include <CSVGFilter.h>
+#include <CSVGBuffer.h>
 #include <CSVG.h>
 
 CSVGFilter::
 CSVGFilter(CSVG &svg) :
- CSVGObject(svg)
+ CSVGObject(svg),
+ xlink_    (this)
 {
 }
 
 CSVGFilter::
 CSVGFilter(const CSVGFilter &filter) :
- CSVGObject(filter)
+ CSVGObject(filter),
+ xlink_    (this)
 {
 }
 
@@ -24,26 +27,28 @@ bool
 CSVGFilter::
 processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  std::string str;
+  std::string     str;
+  CSVGCoordUnits  units;
+  CSVGLengthValue length;
 
-  if      (svg_.stringOption(opt_name, opt_value, "filterUnits", str))
-    units_ = str;
-  else if (svg_.stringOption(opt_name, opt_value, "primitiveUnits", str))
-    primitiveUnits_ = str;
-  else if (svg_.stringOption(opt_name, opt_value, "x", str))
-    x_ = str;
-  else if (svg_.stringOption(opt_name, opt_value, "y", str))
-    y_ = str;
-  else if (svg_.stringOption(opt_name, opt_value, "width", str))
-    width_ = str;
-  else if (svg_.stringOption(opt_name, opt_value, "height", str))
-    height_ = str;
+  if      (svg_.coordUnitsOption(opt_name, opt_value, "filterUnits", units))
+    units_ = units;
+  else if (svg_.coordUnitsOption(opt_name, opt_value, "primitiveUnits", units))
+    primitiveUnits_ = units;
+  else if (svg_.coordOption(opt_name, opt_value, "x", length))
+    x_ = length;
+  else if (svg_.coordOption(opt_name, opt_value, "y", length))
+    y_ = length;
+  else if (svg_.lengthOption(opt_name, opt_value, "width", length))
+    width_ = length;
+  else if (svg_.lengthOption(opt_name, opt_value, "height", length))
+    height_ = length;
   else if (svg_.stringOption(opt_name, opt_value, "filterRes", str))
     filterRes_ = str;
-  else if (svg_.stringOption(opt_name, opt_value, "color-interpolation-filters", str))
-    colorInterFilters_ = str;
   else if (svg_.stringOption(opt_name, opt_value, "xlink:href", str))
-    xlink_ = str;
+    xlink_ = CSVGXLink(this, str);
+  else if (processFilterColorOption(opt_name, opt_value))
+    return true;
   else
     return CSVGObject::processOption(opt_name, opt_value);
 
@@ -60,7 +65,9 @@ CImagePtr
 CSVGFilter::
 filterImage(CImagePtr image)
 {
-  svg_.setBufferImage("SourceGraphic", image);
+  CSVGBuffer *buffer = svg_.getBuffer("SourceGraphic");
+
+  buffer->setImage(image);
 
   for (const auto &c : children()) {
     CSVGFilter *filter = dynamic_cast<CSVGFilter *>(c);
@@ -69,9 +76,7 @@ filterImage(CImagePtr image)
       filter->draw();
   }
 
-  image = svg_.getBufferImage("SourceGraphic");
-
-  return image;
+  return buffer->getImage();
 }
 
 void
@@ -83,15 +88,16 @@ print(std::ostream &os, bool hier) const
 
     CSVGObject::printValues(os);
 
-    printNameValue(os, "filterUnits"                , units_);
-    printNameValue(os, "primitiveUnits"             , primitiveUnits_);
-    printNameValue(os, "x"                          , x_);
-    printNameValue(os, "y"                          , y_);
-    printNameValue(os, "width"                      , width_);
-    printNameValue(os, "height"                     , height_);
-    printNameValue(os, "filterRes"                  , filterRes_);
-    printNameValue(os, "color-interpolation-filters", colorInterFilters_);
-    printNameValue(os, "xlink:href"                 , xlink_);
+    printNameCoordUnits(os, "filterUnits"   , units_);
+    printNameCoordUnits(os, "primitiveUnits", primitiveUnits_);
+
+    printNameLength(os, "x"     , x_);
+    printNameLength(os, "y"     , y_);
+    printNameLength(os, "width" , width_);
+    printNameLength(os, "height", height_);
+
+    printNameValue(os, "filterRes" , filterRes_);
+    printNameXLink(os, "xlink:href", xlink_);
 
     os << ">" << std::endl;
 

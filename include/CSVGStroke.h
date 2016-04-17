@@ -3,7 +3,6 @@
 
 #include <CSVGFill.h>
 #include <CSVGClip.h>
-#include <CSVGFontDef.h>
 #include <CRGBA.h>
 #include <CLineDash.h>
 #include <CLineCapType.h>

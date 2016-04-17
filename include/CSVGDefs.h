@@ -19,9 +19,11 @@ class CSVGDefs : public CSVGObject {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  bool isDrawable() const override { return false; }
+  bool isHierDrawable() const override { return false; }
 
-  void draw() override;
+  bool getBBox(CBBox2D &) const override { return false; }
+
+  void draw() override { }
 
   void print(std::ostream &os, bool hier) const override;
 

@@ -6,7 +6,8 @@
 CSVGMPath::
 CSVGMPath(CSVG &svg) :
  CSVGObject(svg),
- parts_    ()
+ parts_    (),
+ xlink_    (this)
 {
   //fill_.setDefColor(CRGBA(0,0,0));
 }
@@ -14,7 +15,8 @@ CSVGMPath(CSVG &svg) :
 CSVGMPath::
 CSVGMPath(const CSVGMPath &path) :
  CSVGObject(path),
- parts_    (path.parts_)
+ parts_    (path.parts_),
+ xlink_    (this)
 {
 }
 
@@ -35,7 +37,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   if      (svg_.pathOption  (opt_name, opt_value, "d", parts))
     parts_ = parts;
   else if (svg_.stringOption(opt_name, opt_value, "xlink:href", str))
-    xlink_ = str;
+    xlink_ = CSVGXLink(this, str);
   else
     return CSVGObject::processOption(opt_name, opt_value);
 
@@ -59,7 +61,7 @@ print(std::ostream &os, bool hier) const
 
     CSVGObject::printValues(os);
 
-    printNameValue(os, "xlink:href", xlink_);
+    printNameXLink(os, "xlink:href", xlink_);
 
     printNameParts(os, "d", parts_);
 
@@ -86,10 +88,10 @@ bool
 CSVGMPath::
 getBBox(CBBox2D &bbox) const
 {
-  if (! viewBox_.isSet())
+  if (! viewBox_.isValid())
     return svg_.getPartsBBox(parts_, bbox);
   else {
-    bbox = viewBox_;
+    bbox = getViewBox();
 
     return true;
   }

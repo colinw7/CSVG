@@ -1,19 +1,20 @@
 #include <CSVGFeColorMatrix.h>
 #include <CSVG.h>
+#include <CSVGBuffer.h>
 
 CSVGFeColorMatrix::
 CSVGFeColorMatrix(CSVG &svg) :
- CSVGFilter(svg)
+ CSVGFilterBase(svg)
 {
 }
 
 CSVGFeColorMatrix::
 CSVGFeColorMatrix(const CSVGFeColorMatrix &blur) :
- CSVGFilter (blur),
- filter_in_ (blur.filter_in_),
- filter_out_(blur.filter_out_),
- type_      (blur.type_),
- values_    (blur.values_)
+ CSVGFilterBase(blur),
+ filterIn_ (blur.filterIn_),
+ filterOut_(blur.filterOut_),
+ type_     (blur.type_),
+ values_   (blur.values_)
 {
 }
 
@@ -32,33 +33,33 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   std::vector<double> reals;
 
   if      (svg_.stringOption(opt_name, opt_value, "in", str))
-    filter_in_ = str;
+    filterIn_ = str;
   else if (svg_.stringOption(opt_name, opt_value, "result", str))
-    filter_out_ = str;
+    filterOut_ = str;
   else if (svg_.stringOption(opt_name, opt_value, "type", str)) {
     if      (str == "matrix")
-      type_ = Type::MATRIX_TYPE;
+      type_ = CSVGColorMatrixType::MATRIX;
     else if (str == "saturate")
-      type_ = Type::SATURATE_TYPE;
+      type_ = CSVGColorMatrixType::SATURATE;
     else if (str == "hueRotate")
-      type_ = Type::HUE_ROTATE_TYPE;
+      type_ = CSVGColorMatrixType::HUE_ROTATE;
     else if (str == "luminanceToAlpha")
-      type_ = Type::LUMINANCE_TO_ALPHA_TYPE;
+      type_ = CSVGColorMatrixType::LUMINANCE_TO_ALPHA;
   }
   else if (svg_.realListOption(opt_name, opt_value, "values", reals)) {
     values_ = reals;
 
     uint num_values = values_.size();
 
-    if (getType() == Type::MATRIX_TYPE && num_values != 20)
+    if (getType() == CSVGColorMatrixType::MATRIX && num_values != 20)
       std::cerr << "Invalid matrix values" << std::endl;
-    if (getType() == Type::SATURATE_TYPE && num_values != 1)
+    if (getType() == CSVGColorMatrixType::SATURATE && num_values != 1)
       std::cerr << "Invalid saturate values" << std::endl;
-    if (getType() == Type::HUE_ROTATE_TYPE && num_values != 1)
+    if (getType() == CSVGColorMatrixType::HUE_ROTATE && num_values != 1)
       std::cerr << "Invalid hueRotate values" << std::endl;
   }
   else
-    return CSVGFilter::processOption(opt_name, opt_value);
+    return CSVGFilterBase::processOption(opt_name, opt_value);
 
   return true;
 }
@@ -67,29 +68,84 @@ void
 CSVGFeColorMatrix::
 draw()
 {
-  CImagePtr src_image = svg_.getBufferImage(filter_in_.getValue("SourceGraphic"));
+  CSVGBuffer *inBuffer  = svg_.getBuffer(getFilterIn ());
+  CSVGBuffer *outBuffer = svg_.getBuffer(getFilterOut());
 
-  CImagePtr dst_image = filterImage(src_image);
+  if (svg_.getDebugFilter()) {
+    std::string objectBufferName = "_" + getUniqueName();
 
-  svg_.setBufferImage(filter_out_.getValue("SourceGraphic"), dst_image);
+    CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_in");
+
+    buffer->setImage(inBuffer->getImage());
+  }
+
+  filterImage(inBuffer, outBuffer);
+
+  if (svg_.getDebugFilter()) {
+    std::string objectBufferName = "_" + getUniqueName();
+
+    CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_out");
+
+    buffer->setImage(outBuffer->getImage());
+  }
 }
 
-CImagePtr
+void
 CSVGFeColorMatrix::
-filterImage(CImagePtr src_image)
+filterImage(CSVGBuffer *inBuffer, CSVGBuffer *outBuffer)
 {
+  CImagePtr src_image = inBuffer->getImage();
   CImagePtr dst_image = src_image->dup();
 
-  if      (getType() == Type::MATRIX_TYPE)
-    dst_image->applyColorMatrix(&values_[0]);
-  else if (getType() == Type::SATURATE_TYPE)
+  if      (getType() == CSVGColorMatrixType::MATRIX) {
+    dst_image->applyColorMatrix(values_);
+  }
+  // For type="saturate", ‘values’ is a single real number value (0 to 1).
+  // A saturate operation is equivalent to the following matrix operation:
+  // | R' |   |0.213+0.787s 0.715-0.715s 0.072-0.072s 0 0 |   | R |
+  // | G' |   |0.213-0.213s 0.715+0.285s 0.072-0.072s 0 0 |   | G |
+  // | B' | = |0.213-0.213s 0.715-0.715s 0.072+0.928s 0 0 | * | B |
+  // | A' |   |           0            0            0 1 0 |   | A |
+  // | 1  |   |           0            0            0 0 1 |   | 1 |
+  else if (getType() == CSVGColorMatrixType::SATURATE) {
     dst_image->saturate(values_[0]);
-  else if (getType() == Type::HUE_ROTATE_TYPE)
+  }
+  // For type="hueRotate", ‘values’ is a single one real number value (degrees).
+  // A hueRotate operation is equivalent to the following matrix operation:
+  // | R' |   |a00 a01 a02 0 0 |   | R |
+  // | G' |   |a10 a11 a12 0 0 |   | G |
+  // | B' | = |a20 a21 a22 0 0 | * | B |
+  // | A' |   |  0   0   0 1 0 |   | A |
+  // | 1  |   |  0   0   0 0 1 |   | 1 |
+  //
+  // where the terms a00, a01, etc. are calculated as follows:
+  //  | a00 a01 a02 |   [+0.213 +0.715 +0.072]
+  //  | a10 a11 a12 | = [+0.213 +0.715 +0.072] +
+  //  | a20 a21 a22 |   [+0.213 +0.715 +0.072]
+  //
+  //                        [+0.787 -0.715 -0.072]
+  // cos(hueRotate value) * [-0.213 +0.285 -0.072] +
+  //                        [-0.213 -0.715 +0.928]
+  //                        [-0.213 -0.715+0.928]
+  // sin(hueRotate value) * [+0.143 +0.140-0.283]
+  //                        [-0.787 +0.715+0.072]
+  // Thus, the upper left term of the hue matrix turns out to be:
+  //   .213 + cos(hueRotate value)*.787 - sin(hueRotate value)*.213
+  else if (getType() == CSVGColorMatrixType::HUE_ROTATE) {
     dst_image->rotateHue(values_[0]);
-  else if (getType() == Type::LUMINANCE_TO_ALPHA_TYPE)
+  }
+  // For type="luminanceToAlpha", ‘values’ is not applicable.
+  // A luminanceToAlpha operation is equivalent to the following matrix operation:
+  // | R' |   |      0      0      0 0 0 |   | R |
+  // | G' |   |      0      0      0 0 0 |   | G |
+  // | B' | = |      0      0      0 0 0 | * | B |
+  // | A' |   | 0.2125 0.7154 0.0721 0 0 |   | A |
+  // | 1  |   |      0      0      0 0 1 |   | 1 |
+  else if (getType() == CSVGColorMatrixType::LUMINANCE_TO_ALPHA) {
     dst_image->luminanceToAlpha();
+  }
 
-  return dst_image;
+  outBuffer->setImage(dst_image);
 }
 
 void
@@ -101,16 +157,18 @@ print(std::ostream &os, bool hier) const
 
     CSVGObject::printValues(os);
 
-    printNameValue(os, "in"    , filter_in_);
-    printNameValue(os, "result", filter_out_);
+    printNameValue(os, "in"    , filterIn_ );
+    printNameValue(os, "result", filterOut_);
 
     if (type_.isValid()) {
+      CSVGColorMatrixType type = getType();
+
       os << " type=\"";
 
-      if      (type_.getValue() == Type::MATRIX_TYPE            ) os << "matrix";
-      else if (type_.getValue() == Type::SATURATE_TYPE          ) os << "saturate";
-      else if (type_.getValue() == Type::HUE_ROTATE_TYPE        ) os << "hueRotate";
-      else if (type_.getValue() == Type::LUMINANCE_TO_ALPHA_TYPE) os << "luminanceToAlpha";
+      if      (type == CSVGColorMatrixType::MATRIX            ) os << "matrix";
+      else if (type == CSVGColorMatrixType::SATURATE          ) os << "saturate";
+      else if (type == CSVGColorMatrixType::HUE_ROTATE        ) os << "hueRotate";
+      else if (type == CSVGColorMatrixType::LUMINANCE_TO_ALPHA) os << "luminanceToAlpha";
 
       os << "\"";
     }
@@ -120,7 +178,7 @@ print(std::ostream &os, bool hier) const
 
       int i = 0;
 
-      for (const auto &r : values_) {
+      for (const auto &r : getValues()) {
         if (i > 0) os << " ";
 
         os << r;

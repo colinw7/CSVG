@@ -1,19 +1,21 @@
 #include <CSVGFeFlood.h>
+#include <CSVGFilter.h>
+#include <CSVGBuffer.h>
 #include <CSVG.h>
 #include <CRGBName.h>
 
 CSVGFeFlood::
 CSVGFeFlood(CSVG &svg) :
- CSVGFilter(svg)
+ CSVGFilterBase(svg)
 {
 }
 
 CSVGFeFlood::
 CSVGFeFlood(const CSVGFeFlood &fe) :
- CSVGFilter (fe),
- filter_in_ (fe.filter_in_),
- filter_out_(fe.filter_out_),
- color_     (fe.color_)
+ CSVGFilterBase(fe),
+ filterIn_ (fe.filterIn_),
+ filterOut_(fe.filterOut_),
+ color_    (fe.color_)
 {
 }
 
@@ -32,12 +34,14 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   double      real;
 
   if      (svg_.stringOption(opt_name, opt_value, "in", str))
-    filter_in_ = str;
+    filterIn_ = str; // needed ?
   else if (svg_.stringOption(opt_name, opt_value, "result", str))
-    filter_out_ = str;
+    filterOut_ = str;
   else if (svg_.stringOption(opt_name, opt_value, "flood-color", str))
     color_ = CRGBName::toRGBA(str);
   else if (svg_.realOption(opt_name, opt_value, "flood-opacity", &real)) {
+    opacity_ = real;
+
     CRGBA c = color_.getValue(CRGBA(0,0,0,0));
 
     c.setAlpha(real);
@@ -45,7 +49,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
     color_ = c;
   }
   else
-    return CSVGObject::processOption(opt_name, opt_value);
+    return CSVGFilterBase::processOption(opt_name, opt_value);
 
   return true;
 }
@@ -54,22 +58,55 @@ void
 CSVGFeFlood::
 draw()
 {
-  CImagePtr src_image = svg_.getBufferImage(filter_in_.getValue("SourceGraphic"));
+  CSVGBuffer *outBuffer = svg_.getBuffer(getFilterOut());
 
-  CImagePtr dst_image = filterImage(src_image);
+  filterImage(outBuffer);
 
-  svg_.setBufferImage(filter_out_.getValue("SourceGraphic"), dst_image);
+  if (svg_.getDebugFilter()) {
+    std::string objectBufferName = "_" + getUniqueName();
+
+    CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_out");
+
+    buffer->setImage(outBuffer->getImage());
+  }
 }
 
-CImagePtr
+void
 CSVGFeFlood::
-filterImage(CImagePtr src_image)
+filterImage(CSVGBuffer *outBuffer)
 {
-  CImagePtr dst_image = src_image->dup();
+  // get filtered object size
+  int w = 100;
+  int h = 100;
 
+  CSVGFilter *filter = getParentFilter();
+
+  if (filter) {
+    CBBox2D bbox;
+
+    filter->getObject()->getBBox(bbox);
+
+    if (bbox.isSet()) {
+      double pw, ph;
+
+      svg_.lengthToPixel(bbox.getWidth(), bbox.getHeight(), &pw, &ph);
+
+      w = pw;
+      h = ph;
+    }
+  }
+
+  // create image to flood
+  CImageNoSrc src;
+
+  CImagePtr dst_image = CImageMgrInst->createImage(src);
+
+  dst_image->setDataSize(w, h);
+
+  // flood
   dst_image->setRGBAData(color_.getValue(CRGBA(0,0,0,0)));
 
-  return dst_image;
+  outBuffer->setImage(dst_image);
 }
 
 void
@@ -81,11 +118,13 @@ print(std::ostream &os, bool hier) const
 
     CSVGObject::printValues(os);
 
-    printNameValue(os, "in"    , filter_in_ );
-    printNameValue(os, "result", filter_out_);
+    printNameValue(os, "in"    , filterIn_ );
+    printNameValue(os, "result", filterOut_);
 
     if (color_.isValid())
       os << " flood-color=\"" << color_.getValue().getRGB().stringEncode() << "\"";
+
+    printNameValue(os, "opacity", opacity_);
 
     os << "/>" << std::endl;
   }

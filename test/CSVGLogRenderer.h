@@ -35,6 +35,7 @@ class CSVGLogRenderer : public CSVGRenderer {
 
   void setBackground(const CRGBA &) { logNL("setBackground"); }
 
+  bool isAntiAlias() const { logNL("isAntiAlias"); return false; }
   void setAntiAlias(bool) { logNL("setAntiAlias"); }
 
   void setEqualScale(bool) { logNL("setEqualScale"); }
@@ -66,9 +67,10 @@ class CSVGLogRenderer : public CSVGRenderer {
   }
 
   void pathStroke() { logNL("pathStroke"); }
-  void pathFill() { logNL("pathFill"); }
-  void pathClip() { logNL("pathClip"); }
-  void pathEoclip() { logNL("pathEoclip"); }
+  void pathFill  () { logNL("pathFill"); }
+
+  void pathClip  (CSVGRenderer *) { logNL("pathClip"); }
+  void pathEoclip(CSVGRenderer *) { logNL("pathEoclip"); }
 
   void initClip() { logNL("initClip"); }
 
@@ -94,13 +96,14 @@ class CSVGLogRenderer : public CSVGRenderer {
   void setAlign(CHAlignType, CVAlignType) { logNL("setAlign"); }
 
   void windowToPixel(const CPoint2D &, CPoint2D &) { logNL("windowToPixel"); }
+  void pixelToWindow(const CPoint2D &, CPoint2D &) { logNL("pixelToWindow"); }
 
   void textBounds(const std::string &, CBBox2D &) { logNL("textBounds"); }
 
+  CISize2D getImageSize() const { logNL("getImageSize"); return CISize2D(); }
+
   CImagePtr getImage() const { logNL("getImage"); return CImagePtr(); }
-
   void setImage(CImagePtr) { logNL("setImage"); }
-
 
   template<typename T>
   void logT(const T &t) {

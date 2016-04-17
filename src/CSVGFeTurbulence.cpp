@@ -1,21 +1,22 @@
 #include <CSVGFeTurbulence.h>
+#include <CSVGBuffer.h>
 #include <CSVG.h>
 
 CSVGFeTurbulence::
 CSVGFeTurbulence(CSVG &svg) :
- CSVGFilter (svg)
+ CSVGFilterBase(svg)
 {
 }
 
 CSVGFeTurbulence::
 CSVGFeTurbulence(const CSVGFeTurbulence &turb) :
- CSVGFilter (turb),
+ CSVGFilterBase(turb),
  type_      (turb.type_),
  baseFreq_  (turb.baseFreq_),
  numOctaves_(turb.numOctaves_),
  seed_      (turb.seed_),
- filter_in_ (turb.filter_in_),
- filter_out_(turb.filter_out_)
+ filterIn_  (turb.filterIn_),
+ filterOut_ (turb.filterOut_)
 {
 }
 
@@ -34,7 +35,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   double      real;
   long        integer;
 
-  if      (svg_.stringOption(opt_name, opt_value, "type", str))
+  if      (svg_.stringOption (opt_name, opt_value, "type", str))
     type_ = str;
   else if (svg_.realOption   (opt_name, opt_value, "baseFrequency", &real))
     baseFreq_ = real;
@@ -43,11 +44,11 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   else if (svg_.integerOption(opt_name, opt_value, "seed", &integer))
     seed_ = integer;
   else if (svg_.stringOption (opt_name, opt_value, "in", str))
-    filter_in_ = str;
+    filterIn_ = str;
   else if (svg_.stringOption (opt_name, opt_value, "result", str))
-    filter_out_ = str;
+    filterOut_ = str;
   else
-    return CSVGFilter::processOption(opt_name, opt_value);
+    return CSVGFilterBase::processOption(opt_name, opt_value);
 
   return true;
 }
@@ -56,31 +57,38 @@ void
 CSVGFeTurbulence::
 draw()
 {
-  CImagePtr src_image = svg_.getBufferImage(filter_in_.getValue("SourceGraphic"));
-  CImagePtr dst_image = svg_.getBufferImage(filter_out_.getValue("SourceGraphic"));
+  CSVGBuffer *inBuffer  = svg_.getBuffer(getFilterIn ());
+  CSVGBuffer *outBuffer = svg_.getBuffer(getFilterOut());
 
-  CImagePtr dst_image1 = dst_image;
+  if (svg_.getDebugFilter()) {
+    std::string objectBufferName = "_" + getUniqueName();
 
-  if (src_image == dst_image)
-    dst_image1 = dst_image->dup();
+    CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_in");
 
-  dst_image1->turbulence(isFractalNoise(), baseFreq_.getValue(0.1),
-                         numOctaves_.getValue(1), seed_.getValue(0));
+    buffer->setImage(inBuffer->getImage());
+  }
 
-  if (src_image == dst_image)
-    dst_image->copyFrom(dst_image1);
+  filterImage(inBuffer, outBuffer);
+
+  if (svg_.getDebugFilter()) {
+    std::string objectBufferName = "_" + getUniqueName();
+
+    CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_out");
+
+    buffer->setImage(outBuffer->getImage());
+  }
 }
 
-CImagePtr
+void
 CSVGFeTurbulence::
-filterImage(CImagePtr src_image)
+filterImage(CSVGBuffer *inBuffer, CSVGBuffer *outBuffer)
 {
+  CImagePtr src_image = inBuffer->getImage();
   CImagePtr dst_image = src_image->dup();
 
-  dst_image->turbulence(isFractalNoise(), baseFreq_.getValue(0.1),
-                        numOctaves_.getValue(1), seed_.getValue(0));
+  dst_image->turbulence(isFractalNoise(), getBaseFreq(), getNumOctaves(), getSeed());
 
-  return dst_image;
+  outBuffer->setImage(dst_image);
 }
 
 void
@@ -96,8 +104,8 @@ print(std::ostream &os, bool hier) const
     printNameValue(os, "baseFrequency", baseFreq_);
     printNameValue(os, "numOctaves"   , numOctaves_);
     printNameValue(os, "seed"         , seed_);
-    printNameValue(os, "in"           , filter_in_);
-    printNameValue(os, "result"       , filter_out_);
+    printNameValue(os, "in"           , filterIn_);
+    printNameValue(os, "result"       , filterOut_);
 
     os << "/>" << std::endl;
   }

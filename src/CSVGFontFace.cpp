@@ -125,7 +125,17 @@ print(std::ostream &os, bool hier) const
     printNameValue(os, "descent"     , descent_);
     printNameValue(os, "alphabetic"  , alphabetic_);
 
-    os << "/>" << std::endl;
+    CSVGObject::printValues(os);
+
+    os << ">" << std::endl;
+
+    if (hasChildren()) {
+      printChildren(os, hier);
+
+      os << "</font-face>" << std::endl;
+    }
+    else
+      os << "/>" << std::endl;
   }
   else
     os << "font-face";

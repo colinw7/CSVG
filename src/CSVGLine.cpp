@@ -1,6 +1,7 @@
 #include <CSVGLine.h>
 #include <CSVG.h>
 #include <CSVGLog.h>
+#include <CMathGeom2D.h>
 
 CSVGLine::
 CSVGLine(CSVG &svg) :
@@ -46,23 +47,18 @@ processOption(const std::string &opt_name, const std::string &opt_value)
 
   std::string     str;
   CSVGLengthValue length;
+  CMatrix2D       transform;
 
-  if      (svg_.coordOption(opt_name, opt_value, "x1", length))
+  if      (svg_.coordOption    (opt_name, opt_value, "x1", length))
     x1_ = length;
-  else if (svg_.coordOption(opt_name, opt_value, "y1", length))
+  else if (svg_.coordOption    (opt_name, opt_value, "y1", length))
     y1_ = length;
-  else if (svg_.coordOption(opt_name, opt_value, "x2", length))
+  else if (svg_.coordOption    (opt_name, opt_value, "x2", length))
     x2_ = length;
-  else if (svg_.coordOption(opt_name, opt_value, "y2", length))
+  else if (svg_.coordOption    (opt_name, opt_value, "y2", length))
     y2_ = length;
-  else if (svg_.stringOption(opt_name, opt_value, "transform", str)) {
-    CMatrix2D transform;
-
-    if (! svg_.decodeTransform(str, transform))
-      return false;
-
+  else if (svg_.transformOption(opt_name, opt_value, "transform", transform))
     setTransform(transform);
-  }
   else
     return false;
 
@@ -81,23 +77,46 @@ draw()
   svg_.pathMoveTo(getX1(), getY1());
   svg_.pathLineTo(getX2(), getY2());
 
-  if (svg_.isFilled())
-    svg_.pathFill();
+  if (svg_.isFilled() || svg_.isStroked()) {
+    if (svg_.isFilled())
+      svg_.pathFill();
 
-  if (svg_.isStroked())
-    svg_.pathStroke();
+    if (svg_.isStroked())
+      svg_.pathStroke();
+  }
+  else
+    svg_.pathFill();
 }
 
 bool
 CSVGLine::
 getBBox(CBBox2D &bbox) const
 {
-  if (! viewBox_.isSet())
+  if (! viewBox_.isValid())
     bbox = CBBox2D(getStart(), getEnd());
   else
-    bbox = viewBox_;
+    bbox = getViewBox();
 
   return true;
+}
+
+bool
+CSVGLine::
+inside(const CPoint2D &pos) const
+{
+  CMatrix2D m = getFlatTransform();
+
+  CPoint2D p1, p2;
+
+  m.multiplyPoint(getStart(), p1);
+  m.multiplyPoint(getEnd  (), p2);
+
+  double d = 0.0;
+
+  if (! CMathGeom2D::PointLineDistance(pos, CLine2D(p1, p2), &d))
+    return false;
+
+  return (d <= getStrokeWidth());
 }
 
 void

@@ -1,4 +1,5 @@
 #include <CSVG.h>
+#include <CSVGAnchor.h>
 #include <CSVGAnimate.h>
 #include <CSVGAnimateColor.h>
 #include <CSVGAnimateMotion.h>
@@ -8,14 +9,14 @@
 #include <CSVGClipPath.h>
 #include <CSVGDefs.h>
 #include <CSVGDesc.h>
-#include <CSVGUtil.h>
-
 #include <CSVGEllipse.h>
 #include <CSVGFeBlend.h>
 #include <CSVGFeColorMatrix.h>
 #include <CSVGFeComponentTransfer.h>
 #include <CSVGFeComposite.h>
+#include <CSVGFeConvolveMatrix.h>
 #include <CSVGFeDiffuseLighting.h>
+#include <CSVGFeDisplacementMap.h>
 #include <CSVGFeDistantLight.h>
 #include <CSVGFeFlood.h>
 #include <CSVGFeFunc.h>
@@ -23,13 +24,18 @@
 #include <CSVGFeImage.h>
 #include <CSVGFeMerge.h>
 #include <CSVGFeMergeNode.h>
+#include <CSVGFeMorphology.h>
 #include <CSVGFeOffset.h>
 #include <CSVGFePointLight.h>
 #include <CSVGFeSpecularLighting.h>
+#include <CSVGFeSpotLight.h>
 #include <CSVGFeTile.h>
 #include <CSVGFeTurbulence.h>
+#include <CSVGFilter.h>
 #include <CSVGFont.h>
 #include <CSVGFontFace.h>
+#include <CSVGFontFaceSrc.h>
+#include <CSVGFontFaceUri.h>
 #include <CSVGGroup.h>
 #include <CSVGHKern.h>
 #include <CSVGImage.h>
@@ -48,15 +54,19 @@
 #include <CSVGRadialGradient.h>
 #include <CSVGRect.h>
 #include <CSVGRenderer.h>
+#include <CSVGScript.h>
 #include <CSVGSet.h>
 #include <CSVGStop.h>
 #include <CSVGStyle.h>
 #include <CSVGStyleData.h>
+#include <CSVGSwitch.h>
 #include <CSVGSymbol.h>
 #include <CSVGText.h>
+#include <CSVGTextPath.h>
 #include <CSVGTitle.h>
 #include <CSVGTSpan.h>
 #include <CSVGUse.h>
+#include <CSVGUtil.h>
 
 #include <CRadialGradient.h>
 #include <CLinearGradient.h>
@@ -76,21 +86,42 @@ CSVG(CSVGRenderer *renderer) :
  stroke_  (*this),
  fill_    (*this),
  clip_    (*this),
- font_def_(*this)
+ fontDef_ (*this)
 {
-  view_matrix_.setIdentity();
-  transform_  .setIdentity();
-
-  block_ = createBlock();
+  viewMatrix_.setIdentity();
 
   xml_ = new CXML();
 
   buffer_mgr_ = new CSVGBufferMgr(*this);
+
+  //---
+
+  if (getenv("CSVG_DEBUG"))
+    setDebug(true);
+
+  if (getenv("CSVG_DEBUG_IMAGE"))
+    setDebugImage(true);
+
+  if (getenv("CSVG_DEBUG_FILTER"))
+    setDebugFilter(true);
 }
 
 CSVG::
 ~CSVG()
 {
+}
+
+CSVGBlock *
+CSVG::
+getBlock() const
+{
+  if (! block_.isValid()) {
+    CSVG *th = const_cast<CSVG *>(this);
+
+    th->block_ = th->createBlock();
+  }
+
+  return block_;
 }
 
 void
@@ -104,7 +135,10 @@ CSVGRenderer *
 CSVG::
 createRenderer()
 {
-  return renderer_->dup();
+  if (renderer_)
+    return renderer_->dup();
+  else
+    return 0;
 }
 
 void
@@ -123,11 +157,25 @@ setAutoName(bool autoName)
 
 void
 CSVG::
-setDebug(bool debug)
+setDebug(bool b)
 {
-  debug_ = debug;
+  debug_ = b;
 
-  xml_->setDebug(debug);
+  xml_->setDebug(debug_);
+}
+
+void
+CSVG::
+setDebugImage(bool b)
+{
+  debugImage_ = b;
+}
+
+void
+CSVG::
+setDebugFilter(bool b)
+{
+  debugFilter_ = b;
 }
 
 void
@@ -140,7 +188,7 @@ bool
 CSVG::
 read(const std::string &filename)
 {
-  return read(filename, block_);
+  return read(filename, getBlock());
 }
 
 bool
@@ -264,6 +312,7 @@ tokenToObject(CSVGObject *parent, const CXMLToken *token)
 
       tag_text += text->getText();
     }
+#if 0
     else if (token->isTag()) {
       CXMLTag *tag = token->getTag();
 
@@ -287,6 +336,7 @@ tokenToObject(CSVGObject *parent, const CXMLToken *token)
         tag_text += "[0m";
       }
     }
+#endif
   }
 
   if (tag_text != "")
@@ -322,7 +372,7 @@ tokenToObject(CSVGObject *parent, const CXMLToken *token)
   for (uint i = 0; i < num_children; ++i) {
     CSVGObject *object1 = tokenToObject(object, children[i]);
 
-    if (object1 != 0)
+    if (object1)
       object->addChildObject(object1);
   }
 
@@ -347,6 +397,8 @@ createObjectByName(const std::string &name)
 
   if      (name == "svg")
     object = createBlock();
+  else if (name == "a")
+    object = createAnchor();
   else if (name == "animate")
     object = new CSVGAnimate(*this);
   else if (name == "animateColor")
@@ -360,57 +412,69 @@ createObjectByName(const std::string &name)
   else if (name == "clipPath")
     object = new CSVGClipPath(*this);
   else if (name == "defs")
-    object = new CSVGDefs(*this);
+    object = createDefs();
   else if (name == "desc")
-    object = new CSVGDesc(*this);
+    object = createDesc();
   else if (name == "ellipse")
     object = createEllipse();
   else if (name == "feBlend")
-    object = new CSVGFeBlend(*this);
+    object = createFeBlend();
   else if (name == "feColorMatrix")
-    object = new CSVGFeColorMatrix(*this);
+    object = createFeColorMatrix();
   else if (name == "feComponentTransfer")
-    object = new CSVGFeComponentTransfer(*this);
+    object = createFeComponentTransfer();
   else if (name == "feComposite")
-    object = new CSVGFeComposite(*this);
+    object = createFeComposite();
+  else if (name == "feConvolveMatrix")
+    object = createFeConvolveMatrix();
   else if (name == "feDiffuseLighting")
-    object = new CSVGFeDiffuseLighting(*this);
+    object = createFeDiffuseLighting();
+  else if (name == "feDisplacementMap")
+    object = createFeDisplacementMap();
   else if (name == "feDistantLight")
-    object = new CSVGFeDistantLight(*this);
+    object = createFeDistantLight();
   else if (name == "feFlood")
-    object = new CSVGFeFlood(*this);
+    object = createFeFlood();
   else if (name == "feFuncR")
-    object = new CSVGFeFunc(*this, CCOLOR_COMPONENT_RED);
+    object = createFeFunc(CCOLOR_COMPONENT_RED);
   else if (name == "feFuncG")
-    object = new CSVGFeFunc(*this, CCOLOR_COMPONENT_GREEN);
+    object = createFeFunc(CCOLOR_COMPONENT_GREEN);
   else if (name == "feFuncB")
-    object = new CSVGFeFunc(*this, CCOLOR_COMPONENT_BLUE);
+    object = createFeFunc(CCOLOR_COMPONENT_BLUE);
   else if (name == "feFuncA")
-    object = new CSVGFeFunc(*this, CCOLOR_COMPONENT_ALPHA);
+    object = createFeFunc(CCOLOR_COMPONENT_ALPHA);
   else if (name == "feGaussianBlur")
-    object = new CSVGFeGaussianBlur(*this);
+    object = createFeGaussianBlur();
   else if (name == "feImage")
-    object = new CSVGFeImage(*this);
+    object = createFeImage();
   else if (name == "feMerge")
-    object = new CSVGFeMerge(*this);
+    object = createFeMerge();
   else if (name == "feMergeNode")
-    object = new CSVGFeMergeNode(*this);
+    object = createFeMergeNode();
+  else if (name == "feMorphology")
+    object = createFeMorphology();
   else if (name == "feOffset")
-    object = new CSVGFeOffset(*this);
+    object = createFeOffset();
   else if (name == "fePointLight")
-    object = new CSVGFePointLight(*this);
+    object = createFePointLight();
   else if (name == "feSpecularLighting")
-    object = new CSVGFeSpecularLighting(*this);
+    object = createFeSpecularLighting();
+  else if (name == "feSpotLight")
+    object = createFeSpotLight();
   else if (name == "feTile")
-    object = new CSVGFeTile(*this);
+    object = createFeTile();
   else if (name == "feTurbulence")
-    object = new CSVGFeTurbulence(*this);
+    object = createFeTurbulence();
   else if (name == "filter")
-    object = new CSVGFilter(*this);
+    object = createFilter();
   else if (name == "font")
     object = new CSVGFont(*this);
   else if (name == "font-face")
     object = new CSVGFontFace(*this);
+  else if (name == "font-face-src")
+    object = new CSVGFontFaceSrc(*this);
+  else if (name == "font-face-uri")
+    object = new CSVGFontFaceUri(*this);
   else if (name == "glyph")
     object = new CSVGGlyph(*this);
   else if (name == "g")
@@ -426,7 +490,7 @@ createObjectByName(const std::string &name)
   else if (name == "marker")
     object = createMarker();
   else if (name == "mask")
-    object = new CSVGMask(*this);
+    object = createMask();
   else if (name == "missing-glyph")
     object = new CSVGMissingGlyph(*this);
   else if (name == "mpath")
@@ -434,7 +498,7 @@ createObjectByName(const std::string &name)
   else if (name == "path")
     object = createPath();
   else if (name == "pattern")
-    object = new CSVGPattern(*this);
+    object = createPattern();
   else if (name == "polygon")
     object = createPolygon();
   else if (name == "polyline")
@@ -443,6 +507,8 @@ createObjectByName(const std::string &name)
     object = createRadialGradient();
   else if (name == "rect")
     object = createRect();
+  else if (name == "script")
+    object = new CSVGScript(*this);
   else if (name == "set")
     object = createSet();
   else if (name == "stop")
@@ -451,14 +517,18 @@ createObjectByName(const std::string &name)
     object = createSymbol();
   else if (name == "style")
     object = new CSVGStyle(*this);
+  else if (name == "switch")
+    object = new CSVGSwitch(*this);
   else if (name == "text")
     object = createText();
+  else if (name == "textPath")
+    object = createTextPath();
   else if (name == "title")
-    object = new CSVGTitle(*this);
+    object = createTitle();
   else if (name == "tspan")
-    object = new CSVGTSpan(*this);
+    object = createTSpan();
   else if (name == "use")
-    object = new CSVGUse(*this);
+    object = createUse();
   else
     object = 0;
 
@@ -479,6 +549,13 @@ createBlock()
   return new CSVGBlock(*this);
 }
 
+CSVGAnchor *
+CSVG::
+createAnchor()
+{
+  return new CSVGAnchor(*this);
+}
+
 CSVGCircle *
 CSVG::
 createCircle()
@@ -486,11 +563,179 @@ createCircle()
   return new CSVGCircle(*this);
 }
 
+CSVGDefs *
+CSVG::
+createDefs()
+{
+  return new CSVGDefs(*this);
+}
+
+CSVGDesc *
+CSVG::
+createDesc()
+{
+  return new CSVGDesc(*this);
+}
+
 CSVGEllipse *
 CSVG::
 createEllipse()
 {
   return new CSVGEllipse(*this);
+}
+
+CSVGFeBlend *
+CSVG::
+createFeBlend()
+{
+  return new CSVGFeBlend(*this);
+}
+
+CSVGFeColorMatrix *
+CSVG::
+createFeColorMatrix()
+{
+  return new CSVGFeColorMatrix(*this);
+}
+
+CSVGFeComponentTransfer *
+CSVG::
+createFeComponentTransfer()
+{
+  return new CSVGFeComponentTransfer(*this);
+}
+
+CSVGFeConvolveMatrix *
+CSVG::
+createFeConvolveMatrix()
+{
+  return new CSVGFeConvolveMatrix(*this);
+}
+
+CSVGFeComposite *
+CSVG::
+createFeComposite()
+{
+  return new CSVGFeComposite(*this);
+}
+
+CSVGFeDiffuseLighting *
+CSVG::
+createFeDiffuseLighting()
+{
+  return new CSVGFeDiffuseLighting(*this);
+}
+
+CSVGFeDisplacementMap *
+CSVG::
+createFeDisplacementMap()
+{
+  return new CSVGFeDisplacementMap(*this);
+}
+
+CSVGFeDistantLight *
+CSVG::
+createFeDistantLight()
+{
+  return new CSVGFeDistantLight(*this);
+}
+
+CSVGFeFlood *
+CSVG::
+createFeFlood()
+{
+  return new CSVGFeFlood(*this);
+}
+
+CSVGFeFunc *
+CSVG::
+createFeFunc(CColorComponent component)
+{
+  return new CSVGFeFunc(*this, component);
+}
+
+CSVGFeGaussianBlur *
+CSVG::
+createFeGaussianBlur()
+{
+  return new CSVGFeGaussianBlur(*this);
+}
+
+CSVGFeImage *
+CSVG::
+createFeImage()
+{
+  return new CSVGFeImage(*this);
+}
+
+CSVGFeMerge *
+CSVG::
+createFeMerge()
+{
+  return new CSVGFeMerge(*this);
+}
+
+CSVGFeMergeNode *
+CSVG::
+createFeMergeNode()
+{
+  return new CSVGFeMergeNode(*this);
+}
+
+CSVGFeMorphology *
+CSVG::
+createFeMorphology()
+{
+  return new CSVGFeMorphology(*this);
+}
+
+CSVGFeOffset *
+CSVG::
+createFeOffset()
+{
+  return new CSVGFeOffset(*this);
+}
+
+CSVGFePointLight *
+CSVG::
+createFePointLight()
+{
+  return new CSVGFePointLight(*this);
+}
+
+CSVGFeSpecularLighting *
+CSVG::
+createFeSpecularLighting()
+{
+  return new CSVGFeSpecularLighting(*this);
+}
+
+CSVGFeSpotLight *
+CSVG::
+createFeSpotLight()
+{
+  return new CSVGFeSpotLight(*this);
+}
+
+CSVGFeTile *
+CSVG::
+createFeTile()
+{
+  return new CSVGFeTile(*this);
+}
+
+CSVGFeTurbulence *
+CSVG::
+createFeTurbulence()
+{
+  return new CSVGFeTurbulence(*this);
+}
+
+CSVGFilter *
+CSVG::
+createFilter()
+{
+  return new CSVGFilter(*this);
 }
 
 CSVGGroup *
@@ -528,6 +773,13 @@ createMarker()
   return new CSVGMarker(*this);
 }
 
+CSVGMask *
+CSVG::
+createMask()
+{
+  return new CSVGMask(*this);
+}
+
 CSVGMPath *
 CSVG::
 createMPath()
@@ -540,6 +792,13 @@ CSVG::
 createPath()
 {
   return new CSVGPath(*this);
+}
+
+CSVGPattern *
+CSVG::
+createPattern()
+{
+  return new CSVGPattern(*this);
 }
 
 CSVGPolygon *
@@ -598,21 +857,77 @@ createText()
   return new CSVGText(*this);
 }
 
+CSVGTextPath *
+CSVG::
+createTextPath()
+{
+  return new CSVGTextPath(*this);
+}
+
+CSVGTitle *
+CSVG::
+createTitle()
+{
+  return new CSVGTitle(*this);
+}
+
+CSVGTSpan *
+CSVG::
+createTSpan()
+{
+  return new CSVGTSpan(*this);
+}
+
+CSVGUse *
+CSVG::
+createUse()
+{
+  return new CSVGUse(*this);
+}
+
+double
+CSVG::
+getXMin() const
+{
+  return getBlock()->getXMin();
+}
+
+double
+CSVG::
+getYMin() const
+{
+  return getBlock()->getYMin();
+}
+
+double
+CSVG::
+getWidth() const
+{
+  return getBlock()->getWidth();
+}
+
+double
+CSVG::
+getHeight() const
+{
+  return getBlock()->getHeight();
+}
+
 void
 CSVG::
 addFont(CSVGFont *font)
 {
-  font_list_.push_back(font);
+  fontList_.push_back(font);
 }
 
 CSVGFont *
 CSVG::
 getFont() const
 {
-  if (font_list_.empty())
+  if (fontList_.empty())
     return 0;
 
-  return font_list_[0];
+  return fontList_[0];
 }
 
 CSVGGlyph *
@@ -621,7 +936,7 @@ getCharGlyph(char c) const
 {
   CSVGFont *font = getFont();
 
-  if (font != 0)
+  if (font)
     return font->getCharGlyph(c);
   else
     return 0;
@@ -631,10 +946,10 @@ CSVGGlyph *
 CSVG::
 getUnicodeGlyph(const std::string &unicode) const
 {
-  if (font_list_.empty())
+  if (fontList_.empty())
     return 0;
 
-  CSVGFont *font = font_list_[0];
+  CSVGFont *font = fontList_[0];
 
   return font->getUnicodeGlyph(unicode);
 }
@@ -647,13 +962,17 @@ drawToImage(int w, int h)
 
   renderer = createRenderer();
 
-  renderer->setSize(w, h);
+  if (renderer) {
+    renderer->setSize(w, h);
 
-  setRenderer(renderer);
+    setRenderer(renderer);
 
-  draw();
+    draw();
 
-  return renderer->getImage();
+    return renderer->getImage();
+  }
+  else
+    return CImagePtr();
 }
 
 void
@@ -667,35 +986,40 @@ draw()
 
 void
 CSVG::
-draw(const CMatrix2D &matrix)
+draw(const CMatrix2D &matrix, double scale)
 {
-  drawObject(block_, matrix);
+  drawBlock(getBlock(), matrix, scale);
 }
 
 void
 CSVG::
-drawObject(CSVGObject *object)
+drawBlock(CSVGBlock *block)
 {
   CMatrix2D matrix(CMATRIX_TYPE_IDENTITY);
 
-  drawObject(object, matrix);
+  drawBlock(block, matrix);
 }
 
 void
 CSVG::
-drawObject(CSVGObject *object, const CMatrix2D &matrix)
+drawBlock(CSVGBlock *block, const CMatrix2D &matrix, double scale)
 {
-  if (renderer_ == 0)
+  if (! renderer_)
     return;
 
-  view_matrix_ = matrix;
+  viewMatrix_ = matrix;
+  scale_      = scale;
 
   //------
 
   renderer_->beginDraw();
 
-  renderer_->setDataRange(object->getXMin(), object->getYMin(),
-                          object->getXMax(), object->getYMax());
+  CPoint2D bmin, bmax;
+
+  viewMatrix_.multiplyPoint(CPoint2D(block->getXMin(), block->getYMin()), bmin);
+  viewMatrix_.multiplyPoint(CPoint2D(block->getXMax(), block->getYMax()), bmax);
+
+  renderer_->setDataRange(bmin.x, bmin.y, bmax.x, bmax.y);
 
   //------
 
@@ -706,36 +1030,31 @@ drawObject(CSVGObject *object, const CMatrix2D &matrix)
 
   //------
 
-  setBuffer("SourceGraphic");
+  CSVGBuffer *bgBuffer = getBuffer("BackgroundImage");
 
-  beginDrawBuffer();
+  setBuffer(bgBuffer);
 
-  object->drawObject();
+  bgBuffer->clear();
 
-  endDrawBuffer();
-
-  CImagePtr image = getBufferImage("SourceGraphic");
-//image->writePNG("SourceGraphic.png");
+  beginDrawBuffer(bgBuffer);
 
   //------
 
-  setBuffer("BackgroundImage");
-
-  beginDrawBuffer();
-
-  buffer_->setImage(image);
-
-  endDrawBuffer();
+  block->drawObject();
 
   //------
 
-  image = buffer_->getImage();
+  endDrawBuffer(bgBuffer);
+
+  //------
+
+  CImagePtr image = bgBuffer->getImage();
 
   renderer_->setImage(image);
 
   //------
 
-  view_matrix_.setIdentity();
+  viewMatrix_.setIdentity();
 
   renderer_->endDraw();
 }
@@ -759,104 +1078,75 @@ getBufferName() const
 
 void
 CSVG::
-setBuffer(const std::string &name)
+setBuffer(CSVGBuffer *buffer)
 {
-  std::string name1 = name;
-
-  if (name == "SourceGraphic" || name == "SourceAlpha")
-    name1 = "Source";
-
-  buffer_ = getBuffer(name1);
-}
-
-CImagePtr
-CSVG::
-getBufferImage()
-{
-  if (buffer_ != 0)
-    return buffer_->getImage();
-  else
-    return CImagePtr();
-}
-
-CImagePtr
-CSVG::
-getBufferImage(const std::string &name)
-{
-  CSVGBuffer *buffer = getBuffer(name);
-
-  CImagePtr image;
-
-  if (name == "SourceAlpha")
-    image = buffer->getImage();
-  else
-    image = buffer->getImage();
-
-  return image;
+  buffer_ = buffer;
 }
 
 CSVGBuffer *
 CSVG::
 getBuffer(const std::string &name)
 {
-  std::string name1 = name;
+  if      (name == "SourceAlpha") {
+    CSVGBuffer *buffer = buffer_mgr_->lookupBuffer("SourceGraphic", /*create*/true);
 
-  if (name == "SourceGraphic" || name == "SourceAlpha")
-    name1 = "Source";
+    return buffer_mgr_->lookupAlphaBuffer(buffer, /*create*/true);
+  }
+  else if (name == "BackgroundAlpha") {
+    CSVGBuffer *buffer = buffer_mgr_->lookupBuffer("BackgroundImage", /*create*/true);
 
-  CSVGBuffer *buffer = buffer_mgr_->lookupBuffer(name1);
+    return buffer_mgr_->lookupAlphaBuffer(buffer, /*create*/true);
+  }
 
-  if (buffer == 0)
-    buffer = buffer_mgr_->createBuffer(name1);
+  CSVGBuffer *buffer = buffer_mgr_->lookupBuffer(name, /*create*/true);
 
   return buffer;
 }
 
 void
 CSVG::
-setBufferImage(CImagePtr image)
+getBufferNames(std::vector<std::string> &names) const
 {
-  if (buffer_ != 0)
-    buffer_->setImage(image);
+  buffer_mgr_->getBufferNames(names);
 }
 
 void
 CSVG::
-setBufferImage(const std::string &name, CImagePtr image)
+beginDrawBuffer(CSVGBuffer *buffer)
 {
-  CSVGBuffer *buffer = getBuffer(name);
+  CSVGBlock *block = getBlock();
 
-  if (name == "SourceAlpha")
-    buffer->setImage(image);
-  else
-    buffer->setImage(image);
-}
-
-void
-CSVG::
-beginDrawBuffer()
-{
   CBBox2D bbox;
 
-  block_->getBBox(bbox);
+  block->getBBox(bbox);
 
-  int width, height;
-
-  renderer_->getSize(&width, &height);
-
-  buffer_->beginDraw(width, height, bbox);
-
-  buffer_->setAlign(block_->getHAlign(), block_->getVAlign());
-
-  buffer_->setEqualScale(block_->getScale() != CSVGScale::FREE);
-  buffer_->setScaleMin  (block_->getScale() == CSVGScale::FIXED_MEET);
+  beginDrawBuffer(buffer, bbox);
 }
 
 void
 CSVG::
-endDrawBuffer()
+beginDrawBuffer(CSVGBuffer *buffer, const CBBox2D &bbox)
 {
-  buffer_->endDraw();
+  double w = bbox.getWidth ();
+  double h = bbox.getHeight();
+
+  buffer->beginDraw(w*scale_, h*scale_, bbox);
+
+  buffer->setViewMatrix(viewMatrix_);
+
+  CSVGBlock *block = getBlock();
+
+  buffer->setAlign(block->getHAlign(), block->getVAlign());
+
+  buffer->setEqualScale(block->getScale() != CSVGScale::FREE);
+  buffer->setScaleMin  (block->getScale() == CSVGScale::FIXED_MEET);
+}
+
+void
+CSVG::
+endDrawBuffer(CSVGBuffer *buffer)
+{
+  buffer->endDraw();
 }
 
 void
@@ -960,49 +1250,43 @@ bool
 CSVG::
 isFilled() const
 {
-  if (fill_.getFillObjectValid())
+  if (! fill_.isNoColor())
     return true;
-
-  if (fill_.getColorValid()) {
-    CRGBA fillColor = fill_.getAlphaColor();
-
-    return (fillColor.getAlpha() > 0);
-  }
 
   return false;
 }
 
 void
 CSVG::
-setFillBuffer()
+setFillBuffer(CSVGBuffer *buffer)
 {
-  CSVGObject *fill_object = fill_.getFillObject();
+  CSVGObject *fillObject = fill_.getFillObject();
 
-  if (fill_object) {
-    CSVGLinearGradient *lg = dynamic_cast<CSVGLinearGradient *>(fill_object);
-    CSVGRadialGradient *rg = dynamic_cast<CSVGRadialGradient *>(fill_object);
-    CSVGPattern        *pt = dynamic_cast<CSVGPattern        *>(fill_object);
+  if (fillObject) {
+    CSVGLinearGradient *lg = dynamic_cast<CSVGLinearGradient *>(fillObject);
+    CSVGRadialGradient *rg = dynamic_cast<CSVGRadialGradient *>(fillObject);
+    CSVGPattern        *pt = dynamic_cast<CSVGPattern        *>(fillObject);
 
     if      (lg) {
       CAutoPtr<CLinearGradient> lg1;
 
-      lg1 = lg->createGradient();
+      lg1 = lg->createGradient(drawObject_);
 
-      buffer_->setFillGradient(lg1);
+      buffer->setFillGradient(lg1);
     }
     else if (rg) {
       CAutoPtr<CRadialGradient> rg1;
 
-      rg1 = rg->createGradient();
+      rg1 = rg->createGradient(drawObject_);
 
-      buffer_->setFillGradient(rg1);
+      buffer->setFillGradient(rg1);
     }
     else if (pt) {
       double w1, h1;
 
-      CImagePtr image = pt->getImage(100, 100, &w1, &h1);
+      CImagePtr image = pt->getImage(drawObject_, &w1, &h1);
 
-      buffer_->setFillImage(image);
+      buffer->setFillImage(image);
     }
     else
       assert(false);
@@ -1011,14 +1295,14 @@ setFillBuffer()
     if (fill_.getColorValid()) {
       CRGBA fill_color = fill_.getAlphaColor();
 
-      buffer_->setFillColor(fill_color);
+      buffer->setFillColor(fill_color);
     }
     else
-      buffer_->setFillColor(CRGBA(0,0,0));
+      buffer->setFillColor(CRGBA(0,0,0));
   }
 
   if (fill_.getRuleValid())
-    buffer_->setFillType(fill_.getRule());
+    buffer->setFillType(fill_.getRule());
 }
 
 void
@@ -1053,7 +1337,7 @@ void
 CSVG::
 resetFontDef()
 {
-  font_def_.reset();
+  fontDef_.reset();
 }
 
 void
@@ -1072,39 +1356,63 @@ void
 CSVG::
 setTransform(const CMatrix2D &matrix)
 {
-  transform_ = matrix;
+  setBufferTransform(buffer_, matrix);
+}
 
-  buffer_->setViewMatrix(view_matrix_*transform_);
+void
+CSVG::
+setBufferTransform(CSVGBuffer *buffer, const CMatrix2D &matrix)
+{
+  buffer->setTransform(matrix);
 }
 
 void
 CSVG::
 getTransform(CMatrix2D &matrix)
 {
-  matrix = transform_;
+  matrix = buffer_->transform();
 }
 
 void
 CSVG::
 unsetTransform()
 {
-  transform_.setIdentity();
+  unsetBufferTransform(buffer_);
+}
 
-  buffer_->setViewMatrix(view_matrix_);
+void
+CSVG::
+unsetBufferTransform(CSVGBuffer *buffer)
+{
+  buffer->unsetTransform();
 }
 
 void
 CSVG::
 drawImage(double x, double y, CImagePtr image)
 {
-  buffer_->drawImage(x, y, image);
+  drawBufferImage(buffer_, x, y, image);
+}
+
+void
+CSVG::
+drawBufferImage(CSVGBuffer *buffer, double x, double y, CImagePtr image)
+{
+  buffer->drawImage(x, y, image);
 }
 
 void
 CSVG::
 drawImage(const CBBox2D &bbox, CImagePtr image)
 {
-  buffer_->drawImage(bbox, image);
+  drawBufferImage(buffer_, bbox, image);
+}
+
+void
+CSVG::
+drawBufferImage(CSVGBuffer *buffer, const CBBox2D &bbox, CImagePtr image)
+{
+  buffer->drawImage(bbox, image);
 }
 
 void
@@ -1151,7 +1459,7 @@ void
 CSVG::
 fillRoundedRectangle(const CBBox2D &bbox, double rx, double ry)
 {
-  setFillBuffer();
+  setFillBuffer(buffer_);
 
   const CPoint2D &ll = bbox.getLL();
   const CPoint2D &ur = bbox.getUR();
@@ -1195,7 +1503,7 @@ void
 CSVG::
 fillRectangle(const CBBox2D &bbox)
 {
-  setFillBuffer();
+  setFillBuffer(buffer_);
 
   buffer_->pathInit();
 
@@ -1221,16 +1529,23 @@ drawCircle(double x, double y, double r)
 
   buffer_->pathClose();
 
-  if (isFilled()) {
-    setFillBuffer();
+  if (isFilled() || isStroked()) {
+    if (isFilled()) {
+      setFillBuffer(buffer_);
+
+      buffer_->pathFill();
+    }
+
+    if (isStroked()) {
+      setStrokeBuffer();
+
+      buffer_->pathStroke();
+    }
+  }
+  else {
+    setFillBuffer(buffer_);
 
     buffer_->pathFill();
-  }
-
-  if (isStroked()) {
-    setStrokeBuffer();
-
-    buffer_->pathStroke();
   }
 }
 
@@ -1246,16 +1561,23 @@ drawEllipse(double x, double y, double rx, double ry)
 
   buffer_->pathClose();
 
-  if (isFilled()) {
-    setFillBuffer();
+  if (isFilled() || isStroked()) {
+    if (isFilled()) {
+      setFillBuffer(buffer_);
+
+      buffer_->pathFill();
+    }
+
+    if (isStroked()) {
+      setStrokeBuffer();
+
+      buffer_->pathStroke();
+    }
+  }
+  else {
+    setFillBuffer(buffer_);
 
     buffer_->pathFill();
-  }
-
-  if (isStroked()) {
-    setStrokeBuffer();
-
-    buffer_->pathStroke();
   }
 }
 
@@ -1276,7 +1598,7 @@ void
 CSVG::
 fillArc(double xc, double yc, double xr, double yr, double angle1, double angle2)
 {
-  setFillBuffer();
+  setFillBuffer(buffer_);
 
   buffer_->pathInit();
 
@@ -1291,7 +1613,8 @@ drawPolygon(const std::vector<CPoint2D> &points)
 {
   uint num_points = points.size();
 
-  if (num_points == 0) return;
+  if (! num_points)
+    return;
 
   setStrokeBuffer();
 
@@ -1313,9 +1636,10 @@ fillPolygon(const std::vector<CPoint2D> &points)
 {
   uint num_points = points.size();
 
-  if (num_points == 0) return;
+  if (! num_points)
+    return;
 
-  setFillBuffer();
+  setFillBuffer(buffer_);
 
   buffer_->pathInit();
 
@@ -1337,12 +1661,12 @@ drawText(double x, double y, const std::string &text, CFontPtr font, CHAlignType
 
   CSVGFont *svg_font = getFont();
 
-  if (svg_font != 0) {
+  if (svg_font) {
     CSVGFontFace *font_face = svg_font->getFontFace();
 
     double units = 1000;
 
-    if (font_face != 0)
+    if (font_face)
       units = font_face->getUnits();
 
     //-----
@@ -1364,10 +1688,10 @@ drawText(double x, double y, const std::string &text, CFontPtr font, CHAlignType
     for (uint i = 0; i < len; ++i) {
       CSVGGlyph *glyph = getCharGlyph(text[i]);
 
-      if (glyph != 0) {
+      if (glyph) {
         setTransform(transform*transform2*transform1);
 
-        glyph->drawObject();
+        glyph->drawSubObject();
 
         x += font_size;
 
@@ -1392,16 +1716,16 @@ void
 CSVG::
 fillText(double x, double y, const std::string &text, CFontPtr font, CHAlignType align)
 {
-  setFillBuffer();
+  setFillBuffer(buffer_);
 
   CSVGFont *svg_font = getFont();
 
-  if (svg_font != 0) {
+  if (svg_font) {
     CSVGFontFace *font_face = svg_font->getFontFace();
 
     double units = 1000;
 
-    if (font_face != 0)
+    if (font_face)
       units = font_face->getUnits();
 
     //-----
@@ -1423,10 +1747,10 @@ fillText(double x, double y, const std::string &text, CFontPtr font, CHAlignType
     for (uint i = 0; i < len; ++i) {
       CSVGGlyph *glyph = getCharGlyph(text[i]);
 
-      if (glyph != 0) {
+      if (glyph) {
         setTransform(transform*transform2*transform1);
 
-        glyph->drawObject();
+        glyph->drawSubObject();
 
         x += font_size;
 
@@ -1445,6 +1769,15 @@ fillText(double x, double y, const std::string &text, CFontPtr font, CHAlignType
 
     buffer_->pathFill();
   }
+}
+
+void
+CSVG::
+textSize(const std::string &text, CFontPtr font, double *w, double *a, double *d) const
+{
+  *w = font->getStringWidth(text);
+  *a = font->getCharAscent();
+  *d = font->getCharDescent();
 }
 
 void
@@ -1574,7 +1907,7 @@ void
 CSVG::
 pathFill()
 {
-  setFillBuffer();
+  setFillBuffer(buffer_);
 
   buffer_->pathFill();
 }
@@ -2325,11 +2658,15 @@ drawParts(const CSVG::PartList &parts, CSVGObjectMarker *omarker)
   }
 
   // fill and/or stroke path
-  if (isFilled())
-    pathFill();
+  if (isFilled() || isStroked()) {
+    if (isFilled())
+      pathFill();
 
-  if (isStroked())
-    pathStroke();
+    if (isStroked())
+      pathStroke();
+  }
+  else
+    pathFill();
 
   //------
 
@@ -2362,10 +2699,10 @@ drawParts(const CSVG::PartList &parts, CSVGObjectMarker *omarker)
     g1 = atan2(y2 - y1, x2 - x1);
     g2 = atan2(y3 - y2, x3 - x2);
 
-    if (omarker->start != 0) {
+    if (omarker->start) {
       CSVGMarker *marker = dynamic_cast<CSVGMarker *>(omarker->start);
 
-      if (marker != 0)
+      if (marker)
         marker->drawMarker(x1, y1, (g1 + g2)/2);
     }
 
@@ -2383,18 +2720,18 @@ drawParts(const CSVG::PartList &parts, CSVGObjectMarker *omarker)
       g2 = atan2(y3 - y2, x3 - x2);
 
       if (i != num - 1) {
-        if (omarker->mid != 0) {
+        if (omarker->mid) {
           CSVGMarker *marker = dynamic_cast<CSVGMarker *>(omarker->mid);
 
-          if (marker != 0)
+          if (marker)
             marker->drawMarker(x2, y2, (g1 + g2)/2);
         }
       }
       else {
-        if (omarker->end != 0) {
+        if (omarker->end) {
           CSVGMarker *marker = dynamic_cast<CSVGMarker *>(omarker->end);
 
-          if (marker != 0)
+          if (marker)
             marker->drawMarker(x2, y2, g1);
         }
       }
@@ -2532,7 +2869,7 @@ coordOption(const std::string &opt_name, const std::string &opt_value,
       flag = false;
     }
 
-    length = CSVGLengthValue(CSVGLengthValue::Type::PERCENT, value/100.0);
+    length = CSVGLengthValue(CSVGLengthType::PERCENT, value/100.0);
   }
   else {
     CSVGLengthValue length1;
@@ -2616,8 +2953,8 @@ decodeLengthValue(const std::string &str, CSVGLengthValue &lvalue)
   static CRegExp mm_pattern("\\(.*\\)mm");
   static CRegExp in_pattern("\\(.*\\)in");
   static CRegExp px_pattern("\\(.*\\)px");
+  static CRegExp ph_pattern("\\(.*\\)%");
 
-  // TODO: handle %
   double value;
 
   std::vector<std::string> match_strs;
@@ -2626,7 +2963,7 @@ decodeLengthValue(const std::string &str, CSVGLengthValue &lvalue)
     if (! CStrUtil::toReal(match_strs[0], &value))
       return false;
 
-    lvalue = CSVGLengthValue(CSVGLengthValue::Type::EM, value);
+    lvalue = CSVGLengthValue(CSVGLengthType::EM, value);
 
     CSVGLog() << "em conversion not handled";
   }
@@ -2634,7 +2971,7 @@ decodeLengthValue(const std::string &str, CSVGLengthValue &lvalue)
     if (! CStrUtil::toReal(match_strs[0], &value))
       return false;
 
-    lvalue = CSVGLengthValue(CSVGLengthValue::Type::EX, value);
+    lvalue = CSVGLengthValue(CSVGLengthType::EX, value);
 
     CSVGLog() << "ex conversion not handled";
   }
@@ -2646,7 +2983,7 @@ decodeLengthValue(const std::string &str, CSVGLengthValue &lvalue)
 
     mmToPixel((25.4*value)/72.0, &value);
 
-    lvalue = CSVGLengthValue(CSVGLengthValue::Type::PT, ivalue, value);
+    lvalue = CSVGLengthValue(CSVGLengthType::PT, ivalue, value);
   }
   else if (CRegExpUtil::parse(str, pc_pattern, match_strs)) {
     if (! CStrUtil::toReal(match_strs[0], &value))
@@ -2656,7 +2993,7 @@ decodeLengthValue(const std::string &str, CSVGLengthValue &lvalue)
 
     mmToPixel((25.4*value)/6.0, &value);
 
-    lvalue = CSVGLengthValue(CSVGLengthValue::Type::PC, ivalue, value);
+    lvalue = CSVGLengthValue(CSVGLengthType::PC, ivalue, value);
   }
   else if (CRegExpUtil::parse(str, cm_pattern, match_strs)) {
     if (! CStrUtil::toReal(match_strs[0], &value))
@@ -2666,7 +3003,7 @@ decodeLengthValue(const std::string &str, CSVGLengthValue &lvalue)
 
     mmToPixel(10*value, &value);
 
-    lvalue = CSVGLengthValue(CSVGLengthValue::Type::CM, ivalue, value);
+    lvalue = CSVGLengthValue(CSVGLengthType::CM, ivalue, value);
   }
   else if (CRegExpUtil::parse(str, mm_pattern, match_strs)) {
     if (! CStrUtil::toReal(match_strs[0], &value))
@@ -2676,7 +3013,7 @@ decodeLengthValue(const std::string &str, CSVGLengthValue &lvalue)
 
     mmToPixel(value, &value);
 
-    lvalue = CSVGLengthValue(CSVGLengthValue::Type::MM, ivalue, value);
+    lvalue = CSVGLengthValue(CSVGLengthType::MM, ivalue, value);
   }
   else if (CRegExpUtil::parse(str, in_pattern, match_strs)) {
     if (! CStrUtil::toReal(match_strs[0], &value))
@@ -2686,19 +3023,25 @@ decodeLengthValue(const std::string &str, CSVGLengthValue &lvalue)
 
     mmToPixel(25.4*value, &value);
 
-    lvalue = CSVGLengthValue(CSVGLengthValue::Type::IN, ivalue, value);
+    lvalue = CSVGLengthValue(CSVGLengthType::IN, ivalue, value);
   }
   else if (CRegExpUtil::parse(str, px_pattern, match_strs)) {
     if (! CStrUtil::toReal(match_strs[0], &value))
       return false;
 
-    lvalue = CSVGLengthValue(CSVGLengthValue::Type::PX, value);
+    lvalue = CSVGLengthValue(CSVGLengthType::PX, value);
+  }
+  else if (CRegExpUtil::parse(str, ph_pattern, match_strs)) {
+    if (! CStrUtil::toReal(match_strs[0], &value))
+      return false;
+
+    lvalue = CSVGLengthValue(CSVGLengthType::PERCENT, value);
   }
   else {
     if (! CStrUtil::toReal(str, &value))
       return false;
 
-    lvalue = CSVGLengthValue(CSVGLengthValue::Type::NONE, value);
+    lvalue = CSVGLengthValue(CSVGLengthType::NONE, value);
   }
 
   return true;
@@ -2806,8 +3149,6 @@ CSVG::
 bboxOption(const std::string &opt_name, const std::string &opt_value,
            const std::string &name, CBBox2D *bbox)
 {
-  double x1, y1, x2, y2;
-
   if (opt_name != name)
     return false;
 
@@ -2818,19 +3159,34 @@ bboxOption(const std::string &opt_name, const std::string &opt_value,
   if (words.size() != 4)
     return false;
 
-  if (! CStrUtil::toReal(CStrUtil::stripSpaces(words[0]), &x1))
-    return false;
+  double x1, y1, x2, y2;
 
-  if (! CStrUtil::toReal(CStrUtil::stripSpaces(words[1]), &y1))
-    return false;
-
-  if (! CStrUtil::toReal(CStrUtil::stripSpaces(words[2]), &x2))
-    return false;
-
-  if (! CStrUtil::toReal(CStrUtil::stripSpaces(words[3]), &y2))
-    return false;
+  if (! CStrUtil::toReal(CStrUtil::stripSpaces(words[0]), &x1)) return false;
+  if (! CStrUtil::toReal(CStrUtil::stripSpaces(words[1]), &y1)) return false;
+  if (! CStrUtil::toReal(CStrUtil::stripSpaces(words[2]), &x2)) return false;
+  if (! CStrUtil::toReal(CStrUtil::stripSpaces(words[3]), &y2)) return false;
 
   *bbox = CBBox2D(x1, y1, x2, y2);
+
+  return true;
+}
+
+bool
+CSVG::
+preserveAspectOption(const std::string &opt_name, const std::string &opt_value,
+                     const std::string &name, CSVGPreserveAspect &preserveAspect)
+{
+  if (opt_name != name)
+    return false;
+
+  CHAlignType halign;
+  CVAlignType valign;
+  CSVGScale   scale;
+
+  if (! decodePreserveAspectRatio(opt_value, &halign, &valign, &scale))
+    return false;
+
+  preserveAspect = CSVGPreserveAspect(halign, valign, scale);
 
   return true;
 }
@@ -2913,13 +3269,13 @@ eventValueOption(const std::string &opt_name, const std::string &opt_value,
     std::string units = opt_value.substr(pos);
 
     if      (units == "h")
-      time = CSVGTimeValue(CSVGTimeValue::Type::HOURS, r);
+      time = CSVGTimeValue(CSVGTimeValueType::HOURS, r);
     else if (units == "min")
-      time = CSVGTimeValue(CSVGTimeValue::Type::MINUTES, r);
+      time = CSVGTimeValue(CSVGTimeValueType::MINUTES, r);
     else if (units == "s")
-      time = CSVGTimeValue(CSVGTimeValue::Type::SECONDS, r);
+      time = CSVGTimeValue(CSVGTimeValueType::SECONDS, r);
     else if (units == "ms")
-      time = CSVGTimeValue(CSVGTimeValue::Type::MILLISECONDS, r);
+      time = CSVGTimeValue(CSVGTimeValueType::MILLISECONDS, r);
     else
       time = CSVGTimeValue(r);
 
@@ -3030,15 +3386,31 @@ stringToTime(const std::string &str, CSVGTimeValue &time) const
   std::string units = str.substr(pos);
 
   if      (units == "h")
-    time = CSVGTimeValue(CSVGTimeValue::Type::HOURS, r);
+    time = CSVGTimeValue(CSVGTimeValueType::HOURS, r);
   else if (units == "min")
-    time = CSVGTimeValue(CSVGTimeValue::Type::MINUTES, r);
+    time = CSVGTimeValue(CSVGTimeValueType::MINUTES, r);
   else if (units == "s")
-    time = CSVGTimeValue(CSVGTimeValue::Type::SECONDS, r);
+    time = CSVGTimeValue(CSVGTimeValueType::SECONDS, r);
   else if (units == "ms")
-    time = CSVGTimeValue(CSVGTimeValue::Type::MILLISECONDS, r);
+    time = CSVGTimeValue(CSVGTimeValueType::MILLISECONDS, r);
   else
     time = CSVGTimeValue(r);
+
+  return true;
+}
+
+bool
+CSVG::
+transformOption(const std::string &opt_name, const std::string &opt_value,
+                const std::string &name, CMatrix2D &matrix)
+{
+  if (opt_name != name)
+    return false;
+
+  matrix.setIdentity();
+
+  if (! decodeTransform(opt_value, matrix))
+    return false;
 
   return true;
 }
@@ -3210,7 +3582,7 @@ decodeTransform(const std::string &str, CMatrix2D &matrix)
 
         matrix1.setTranslation(cx, cy);
 
-        matrix2.setRotation(-CMathGen::DegToRad(a));
+        matrix2.setRotation(CMathGen::DegToRad(a));
 
         matrix3.setTranslation(-cx, -cy);
 
@@ -3219,7 +3591,7 @@ decodeTransform(const std::string &str, CMatrix2D &matrix)
       else {
         CMatrix2D matrix1;
 
-        matrix1.setRotation(-CMathGen::DegToRad(a));
+        matrix1.setRotation(CMathGen::DegToRad(a));
 
         matrix *= matrix1;
       }
@@ -3614,7 +3986,7 @@ decodePercentString(const std::string &str, CSVGLengthValue &length)
       flag = false;
     }
 
-    length = CSVGLengthValue(CSVGLengthValue::Type::PERCENT, value/100.0);
+    length = CSVGLengthValue(CSVGLengthType::PERCENT, value/100.0);
   }
   else {
     double value;
@@ -3709,7 +4081,14 @@ bool
 CSVG::
 mmToPixel(double mm, double *pixel)
 {
-  return buffer_->mmToPixel(mm, pixel);
+  if (buffer_)
+    return buffer_->mmToPixel(mm, pixel);
+  else {
+    // 75 dpi
+    *pixel = 75.0*mm/25.4;
+
+    return true;
+  }
 }
 
 void
@@ -3740,7 +4119,7 @@ getTitle(std::string &str)
 {
   std::vector<CSVGObject *> objects;
 
-  block_->getChildrenOfType(CSVGObjTypeId::TITLE, objects);
+  getBlock()->getChildrenOfType(CSVGObjTypeId::TITLE, objects);
 
   if (objects.empty())
     return false;
@@ -3754,20 +4133,20 @@ getTitle(std::string &str)
 
 void
 CSVG::
-lengthToPixel(double xi, double yi, int *xo, int *yo)
+lengthToPixel(double xi, double yi, double *xo, double *yo)
 {
-  int px1, py1, px2, py2;
+  double px1, py1, px2, py2;
 
   windowToPixel( 0,  0, &px1, &py1);
   windowToPixel(xi, yi, &px2, &py2);
 
-  *xo = abs(px2 - px1);
-  *yo = abs(py2 - py1);
+  *xo = fabs(px2 - px1);
+  *yo = fabs(py2 - py1);
 }
 
 void
 CSVG::
-windowToPixel(double xi, double yi, int *xo, int *yo)
+windowToPixel(double xi, double yi, double *xo, double *yo)
 {
   buffer_->windowToPixel(xi, yi, xo, yo);
 }
@@ -3776,16 +4155,16 @@ void
 CSVG::
 setObjectById(const std::string &id, CSVGObject *object)
 {
-  id_object_map_[id] = object;
+  idObjectMap_[id] = object;
 }
 
 CSVGObject *
 CSVG::
 lookupObjectById(const std::string &id) const
 {
-  auto p = id_object_map_.find(id);
+  auto p = idObjectMap_.find(id);
 
-  if (p != id_object_map_.end())
+  if (p != idObjectMap_.end())
     return (*p).second;
 
   return 0;
@@ -3911,19 +4290,19 @@ void
 CSVG::
 getObjectsAtPoint(const CPoint2D &p, ObjectList &objects) const
 {
-  block_->getObjectsAtPoint(p, objects);
+  getBlock()->getObjectsAtPoint(p, objects);
 }
 
 void
 CSVG::
 sendEvent(CSVGEventType type, const std::string &id, const std::string &data)
 {
-  block_->handleEvent(type, id, data);
+  getBlock()->handleEvent(type, id, data);
 }
 
 void
 CSVG::
 print(std::ostream &os, bool hier) const
 {
-  block_->print(os, hier);
+  getBlock()->print(os, hier);
 }

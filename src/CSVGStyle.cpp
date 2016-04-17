@@ -7,7 +7,7 @@
 
 CSVGStyle::
 CSVGStyle(CSVG &svg) :
- CSVGObject(svg), type_(StyleType::NONE)
+ CSVGObject(svg), type_(CSVGStyleType::NONE)
 {
 }
 
@@ -35,7 +35,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
 
   if (svg_.stringOption(opt_name, opt_value, "type", str)) {
     if (str == "text/css")
-      type_ = StyleType::TEXT_CSS;
+      type_ = CSVGStyleType::TEXT_CSS;
     else
       std::cerr << "Invalid type " << str << std::endl;
 
@@ -85,6 +85,8 @@ setText(const std::string &text)
   }
   else
     std::cerr << "Invalid Text: " << text << std::endl;
+
+  text_ = text;
 }
 
 bool
@@ -130,8 +132,16 @@ CSVGStyle::
 print(std::ostream &os, bool hier) const
 {
   if (hier) {
-    os << "<style>";
+    os << "<style";
+
+    CSVGObject::printValues(os);
+
+    os << ">" << std::endl;
+
     os << getText();
+
+    printChildren(os, hier);
+
     os << "</style>" << std::endl;
   }
   else

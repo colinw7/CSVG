@@ -3,13 +3,13 @@
 
 CSVGFeDistantLight::
 CSVGFeDistantLight(CSVG &svg) :
- CSVGFilter(svg)
+ CSVGFilterBase(svg)
 {
 }
 
 CSVGFeDistantLight::
 CSVGFeDistantLight(const CSVGFeDistantLight &fe) :
- CSVGFilter(fe)
+ CSVGFilterBase(fe)
 {
 }
 
@@ -24,14 +24,14 @@ bool
 CSVGFeDistantLight::
 processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  std::string str;
+  double r;
 
-  if      (svg_.stringOption(opt_name, opt_value, "elevation", str))
-    ;
-  else if (svg_.stringOption(opt_name, opt_value, "azimuth", str))
-    ;
+  if      (svg_.realOption(opt_name, opt_value, "elevation", &r))
+    elevation_ = r;
+  else if (svg_.realOption(opt_name, opt_value, "azimuth", &r))
+    azimuth_ = r;
   else
-    return CSVGObject::processOption(opt_name, opt_value);
+    return CSVGFilterBase::processOption(opt_name, opt_value);
 
   return true;
 }
@@ -48,6 +48,9 @@ print(std::ostream &os, bool hier) const
 {
   if (hier) {
     os << "<feDistantLight";
+
+    printNameValue(os, "elevation", elevation_);
+    printNameValue(os, "azimuth"  , azimuth_  );
 
     CSVGObject::printValues(os);
 

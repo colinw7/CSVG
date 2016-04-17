@@ -12,7 +12,7 @@ class CSVGTempFont {
 
  private:
   CSVGObject  &object_;
-  CSVGFontDef  font_def_;
+  CSVGFontDef  fontDef_;
 };
 
 #endif

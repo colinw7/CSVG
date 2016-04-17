@@ -55,11 +55,12 @@ class CSVGImage : public CSVGObject {
   CSize2D getSizeInternal() const { return CSize2D(getWidth(), getHeight()); }
 
  private:
-  CSVGXLink                 xlink_;
-  COptValT<double>          x_;
-  COptValT<double>          y_;
-  COptValT<CSVGLengthValue> w_;
-  COptValT<CSVGLengthValue> h_;
+  COptValT<CSVGXLink>          xlink_;
+  COptValT<double>             x_;
+  COptValT<double>             y_;
+  COptValT<CSVGLengthValue>    w_;
+  COptValT<CSVGLengthValue>    h_;
+  COptValT<CSVGPreserveAspect> preserveAspect_;
 };
 
 #endif

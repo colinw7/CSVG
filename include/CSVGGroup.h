@@ -18,7 +18,7 @@ class CSVGGroup : public CSVGObject {
   void resizeTo(const CSize2D &size) override;
   void rotateBy(double da, const CPoint2D &c) override;
 
-  void draw() override;
+  bool isDrawable() const override { return false; }
 
   void print(std::ostream &os, bool hier) const override;
 

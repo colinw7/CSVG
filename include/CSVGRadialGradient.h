@@ -19,66 +19,33 @@ class CSVGRadialGradient : public CSVGObject {
 
   CSVGRadialGradient *dup() const override;
 
-  const CPoint2D &getCenter() { return center_.getValue(); }
+  double getCenterX() const { return cx_.isValid() ? cx_.getValue().value() : 0.5; }
+  void setCenterX(double x) { cx_ = x; }
 
-  double getCenterX() { return (center_.isValid() ? getCenter().x : 0.5); }
-  double getCenterY() { return (center_.isValid() ? getCenter().y : 0.5); }
+  double getCenterY() const { return cy_.isValid() ? cy_.getValue().value() : 0.5; }
+  void setCenterY(double y) { cy_ = y; }
 
-  void setCenter(const CPoint2D &center) { center_ = center; }
+  CPoint2D getCenter() { return CPoint2D(getCenterX(), getCenterY()); }
+  void setCenter(const CPoint2D &center) { setCenterX(center.x); setCenterY(center.y); }
 
-  void setCenterX(double x) {
-    CPoint2D center(x, 0);
-
-    if (center_.isValid())
-      center.y = getCenterY();
-
-    setCenter(center);
-  }
-
-  void setCenterY(double y) {
-    CPoint2D center(0, y);
-
-    if (center_.isValid())
-      center.x = getCenterX();
-
-    setCenter(center);
-  }
-
-  double getRadius() const { return (radius_.isValid() ? radius_.getValue() : 0.5); }
-
+  double getRadius() const { return radius_.isValid() ? radius_.getValue().value() : 0.5; }
   void setRadius(double r) { radius_ = r; }
 
-  const CPoint2D &getFocus () const { return focus_.getValue(); }
+  double getFocusX() const { return focusX_.isValid() ? focusX_.getValue() : getCenterX(); }
+  void setFocusX(double x) { focusX_ = x; }
 
-  double getFocusX() { return (focus_.isValid() ? getFocus().x : getCenterX()); }
-  double getFocusY() { return (focus_.isValid() ? getFocus().y : getCenterY()); }
+  double getFocusY() const { return focusY_.isValid() ? focusY_.getValue() : getCenterY(); }
+  void setFocusY(double y) { focusY_ = y; }
 
-  void setFocus(const CPoint2D &focus) { focus_ = focus; }
-
-  void setFocusX(double x) {
-    CPoint2D focus(x, 0);
-
-    if (focus_.isValid())
-      focus.y = getFocusY();
-
-    setFocus(focus);
-  }
-
-  void setFocusY(double y) {
-    CPoint2D focus(0, y);
-
-    if (focus_.isValid())
-      focus.x = getFocusX();
-
-    setFocus(focus);
-  }
+  CPoint2D getFocus() const { return CPoint2D(getFocusX(), getFocusY()); }
+  void setFocus(const CPoint2D &focus) { setFocusX(focus.x); setFocusY(focus.y); }
 
   bool getGTransformValid() const { return gtransform_.isValid(); }
   CMatrix2D getGTransform() const { return gtransform_.getValue(); }
   void setGTransform(const CMatrix2D &gtransform) { gtransform_ = gtransform; }
 
   bool getUnitsValid() const { return units_.isValid(); }
-  CSVGCoordUnits getUnits() const { return units_.getValue(CSVGCoordUnits::USER_SPACE); }
+  CSVGCoordUnits getUnits() const { return units_.getValue(CSVGCoordUnits::OBJECT_BBOX); }
   void setUnits(CSVGCoordUnits units) { units_ = units; }
 
   bool getSpreadValid() const { return spread_.isValid(); }
@@ -100,20 +67,20 @@ class CSVGRadialGradient : public CSVGObject {
 
   bool isDrawable() const override { return false; }
 
-  void draw() override;
-
   void print(std::ostream &os, bool hier) const override;
 
   CImagePtr getImage(CBBox2D &bbox);
 
-  CRadialGradient *createGradient();
+  CRadialGradient *createGradient(CSVGObject *);
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGRadialGradient &gradient);
 
  private:
-  COptValT<CPoint2D>            center_;
-  COptValT<double>              radius_;
-  COptValT<CPoint2D>            focus_;
+  COptValT<CSVGLengthValue>     cx_;
+  COptValT<CSVGLengthValue>     cy_;
+  COptValT<CSVGLengthValue>     radius_;
+  COptValT<double>              focusX_;
+  COptValT<double>              focusY_;
   StopList                      stops_;
   COptValT<CMatrix2D>           gtransform_;
   COptValT<CSVGCoordUnits>      units_;

@@ -108,7 +108,8 @@ termParse()
 
       addChildObject(object1);
 
-      xlink_.setObject(0);
+      if (xlink_.isValid())
+        xlink_.getValue().setObject(0);
     }
   }
   else {
@@ -136,6 +137,22 @@ termParse()
   }
 }
 
+bool
+CSVGUse::
+getBBox(CBBox2D &bbox) const
+{
+  if (! viewBox_.isValid()) {
+    CSVGObject *object = getObject();
+
+    if (! object->getBBox(bbox))
+      return false;
+  }
+  else
+    bbox = getViewBox();
+
+  return true;
+}
+
 void
 CSVGUse::
 moveBy(const CVector2D &delta)
@@ -158,11 +175,14 @@ draw()
 
   CSVGObject *object = getObject();
 
-  if (object != 0)
-    object->drawObject();
+  if (object) {
+    object->drawSubObject();
+  }
 
-  if (xlink_.isImage())
-    svg_.drawImage(0, 0, xlink_.getImage());
+  if (xlink_.isValid()) {
+    if (xlink_.getValue().isImage())
+      svg_.drawImage(0, 0, xlink_.getValue().getImage());
+  }
 }
 
 void
@@ -172,12 +192,9 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<use";
 
+    printNameXLink(os, "xlink:href", xlink_);
+
     CSVGObject::printValues(os);
-
-    std::string xn = xlink_.str();
-
-    if (xn != "")
-      os << " xlink:href=\"" << xn << "\"";
 
     os << "/>" << std::endl;
   }
@@ -199,8 +216,10 @@ getObject() const
 {
   CSVGObject *object = 0;
 
-  if (xlink_.isObject())
-    object = xlink_.getObject();
+  if (xlink_.isValid()) {
+    if (xlink_.getValue().isObject())
+      object = xlink_.getValue().getObject();
+  }
 
   return object;
 }

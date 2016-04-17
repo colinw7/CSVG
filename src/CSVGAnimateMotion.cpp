@@ -1,4 +1,6 @@
 #include <CSVGAnimateMotion.h>
+#include <CSVGMPath.h>
+#include <CSVGPath.h>
 #include <CSVG.h>
 #include <CSVGLog.h>
 #include <CSVGUtil.h>
@@ -71,6 +73,8 @@ CSVGAnimateMotion::
 animate(double t)
 {
   //std::cerr << "CSVGAnimateMotion: " << t_ << ":" << t << std::endl;
+  ObjectArray objects;
+
   if (! path_.empty()) {
     double x, y, a;
 
@@ -86,6 +90,35 @@ animate(double t)
     }
 
     svg_.redraw();
+  }
+  else if (getChildrenOfType(CSVGObjTypeId::MPATH, objects)) {
+    CSVGMPath *mpath = dynamic_cast<CSVGMPath *>(objects[0]);
+
+    const PartList *path = (mpath ? &mpath->getPartList() : 0);
+
+    if (path_.empty()) {
+      CSVGObject *obj = mpath->xlink().getObject();
+
+      if (obj && obj->getObjTypeId() == CSVGObjTypeId::PATH)
+        path = &dynamic_cast<CSVGPath *>(obj)->getPartList();
+    }
+
+    if (path) {
+      double x, y, a;
+
+      svg_.interpParts(t, *path, &x, &y, &a);
+
+      getParent()->moveTo(CPoint2D(x, y));
+
+      if (rotate_.getValue("") == "auto")
+        getParent()->rotateTo(a, CPoint2D(x, y));
+      else {
+        if (CStrUtil::toReal(rotate_.getValue(""), &a))
+          getParent()->rotateTo(a, CPoint2D(x, y));
+      }
+
+      svg_.redraw();
+    }
   }
   else {
     std::vector<double> fromValues, toValues;

@@ -1,18 +1,11 @@
 #ifndef CSVGFeBlend_H
 #define CSVGFeBlend_H
 
-#include <CSVGFilter.h>
+#include <CSVGFilterBase.h>
 
-class CSVGFeBlend : public CSVGFilter {
- public:
-  enum class Type {
-    NORMAL,
-    MULTIPLY,
-    SCREEN,
-    DARKEN,
-    LIGHTEN
-  };
+class CSVGBuffer;
 
+class CSVGFeBlend : public CSVGFilterBase {
  public:
   CSVG_OBJECT_DEF("feBlend", CSVGObjTypeId::FE_BLEND)
 
@@ -21,21 +14,33 @@ class CSVGFeBlend : public CSVGFilter {
 
   CSVGFeBlend *dup() const override;
 
+  CSVGBlendMode getMode() const { return mode_.getValue(CSVGBlendMode::NORMAL); }
+  void setMode(CSVGBlendMode m) { mode_ = m; }
+
+  std::string getFilterIn1() const { return filterIn1_.getValue("SourceGraphic"); }
+  void setFilterIn1(const std::string &s) { filterIn1_ = s; }
+
+  std::string getFilterIn2() const { return filterIn2_.getValue("SourceGraphic"); }
+  void setFilterIn2(const std::string &s) { filterIn2_ = s; }
+
+  std::string getFilterOut() const { return filterOut_.getValue("SourceGraphic"); }
+  void setFilterOut(const std::string &s) { filterOut_ = s; }
+
   bool processOption(const std::string &name, const std::string &value) override;
 
   void draw() override;
 
-  CImagePtr filterImage2(CImagePtr src_image1, CImagePtr src_image2);
+  void filterImage(CSVGBuffer *inBuffer1, CSVGBuffer *inBuffer2, CSVGBuffer *outBuffer);
 
   void print(std::ostream &os, bool hier) const override;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGFeBlend &fe);
 
  private:
-  COptValT<Type>        type_;
-  COptValT<std::string> filter_in1_;
-  COptValT<std::string> filter_in2_;
-  COptValT<std::string> filter_out_;
+  COptValT<CSVGBlendMode> mode_;
+  COptValT<std::string>   filterIn1_;
+  COptValT<std::string>   filterIn2_;
+  COptValT<std::string>   filterOut_;
 };
 
 #endif

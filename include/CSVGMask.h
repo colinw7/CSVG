@@ -13,6 +13,18 @@ class CSVGMask : public CSVGObject {
 
   CSVGMask *dup() const override;
 
+  double getX() const { return x_.getValue(0); }
+  void setX(double x) { x_ = x; }
+
+  double getY() const { return y_.getValue(0); }
+  void setY(double y) { y_ = y; }
+
+  double getWidth() const { return width_.isValid() ? width_ .getValue().value() : 1; }
+  void setWidth(double w) { width_ = w; }
+
+  double getHeight() const { return height_.isValid() ? height_.getValue().value() : 1; }
+  void setHeight(double h) { height_ = h; }
+
   bool getUnitsValid() const { return units_.isValid(); }
   CSVGCoordUnits getUnits() const { return units_.getValue(CSVGCoordUnits::USER_SPACE); }
   void setUnits(CSVGCoordUnits units) { units_ = units; }
@@ -21,7 +33,7 @@ class CSVGMask : public CSVGObject {
 
   void draw() override;
 
-  void objectDraw(const CSVGObject &object);
+  void drawMask(const CSVGObject &object);
 
   void print(std::ostream &os, bool hier) const override;
 
@@ -31,12 +43,12 @@ class CSVGMask : public CSVGObject {
   CSVGMask &operator=(const CSVGMask &rhs);
 
  private:
-  CSVGObject *             object_ { 0 };
-  COptValT<double>         x_;
-  COptValT<double>         y_;
-  COptValT<double>         width_;
-  COptValT<double>         height_;
-  COptValT<CSVGCoordUnits> units_;
+  CSVGObject *              object_ { 0 };
+  COptValT<double>          x_;
+  COptValT<double>          y_;
+  COptValT<CSVGLengthValue> width_;
+  COptValT<CSVGLengthValue> height_;
+  COptValT<CSVGCoordUnits>  units_;
 };
 
 #endif

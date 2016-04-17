@@ -1,9 +1,11 @@
 #ifndef CSVGFeFlood_H
 #define CSVGFeFlood_H
 
-#include <CSVGFilter.h>
+#include <CSVGFilterBase.h>
 
-class CSVGFeFlood : public CSVGFilter {
+class CSVGBuffer;
+
+class CSVGFeFlood : public CSVGFilterBase {
  public:
   CSVG_OBJECT_DEF("feFlood", CSVGObjTypeId::FE_FLOOD)
 
@@ -12,20 +14,30 @@ class CSVGFeFlood : public CSVGFilter {
 
   CSVGFeFlood *dup() const override;
 
+  std::string getFilterIn() const { return filterIn_.getValue("SourceGraphic"); }
+  void setFilterIn(const std::string &s) { filterIn_ = s; }
+
+  std::string getFilterOut() const { return filterOut_.getValue("SourceGraphic"); }
+  void setFilterOut(const std::string &s) { filterOut_ = s; }
+
+  double getOpacity() const { return opacity_.getValue(1); }
+  void setOpacity(double r) { opacity_ = r; }
+
   bool processOption(const std::string &name, const std::string &value) override;
 
   void draw() override;
 
-  CImagePtr filterImage(CImagePtr src_image);
+  void filterImage(CSVGBuffer *outBuffer);
 
   void print(std::ostream &os, bool hier) const override;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGFeFlood &fe);
 
  private:
-  COptValT<std::string> filter_in_;
-  COptValT<std::string> filter_out_;
+  COptValT<std::string> filterIn_;
+  COptValT<std::string> filterOut_;
   COptValT<CRGBA>       color_;
+  COptValT<double>      opacity_;
 };
 
 #endif

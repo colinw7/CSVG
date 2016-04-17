@@ -1,24 +1,10 @@
 #ifndef CSVGPathPart_H
 #define CSVGPathPart_H
 
+#include <CSVGTypes.h>
 #include <CBBox2D.h>
 
 class CSVG;
-
-enum class CSVGPathPartType {
-  MOVE_TO,
-  LINE_TO,
-  RLINE_TO,
-  HLINE_TO,
-  VLINE_TO,
-  ARC_TO,
-  RARC_TO,
-  BEZIER2_TO,
-  RBEZIER2_TO,
-  BEZIER3_TO,
-  RBEZIER3_TO,
-  CLOSE_PATH
-};
 
 class CSVGPathPart {
  protected:

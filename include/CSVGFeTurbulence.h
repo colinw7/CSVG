@@ -1,9 +1,11 @@
 #ifndef CSVGFeTurbulence_H
 #define CSVGFeTurbulence_H
 
-#include <CSVGFilter.h>
+#include <CSVGFilterBase.h>
 
-class CSVGFeTurbulence : public CSVGFilter {
+class CSVGBuffer;
+
+class CSVGFeTurbulence : public CSVGFilterBase {
  public:
   CSVG_OBJECT_DEF("feTurbulence", CSVGObjTypeId::FE_TURBULENCE)
 
@@ -15,12 +17,28 @@ class CSVGFeTurbulence : public CSVGFilter {
   std::string getType() const { return type_.getValue(""); }
 
   bool isFractalNoise() const { return (getType() == "fractalNoise"); }
+  void setFractalNoise(bool b) { type_ = (b ? "fractalNoise" : "turbulence"); }
+
+  double getBaseFreq() const { return baseFreq_.getValue(0.1); }
+  void setBaseFreq(double r) { baseFreq_ = r; }
+
+  int getNumOctaves() const { return numOctaves_.getValue(1); }
+  void setNumOctaves(int i) { numOctaves_ = i; }
+
+  int getSeed() const { return seed_.getValue(0); }
+  void setSeed(int i) { seed_ = i; }
+
+  std::string getFilterIn() const { return filterIn_.getValue("SourceGraphic"); }
+  void setFilterIn(const std::string &s) { filterIn_ = s; }
+
+  std::string getFilterOut() const { return filterOut_.getValue("SourceGraphic"); }
+  void setFilterOut(const std::string &s) { filterOut_ = s; }
 
   bool processOption(const std::string &name, const std::string &value) override;
 
   void draw() override;
 
-  CImagePtr filterImage(CImagePtr src_image);
+  void filterImage(CSVGBuffer *inBuffer, CSVGBuffer *outBuffer);
 
   void print(std::ostream &os, bool hier) const override;
 
@@ -31,8 +49,8 @@ class CSVGFeTurbulence : public CSVGFilter {
   COptValT<double>      baseFreq_;
   COptValT<int>         numOctaves_;
   COptValT<int>         seed_;
-  COptValT<std::string> filter_in_;
-  COptValT<std::string> filter_out_;
+  COptValT<std::string> filterIn_;
+  COptValT<std::string> filterOut_;
 };
 
 #endif

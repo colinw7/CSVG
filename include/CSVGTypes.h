@@ -1,6 +1,74 @@
 #ifndef CSVGTypes_H
 #define CSVGTypes_H
 
+enum class CSVGObjTypeId {
+  ANCHOR=1,
+  ANIMATE,
+  ANIMATE_BASE,
+  ANIMATE_COLOR,
+  ANIMATE_MOTION,
+  ANIMATE_TRANSFORM,
+  BLOCK,
+  CIRCLE,
+  CLIP_PATH,
+  DEFS,
+  DESC,
+  ELLIPSE,
+  FE_BLEND,
+  FE_COLOR_MATRIX,
+  FE_COMPONENT_TRANSFER,
+  FE_COMPOSITE,
+  FE_CONVOLVE_MATRIX,
+  FE_DIFFUSE_LIGHTING,
+  FE_DISPLACEMENT_MAP,
+  FE_DISTANT_LIGHT,
+  FE_FLOOD,
+  FE_FUNC,
+  FE_GAUSSIAN_BLUR,
+  FE_IMAGE,
+  FE_MERGE,
+  FE_MERGE_NODE,
+  FE_MORPHOLOGY,
+  FE_OFFSET,
+  FE_POINT_LIGHT,
+  FE_SPECULAR_LIGHTING,
+  FE_SPOT_LIGHT,
+  FE_TILE,
+  FE_TURBULENCE,
+  FILTER,
+  FONT,
+  FONT_FACE,
+  FONT_FACE_SRC,
+  FONT_FACE_URI,
+  GLYPH,
+  GROUP,
+  HKERN,
+  IMAGE,
+  LINEAR_GRADIENT,
+  LINE,
+  MARKER,
+  MASK,
+  MISSING_GLYPH,
+  MPATH,
+  PATH,
+  PATTERN,
+  POLYGON,
+  POLYLINE,
+  RADIAL_GRADIENT,
+  RECT,
+  SCRIPT,
+  SET,
+  STOP,
+  STYLE,
+  SWITCH,
+  SYMBOL,
+  TEXT,
+  TEXT_PATH,
+  TITLE,
+  TSPAN,
+  USE
+};
+
 enum class CSVGScale {
   FREE,
   FIXED_MEET,
@@ -22,6 +90,82 @@ enum class CSVGEventType {
   ANIMATE_END,
   ANIMATE_REPEAT,
   TIMEOUT
+};
+
+enum class CSVGTextDecoration {
+  NONE,
+  UNDERLINE,
+  OVERLINE,
+  LINE_THROUGH
+};
+
+enum class CSVGColorMatrixType {
+  MATRIX,
+  SATURATE,
+  HUE_ROTATE,
+  LUMINANCE_TO_ALPHA
+};
+
+enum class CSVGBlendMode {
+  NORMAL,
+  MULTIPLY,
+  SCREEN,
+  DARKEN,
+  LIGHTEN
+};
+
+enum class CSVGFilterFuncType {
+  IDENTITY,
+  LINEAR,
+  GAMMA,
+  TABLE,
+  DISCRETE
+};
+
+enum class CSVGMorphologyOperator {
+  ERODE,
+  DILATE
+};
+
+enum class CSVGLengthType {
+  NONE,
+  EM,
+  EX,
+  PT,
+  PC,
+  CM,
+  MM,
+  IN,
+  PX,
+  PERCENT
+};
+
+enum class CSVGPathPartType {
+  MOVE_TO,
+  LINE_TO,
+  RLINE_TO,
+  HLINE_TO,
+  VLINE_TO,
+  ARC_TO,
+  RARC_TO,
+  BEZIER2_TO,
+  RBEZIER2_TO,
+  BEZIER3_TO,
+  RBEZIER3_TO,
+  CLOSE_PATH
+};
+
+enum class CSVGStyleType {
+  NONE,
+  TEXT_CSS
+};
+
+enum class CSVGTimeValueType {
+  NONE,
+  HOURS,
+  MINUTES,
+  SECONDS,
+  MILLISECONDS
 };
 
 #endif

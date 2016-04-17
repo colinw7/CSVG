@@ -7,11 +7,29 @@ CSVGSwitch(CSVG &svg) :
 {
 }
 
+CSVGSwitch::
+CSVGSwitch(const CSVGSwitch &use) :
+ CSVGObject(use)
+{
+}
+
+CSVGSwitch::
+~CSVGSwitch()
+{
+}
+
+CSVGSwitch *
+CSVGSwitch::
+dup() const
+{
+  return new CSVGSwitch(*this);
+}
+
 bool
 CSVGSwitch::
 processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  return true;
+  return CSVGObject::processOption(opt_name, opt_value);
 }
 
 void
@@ -25,7 +43,15 @@ CSVGSwitch::
 print(std::ostream &os, bool hier) const
 {
   if (hier) {
-    os << "<switch/>" << std::endl;
+    os << "<switch";
+
+    CSVGObject::printValues(os);
+
+    os << ">" << std::endl;
+
+    printChildren(os, hier);
+
+    os << "</switch>" << std::endl;
   }
   else
     os << "switch";

@@ -23,20 +23,28 @@ class CSVGBufferMgr {
   CSVGBufferMgr(CSVG &svg);
  ~CSVGBufferMgr();
 
-  void setAntiAlias(bool flag) { anti_alias_ = flag; }
+  bool isAntiAlias() const { return antiAlias_; }
+  void setAntiAlias(bool flag) { antiAlias_ = flag; }
 
-  CSVGBuffer *lookupBuffer(const std::string &name);
+  CSVGBuffer *lookupBuffer(const std::string &name, bool create=false);
   CSVGBuffer *createBuffer(const std::string &name);
+
+  CSVGBuffer *lookupAlphaBuffer(CSVGBuffer *refBuffer, bool create=false);
+  CSVGBuffer *createAlphaBuffer(CSVGBuffer *refBuffer);
+
+  void getBufferNames(std::vector<std::string> &names) const;
 
  private:
   void addBuffer(CSVGBuffer *buffer);
+  void addAlphaBuffer(CSVGBuffer *buffer);
 
  private:
   typedef std::map<std::string,CSVGBuffer*> BufferMap;
 
-  CSVG      &svg_;
-  bool       anti_alias_ { true };
-  BufferMap  buffer_map_;
+  CSVG&     svg_;
+  bool      antiAlias_ { true };
+  BufferMap bufferMap_;
+  BufferMap alphaBufferMap_;
 };
 
 //------
@@ -44,26 +52,50 @@ class CSVGBufferMgr {
 class CSVGBuffer {
  public:
   CSVGBuffer(CSVG &svg, const std::string &name);
+  CSVGBuffer(CSVGBuffer *refBuffer);
+
  ~CSVGBuffer();
 
   const std::string &getName() const { return name_; }
 
+  bool isAntiAlias() const;
   void setAntiAlias(bool flag);
 
+  const CMatrix2D &transform() const { return transform_; }
+  void setTransform(const CMatrix2D &v);
+  void unsetTransform();
+
+  const CPoint2D &origin() const { return origin_; }
+  void setOrigin(const CPoint2D &o) { origin_ = o; }
+
+  const CBBox2D &bbox() const { return bbox_; }
+  void setBBox(const CBBox2D &b) { bbox_ = b; }
+
+  bool isDrawing() const { return drawing_; }
+  void setDrawing(bool b) { drawing_ = b; }
+
+  CISize2D getImageSize() const;
+
   CImagePtr getImage() const;
-  CImagePtr getAlphaImage() const;
 
   void setImage(CImagePtr image);
-  void setAlphaImage(CImagePtr image);
+
+  void addImage(CImagePtr image);
+  void addImage(double x, double y, CImagePtr image);
 
   void reset();
+
+  void clear();
 
   void setup(const CBBox2D &bbox);
 
   CSVGRenderer *getRenderer() const;
 
-  void beginDraw(int w, int h, const CBBox2D &bbox);
+  void beginDraw(double w, double h, const CBBox2D &bbox);
   void endDraw();
+
+  void startDraw();
+  void stopDraw ();
 
   void setAlign(CHAlignType halign, CVAlignType valign);
   void setEqualScale(bool equalScale);
@@ -108,25 +140,32 @@ class CSVGBuffer {
   void pathStroke();
   void pathFill();
 
-  void pathClip();
-  void pathEoClip();
+  void pathClip  (CSVGBuffer *buffer=0);
+  void pathEoClip(CSVGBuffer *buffer=0);
 
   void pathBBox(CBBox2D &bbox);
 
   void initClip();
 
   bool mmToPixel(double mm, double *pixel);
-  void windowToPixel(double xi, double yi, int *xo, int *yo);
+
+  void lengthToPixel(double xi, double yi, double *xo, double *yo);
+  void windowToPixel(double xi, double yi, double *xo, double *yo);
 
  private:
   CSVGBuffer(const CSVGBuffer &rhs);
   CSVGBuffer &operator=(const CSVGBuffer &rhs);
 
  private:
-  CSVG         &svg_;
+  CSVG&         svg_;
   std::string   name_;
-  CSVGRenderer *renderer_ { 0 };
+  CSVGRenderer* renderer_ { 0 };
+  CMatrix2D     transform_;
   CLineDash     lineDash_;
+  CPoint2D      origin_ { 0, 0 };
+  CBBox2D       bbox_;
+  bool          drawing_ { false };
+  CSVGBuffer*   refBuffer_ { 0 };
 };
 
 #endif

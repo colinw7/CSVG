@@ -54,9 +54,9 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   else if (svg_.coordOption (opt_name, opt_value, "y", &real))
     y_ = real;
   else if (svg_.lengthOption(opt_name, opt_value, "width", length))
-    width_ = length.value();
+    width_ = length;
   else if (svg_.lengthOption(opt_name, opt_value, "height", length))
-    height_ = length.value();
+    height_ = length;
   else if (svg_.coordUnitsOption(opt_name, opt_value, "maskContentUnits", units))
     units_ = units;
   else
@@ -73,49 +73,95 @@ draw()
 
 void
 CSVGMask::
-objectDraw(const CSVGObject &object)
+drawMask(const CSVGObject &object)
 {
-  std::string old_buffer = svg_.getBufferName();
+  CBBox2D bbox;
 
-  svg_.setBuffer("_mask");
+  if (! object.getBBox(bbox))
+    return;
 
-  svg_.getBuffer()->reset();
+  //---
 
+  CSVGBuffer *oldBuffer = svg_.getBuffer();
+
+  // set temp buffer for mask image
+  CSVGBuffer *buffer = svg_.getBuffer("mask_" + object.getUniqueName());
+
+  svg_.setBuffer(buffer);
+
+  //---
+
+  double x = bbox.getXMin  ();
+  double y = bbox.getYMin  ();
+  double w = bbox.getWidth ();
+  double h = bbox.getHeight();
+
+  svg_.beginDrawBuffer(buffer, bbox);
+
+  buffer->clear();
+
+  //---
+
+  // draw mask object
   CMatrix2D transform;
 
+  svg_.getTransform(transform);
+
   if (getUnits() == CSVGCoordUnits::OBJECT_BBOX) {
-    CBBox2D bbox;
-
-    if (! object.getBBox(bbox))
-      return;
-
-    double x = bbox.getMin().x;
-    double y = bbox.getMin().y;
-    double w = bbox.getWidth();
-    double h = bbox.getHeight();
-
     CMatrix2D matrix1, matrix2;
 
-    matrix1.setTranslation(x - x_.getValue(0), y - y_.getValue(0));
-    matrix2.setScale      (w/width_.getValue(1), h/height_.getValue(1));
+    matrix1.setTranslation(x - getX()  , y - getY()   );
+    matrix2.setScale      (w/getWidth(), h/getHeight());
 
-    svg_.getTransform(transform);
-
-    svg_.setTransform(transform*matrix1*matrix2);
+    svg_.setTransform(matrix1*matrix2);
   }
 
-  drawObject();
+  drawSubObject();
 
   if (getUnits() == CSVGCoordUnits::OBJECT_BBOX)
     svg_.setTransform(transform);
 
-  CImagePtr mask_image  = svg_.getBufferImage("_mask");
+  //---
+
+  svg_.endDrawBuffer(buffer);
+
+  svg_.setBuffer(oldBuffer);
+
+  //---
+
+  // create mask image
+  CImagePtr mask_image  = buffer->getImage();
   CImagePtr mask_image1 = mask_image->createRGBAMask();
-  CImagePtr dest_image  = svg_.getBufferImage(old_buffer);
+
+#if 0
+  {
+  std::string maskBufferName = "rgb_mask_" + object.getUniqueName();
+
+  CSVGBuffer *buffer = svg_.getBuffer(maskBufferName);
+
+  buffer->setImage(mask_image1);
+  }
+#endif
+
+  //---
+
+  // combine mask with image
+  CImagePtr dest_image = oldBuffer->getImage();
 
   dest_image->copyAlpha(mask_image1, 0, 0);
 
-  svg_.setBuffer(old_buffer);
+
+#if 0
+  {
+  std::string maskBufferName = "alpha_mask_" + object.getUniqueName();
+
+  CSVGBuffer *buffer = svg_.getBuffer(maskBufferName);
+
+  buffer->setImage(dest_image);
+  }
+#endif
+
+  oldBuffer->setImage(dest_image);
 }
 
 void
@@ -127,10 +173,10 @@ print(std::ostream &os, bool hier) const
 
     CSVGObject::printValues(os);
 
-    printNameValue(os, "x"     , x_     );
-    printNameValue(os, "y"     , y_     );
-    printNameValue(os, "width" , width_ );
-    printNameValue(os, "height", height_);
+    printNameValue (os, "x"     , x_     );
+    printNameValue (os, "y"     , y_     );
+    printNameLength(os, "width" , width_ );
+    printNameLength(os, "height", height_);
 
     if (getUnitsValid())
       os << " maskContentUnits=\"" << CSVG::encodeUnitsString(getUnits()) << "\"";
