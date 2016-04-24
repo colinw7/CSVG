@@ -7,6 +7,29 @@ CQSVGPath(CQSVG *svg) :
 {
 }
 
+QString
+CQSVGPath::
+getPathString() const
+{
+  std::stringstream ss;
+
+  qsvg_->printParts(ss, CSVGPath::getPartList());
+
+  return ss.str().c_str();
+}
+
+void
+CQSVGPath::
+setPathString(const QString &s)
+{
+  CSVG::PartList parts;
+
+  if (! qsvg_->pathStringToParts(s.toStdString(), parts))
+    return;
+
+  CSVGPath::setPartList(parts);
+}
+
 void
 CQSVGPath::
 drawTerm()

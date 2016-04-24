@@ -47,7 +47,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
 
   std::string     str;
   CSVGLengthValue length;
-  CMatrix2D       transform;
+  CMatrixStack2D  transform;
 
   if      (svg_.coordOption    (opt_name, opt_value, "x1", length))
     x1_ = length;
@@ -104,7 +104,7 @@ bool
 CSVGLine::
 inside(const CPoint2D &pos) const
 {
-  CMatrix2D m = getFlatTransform();
+  CMatrixStack2D m = getFlatTransform();
 
   CPoint2D p1, p2;
 

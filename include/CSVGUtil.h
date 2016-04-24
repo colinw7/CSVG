@@ -18,6 +18,8 @@ namespace CSVGUtil {
                         double rx, double ry, int fa, int fs, bool unit_circle,
                         double *cx, double *cy, double *xr, double *yr,
                         double *theta, double *delta);
+
+  inline int round(double r) { return int(r + 0.5); }
 }
 
 #endif

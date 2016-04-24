@@ -60,13 +60,13 @@ void
 CSVGAnimateTransform::
 animate(double t)
 {
-  if (attributeName_.getValue() == "transform") {
+  if (getAttributeName() == "transform") {
     std::vector<double> fromValues, toValues;
 
-    svg_.stringToReals(from_.getValue(""), fromValues);
-    svg_.stringToReals(to_  .getValue(""), toValues  );
+    svg_.stringToReals(getFrom(), fromValues);
+    svg_.stringToReals(getTo  (), toValues  );
 
-    if      (type_.getValue("") == "rotate") {
+    if      (getType() == "rotate") {
       if (fromValues.size() == 1) { fromValues.push_back(0); fromValues.push_back(0); }
       if (toValues  .size() == 1) { toValues  .push_back(0); toValues  .push_back(0); }
 
@@ -78,26 +78,20 @@ animate(double t)
       double y = CSVGUtil::map(t, 0, 1, fromValues[2], toValues[2]);
 
       //std::cerr << "CSVGAnimateTransform: transform " << currentTime_ << ":" << a << std::endl;
-      CMatrix2D m;
+      CMatrixStack2D m;
 
-      if (additive_.getValue("") == "sum")
+      if (getAdditive() == "sum")
         m = getParent()->getTransform();
       else
         m = getParent()->getAnimation().getTransform();
 
-      CMatrix2D m1, m2, m3;
+      m.rotate(CMathGen::DegToRad(a), CPoint2D(x, y));
 
-      m1.setTranslation(-x, -y);
-      m2.setRotation(CMathGen::DegToRad(a));
-      m3.setTranslation( x,  y);
-
-      CMatrix2D mm = m3*m2*m1;
-
-      getParent()->setTransform(mm*m);
+      getParent()->setTransform(m);
 
       svg_.redraw();
     }
-    else if (type_.getValue("") == "scale") {
+    else if (getType() == "scale") {
       if (fromValues.size() == 1) fromValues.push_back(fromValues[0]);
       if (toValues  .size() == 1) toValues  .push_back(toValues  [0]);
 
@@ -109,18 +103,16 @@ animate(double t)
 
       //std::cerr << "CSVGAnimateTransform: scale " << currentTime_ << ":" <<
       //             xs << " " << ys << std::endl;
-      CMatrix2D m;
+      CMatrixStack2D m;
 
-      if (additive_.getValue("") == "sum")
+      if (getAdditive() == "sum")
         m = getParent()->getTransform();
       else
         m = getParent()->getAnimation().getTransform();
 
-      CMatrix2D m1;
+      m.scale(xs, ys);
 
-      m1.setScale(xs, ys);
-
-      getParent()->setTransform(m1*m);
+      getParent()->setTransform(m);
 
       svg_.redraw();
     }

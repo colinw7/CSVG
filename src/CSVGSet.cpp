@@ -48,7 +48,7 @@ CSVGSet::
 animate(double /*t*/)
 {
   if (attributeName_.isValid() && to_.isValid()) {
-    getParent()->processOption(attributeName_.getValue(), to_.getValue());
+    getParent()->processOption(getAttributeName(), getTo());
 
     svg_.redraw();
   }

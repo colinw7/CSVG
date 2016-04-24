@@ -13,6 +13,11 @@ class CSVGTextPath : public CSVGObject {
 
   CSVGTextPath *dup() const override;
 
+  const CSVGXLink &xlink() const { return xlink_.getValue(); }
+
+  std::string getLinkName() const { return (xlink_.isValid() ? xlink_.getValue().str() : ""); }
+  void setLinkName(const std::string &str);
+
   bool processOption(const std::string &name, const std::string &value) override;
 
   void draw() override;

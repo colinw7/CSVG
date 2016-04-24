@@ -39,6 +39,11 @@ class CSVGFilter : public CSVGObject {
     return height_.getValue(CSVGLengthValue(h)).calcValue(h); }
   void setHeight(double h) { height_ = h; }
 
+  const CSVGXLink &xlink() const { return xlink_.getValue(); }
+
+  std::string getLinkName() const { return (xlink_.isValid() ? xlink_.getValue().str() : ""); }
+  void setLinkName(const std::string &str);
+
   bool processOption(const std::string &name, const std::string &value) override;
 
   void setObject(CSVGObject *object) { object_ = object; }

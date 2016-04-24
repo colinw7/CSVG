@@ -21,10 +21,10 @@
     patternTransform
     xlink:href
 */
-
 CSVGPattern::
 CSVGPattern(CSVG &svg) :
- CSVGObject(svg)
+ CSVGObject(svg),
+ xlink_    (this)
 {
 }
 
@@ -37,7 +37,8 @@ CSVGPattern(const CSVGPattern &pattern) :
  height_          (pattern.height_),
  units_           (pattern.units_),
  contentUnits_    (pattern.contentUnits_),
- patternTransform_(pattern.patternTransform_)
+ patternTransform_(pattern.patternTransform_),
+ xlink_           (pattern.xlink_)
 {
 }
 
@@ -48,6 +49,13 @@ dup() const
   return new CSVGPattern(*this);
 }
 
+void
+CSVGPattern::
+setLinkName(const std::string &str)
+{
+  xlink_ = CSVGXLink(this, str);
+}
+
 bool
 CSVGPattern::
 processOption(const std::string &opt_name, const std::string &opt_value)
@@ -56,7 +64,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   double          real;
   CSVGCoordUnits  units;
   CSVGLengthValue length;
-  CMatrix2D       transform;
+  CMatrixStack2D  transform;
 
   if      (svg_.realOption(opt_name, opt_value, "x", &real))
     x_ = real;
@@ -73,6 +81,8 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   else if (svg_.transformOption(opt_name, opt_value, "patternTransform", transform))
     patternTransform_ = transform;
   else if (svg_.stringOption(opt_name, opt_value, "xlink:href", str)) {
+    xlink_ = CSVGXLink(this, str);
+#if 0
     // TODO: delayed paint ?
     CSVGObject *object;
     CImagePtr   image;
@@ -80,7 +90,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
     if (! decodeXLink(opt_value, &object, image))
       return false;
 
-    if  (object) {
+    if (object) {
       CSVGPattern *p = dynamic_cast<CSVGPattern *>(object);
 
       if (p) {
@@ -99,17 +109,12 @@ processOption(const std::string &opt_name, const std::string &opt_value)
         }
       }
     }
+#endif
   }
   else
     return CSVGObject::processOption(opt_name, opt_value);
 
   return true;
-}
-
-void
-CSVGPattern::
-draw()
-{
 }
 
 void
@@ -146,30 +151,33 @@ CImagePtr
 CSVGPattern::
 getImage(CSVGObject *parent, double *w1, double *h1)
 {
-  double w = 100;
-  double h = 100;
+  double w = getWidth ();
+  double h = getHeight();
+
+  double pw = 100;
+  double ph = 100;
 
   if (getUnits() == CSVGCoordUnits::OBJECT_BBOX) {
     CBBox2D parentBBox;
 
     if (parent && parent->getBBox(parentBBox)) {
-      w = parentBBox.getWidth ();
-      h = parentBBox.getHeight();
+      pw = parentBBox.getWidth ();
+      ph = parentBBox.getHeight();
     }
 
-    *w1 = getWidth ()*w;
-    *h1 = getHeight()*h;
+    *w1 = w*pw;
+    *h1 = h*ph;
   }
   else {
-    *w1 = getWidth ();
-    *h1 = getHeight();
+    *w1 = w;
+    *h1 = h;
   }
 
   //---
 
   CSVGBuffer *oldBuffer = svg_.getBuffer();
 
-  CMatrix2D transform;
+  CMatrixStack2D transform;
 
   svg_.getTransform(transform);
 
@@ -178,10 +186,12 @@ getImage(CSVGObject *parent, double *w1, double *h1)
   // switch to pattern buffer
   CSVGBuffer *patternBuffer;
 
+  std::string bufferId = (getId() != "" ? getId() : "pattern");
+
   if (parent)
-    patternBuffer = svg_.getBuffer("_" + parent->getUniqueName() + "_pattern");
+    patternBuffer = svg_.getBuffer("_" + parent->getUniqueName() + "_" + bufferId);
   else
-    patternBuffer = svg_.getBuffer("_pattern");
+    patternBuffer = svg_.getBuffer("_" + bufferId);
 
   svg_.setBuffer(patternBuffer);
 
@@ -189,29 +199,30 @@ getImage(CSVGObject *parent, double *w1, double *h1)
 
   // draw pattern to buffer
   svg_.beginDrawBuffer(patternBuffer, CBBox2D(getX(), getY(), *w1, *h1));
+  //svg_.beginDrawBuffer(patternBuffer);
 
   //---
 
-  if      (getContentsUnits() == CSVGCoordUnits::OBJECT_BBOX) {
+  CMatrixStack2D matrix;
+
+  if      (getContentUnits() == CSVGCoordUnits::OBJECT_BBOX) {
     if (parent) {
-      CMatrix2D matrix1, matrix2;
+      //matrix.translate(0, 0);
+      matrix.scale(*w1/w, *h1/h);
 
-      matrix1.setTranslation(0, 0);
-      matrix2.setScale      (w, h);
-
-      svg_.setTransform(matrix1*matrix2);
+      svg_.setTransform(matrix);
     }
   }
   else if (viewBox_.isValid()) {
     CBBox2D viewBox = viewBox_.getValue();
 
-    CMatrix2D matrix1, matrix2;
+    //matrix.translate(0, 0);
+    matrix.scale(*w1/viewBox.getWidth(), *h1/viewBox.getHeight());
 
-    matrix1.setTranslation(0, 0);
-    matrix2.setScale      (*w1/viewBox.getWidth(), *h1/viewBox.getHeight());
-
-    svg_.setTransform(matrix1*matrix2);
+    svg_.setTransform(matrix);
   }
+
+  //--
 
   drawSubObject();
 
@@ -224,10 +235,19 @@ getImage(CSVGObject *parent, double *w1, double *h1)
   // restore original buffer
   svg_.setBuffer(oldBuffer);
 
-  if (getContentsUnits() == CSVGCoordUnits::OBJECT_BBOX)
-    svg_.setTransform(transform);
+  svg_.setTransform(transform);
 
   return image;
+}
+
+CSVGObject *
+CSVGPattern::
+getObject()
+{
+  if (! xlink_.isValid())
+    return 0;
+
+  return xlink_.getValue().getObject();
 }
 
 std::ostream &

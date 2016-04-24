@@ -4,7 +4,7 @@
 #include <CImage.h>
 #include <CFont.h>
 #include <CBBox2D.h>
-#include <CMatrix2D.h>
+#include <CMatrixStack2D.h>
 #include <CLineDash.h>
 #include <CLineCapType.h>
 #include <CLineJoinType.h>
@@ -61,8 +61,8 @@ class CSVGBuffer {
   bool isAntiAlias() const;
   void setAntiAlias(bool flag);
 
-  const CMatrix2D &transform() const { return transform_; }
-  void setTransform(const CMatrix2D &v);
+  const CMatrixStack2D &transform() const { return transform_; }
+  void setTransform(const CMatrixStack2D &v);
   void unsetTransform();
 
   const CPoint2D &origin() const { return origin_; }
@@ -101,7 +101,7 @@ class CSVGBuffer {
   void setEqualScale(bool equalScale);
   void setScaleMin(bool scale);
 
-  void setViewMatrix(const CMatrix2D &matrix);
+  void setViewMatrix(const CMatrixStack2D &matrix);
 
   void fill(const CRGBA &bg);
 
@@ -157,15 +157,15 @@ class CSVGBuffer {
   CSVGBuffer &operator=(const CSVGBuffer &rhs);
 
  private:
-  CSVG&         svg_;
-  std::string   name_;
-  CSVGRenderer* renderer_ { 0 };
-  CMatrix2D     transform_;
-  CLineDash     lineDash_;
-  CPoint2D      origin_ { 0, 0 };
-  CBBox2D       bbox_;
-  bool          drawing_ { false };
-  CSVGBuffer*   refBuffer_ { 0 };
+  CSVG&          svg_;
+  std::string    name_;
+  CSVGRenderer*  renderer_ { 0 };
+  CMatrixStack2D transform_;
+  CLineDash      lineDash_;
+  CPoint2D       origin_ { 0, 0 };
+  CBBox2D        bbox_;
+  bool           drawing_ { false };
+  CSVGBuffer*    refBuffer_ { 0 };
 };
 
 #endif

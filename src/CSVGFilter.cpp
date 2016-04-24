@@ -23,6 +23,13 @@ dup() const
   return new CSVGFilter(*this);
 }
 
+void
+CSVGFilter::
+setLinkName(const std::string &str)
+{
+  xlink_ = CSVGXLink(this, str);
+}
+
 bool
 CSVGFilter::
 processOption(const std::string &opt_name, const std::string &opt_value)

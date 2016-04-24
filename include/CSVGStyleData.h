@@ -22,6 +22,8 @@ class CSVGStyleData {
   CLineDash getStrokeDash        () const { return stroke_.getDash(); }
   bool      getFillColorValid    () const { return fill_  .getColorValid(); }
   CRGBA     getFillColor         () const { return fill_  .getColor(); }
+  bool      getFillNoColorValid  () const { return fill_  .getNoColorValid(); }
+  bool      getFillNoColor       () const { return fill_  .getNoColor(); }
 
  private:
   std::string id_;

@@ -46,8 +46,8 @@ processOption(const std::string &opt_name, const std::string &opt_value)
 {
   std::string     str;
   double          real;
-  CSVGLengthValue length;
   CSVGCoordUnits  units;
+  CSVGLengthValue length;
 
   if      (svg_.coordOption (opt_name, opt_value, "x", &real))
     x_ = real;
@@ -103,17 +103,17 @@ drawMask(const CSVGObject &object)
   //---
 
   // draw mask object
-  CMatrix2D transform;
+  CMatrixStack2D transform;
 
   svg_.getTransform(transform);
 
   if (getUnits() == CSVGCoordUnits::OBJECT_BBOX) {
-    CMatrix2D matrix1, matrix2;
+    CMatrixStack2D matrix;
 
-    matrix1.setTranslation(x - getX()  , y - getY()   );
-    matrix2.setScale      (w/getWidth(), h/getHeight());
+    matrix.translate(x - getX()  , y - getY()   );
+    matrix.scale    (w/getWidth(), h/getHeight());
 
-    svg_.setTransform(matrix1*matrix2);
+    svg_.setTransform(matrix);
   }
 
   drawSubObject();

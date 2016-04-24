@@ -70,12 +70,6 @@ rotateBy(double da, const CPoint2D &origin)
 
 void
 CSVGSymbol::
-draw()
-{
-}
-
-void
-CSVGSymbol::
 print(std::ostream &os, bool hier) const
 {
   if (hier) {

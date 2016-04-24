@@ -7,6 +7,20 @@ CQSVGImage(CQSVG *svg) :
 {
 }
 
+QString
+CQSVGImage::
+getXLink() const
+{
+  return CSVGImage::getLinkName().c_str();
+}
+
+void
+CQSVGImage::
+setXLink(const QString &s)
+{
+  CSVGImage::setLinkName(s.toStdString());
+}
+
 void
 CQSVGImage::
 drawTerm()

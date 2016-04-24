@@ -30,13 +30,15 @@ class CSVGLinearGradient : public CSVGObject {
   }
 
   double getX1() const { return x1_.isValid() ? x1_.getValue().value() : 0; }
-  double getY1() const { return y1_.isValid() ? y1_.getValue().value() : 0; }
-  double getX2() const { return x2_.isValid() ? x2_.getValue().value() : 1; }
-  double getY2() const { return x2_.isValid() ? y2_.getValue().value() : 0; }
-
   void setX1(double x1) { x1_.setValue(x1); }
+
+  double getY1() const { return y1_.isValid() ? y1_.getValue().value() : 0; }
   void setY1(double y1) { y1_.setValue(y1); }
+
+  double getX2() const { return x2_.isValid() ? x2_.getValue().value() : 1; }
   void setX2(double x2) { x2_.setValue(x2); }
+
+  double getY2() const { return x2_.isValid() ? y2_.getValue().value() : 0; }
   void setY2(double y2) { y2_.setValue(y2); }
 
   void setBBox(const CBBox2D &bbox) {
@@ -47,8 +49,8 @@ class CSVGLinearGradient : public CSVGObject {
   }
 
   bool getGTransformValid() const { return gtransform_.isValid(); }
-  CMatrix2D getGTransform() const { return gtransform_.getValue(); }
-  void setGTransform(const CMatrix2D &gtransform) { gtransform_ = gtransform; }
+  CMatrixStack2D getGTransform() const { return gtransform_.getValue(); }
+  void setGTransform(const CMatrixStack2D &gtransform) { gtransform_ = gtransform; }
 
   bool getUnitsValid() const { return units_.isValid(); }
   CSVGCoordUnits getUnits() const { return units_.getValue(CSVGCoordUnits::OBJECT_BBOX); }
@@ -87,7 +89,7 @@ class CSVGLinearGradient : public CSVGObject {
   COptValT<CSVGLengthValue>     x2_;
   COptValT<CSVGLengthValue>     y2_;
   StopList                      stops_;
-  COptValT<CMatrix2D>           gtransform_;
+  COptValT<CMatrixStack2D>      gtransform_;
   COptValT<CSVGCoordUnits>      units_;
   COptValT<CGradientSpreadType> spread_;
 };

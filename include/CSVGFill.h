@@ -47,8 +47,9 @@ class CSVGFill {
            fillObject_  .isValid();
   }
 
-  bool isNoColor() const { return noColor_.getValue(false); }
-  void setIsNoColor(bool b) { noColor_ = b; }
+  bool getNoColorValid() const { return noColor_.isValid(); }
+  bool getNoColor() const { return noColor_.getValue(false); }
+  void setNoColor(bool b) { noColor_ = b; }
 
   bool isCurrentColor() const { return currentColor_.getValue(false); }
   void setIsCurrentColor(bool b) { currentColor_ = b; }
@@ -56,7 +57,7 @@ class CSVGFill {
   // color
   CRGBA getAlphaColor() const;
 
-  bool  getColorValid() const { return color_.isValid(); }
+  bool getColorValid() const { return color_.isValid(); }
   CRGBA getColor() const { return color_.getValue(CRGBA(0,0,0,0)); }
 
   void setColor(const std::string &color_str);
@@ -64,13 +65,13 @@ class CSVGFill {
 
   void resetColor() { color_.setInvalid(); }
 
-  bool  getDefColorValid() const { return defColor_.isValid(); }
+  bool getDefColorValid() const { return defColor_.isValid(); }
   CRGBA getDefColor() const { return defColor_.getValue(CRGBA(0,0,0,0)); }
 
   void setDefColor(const CRGBA &rgba) { defColor_ = rgba; }
 
   // opacity
-  bool   getOpacityValid() const { return opacity_.isValid(); }
+  bool getOpacityValid() const { return opacity_.isValid(); }
   double getOpacity() const { return opacity_.getValue(1.0); }
 
   void setOpacity(const std::string &opacity_str);
@@ -79,7 +80,7 @@ class CSVGFill {
   void resetOpacity() { opacity_.setInvalid(); }
 
   // rule
-  bool      getRuleValid() const { return rule_.isValid(); }
+  bool getRuleValid() const { return rule_.isValid(); }
   CFillType getRule() const { return rule_.getValue(FILL_TYPE_EVEN_ODD); }
 
   void setRule(const std::string &rule_str);

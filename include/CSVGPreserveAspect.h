@@ -15,7 +15,7 @@ class CSVGPreserveAspect {
   const CVAlignType &getVAlign() const { return valign_; }
   void setVAlign(const CVAlignType &a) { valign_ = a; }
 
-  const CSVGScale &getScale () const { return scale_ ; }
+  const CSVGScale &getScale() const { return scale_ ; }
   void setScale(const CSVGScale &s) { scale_ = s; }
 
  public:

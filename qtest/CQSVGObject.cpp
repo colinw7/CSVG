@@ -59,7 +59,7 @@ QString
 CQSVGObject::
 transformStr() const
 {
-  return obj_->getTransform().toString().c_str();
+  return obj_->getTransform().getMatrix().toString().c_str();
 }
 
 QColor
@@ -150,7 +150,7 @@ bool
 CQSVGObject::
 fillIsNoColor() const
 {
-  return obj_->getFill().isNoColor();
+  return obj_->getFill().getNoColor();
 }
 
 void
@@ -159,7 +159,7 @@ setFillIsNoColor(bool b)
 {
   CSVGFill fill = obj_->getFill();
 
-  fill.setIsNoColor(b);
+  fill.setNoColor(b);
 
   obj_->setFill(fill);
 }
@@ -253,6 +253,48 @@ setFillUrl(const QString &str)
   obj_->setFill(fill);
 }
 
+QString
+CQSVGObject::
+getFontFamily() const
+{
+  return obj_->getFontFamily().c_str();
+}
+
+void
+CQSVGObject::
+setFontFamily(const QString &str)
+{
+  obj_->setFontFamily(str.toStdString());
+}
+
+double
+CQSVGObject::
+getFontSize() const
+{
+  return obj_->getFontSize();
+}
+
+void
+CQSVGObject::
+setFontSize(double s)
+{
+  obj_->setFontSize(s);
+}
+
+QFont
+CQSVGObject::
+getFont() const
+{
+  return CQUtil::toQFont(obj_->getFont());
+}
+
+void
+CQSVGObject::
+setFont(QFont f)
+{
+  obj_->setFont(CQUtil::fromQFont(f));
+}
+
 void
 CQSVGObject::
 drawSelected()
@@ -265,6 +307,10 @@ drawSelected()
   if (obj_->getFlatTransformedBBox(bbox)) {
     CQSVGCanvas *canvas = qsvg_->window()->canvas();
 
-    canvas->drawRect(bbox, Qt::red);
+    double scale = obj_->getSVG().scale();
+
+    CBBox2D bbox1 = scale*bbox;
+
+    canvas->drawRect(bbox1, Qt::red);
   }
 }

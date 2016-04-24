@@ -32,6 +32,13 @@ getUniqueName() const
   return name;
 }
 
+void
+CSVGFilterBase::
+setLinkName(const std::string &str)
+{
+  xlink_ = CSVGXLink(this, str);
+}
+
 bool
 CSVGFilterBase::
 processOption(const std::string &opt_name, const std::string &opt_value)

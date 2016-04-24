@@ -9,6 +9,9 @@ class CQSVG;
 class CQSVGMarker : public CQSVGObject, public CSVGMarker {
   Q_OBJECT
 
+  Q_PROPERTY(double refX READ getRefX WRITE setRefX)
+  Q_PROPERTY(double refY READ getRefY WRITE setRefY)
+
  public:
   CQSVGMarker(CQSVG *svg);
 };

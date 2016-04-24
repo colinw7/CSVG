@@ -17,6 +17,7 @@ class CQSVGEnum : public QObject {
   Q_ENUMS(LineJoinType)
   Q_ENUMS(FillType)
   Q_ENUMS(ColorMatrixType)
+  Q_ENUMS(CoordUnitsType)
 
  public:
   enum HAlignType {
@@ -54,6 +55,12 @@ class CQSVGEnum : public QObject {
     ColorMatrixTypeSaturate,
     ColorMatrixTypeHueRotate,
     ColorMatrixTypeLuminanceToAlpha
+  };
+
+  enum CoordUnitsType {
+    CoordUnitsObjectBBox,
+    CoordUnitsUserSpace,
+    CoordUnitsStrokeWidth
   };
 
  public:
@@ -109,6 +116,14 @@ class CQSVGEnum : public QObject {
 
   //---
 
+  const CoordUnitsType &coordUnitsType() { return coordUnitsType_; }
+  void setCoordUnitsType(const CoordUnitsType &type) { coordUnitsType_ = type; }
+
+  static CoordUnitsType coordUnitsTypeConv(const CSVGCoordUnits &type);
+  static CSVGCoordUnits coordUnitsTypeConv(const CoordUnitsType &type);
+
+  //---
+
  private:
   HAlignType      halignType_;
   VAlignType      valignType_;
@@ -116,6 +131,7 @@ class CQSVGEnum : public QObject {
   LineJoinType    lineJoinType_;
   FillType        fillType_;
   ColorMatrixType colorMatrixType_;
+  CoordUnitsType  coordUnitsType_;
 };
 
 #endif

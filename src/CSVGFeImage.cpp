@@ -24,6 +24,13 @@ dup() const
   return new CSVGFeImage(*this);
 }
 
+void
+CSVGFeImage::
+setLinkName(const std::string &str)
+{
+  xlink_ = CSVGXLink(this, str);
+}
+
 bool
 CSVGFeImage::
 processOption(const std::string &opt_name, const std::string &opt_value)

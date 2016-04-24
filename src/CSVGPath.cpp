@@ -6,10 +6,8 @@
 
 CSVGPath::
 CSVGPath(CSVG &svg) :
- CSVGObject(svg),
- parts_    ()
+ CSVGObject(svg)
 {
-  //fill_.setDefColor(CRGBA(0,0,0));
 }
 
 CSVGPath::

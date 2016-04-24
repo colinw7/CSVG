@@ -5,8 +5,7 @@
 #include <cassert>
 
 CCSS::
-CCSS() :
- styleData_()
+CCSS()
 {
 }
 
@@ -42,10 +41,8 @@ void
 CCSS::
 getIds(std::vector<std::string> &ids) const
 {
-  StyleDataMap::const_iterator p1, p2;
-
-  for (p1 = styleData_.begin(), p2 = styleData_.end(); p1 != p2; ++p1) {
-    const std::string &id = (*p1).first;
+  for (const auto &d : styleData_) {
+    const std::string &id = d.first;
 
     ids.push_back(id);
   }
@@ -158,7 +155,7 @@ CCSS::StyleData &
 CCSS::
 getStyleData(const std::string &id)
 {
-  StyleDataMap::iterator p = styleData_.find(id);
+  auto p = styleData_.find(id);
 
   if (p == styleData_.end())
     p = styleData_.insert(p, StyleDataMap::value_type(id, StyleData(id)));
@@ -172,7 +169,7 @@ const CCSS::StyleData &
 CCSS::
 getStyleData(const std::string &id) const
 {
-  StyleDataMap::const_iterator p = styleData_.find(id);
+  auto p = styleData_.find(id);
 
   assert(p != styleData_.end());
 
@@ -185,10 +182,8 @@ void
 CCSS::
 print(std::ostream &os) const
 {
-  StyleDataMap::const_iterator p1, p2;
-
-  for (p1 = styleData_.begin(), p2 = styleData_.end(); p1 != p2; ++p1) {
-    const StyleData &styleData = (*p1).second;
+  for (const auto &d : styleData_) {
+    const StyleData &styleData = d.second;
 
     styleData.print(os);
 
@@ -204,13 +199,8 @@ print(std::ostream &os) const
 {
   os << "<style class=\"" << id_ << "\"";
 
-  OptionList::const_iterator p1, p2;
-
-  for (p1 = options_.begin(), p2 = options_.end(); p1 != p2; ++p1) {
-    const Option &option = *p1;
-
-    os << " " << option.getName() << "=\"" << option.getValue() << "\"";
-  }
+  for (const auto &o : options_)
+    os << " " << o.getName() << "=\"" << o.getValue() << "\"";
 
   os << "/>";
 }

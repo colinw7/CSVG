@@ -1,6 +1,7 @@
 #include <CSVGBuffer.h>
 #include <CSVG.h>
 #include <CSVGRenderer.h>
+#include <CSVGUtil.h>
 
 CSVGBufferMgr::
 CSVGBufferMgr(CSVG &svg) :
@@ -97,7 +98,7 @@ CSVGBuffer::
 CSVGBuffer(CSVG &svg, const std::string &name) :
  svg_(svg), name_(name)
 {
-  transform_.setIdentity();
+  transform_.reset();
 }
 
 CSVGBuffer::
@@ -220,8 +221,8 @@ addImage(double x, double y, CImagePtr image)
 
   //---
 
-  int ix = int(x + 0.5);
-  int iy = int(y + 0.5);
+  int ix = CSVGUtil::round(x);
+  int iy = CSVGUtil::round(y);
 
   CImagePtr image1 = getRenderer()->getImage();
 
@@ -282,7 +283,9 @@ reset()
 
   renderer->setDataRange(0, 0, 1, 1);
 
-  renderer->setViewMatrix(CMatrix2D(CMATRIX_TYPE_IDENTITY));
+  CMatrixStack2D matrix;
+
+  renderer->setViewMatrix(matrix.getMatrix());
 
   //------
 
@@ -326,8 +329,8 @@ setup(const CBBox2D &bbox)
   double x2 = bbox.getXMax();
   double y2 = bbox.getYMax();
 
-  int w = x2 - x1;
-  int h = y2 - y1;
+  int w = CSVGUtil::round(x2 - x1);
+  int h = CSVGUtil::round(y2 - y1);
 
   renderer->setSize(w, h);
 
@@ -454,7 +457,7 @@ fill(const CRGBA &bg)
 
 void
 CSVGBuffer::
-setTransform(const CMatrix2D &matrix)
+setTransform(const CMatrixStack2D &matrix)
 {
   if (refBuffer_)
     return refBuffer_->setTransform(matrix);
@@ -463,7 +466,11 @@ setTransform(const CMatrix2D &matrix)
 
   transform_ = matrix;
 
-  setViewMatrix(svg_.viewMatrix()*transform_);
+  CMatrixStack2D matrix1(svg_.viewMatrix());
+
+  matrix1.append(transform_);
+
+  setViewMatrix(matrix1);
 }
 
 void
@@ -475,21 +482,21 @@ unsetTransform()
 
   //---
 
-  transform_.setIdentity();
+  transform_.reset();
 
-  setViewMatrix(svg_.viewMatrix()*transform_);
+  setViewMatrix(svg_.viewMatrix());
 }
 
 void
 CSVGBuffer::
-setViewMatrix(const CMatrix2D &matrix)
+setViewMatrix(const CMatrixStack2D &matrix)
 {
   if (refBuffer_)
     return refBuffer_->setViewMatrix(matrix);
 
   //---
 
-  renderer_->setViewMatrix(matrix);
+  renderer_->setViewMatrix(matrix.getMatrix());
 }
 
 void
@@ -654,8 +661,8 @@ drawImage(const CBBox2D &bbox, CImagePtr image)
   renderer_->windowToPixel(bbox.getLL(), p1);
   renderer_->windowToPixel(bbox.getUR(), p2);
 
-  int pw = fabs(p2.x - p1.x);
-  int ph = fabs(p2.y - p1.y);
+  int pw = CSVGUtil::round(fabs(p2.x - p1.x));
+  int ph = CSVGUtil::round(fabs(p2.y - p1.y));
 
   image->reshape(pw, ph);
 
@@ -681,7 +688,7 @@ pathText(const std::string &text, CFontPtr font, CHAlignType align)
 
   renderer_->textBounds(text, box);
 
-  int dx = 0;
+  double dx = 0;
 
   if      (align == CHALIGN_TYPE_LEFT)
     dx = 0;

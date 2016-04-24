@@ -9,28 +9,36 @@ CSVGTempStroke(CSVGObject &object) :
  fill_  (object_.getSVG()),
  clip_  (object_.getSVG())
 {
-  stroke_ = object_.getSVG().getStroke();
-  fill_   = object_.getSVG().getFill  ();
-  clip_   = object_.getSVG().getClip  ();
+  CSVG &svg = object_.getSVG();
+
+  svg.setStyleObject(&object);
+
+  stroke_ = svg.getStroke();
+  fill_   = svg.getFill  ();
+  clip_   = svg.getClip  ();
 
   if (! object.getSelected())
-    object_.getSVG().updateStroke(object_.getStroke());
+    svg.updateStroke(object_.getStroke());
   else
-    object_.getSVG().setSelectedStroke();
+    svg.setSelectedStroke();
 
-  object_.getSVG().updateFill(object_.getFill());
+  svg.updateFill(object_.getFill());
 
-  object_.getSVG().updateClip(object_.getClip());
+  svg.updateClip(object_.getClip());
 }
 
 CSVGTempStroke::
 ~CSVGTempStroke()
 {
-  object_.getSVG().resetStroke();
-  object_.getSVG().resetFill  ();
-  object_.getSVG().resetClip  ();
+  CSVG &svg = object_.getSVG();
 
-  object_.getSVG().updateStroke(stroke_);
-  object_.getSVG().updateFill  (fill_  );
-  object_.getSVG().updateClip  (clip_  );
+  svg.setStyleObject(0);
+
+  svg.resetStroke();
+  svg.resetFill  ();
+  svg.resetClip  ();
+
+  svg.updateStroke(stroke_);
+  svg.updateFill  (fill_  );
+  svg.updateClip  (clip_  );
 }

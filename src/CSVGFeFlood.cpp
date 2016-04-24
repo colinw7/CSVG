@@ -2,6 +2,7 @@
 #include <CSVGFilter.h>
 #include <CSVGBuffer.h>
 #include <CSVG.h>
+#include <CSVGUtil.h>
 #include <CRGBName.h>
 
 CSVGFeFlood::
@@ -76,8 +77,8 @@ CSVGFeFlood::
 filterImage(CSVGBuffer *outBuffer)
 {
   // get filtered object size
-  int w = 100;
-  int h = 100;
+  double w = 100;
+  double h = 100;
 
   CSVGFilter *filter = getParentFilter();
 
@@ -101,7 +102,10 @@ filterImage(CSVGBuffer *outBuffer)
 
   CImagePtr dst_image = CImageMgrInst->createImage(src);
 
-  dst_image->setDataSize(w, h);
+  int pw = CSVGUtil::round(w);
+  int ph = CSVGUtil::round(h);
+
+  dst_image->setDataSize(pw, ph);
 
   // flood
   dst_image->setRGBAData(color_.getValue(CRGBA(0,0,0,0)));

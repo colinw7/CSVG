@@ -71,7 +71,6 @@
 #include <CRadialGradient.h>
 #include <CLinearGradient.h>
 #include <CConfig.h>
-#include <CCSS.h>
 #include <CXML.h>
 #include <CXMLToken.h>
 #include <CXMLExecute.h>
@@ -88,7 +87,7 @@ CSVG(CSVGRenderer *renderer) :
  clip_    (*this),
  fontDef_ (*this)
 {
-  viewMatrix_.setIdentity();
+  viewMatrix_.reset();
 
   xml_ = new CXML();
 
@@ -104,6 +103,9 @@ CSVG(CSVGRenderer *renderer) :
 
   if (getenv("CSVG_DEBUG_FILTER"))
     setDebugFilter(true);
+
+  if (getenv("CSVG_DEBUG_USE"))
+    setDebugUse(true);
 }
 
 CSVG::
@@ -180,6 +182,13 @@ setDebugFilter(bool b)
 
 void
 CSVG::
+setDebugUse(bool b)
+{
+  debugUse_ = b;
+}
+
+void
+CSVG::
 init()
 {
 }
@@ -198,21 +207,16 @@ read(const std::string &filename, CSVGObject *object)
   if (! CFile::exists(filename) || ! CFile::isRegular(filename))
     return false;
 
-  if (! xml_->read(filename, &xml_tag_))
+  if (! xml_->read(filename, &xmlTag_))
     return false;
 
-  if (xml_tag_->getName() != "svg")
+  if (xmlTag_->getName() != "svg")
     return false;
 
   //------
 
-  // Process top tokens
-
-  uint num = xml_->getNumTokens();
-
-  for (uint i = 0; i < num; ++i) {
-    CXMLToken *token = xml_->getToken(i);
-
+  // Process top (execute) tokens
+  for (const auto &token : xml_->getTokens()) {
     if (token->isExecute()) {
       CXMLExecute *exec = token->getExecute();
 
@@ -242,7 +246,7 @@ read(const std::string &filename, CSVGObject *object)
   //------
 
   // Process svg options
-  for (const auto &opt : xml_tag_->getOptions()) {
+  for (const auto &opt : xmlTag_->getOptions()) {
     const std::string &opt_name  = opt->getName ();
     const std::string &opt_value = opt->getValue();
 
@@ -254,9 +258,9 @@ read(const std::string &filename, CSVGObject *object)
   //------
 
   // Process svg children
-  object->setXMLTag(xml_tag_);
+  object->setXMLTag(xmlTag_);
 
-  for (const auto &token : xml_tag_->getChildren()) {
+  for (const auto &token : xmlTag_->getChildren()) {
     CSVGObject *object1 = tokenToObject(object, token);
 
     if (object1)
@@ -278,7 +282,6 @@ tokenToObject(CSVGObject *parent, const CXMLToken *token)
   //-----
 
   // Create object from tag name
-
   const std::string &tag_name = tag->getName();
 
   CSVGObject *object = createObjectByName(tag_name);
@@ -293,65 +296,57 @@ tokenToObject(CSVGObject *parent, const CXMLToken *token)
   //-----
 
   // inform object we are about to parse tag
-
   object->initParse();
 
   //-----
 
   // get tag text (including embedded tspan tags)
+  std::string textStr;
+  bool        hasTextSpan = false;
 
-  std::string tag_text;
-
-  uint num_children1 = tag->getNumChildren();
-
-  for (uint i = 0; i < num_children1; ++i) {
-    const CXMLToken *token = tag->getChild(i);
-
+  for (const auto &token : tag->getChildren()) {
     if      (token->isText()) {
       CXMLText *text = token->getText();
 
-      tag_text += text->getText();
-    }
-#if 0
-    else if (token->isTag()) {
-      CXMLTag *tag = token->getTag();
+      if (hasTextSpan) {
+        CSVGTSpan *tspan = dynamic_cast<CSVGTSpan *>(object);
 
-      const std::string &tag_name = tag->getName();
+        if (! tspan) {
+          tspan = createTSpan();
 
-      if (tag_name == "tspan") {
-        CAutoPtr<CSVGObject> to;
+          object->addChildObject(tspan);
+        }
 
-        to = tokenToObject(object, token);
-
-        CSVGTSpan *ts = dynamic_cast<CSVGTSpan *>(to.get());
-
-        CFontStyles styles = ts->getFontStyle();
-
-        // TODO: handle more inline styles
-        if (styles & CFONT_STYLE_BOLD  ) tag_text += "[1m";
-        if (styles & CFONT_STYLE_ITALIC) tag_text += "[3m";
-
-        tag_text += tag->getText();
-
-        tag_text += "[0m";
+        tspan->setText(text->getText());
       }
+      else
+        textStr += text->getText();
     }
-#endif
+    else if (token->isTag() && token->getTag()->getName() == "tspan") {
+      if (! hasTextSpan && textStr != "") {
+        CSVGTSpan *tspan = createTSpan();
+
+        tspan->setText(textStr);
+
+        object->addChildObject(tspan);
+
+        hasTextSpan = true;
+      }
+
+      CSVGObject *object1 = tokenToObject(object, token);
+      assert(object1);
+
+      object->addChildObject(object1);
+    }
   }
 
-  if (tag_text != "")
-    object->setText(tag_text);
+  if (! hasTextSpan && textStr != "")
+    object->setText(textStr);
 
   //-----
 
   // process tag options
-  uint num_options = tag->getNumOptions();
-
-  const CXMLTag::OptionArray &options = tag->getOptions();
-
-  for (uint i = 0; i < num_options; ++i) {
-    CXMLTagOption *option = options[i];
-
+  for (const auto &option : tag->getOptions()) {
     const std::string &opt_name  = option->getName ();
     const std::string &opt_value = option->getValue();
 
@@ -365,12 +360,13 @@ tokenToObject(CSVGObject *parent, const CXMLToken *token)
   //-----
 
   // process tag children
-  CXMLTag::TokenArray children = tag->getChildren();
+  for (const auto &token : tag->getChildren()) {
+    if (token->isTag() && token->getTag()->getName() == "tspan")
+      continue;
 
-  uint num_children = children.size();
+    //---
 
-  for (uint i = 0; i < num_children; ++i) {
-    CSVGObject *object1 = tokenToObject(object, children[i]);
+    CSVGObject *object1 = tokenToObject(object, token);
 
     if (object1)
       object->addChildObject(object1);
@@ -979,14 +975,14 @@ void
 CSVG::
 draw()
 {
-  CMatrix2D matrix(CMATRIX_TYPE_IDENTITY);
+  CMatrixStack2D matrix;
 
   draw(matrix);
 }
 
 void
 CSVG::
-draw(const CMatrix2D &matrix, double scale)
+draw(const CMatrixStack2D &matrix, double scale)
 {
   drawBlock(getBlock(), matrix, scale);
 }
@@ -995,14 +991,14 @@ void
 CSVG::
 drawBlock(CSVGBlock *block)
 {
-  CMatrix2D matrix(CMATRIX_TYPE_IDENTITY);
+  CMatrixStack2D matrix;
 
   drawBlock(block, matrix);
 }
 
 void
 CSVG::
-drawBlock(CSVGBlock *block, const CMatrix2D &matrix, double scale)
+drawBlock(CSVGBlock *block, const CMatrixStack2D &matrix, double scale)
 {
   if (! renderer_)
     return;
@@ -1054,7 +1050,7 @@ drawBlock(CSVGBlock *block, const CMatrix2D &matrix, double scale)
 
   //------
 
-  viewMatrix_.setIdentity();
+  viewMatrix_.reset();
 
   renderer_->endDraw();
 }
@@ -1114,23 +1110,37 @@ void
 CSVG::
 beginDrawBuffer(CSVGBuffer *buffer)
 {
+  beginDrawBuffer(buffer, scale(), scale());
+}
+
+void
+CSVG::
+beginDrawBuffer(CSVGBuffer *buffer, double xs, double ys)
+{
   CSVGBlock *block = getBlock();
 
   CBBox2D bbox;
 
   block->getBBox(bbox);
 
-  beginDrawBuffer(buffer, bbox);
+  beginDrawBuffer(buffer, bbox, xs, ys);
 }
 
 void
 CSVG::
 beginDrawBuffer(CSVGBuffer *buffer, const CBBox2D &bbox)
 {
+  beginDrawBuffer(buffer, bbox, scale(), scale());
+}
+
+void
+CSVG::
+beginDrawBuffer(CSVGBuffer *buffer, const CBBox2D &bbox, double xs, double ys)
+{
   double w = bbox.getWidth ();
   double h = bbox.getHeight();
 
-  buffer->beginDraw(w*scale_, h*scale_, bbox);
+  buffer->beginDraw(w*xs, h*ys, bbox);
 
   buffer->setViewMatrix(viewMatrix_);
 
@@ -1250,7 +1260,7 @@ bool
 CSVG::
 isFilled() const
 {
-  if (! fill_.isNoColor())
+  if (! fill_.getNoColor())
     return true;
 
   return false;
@@ -1354,21 +1364,21 @@ setFontDef()
 
 void
 CSVG::
-setTransform(const CMatrix2D &matrix)
+setTransform(const CMatrixStack2D &matrix)
 {
   setBufferTransform(buffer_, matrix);
 }
 
 void
 CSVG::
-setBufferTransform(CSVGBuffer *buffer, const CMatrix2D &matrix)
+setBufferTransform(CSVGBuffer *buffer, const CMatrixStack2D &matrix)
 {
   buffer->setTransform(matrix);
 }
 
 void
 CSVG::
-getTransform(CMatrix2D &matrix)
+getTransform(CMatrixStack2D &matrix)
 {
   matrix = buffer_->transform();
 }
@@ -1655,6 +1665,22 @@ fillPolygon(const std::vector<CPoint2D> &points)
 
 void
 CSVG::
+fillDrawText(double x, double y, const std::string &text, CFontPtr font, CHAlignType align,
+             bool isFilled, bool isStroked)
+{
+  if (isFilled || isStroked) {
+    if (isFilled)
+      fillText(x, y, text, font, align);
+
+    if (isStroked)
+      drawText(x, y, text, font, align);
+  }
+  else
+    fillText(x, y, text, font, align);
+}
+
+void
+CSVG::
 drawText(double x, double y, const std::string &text, CFontPtr font, CHAlignType align)
 {
   setStrokeBuffer();
@@ -1671,17 +1697,14 @@ drawText(double x, double y, const std::string &text, CFontPtr font, CHAlignType
 
     //-----
 
-    CMatrix2D transform;
+    CMatrixStack2D transform;
 
     getTransform(transform);
 
-    CMatrix2D transform1;
-    CMatrix2D transform2;
-
     double font_size = 10.0;
 
-    transform1.setScale(font_size/units, font_size/units);
-    transform2.setTranslation(x, y);
+    transform.scale    (font_size/units, font_size/units);
+    transform.translate(x, y);
 
     uint len = text.size();
 
@@ -1689,19 +1712,33 @@ drawText(double x, double y, const std::string &text, CFontPtr font, CHAlignType
       CSVGGlyph *glyph = getCharGlyph(text[i]);
 
       if (glyph) {
-        setTransform(transform*transform2*transform1);
+        setTransform(transform);
 
         glyph->drawSubObject();
 
         x += font_size;
 
-        transform2.setTranslation(x, y);
+        transform.translate(x, y);
       }
     }
 
     setTransform(transform);
   }
   else {
+    CMatrixStack2D transform;
+
+    getTransform(transform);
+
+    CMatrixStack2D transform1 = transform;
+
+    if (font->getAngle()) {
+      transform1.rotate(font->getAngle(), CPoint2D(x, y));
+
+      setTransform(transform1);
+    }
+
+    //---
+
     buffer_->pathInit();
 
     buffer_->pathMoveTo(x, y);
@@ -1709,6 +1746,10 @@ drawText(double x, double y, const std::string &text, CFontPtr font, CHAlignType
     buffer_->pathText(text, font, align);
 
     buffer_->pathStroke();
+
+    //---
+
+    setTransform(transform);
   }
 }
 
@@ -1730,17 +1771,14 @@ fillText(double x, double y, const std::string &text, CFontPtr font, CHAlignType
 
     //-----
 
-    CMatrix2D transform;
+    CMatrixStack2D transform;
 
     getTransform(transform);
 
-    CMatrix2D transform1;
-    CMatrix2D transform2;
-
     double font_size = 10.0;
 
-    transform1.setScale(font_size/units, font_size/units);
-    transform2.setTranslation(x, y);
+    transform.scale    (font_size/units, font_size/units);
+    transform.translate(x, y);
 
     uint len = text.size();
 
@@ -1748,19 +1786,33 @@ fillText(double x, double y, const std::string &text, CFontPtr font, CHAlignType
       CSVGGlyph *glyph = getCharGlyph(text[i]);
 
       if (glyph) {
-        setTransform(transform*transform2*transform1);
+        setTransform(transform);
 
         glyph->drawSubObject();
 
         x += font_size;
 
-        transform2.setTranslation(x, y);
+        transform.translate(x, y);
       }
     }
 
     setTransform(transform);
   }
   else {
+    CMatrixStack2D transform;
+
+    getTransform(transform);
+
+    CMatrixStack2D transform1 = transform;
+
+    if (font->getAngle()) {
+      transform1.rotate(font->getAngle(), CPoint2D(x, y));
+
+      setTransform(transform1);
+    }
+
+    //---
+
     buffer_->pathInit();
 
     buffer_->pathMoveTo(x, y);
@@ -1768,6 +1820,10 @@ fillText(double x, double y, const std::string &text, CFontPtr font, CHAlignType
     buffer_->pathText(text, font, align);
 
     buffer_->pathFill();
+
+    //---
+
+    setTransform(transform);
   }
 }
 
@@ -3402,14 +3458,12 @@ stringToTime(const std::string &str, CSVGTimeValue &time) const
 bool
 CSVG::
 transformOption(const std::string &opt_name, const std::string &opt_value,
-                const std::string &name, CMatrix2D &matrix)
+                const std::string &name, CMatrixStack2D &matrixStack)
 {
   if (opt_name != name)
     return false;
 
-  matrix.setIdentity();
-
-  if (! decodeTransform(opt_value, matrix))
+  if (! decodeTransform(opt_value, matrixStack))
     return false;
 
   return true;
@@ -3417,9 +3471,9 @@ transformOption(const std::string &opt_name, const std::string &opt_value,
 
 bool
 CSVG::
-decodeTransform(const std::string &str, CMatrix2D &matrix)
+decodeTransform(const std::string &str, CMatrixStack2D &matrix)
 {
-  matrix.setIdentity();
+  matrix.reset();
 
   CStrParse parse(str);
 
@@ -3454,6 +3508,8 @@ decodeTransform(const std::string &str, CMatrix2D &matrix)
 
       skipCommaSpace(parse);
 
+      bool isEqualScale = true;
+
       if (! parse.isChar(')')) {
         if (! parse.readReal(&sy)) {
           CSVGLog() << "Invalid scale " << str;
@@ -3461,6 +3517,8 @@ decodeTransform(const std::string &str, CMatrix2D &matrix)
         }
 
         parse.skipSpace();
+
+        isEqualScale = false;
       }
       else
         sy = sx;
@@ -3474,11 +3532,10 @@ decodeTransform(const std::string &str, CMatrix2D &matrix)
 
       //------
 
-      CMatrix2D matrix1;
-
-      matrix1.setScale(sx, sy);
-
-      matrix *= matrix1;
+      if (isEqualScale)
+        matrix.scale(sx);
+      else
+        matrix.scale(sx, sy);
     }
     else if (keyword == "translate") {
       if (! parse.isChar('(')) {
@@ -3519,11 +3576,7 @@ decodeTransform(const std::string &str, CMatrix2D &matrix)
 
       //------
 
-      CMatrix2D matrix1;
-
-      matrix1.setTranslation(dx, dy);
-
-      matrix *= matrix1;
+      matrix.translate(dx, dy);
     }
     else if (keyword == "rotate") {
       if (! parse.isChar('(')) {
@@ -3577,24 +3630,10 @@ decodeTransform(const std::string &str, CMatrix2D &matrix)
 
       //------
 
-      if (translate) {
-        CMatrix2D matrix1, matrix2, matrix3;
-
-        matrix1.setTranslation(cx, cy);
-
-        matrix2.setRotation(CMathGen::DegToRad(a));
-
-        matrix3.setTranslation(-cx, -cy);
-
-        matrix *= matrix1*matrix2*matrix3;
-      }
-      else {
-        CMatrix2D matrix1;
-
-        matrix1.setRotation(CMathGen::DegToRad(a));
-
-        matrix *= matrix1;
-      }
+      if (translate)
+        matrix.rotate(CMathGen::DegToRad(a), CPoint2D(cx, cy));
+      else
+        matrix.rotate(CMathGen::DegToRad(a));
     }
     else if (keyword == "skewX") {
       if (! parse.isChar('(')) {
@@ -3624,11 +3663,7 @@ decodeTransform(const std::string &str, CMatrix2D &matrix)
 
       //------
 
-      CMatrix2D matrix1;
-
-      matrix1.setSkewX(CMathGen::DegToRad(angle));
-
-      matrix *= matrix1;
+      matrix.skewX(CMathGen::DegToRad(angle));
     }
     else if (keyword == "skewY") {
       if (! parse.isChar('(')) {
@@ -3658,11 +3693,7 @@ decodeTransform(const std::string &str, CMatrix2D &matrix)
 
       //------
 
-      CMatrix2D matrix1;
-
-      matrix1.setSkewY(CMathGen::DegToRad(angle));
-
-      matrix *= matrix1;
+      matrix.skewY(CMathGen::DegToRad(angle));
     }
     else if (keyword == "matrix") {
       if (! parse.isChar('(')) {
@@ -3727,11 +3758,7 @@ decodeTransform(const std::string &str, CMatrix2D &matrix)
 
       //------
 
-      CMatrix2D matrix1;
-
-      matrix1.setValues(m00, m01, m10, m11, tx, ty);
-
-      matrix *= matrix1;
+      matrix.matrix(m00, m01, m10, m11, tx, ty);
     }
     else {
       CSVGLog() << "Unrecognised transform keyword " << keyword << " in " << str;
@@ -3755,14 +3782,12 @@ decodePreserveAspectRatio(const std::string &str, CHAlignType *halign,
 
   CStrUtil::addWords(str, words, " ,");
 
-  uint num_words = words.size();
-
   CRegExp mmp("xM[ia][ndx]YM[ia][ndx]");
 
-  for (uint i = 0; i < num_words; ++i) {
-    if (mmp.find(words[i])) {
-      std::string lword = words[i].substr(0, 4);
-      std::string rword = words[i].substr(4, 8);
+  for (const auto &word : words) {
+    if (mmp.find(word)) {
+      std::string lword = word.substr(0, 4);
+      std::string rword = word.substr(4, 8);
 
       if      (lword == "xMin") *halign = CHALIGN_TYPE_LEFT;
       else if (lword == "xMid") *halign = CHALIGN_TYPE_CENTER;
@@ -3772,11 +3797,11 @@ decodePreserveAspectRatio(const std::string &str, CHAlignType *halign,
       else if (rword == "YMid") *valign = CVALIGN_TYPE_CENTER;
       else if (rword == "YMax") *valign = CVALIGN_TYPE_TOP;
     }
-    else if (words[i] == "meet")
+    else if (word == "meet")
       *scale = CSVGScale::FIXED_MEET;
-    else if (words[i] == "slice")
+    else if (word == "slice")
       *scale = CSVGScale::FIXED_SLICE;
-    else if (words[i] == "none")
+    else if (word == "none")
       *scale = CSVGScale::FREE;
   }
 
@@ -4010,6 +4035,8 @@ decodeUnitsString(const std::string &str, CSVGCoordUnits &units)
     units = CSVGCoordUnits::OBJECT_BBOX;
   else if (str == "userSpaceOnUse")
     units = CSVGCoordUnits::USER_SPACE;
+  else if (str == "strokeWidth")
+    units = CSVGCoordUnits::STROKE_WIDTH;
   else
     return false;
 
@@ -4024,6 +4051,8 @@ encodeUnitsString(const CSVGCoordUnits &units)
     return "objectBoundingBox";
   else if (units == CSVGCoordUnits::USER_SPACE)
     return "userSpaceOnUse";
+  else if (units == CSVGCoordUnits::STROKE_WIDTH)
+    return "strokeWidth";
   else
     return "??";
 }
@@ -4056,6 +4085,31 @@ encodeGradientSpread(const CGradientSpreadType &spread)
     return "reflect";
   else
     return "??";
+}
+
+bool
+CSVG::
+urlOption(const std::string &opt_name, const std::string &opt_value,
+          const std::string &name, CSVGObject **obj)
+{
+  if (opt_name != name)
+    return false;
+
+  if (opt_value == "none") {
+    *obj = 0;
+    return true;
+  }
+
+  CSVGObject *obj1;
+
+  if (! decodeUrlObject(opt_value, &obj1)) {
+    CSVGLog() << "Illegal value for " << name;
+    return false;
+  }
+
+  *obj = obj1;
+
+  return true;
 }
 
 bool
@@ -4174,116 +4228,335 @@ bool
 CSVG::
 readCSSFile(const std::string &filename)
 {
-  CCSS css;
-
-  if (! css.processFile(filename))
+  if (! css_.processFile(filename))
     return false;
 
+  return processCSSIds();
+}
+
+bool
+CSVG::
+readCSSString(const std::string &str)
+{
+  if (! css_.processLine(str))
+    return false;
+
+  return processCSSIds();
+}
+
+bool
+CSVG::
+processCSSIds()
+{
   std::vector<std::string> ids;
 
-  css.getIds(ids);
+  css_.getIds(ids);
 
-  uint num_ids = ids.size();
+  for (const auto &id : ids) {
+    const CCSS::StyleData &cssStyleData = css_.getStyleData(id);
 
-  for (uint i = 0; i < num_ids; ++i) {
-    const CCSS::StyleData &styleData = css.getStyleData(ids[i]);
+    std::string objType, objClass;
 
-    CSVGStyleData &styleData1 = getStyleData(ids[i]);
+    auto p = id.find(".");
 
-    uint num_options = styleData.getNumOptions();
-
-    for (uint j = 0; j < num_options; ++j) {
-      const CCSS::Option &option = styleData.getOption(j);
-
-      styleData1.setValue(option.getName(), option.getValue());
+    if (p != std::string::npos) {
+      objType  = id.substr(0, p);
+      objClass = id.substr(p + 1);
     }
+    else
+      objType = id;
+
+    if (objType == "" && objClass == "")
+      continue;
+
+    if (objType  == "*") objType  = "";
+    if (objClass == "*") objClass = "";
+
+    if      (objType != "" && objClass == "")
+      addStyleValues(getTypeStyleData(objType), cssStyleData);
+    else if (objType == "" && objClass != "")
+      addStyleValues(getClassStyleData(objClass), cssStyleData);
+    else if (objType != "" && objClass  != "")
+      addStyleValues(getTypeClassStyleData(objType, objClass), cssStyleData);
+    else
+      addStyleValues(getGlobalStyleData(), cssStyleData);
   }
 
   return true;
 }
 
+void
+CSVG::
+addStyleValues(CSVGStyleData &svgStyleData, const CCSS::StyleData &cssStyleData)
+{
+  for (const auto &option : cssStyleData.getOptions())
+    svgStyleData.setValue(option.getName(), option.getValue());
+}
+
 CSVGStyleData &
 CSVG::
-getStyleData(const std::string &id)
+getGlobalStyleData()
 {
-  auto p = styleData_.find(id);
+  auto p = globalStyleData_.find("*");
 
-  if (p == styleData_.end())
-    p = styleData_.insert(p, StyleDataMap::value_type(id, CSVGStyleData(*this, id)));
+  if (p == globalStyleData_.end())
+    p = globalStyleData_.insert(p,
+      StyleDataMap::value_type("*", CSVGStyleData(*this, "*")));
 
   CSVGStyleData &styleData = (*p).second;
 
   return styleData;
 }
 
-bool
+CSVGStyleData &
 CSVG::
-getStyleStrokeColor(const std::string &id, CRGBA &rgba)
+getTypeStyleData(const std::string &objType)
 {
-  CSVGStyleData &styleData = getStyleData(id);
+  auto p = typeStyleData_.find(objType);
 
-  if (! styleData.getStrokeColorValid())
-    return false;
+  if (p == typeStyleData_.end())
+    p = typeStyleData_.insert(p,
+      StyleDataMap::value_type(objType, CSVGStyleData(*this, objType)));
 
-  rgba = styleData.getStrokeColor();
+  CSVGStyleData &styleData = (*p).second;
 
-  return true;
+  return styleData;
+}
+
+CSVGStyleData &
+CSVG::
+getClassStyleData(const std::string &objClass)
+{
+  auto p = classStyleData_.find(objClass);
+
+  if (p == classStyleData_.end())
+    p = classStyleData_.insert(p,
+      StyleDataMap::value_type(objClass, CSVGStyleData(*this, objClass)));
+
+  CSVGStyleData &styleData = (*p).second;
+
+  return styleData;
+}
+
+CSVGStyleData &
+CSVG::
+getTypeClassStyleData(const std::string &objType, const std::string &objClass)
+{
+  auto p1 = typeClassStyleData_.find(objType);
+
+  if (p1 == typeClassStyleData_.end())
+    p1 = typeClassStyleData_.insert(p1,
+      TypeStyleDataMap::value_type(objType, StyleDataMap()));
+
+  StyleDataMap &typeStyleDataMap = (*p1).second;
+
+  auto p2 = typeStyleDataMap.find(objClass);
+
+  if (p2 == typeStyleDataMap.end())
+    p2 = typeStyleDataMap.insert(p2,
+      StyleDataMap::value_type(objClass, CSVGStyleData(*this, objClass)));
+
+  CSVGStyleData &styleData = (*p2).second;
+
+  return styleData;
 }
 
 bool
 CSVG::
-getStyleStrokeOpacity(const std::string &id, double &opacity)
+getStyleStrokeColor(const CSVGObject *obj, CRGBA &rgba)
 {
-  CSVGStyleData &styleData = getStyleData(id);
+  CSVGStyleData &typeStyleData = getTypeStyleData(obj->getObjName());
 
-  if (! styleData.getStrokeOpacityValid())
-    return false;
+  if (typeStyleData.getStrokeColorValid()) {
+    rgba = typeStyleData.getStrokeColor();
+    return true;
+  }
 
-  opacity = styleData.getStrokeOpacity();
+  for (const auto &c : obj->getClasses()) {
+    CSVGStyleData &classStyleData = getClassStyleData(c);
 
-  return true;
+    if (classStyleData.getStrokeColorValid()) {
+      rgba = classStyleData.getStrokeColor();
+      return true;
+    }
+  }
+
+  CSVGStyleData &globalStyleData = getGlobalStyleData();
+
+  if (globalStyleData.getStrokeColorValid()) {
+    rgba = globalStyleData.getStrokeColor();
+    return true;
+  }
+
+  return false;
 }
 
 bool
 CSVG::
-getStyleStrokeWidth(const std::string &id, double &width)
+getStyleStrokeOpacity(const CSVGObject *obj, double &opacity)
 {
-  CSVGStyleData &styleData = getStyleData(id);
+  CSVGStyleData &typeStyleData = getTypeStyleData(obj->getObjName());
 
-  if (! styleData.getStrokeWidthValid())
-    return false;
+  if (typeStyleData.getStrokeOpacityValid()) {
+    opacity = typeStyleData.getStrokeOpacity();
+    return true;
+  }
 
-  width = styleData.getStrokeWidth();
+  for (const auto &c : obj->getClasses()) {
+    CSVGStyleData &classStyleData = getClassStyleData(c);
 
-  return true;
+    if (classStyleData.getStrokeOpacityValid()) {
+      opacity = classStyleData.getStrokeOpacity();
+      return true;
+    }
+  }
+
+  CSVGStyleData &globalStyleData = getGlobalStyleData();
+
+  if (globalStyleData.getStrokeOpacityValid()) {
+    opacity = globalStyleData.getStrokeOpacity();
+    return true;
+  }
+
+  return false;
 }
 
 bool
 CSVG::
-getStyleStrokeDash(const std::string &id, CLineDash &dash)
+getStyleStrokeWidth(const CSVGObject *obj, double &width)
 {
-  CSVGStyleData &styleData = getStyleData(id);
+  CSVGStyleData &typeStyleData = getTypeStyleData(obj->getObjName());
 
-  if (! styleData.getStrokeDashValid())
-    return false;
+  if (typeStyleData.getStrokeWidthValid()) {
+    width = typeStyleData.getStrokeWidth();
+    return true;
+  }
 
-  dash = styleData.getStrokeDash();
+  for (const auto &c : obj->getClasses()) {
+    CSVGStyleData &classStyleData = getClassStyleData(c);
 
-  return true;
+    if (classStyleData.getStrokeWidthValid()) {
+      width = classStyleData.getStrokeWidth();
+      return true;
+    }
+  }
+
+  CSVGStyleData &globalStyleData = getGlobalStyleData();
+
+  if (globalStyleData.getStrokeWidthValid()) {
+    width = globalStyleData.getStrokeWidth();
+    return true;
+  }
+
+  return false;
 }
 
 bool
 CSVG::
-getStyleFillColor(const std::string &id, CRGBA &rgba)
+getStyleStrokeDash(const CSVGObject *obj, CLineDash &dash)
 {
-  CSVGStyleData &styleData = getStyleData(id);
+  CSVGStyleData &typeStyleData = getTypeStyleData(obj->getObjName());
 
-  if (! styleData.getFillColorValid())
-    return false;
+  if (typeStyleData.getStrokeDashValid()) {
+    dash = typeStyleData.getStrokeDash();
+    return true;
+  }
 
-  rgba = styleData.getFillColor();
+  for (const auto &c : obj->getClasses()) {
+    CSVGStyleData &classStyleData = getClassStyleData(c);
 
-  return true;
+    if (classStyleData.getStrokeDashValid()) {
+      dash = classStyleData.getStrokeDash();
+      return true;
+    }
+  }
+
+  CSVGStyleData &globalStyleData = getGlobalStyleData();
+
+  if (globalStyleData.getStrokeDashValid()) {
+    dash = globalStyleData.getStrokeDash();
+    return true;
+  }
+
+  return false;
+}
+
+bool
+CSVG::
+getStyleFillColor(const CSVGObject *obj, CRGBA &rgba)
+{
+  for (const auto &c : obj->getClasses()) {
+    CSVGStyleData &typeClassStyleData = getTypeClassStyleData(obj->getObjName(), c);
+
+    if (typeClassStyleData.getFillColorValid()) {
+      rgba = typeClassStyleData.getFillColor();
+      return true;
+    }
+  }
+
+  CSVGStyleData &typeStyleData = getTypeStyleData(obj->getObjName());
+
+  if (typeStyleData.getFillColorValid()) {
+    rgba = typeStyleData.getFillColor();
+    return true;
+  }
+
+  for (const auto &c : obj->getClasses()) {
+    CSVGStyleData &classStyleData = getClassStyleData(c);
+
+    if (classStyleData.getFillColorValid()) {
+      rgba = classStyleData.getFillColor();
+      return true;
+    }
+  }
+
+  CSVGStyleData &globalStyleData = getGlobalStyleData();
+
+  if (globalStyleData.getFillColorValid()) {
+    rgba = globalStyleData.getFillColor();
+    return true;
+  }
+
+  return false;
+}
+
+bool
+CSVG::
+getStyleFillNoColor(const CSVGObject *obj, bool &noColor)
+{
+  for (const auto &c : obj->getClasses()) {
+    CSVGStyleData &typeClassStyleData = getTypeClassStyleData(obj->getObjName(), c);
+
+    if (typeClassStyleData.getFillNoColorValid()) {
+      noColor = typeClassStyleData.getFillNoColor();
+      return true;
+    }
+  }
+
+  CSVGStyleData &typeStyleData = getTypeStyleData(obj->getObjName());
+
+  if (typeStyleData.getFillNoColorValid()) {
+    noColor = typeStyleData.getFillNoColor();
+    return true;
+  }
+
+  for (const auto &c : obj->getClasses()) {
+    CSVGStyleData &classStyleData = getClassStyleData(c);
+
+    if (classStyleData.getFillNoColorValid()) {
+      noColor = classStyleData.getFillNoColor();
+      return true;
+    }
+  }
+
+  CSVGStyleData &globalStyleData = getGlobalStyleData();
+
+  if (globalStyleData.getFillNoColorValid()) {
+    noColor = globalStyleData.getFillNoColor();
+    return true;
+  }
+
+  return false;
 }
 
 void
@@ -4305,4 +4578,6 @@ CSVG::
 print(std::ostream &os, bool hier) const
 {
   getBlock()->print(os, hier);
+
+  css_.print(os);
 }

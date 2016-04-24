@@ -12,8 +12,23 @@ class CSVGAnimateBase : public CSVGObject {
 
   bool isAnimated() const override { return true; }
 
+  std::string getAttributeName() const { return attributeName_.getValue(""); }
+  void setAttributeName(const std::string &s) { attributeName_ = s; }
+
+  std::string getAttributeType() const { return attributeType_.getValue(""); }
+  void setAttributeType(const std::string &s) { attributeType_ = s; }
+
+  std::string getFrom() const { return from_.getValue(""); }
+  std::string getTo  () const { return to_  .getValue(""); }
+
   bool isAnimating() const { return animating_; }
   void setAnimating(bool b);
+
+  double getStartTime() const { return startTime_.getValue(0); }
+
+  double getEndTime() const { return endTime_.getValue(0); }
+
+  int getRepeatNum() const { return repeatNum_.getValue(0); }
 
   bool processOption(const std::string &name, const std::string &value) override;
 

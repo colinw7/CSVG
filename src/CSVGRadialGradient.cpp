@@ -59,7 +59,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   double          real;
   CSVGCoordUnits  units;
   CSVGLengthValue length;
-  CMatrix2D       transform;
+  CMatrixStack2D  transform;
 
   if      (svg_.percentOption(opt_name, opt_value, "cx", length))
     cx_ = length;
@@ -234,7 +234,7 @@ createGradient(CSVGObject *obj)
 
   // remap points to absolute
   if      (getUnits() == CSVGCoordUnits::USER_SPACE) {
-    CMatrix2D m;
+    CMatrixStack2D m;
 
     svg_.getTransform(m);
 
@@ -250,11 +250,11 @@ createGradient(CSVGObject *obj)
 
     obj->getBBox(bbox);
 
-    // radius ?
     xc = CSVGUtil::map(xc, 0, 1, bbox.getXMin(), bbox.getXMax());
     yc = CSVGUtil::map(yc, 0, 1, bbox.getYMin(), bbox.getYMax());
     xf = CSVGUtil::map(xf, 0, 1, bbox.getXMin(), bbox.getXMax());
     yf = CSVGUtil::map(yf, 0, 1, bbox.getYMin(), bbox.getYMax());
+    r  = CSVGUtil::map(r , 0, 1, 0, bbox.getWidth()); // w or h or both
   }
 
   //---

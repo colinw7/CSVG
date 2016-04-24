@@ -40,31 +40,11 @@ reset()
   style_ .setInvalid();
 }
 
-std::string
-CSVGFontDef::
-getFamily() const
-{
-  if (hasFamily())
-    return family_.getValue();
-  else
-    return "serif";
-}
-
 void
 CSVGFontDef::
 setFamily(const std::string &family)
 {
   family_ = family;
-}
-
-double
-CSVGFontDef::
-getSize() const
-{
-  if (hasSize())
-    return size_.getValue().value();
-  else
-    return 10;
 }
 
 void
@@ -88,19 +68,9 @@ setWeight(const std::string &weight_def)
   CFontStyles weight = svg_.decodeFontWeightString(weight_def);
 
   if (hasStyle())
-    style_.setValue(style_.getValue() | weight);
+    style_.setValue(getStyle() | weight);
   else
     style_.setValue(weight);
-}
-
-CFontStyles
-CSVGFontDef::
-getStyle() const
-{
-  if (hasStyle())
-    return style_.getValue();
-  else
-    return CFONT_STYLE_NORMAL;
 }
 
 void
@@ -110,9 +80,51 @@ setStyle(const std::string &style_def)
   CFontStyles style = svg_.decodeFontStyleString(style_def);
 
   if (hasStyle())
-    style_.setValue(style_.getValue() | style);
+    style_.setValue(getStyle() | style);
   else
     style_.setValue(style);
+}
+
+void
+CSVGFontDef::
+setStyle(CFontStyle s)
+{
+  style_.setValue(s);
+}
+
+void
+CSVGFontDef::
+setUnderline(bool b)
+{
+  style_.setValue(getStyle().addRemove(CFONT_STYLE_UNDERLINE, b));
+}
+
+void
+CSVGFontDef::
+setOverline(bool b)
+{
+  style_.setValue(getStyle().addRemove(CFONT_STYLE_OVERLINE, b));
+}
+
+void
+CSVGFontDef::
+setLineThrough(bool b)
+{
+  style_.setValue(getStyle().addRemove(CFONT_STYLE_STRIKEOUT, b));
+}
+
+void
+CSVGFontDef::
+setSubscript(bool b)
+{
+  style_.setValue(getStyle().addRemove(CFONT_STYLE_SUBSCRIPT, b));
+}
+
+void
+CSVGFontDef::
+setSuperscript(bool b)
+{
+  style_.setValue(getStyle().addRemove(CFONT_STYLE_SUPERSCRIPT, b));
 }
 
 void

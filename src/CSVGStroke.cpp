@@ -1,6 +1,7 @@
 #include <CSVGStroke.h>
 #include <CSVG.h>
 #include <CSVGLog.h>
+#include <CSVGUtil.h>
 
 CRGBA
 CSVGStroke::
@@ -227,15 +228,47 @@ update(const CSVGStroke &stroke)
 {
   if (stroke.getColorValid())
     setColor(stroke.getColor());
+  else {
+    if (svg_.styleObject()) {
+      CRGBA c;
+
+      if (svg_.getStyleStrokeColor(svg_.styleObject(), c))
+        setColor(c);
+    }
+  }
 
   if (stroke.getOpacityValid())
     setOpacity(stroke.getOpacity());
+  else {
+    if (svg_.styleObject()) {
+      double a;
+
+      if (svg_.getStyleStrokeOpacity(svg_.styleObject(), a))
+        setOpacity(a);
+    }
+  }
 
   if (stroke.getWidthValid())
     setWidth(stroke.getWidth());
+  else {
+    if (svg_.styleObject()) {
+      double w;
+
+      if (svg_.getStyleStrokeWidth(svg_.styleObject(), w))
+        setWidth(w);
+    }
+  }
 
   if (stroke.getDashValid())
     setDash(stroke.getDash());
+  else {
+    if (svg_.styleObject()) {
+      CLineDash dash;
+
+      if (svg_.getStyleStrokeDash(svg_.styleObject(), dash))
+        setDash(dash);
+    }
+  }
 
   if (stroke.getLineCapValid())
     setLineCap(stroke.getLineCap());
@@ -273,7 +306,7 @@ print(std::ostream &os) const
     if      (cap_.getValue() == LINE_CAP_TYPE_BUTT  ) os << "butt";
     else if (cap_.getValue() == LINE_CAP_TYPE_ROUND ) os << "round";
     else if (cap_.getValue() == LINE_CAP_TYPE_SQUARE) os << "square";
-    else os << int(cap_.getValue());
+    else                                              os << CSVGUtil::round(cap_.getValue());
 
     os << ";";
   }
@@ -284,7 +317,7 @@ print(std::ostream &os) const
     if      (join_.getValue() == LINE_JOIN_TYPE_MITRE) os << "miter";
     else if (join_.getValue() == LINE_JOIN_TYPE_ROUND) os << "round";
     else if (join_.getValue() == LINE_JOIN_TYPE_BEVEL) os << "bevel";
-    else os << int(join_.getValue());
+    else                                               os << CSVGUtil::round(join_.getValue());
 
     os << ";";
   }

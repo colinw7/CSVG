@@ -123,8 +123,8 @@ animate(double t)
   else {
     std::vector<double> fromValues, toValues;
 
-    svg_.stringToReals(from_.getValue(""), fromValues);
-    svg_.stringToReals(to_  .getValue(""), toValues  );
+    svg_.stringToReals(getFrom(), fromValues);
+    svg_.stringToReals(getTo  (), toValues  );
 
     if (fromValues.size() != 2 || toValues.size() != 2)
       return;

@@ -63,7 +63,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
 
   std::vector<CPoint2D> points;
   std::string           str;
-  CMatrix2D             transform;
+  CMatrixStack2D        transform;
 
   if      (svg_.pointListOption(opt_name, opt_value, "points", points)) {
     points_.clear();

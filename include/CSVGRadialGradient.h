@@ -41,8 +41,8 @@ class CSVGRadialGradient : public CSVGObject {
   void setFocus(const CPoint2D &focus) { setFocusX(focus.x); setFocusY(focus.y); }
 
   bool getGTransformValid() const { return gtransform_.isValid(); }
-  CMatrix2D getGTransform() const { return gtransform_.getValue(); }
-  void setGTransform(const CMatrix2D &gtransform) { gtransform_ = gtransform; }
+  CMatrixStack2D getGTransform() const { return gtransform_.getValue(); }
+  void setGTransform(const CMatrixStack2D &gtransform) { gtransform_ = gtransform; }
 
   bool getUnitsValid() const { return units_.isValid(); }
   CSVGCoordUnits getUnits() const { return units_.getValue(CSVGCoordUnits::OBJECT_BBOX); }
@@ -82,7 +82,7 @@ class CSVGRadialGradient : public CSVGObject {
   COptValT<double>              focusX_;
   COptValT<double>              focusY_;
   StopList                      stops_;
-  COptValT<CMatrix2D>           gtransform_;
+  COptValT<CMatrixStack2D>      gtransform_;
   COptValT<CSVGCoordUnits>      units_;
   COptValT<CGradientSpreadType> spread_;
 };

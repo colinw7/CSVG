@@ -52,9 +52,8 @@ animate(double t)
   if (attributeName_.isValid() && from_.isValid() && to_.isValid()) {
     std::string ystr;
 
-    if (getParent()->interpValue(attributeName_.getValue(), from_.getValue(),
-                                 to_.getValue(), t, ystr)) {
-      getParent()->processOption(attributeName_.getValue(), ystr);
+    if (getParent()->interpValue(getAttributeName(), getFrom(), getTo(), t, ystr)) {
+      getParent()->processOption(getAttributeName(), ystr);
 
       svg_.redraw();
     }

@@ -11,9 +11,10 @@
 #include <CSVGTimeValue.h>
 #include <CSVGPreserveAspect.h>
 
+#include <CCSS.h>
 #include <CImageLib.h>
 #include <CFont.h>
-#include <CMatrix2D.h>
+#include <CMatrixStack2D.h>
 #include <CBBox2D.h>
 #include <CFillType.h>
 #include <CLineDash.h>
@@ -99,8 +100,11 @@ class CSVG {
   void          setRenderer(CSVGRenderer *renderer);
   CSVGRenderer *getRenderer() const { return renderer_; }
 
-  const CMatrix2D &viewMatrix() const { return viewMatrix_; }
-  void setViewMatrix(const CMatrix2D &v) { viewMatrix_ = v; }
+  const CMatrixStack2D &viewMatrix() const { return viewMatrix_; }
+  void setViewMatrix(const CMatrixStack2D &v) { viewMatrix_ = v; }
+
+  double scale() const { return scale_; }
+  void setScale(double s) { scale_ = s; }
 
   CSVGRenderer *createRenderer();
 
@@ -117,10 +121,15 @@ class CSVG {
   void getBufferNames(std::vector<std::string> &names) const;
 
   void beginDrawBuffer(CSVGBuffer *buffer);
+  void beginDrawBuffer(CSVGBuffer *buffer, double xs, double ys);
   void beginDrawBuffer(CSVGBuffer *buffer, const CBBox2D &bbox);
+  void beginDrawBuffer(CSVGBuffer *buffer, const CBBox2D &bbox, double xs, double ys);
   void endDrawBuffer  (CSVGBuffer *buffer);
 
   void setAntiAlias(bool flag);
+
+  CSVGObject *styleObject() const { return styleObject_; }
+  void setStyleObject(CSVGObject *o) { styleObject_ = o; }
 
   CSVGObject *drawObject() const { return drawObject_; }
   void setDrawObject(CSVGObject *o) { drawObject_ = o; }
@@ -139,6 +148,9 @@ class CSVG {
 
   void setDebugFilter(bool b);
   bool getDebugFilter() const { return debugFilter_; }
+
+  void setDebugUse(bool b);
+  bool getDebugUse() const { return debugUse_; }
 
   void init();
 
@@ -233,10 +245,10 @@ class CSVG {
   CImagePtr drawToImage(int w, int h);
 
   void draw();
-  void draw(const CMatrix2D &matrix, double scale=1);
+  void draw(const CMatrixStack2D &matrix, double scale=1);
 
   void drawBlock(CSVGBlock *block);
-  void drawBlock(CSVGBlock *block, const CMatrix2D &matrix, double scale=1);
+  void drawBlock(CSVGBlock *block, const CMatrixStack2D &matrix, double scale=1);
 
   void resetStroke();
   void updateStroke(const CSVGStroke &stroke);
@@ -259,11 +271,11 @@ class CSVG {
   void updateFontDef(const CSVGFontDef &fontDef);
   void setFontDef();
 
-  void setTransform(const CMatrix2D &matrix);
-  void getTransform(CMatrix2D &matrix);
+  void setTransform(const CMatrixStack2D &matrix);
+  void getTransform(CMatrixStack2D &matrix);
   void unsetTransform();
 
-  void setBufferTransform(CSVGBuffer *butter, const CMatrix2D &matrix);
+  void setBufferTransform(CSVGBuffer *butter, const CMatrixStack2D &matrix);
   void unsetBufferTransform(CSVGBuffer *butter);
 
   void drawImage(double x, double y, CImagePtr image);
@@ -288,6 +300,9 @@ class CSVG {
 
   void drawPolygon(const std::vector<CPoint2D> &points);
   void fillPolygon(const std::vector<CPoint2D> &points);
+
+  void fillDrawText(double x, double y, const std::string &text, CFontPtr font, CHAlignType align,
+                    bool isFilled, bool isStroked);
 
   void drawText(double x, double y, const std::string &text, CFontPtr font, CHAlignType align);
   void fillText(double x, double y, const std::string &text, CFontPtr font, CHAlignType align);
@@ -364,13 +379,16 @@ class CSVG {
   bool timeValueOption(const std::string &opt_name, const std::string &opt_value,
                        const std::string &name, CSVGTimeValue &time);
   bool transformOption(const std::string &opt_name, const std::string &opt_value,
-                       const std::string &name, CMatrix2D &matrix);
+                       const std::string &name, CMatrixStack2D &matrix);
 
   bool stringToTime(const std::string &str, CSVGTimeValue &time) const;
 
   bool decodeLengthValue(const std::string &str, CSVGLengthValue &lvalue);
 
-  bool decodeTransform(const std::string &str, CMatrix2D &matrix);
+  bool urlOption(const std::string &opt_name, const std::string &opt_value,
+                 const std::string &name, CSVGObject **obj);
+
+  bool decodeTransform(const std::string &str, CMatrixStack2D &matrix);
 
   bool decodePreserveAspectRatio(const std::string &str, CHAlignType *halign,
                                  CVAlignType *valign, CSVGScale *scale);
@@ -405,15 +423,24 @@ class CSVG {
 
   CSVGObject *lookupObjectById(const std::string &id) const;
 
-  bool readCSSFile(const std::string &filename);
+  bool readCSSFile  (const std::string &filename);
+  bool readCSSString(const std::string &str);
 
-  CSVGStyleData &getStyleData(const std::string &id);
+  bool processCSSIds();
 
-  bool getStyleStrokeColor  (const std::string &id, CRGBA &rgba);
-  bool getStyleStrokeOpacity(const std::string &id, double &opacity);
-  bool getStyleStrokeWidth  (const std::string &id, double &width);
-  bool getStyleStrokeDash   (const std::string &id, CLineDash &dash);
-  bool getStyleFillColor    (const std::string &id, CRGBA &rgba);
+  void addStyleValues(CSVGStyleData &svgStyleData, const CCSS::StyleData &cssStyleData);
+
+  CSVGStyleData &getGlobalStyleData   ();
+  CSVGStyleData &getTypeStyleData     (const std::string &objType);
+  CSVGStyleData &getClassStyleData    (const std::string &objClass);
+  CSVGStyleData &getTypeClassStyleData(const std::string &objType, const std::string &objClass);
+
+  bool getStyleStrokeColor  (const CSVGObject *obj, CRGBA &rgba);
+  bool getStyleStrokeOpacity(const CSVGObject *obj, double &opacity);
+  bool getStyleStrokeWidth  (const CSVGObject *obj, double &width);
+  bool getStyleStrokeDash   (const CSVGObject *obj, CLineDash &dash);
+  bool getStyleFillColor    (const CSVGObject *obj, CRGBA &rgba);
+  bool getStyleFillNoColor  (const CSVGObject *obj, bool &noColor);
 
   void getObjectsAtPoint(const CPoint2D &p, ObjectList &objects) const;
 
@@ -434,15 +461,16 @@ class CSVG {
   typedef std::vector<CSVGFont *>              FontList;
   typedef std::map<std::string, CSVGObject *>  NameObjectMap;
   typedef std::map<std::string, CSVGStyleData> StyleDataMap;
+  typedef std::map<std::string, StyleDataMap>  TypeStyleDataMap;
 
   CSVGRenderer*           renderer_      { 0 };
   CAutoPtr<CSVGBufferMgr> buffer_mgr_;
   CSVGBuffer*             buffer_        { 0 };
-  CMatrix2D               viewMatrix_;
+  CMatrixStack2D          viewMatrix_;
   double                  scale_         { 1 };
   CAutoPtr<CSVGBlock>     block_;
   CAutoPtr<CXML>          xml_;
-  CXMLTag*                xml_tag_       { 0 };
+  CXMLTag*                xmlTag_        { 0 };
   CRGBA                   background_    { 1, 1, 1};
   CSVGStroke              stroke_;
   CSVGFill                fill_;
@@ -450,13 +478,19 @@ class CSVG {
   CSVGFontDef             fontDef_;
   FontList                fontList_;
   NameObjectMap           idObjectMap_;
-  StyleDataMap            styleData_;
+  StyleDataMap            globalStyleData_;
+  StyleDataMap            typeStyleData_;
+  StyleDataMap            classStyleData_;
+  TypeStyleDataMap        typeClassStyleData_;
+  CCSS                    css_;
+  CSVGObject*             styleObject_   { 0 };
   CSVGObject*             drawObject_    { 0 };
   bool                    uniquify_      { false };
   bool                    autoName_      { false };
   bool                    debug_         { false };
   bool                    debugImage_    { false };
   bool                    debugFilter_   { false };
+  bool                    debugUse_      { false };
 };
 
 #endif

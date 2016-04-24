@@ -33,6 +33,13 @@ dup() const
   return new CSVGImage(*this);
 }
 
+void
+CSVGImage::
+setLinkName(const std::string &str)
+{
+  xlink_ = CSVGXLink(this, str);
+}
+
 /* Atributes:
     <Core>
     <Conditional>

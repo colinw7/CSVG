@@ -29,18 +29,25 @@ class CSVGPattern : public CSVGObject {
   CSVGCoordUnits getUnits() const { return units_.getValue(CSVGCoordUnits::USER_SPACE); }
   void setUnits(CSVGCoordUnits units) { units_ = units; }
 
-  bool getContentsUnitsValid() const { return contentUnits_.isValid(); }
-  CSVGCoordUnits getContentsUnits() const {
+  bool getContentUnitsValid() const { return contentUnits_.isValid(); }
+  CSVGCoordUnits getContentUnits() const {
     return contentUnits_.getValue(CSVGCoordUnits::USER_SPACE); }
-  void setContentsUnits(CSVGCoordUnits units) { contentUnits_ = units; }
+  void setContentUnits(CSVGCoordUnits units) { contentUnits_ = units; }
+
+  const CSVGXLink &xlink() const { return xlink_.getValue(); }
+
+  std::string getLinkName() const { return (xlink_.isValid() ? xlink_.getValue().str() : ""); }
+  void setLinkName(const std::string &str);
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  void draw() override;
+  bool isDrawable() const override { return false; }
 
   void print(std::ostream &os, bool hier) const override;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGPattern &pattern);
+
+  CSVGObject *getObject();
 
   CImagePtr getImage(CSVGObject *parent, double *w1, double *h1);
 
@@ -54,7 +61,8 @@ class CSVGPattern : public CSVGObject {
   COptValT<CSVGLengthValue> height_;
   COptValT<CSVGCoordUnits>  units_;
   COptValT<CSVGCoordUnits>  contentUnits_;
-  COptValT<CMatrix2D>       patternTransform_;
+  COptValT<CMatrixStack2D>  patternTransform_;
+  COptValT<CSVGXLink>       xlink_;
 };
 
 #endif

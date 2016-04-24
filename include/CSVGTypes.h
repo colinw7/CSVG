@@ -77,7 +77,8 @@ enum class CSVGScale {
 
 enum class CSVGCoordUnits {
   OBJECT_BBOX,
-  USER_SPACE
+  USER_SPACE,
+  STROKE_WIDTH
 };
 
 enum class CSVGEventType {

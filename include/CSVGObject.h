@@ -11,7 +11,7 @@
 #include <CSVGAnimation.h>
 #include <CSVGFontDef.h>
 #include <CBBox2D.h>
-#include <CMatrix2D.h>
+#include <CMatrixStack2D.h>
 #include <COptVal.h>
 #include <CImagePtr.h>
 #include <CAlignType.h>
@@ -41,6 +41,8 @@ struct CSVGObjectMarker {
   CSVGObjectMarker() { }
 };
 
+//---
+
 class CSVGObject {
  public:
   typedef std::list<CSVGObject *>   ObjectList;
@@ -66,8 +68,9 @@ class CSVGObject {
   std::string getId() const { return id_.getValue(""); }
   void setId(const std::string &id);
 
-  const std::string &getClass() const { return class_.getValue(""); }
-  void setClass(const std::string &name);
+  std::vector<std::string> getClasses() const {
+    return classes_.getValue(std::vector<std::string>()); }
+  void setClasses(const std::vector<std::string> &classes);
 
   CSVGObject *getParent() const { return parent_; }
   void setParent(CSVGObject *parent);
@@ -206,7 +209,7 @@ class CSVGObject {
 
   bool getFlatTransformedBBox(CBBox2D &bbox) const;
 
-  CBBox2D transformBBox(const CMatrix2D &m, const CBBox2D &bbox) const;
+  CBBox2D transformBBox(const CMatrixStack2D &m, const CBBox2D &bbox) const;
 
   virtual bool inside(const CPoint2D &pos) const;
 
@@ -234,71 +237,80 @@ class CSVGObject {
 
   bool drawSubObject();
 
+  //------
+
   // text
   virtual bool hasText() const { return text_.isValid(); }
-  virtual std::string getText() const { return text_.getValue(""); }
+  virtual std::string getText() const;
   virtual void setText(const std::string &text);
+
+  //------
 
   // opacity
   void   setOpacity     (const std::string &opacityStr);
   void   setOpacity     (double opacity) { opacity_.setValue(opacity); }
   bool   getOpacityValid() const { return opacity_.isValid(); }
-  double getOpacity     () const;
+  double getOpacity     () const { return opacity_.getValue(1.0); }
+
+  //------
 
   // stroke
-  bool  getStrokeColorValid() const;
-  CRGBA getStrokeColor     () const;
-
   void setStrokeColor(const std::string &color) { stroke_.setColor(color); }
-  void setStrokeColor(const CRGBA &color      ) { stroke_.setColor(color); }
-
-  bool   getStrokeOpacityValid() const;
-  double getStrokeOpacity() const;
+  void setStrokeColor(const CRGBA &color) { stroke_.setColor(color); }
+  bool getStrokeColorValid() const { return stroke_.getColorValid(); }
 
   void setStrokeOpacity(const std::string &opacity) { stroke_.setOpacity(opacity); }
   void setStrokeOpacity(double t) { stroke_.setOpacity(t); }
-
-  double getStrokeWidth() const;
+  bool getStrokeOpacityValid() const { return stroke_.getOpacityValid(); }
 
   void setStrokeWidth(const std::string &width) { stroke_.setWidth(width); }
   void setStrokeWidth(double width            ) { stroke_.setWidth(width); }
-
-  const CLineDash &getStrokeLineDash();
 
   void setStrokeDash(const std::string &dashStr) { stroke_.setDash(dashStr); }
   void setStrokeDash(const CLineDash &dash) { stroke_.setDash(dash); }
 
   void setStrokeDashOffset(const std::string &offsetStr) { stroke_.setDashOffset(offsetStr); }
 
-  CLineCapType getStrokeLineCap();
-
   void setStrokeLineCap(const std::string &capStr) { stroke_.setLineCap(capStr); }
   void setStrokeLineCap(const CLineCapType &cap) { stroke_.setLineCap(cap); }
-
-  CLineJoinType getStrokeLineJoin();
+  CLineCapType getStrokeLineCap() { return stroke_.getLineCap(); }
 
   void setStrokeLineJoin(const std::string &joinStr) { stroke_.setLineJoin(joinStr); }
   void setStrokeLineJoin(const CLineJoinType &join) { stroke_.setLineJoin(join); }
+  CLineJoinType getStrokeLineJoin() { return stroke_.getLineJoin(); }
 
   void setStrokeMitreLimit(const std::string &limitStr) { stroke_.setMitreLimit(limitStr); }
 
+  //---
+
+//CRGBA            getStrokeColor   () const;
+  double           getStrokeOpacity () const;
+  double           getStrokeWidth   () const;
+  const CLineDash &getStrokeLineDash() const;
+
+  //------
+
   // fill
-  bool getFillColorValid() const;
-
-  CRGBA getFillColor() const;
   void setFillColor(const std::string &color) { fill_.setColor(color); }
-  void setFillColor(const CRGBA  &color) { fill_.setColor(color); }
+  void setFillColor(const CRGBA &color) { fill_.setColor(color); }
+  bool getFillColorValid() const { return fill_.getColorValid(); }
 
-  double getFillOpacity() const;
-  bool getFillOpacityValid() const;
   void setFillOpacity(const std::string &opacity) { fill_.setOpacity(opacity); }
   void setFillOpacity(double r) { fill_.setOpacity(r); }
+  bool getFillOpacityValid() const { return fill_.getOpacityValid(); }
 
-  CFillType getFillRule() const;
   void setFillRule(const std::string &rule) { fill_.setRule(rule); }
+  CFillType getFillRule() const { return fill_.getRule(); }
 
-  CSVGObject *getFillObject() const;
   void setFillObject(CSVGObject *object) { fill_.setFillObject(object); }
+  CSVGObject *getFillObject() const { return fill_.getFillObject(); }
+
+  //---
+
+//CRGBA  getFillColor  () const;
+  double getFillOpacity() const;
+
+  //------
 
   // font
   std::string getFontFamily() const;
@@ -306,12 +318,14 @@ class CSVGObject {
   double      getFontSize() const;
 
   CFontPtr getFont() const;
+  void setFont(CFontPtr f);
 
   void setFontFamily(const std::string &family);
   void setFontSize  (double size);
   void setFontSize  (const CSVGLengthValue &lvalue);
   void setFontWeight(const std::string &weight);
   void setFontStyle (const std::string &style );
+  void setFontStyle (CFontStyle s);
 
   // visible
   std::string getVisibility() const { return visibility_.getValue(""); }
@@ -321,11 +335,28 @@ class CSVGObject {
   void setClipRule(const std::string &rule) { clip_.setRule(rule); }
 
   // transform
-  const CMatrix2D &getTransform() const { return transform_; }
+  const CMatrixStack2D &getTransform() const { return transform_; }
 
-  void setTransform(const CMatrix2D &transform) { transform_ = transform; }
+  void setTransform(const CMatrixStack2D &transform) { transform_ = transform; }
 
-  CMatrix2D getFlatTransform() const;
+  CMatrixStack2D getFlatTransform() const;
+
+  //---
+
+  void setNameValue(const std::string &name, const std::string &value) {
+    nameValues_[name] = value;
+  }
+
+  COptValT<std::string> getNameValue(const std::string &name) const {
+    COptValT<std::string> value;
+
+    auto p = nameValues_.find(name);
+
+    if (p != nameValues_.end())
+      value = (*p).second;
+
+    return value;
+  }
 
   //---
 
@@ -336,11 +367,43 @@ class CSVGObject {
 
   void setStyle(const std::string &style);
 
+  //---
+
+  void setTextBaselineShift(const std::string &str);
+
   void setTextAnchor(const std::string &str);
   CHAlignType getTextAnchor() const;
 
+  CSVGTextDecoration getTextDecoration() const {
+    return textDecoration_.getValue(CSVGTextDecoration::NONE);
+  }
   void setTextDecoration(const std::string &str);
-  CSVGTextDecoration getTextDecoration() const;
+
+  void setWritingMode(const std::string &mode) {
+    setNameValue("writing-mode", mode);
+  }
+
+  std::string getWritingMode() const {
+    return getNameValue("writing-mode").getValue("lr-tb");
+  }
+
+  void setHGlyphOrient(const std::string &o) {
+    setNameValue("glyph-orientation-horizontal", o);
+  }
+
+  std::string getHGlyphOrient() const {
+    return getNameValue("glyph-orientation-horizontal").getValue("auto");
+  }
+
+  void setVGlyphOrient(const std::string &o) {
+    setNameValue("glyph-orientation-vertical", o);
+  }
+
+  std::string getVGlyphOrient() const {
+    return getNameValue("glyph-orientation-vertical").getValue("auto");
+  }
+
+  //---
 
   void setShapeRendering(const std::string &rendering);
 
@@ -378,10 +441,10 @@ class CSVGObject {
   void printFontDef    (std::ostream &os) const;
   void printTransform  (std::ostream &os) const;
 
-  void printTransform(std::ostream &os, const CMatrix2D &m) const;
+  void printTransform(std::ostream &os, const CMatrixStack2D &m) const;
 
   void printNameTransform(std::ostream &os, const std::string &name,
-                          const COptValT<CMatrix2D> &m) const {
+                          const COptValT<CMatrixStack2D> &m) const {
     if (m.isValid()) {
       os << " " << name << "=\""; printTransform(os, m.getValue()); os << "\"";
     }
@@ -465,10 +528,11 @@ class CSVGObject {
 
  protected:
   typedef std::map<std::string,std::string> NameValues;
+  typedef std::vector<std::string>          StringVector;
 
   CSVG&                        svg_;
   COptValT<std::string>        id_;
-  COptValT<std::string>        class_;
+  COptValT<StringVector>       classes_;
   CSVGObject*                  parent_ { 0 };
   uint                         ind_;
   COptValT<double>             opacity_;
@@ -483,7 +547,7 @@ class CSVGObject {
   COptValT<CSVGLengthValue>    letterSpacing_;
   COptValT<CSVGLengthValue>    wordSpacing_;
   NameValues                   nameValues_;
-  CMatrix2D                    transform_;
+  CMatrixStack2D               transform_;
   ObjectList                   objects_;
   CSVGAnimation                animation_;
   CSVGFilter*                  filter_   { 0 };

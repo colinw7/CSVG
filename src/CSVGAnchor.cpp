@@ -28,6 +28,13 @@ dup() const
   return new CSVGAnchor(*this);
 }
 
+void
+CSVGAnchor::
+setLinkName(const std::string &str)
+{
+  xlink_ = CSVGXLink(this, str);
+}
+
 /* Attributes:
     <Core>
     <Conditional>
@@ -37,7 +44,6 @@ dup() const
     <XLinkEmbed>
     <External>
 */
-
 bool
 CSVGAnchor::
 processOption(const std::string &opt_name, const std::string &opt_value)

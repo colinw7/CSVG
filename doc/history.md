@@ -14,3 +14,13 @@
  + Add separate Qt buffer viewer window
  + Add separate Qt property tree window
  + Add basic zoom in/out
+
+### 4/24/2016
+ + Use Matrix Stack so build transform so orignal transform parts can be extracted
+ + Improve handling of tspan so text ordering is maintained
+ + Add UTF8 support for XML reader
+ + Improve CSS handling so support global, type and class matches
+ + Add subscript, superscript, overline, underline, strokethrough font styles
+ + Improve marker drawing
+ + More object properties
+ + Fix issues in radial gradient bbox scaling

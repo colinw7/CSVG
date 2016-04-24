@@ -80,45 +80,13 @@ setText(const std::string &text)
       }
     }
 
-    if (! parseCSS(str))
+    if (! svg_.readCSSString(str))
       std::cerr << "Invalid Style: " << str << std::endl;
   }
   else
     std::cerr << "Invalid Text: " << text << std::endl;
 
   text_ = text;
-}
-
-bool
-CSVGStyle::
-parseCSS(const std::string &str)
-{
-  CCSS css;
-
-  if (! css.processLine(str))
-    return false;
-
-  std::vector<std::string> ids;
-
-  css.getIds(ids);
-
-  uint num_ids = ids.size();
-
-  for (uint i = 0; i < num_ids; ++i) {
-    const CCSS::StyleData &styleData = css.getStyleData(ids[i]);
-
-    CSVGStyleData &styleData1 = svg_.getStyleData(ids[i]);
-
-    uint num_options = styleData.getNumOptions();
-
-    for (uint j = 0; j < num_options; ++j) {
-      const CCSS::Option &option = styleData.getOption(j);
-
-      styleData1.setValue(option.getName(), option.getValue());
-    }
-  }
-
-  return true;
 }
 
 void

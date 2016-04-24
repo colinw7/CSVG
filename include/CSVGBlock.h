@@ -25,29 +25,28 @@ class CSVGBlock : public CSVGObject {
   double getHeight() const;
   void setHeight(double h) { height_ = h; }
 
-  CHAlignType getHAlign() const {
-    return preserveAspect_.getValue(CSVGPreserveAspect()).getHAlign();
-  }
+  CSVGPreserveAspect preserveAspect() const {
+    return preserveAspect_.getValue(CSVGPreserveAspect()); }
+  void setPreserveAspect(const CSVGPreserveAspect &a) { preserveAspect_ = a; }
+
+  CHAlignType getHAlign() const { return preserveAspect().getHAlign(); }
+  CVAlignType getVAlign() const { return preserveAspect().getVAlign(); }
+  CSVGScale   getScale () const { return preserveAspect().getScale (); }
+
   void setHAlign(const CHAlignType &a) {
-    CSVGPreserveAspect preserveAspect = preserveAspect_.getValue(CSVGPreserveAspect());
+    CSVGPreserveAspect preserveAspect = this->preserveAspect();
     preserveAspect.setHAlign(a);
     preserveAspect_ = preserveAspect;
   }
 
-  CVAlignType getVAlign() const {
-    return preserveAspect_.getValue(CSVGPreserveAspect()).getVAlign();
-  }
   void setVAlign(const CVAlignType &a) {
-    CSVGPreserveAspect preserveAspect = preserveAspect_.getValue(CSVGPreserveAspect());
+    CSVGPreserveAspect preserveAspect = this->preserveAspect();
     preserveAspect.setVAlign(a);
     preserveAspect_ = preserveAspect;
   }
 
-  CSVGScale getScale() const {
-    return preserveAspect_.getValue(CSVGPreserveAspect()).getScale();
-  }
   void setScale(const CSVGScale &s) {
-    CSVGPreserveAspect preserveAspect = preserveAspect_.getValue(CSVGPreserveAspect());
+    CSVGPreserveAspect preserveAspect = this->preserveAspect();
     preserveAspect.setScale(s);
     preserveAspect_ = preserveAspect;
   }

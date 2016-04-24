@@ -29,6 +29,13 @@ redraw()
 {
   renderer_->setSize(width(), height());
 
+  if (autoScale_) {
+    double sx = (1.0*width ())/svg_->getBlock()->getWidth ();
+    double sy = (1.0*height())/svg_->getBlock()->getHeight();
+
+    scale_ = std::min(sx, sy);
+  }
+
   double bw = svg_->getBlock()->getWidth ()*scale_;
   double bh = svg_->getBlock()->getHeight()*scale_;
 
@@ -43,9 +50,9 @@ redraw()
 
   opainter_->begin(&oimage_);
 
-  CMatrix2D matrix;
+  CMatrixStack2D matrix;
 
-  matrix.setScale(scale_, scale_);
+  matrix.scale(scale_, scale_);
 
   svg_->draw(matrix, scale_);
 
@@ -92,7 +99,7 @@ mousePressEvent(QMouseEvent *e)
 
   CPoint2D w;
 
-  renderer_->pixelToWindow(CPoint2D(e->pos().x(), e->pos().y()), w);
+  pixelToWindow(CPoint2D(e->pos().x(), e->pos().y()), w);
 
   std::vector<CSVGObject *> objects;
 
@@ -127,7 +134,7 @@ mouseMoveEvent(QMouseEvent *e)
 {
   CPoint2D w;
 
-  renderer_->pixelToWindow(CPoint2D(e->pos().x(), e->pos().y()), w);
+  pixelToWindow(CPoint2D(e->pos().x(), e->pos().y()), w);
 
   std::vector<CSVGObject *> objects;
 
@@ -162,7 +169,7 @@ mouseReleaseEvent(QMouseEvent *e)
 {
   CPoint2D w;
 
-  renderer_->pixelToWindow(CPoint2D(e->pos().x(), e->pos().y()), w);
+  pixelToWindow(CPoint2D(e->pos().x(), e->pos().y()), w);
 
   std::vector<CSVGObject *> objects;
 
@@ -186,6 +193,8 @@ keyPressEvent(QKeyEvent *ke)
     scale_ /= 1.20;
   else if (ke->key() == Qt::Key_Home)
     scale_ = 1;
+  else if (ke->key() == Qt::Key_A)
+    autoScale_ = ! autoScale_;
 
   redraw();
 
@@ -238,4 +247,14 @@ drawRect(const CBBox2D &bbox, const QColor &c)
   opainter_->drawLine(p2.x, p1.y, p2.x, p2.y);
   opainter_->drawLine(p2.x, p2.y, p1.x, p2.y);
   opainter_->drawLine(p1.x, p2.y, p1.x, p1.y);
+}
+
+void
+CQSVGCanvas::
+pixelToWindow(const CPoint2D &p, CPoint2D &w)
+{
+  renderer_->pixelToWindow(p, w);
+
+  w.x /= scale_;
+  w.y /= scale_;
 }

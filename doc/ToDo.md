@@ -1,4 +1,8 @@
 ## TODO
+ + General
+   + preserveAspectRatio (fig_0205.svg)
+   + clip (fig_0206.svg)
+   + nested viewport (fig_0208.svg)
  + Pattern
    + Image Size
    + patternContentUnits (fig_0704.svg)
@@ -21,10 +25,7 @@
  + Clipping
    + Does not work for transformed path
  + Text
-   + tspan split text
-   + UTF support
    + text on path
-   + writing mode
  + Color
    + sRGB color interpolation not implemented
  + Gradient

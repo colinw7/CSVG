@@ -2,6 +2,7 @@
 #include <CSVGFeMergeNode.h>
 #include <CSVG.h>
 #include <CSVGBuffer.h>
+#include <CSVGUtil.h>
 
 CSVGFeMerge::
 CSVGFeMerge(CSVG &svg) :

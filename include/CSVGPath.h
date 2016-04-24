@@ -21,6 +21,7 @@ class CSVGPath : public CSVGObject {
   bool processOption(const std::string &name, const std::string &value) override;
 
   const PartList &getPartList() const { return parts_; }
+  void setPartList(const PartList &parts) { parts_ = parts; }
 
   void moveBy(const CVector2D &d);
 

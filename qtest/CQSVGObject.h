@@ -37,6 +37,11 @@ class CQSVGObject : public QObject {
   Q_PROPERTY(CQSVGEnum::FillType fillRule    READ fillRule    WRITE setFillRule   )
   Q_PROPERTY(QString             fillUrl     READ fillUrl     WRITE setFillUrl    )
 
+  Q_PROPERTY(QString              fontFamily READ getFontFamily WRITE setFontFamily)
+//Q_PROPERTY(CQSVGEnum::FontStyle fontStyle  READ getFontStyle  WRITE setFontStyle )
+  Q_PROPERTY(double               fontSize   READ getFontSize   WRITE setFontSize  )
+  Q_PROPERTY(QFont                font       READ getFont       WRITE setFont      )
+
  public:
   CQSVGObject(CQSVG *svg, CSVGObject *obj);
 
@@ -91,6 +96,15 @@ class CQSVGObject : public QObject {
 
   QString fillUrl() const;
   void setFillUrl(const QString &str);
+
+  QString getFontFamily() const;
+  void setFontFamily(const QString &str);
+
+  double getFontSize() const;
+  void setFontSize(double s);
+
+  QFont getFont() const;
+  void setFont(QFont f);
 
   void drawSelected();
 

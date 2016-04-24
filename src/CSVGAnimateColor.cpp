@@ -60,11 +60,11 @@ void
 CSVGAnimateColor::
 animate(double t)
 {
-  if      (attributeName_.getValue() == "fill") {
+  if      (getAttributeName() == "fill") {
     CRGBA fromColor, toColor;
 
-    svg_.decodeColorString(from_.getValue(""), fromColor);
-    svg_.decodeColorString(to_  .getValue(""), toColor  );
+    svg_.decodeColorString(getFrom(), fromColor);
+    svg_.decodeColorString(getTo  (), toColor  );
 
     CRGBA c = fromColor*(1 - t) + toColor*t;
 
@@ -72,11 +72,11 @@ animate(double t)
 
     svg_.redraw();
   }
-  else if (attributeName_.getValue() == "stroke") {
+  else if (getAttributeName() == "stroke") {
     CRGBA fromColor, toColor;
 
-    svg_.decodeColorString(from_.getValue(""), fromColor);
-    svg_.decodeColorString(to_  .getValue(""), toColor  );
+    svg_.decodeColorString(getFrom(), fromColor);
+    svg_.decodeColorString(getTo  (), toColor  );
 
     CRGBA c = fromColor*(1 - t) + toColor*t;
 

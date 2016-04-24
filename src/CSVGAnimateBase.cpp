@@ -61,7 +61,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
         startTime_ = begin_.getValue().time().getSeconds();
 
         if (dur_.isValid())
-          endTime_ = startTime_.getValue() + dur_.getValue().getSeconds();
+          endTime_ = getStartTime() + dur_.getValue().getSeconds();
       }
       else if (begin_.getValue().type() == CSVGEventType::ANIMATE_BEGIN &&
                begin_.getValue().id() == "prev") {
@@ -72,7 +72,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
           startTime_ = prev->startTime_;
 
           if (dur_.isValid())
-            endTime_ = startTime_.getValue() + dur_.getValue().getSeconds();
+            endTime_ = getStartTime() + dur_.getValue().getSeconds();
         }
       }
     }
@@ -87,7 +87,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
     dur_ = time;
 
     if (dur_.isValid())
-      endTime_ = startTime_.getValue(0) + dur_.getValue().getSeconds();
+      endTime_ = getStartTime() + dur_.getValue().getSeconds();
   }
   else if (svg_.stringOption(opt_name, opt_value, "repeatCount", str)) {
     repeatCount_ = str;
@@ -129,31 +129,31 @@ tick(double dt)
   if (! isAnimating()) {
     if (startTime_.isValid()) {
       if (endTime_.isValid()) {
-        if (currentTime_ >= startTime_.getValue() && currentTime_ <= endTime_.getValue())
+        if (currentTime_ >= getStartTime() && currentTime_ <= getEndTime())
           setAnimating(true);
       }
       else {
-        if (currentTime_ >= startTime_.getValue())
+        if (currentTime_ >= getStartTime())
           setAnimating(true);
       }
     }
     else {
       if (endTime_.isValid()) {
-        if (currentTime_ <= endTime_.getValue())
+        if (currentTime_ <= getEndTime())
           setAnimating(true);
       }
     }
   }
   else {
-    if (endTime_.isValid() && currentTime_ > endTime_.getValue()) {
+    if (endTime_.isValid() && currentTime_ > getEndTime()) {
       bool repeat = false;
 
       if      (repeatNum_.isValid()) {
         ++repeatInd_;
 
-        if      (repeatNum_.getValue() == -1)
+        if      (getRepeatNum() == -1)
           repeat = true;
-        else if (repeatNum_.getValue() >= repeatInd_)
+        else if (getRepeatNum() >= repeatInd_)
           repeat = true;
 
         if (repeat && id_.isValid())
@@ -165,13 +165,13 @@ tick(double dt)
 
         repeatDur_.setInvalid();
 
-        endTime_ = startTime_.getValue() + repeatDur_.getValue().getSeconds();
+        endTime_ = getStartTime() + repeatDur_.getValue().getSeconds();
 
         repeat = true;
       }
 
       if (repeat)
-        currentTime_ = startTime_.getValue();
+        currentTime_ = getStartTime();
       else
         setAnimating(false);
     }
@@ -184,7 +184,7 @@ tick(double dt)
 
   //---
 
-  double t = CSVGUtil::map(currentTime_, startTime_.getValue(0), endTime_.getValue(), 0, 1);
+  double t = CSVGUtil::map(currentTime_, getStartTime(), getEndTime(), 0, 1);
 
   animate(t);
 }
@@ -199,9 +199,9 @@ handleEvent(CSVGEventType type, const std::string &id, const std::string &data)
     if      (end_.isValid() && end_.getValue().isTimeout())
       endTime_ = end_.getValue().time().getSeconds();
     else if (dur_.isValid())
-      endTime_ = startTime_.getValue() + dur_.getValue().getSeconds();
+      endTime_ = getStartTime() + dur_.getValue().getSeconds();
 
-    if (currentTime_ >= startTime_.getValue() && currentTime_ <= endTime_.getValue())
+    if (currentTime_ >= getStartTime() && currentTime_ <= getEndTime())
       setAnimating(true);
   }
 

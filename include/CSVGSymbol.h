@@ -12,13 +12,17 @@ class CSVGSymbol : public CSVGObject {
 
   CSVGSymbol *dup() const override;
 
+  CSVGPreserveAspect preserveAspect() const {
+    return preserveAspect_.getValue(CSVGPreserveAspect()); }
+  void setPreserveAspect(const CSVGPreserveAspect &a) { preserveAspect_ = a; }
+
   bool processOption(const std::string &name, const std::string &value) override;
 
   void moveBy(const CVector2D &delta) override;
   void resizeTo(const CSize2D &size) override;
   void rotateBy(double da, const CPoint2D &c) override;
 
-  void draw() override;
+  bool isDrawable() const override { return false; }
 
   void print(std::ostream &os, bool hier) const override;
 

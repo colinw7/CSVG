@@ -22,6 +22,13 @@ dup() const
   return new CSVGFontFaceUri(*this);
 }
 
+void
+CSVGFontFaceUri::
+setLinkName(const std::string &str)
+{
+  xlink_ = CSVGXLink(this, str);
+}
+
 bool
 CSVGFontFaceUri::
 processOption(const std::string &opt_name, const std::string &opt_value)

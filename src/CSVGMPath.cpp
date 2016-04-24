@@ -27,6 +27,13 @@ dup() const
   return new CSVGMPath(*this);
 }
 
+void
+CSVGMPath::
+setLinkName(const std::string &str)
+{
+  xlink_ = CSVGXLink(this, str);
+}
+
 bool
 CSVGMPath::
 processOption(const std::string &opt_name, const std::string &opt_value)

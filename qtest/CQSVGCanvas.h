@@ -34,16 +34,19 @@ class CQSVGCanvas : public QWidget {
 
   void drawRect(const CBBox2D &bbox, const QColor &c);
 
+  void pixelToWindow(const CPoint2D &p, CPoint2D &w);
+
  public slots:
   void redraw();
 
  private:
-  CQSVGWindow   *window_   { 0 };
-  CQSVG         *svg_      { 0 };
-  CQSVGRenderer *renderer_ { 0 };
-  QPainter      *opainter_ { 0 };
+  CQSVGWindow   *window_    { 0 };
+  CQSVG         *svg_       { 0 };
+  CQSVGRenderer *renderer_  { 0 };
+  QPainter      *opainter_  { 0 };
   QImage         oimage_;
-  double         scale_    { 1 };
+  double         scale_     { 1 };
+  bool           autoScale_ { false };
 };
 
 #endif

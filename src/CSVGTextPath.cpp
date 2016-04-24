@@ -24,6 +24,13 @@ dup() const
   return new CSVGTextPath(*this);
 }
 
+void
+CSVGTextPath::
+setLinkName(const std::string &str)
+{
+  xlink_ = CSVGXLink(this, str);
+}
+
 bool
 CSVGTextPath::
 processOption(const std::string &opt_name, const std::string &opt_value)

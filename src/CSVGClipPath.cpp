@@ -75,17 +75,17 @@ drawPath(CSVGObject* obj)
   //---
 
   // draw clip path
-  CMatrix2D transform;
+  CMatrixStack2D transform;
 
   svg_.getTransform(transform);
 
   if (getUnits() == CSVGCoordUnits::OBJECT_BBOX) {
-    CMatrix2D matrix1, matrix2;
+    CMatrixStack2D m;
 
-    matrix1.setTranslation(x, y);
-    matrix2.setScale      (w, h);
+    m.translate(x, y);
+    m.scale    (w, h);
 
-    svg_.setTransform(matrix1*matrix2);
+    svg_.setTransform(m);
   }
 
   svg_.pathInit();

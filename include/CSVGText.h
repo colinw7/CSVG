@@ -5,6 +5,9 @@
 
 class CSVGText : public CSVGObject {
  public:
+  typedef std::vector<double> Reals;
+
+ public:
   CSVG_OBJECT_DEF("text", CSVGObjTypeId::TEXT)
 
   CSVGText(CSVG &svg);
@@ -17,6 +20,21 @@ class CSVGText : public CSVGObject {
 
   double getY() const { return y_.getValue(0); }
   void setY(double y) { y_ = y; }
+
+  CSVGLengthValue getDX() const { return dx_.getValue(CSVGLengthValue(0)); }
+  void setDX(const CSVGLengthValue x) { dx_ = x; }
+
+  CSVGLengthValue getDY() const { return dy_.getValue(CSVGLengthValue(0)); }
+  void setDY(const CSVGLengthValue y) { dy_ = y; }
+
+  Reals getRotate() const { return rotate_.getValue(Reals()); }
+  void setRotate(const Reals &r) { rotate_ = r; }
+
+  std::string getTextLength() const { return textLength_.getValue(""); }
+  void setTextLength(const std::string &s) { textLength_ = s; }
+
+  std::string getLengthAdjust() const { return lengthAdjust_.getValue("spacing"); }
+  void setLengthAdjust(const std::string &s) { lengthAdjust_ = s; }
 
   CPoint2D getPosition() const { return CPoint2D(getX(), getY()); }
 
@@ -43,9 +61,9 @@ class CSVGText : public CSVGObject {
   COptValT<double>          y_;
   COptValT<CSVGLengthValue> dx_;
   COptValT<CSVGLengthValue> dy_;
-  COptValT<std::string>     rotate_;
+  COptValT<Reals>           rotate_;
   COptValT<std::string>     textLength_;
-  COptValT<CSVGLengthValue> lengthAdjust_;
+  COptValT<std::string>     lengthAdjust_;
   CPoint2D                  lastPos_;
 };
 

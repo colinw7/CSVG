@@ -67,7 +67,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   double          real;
   std::string     str;
   CSVGLengthValue length;
-  CMatrix2D       transform;
+  CMatrixStack2D  transform;
 
   if      (svg_.coordOption    (opt_name, opt_value, "cx", &real))
     cx_ = real;

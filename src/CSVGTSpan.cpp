@@ -43,6 +43,13 @@ dup() const
   return new CSVGTSpan(*this);
 }
 
+void
+CSVGTSpan::
+setText(const std::string &text)
+{
+  text_ = text;
+}
+
 bool
 CSVGTSpan::
 processOption(const std::string &opt_name, const std::string &opt_value)
@@ -71,7 +78,7 @@ getBBox(CBBox2D &bbox) const
   if (! viewBox_.isValid()) {
     double x = 0, y = 0;
 
-    getDrawPos(x, y);
+    getDrawPos(x, y, 0);
 
     double w = 8;
     double a = 10;
@@ -110,42 +117,78 @@ draw()
   if (svg_.getDebug())
     CSVGLog() << *this;
 
+  CSVGText *parentText = getParentText();
+
+  std::string text   = getText();
+  CHAlignType anchor = getTextAnchor();
+  CFontPtr    font   = getFont();
+
   double x = 0, y = 0;
 
-  getDrawPos(x, y);
+  if (getDX().size() > 1 || getDY().size() > 1) {
+    for (uint i = 0; i < text.size(); ++i) {
+      std::string text1 = text.substr(i, 1);
 
-  if (svg_.isFilled() || svg_.isStroked()) {
-    if (svg_.isFilled())
-      svg_.fillText(x, y, getText(), getFont(), getTextAnchor());
+      //---
 
-    if (svg_.isStroked())
-      svg_.drawText(x, y, getText(), getFont(), getTextAnchor());
+      double w, a, d;
+
+      svg_.textSize(text1, font, &w, &a, &d);
+
+      //---
+
+      getDrawPos(x, y, i);
+
+      double y1 = y;
+
+      if      (font->isSubscript())
+        y1 += a/2;
+      else if (font->isSuperscript())
+        y1 -= a/2;
+
+      svg_.fillDrawText(x, y1, text1, font, anchor, svg_.isFilled(), svg_.isStroked());
+
+      //---
+
+      if (parentText)
+        parentText->setLastPos(CPoint2D(x + w, y));
+    }
   }
-  else
-    svg_.fillText(x, y, getText(), getFont(), getTextAnchor());
+  else {
+    double w, a, d;
 
-  double w, a, d;
+    svg_.textSize(text, font, &w, &a, &d);
 
-  svg_.textSize(getText(), getFont(), &w, &a, &d);
+    //---
 
-  //---
+    getDrawPos(x, y, 0);
 
-  CSVGText *text = getParentText();
+    double y1 = y;
 
-  if (text)
-    text->setLastPos(CPoint2D(x + w, y));
+    if      (font->isSubscript())
+      y1 += a/2;
+    else if (font->isSuperscript())
+      y1 -= a/2;
+
+    svg_.fillDrawText(x, y1, text, font, anchor, svg_.isFilled(), svg_.isStroked());
+
+    //---
+
+    if (parentText)
+      parentText->setLastPos(CPoint2D(x + w, y));
+  }
 }
 
 void
 CSVGTSpan::
-getDrawPos(double &x, double &y) const
+getDrawPos(double &x, double &y, int i) const
 {
-  CSVGText *text = getParentText();
+  CSVGText *parentText = getParentText();
 
   CPoint2D lastPos;
 
-  if (text)
-    lastPos = text->lastPos();
+  if (parentText)
+    lastPos = parentText->lastPos();
 
   //---
 
@@ -157,7 +200,8 @@ getDrawPos(double &x, double &y) const
   else if (dx_.isValid()) {
     Reals reals = dx_.getValue();
 
-    x += (! reals.empty() ? reals[0] : 0);
+    if (i < int(reals.size()))
+      x += reals[i];
   }
 
   if      (y_ .isValid())
@@ -165,7 +209,8 @@ getDrawPos(double &x, double &y) const
   else if (dy_.isValid()) {
     Reals reals = dy_.getValue();
 
-    y += (! reals.empty() ? reals[0] : 0);
+    if (i < int(reals.size()))
+      y += reals[i];
   }
 }
 

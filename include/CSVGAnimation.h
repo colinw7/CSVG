@@ -2,7 +2,7 @@
 #define CSVGAnimation_H
 
 #include <CSVGTypes.h>
-#include <CMatrix2D.h>
+#include <CMatrixStack2D.h>
 #include <COptVal.h>
 #include <list>
 
@@ -22,7 +22,7 @@ class CSVGAnimation {
 
   const Objects &objects() const { return objects_; }
 
-  const CMatrix2D &getTransform() const { return t_.getValue(CMatrix2D()); }
+  const CMatrixStack2D &getTransform() const { return t_.getValue(CMatrixStack2D()); }
 
   void addObject(CSVGObject *obj);
 
@@ -35,9 +35,9 @@ class CSVGAnimation {
   void handleEvent(CSVGEventType type, const std::string &id, const std::string &data);
 
  private:
-  CSVGObject          *parent_ { 0 };
-  Objects              objects_;
-  COptValT<CMatrix2D>  t_;
+  CSVGObject               *parent_ { 0 };
+  Objects                   objects_;
+  COptValT<CMatrixStack2D>  t_;
 };
 
 #endif

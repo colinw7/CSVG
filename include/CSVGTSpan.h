@@ -31,6 +31,8 @@ class CSVGTSpan : public CSVGObject {
 
   bool hasFont() const override { return true; }
 
+  void setText(const std::string &text) override;
+
   bool processOption(const std::string &name, const std::string &value) override;
 
   void draw() override;
@@ -45,7 +47,7 @@ class CSVGTSpan : public CSVGObject {
   friend std::ostream &operator<<(std::ostream &os, const CSVGTSpan &tspan);
 
  private:
-  void getDrawPos(double &x, double &y) const;
+  void getDrawPos(double &x, double &y, int i) const;
 
   CSVGText *getParentText() const;
 

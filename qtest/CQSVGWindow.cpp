@@ -33,10 +33,13 @@
 #include <CQSVGImage.h>
 #include <CQSVGLine.h>
 #include <CQSVGLinearGradient.h>
+#include <CQSVGMarker.h>
 #include <CQSVGMask.h>
 #include <CQSVGPath.h>
+#include <CQSVGPattern.h>
 #include <CQSVGPolygon.h>
 #include <CQSVGPolyLine.h>
+#include <CQSVGRadialGradient.h>
 #include <CQSVGRect.h>
 #include <CQSVGStop.h>
 #include <CQSVGText.h>
@@ -328,10 +331,13 @@ addObjectToTree(const std::string &name, CSVGObject *obj)
     CQSVGImage              *qimage    = dynamic_cast<CQSVGImage              *>(obj);
     CQSVGLine               *qline     = dynamic_cast<CQSVGLine               *>(obj);
     CQSVGLinearGradient     *qlgrad    = dynamic_cast<CQSVGLinearGradient     *>(obj);
+    CQSVGMarker             *qmarker   = dynamic_cast<CQSVGMarker             *>(obj);
     CQSVGMask               *qmask     = dynamic_cast<CQSVGMask               *>(obj);
     CQSVGPath               *qpath     = dynamic_cast<CQSVGPath               *>(obj);
+    CQSVGPattern            *qpattern  = dynamic_cast<CQSVGPattern            *>(obj);
     CQSVGPolygon            *qpolygon  = dynamic_cast<CQSVGPolygon            *>(obj);
     CQSVGPolyLine           *qpolyline = dynamic_cast<CQSVGPolyLine           *>(obj);
+    CQSVGRadialGradient     *qrgrad    = dynamic_cast<CQSVGRadialGradient     *>(obj);
     CQSVGRect               *qrect     = dynamic_cast<CQSVGRect               *>(obj);
     CQSVGStop               *qstop     = dynamic_cast<CQSVGStop               *>(obj);
     CQSVGText               *qtext     = dynamic_cast<CQSVGText               *>(obj);
@@ -361,6 +367,7 @@ addObjectToTree(const std::string &name, CSVGObject *obj)
       tree_->addProperty(objName, qblock, "height");
     }
     else if (qanchor) {
+      tree_->addProperty(objName, qanchor, "xlink");
     }
     else if (qdefs) {
     }
@@ -468,6 +475,10 @@ addObjectToTree(const std::string &name, CSVGObject *obj)
       tree_->addProperty(objName, qlgrad, "x2");
       tree_->addProperty(objName, qlgrad, "y2");
     }
+    else if (qmarker) {
+      tree_->addProperty(objName, qmarker, "refX");
+      tree_->addProperty(objName, qmarker, "refY");
+    }
     else if (qmask) {
       tree_->addProperty(objName, qmask, "x"     );
       tree_->addProperty(objName, qmask, "y"     );
@@ -475,10 +486,26 @@ addObjectToTree(const std::string &name, CSVGObject *obj)
       tree_->addProperty(objName, qmask, "height");
     }
     else if (qpath) {
+      tree_->addProperty(objName, qpath, "pathString");
+    }
+    else if (qpattern) {
+      tree_->addProperty(objName, qpattern, "x"           );
+      tree_->addProperty(objName, qpattern, "y"           );
+      tree_->addProperty(objName, qpattern, "width"       );
+      tree_->addProperty(objName, qpattern, "height"      );
+      tree_->addProperty(objName, qpattern, "units"       );
+      tree_->addProperty(objName, qpattern, "contentUnits");
     }
     else if (qpolygon) {
     }
     else if (qpolyline) {
+    }
+    else if (qrgrad) {
+      tree_->addProperty(objName, qrgrad, "cx");
+      tree_->addProperty(objName, qrgrad, "cy");
+      tree_->addProperty(objName, qrgrad, "r" );
+      tree_->addProperty(objName, qrgrad, "fx");
+      tree_->addProperty(objName, qrgrad, "fy");
     }
     else if (qrect) {
       tree_->addProperty(objName, qrect, "x" );
@@ -493,9 +520,14 @@ addObjectToTree(const std::string &name, CSVGObject *obj)
       tree_->addProperty(objName, qstop, "opacity");
     }
     else if (qtext) {
-      tree_->addProperty(objName, qtext, "x"   );
-      tree_->addProperty(objName, qtext, "y"   );
-      tree_->addProperty(objName, qtext, "text");
+      tree_->addProperty(objName, qtext, "x"           );
+      tree_->addProperty(objName, qtext, "y"           );
+      tree_->addProperty(objName, qtext, "dx"          );
+      tree_->addProperty(objName, qtext, "dy"          );
+      tree_->addProperty(objName, qtext, "text"        );
+      tree_->addProperty(objName, qtext, "rotate"      );
+      tree_->addProperty(objName, qtext, "textLength"  );
+      tree_->addProperty(objName, qtext, "lengthAdjust");
     }
     else if (qtextpath) {
       tree_->addProperty(objName, qtextpath, "text");
@@ -511,6 +543,11 @@ addObjectToTree(const std::string &name, CSVGObject *obj)
       tree_->addProperty(objName, qtspan, "text");
     }
     else if (quse) {
+      tree_->addProperty(objName, quse, "x"     );
+      tree_->addProperty(objName, quse, "y"     );
+      tree_->addProperty(objName, quse, "width" );
+      tree_->addProperty(objName, quse, "height");
+      tree_->addProperty(objName, quse, "xlink" );
     }
 
     //---
@@ -538,6 +575,15 @@ addObjectToTree(const std::string &name, CSVGObject *obj)
       tree_->addProperty(fillName, qobj, "fillOpacity"       )->setLabel("opacity"       );
       tree_->addProperty(fillName, qobj, "fillRule"          )->setLabel("rule"          );
       tree_->addProperty(fillName, qobj, "fillUrl"           )->setLabel("url"           );
+    }
+
+    if (qobj->object()->hasFont()) {
+      QString fontName = objName + "/font";
+
+      tree_->addProperty(fontName, qobj, "fontFamily")->setLabel("family");
+//    tree_->addProperty(fontName, qobj, "fontStyle" )->setLabel("style");
+      tree_->addProperty(fontName, qobj, "fontSize"  )->setLabel("size");
+      tree_->addProperty(fontName, qobj, "font"      )->setLabel("font");
     }
   }
 

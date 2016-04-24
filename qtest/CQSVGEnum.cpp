@@ -64,6 +64,16 @@ ColorMatrixTypeConv colorMatrixTypeConv({
 
 //---
 
+typedef CEnumConv<CSVGCoordUnits, CQSVGEnum::CoordUnitsType> CoordUnitsTypeConv;
+
+CoordUnitsTypeConv coordUnitsTypeConv({
+ { CSVGCoordUnits::OBJECT_BBOX , CQSVGEnum::CoordUnitsObjectBBox  },
+ { CSVGCoordUnits::USER_SPACE  , CQSVGEnum::CoordUnitsUserSpace   },
+ { CSVGCoordUnits::STROKE_WIDTH, CQSVGEnum::CoordUnitsStrokeWidth }
+});
+
+//---
+
 }
 
 //---
@@ -160,4 +170,20 @@ CQSVGEnum::
 colorMatrixTypeConv(const ColorMatrixType &type)
 {
   return Conv::colorMatrixTypeConv.conv(type);
+}
+
+//---
+
+CQSVGEnum::CoordUnitsType
+CQSVGEnum::
+coordUnitsTypeConv(const CSVGCoordUnits &type)
+{
+  return Conv::coordUnitsTypeConv.conv(type);
+}
+
+CSVGCoordUnits
+CQSVGEnum::
+coordUnitsTypeConv(const CoordUnitsType &type)
+{
+  return Conv::coordUnitsTypeConv.conv(type);
 }

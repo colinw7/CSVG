@@ -187,7 +187,7 @@ lightPoint(CRGBA &rgba, const CPoint3D &point) const
 
   dlight.normalize();
 
-  //uncomment if light both sides
+  // uncomment if light both sides
   //double dot = fabs(dlight.dotProduct(normal));
   double dot = dlight.dotProduct(normal);
 

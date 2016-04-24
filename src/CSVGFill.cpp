@@ -151,8 +151,17 @@ void
 CSVGFill::
 update(const CSVGFill &fill)
 {
+  // TODO: return priority and use highest priority for fill (only use one fill)
   if (fill.noColor_.isValid())
     noColor_ = fill.noColor_;
+  else {
+    if (svg_.styleObject()) {
+      bool b;
+
+      if (svg_.getStyleFillNoColor(svg_.styleObject(), b))
+        noColor_ = b;
+    }
+  }
 
   if (fill.currentColor_.isValid()) {
     currentColor_ = fill.currentColor_;
@@ -164,6 +173,17 @@ update(const CSVGFill &fill)
     color_ = fill.color_;
 
     noColor_.setInvalid();
+  }
+  else {
+    if (svg_.styleObject()) {
+      CRGBA c;
+
+      if (svg_.getStyleFillColor(svg_.styleObject(), c)) {
+        color_ = c;
+
+        noColor_.setInvalid();
+      }
+    }
   }
 
   if (fill.opacity_.isValid())

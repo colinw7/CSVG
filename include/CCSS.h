@@ -10,10 +10,6 @@
 class CCSS {
  public:
   class Option {
-   private:
-    std::string name_;
-    std::string value_;
-
    public:
     Option(const std::string &name, const std::string &value) :
      name_(name), value_(value) {
@@ -21,37 +17,50 @@ class CCSS {
 
     const std::string &getName () const { return name_ ; }
     const std::string &getValue() const { return value_; }
+
+   private:
+    std::string name_;
+    std::string value_;
   };
 
   typedef std::vector<Option> OptionList;
 
-  class StyleData {
-   private:
-    std::string id_;
-    OptionList  options_;
+  //---
 
+  class StyleData {
    public:
     StyleData(const std::string &id) :
      id_(id), options_() {
     }
 
-    void addOption(const std::string &name, const std::string &value) {
-      options_.push_back(Option(name, value));
-    }
+    const std::string &getId() const { return id_; }
+
+    const OptionList &getOptions() const { return options_; }
 
     uint getNumOptions() const { return options_.size(); }
 
     const Option &getOption(uint i) const { return options_[i]; }
 
+    void addOption(const std::string &name, const std::string &value) {
+      options_.push_back(Option(name, value));
+    }
+
     void print(std::ostream &os) const;
+
+   private:
+    std::string id_;
+    OptionList  options_;
   };
 
   typedef std::map<std::string, StyleData> StyleDataMap;
 
-  typedef StyleDataMap::const_iterator style_const_iterator;
+  //---
 
  public:
   CCSS();
+
+  bool isDebug() const { return debug_; }
+  void setDebug(bool b) { debug_ = b; }
 
   bool processFile(const std::string &fileName);
 
@@ -76,6 +85,7 @@ class CCSS {
   bool parseAttr(const std::string &str, StyleData &styleData);
 
  private:
+  bool         debug_ { false };
   StyleDataMap styleData_;
 };
 

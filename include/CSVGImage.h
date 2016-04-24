@@ -15,6 +15,11 @@ class CSVGImage : public CSVGObject {
 
   CSVGImage *dup() const override;
 
+  const CSVGXLink &xlink() const { return xlink_.getValue(); }
+
+  std::string getLinkName() const { return (xlink_.isValid() ? xlink_.getValue().str() : ""); }
+  void setLinkName(const std::string &str);
+
   CImagePtr getImage() const;
 
   double getX() const { return x_.getValue(0); }
@@ -37,6 +42,10 @@ class CSVGImage : public CSVGObject {
   void setSize(const CSize2D &size);
 
   void setImage(const std::string &filename);
+
+  CSVGPreserveAspect preserveAspect() const {
+    return preserveAspect_.getValue(CSVGPreserveAspect()); }
+  void setPreserveAspect(const CSVGPreserveAspect &a) { preserveAspect_ = a; }
 
   bool processOption(const std::string &name, const std::string &value) override;
 
