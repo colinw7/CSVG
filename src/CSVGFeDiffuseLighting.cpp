@@ -87,7 +87,7 @@ filterImage(CSVGBuffer *inBuffer, CSVGBuffer *outBuffer)
   for (const auto &c : children()) {
     CSVGFeDistantLight *dl = dynamic_cast<CSVGFeDistantLight *>(c);
     CSVGFePointLight   *pl = dynamic_cast<CSVGFePointLight   *>(c);
-    CSVGFeSpotLight    *sl = dynamic_cast<CSVGFeSpotLight   *>(c);
+    CSVGFeSpotLight    *sl = dynamic_cast<CSVGFeSpotLight    *>(c);
 
     if      (dl) distantLight(dst_image, dl);
     else if (pl) pointLight  (dst_image, pl);
@@ -99,47 +99,23 @@ filterImage(CSVGBuffer *inBuffer, CSVGBuffer *outBuffer)
 
 void
 CSVGFeDiffuseLighting::
-distantLight(CImagePtr /*image*/, CSVGFeDistantLight *)
+distantLight(CImagePtr image, CSVGFeDistantLight *light)
 {
-  // TODO
-#if 0
-  lpoint_ = pl->getPoint();
-  lcolor_ = getLightingColor();
+  ltype_      = light->getObjTypeId();
+  lcolor_     = getLightingColor();
+  lelevation_ = light->getElevation();
+  lazimuth_   = light->getAzimuth();
+  lpoint_     = CPoint3D();
+  lpointsAt_  = CPoint3D();
+  lexponent_  = 0;
+  lcone_      = 0;
 
   int w = image->getWidth ();
   int h = image->getHeight();
 
   for (int y = 0; y < h; ++y) {
     for (int x = 0; x < w; ++x) {
-      CRGBA rgba;
-
-      image->getRGBAPixel(x, y, rgba);
-
-      CRGBA rgba1 = lightPoint(rgba, CPoint3D(x, y, 0));
-
-      image->setRGBAPixel(x, y, rgba1);
-    }
-  }
-#endif
-}
-
-void
-CSVGFeDiffuseLighting::
-pointLight(CImagePtr image, CSVGFePointLight *pl)
-{
-  lpoint_ = pl->getPoint();
-  lcolor_ = getLightingColor();
-
-  int w = image->getWidth ();
-  int h = image->getHeight();
-
-  for (int y = 0; y < h; ++y) {
-    for (int x = 0; x < w; ++x) {
-      CRGBA rgba;
-
-      image->getRGBAPixel(x, y, rgba);
-
-      CRGBA rgba1 = lightPoint(rgba, CPoint3D(x, y, 0));
+      CRGBA rgba1 = lightPoint(image, x, y);
 
       image->setRGBAPixel(x, y, rgba1);
     }
@@ -148,85 +124,118 @@ pointLight(CImagePtr image, CSVGFePointLight *pl)
 
 void
 CSVGFeDiffuseLighting::
-spotLight(CImagePtr /*image*/, CSVGFeSpotLight *)
+pointLight(CImagePtr image, CSVGFePointLight *light)
 {
-  // TODO
-#if 0
-  lpoint_ = pl->getPoint();
-  lcolor_ = getLightingColor();
+  ltype_      = light->getObjTypeId();
+  lpoint_     = light->getPoint();
+  lcolor_     = getLightingColor();
+  lpointsAt_  = CPoint3D();
+  lelevation_ = 0;
+  lazimuth_   = 0;
+  lexponent_  = 0;
+  lcone_      = 0;
 
   int w = image->getWidth ();
   int h = image->getHeight();
 
   for (int y = 0; y < h; ++y) {
     for (int x = 0; x < w; ++x) {
-      CRGBA rgba;
-
-      image->getRGBAPixel(x, y, rgba);
-
-      CRGBA rgba1 = lightPoint(rgba, CPoint3D(x, y, 0));
+      CRGBA rgba1 = lightPoint(image, x, y);
 
       image->setRGBAPixel(x, y, rgba1);
     }
   }
-#endif
+}
+
+void
+CSVGFeDiffuseLighting::
+spotLight(CImagePtr image, CSVGFeSpotLight *light)
+{
+  ltype_      = light->getObjTypeId();
+  lpoint_     = light->getPoint();
+  lcolor_     = getLightingColor();
+  lpointsAt_  = light->getPointsAt();
+  lexponent_  = light->getSpecularExponent();
+  lcone_      = (light->hasLimitingConeAngle() ? cos(light->getLimitingConeAngle()) : 0);
+  lelevation_ = 0;
+  lazimuth_   = 0;
+
+  int w = image->getWidth ();
+  int h = image->getHeight();
+
+  for (int y = 0; y < h; ++y) {
+    for (int x = 0; x < w; ++x) {
+      CRGBA rgba1 = lightPoint(image, x, y);
+
+      image->setRGBAPixel(x, y, rgba1);
+    }
+  }
 }
 
 CRGBA
 CSVGFeDiffuseLighting::
-lightPoint(CRGBA &rgba, const CPoint3D &point) const
+lightPoint(CImagePtr image, int x, int y) const
 {
-  CVector3D normal(0, 0, 1);
+  // calc light color
+  double lx, ly, lz;
 
-  // Ambient
-  //CRGBA ambient = getAmbient()*material.getAmbient();
-  //CRGBA ambient(0,0,0);
+  if (ltype_ == CSVGObjTypeId::FE_DISTANT_LIGHT) {
+    lx = cos(lazimuth_)*cos(lelevation_);
+    ly = sin(lazimuth_)*cos(lelevation_);
+    lz = sin(lelevation_);
+  }
+  else {
+    double gray;
 
-  // Diffuse
-  CVector3D dlight(point, lpoint_);
+    image->getGrayPixel(x, y, &gray);
 
-  dlight.normalize();
+    double z = getSurfaceScale()*gray;
 
-  // uncomment if light both sides
-  //double dot = fabs(dlight.dotProduct(normal));
-  double dot = dlight.dotProduct(normal);
-
-  if (dot < 0.0)
-    dot = 0.0;
-
-  //CRGBA diffuse = dot*getDiffuse()*material.getDiffuse();
-  CRGBA diffuse = dot*lcolor_*rgba;
-
-#if 0
-  // Specular
-  CRGBA specular(0,0,0,1);
-
-  if (dot > 0.0) {
-    CVector3D viewpoint(0,0,1);
-
-    CVector3D sum(viewpoint + dlight);
-
-    sum.normalize();
-
-    double dot1 = sum.dotProduct(normal);
-
-    if (dot1 < 0.0)
-      dot1 = 0.0;
-
-    specular = pow(dot1, material.getShininess())*getSpecular()*material.getSpecular();
+    lx = lpoint_.x - x;
+    ly = lpoint_.y - y;
+    lz = lpoint_.z - z;
   }
 
-  double dist = CVector3D(point, lpoint_).length();
+  CVector3D lightDir = CVector3D(lx, ly, lz).unit();
 
-  rgba += getAttenuation(dist)*getSpotEffect(point)*(ambient + diffuse + specular);
-#endif
+  CRGBA lcolor;
 
-  CRGBA rgba1 = diffuse;
+  if (ltype_ == CSVGObjTypeId::FE_SPOT_LIGHT) {
+    CVector3D dspot(lpoint_, lpointsAt_);
 
-  //rgba1.setAlpha(material.getDiffuse().getAlpha());
-  rgba1.setAlpha(rgba.getAlpha());
+    double ldot = lightDir.dotProduct(dspot.unit());
 
-  return rgba1;
+    if (ldot >= 0 && -ldot >= lcone_)
+      lcolor = lcolor_*pow(-ldot, lexponent_);
+    else
+      lcolor = CRGBA(0,0,0);
+  }
+  else
+    lcolor = lcolor_;
+
+  //---
+
+  // get gradient at point
+  double xgray, ygray, xf, yf;
+
+  image->sobelPixelGradient(x, y, 1, 1, xgray, ygray, xf, yf);
+
+  // calc normal from gradient
+  double nx = -getSurfaceScale()*xf*xgray;
+  double ny = -getSurfaceScale()*yf*ygray;
+  double nz = 1;
+
+  CVector3D normal = CVector3D(nx, ny, nz).unit();
+
+  //---
+
+  double dot = normal.dotProduct(lightDir);
+
+  CRGBA diffuse = getDiffuseConstant()*dot*lcolor;
+
+  diffuse.setAlpha(1);
+
+  return diffuse.clamp();
 }
 
 void

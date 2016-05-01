@@ -15,7 +15,6 @@
     maskUnits ( userSpaceOnUse | objectBoundingBox )
     maskContentUnits ( userSpaceOnUse | objectBoundingBox )
 */
-
 CSVGMask::
 CSVGMask(CSVG &svg) :
  CSVGObject(svg)
@@ -102,10 +101,12 @@ drawMask(const CSVGObject &object)
 
   //---
 
-  // draw mask object
   CMatrixStack2D transform;
 
   svg_.getTransform(transform);
+
+  // set transform
+  CMatrixStack2D transform1;
 
   if (getUnits() == CSVGCoordUnits::OBJECT_BBOX) {
     CMatrixStack2D matrix;
@@ -113,11 +114,17 @@ drawMask(const CSVGObject &object)
     matrix.translate(x - getX()  , y - getY()   );
     matrix.scale    (w/getWidth(), h/getHeight());
 
+    transform1 = matrix;
+
     svg_.setTransform(matrix);
   }
+  else
+    transform1 = transform;
 
+  // draw mask object
   drawSubObject();
 
+  // reset transform
   if (getUnits() == CSVGCoordUnits::OBJECT_BBOX)
     svg_.setTransform(transform);
 
@@ -133,35 +140,52 @@ drawMask(const CSVGObject &object)
   CImagePtr mask_image  = buffer->getImage();
   CImagePtr mask_image1 = mask_image->createRGBAMask();
 
-#if 0
-  {
-  std::string maskBufferName = "rgb_mask_" + object.getUniqueName();
+  if (svg_.getDebugMask()) {
+    std::string maskBufferName = "rgb_mask_" + object.getUniqueName();
 
-  CSVGBuffer *buffer = svg_.getBuffer(maskBufferName);
+    CSVGBuffer *buffer = svg_.getBuffer(maskBufferName);
 
-  buffer->setImage(mask_image1);
+    buffer->setImage(mask_image1);
   }
-#endif
 
   //---
+
+  // get offset
+  double x1 = 0, y1 = 0;
+
+  if (getUnits() == CSVGCoordUnits::OBJECT_BBOX)
+    transform1.multiplyPoint(0, 0, &x1, &y1);
+  else
+    transform1.multiplyPoint(x, y, &x1, &y1);
+
+  double px1, py1;
+
+  oldBuffer->lengthToPixel(x1, y1, &px1, &py1);
 
   // combine mask with image
   CImagePtr dest_image = oldBuffer->getImage();
 
-  dest_image->copyAlpha(mask_image1, 0, 0);
+  dest_image->copyAlpha(mask_image1, px1, py1);
 
+  //---
 
-#if 0
-  {
-  std::string maskBufferName = "alpha_mask_" + object.getUniqueName();
+  if (svg_.getDebugMask()) {
+    std::string maskBufferName = "alpha_mask_" + object.getUniqueName();
 
-  CSVGBuffer *buffer = svg_.getBuffer(maskBufferName);
+    CSVGBuffer *buffer = svg_.getBuffer(maskBufferName);
 
-  buffer->setImage(dest_image);
+    buffer->setImage(dest_image);
   }
-#endif
+
+  bool oldDrawing = oldBuffer->isDrawing();
+
+  if (oldDrawing)
+    oldBuffer->stopDraw();
 
   oldBuffer->setImage(dest_image);
+
+  if (oldDrawing)
+    oldBuffer->startDraw();
 }
 
 void

@@ -24,3 +24,13 @@
  + Improve marker drawing
  + More object properties
  + Fix issues in radial gradient bbox scaling
+
+### 5/1/2016
+ + Improve path interpolation
+ + Text on path
+ + Improve handling clip transformed clip path
+ + Add alpha bump map support for diffuse, specular lighting
+ + Improve mask handing
+ + Improve UTF8 support for text rendering
+ + More object properties
+ + Checkerboard drawing for SVG background

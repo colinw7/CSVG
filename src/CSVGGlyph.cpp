@@ -35,9 +35,9 @@ bool
 CSVGGlyph::
 processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  std::string str;
-  PartList    parts;
-  long        integer;
+  std::string      str;
+  CSVGPathPartList parts;
+  long             integer;
 
   if      (svg_.stringOption(opt_name, opt_value, "unicode", str))
     unicode_ = str;

@@ -101,12 +101,15 @@ CSVGXLink.cpp \
 CCSS.cpp \
 CLog.cpp \
 CEncode64.cpp \
+CMathGeom2D.cpp \
+CArcToBezier.cpp \
 
 OBJS = $(patsubst %.cpp,$(OBJ_DIR)/%.o,$(SRC))
 
 CPPFLAGS = \
 -std=c++11 \
 $(CDEBUG) \
+-I. \
 -I$(INC_DIR) \
 -I../../CXML/include \
 -I../../CConfig/include \

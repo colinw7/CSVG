@@ -13,6 +13,8 @@ class CQSVGRenderer : public CSVGRenderer {
  public:
   CQSVGRenderer();
 
+ ~CQSVGRenderer();
+
   CQSVGRenderer *dup() const override;
 
   QPainter *painter() const { return painter_; }
@@ -62,10 +64,14 @@ class CQSVGRenderer : public CSVGRenderer {
   void pathStroke() override;
   void pathFill  () override;
 
+  void savePath(const CMatrix2D &m) override;
+
   void pathClip  (CSVGRenderer *renderer) override;
   void pathEoclip(CSVGRenderer *renderer) override;
 
   void initClip() override;
+
+  void addClipPath(CSVGRenderer *renderer) override;
 
   void pathBBox(CBBox2D &bbox) override;
 
@@ -109,6 +115,7 @@ class CQSVGRenderer : public CSVGRenderer {
   QImage           qimage_;
   QPainter        *painter_ { 0 };
   QPainterPath    *path_ { 0 };
+  QPainterPath    *savePath_ { 0 };
   QBrush           brush_;
   QPen             pen_;
   QFont            qfont_;

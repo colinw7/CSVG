@@ -25,8 +25,6 @@ CPixelRenderer.cpp \
 CPixelClip.cpp \
 CFreeType.cpp \
 CSymbol2D.cpp \
-CMathGeom2D.cpp \
-CArcToBezier.cpp \
 
 OBJS = $(patsubst %.cpp,$(OBJ_DIR)/%.o,$(SRC))
 

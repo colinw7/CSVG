@@ -71,6 +71,12 @@ class CSVGBuffer {
   const CBBox2D &bbox() const { return bbox_; }
   void setBBox(const CBBox2D &b) { bbox_ = b; }
 
+  bool isClip() const { return clip_; }
+  void setClip(bool b) { clip_ = b; }
+
+  bool hasClipPath() const { return hasClipPath_; }
+  void setHasClipPath(bool b) { hasClipPath_ = b; }
+
   bool isDrawing() const { return drawing_; }
   void setDrawing(bool b) { drawing_ = b; }
 
@@ -143,6 +149,8 @@ class CSVGBuffer {
   void pathClip  (CSVGBuffer *buffer=0);
   void pathEoClip(CSVGBuffer *buffer=0);
 
+  void addClipPath(CSVGBuffer *buffer);
+
   void pathBBox(CBBox2D &bbox);
 
   void initClip();
@@ -159,13 +167,15 @@ class CSVGBuffer {
  private:
   CSVG&          svg_;
   std::string    name_;
-  CSVGRenderer*  renderer_ { 0 };
+  CSVGRenderer*  renderer_    { 0 };
   CMatrixStack2D transform_;
   CLineDash      lineDash_;
-  CPoint2D       origin_ { 0, 0 };
+  CPoint2D       origin_      { 0, 0 };
   CBBox2D        bbox_;
-  bool           drawing_ { false };
-  CSVGBuffer*    refBuffer_ { 0 };
+  bool           clip_        { false };
+  bool           hasClipPath_ { false };
+  bool           drawing_     { false };
+  CSVGBuffer*    refBuffer_   { 0 };
 };
 
 #endif

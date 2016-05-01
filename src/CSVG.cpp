@@ -101,8 +101,14 @@ CSVG(CSVGRenderer *renderer) :
   if (getenv("CSVG_DEBUG_IMAGE"))
     setDebugImage(true);
 
+  if (getenv("CSVG_DEBUG_OBJ_IMAGE"))
+    setDebugObjImage(true);
+
   if (getenv("CSVG_DEBUG_FILTER"))
     setDebugFilter(true);
+
+  if (getenv("CSVG_DEBUG_MASK"))
+    setDebugMask(true);
 
   if (getenv("CSVG_DEBUG_USE"))
     setDebugUse(true);
@@ -175,9 +181,23 @@ setDebugImage(bool b)
 
 void
 CSVG::
+setDebugObjImage(bool b)
+{
+  debugObjImage_ = b;
+}
+
+void
+CSVG::
 setDebugFilter(bool b)
 {
   debugFilter_ = b;
+}
+
+void
+CSVG::
+setDebugMask(bool b)
+{
+  debugMask_ = b;
 }
 
 void
@@ -329,14 +349,14 @@ tokenToObject(CSVGObject *parent, const CXMLToken *token)
         tspan->setText(textStr);
 
         object->addChildObject(tspan);
-
-        hasTextSpan = true;
       }
 
       CSVGObject *object1 = tokenToObject(object, token);
       assert(object1);
 
       object->addChildObject(object1);
+
+      hasTextSpan = true;
     }
   }
 
@@ -375,7 +395,6 @@ tokenToObject(CSVGObject *parent, const CXMLToken *token)
   //-----
 
   // inform object we are done parsing tag
-
   object->termParse();
 
   //-----
@@ -406,7 +425,7 @@ createObjectByName(const std::string &name)
   else if (name == "circle")
     object = createCircle();
   else if (name == "clipPath")
-    object = new CSVGClipPath(*this);
+    object = createClipPath();
   else if (name == "defs")
     object = createDefs();
   else if (name == "desc")
@@ -557,6 +576,13 @@ CSVG::
 createCircle()
 {
   return new CSVGCircle(*this);
+}
+
+CSVGClipPath *
+CSVG::
+createClipPath()
+{
+  return new CSVGClipPath(*this);
 }
 
 CSVGDefs *
@@ -1060,16 +1086,6 @@ CSVG::
 getBuffer() const
 {
   return buffer_;
-}
-
-std::string
-CSVG::
-getBufferName() const
-{
-  if (buffer_)
-    return buffer_->getName();
-  else
-    return "";
 }
 
 void
@@ -1745,6 +1761,8 @@ drawText(double x, double y, const std::string &text, CFontPtr font, CHAlignType
 
     buffer_->pathText(text, font, align);
 
+    buffer_->pathClose();
+
     buffer_->pathStroke();
 
     //---
@@ -1819,6 +1837,8 @@ fillText(double x, double y, const std::string &text, CFontPtr font, CHAlignType
 
     buffer_->pathText(text, font, align);
 
+    buffer_->pathClose();
+
     buffer_->pathFill();
 
     //---
@@ -1834,13 +1854,6 @@ textSize(const std::string &text, CFontPtr font, double *w, double *a, double *d
   *w = font->getStringWidth(text);
   *a = font->getCharAscent();
   *d = font->getCharDescent();
-}
-
-void
-CSVG::
-pathInit()
-{
-  buffer_->pathInit();
 }
 
 void
@@ -1936,13 +1949,6 @@ pathRBezier3To(double x1, double y1, double x2, double y2, double x3, double y3)
   buffer_->pathRBezier3To(x1, y1, x2, y2, x3, y3);
 }
 
-void
-CSVG::
-pathClose()
-{
-  buffer_->pathClose();
-}
-
 bool
 CSVG::
 pathGetCurrentPoint(double *x, double *y)
@@ -1968,40 +1974,12 @@ pathFill()
   buffer_->pathFill();
 }
 
-void
-CSVG::
-pathClip()
-{
-  buffer_->pathClip();
-}
-
-void
-CSVG::
-pathEoClip()
-{
-  buffer_->pathEoClip();
-}
-
-void
-CSVG::
-pathBBox(CBBox2D &bbox)
-{
-  buffer_->pathBBox(bbox);
-}
-
-void
-CSVG::
-initClip()
-{
-  buffer_->initClip();
-}
-
 //--------------
 
 bool
 CSVG::
 pathOption(const std::string &opt_name, const std::string &opt_value,
-           const std::string &name, CSVG::PartList &parts)
+           const std::string &name, CSVGPathPartList &parts)
 {
   if (opt_name != name)
     return false;
@@ -2014,7 +1992,7 @@ pathOption(const std::string &opt_name, const std::string &opt_value,
 
 bool
 CSVG::
-pathStringToParts(const std::string &data, CSVG::PartList &parts)
+pathStringToParts(const std::string &data, CSVGPathPartList &parts)
 {
   COptValT<double> bezier2_x2, bezier2_y2, bezier2_x3, bezier2_y3;
   COptValT<double> bezier3_x2, bezier3_y2, bezier3_x3, bezier3_y3;
@@ -2673,45 +2651,14 @@ pathStringToParts(const std::string &data, CSVG::PartList &parts)
 
 void
 CSVG::
-drawParts(const CSVG::PartList &parts, CSVGObjectMarker *omarker)
+drawParts(const CSVGPathPartList &parts, CSVGObjectMarker *omarker)
 {
   std::vector<CPoint2D> points;
 
   // add path parts and same path part points for markers (if any)
   buffer_->pathInit();
 
-  auto p1 = parts.begin();
-  auto p2 = parts.end  ();
-
-  double x1, y1;
-
-  while (p1 != p2 && ! buffer_->pathGetCurrentPoint(&x1, &y1)) {
-    (*p1)->draw();
-
-    ++p1;
-  }
-
-  if (p1 == p2)
-    return;
-
-  points.push_back(CPoint2D(x1, y1));
-
-  while (p1 != p2) {
-    (*p1)->draw();
-
-    ++p1;
-
-    double x2, y2;
-
-    buffer_->pathGetCurrentPoint(&x2, &y2);
-
-    if (! REAL_EQ(x1, x2) || ! REAL_EQ(y1, y2)) {
-      points.push_back(CPoint2D(x2, y2));
-
-      x1 = x2;
-      y1 = y2;
-    }
-  }
+  parts.draw(buffer_, points);
 
   // fill and/or stroke path
   if (isFilled() || isStroked()) {
@@ -2727,7 +2674,7 @@ drawParts(const CSVG::PartList &parts, CSVGObjectMarker *omarker)
   //------
 
   // draw markers
-  if (omarker->start || omarker->mid || omarker->end) {
+  if (omarker->getStart() || omarker->getMid() || omarker->getEnd()) {
     uint num = points.size();
 
     if (num <= 0)
@@ -2755,8 +2702,8 @@ drawParts(const CSVG::PartList &parts, CSVGObjectMarker *omarker)
     g1 = atan2(y2 - y1, x2 - x1);
     g2 = atan2(y3 - y2, x3 - x2);
 
-    if (omarker->start) {
-      CSVGMarker *marker = dynamic_cast<CSVGMarker *>(omarker->start);
+    if (omarker->getStart()) {
+      CSVGMarker *marker = dynamic_cast<CSVGMarker *>(omarker->getStart());
 
       if (marker)
         marker->drawMarker(x1, y1, (g1 + g2)/2);
@@ -2776,16 +2723,16 @@ drawParts(const CSVG::PartList &parts, CSVGObjectMarker *omarker)
       g2 = atan2(y3 - y2, x3 - x2);
 
       if (i != num - 1) {
-        if (omarker->mid) {
-          CSVGMarker *marker = dynamic_cast<CSVGMarker *>(omarker->mid);
+        if (omarker->getMid()) {
+          CSVGMarker *marker = dynamic_cast<CSVGMarker *>(omarker->getMid());
 
           if (marker)
             marker->drawMarker(x2, y2, (g1 + g2)/2);
         }
       }
       else {
-        if (omarker->end) {
-          CSVGMarker *marker = dynamic_cast<CSVGMarker *>(omarker->end);
+        if (omarker->getEnd()) {
+          CSVGMarker *marker = dynamic_cast<CSVGMarker *>(omarker->getEnd());
 
           if (marker)
             marker->drawMarker(x2, y2, g1);
@@ -2800,107 +2747,36 @@ drawParts(const CSVG::PartList &parts, CSVGObjectMarker *omarker)
   }
 }
 
-bool
+double
 CSVG::
-interpParts(double s, const CSVG::PartList &parts, double *xi, double *yi, double *a)
+partsLength(const CSVGPathPartList &parts) const
 {
-  *xi = 0;
-  *yi = 0;
-
-  std::vector<CPoint2D>       points;
-  std::vector<CSVGPathPart *> pparts;
-
-  // add path points
-  buffer_->pathInit();
-
-  auto p1 = parts.begin();
-  auto p2 = parts.end  ();
-
-  double x1, y1;
-
-  while (p1 != p2 && ! buffer_->pathGetCurrentPoint(&x1, &y1)) {
-    (*p1)->draw();
-
-    ++p1;
-  }
-
-  *xi = x1;
-  *yi = y1;
-
-  if (p1 == p2)
-    return false;
-
-  points.push_back(CPoint2D(x1, y1));
-  pparts.push_back(*p1);
-
-  while (p1 != p2) {
-    auto pt = p1;
-
-    (*p1)->draw();
-
-    ++p1;
-
-    double x2, y2;
-
-    buffer_->pathGetCurrentPoint(&x2, &y2);
-
-    if (! REAL_EQ(x1, x2) || ! REAL_EQ(y1, y2)) {
-      points.push_back(CPoint2D(x2, y2));
-      pparts.push_back(*pt);
-
-      x1 = x2;
-      y1 = y2;
-    }
-  }
-
-  // interp points
-  int num = points.size();
-
-  double xmin = points[0      ].x;
-  double xmax = points[num - 1].x;
-
-  *xi = CSVGUtil::map(s, 0, 1, xmin, xmax);
-
-  for (int i = 0; i < num - 1; ++i) {
-    if (*xi >= points[i].x && *xi <= points[i + 1].x) {
-      *yi = pparts[i + 1]->interp(*xi, points[i], points[i + 1], *a);
-
-      break;
-    }
-  }
-
-  return true;
+  return parts.getLength();
 }
 
 bool
 CSVG::
-getPartsBBox(const CSVG::PartList &parts, CBBox2D &bbox) const
+interpParts(double s, const CSVGPathPartList &parts, double *xi, double *yi, double *a)
+{
+  int pi;
+
+  return parts.interp(s, xi, yi, a, &pi);
+}
+
+bool
+CSVG::
+getPartsBBox(const CSVGPathPartList &parts, CBBox2D &bbox) const
 {
   CSVG *th = const_cast<CSVG *>(this);
 
-  th->buffer_->pathInit();
-
-  for (const auto &p : parts)
-    p->draw();
-
-  th->pathBBox(bbox);
-
-  return bbox.isSet();
+  return parts.getBBox(th->buffer_, bbox);
 }
 
 void
 CSVG::
-printParts(std::ostream &os, const CSVG::PartList &parts) const
+printParts(std::ostream &os, const CSVGPathPartList &parts) const
 {
-  int i = 0;
-
-  for (const auto &p : parts) {
-    if (i > 0) os << " ";
-
-    p->print(os);
-
-    ++i;
-  }
+  parts.print(os);
 }
 
 //--------------

@@ -820,6 +820,9 @@ pathClose()
   //---
 
   renderer_->pathClose();
+
+  if (clip_)
+    renderer_->savePath(transform_.getMatrix());
 }
 
 bool
@@ -879,6 +882,8 @@ pathClip(CSVGBuffer *buffer)
   //---
 
   renderer_->pathClip(buffer ? buffer->renderer_ : 0);
+
+  hasClipPath_ = true;
 }
 
 void
@@ -891,6 +896,8 @@ pathEoClip(CSVGBuffer *buffer)
   //---
 
   renderer_->pathEoclip(buffer ? buffer->renderer_ : 0);
+
+  hasClipPath_ = true;
 }
 
 void
@@ -915,6 +922,18 @@ initClip()
   //---
 
   renderer_->initClip();
+
+  hasClipPath_ = false;
+}
+
+void
+CSVGBuffer::
+addClipPath(CSVGBuffer *origBuffer)
+{
+  if (refBuffer_)
+    return refBuffer_->addClipPath(origBuffer);
+
+  renderer_->addClipPath(origBuffer->getRenderer());
 }
 
 bool

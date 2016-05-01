@@ -43,6 +43,34 @@ setFiltered(bool b)
 
 bool
 CQSVGObject::
+isClipped() const
+{
+  return obj_->getClipped();
+}
+
+void
+CQSVGObject::
+setClipped(bool b)
+{
+  obj_->setClipped(b);
+}
+
+bool
+CQSVGObject::
+isMasked() const
+{
+  return obj_->getMasked();
+}
+
+void
+CQSVGObject::
+setMasked(bool b)
+{
+  obj_->setMasked(b);
+}
+
+bool
+CQSVGObject::
 isVisible() const
 {
   return obj_->isVisible();

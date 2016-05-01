@@ -3,6 +3,7 @@
 #include <CQSVGWindow.h>
 #include <CQSVGObject.h>
 #include <CQSVGRenderer.h>
+#include <CQSVGUtil.h>
 #include <CQPropertyTree.h>
 #include <QMouseEvent>
 
@@ -72,7 +73,10 @@ paintEvent(QPaintEvent *)
 {
   QPainter painter(this);
 
-  painter.fillRect(rect(), svg_->background());
+  if (! svg_->isCheckerboard())
+    painter.fillRect(rect(), svg_->background());
+  else
+    CQSVGUtil::drawCheckerboard(&painter, 32);
 
   renderer_->paint(&painter);
 

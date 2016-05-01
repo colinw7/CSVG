@@ -7,103 +7,110 @@ class CSVGLogRenderer : public CSVGRenderer {
  public:
   CSVGLogRenderer() : os_(&std::cout) { }
 
-  CSVGLogRenderer *dup() const {
+  CSVGLogRenderer *dup() const override {
     return new CSVGLogRenderer();
   }
 
   std::ostream &os() const { return *os_; }
 
-  void setSize(int width, int height) {
+  void setSize(int width, int height) override {
     width_  = width;
     height_ = height;
   }
 
-  void getSize(int *width, int *height) const {
+  void getSize(int *width, int *height) const override {
     *width  = width_;
     *height = height_;
   }
 
-  void setDataRange(double xmin, double ymin, double xmax, double ymax) {
+  void setDataRange(double xmin, double ymin, double xmax, double ymax) override {
     xmin_ = xmin; ymin_ = ymin;
     xmax_ = xmax; ymax_ = ymax;
   }
 
-  void getDataRange(double *xmin, double *ymin, double *xmax, double *ymax) const {
+  void getDataRange(double *xmin, double *ymin, double *xmax, double *ymax) const override {
     *xmin = xmin_; *ymin = ymin_;
     *xmax = xmax_; *ymax = ymax_;
   }
 
-  void setBackground(const CRGBA &) { logNL("setBackground"); }
+  void setBackground(const CRGBA &) override { logNL("setBackground"); }
 
-  bool isAntiAlias() const { logNL("isAntiAlias"); return false; }
-  void setAntiAlias(bool) { logNL("setAntiAlias"); }
+  bool isAntiAlias() const override { logNL("isAntiAlias"); return false; }
+  void setAntiAlias(bool) override { logNL("setAntiAlias"); }
 
-  void setEqualScale(bool) { logNL("setEqualScale"); }
+  void setEqualScale(bool) override { logNL("setEqualScale"); }
 
-  void setScaleMin(bool) { logNL("setScaleMin"); }
+  void setScaleMin(bool) override { logNL("setScaleMin"); }
 
-  void beginDraw() { logNL("beginDraw"); }
-  void endDraw  () { logNL("endDraw"); }
+  void beginDraw() override { logNL("beginDraw"); }
+  void endDraw  () override { logNL("endDraw"); }
 
-  void setViewMatrix(const CMatrix2D &) { logNL("setViewMatrix"); }
+  void setViewMatrix(const CMatrix2D &) override { logNL("setViewMatrix"); }
 
-  void clear(const CRGBA &) { logNL("clear"); }
+  void clear(const CRGBA &) override { logNL("clear"); }
 
-  void pathInit() { logNL("pathInit"); }
-  void pathMoveTo(const CPoint2D &p) { log("pathMoveTo "); logT(p); }
-  void pathRMoveTo(const CPoint2D &p) { log("pathRMoveTo "); logT(p); }
-  void pathLineTo(const CPoint2D &p) { log("pathLineTo "); logT(p); }
-  void pathRLineTo(const CPoint2D &p) { log("pathRLineTo "); logT(p); }
-  void pathCurveTo(const CPoint2D &, const CPoint2D &) { logNL("pathCurveTo"); }
-  void pathRCurveTo(const CPoint2D &, const CPoint2D &) { logNL("pathRCurveTo"); }
-  void pathCurveTo(const CPoint2D &, const CPoint2D &, const CPoint2D &) { logNL("pathCurveTo"); }
-  void pathRCurveTo(const CPoint2D &, const CPoint2D &, const CPoint2D &) { logNL("pathRCurveTo"); }
-  void pathArcTo(const CPoint2D &, double, double, double, double) { logNL("pathArcTo"); }
-  void pathText(const std::string &) { logNL("pathText"); }
-  void pathClose() { logNL("pathClose"); }
+  void pathInit() override { logNL("pathInit"); }
+  void pathMoveTo(const CPoint2D &p) override { log("pathMoveTo "); logT(p); }
+  void pathRMoveTo(const CPoint2D &p) override { log("pathRMoveTo "); logT(p); }
+  void pathLineTo(const CPoint2D &p) override { log("pathLineTo "); logT(p); }
+  void pathRLineTo(const CPoint2D &p) override { log("pathRLineTo "); logT(p); }
+  void pathCurveTo(const CPoint2D &, const CPoint2D &) override { logNL("pathCurveTo"); }
+  void pathRCurveTo(const CPoint2D &, const CPoint2D &) override { logNL("pathRCurveTo"); }
+  void pathCurveTo(const CPoint2D &, const CPoint2D &, const CPoint2D &) override {
+    logNL("pathCurveTo"); }
+  void pathRCurveTo(const CPoint2D &, const CPoint2D &, const CPoint2D &) override {
+    logNL("pathRCurveTo"); }
+  void pathArcTo(const CPoint2D &, double, double, double, double) override {
+    logNL("pathArcTo"); }
+  void pathText(const std::string &) override { logNL("pathText"); }
+  void pathClose() override { logNL("pathClose"); }
 
-  bool pathGetCurrentPoint(CPoint2D &) {
+  bool pathGetCurrentPoint(CPoint2D &) override {
     return false;
   }
 
-  void pathStroke() { logNL("pathStroke"); }
-  void pathFill  () { logNL("pathFill"); }
+  void pathStroke() override { logNL("pathStroke"); }
+  void pathFill  () override { logNL("pathFill"); }
 
-  void pathClip  (CSVGRenderer *) { logNL("pathClip"); }
-  void pathEoclip(CSVGRenderer *) { logNL("pathEoclip"); }
+  void savePath(const CMatrix2D &) override { logNL("savePath"); }
 
-  void initClip() { logNL("initClip"); }
+  void pathClip  (CSVGRenderer *) override { logNL("pathClip"); }
+  void pathEoclip(CSVGRenderer *) override { logNL("pathEoclip"); }
 
-  void pathBBox(CBBox2D &) { logNL("pathBBox"); }
+  void initClip() override { logNL("initClip"); }
 
-  void drawImage(const CPoint2D &, CImagePtr) { logNL("drawImage"); }
+  void addClipPath(CSVGRenderer *) override { logNL("addClipPath"); }
 
-  void setFont(CFontPtr) { logNL("setFont"); }
+  void pathBBox(CBBox2D &) override { logNL("pathBBox"); }
 
-  void setStrokeColor(const CRGBA &) { logNL("setStrokeColor"); }
-  void setLineWidth(double) { logNL("setLineWidth"); }
-  void setLineDash(const CLineDash &) { logNL("setLineDash"); }
-  void setLineCap(const CLineCapType &) { logNL("setLineCap"); }
-  void setLineJoin(const CLineJoinType &) { logNL("setLineJoin"); }
-  void setMitreLimit(double) { logNL("setMitreLimit"); }
+  void drawImage(const CPoint2D &, CImagePtr) override { logNL("drawImage"); }
 
-  void setFillType(CFillType) { logNL("setFillType"); }
+  void setFont(CFontPtr) override { logNL("setFont"); }
 
-  void setFillColor(const CRGBA &) { logNL("setFillColor"); }
-  void setFillGradient(CGenGradient *) { logNL("setFillGradient"); }
-  void setFillImage(CImagePtr) { logNL("setFillImage"); }
+  void setStrokeColor(const CRGBA &) override { logNL("setStrokeColor"); }
+  void setLineWidth(double) override { logNL("setLineWidth"); }
+  void setLineDash(const CLineDash &) override { logNL("setLineDash"); }
+  void setLineCap(const CLineCapType &) override { logNL("setLineCap"); }
+  void setLineJoin(const CLineJoinType &) override { logNL("setLineJoin"); }
+  void setMitreLimit(double) override { logNL("setMitreLimit"); }
 
-  void setAlign(CHAlignType, CVAlignType) { logNL("setAlign"); }
+  void setFillType(CFillType) override { logNL("setFillType"); }
 
-  void windowToPixel(const CPoint2D &, CPoint2D &) { logNL("windowToPixel"); }
-  void pixelToWindow(const CPoint2D &, CPoint2D &) { logNL("pixelToWindow"); }
+  void setFillColor(const CRGBA &) override { logNL("setFillColor"); }
+  void setFillGradient(CGenGradient *) override { logNL("setFillGradient"); }
+  void setFillImage(CImagePtr) override { logNL("setFillImage"); }
 
-  void textBounds(const std::string &, CBBox2D &) { logNL("textBounds"); }
+  void setAlign(CHAlignType, CVAlignType) override { logNL("setAlign"); }
 
-  CISize2D getImageSize() const { logNL("getImageSize"); return CISize2D(); }
+  void windowToPixel(const CPoint2D &, CPoint2D &) override { logNL("windowToPixel"); }
+  void pixelToWindow(const CPoint2D &, CPoint2D &) override { logNL("pixelToWindow"); }
 
-  CImagePtr getImage() const { logNL("getImage"); return CImagePtr(); }
-  void setImage(CImagePtr) { logNL("setImage"); }
+  void textBounds(const std::string &, CBBox2D &) override { logNL("textBounds"); }
+
+  CISize2D getImageSize() const override { logNL("getImageSize"); return CISize2D(); }
+
+  CImagePtr getImage() const override { logNL("getImage"); return CImagePtr(); }
+  void setImage(CImagePtr) override { logNL("setImage"); }
 
   template<typename T>
   void logT(const T &t) {

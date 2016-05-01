@@ -1,6 +1,7 @@
 #include <CQSVGBufferView.h>
 #include <CQSVG.h>
 #include <CSVGBuffer.h>
+#include <CQSVGUtil.h>
 #include <CQImage.h>
 #include <CQUtil.h>
 
@@ -122,6 +123,8 @@ paintEvent(QPaintEvent *)
   QPainter painter(this);
 
   if (checked_) {
+    CQSVGUtil::drawCheckerboard(&painter, 32);
+#if 0
     int cs = 32;
     int nc = (width () + cs - 1)/cs;
     int nr = (height() + cs - 1)/cs;
@@ -138,6 +141,7 @@ paintEvent(QPaintEvent *)
           painter.fillRect(QRect(x, y, cs, cs), Qt::white);
       }
     }
+#endif
   }
   else
     painter.fillRect(rect(), Qt::white);

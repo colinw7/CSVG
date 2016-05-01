@@ -2,6 +2,7 @@
 #include <CQSVGAnchor.h>
 #include <CQSVGBlock.h>
 #include <CQSVGCircle.h>
+#include <CQSVGClipPath.h>
 #include <CQSVGDefs.h>
 #include <CQSVGDesc.h>
 #include <CQSVGEllipse.h>
@@ -77,6 +78,13 @@ setBackground(const QColor &c)
   CSVG::setBackground(CQUtil::colorToRGBA(c));
 }
 
+void
+CQSVG::
+setCheckerboard(bool b)
+{
+  checkerboard_ = b;
+}
+
 CSVGBlock *
 CQSVG::
 createBlock()
@@ -96,6 +104,13 @@ CQSVG::
 createCircle()
 {
   return new CQSVGCircle(this);
+}
+
+CSVGClipPath *
+CQSVG::
+createClipPath()
+{
+  return new CQSVGClipPath(this);
 }
 
 CSVGDefs *

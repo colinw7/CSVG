@@ -51,8 +51,8 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   if (CSVGAnimateBase::processOption(opt_name, opt_value))
     return true;
 
-  std::string str;
-  PartList    parts;
+  std::string      str;
+  CSVGPathPartList parts;
 
   if      (svg_.pathOption  (opt_name, opt_value, "path"     , parts))
     path_ = parts;
@@ -73,6 +73,8 @@ CSVGAnimateMotion::
 animate(double t)
 {
   //std::cerr << "CSVGAnimateMotion: " << t_ << ":" << t << std::endl;
+  CSVGObject *parent = getParent();
+
   ObjectArray objects;
 
   if (! path_.empty()) {
@@ -80,13 +82,20 @@ animate(double t)
 
     svg_.interpParts(t, path_, &x, &y, &a);
 
-    getParent()->moveTo(CPoint2D(x, y));
+    CPoint2D p(x, y);
+
+    CBBox2D bbox;
+
+    if (parent->getBBox(bbox))
+      p -= CPoint2D(bbox.getWidth()/2, bbox.getHeight()/2);
+
+    parent->moveTo(p);
 
     if (rotate_.getValue("") == "auto")
-      getParent()->rotateTo(a, CPoint2D(x, y));
+      parent->rotateTo(a, p);
     else {
       if (CStrUtil::toReal(rotate_.getValue(""), &a))
-        getParent()->rotateTo(a, CPoint2D(x, y));
+        parent->rotateTo(a, p);
     }
 
     svg_.redraw();
@@ -94,7 +103,7 @@ animate(double t)
   else if (getChildrenOfType(CSVGObjTypeId::MPATH, objects)) {
     CSVGMPath *mpath = dynamic_cast<CSVGMPath *>(objects[0]);
 
-    const PartList *path = (mpath ? &mpath->getPartList() : 0);
+    const CSVGPathPartList *path = (mpath ? &mpath->getPartList() : 0);
 
     if (path_.empty()) {
       CSVGObject *obj = mpath->xlink().getObject();
@@ -108,13 +117,15 @@ animate(double t)
 
       svg_.interpParts(t, *path, &x, &y, &a);
 
-      getParent()->moveTo(CPoint2D(x, y));
+      CPoint2D p(x, y);
+
+      parent->moveTo(p);
 
       if (rotate_.getValue("") == "auto")
-        getParent()->rotateTo(a, CPoint2D(x, y));
+        parent->rotateTo(a, p);
       else {
         if (CStrUtil::toReal(rotate_.getValue(""), &a))
-          getParent()->rotateTo(a, CPoint2D(x, y));
+          parent->rotateTo(a, p);
       }
 
       svg_.redraw();

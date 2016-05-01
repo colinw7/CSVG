@@ -4,8 +4,10 @@
 #include <CSVGFilterBase.h>
 #include <CPoint3D.h>
 
-class CSVGFePointLight;
 class CSVGBuffer;
+class CSVGFeDistantLight;
+class CSVGFePointLight;
+class CSVGFeSpotLight;
 
 class CSVGFeSpecularLighting : public CSVGFilterBase {
  public:
@@ -45,9 +47,11 @@ class CSVGFeSpecularLighting : public CSVGFilterBase {
  private:
   void filterImage(CSVGBuffer *inBuffer, CSVGBuffer *outBuffer);
 
-  void pointLight(CImagePtr image, CSVGFePointLight *pl);
+  void distantLight(CImagePtr image, CSVGFeDistantLight *pl);
+  void pointLight  (CImagePtr image, CSVGFePointLight *pl);
+  void spotLight   (CImagePtr image, CSVGFeSpotLight *pl);
 
-  CRGBA lightPoint(CRGBA &rgba, const CPoint3D &point) const;
+  CRGBA lightPoint(CImagePtr image, int x, int y) const;
 
  private:
   COptValT<std::string> filterIn_;
@@ -57,10 +61,16 @@ class CSVGFeSpecularLighting : public CSVGFilterBase {
   COptValT<double>      specularExponent_;
   COptValT<double>      surfaceScale_;
 
-  mutable CPoint3D lpoint_;
-  mutable CRGBA    lcolor_;
-  mutable double   specConstant_;
-  mutable double   specExponent_;
+  mutable double        specConstant_;
+  mutable double        specExponent_;
+  mutable CSVGObjTypeId ltype_;
+  mutable CPoint3D      lpoint_;
+  mutable CRGBA         lcolor_;
+  mutable CPoint3D      lpointsAt_;
+  mutable double        lexponent_;
+  mutable double        lcone_;
+  mutable double        lelevation_;
+  mutable double        lazimuth_;
 };
 
 #endif

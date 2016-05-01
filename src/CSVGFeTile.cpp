@@ -1,6 +1,7 @@
 #include <CSVGFeTile.h>
 #include <CSVGFilter.h>
 #include <CSVGBuffer.h>
+#include <CSVGUtil.h>
 #include <CSVG.h>
 
 CSVGFeTile::
@@ -95,8 +96,8 @@ filterImage(CSVGBuffer *inBuffer, CSVGBuffer *outBuffer)
 
     svg_.lengthToPixel(bbox.getWidth(), bbox.getHeight(), &pw, &ph);
 
-    w = pw;
-    h = ph;
+    w = CSVGUtil::round(pw);
+    h = CSVGUtil::round(ph);
   }
 
   // tile

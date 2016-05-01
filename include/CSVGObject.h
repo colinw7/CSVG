@@ -10,6 +10,8 @@
 #include <CSVGPreserveAspect.h>
 #include <CSVGAnimation.h>
 #include <CSVGFontDef.h>
+#include <CSVGPathPart.h>
+#include <CSVGObjectMarker.h>
 #include <CBBox2D.h>
 #include <CMatrixStack2D.h>
 #include <COptVal.h>
@@ -32,14 +34,6 @@ class CSVGFilter;
 class CSVGMask;
 class CSVGClipPath;
 class CSVGPathPart;
-
-struct CSVGObjectMarker {
-  CSVGObject *start { 0 };
-  CSVGObject *mid   { 0 };
-  CSVGObject *end   { 0 };
-
-  CSVGObjectMarker() { }
-};
 
 //---
 
@@ -108,7 +102,11 @@ class CSVGObject {
 
   bool isObjType(const std::string &name) const { return (getObjName() == name); }
 
+  //---
+
   const CSVGAnimation &getAnimation() const { return animation_; }
+
+  //---
 
   CSVGFilter *getFilter() const { return filter_; }
   void setFilter(CSVGFilter *filter) { filter_ = filter; }
@@ -116,18 +114,54 @@ class CSVGObject {
   bool getFiltered() const { return filtered_; }
   void setFiltered(bool b) { filtered_ = b; }
 
+  //---
+
+  CSVGMask *getMask() const { return mask_; }
+  void setMask(CSVGMask *m) { mask_ = m; }
+
+  bool getMasked() const { return masked_; }
+  void setMasked(bool b) { masked_ = b; }
+
+  //---
+
+  CSVGClipPath *getClipPath() const { return clipPath_; }
+  void setClipPath(CSVGClipPath *c) { clipPath_ = c; }
+
+  bool getClipped() const { return clipped_; }
+  void setClipped(bool b) { clipped_ = b; }
+
+  //---
+
+  CSVGObject *getMarkerStart() const { return marker_.getStart(); }
+  void setMarkerStart(CSVGObject *m) { marker_.setStart(m); }
+
+  CSVGObject *getMarkerMid() const { return marker_.getMid(); }
+  void setMarkerMid(CSVGObject *m) { marker_.setMid(m); }
+
+  CSVGObject *getMarkerEnd() const { return marker_.getEnd(); }
+  void setMarkerEnd(CSVGObject *m) { marker_.setEnd(m); }
+
+  //---
+
   bool getSelected() const { return selected_; }
   void setSelected(bool selected, bool children=false);
+
+  //---
 
   bool getInside() const { return inside_; }
   void setInside(bool inside) { inside_ = inside; }
 
+  //---
+
+  CXMLTag *getXMLTag() const { return xmlTag_; }
   void setXMLTag(CXMLTag *tag) { xmlTag_ = tag; }
+
+  //---
 
   CBBox2D getViewBox() const { return viewBox_.getValue(CBBox2D()); }
   void setViewBox(const CBBox2D &box) { viewBox_ = box; }
 
-  CXMLTag *getXMLTag() const { return xmlTag_; }
+  //---
 
   virtual void initParse() { }
   virtual void termParse() { }
@@ -235,7 +269,7 @@ class CSVGObject {
 
   bool drawObject();
 
-  bool drawSubObject();
+  bool drawSubObject(bool forceDraw=false);
 
   //------
 
@@ -473,7 +507,7 @@ class CSVGObject {
   }
 
   void printNameParts(std::ostream &os, const std::string &name,
-                      const std::vector<CSVGPathPart *> &parts) const;
+                      const CSVGPathPartList &parts) const;
 
   static void printLength(std::ostream &os, const CSVGLengthValue &l);
 
@@ -553,7 +587,9 @@ class CSVGObject {
   CSVGFilter*                  filter_   { 0 };
   bool                         filtered_ { true };
   CSVGMask*                    mask_     { 0 };
+  bool                         masked_   { true };
   CSVGClipPath*                clipPath_ { 0 };
+  bool                         clipped_  { true };
   CSVGObjectMarker             marker_;
   COptValT<CBBox2D>            viewBox_;
   bool                         selected_ { false };

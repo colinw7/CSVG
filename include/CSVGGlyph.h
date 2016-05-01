@@ -7,9 +7,6 @@ class CSVGPathPart;
 
 class CSVGGlyph : public CSVGObject {
  public:
-  typedef std::vector<CSVGPathPart *> PartList;
-
- public:
   CSVG_OBJECT_DEF("glyph", CSVGObjTypeId::GLYPH)
 
   CSVGGlyph(CSVG &svg);
@@ -23,6 +20,9 @@ class CSVGGlyph : public CSVGObject {
   std::string getName   () const { return glyphName_.getValue(""); }
   int         getDx     () const { return horizAdvX_.getValue(0 ); }
 
+  const CSVGPathPartList &getPartList() const { return parts_; }
+  void setPartList(const CSVGPathPartList &parts) { parts_ = parts; }
+
   virtual bool processOption(const std::string &name, const std::string &value) override;
 
   virtual void draw() override;
@@ -34,7 +34,7 @@ class CSVGGlyph : public CSVGObject {
  protected:
   COptValT<std::string> unicode_;
   COptValT<std::string> glyphName_;
-  PartList              parts_;
+  CSVGPathPartList      parts_;
   COptValT<std::string> orientation_;
   COptValT<std::string> arabicForm_;
   COptValT<std::string> lang_;

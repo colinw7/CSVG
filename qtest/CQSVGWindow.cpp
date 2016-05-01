@@ -7,6 +7,7 @@
 #include <CQSVGAnchor.h>
 #include <CQSVGBlock.h>
 #include <CQSVGCircle.h>
+#include <CQSVGClipPath.h>
 #include <CQSVGDefs.h>
 #include <CQSVGDesc.h>
 #include <CQSVGEllipse.h>
@@ -282,6 +283,7 @@ addProperties()
   tree_->clear();
 
   tree_->addProperty("", svg_, "background");
+  tree_->addProperty("", svg_, "checkerboard");
 
   CSVGBlock *block = svg_->getBlock();
 
@@ -289,6 +291,8 @@ addProperties()
 
   if (id == "")
     id = block->getUniqueName();
+  else
+    id += "(" + block->getObjName() + ")";
 
   addObjectToTree(id, block);
 }
@@ -305,6 +309,7 @@ addObjectToTree(const std::string &name, CSVGObject *obj)
     CQSVGBlock              *qblock    = dynamic_cast<CQSVGBlock              *>(obj);
     CQSVGAnchor             *qanchor   = dynamic_cast<CQSVGAnchor             *>(obj);
     CQSVGCircle             *qcircle   = dynamic_cast<CQSVGCircle             *>(obj);
+    CQSVGClipPath           *qclippath = dynamic_cast<CQSVGClipPath           *>(obj);
     CQSVGDefs               *qdefs     = dynamic_cast<CQSVGDefs               *>(obj);
     CQSVGDesc               *qdesc     = dynamic_cast<CQSVGDesc               *>(obj);
     CQSVGEllipse            *qellipse  = dynamic_cast<CQSVGEllipse            *>(obj);
@@ -358,6 +363,12 @@ addObjectToTree(const std::string &name, CSVGObject *obj)
     if (qobj->object()->getFilter())
       tree_->addProperty(objName, qobj, "filtered");
 
+    if (qobj->object()->getClipPath())
+      tree_->addProperty(objName, qobj, "clipped");
+
+    if (qobj->object()->getMask())
+      tree_->addProperty(objName, qobj, "masked");
+
     //---
 
     if      (qblock) {
@@ -378,6 +389,8 @@ addObjectToTree(const std::string &name, CSVGObject *obj)
       tree_->addProperty(objName, qcircle, "cx");
       tree_->addProperty(objName, qcircle, "cy");
       tree_->addProperty(objName, qcircle, "r" );
+    }
+    else if (qclippath) {
     }
     else if (qellipse) {
       tree_->addProperty(objName, qellipse, "cx");
@@ -446,6 +459,14 @@ addObjectToTree(const std::string &name, CSVGObject *obj)
       tree_->addProperty(objName, qfespec, "surfaceScale");
     }
     else if (qfespot) {
+      tree_->addProperty(objName, qfespot, "x");
+      tree_->addProperty(objName, qfespot, "y");
+      tree_->addProperty(objName, qfespot, "z");
+      tree_->addProperty(objName, qfespot, "pointsAtX");
+      tree_->addProperty(objName, qfespot, "pointsAtY");
+      tree_->addProperty(objName, qfespot, "pointsAtZ");
+      tree_->addProperty(objName, qfespot, "specularExponent");
+      tree_->addProperty(objName, qfespot, "limitingConeAngle");
     }
     else if (qfetile) {
     }
@@ -530,7 +551,9 @@ addObjectToTree(const std::string &name, CSVGObject *obj)
       tree_->addProperty(objName, qtext, "lengthAdjust");
     }
     else if (qtextpath) {
-      tree_->addProperty(objName, qtextpath, "text");
+      tree_->addProperty(objName, qtextpath, "text"       );
+      tree_->addProperty(objName, qtextpath, "xlink"      );
+      tree_->addProperty(objName, qtextpath, "startOffset");
     }
     else if (qtitle) {
       tree_->addProperty(objName, qtitle, "text");
@@ -592,6 +615,8 @@ addObjectToTree(const std::string &name, CSVGObject *obj)
 
     if (id == "")
       id = o->getUniqueName();
+    else
+      id += "(" + o->getObjName() + ")";
 
     std::string name1 = name + "/" + id;
 

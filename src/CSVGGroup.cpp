@@ -1,4 +1,5 @@
 #include <CSVGGroup.h>
+#include <CSVGLog.h>
 #include <CSVG.h>
 
 CSVGGroup::
@@ -37,6 +38,14 @@ processOption(const std::string &opt_name, const std::string &opt_value)
     return true;
   else
     return CSVGObject::processOption(opt_name, opt_value);
+}
+
+void
+CSVGGroup::
+draw()
+{
+  if (svg_.getDebug())
+    CSVGLog() << *this;
 }
 
 void

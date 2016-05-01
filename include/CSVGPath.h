@@ -8,9 +8,6 @@ class CSVGPathPart;
 
 class CSVGPath : public CSVGObject {
  public:
-  typedef std::vector<CSVGPathPart *> PartList;
-
- public:
   CSVG_OBJECT_DEF("path", CSVGObjTypeId::PATH)
 
   CSVGPath(CSVG &svg);
@@ -20,8 +17,8 @@ class CSVGPath : public CSVGObject {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  const PartList &getPartList() const { return parts_; }
-  void setPartList(const PartList &parts) { parts_ = parts; }
+  const CSVGPathPartList &getPartList() const { return parts_; }
+  void setPartList(const CSVGPathPartList &parts) { parts_ = parts; }
 
   void moveBy(const CVector2D &d);
 
@@ -34,7 +31,7 @@ class CSVGPath : public CSVGObject {
   friend std::ostream &operator<<(std::ostream &os, const CSVGPath &path);
 
  protected:
-  PartList parts_;
+  CSVGPathPartList parts_;
 };
 
 #endif

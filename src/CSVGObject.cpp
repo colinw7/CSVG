@@ -66,7 +66,9 @@ CSVGObject(const CSVGObject &obj) :
  filter_        (obj.filter_),
  filtered_      (obj.filtered_),
  mask_          (obj.mask_),
+ masked_        (obj.masked_),
  clipPath_      (obj.clipPath_),
+ clipped_       (obj.clipped_),
  marker_        (obj.marker_),
  viewBox_       (obj.viewBox_),
  selected_      (obj.selected_),
@@ -814,16 +816,16 @@ processMarkerOption(const std::string &optName, const std::string &optValue)
 
   // Marker
   if      (svg_.urlOption(optName, optValue, "marker", &obj)) {
-    marker_.start = obj;
-    marker_.mid   = obj;
-    marker_.end   = obj;
+    setMarkerStart(obj);
+    setMarkerMid  (obj);
+    setMarkerEnd  (obj);
   }
   else if (svg_.urlOption(optName, optValue, "marker-start", &obj))
-    marker_.start = obj;
+    setMarkerStart(obj);
   else if (svg_.urlOption(optName, optValue, "marker-mid", &obj))
-    marker_.mid = obj;
+    setMarkerMid(obj);
   else if (svg_.urlOption(optName, optValue, "marker-end", &obj))
-    marker_.end = obj;
+    setMarkerEnd(obj);
   else
     return false;
 
@@ -1373,23 +1375,29 @@ drawObject()
   //------
 
   // get current buffer
-  CSVGBuffer *oldBuffer = svg_.getBuffer();
+  CSVGBuffer *oldBuffer     = svg_.getBuffer();
+  CSVGBuffer *currentBuffer = oldBuffer;
 
   //------
 
   // save object image to temporary buffer if debug or filter
   bool saveImage = false;
 
-  if (svg_.getDebugImage()) {
+  if (svg_.getDebugObjImage()) {
     saveImage = true;
 
     if (! isDrawable() && ! hasChildren())
       saveImage = false;
   }
 
-  bool filtered = (getFilter() && getFiltered());
+  bool isFiltered = (getFilter() && getFiltered());
 
-  if (filtered)
+  if (isFiltered)
+    saveImage = true;
+
+  bool isMasked = (getMask() && getMasked());
+
+  if (isMasked)
     saveImage = true;
 
   CSVGBuffer *saveBuffer = 0;
@@ -1405,6 +1413,8 @@ drawObject()
     saveBuffer->clear();
 
     svg_.beginDrawBuffer(saveBuffer);
+
+    currentBuffer = saveBuffer;
   }
 
   //------
@@ -1416,8 +1426,8 @@ drawObject()
 
   transform1.append(getTransform());
 
-  if (! filtered)
-    svg_.setTransform(transform1);
+  if (! isFiltered)
+    currentBuffer->setTransform(transform1);
 
   //------
 
@@ -1428,8 +1438,8 @@ drawObject()
   //------
 
   // restore transform
-  if (! filtered)
-    svg_.setTransform(transform);
+  if (! isFiltered)
+    currentBuffer->setTransform(transform);
 
   //------
 
@@ -1442,7 +1452,7 @@ drawObject()
     if (drawn) {
       CImagePtr image = saveBuffer->getImage();
 
-      if (filtered) {
+      if (isFiltered) {
         double x = 0, y = 0;
 
         transform1.multiplyPoint(0, 0, &x, &y);
@@ -1469,7 +1479,7 @@ drawObject()
 
 bool
 CSVGObject::
-drawSubObject()
+drawSubObject(bool forceDraw)
 {
   if (! isVisible())
     return false;
@@ -1491,8 +1501,10 @@ drawSubObject()
   //------
 
   // draw clip path if specified
-  if (clipPath_)
-    clipPath_->drawPath(this);
+  bool isClipped = (getClipPath() && getClipped());
+
+  if (isClipped)
+    getClipPath()->drawPath(this);
 
   //------
 
@@ -1511,6 +1523,9 @@ drawSubObject()
 
   // draw children
   for (const auto &c : children()) {
+    if (! forceDraw && ! c->isDrawable())
+      continue;
+
     if (c->drawObject())
       drawn = true;
   }
@@ -1518,7 +1533,9 @@ drawSubObject()
   //------
 
   // apply filter
-  if (getFilter() && getFiltered()) {
+  bool isFiltered = (getFilter() && getFiltered());
+
+  if (isFiltered) {
     // store current buffer image into SourceGraphic
     CSVGBuffer *srcBuffer = svg_.getBuffer("SourceGraphic");
 
@@ -1543,7 +1560,7 @@ drawSubObject()
     // apply filter
     filter_->setObject(this);
 
-    if (filter_->drawSubObject())
+    if (filter_->drawSubObject(true))
       drawn = true;
 
     //--
@@ -1567,13 +1584,16 @@ drawSubObject()
 
   //---
 
-  if (clipPath_)
-    svg_.initClip();
+  if (isClipped)
+    oldBuffer->initClip();
 
   //---
 
-  if (mask_)
-    mask_->drawMask(*this);
+  // mask if defined
+  bool isMasked = (getMask() && getMasked());
+
+  if (isMasked)
+    getMask()->drawMask(*this);
 
   //------
 
@@ -1626,7 +1646,7 @@ toImage()
 
   //buffer->setup(bbox);
 
-  (void) drawSubObject();
+  (void) drawSubObject(true);
 
   svg_.endDrawBuffer(imageBuffer);
 
@@ -1658,7 +1678,7 @@ toNamedImage(const std::string &bufferName)
 
   svg_.beginDrawBuffer(buffer, bbox);
 
-  (void) drawSubObject();
+  (void) drawSubObject(true);
 
   svg_.endDrawBuffer(buffer);
 
@@ -1718,9 +1738,9 @@ rotateTo(double a, const CPoint2D &c)
 {
   CMatrixStack2D m;
 
-  m.translate(-c.x, -c.y);
-  m.rotate   (a);
-  m.translate( c.x,  c.y);
+  m.rotate(a, c);
+
+  m.append(getTransform());
 
   setTransform(m);
 }
@@ -2339,8 +2359,7 @@ printTransform(std::ostream &os, const CMatrixStack2D &m) const
 
 void
 CSVGObject::
-printNameParts(std::ostream &os, const std::string &name,
-               const std::vector<CSVGPathPart *> &parts) const
+printNameParts(std::ostream &os, const std::string &name, const CSVGPathPartList &parts) const
 {
   if (! parts.empty()) {
     os << " " << name << "=\"";

@@ -28,7 +28,6 @@
     lengthAdjust ( spacing | spacingAndGlyphs ) #IMPLIED
     transform <TransformList>
 */
-
 CSVGText::
 CSVGText(CSVG &svg) :
  CSVGObject(svg)

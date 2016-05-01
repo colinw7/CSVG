@@ -48,7 +48,7 @@ class CSVGFeDiffuseLighting : public CSVGFilterBase {
   void pointLight  (CImagePtr image, CSVGFePointLight *pl);
   void spotLight   (CImagePtr image, CSVGFeSpotLight *pl);
 
-  CRGBA lightPoint(CRGBA &rgba, const CPoint3D &point) const;
+  CRGBA lightPoint(CImagePtr image, int x, int y) const;
 
  private:
   COptValT<std::string> filterIn_;
@@ -57,8 +57,14 @@ class CSVGFeDiffuseLighting : public CSVGFilterBase {
   COptValT<double>      surfaceScale_;
   COptValT<double>      diffuseConstant_;
 
-  mutable CPoint3D lpoint_;
-  mutable CRGBA    lcolor_;
+  mutable CSVGObjTypeId ltype_;
+  mutable CPoint3D      lpoint_;
+  mutable CRGBA         lcolor_;
+  mutable CPoint3D      lpointsAt_;
+  mutable double        lexponent_;
+  mutable double        lcone_;
+  mutable double        lelevation_;
+  mutable double        lazimuth_;
 };
 
 #endif

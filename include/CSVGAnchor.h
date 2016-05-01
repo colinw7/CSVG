@@ -22,7 +22,7 @@ class CSVGAnchor : public CSVGObject {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  bool isDrawable() const override { return false; }
+  void draw();
 
   void print(std::ostream &os, bool hier) const override;
 

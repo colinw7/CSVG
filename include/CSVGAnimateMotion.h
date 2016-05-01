@@ -2,11 +2,9 @@
 #define CSVGAnimateMotion_H
 
 #include <CSVGAnimateBase.h>
+#include <CSVGPathPart.h>
 
 class CSVGAnimateMotion : public CSVGAnimateBase {
- public:
-  typedef std::vector<CSVGPathPart *> PartList;
-
  public:
   CSVG_OBJECT_DEF("animateMotion", CSVGObjTypeId::ANIMATE_MOTION)
 
@@ -14,6 +12,9 @@ class CSVGAnimateMotion : public CSVGAnimateBase {
   CSVGAnimateMotion(const CSVGAnimateMotion &animateMotion);
 
   CSVGAnimateMotion *dup() const override;
+
+  const CSVGPathPartList &getPath() const { return path_; }
+  void setPath(const CSVGPathPartList &path) { path_ = path; }
 
   bool processOption(const std::string &name, const std::string &value) override;
 
@@ -24,7 +25,7 @@ class CSVGAnimateMotion : public CSVGAnimateBase {
   friend std::ostream &operator<<(std::ostream &os, const CSVGAnimateMotion &animateMotion);
 
  private:
-  PartList              path_;
+  CSVGPathPartList      path_;
   COptValT<std::string> keyPoints_;
   COptValT<std::string> rotate_;
   COptValT<std::string> origin_;

@@ -80,10 +80,15 @@ filterImage(CSVGBuffer *inBuffer)
 
   CSVGMorphologyOperator op = getOperator();
 
+  int r = 1;
+
+  if (! radius_.isValid() || ! CStrUtil::toInteger(radius_.getValue(), &r))
+    r = 1;
+
   if      (op == CSVGMorphologyOperator::ERODE)
-    dst_image = src_image->erode(/*isAlpha*/true);
+    dst_image = src_image->erode (r, /*isAlpha*/true);
   else if (op == CSVGMorphologyOperator::DILATE)
-    dst_image = src_image->dilate(/*isAlpha*/true);
+    dst_image = src_image->dilate(r, /*isAlpha*/true);
 
   inBuffer->setImage(dst_image);
 }

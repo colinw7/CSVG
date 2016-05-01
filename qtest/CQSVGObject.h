@@ -18,6 +18,8 @@ class CQSVGObject : public QObject {
 
   Q_PROPERTY(bool selected READ isSelected WRITE setSelected)
   Q_PROPERTY(bool filtered READ isFiltered WRITE setFiltered)
+  Q_PROPERTY(bool clipped  READ isClipped  WRITE setClipped )
+  Q_PROPERTY(bool masked   READ isMasked   WRITE setMasked  )
   Q_PROPERTY(bool visible  READ isVisible  WRITE setVisible )
 
   Q_PROPERTY(QString transform READ transformStr)
@@ -55,6 +57,12 @@ class CQSVGObject : public QObject {
 
   bool isFiltered() const;
   void setFiltered(bool b);
+
+  bool isClipped() const;
+  void setClipped(bool b);
+
+  bool isMasked() const;
+  void setMasked(bool b);
 
   bool isVisible() const;
   void setVisible(bool b);

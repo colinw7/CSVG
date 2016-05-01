@@ -38,8 +38,8 @@ bool
 CSVGMPath::
 processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  PartList    parts;
-  std::string str;
+  std::string      str;
+  CSVGPathPartList parts;
 
   if      (svg_.pathOption  (opt_name, opt_value, "d", parts))
     parts_ = parts;

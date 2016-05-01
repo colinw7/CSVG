@@ -19,6 +19,13 @@ CQSVGRenderer()
   range_.setScaleMin  (false);
 }
 
+CQSVGRenderer::
+~CQSVGRenderer()
+{
+  delete path_;
+  delete savePath_;
+}
+
 CQSVGRenderer *
 CQSVGRenderer::
 dup() const
@@ -274,9 +281,11 @@ void
 CQSVGRenderer::
 pathText(const std::string &str)
 {
+  QString qstr = QString::fromUtf8(str.c_str());
+
   QPointF c = path_->currentPosition();
 
-  path_->addText(c, qfont_, str.c_str());
+  path_->addText(c, qfont_, qstr);
 }
 
 void
@@ -320,12 +329,58 @@ pathFill()
 
 void
 CQSVGRenderer::
+savePath(const CMatrix2D &m)
+{
+  QTransform matrix = CQUtil::toQTransform(m);
+
+  QList<QPolygonF> polygons = path_->toSubpathPolygons(matrix);
+
+  delete savePath_;
+
+  savePath_ = new QPainterPath;
+
+  for (int i = 0; i < polygons.size(); ++i)
+    savePath_->addPolygon(polygons[i]);
+}
+
+void
+CQSVGRenderer::
 pathClip(CSVGRenderer *renderer)
 {
   CQSVGRenderer *qrenderer = dynamic_cast<CQSVGRenderer *>(renderer);
 
-  if (qrenderer)
+  if (qrenderer) {
+#if 0
     painter_->setClipPath(*qrenderer->path_);
+
+    QTransform matrix = CQUtil::toQTransform(m);
+
+    QList<QPolygonF> polygons = qrenderer->path_->toSubpathPolygons(matrix);
+
+    for (int i = 0; i < polygons.size(); ++i) {
+      const QPolygonF &polygon = polygons[i];
+
+      for (int j = 0; j < polygon.size(); ++j) {
+        const QPointF &p = polygon[j];
+
+        std::cout << p.x() << " " << p.y() << std::endl;
+      }
+    }
+
+    for (int i = 0; i < polygons.size(); ++i)
+      painter_->drawPolygon(polygons[i]);
+
+    QPainterPath path;
+
+    for (int i = 0; i < polygons.size(); ++i)
+      path.addPolygon(polygons[i]);
+
+    painter_->setClipPath(path);
+#endif
+
+    if (qrenderer->savePath_)
+      painter_->setClipPath(*qrenderer->savePath_);
+  }
   else
     painter_->setClipPath(*path_);
 }
@@ -337,8 +392,40 @@ pathEoclip(CSVGRenderer *renderer)
   // TODO: even odd ?
   CQSVGRenderer *qrenderer = dynamic_cast<CQSVGRenderer *>(renderer);
 
-  if (qrenderer)
+  if (qrenderer) {
+#if 0
     painter_->setClipPath(*qrenderer->path_);
+
+    QTransform matrix = CQUtil::toQTransform(m);
+
+    QList<QPolygonF> polygons = qrenderer->path_->toSubpathPolygons(matrix);
+
+    for (int i = 0; i < polygons.size(); ++i) {
+      const QPolygonF &polygon = polygons[i];
+
+      for (int j = 0; j < polygon.size(); ++j) {
+        const QPointF &p = polygon[j];
+
+        std::cout << p.x() << " " << p.y() << std::endl;
+      }
+    }
+
+    for (int i = 0; i < polygons.size(); ++i)
+      painter_->drawPolygon(polygons[i]);
+
+    painter_->strokePath(*qrenderer->path_, QColor(Qt::black));
+
+    QPainterPath path;
+
+    for (int i = 0; i < polygons.size(); ++i)
+      path.addPolygon(polygons[i]);
+
+    painter_->setClipPath(path);
+#endif
+
+    if (qrenderer->savePath_)
+      painter_->setClipPath(*qrenderer->savePath_);
+  }
   else
     painter_->setClipPath(*path_);
 }
@@ -348,6 +435,13 @@ CQSVGRenderer::
 initClip()
 {
   painter_->setClipping(false);
+}
+
+void
+CQSVGRenderer::
+addClipPath(CSVGRenderer *origRenderer)
+{
+  painter_->setClipPath(static_cast<CQSVGRenderer *>(origRenderer)->painter_->clipPath());
 }
 
 void
@@ -404,7 +498,7 @@ setLineWidth(double w)
 {
   assert(drawing_);
 
-  if (w <= 1.0) w = 1.0;
+  //if (w <= 1.0) w = 1.0;
 
   pen_.setWidthF(w);
 
@@ -578,9 +672,11 @@ void
 CQSVGRenderer::
 textBounds(const std::string &str, CBBox2D &bbox)
 {
+  QString qstr = QString::fromUtf8(str.c_str());
+
   QFontMetrics fm(qfont_);
 
-  int w = fm.width(str.c_str());
+  int w = fm.width(qstr);
   int h = fm.height();
 
   bbox = CBBox2D(CPoint2D(0, 0), CPoint2D(w, h));

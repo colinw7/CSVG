@@ -28,7 +28,7 @@ bool
 CSVGPath::
 processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  PartList parts;
+  CSVGPathPartList parts;
 
   if (svg_.pathOption(opt_name, opt_value, "d", parts))
     parts_ = parts;
@@ -42,8 +42,7 @@ void
 CSVGPath::
 moveBy(const CVector2D &d)
 {
-  for (const auto &p : parts_)
-    p->moveBy(d);
+  parts_.moveBy(d);
 }
 
 void

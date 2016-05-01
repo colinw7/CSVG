@@ -1,5 +1,6 @@
 #include <CSVGPolyLine.h>
 #include <CSVG.h>
+#include <CSVGBuffer.h>
 #include <CSVGLog.h>
 
 /* Attributes:
@@ -76,7 +77,9 @@ draw()
   if (svg_.getDebug())
     CSVGLog() << *this;
 
-  svg_.pathInit();
+  CSVGBuffer *buffer = svg_.getBuffer();
+
+  buffer->pathInit();
 
   uint num_points = points_.size();
 

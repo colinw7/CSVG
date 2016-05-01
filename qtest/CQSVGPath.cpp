@@ -22,7 +22,7 @@ void
 CQSVGPath::
 setPathString(const QString &s)
 {
-  CSVG::PartList parts;
+  CSVGPathPartList parts;
 
   if (! qsvg_->pathStringToParts(s.toStdString(), parts))
     return;

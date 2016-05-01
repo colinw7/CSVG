@@ -14,12 +14,13 @@ CONFIG += debug
 
 # Input
 SOURCES += \
+CQSVG.cpp \
 CQSVGAnchor.cpp \
 CQSVGBlock.cpp \
 CQSVGBufferView.cpp \
 CQSVGCanvas.cpp \
 CQSVGCircle.cpp \
-CQSVG.cpp \
+CQSVGClipPath.cpp \
 CQSVGDefs.cpp \
 CQSVGDesc.cpp \
 CQSVGEllipse.cpp \
@@ -69,9 +70,7 @@ CQSVGUse.cpp \
 CQSVGWindow.cpp \
 \
 CQSVGRenderer.cpp \
-\
-CMathGeom2D.cpp \
-CArcToBezier.cpp \
+CQSVGUtil.cpp \
 
 HEADERS += \
 CEnumConv.h \
@@ -80,6 +79,7 @@ CQSVGBlock.h \
 CQSVGBufferView.h \
 CQSVGCanvas.h \
 CQSVGCircle.h \
+CQSVGClipPath.h \
 CQSVGDefs.h \
 CQSVGDesc.h \
 CQSVGEllipse.h \
@@ -130,6 +130,7 @@ CQSVGUse.h \
 CQSVGWindow.h \
 \
 CQSVGRenderer.h \
+CQSVGUtil.h \
 \
 
 DESTDIR     = ../bin

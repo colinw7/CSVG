@@ -230,6 +230,10 @@ draw()
     if (symbol)
       saveImage = true;
 
+    // if currently drawing to clip then can't use image
+    if (oldBuffer->isClip())
+      saveImage = false;
+
     CSVGBuffer *saveBuffer = 0;
 
     //---
@@ -257,27 +261,30 @@ draw()
 
     // set buffer to temporary buffer
     if (saveImage) {
-      saveBuffer = svg_.getBuffer("_" + getUniqueName());
+      saveBuffer = svg_.getBuffer("_" + object->getUniqueName() + "_" + getUniqueName());
 
       svg_.setBuffer(saveBuffer);
 
       saveBuffer->clear();
 
       svg_.beginDrawBuffer(saveBuffer, svg_.scale()*xs, svg_.scale()*ys);
+
+      if (oldBuffer->hasClipPath())
+        saveBuffer->addClipPath(oldBuffer);
     }
 
     //------
 
-#if 0
-    // set current transform
     CMatrixStack2D transform = oldBuffer->transform();
 
-    CMatrixStack2D transform1(transform);
+    if (! saveImage) {
+      // set current transform
+      CMatrixStack2D transform1 = transform;
 
-    transform1.append(getTransform());
+      transform1.append(object->getTransform());
 
-    svg_.setTransform(transform1);
-#endif
+      svg_.setTransform(transform1);
+    }
 
     //------
 
@@ -286,10 +293,10 @@ draw()
 
     //------
 
-#if 0
-    // restore transform
-    svg_.setTransform(transform);
-#endif
+    if (! saveImage) {
+      // restore transform
+      svg_.setTransform(transform);
+    }
 
     //------
 
@@ -326,8 +333,17 @@ draw()
 
           oldBuffer->addImage(x1 - px1, y1 - py1, image);
         }
-        else
-          oldBuffer->addImage(image);
+        else {
+          double x = 0, y = 0;
+
+          transform.multiplyPoint(0, 0, &x, &y);
+
+          double px, py;
+
+          oldBuffer->lengthToPixel(x, y, &px, &py);
+
+          oldBuffer->addImage(px, py, image);
+        }
       }
 
       //---

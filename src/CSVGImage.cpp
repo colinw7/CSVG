@@ -1,6 +1,8 @@
 #include <CSVGImage.h>
+#include <CSVGBuffer.h>
 #include <CSVG.h>
 #include <CSVGLog.h>
+#include <CSVGUtil.h>
 
 CSVGImage::
 CSVGImage(CSVG &svg) :
@@ -157,13 +159,50 @@ draw()
 
   CImagePtr image = getImage();
 
-  if (image.isValid()) {
-    CBBox2D bbox;
+  if (! image.isValid())
+    return;
 
-    getBBox(bbox);
+  //---
 
-    svg_.drawImage(bbox, image);
+  CSVGBuffer *oldBuffer = svg_.getBuffer();
+
+  //---
+
+  // get bbox
+  CBBox2D bbox;
+
+  getBBox(bbox);
+
+  // resize image to bbox
+  double x1, y1, x2, y2;
+
+  oldBuffer->windowToPixel(bbox.getXMin(), bbox.getYMin(), &x1, &y1);
+  oldBuffer->windowToPixel(bbox.getXMax(), bbox.getYMax(), &x2, &y2);
+
+  int pw = CSVGUtil::round(fabs(x2 - x1));
+  int ph = CSVGUtil::round(fabs(y2 - y1));
+
+  image->reshape(pw, ph);
+
+  if (svg_.getDebugImage()) {
+    std::string imageBufferName = "image_" + getUniqueName();
+
+    CSVGBuffer *imageBuffer = svg_.getBuffer(imageBufferName);
+
+    imageBuffer->setImage(image);
   }
+
+  //---
+
+  bool oldDrawing = oldBuffer->isDrawing();
+
+  if (oldDrawing)
+    oldBuffer->stopDraw();
+
+  oldBuffer->addImage(x1, y1, image);
+
+  if (oldDrawing)
+    oldBuffer->startDraw();
 }
 
 bool

@@ -165,7 +165,7 @@ tick(double dt)
 
         repeatDur_.setInvalid();
 
-        endTime_ = getStartTime() + repeatDur_.getValue().getSeconds();
+        endTime_ = getStartTime() + dur_.getValue().getSeconds();
 
         repeat = true;
       }

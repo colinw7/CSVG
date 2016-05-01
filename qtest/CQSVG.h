@@ -11,7 +11,8 @@ class QTimer;
 class CQSVG : public QObject, public CSVG {
   Q_OBJECT
 
-  Q_PROPERTY(QColor background READ background WRITE setBackground)
+  Q_PROPERTY(QColor background   READ background     WRITE setBackground  )
+  Q_PROPERTY(bool   checkerboard READ isCheckerboard WRITE setCheckerboard)
 
  public:
   CQSVG(CQSVGWindow *w);
@@ -23,9 +24,13 @@ class CQSVG : public QObject, public CSVG {
   QColor background() const;
   void setBackground(const QColor &v);
 
+  bool isCheckerboard() const { return checkerboard_; }
+  void setCheckerboard(bool b);
+
   CSVGBlock              *createBlock() override;
   CSVGAnchor             *createAnchor() override;
   CSVGCircle             *createCircle() override;
+  CSVGClipPath           *createClipPath() override;
   CSVGDefs               *createDefs() override;
   CSVGDesc               *createDesc() override;
   CSVGEllipse            *createEllipse() override;
@@ -79,9 +84,10 @@ class CQSVG : public QObject, public CSVG {
   void tickSlot();
 
  private:
-  CQSVGWindow *window_ { 0 };
-  QTimer      *timer_  { 0 };
-  int          dt_     { 100 };
+  CQSVGWindow *window_       { 0 };
+  QTimer      *timer_        { 0 };
+  int          dt_           { 100 };
+  bool         checkerboard_ { false };
 };
 
 #endif

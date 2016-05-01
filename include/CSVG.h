@@ -22,6 +22,7 @@
 #include <CGenGradient.h>
 
 class CSVGPathPart;
+class CSVGPathPartList;
 class CSVGRenderer;
 class CSVGBuffer;
 class CSVGObject;
@@ -89,8 +90,7 @@ class CXMLToken;
 
 class CSVG {
  public:
-  typedef std::vector<CSVGObject *>   ObjectList;
-  typedef std::vector<CSVGPathPart *> PartList;
+  typedef std::vector<CSVGObject *> ObjectList;
 
  public:
   CSVG(CSVGRenderer *renderer=0);
@@ -110,10 +110,7 @@ class CSVG {
 
   CSVGBlock *getBlock() const;
 
-  CSVGBuffer  *getBuffer    () const;
-  std::string  getBufferName() const;
-
-  //void setBuffer(const std::string &name);
+  CSVGBuffer *getBuffer() const;
   void setBuffer(CSVGBuffer *buffer);
 
   CSVGBuffer *getBuffer(const std::string &name);
@@ -143,11 +140,17 @@ class CSVG {
   void setDebug(bool b);
   bool getDebug() const { return debug_; }
 
+  void setDebugObjImage(bool b);
+  bool getDebugObjImage() const { return debugObjImage_; }
+
   void setDebugImage(bool b);
   bool getDebugImage() const { return debugImage_; }
 
   void setDebugFilter(bool b);
   bool getDebugFilter() const { return debugFilter_; }
+
+  void setDebugMask(bool b);
+  bool getDebugMask() const { return debugMask_; }
 
   void setDebugUse(bool b);
   bool getDebugUse() const { return debugUse_; }
@@ -162,6 +165,7 @@ class CSVG {
   virtual CSVGBlock               *createBlock();
   virtual CSVGAnchor              *createAnchor();
   virtual CSVGCircle              *createCircle();
+  virtual CSVGClipPath            *createClipPath();
   virtual CSVGDefs                *createDefs();
   virtual CSVGDesc                *createDesc();
   virtual CSVGEllipse             *createEllipse();
@@ -309,7 +313,6 @@ class CSVG {
 
   void textSize(const std::string &text, CFontPtr font, double *w, double *a, double *d) const;
 
-  void pathInit();
   void pathTerm();
   void pathMoveTo(double x, double y);
   void pathLineTo(double x, double y);
@@ -321,27 +324,25 @@ class CSVG {
   void pathRBezier2To(double x1, double y1, double x2, double y2);
   void pathBezier3To(double x1, double y1, double x2, double y2, double x3, double y3);
   void pathRBezier3To(double x1, double y1, double x2, double y2, double x3, double y3);
-  void pathClose();
   bool pathGetCurrentPoint(double *x, double *y);
   void pathStroke();
   void pathFill();
-  void pathClip();
-  void pathEoClip();
-  void pathBBox(CBBox2D &bbox);
-  void initClip();
 
   void addWidthToPoint(double x, double y, double angle, double width,
                        double *x1, double *y1, double *x2, double *y2) const;
 
   bool pathOption(const std::string &opt_name, const std::string &opt_value,
-                  const std::string &name, CSVG::PartList &parts);
-  bool pathStringToParts(const std::string &data, PartList &parts);
+                  const std::string &name, CSVGPathPartList &parts);
+  bool pathStringToParts(const std::string &data, CSVGPathPartList &parts);
 
-  void drawParts(const PartList &parts, CSVGObjectMarker *marker=0);
-  bool interpParts(double s, const CSVG::PartList &parts, double *xi, double *yi, double *a);
+  void drawParts(const CSVGPathPartList &parts, CSVGObjectMarker *marker=0);
 
-  bool getPartsBBox(const PartList &parts, CBBox2D &bbox) const;
-  void printParts(std::ostream &os, const PartList &parts) const;
+  double partsLength(const CSVGPathPartList &parts) const;
+
+  bool interpParts(double s, const CSVGPathPartList &parts, double *xi, double *yi, double *a);
+
+  bool getPartsBBox(const CSVGPathPartList &parts, CBBox2D &bbox) const;
+  void printParts(std::ostream &os, const CSVGPathPartList &parts) const;
 
   bool coordOption(const std::string &opt_name, const std::string &opt_value,
                    const std::string &name, CSVGLengthValue &length);
@@ -488,8 +489,10 @@ class CSVG {
   bool                    uniquify_      { false };
   bool                    autoName_      { false };
   bool                    debug_         { false };
+  bool                    debugObjImage_ { false };
   bool                    debugImage_    { false };
   bool                    debugFilter_   { false };
+  bool                    debugMask_     { false };
   bool                    debugUse_      { false };
 };
 

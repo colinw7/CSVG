@@ -60,6 +60,14 @@ processOption(const std::string &opt_name, const std::string &opt_value)
 
 void
 CSVGAnchor::
+draw()
+{
+  if (svg_.getDebug())
+    CSVGLog() << *this;
+}
+
+void
+CSVGAnchor::
 print(std::ostream &os, bool hier) const
 {
   if (hier) {

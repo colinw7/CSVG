@@ -3,11 +3,12 @@
 
 #include <CSVGStroke.h>
 #include <CSVGFill.h>
+#include <CSVGObjectMarker.h>
 
 class CSVGStyleData {
  public:
   CSVGStyleData(CSVG &svg, const std::string &id) :
-   id_(id), stroke_(svg), fill_(svg) {
+   svg_(svg), id_(id), stroke_(svg), fill_(svg) {
   }
 
   void setValue(const std::string &name, const std::string &value);
@@ -26,9 +27,11 @@ class CSVGStyleData {
   bool      getFillNoColor       () const { return fill_  .getNoColor(); }
 
  private:
-  std::string id_;
-  CSVGStroke  stroke_;
-  CSVGFill    fill_;
+  CSVG&            svg_;
+  std::string      id_;
+  CSVGStroke       stroke_;
+  CSVGFill         fill_;
+  CSVGObjectMarker marker_;
 };
 
 #endif

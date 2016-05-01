@@ -1,5 +1,6 @@
 #include <CSVGLine.h>
 #include <CSVG.h>
+#include <CSVGBuffer.h>
 #include <CSVGLog.h>
 #include <CMathGeom2D.h>
 
@@ -72,7 +73,9 @@ draw()
   if (svg_.getDebug())
     CSVGLog() << *this;
 
-  svg_.pathInit();
+  CSVGBuffer *buffer = svg_.getBuffer();
+
+  buffer->pathInit();
 
   svg_.pathMoveTo(getX1(), getY1());
   svg_.pathLineTo(getX2(), getY2());

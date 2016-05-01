@@ -27,9 +27,9 @@ bool
 CSVGClipPath::
 processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  std::string    str;
-  PartList       parts;
-  CSVGCoordUnits units;
+  std::string      str;
+  CSVGPathPartList parts;
+  CSVGCoordUnits   units;
 
   if      (svg_.pathOption  (opt_name, opt_value, "d", parts))
     parts_ = parts;
@@ -59,6 +59,8 @@ drawPath(CSVGObject* obj)
   // set temp buffer for clip path data
   CSVGBuffer *buffer = svg_.getBuffer("clipPath_" + obj->getUniqueName());
 
+  buffer->setClip(true);
+
   svg_.setBuffer(buffer);
 
   //---
@@ -74,10 +76,12 @@ drawPath(CSVGObject* obj)
 
   //---
 
-  // draw clip path
   CMatrixStack2D transform;
 
   svg_.getTransform(transform);
+
+  // set transform
+  CMatrixStack2D transform1;
 
   if (getUnits() == CSVGCoordUnits::OBJECT_BBOX) {
     CMatrixStack2D m;
@@ -85,28 +89,37 @@ drawPath(CSVGObject* obj)
     m.translate(x, y);
     m.scale    (w, h);
 
+    transform1 = m;
+
     svg_.setTransform(m);
   }
+  else
+    transform1 = transform;
 
-  svg_.pathInit();
+  //---
+
+  // draw clip path
+  buffer->pathInit();
 
   drawSubObject();
 
-  if (getUnits() == CSVGCoordUnits::OBJECT_BBOX)
-    svg_.setTransform(transform);
-
   //---
 
-  svg_.endDrawBuffer(buffer);
-
-  svg_.setBuffer(oldBuffer);
-
-  //---
-
+  // take path from buffer and set as clip in oldBuffer
   if (clip_.getRule() == FILL_TYPE_EVEN_ODD)
     oldBuffer->pathEoClip(buffer);
   else
     oldBuffer->pathClip(buffer);
+
+  //---
+
+  // reset transform and switch to old buffer
+  if (getUnits() == CSVGCoordUnits::OBJECT_BBOX)
+    svg_.setTransform(transform);
+
+  svg_.endDrawBuffer(buffer);
+
+  svg_.setBuffer(oldBuffer);
 }
 
 void

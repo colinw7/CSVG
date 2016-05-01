@@ -9,9 +9,6 @@ class CSVGPathPart;
 
 class CSVGMPath : public CSVGObject {
  public:
-  typedef std::vector<CSVGPathPart *> PartList;
-
- public:
   CSVG_OBJECT_DEF("mpath", CSVGObjTypeId::MPATH)
 
   CSVGMPath(CSVG &svg);
@@ -21,7 +18,8 @@ class CSVGMPath : public CSVGObject {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  const PartList &getPartList() const { return parts_; }
+  const CSVGPathPartList &getPartList() const { return parts_; }
+  void setPartList(const CSVGPathPartList &parts) { parts_ = parts; }
 
   const CSVGXLink &xlink() const { return xlink_.getValue(); }
 
@@ -37,7 +35,7 @@ class CSVGMPath : public CSVGObject {
   friend std::ostream &operator<<(std::ostream &os, const CSVGMPath &path);
 
  protected:
-  PartList            parts_;
+  CSVGPathPartList    parts_;
   COptValT<CSVGXLink> xlink_;
 };
 
