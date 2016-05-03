@@ -127,10 +127,16 @@ class CSVGBuffer {
   void drawImage(double x, double y, CImagePtr image);
   void drawImage(const CBBox2D &bbox, CImagePtr image);
 
+  void drawRoundedRectangle(const CBBox2D &bbox, double rx, double ry);
+  void fillRoundedRectangle(const CBBox2D &bbox, double rx, double ry);
+
+  void drawRectangle(const CBBox2D &bbox);
+  void fillRectangle(const CBBox2D &bbox);
+
   void pathInit();
   void pathTerm();
   void pathMoveTo(double x, double y);
-  void pathRMoveTo(double x, double y);
+  void pathRMoveTo(double dx, double dy);
   void pathLineTo(double x, double y);
   void pathRLineTo(double dx, double dy);
   void pathArcTo(double cx, double cy, double rx, double ry, double theta1, double theta2);

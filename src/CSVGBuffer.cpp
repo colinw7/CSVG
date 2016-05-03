@@ -704,6 +704,94 @@ pathText(const std::string &text, CFontPtr font, CHAlignType align)
 
 void
 CSVGBuffer::
+drawRoundedRectangle(const CBBox2D &bbox, double rx, double ry)
+{
+  svg_.setStrokeBuffer(this);
+
+  const CPoint2D &ll = bbox.getLL();
+  const CPoint2D &ur = bbox.getUR();
+
+  pathInit();
+
+  pathMoveTo(ll.x + rx, ll.y);
+  pathLineTo(ur.x - rx, ll.y);
+  pathArcTo (ur.x - rx, ll.y + ry, rx, ry, 3*M_PI/2, 2*M_PI);
+  pathLineTo(ur.x, ll.y + ry);
+  pathArcTo (ur.x - rx, ur.y - ry, rx, ry, 0       , M_PI/2.0);
+  pathLineTo(ur.x - rx, ur.y);
+  pathArcTo (ll.x + rx, ur.y - ry, rx, ry, M_PI/2.0, M_PI);
+  pathLineTo(ll.x, ur.y - ry);
+  pathArcTo (ll.x + rx, ll.y + ry, rx, ry, M_PI    , 3*M_PI/2);
+
+  pathClose();
+
+  pathStroke();
+}
+
+void
+CSVGBuffer::
+fillRoundedRectangle(const CBBox2D &bbox, double rx, double ry)
+{
+  svg_.setFillBuffer(this);
+
+  const CPoint2D &ll = bbox.getLL();
+  const CPoint2D &ur = bbox.getUR();
+
+  pathInit();
+
+  pathMoveTo(ll.x + rx, ll.y);
+  pathLineTo(ur.x - rx, ll.y);
+  pathArcTo (ur.x - rx, ll.y + ry, rx, ry, 3*M_PI/2, 2*M_PI);
+  pathLineTo(ur.x, ll.y + ry);
+  pathArcTo (ur.x - rx, ur.y - ry, rx, ry, 0       , M_PI/2.0);
+  pathLineTo(ur.x - rx, ur.y);
+  pathArcTo (ll.x + rx, ur.y - ry, rx, ry, M_PI/2.0, M_PI);
+  pathLineTo(ll.x, ur.y - ry);
+  pathArcTo (ll.x + rx, ll.y + ry, rx, ry, M_PI    , 3*M_PI/2);
+
+  pathClose();
+
+  pathFill();
+}
+
+void
+CSVGBuffer::
+drawRectangle(const CBBox2D &bbox)
+{
+  svg_.setStrokeBuffer(this);
+
+  pathInit();
+
+  pathMoveTo(bbox.getXMin(), bbox.getYMin());
+  pathLineTo(bbox.getXMax(), bbox.getYMin());
+  pathLineTo(bbox.getXMax(), bbox.getYMax());
+  pathLineTo(bbox.getXMin(), bbox.getYMax());
+
+  pathClose();
+
+  pathStroke();
+}
+
+void
+CSVGBuffer::
+fillRectangle(const CBBox2D &bbox)
+{
+  svg_.setFillBuffer(this);
+
+  pathInit();
+
+  pathMoveTo(bbox.getXMin(), bbox.getYMin());
+  pathLineTo(bbox.getXMax(), bbox.getYMin());
+  pathLineTo(bbox.getXMax(), bbox.getYMax());
+  pathLineTo(bbox.getXMin(), bbox.getYMax());
+
+  pathClose();
+
+  pathFill();
+}
+
+void
+CSVGBuffer::
 pathInit()
 {
   if (refBuffer_)
@@ -724,6 +812,18 @@ pathMoveTo(double x, double y)
   //---
 
   renderer_->pathMoveTo(CPoint2D(x, y));
+}
+
+void
+CSVGBuffer::
+pathRMoveTo(double dx, double dy)
+{
+  if (refBuffer_)
+    return refBuffer_->pathRMoveTo(dx, dy);
+
+  //---
+
+  renderer_->pathRMoveTo(CPoint2D(dx, dy));
 }
 
 void

@@ -102,6 +102,28 @@ class CSVGPathMoveTo : public CSVGPathPart {
 
 //---
 
+class CSVGPathRMoveTo : public CSVGPathPart {
+ public:
+  CSVGPathRMoveTo(CSVG &svg, double x, double y);
+
+  const CPoint2D &getPoint() const { return point_; }
+
+  void moveBy(const CVector2D &d) override;
+
+  void draw() override;
+
+  double getLength(const CPoint2D &) const override { return 0; }
+
+  CPoint2D getEndPoint(const CPoint2D &) const override { return point_; }
+
+  void print(std::ostream &os) const override;
+
+ private:
+  CPoint2D point_;
+};
+
+//---
+
 class CSVGPathLineTo : public CSVGPathPart {
  public:
   CSVGPathLineTo(CSVG &svg, double x, double y);

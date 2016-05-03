@@ -76,9 +76,7 @@ drawPath(CSVGObject* obj)
 
   //---
 
-  CMatrixStack2D transform;
-
-  svg_.getTransform(transform);
+  CMatrixStack2D transform = buffer->transform();
 
   // set transform
   CMatrixStack2D transform1;

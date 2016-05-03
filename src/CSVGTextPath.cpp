@@ -1,6 +1,7 @@
 #include <CSVGTextPath.h>
 #include <CSVGText.h>
 #include <CSVGPath.h>
+#include <CSVGBuffer.h>
 #include <CSVG.h>
 #include <CSVGLog.h>
 #include <CSVGUtil.h>
@@ -70,9 +71,9 @@ draw()
 
   //---
 
-  CMatrixStack2D transform;
+  CSVGBuffer *currentBuffer = svg_.getBuffer();
 
-  svg_.getTransform(transform);
+  CMatrixStack2D transform = currentBuffer->transform();
 
   CMatrixStack2D transform1(transform);
 

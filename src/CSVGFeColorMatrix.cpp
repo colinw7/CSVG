@@ -126,9 +126,9 @@ filterImage(CSVGBuffer *inBuffer, CSVGBuffer *outBuffer)
   //                        [+0.787 -0.715 -0.072]
   // cos(hueRotate value) * [-0.213 +0.285 -0.072] +
   //                        [-0.213 -0.715 +0.928]
-  //                        [-0.213 -0.715+0.928]
-  // sin(hueRotate value) * [+0.143 +0.140-0.283]
-  //                        [-0.787 +0.715+0.072]
+  //                        [-0.213 -0.715 +0.928]
+  // sin(hueRotate value) * [+0.143 +0.140 -0.283]
+  //                        [-0.787 +0.715 +0.072]
   // Thus, the upper left term of the hue matrix turns out to be:
   //   .213 + cos(hueRotate value)*.787 - sin(hueRotate value)*.213
   else if (getType() == CSVGColorMatrixType::HUE_ROTATE) {

@@ -1003,14 +1003,14 @@ draw()
 {
   CMatrixStack2D matrix;
 
-  draw(matrix);
+  draw(matrix, CPoint2D(0,0), 1);
 }
 
 void
 CSVG::
-draw(const CMatrixStack2D &matrix, double scale)
+draw(const CMatrixStack2D &matrix, const CPoint2D &offset, double scale)
 {
-  drawBlock(getBlock(), matrix, scale);
+  drawBlock(getBlock(), matrix, offset, scale);
 }
 
 void
@@ -1019,17 +1019,18 @@ drawBlock(CSVGBlock *block)
 {
   CMatrixStack2D matrix;
 
-  drawBlock(block, matrix);
+  drawBlock(block, matrix, CPoint2D(0, 0), 1);
 }
 
 void
 CSVG::
-drawBlock(CSVGBlock *block, const CMatrixStack2D &matrix, double scale)
+drawBlock(CSVGBlock *block, const CMatrixStack2D &matrix, const CPoint2D &offset, double scale)
 {
   if (! renderer_)
     return;
 
   viewMatrix_ = matrix;
+  offset_     = offset;
   scale_      = scale;
 
   //------
@@ -1126,12 +1127,12 @@ void
 CSVG::
 beginDrawBuffer(CSVGBuffer *buffer)
 {
-  beginDrawBuffer(buffer, scale(), scale());
+  beginDrawBuffer(buffer, offset(), scale(), scale());
 }
 
 void
 CSVG::
-beginDrawBuffer(CSVGBuffer *buffer, double xs, double ys)
+beginDrawBuffer(CSVGBuffer *buffer, const CPoint2D &offset, double xs, double ys)
 {
   CSVGBlock *block = getBlock();
 
@@ -1139,24 +1140,29 @@ beginDrawBuffer(CSVGBuffer *buffer, double xs, double ys)
 
   block->getBBox(bbox);
 
-  beginDrawBuffer(buffer, bbox, xs, ys);
+  beginDrawBuffer(buffer, bbox, offset, xs, ys);
 }
 
 void
 CSVG::
 beginDrawBuffer(CSVGBuffer *buffer, const CBBox2D &bbox)
 {
-  beginDrawBuffer(buffer, bbox, scale(), scale());
+  beginDrawBuffer(buffer, bbox, offset(), scale(), scale());
 }
 
 void
 CSVG::
-beginDrawBuffer(CSVGBuffer *buffer, const CBBox2D &bbox, double xs, double ys)
+beginDrawBuffer(CSVGBuffer *buffer, const CBBox2D &bbox,
+                const CPoint2D &offset, double xs, double ys)
 {
   double w = bbox.getWidth ();
   double h = bbox.getHeight();
 
-  buffer->beginDraw(w*xs, h*ys, bbox);
+  CBBox2D bbox1 = bbox;
+
+  bbox1.moveBy(offset);
+
+  buffer->beginDraw(w*xs, h*ys, bbox1);
 
   buffer->setViewMatrix(viewMatrix_);
 
@@ -1214,7 +1220,7 @@ isStroked() const
 
 void
 CSVG::
-setStrokeBuffer()
+setStrokeBuffer(CSVGBuffer *buffer)
 {
   if (stroke_.getColorValid()) {
     CRGBA strokeColor = stroke_.getAlphaColor();
@@ -1224,38 +1230,38 @@ setStrokeBuffer()
 
       strokeColor1.setAlpha(stroke_.getOpacity());
 
-      buffer_->setStrokeColor(strokeColor1);
+      buffer->setStrokeColor(strokeColor1);
     }
     else
-      buffer_->setStrokeColor(strokeColor);
+      buffer->setStrokeColor(strokeColor);
   }
   else
-    buffer_->setStrokeColor(CRGBA(0,0,0));
+    buffer->setStrokeColor(CRGBA(0,0,0));
 
   if (stroke_.getWidthValid())
-    buffer_->setLineWidth(stroke_.getWidth());
+    buffer->setLineWidth(stroke_.getWidth());
   else
-    buffer_->setLineWidth(1);
+    buffer->setLineWidth(1);
 
   if (stroke_.getDashValid())
-    buffer_->setLineDash(stroke_.getDash());
+    buffer->setLineDash(stroke_.getDash());
   else
-    buffer_->setLineDash(CLineDash());
+    buffer->setLineDash(CLineDash());
 
   if (stroke_.getLineCapValid())
-    buffer_->setLineCap(stroke_.getLineCap());
+    buffer->setLineCap(stroke_.getLineCap());
   else
-    buffer_->setLineCap(LINE_CAP_TYPE_BUTT);
+    buffer->setLineCap(LINE_CAP_TYPE_BUTT);
 
   if (stroke_.getLineJoinValid())
-    buffer_->setLineJoin(stroke_.getLineJoin());
+    buffer->setLineJoin(stroke_.getLineJoin());
   else
-    buffer_->setLineJoin(LINE_JOIN_TYPE_MITRE);
+    buffer->setLineJoin(LINE_JOIN_TYPE_MITRE);
 
   if (stroke_.getMitreLimitValid())
-    buffer_->setLineMitreLimit(stroke_.getMitreLimitValid());
+    buffer->setLineMitreLimit(stroke_.getMitreLimitValid());
   else
-    buffer_->setLineMitreLimit(4.0);
+    buffer->setLineMitreLimit(4.0);
 }
 
 void
@@ -1329,6 +1335,8 @@ setFillBuffer(CSVGBuffer *buffer)
 
   if (fill_.getRuleValid())
     buffer->setFillType(fill_.getRule());
+  else
+    buffer->setFillType(FILL_TYPE_WINDING);
 }
 
 void
@@ -1382,70 +1390,28 @@ void
 CSVG::
 setTransform(const CMatrixStack2D &matrix)
 {
-  setBufferTransform(buffer_, matrix);
-}
-
-void
-CSVG::
-setBufferTransform(CSVGBuffer *buffer, const CMatrixStack2D &matrix)
-{
-  buffer->setTransform(matrix);
-}
-
-void
-CSVG::
-getTransform(CMatrixStack2D &matrix)
-{
-  matrix = buffer_->transform();
-}
-
-void
-CSVG::
-unsetTransform()
-{
-  unsetBufferTransform(buffer_);
-}
-
-void
-CSVG::
-unsetBufferTransform(CSVGBuffer *buffer)
-{
-  buffer->unsetTransform();
+  buffer_->setTransform(matrix);
 }
 
 void
 CSVG::
 drawImage(double x, double y, CImagePtr image)
 {
-  drawBufferImage(buffer_, x, y, image);
-}
-
-void
-CSVG::
-drawBufferImage(CSVGBuffer *buffer, double x, double y, CImagePtr image)
-{
-  buffer->drawImage(x, y, image);
+  buffer_->drawImage(x, y, image);
 }
 
 void
 CSVG::
 drawImage(const CBBox2D &bbox, CImagePtr image)
 {
-  drawBufferImage(buffer_, bbox, image);
-}
-
-void
-CSVG::
-drawBufferImage(CSVGBuffer *buffer, const CBBox2D &bbox, CImagePtr image)
-{
-  buffer->drawImage(bbox, image);
+  buffer_->drawImage(bbox, image);
 }
 
 void
 CSVG::
 drawLine(double x1, double y1, double x2, double y2)
 {
-  setStrokeBuffer();
+  setStrokeBuffer(buffer_);
 
   buffer_->pathInit();
 
@@ -1453,94 +1419,6 @@ drawLine(double x1, double y1, double x2, double y2)
   buffer_->pathLineTo(x2, y2);
 
   buffer_->pathStroke();
-}
-
-void
-CSVG::
-drawRoundedRectangle(const CBBox2D &bbox, double rx, double ry)
-{
-  setStrokeBuffer();
-
-  const CPoint2D &ll = bbox.getLL();
-  const CPoint2D &ur = bbox.getUR();
-
-  buffer_->pathInit();
-
-  buffer_->pathMoveTo(ll.x + rx, ll.y);
-  buffer_->pathLineTo(ur.x - rx, ll.y);
-  buffer_->pathArcTo (ur.x - rx, ll.y + ry, rx, ry, 3*M_PI/2, 2*M_PI);
-  buffer_->pathLineTo(ur.x, ll.y + ry);
-  buffer_->pathArcTo (ur.x - rx, ur.y - ry, rx, ry, 0       , M_PI/2.0);
-  buffer_->pathLineTo(ur.x - rx, ur.y);
-  buffer_->pathArcTo (ll.x + rx, ur.y - ry, rx, ry, M_PI/2.0, M_PI);
-  buffer_->pathLineTo(ll.x, ur.y - ry);
-  buffer_->pathArcTo (ll.x + rx, ll.y + ry, rx, ry, M_PI    , 3*M_PI/2);
-
-  buffer_->pathClose();
-
-  buffer_->pathStroke();
-}
-
-void
-CSVG::
-fillRoundedRectangle(const CBBox2D &bbox, double rx, double ry)
-{
-  setFillBuffer(buffer_);
-
-  const CPoint2D &ll = bbox.getLL();
-  const CPoint2D &ur = bbox.getUR();
-
-  buffer_->pathInit();
-
-  buffer_->pathMoveTo(ll.x + rx, ll.y);
-  buffer_->pathLineTo(ur.x - rx, ll.y);
-  buffer_->pathArcTo (ur.x - rx, ll.y + ry, rx, ry, 3*M_PI/2, 2*M_PI);
-  buffer_->pathLineTo(ur.x, ll.y + ry);
-  buffer_->pathArcTo (ur.x - rx, ur.y - ry, rx, ry, 0       , M_PI/2.0);
-  buffer_->pathLineTo(ur.x - rx, ur.y);
-  buffer_->pathArcTo (ll.x + rx, ur.y - ry, rx, ry, M_PI/2.0, M_PI);
-  buffer_->pathLineTo(ll.x, ur.y - ry);
-  buffer_->pathArcTo (ll.x + rx, ll.y + ry, rx, ry, M_PI    , 3*M_PI/2);
-
-  buffer_->pathClose();
-
-  buffer_->pathFill();
-}
-
-void
-CSVG::
-drawRectangle(const CBBox2D &bbox)
-{
-  setStrokeBuffer();
-
-  buffer_->pathInit();
-
-  buffer_->pathMoveTo(bbox.getXMin(), bbox.getYMin());
-  buffer_->pathLineTo(bbox.getXMax(), bbox.getYMin());
-  buffer_->pathLineTo(bbox.getXMax(), bbox.getYMax());
-  buffer_->pathLineTo(bbox.getXMin(), bbox.getYMax());
-
-  buffer_->pathClose();
-
-  buffer_->pathStroke();
-}
-
-void
-CSVG::
-fillRectangle(const CBBox2D &bbox)
-{
-  setFillBuffer(buffer_);
-
-  buffer_->pathInit();
-
-  buffer_->pathMoveTo(bbox.getXMin(), bbox.getYMin());
-  buffer_->pathLineTo(bbox.getXMax(), bbox.getYMin());
-  buffer_->pathLineTo(bbox.getXMax(), bbox.getYMax());
-  buffer_->pathLineTo(bbox.getXMin(), bbox.getYMax());
-
-  buffer_->pathClose();
-
-  buffer_->pathFill();
 }
 
 void
@@ -1563,7 +1441,7 @@ drawCircle(double x, double y, double r)
     }
 
     if (isStroked()) {
-      setStrokeBuffer();
+      setStrokeBuffer(buffer_);
 
       buffer_->pathStroke();
     }
@@ -1595,7 +1473,7 @@ drawEllipse(double x, double y, double rx, double ry)
     }
 
     if (isStroked()) {
-      setStrokeBuffer();
+      setStrokeBuffer(buffer_);
 
       buffer_->pathStroke();
     }
@@ -1611,7 +1489,7 @@ void
 CSVG::
 drawArc(double xc, double yc, double xr, double yr, double angle1, double angle2)
 {
-  setStrokeBuffer();
+  setStrokeBuffer(buffer_);
 
   buffer_->pathInit();
 
@@ -1642,7 +1520,7 @@ drawPolygon(const std::vector<CPoint2D> &points)
   if (! num_points)
     return;
 
-  setStrokeBuffer();
+  setStrokeBuffer(buffer_);
 
   buffer_->pathInit();
 
@@ -1699,7 +1577,7 @@ void
 CSVG::
 drawText(double x, double y, const std::string &text, CFontPtr font, CHAlignType align)
 {
-  setStrokeBuffer();
+  setStrokeBuffer(buffer_);
 
   CSVGFont *svg_font = getFont();
 
@@ -1713,9 +1591,7 @@ drawText(double x, double y, const std::string &text, CFontPtr font, CHAlignType
 
     //-----
 
-    CMatrixStack2D transform;
-
-    getTransform(transform);
+    CMatrixStack2D transform = buffer_->transform();
 
     double font_size = 10.0;
 
@@ -1741,9 +1617,7 @@ drawText(double x, double y, const std::string &text, CFontPtr font, CHAlignType
     setTransform(transform);
   }
   else {
-    CMatrixStack2D transform;
-
-    getTransform(transform);
+    CMatrixStack2D transform = buffer_->transform();
 
     CMatrixStack2D transform1 = transform;
 
@@ -1789,9 +1663,7 @@ fillText(double x, double y, const std::string &text, CFontPtr font, CHAlignType
 
     //-----
 
-    CMatrixStack2D transform;
-
-    getTransform(transform);
+    CMatrixStack2D transform = buffer_->transform();
 
     double font_size = 10.0;
 
@@ -1817,9 +1689,7 @@ fillText(double x, double y, const std::string &text, CFontPtr font, CHAlignType
     setTransform(transform);
   }
   else {
-    CMatrixStack2D transform;
-
-    getTransform(transform);
+    CMatrixStack2D transform = buffer_->transform();
 
     CMatrixStack2D transform1 = transform;
 
@@ -1861,6 +1731,13 @@ CSVG::
 pathMoveTo(double dx, double dy)
 {
   buffer_->pathMoveTo(dx, dy);
+}
+
+void
+CSVG::
+pathRMoveTo(double dx, double dy)
+{
+  buffer_->pathRMoveTo(dx, dy);
 }
 
 void
@@ -1960,7 +1837,7 @@ void
 CSVG::
 pathStroke()
 {
-  setStrokeBuffer();
+  setStrokeBuffer(buffer_);
 
   buffer_->pathStroke();
 }
@@ -2028,7 +1905,7 @@ pathStringToParts(const std::string &data, CSVGPathPartList &parts)
 
       skipCommaSpace(parse);
 
-      parts.push_back(new CSVGPathMoveTo(*this, x, y));
+      parts.push_back(new CSVGPathRMoveTo(*this, x, y));
 
       while (parse.isDigit() || parse.isChar('-')) {
         if (! parse.readReal(&x)) { flag = false; break; }
@@ -3581,6 +3458,7 @@ decodeTransform(const std::string &str, CMatrixStack2D &matrix)
 
       parse.skipSpace();
 
+      // SVG is ((a c e) (b d f) (0 0 1))
       double m00, m01, m10, m11, tx, ty;
 
       if (! parse.readReal(&m00)) {
@@ -3590,14 +3468,14 @@ decodeTransform(const std::string &str, CMatrixStack2D &matrix)
 
       skipCommaSpace(parse);
 
-      if (! parse.readReal(&m01)) {
+      if (! parse.readReal(&m10)) {
         CSVGLog() << "Invalid matrix " << str;
         return false;
       }
 
       skipCommaSpace(parse);
 
-      if (! parse.readReal(&m10)) {
+      if (! parse.readReal(&m01)) {
         CSVGLog() << "Invalid matrix " << str;
         return false;
       }

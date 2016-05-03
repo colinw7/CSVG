@@ -592,6 +592,7 @@ class CSVGObject {
   bool                         clipped_  { true };
   CSVGObjectMarker             marker_;
   COptValT<CBBox2D>            viewBox_;
+  mutable COptValT<CBBox2D>    bbox_;
   bool                         selected_ { false };
   bool                         inside_   { false };
   CXMLTag*                     xmlTag_   { 0 };

@@ -103,6 +103,9 @@ class CSVG {
   const CMatrixStack2D &viewMatrix() const { return viewMatrix_; }
   void setViewMatrix(const CMatrixStack2D &v) { viewMatrix_ = v; }
 
+  const CPoint2D &offset() const { return offset_; }
+  void setOffset(const CPoint2D &o) { offset_ = o; }
+
   double scale() const { return scale_; }
   void setScale(double s) { scale_ = s; }
 
@@ -118,9 +121,10 @@ class CSVG {
   void getBufferNames(std::vector<std::string> &names) const;
 
   void beginDrawBuffer(CSVGBuffer *buffer);
-  void beginDrawBuffer(CSVGBuffer *buffer, double xs, double ys);
+  void beginDrawBuffer(CSVGBuffer *buffer, const CPoint2D &offset, double xs, double ys);
   void beginDrawBuffer(CSVGBuffer *buffer, const CBBox2D &bbox);
-  void beginDrawBuffer(CSVGBuffer *buffer, const CBBox2D &bbox, double xs, double ys);
+  void beginDrawBuffer(CSVGBuffer *buffer, const CBBox2D &bbox,
+                       const CPoint2D &offset, double xs, double ys);
   void endDrawBuffer  (CSVGBuffer *buffer);
 
   void setAntiAlias(bool flag);
@@ -249,10 +253,11 @@ class CSVG {
   CImagePtr drawToImage(int w, int h);
 
   void draw();
-  void draw(const CMatrixStack2D &matrix, double scale=1);
+  void draw(const CMatrixStack2D &matrix, const CPoint2D &offset, double scale=1);
 
   void drawBlock(CSVGBlock *block);
-  void drawBlock(CSVGBlock *block, const CMatrixStack2D &matrix, double scale=1);
+  void drawBlock(CSVGBlock *block, const CMatrixStack2D &matrix,
+                 const CPoint2D &offset, double scale=1);
 
   void resetStroke();
   void updateStroke(const CSVGStroke &stroke);
@@ -263,8 +268,8 @@ class CSVG {
   void updateFill(const CSVGFill &fill);
   bool isFilled() const;
 
-  void setStrokeBuffer();
-  void setFillBuffer(CSVGBuffer *butter);
+  void setStrokeBuffer(CSVGBuffer *buffer);
+  void setFillBuffer  (CSVGBuffer *buffer);
 
   void resetClip();
   void updateClip(const CSVGClip &clip);
@@ -276,27 +281,13 @@ class CSVG {
   void setFontDef();
 
   void setTransform(const CMatrixStack2D &matrix);
-  void getTransform(CMatrixStack2D &matrix);
-  void unsetTransform();
-
-  void setBufferTransform(CSVGBuffer *butter, const CMatrixStack2D &matrix);
-  void unsetBufferTransform(CSVGBuffer *butter);
 
   void drawImage(double x, double y, CImagePtr image);
   void drawImage(const CBBox2D &bbox, CImagePtr image);
 
-  void drawBufferImage(CSVGBuffer *butter, double x, double y, CImagePtr image);
-  void drawBufferImage(CSVGBuffer *butter, const CBBox2D &bbox, CImagePtr image);
-
   void drawLine(double x1, double y1, double x2, double y2);
 
-  void drawRoundedRectangle(const CBBox2D &bbox, double rx, double ry);
-  void fillRoundedRectangle(const CBBox2D &bbox, double rx, double ry);
-
-  void drawRectangle(const CBBox2D &bbox);
-  void fillRectangle(const CBBox2D &bbox);
-
-  void drawCircle(double x, double y, double r);
+  void drawCircle (double x, double y, double r);
   void drawEllipse(double x, double y, double rx, double ry);
 
   void drawArc(double xc, double yc, double xr, double yr, double angle1, double angle2);
@@ -315,6 +306,7 @@ class CSVG {
 
   void pathTerm();
   void pathMoveTo(double x, double y);
+  void pathRMoveTo(double x, double y);
   void pathLineTo(double x, double y);
   void pathRLineTo(double dx, double dy);
   void pathArcTo(double cx, double cy, double rx, double ry, double theta1, double theta2);
@@ -468,6 +460,7 @@ class CSVG {
   CAutoPtr<CSVGBufferMgr> buffer_mgr_;
   CSVGBuffer*             buffer_        { 0 };
   CMatrixStack2D          viewMatrix_;
+  CPoint2D                offset_        { 0, 0 };
   double                  scale_         { 1 };
   CAutoPtr<CSVGBlock>     block_;
   CAutoPtr<CXML>          xml_;

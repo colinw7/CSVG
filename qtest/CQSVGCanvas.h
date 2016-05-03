@@ -17,6 +17,9 @@ class CQSVGCanvas : public QWidget {
 
   CQSVGRenderer *renderer() const { return renderer_; }
 
+  const CPoint2D &offset() const { return offset_; }
+  void setOffset(const CPoint2D &o) { offset_ = o; }
+
   double scale() const { return scale_; }
   void setScale(double r) { scale_ = r; }
 
@@ -45,6 +48,7 @@ class CQSVGCanvas : public QWidget {
   CQSVGRenderer *renderer_  { 0 };
   QPainter      *opainter_  { 0 };
   QImage         oimage_;
+  CPoint2D       offset_    { 0, 0 };
   double         scale_     { 1 };
   bool           autoScale_ { false };
 };

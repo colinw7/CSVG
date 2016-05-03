@@ -92,7 +92,8 @@ getLength() const
   CPoint2D p(0, 0);
 
   for ( ; ppart != parts_.end(); ++ppart) {
-    if ((*ppart)->getType() == CSVGPathPartType::MOVE_TO) {
+    if ((*ppart)->getType() == CSVGPathPartType::MOVE_TO ||
+        (*ppart)->getType() == CSVGPathPartType::RMOVE_TO) {
       p = (*ppart)->getEndPoint(p);
       break;
     }
@@ -129,7 +130,8 @@ interp(double s, double *xi, double *yi, double *a, int *pi) const
   CPoint2D p(0, 0);
 
   for ( ; ppart != parts_.end(); ++ppart) {
-    if ((*ppart)->getType() == CSVGPathPartType::MOVE_TO) {
+    if ((*ppart)->getType() == CSVGPathPartType::MOVE_TO ||
+        (*ppart)->getType() == CSVGPathPartType::RMOVE_TO) {
       p = (*ppart)->getEndPoint(p);
       break;
     }
@@ -235,6 +237,35 @@ CSVGPathMoveTo::
 print(std::ostream &os) const
 {
   os << "M " << point_.x << " " << point_.y;
+}
+
+//------
+
+CSVGPathRMoveTo::
+CSVGPathRMoveTo(CSVG &svg, double x, double y) :
+ CSVGPathPart(svg, CSVGPathPartType::RMOVE_TO), point_(x, y)
+{
+}
+
+void
+CSVGPathRMoveTo::
+moveBy(const CVector2D &d)
+{
+  point_ += d;
+}
+
+void
+CSVGPathRMoveTo::
+draw()
+{
+  svg_.pathRMoveTo(point_.x, point_.y);
+}
+
+void
+CSVGPathRMoveTo::
+print(std::ostream &os) const
+{
+  os << "m " << point_.x << " " << point_.y;
 }
 
 //------

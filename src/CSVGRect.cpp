@@ -1,4 +1,5 @@
 #include <CSVGRect.h>
+#include <CSVGBuffer.h>
 #include <CSVG.h>
 #include <CSVGLog.h>
 
@@ -114,6 +115,8 @@ draw()
   if (svg_.getDebug())
     CSVGLog() << *this;
 
+  CSVGBuffer *buffer = svg_.getBuffer();
+
   double rx = getRX();
   double ry = getRY();
 
@@ -123,24 +126,24 @@ draw()
 
     if (svg_.isFilled() || svg_.isStroked()) {
       if (svg_.isFilled())
-        svg_.fillRoundedRectangle(bbox_, rx, ry);
+        buffer->fillRoundedRectangle(bbox_, rx, ry);
 
       if (svg_.isStroked())
-        svg_.drawRoundedRectangle(bbox_, rx, ry);
+        buffer->drawRoundedRectangle(bbox_, rx, ry);
     }
     else
-      svg_.fillRoundedRectangle(bbox_, rx, ry);
+      buffer->fillRoundedRectangle(bbox_, rx, ry);
   }
   else {
     if (svg_.isFilled() || svg_.isStroked()) {
       if (svg_.isFilled())
-        svg_.fillRectangle(bbox_);
+        buffer->fillRectangle(bbox_);
 
       if (svg_.isStroked())
-        svg_.drawRectangle(bbox_);
+        buffer->drawRectangle(bbox_);
     }
     else {
-      svg_.fillRectangle(bbox_);
+      buffer->fillRectangle(bbox_);
     }
   }
 }

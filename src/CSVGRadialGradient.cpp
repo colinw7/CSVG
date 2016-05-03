@@ -1,6 +1,7 @@
 #include <CSVGRadialGradient.h>
 #include <CSVGLinearGradient.h>
 #include <CSVGStop.h>
+#include <CSVGBuffer.h>
 #include <CSVG.h>
 #include <CMathGen.h>
 #include <CSVGUtil.h>
@@ -222,6 +223,8 @@ CRadialGradient *
 CSVGRadialGradient::
 createGradient(CSVGObject *obj)
 {
+  CSVGBuffer *currentBuffer = svg_.getBuffer();
+
   CRadialGradient *gradient = new CRadialGradient;
 
   double xc = getCenterX();
@@ -234,9 +237,7 @@ createGradient(CSVGObject *obj)
 
   // remap points to absolute
   if      (getUnits() == CSVGCoordUnits::USER_SPACE) {
-    CMatrixStack2D m;
-
-    svg_.getTransform(m);
+    CMatrixStack2D m = currentBuffer->transform();
 
     // radius ?
     CPoint2D p1(xc, yc);

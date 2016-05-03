@@ -1,6 +1,7 @@
 #include <CSVGLinearGradient.h>
 #include <CSVGRadialGradient.h>
 #include <CSVGStop.h>
+#include <CSVGBuffer.h>
 #include <CSVG.h>
 #include <CSVGUtil.h>
 #include <CLinearGradient.h>
@@ -213,6 +214,8 @@ CLinearGradient *
 CSVGLinearGradient::
 createGradient(CSVGObject *obj)
 {
+  CSVGBuffer *currentBuffer = svg_.getBuffer();
+
   CLinearGradient *gradient = new CLinearGradient;
 
   double x1 = getX1(), y1 = getY1();
@@ -222,9 +225,7 @@ createGradient(CSVGObject *obj)
 
   // remap points to absolute
   if      (getUnits() == CSVGCoordUnits::USER_SPACE) {
-    CMatrixStack2D m;
-
-    svg_.getTransform(m);
+    CMatrixStack2D m = currentBuffer->transform();
 
     CPoint2D p1(x1, y1);
     CPoint2D p2(x2, y2);

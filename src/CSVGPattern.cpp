@@ -177,9 +177,7 @@ getImage(CSVGObject *parent, double *w1, double *h1)
 
   CSVGBuffer *oldBuffer = svg_.getBuffer();
 
-  CMatrixStack2D transform;
-
-  svg_.getTransform(transform);
+  CMatrixStack2D transform = oldBuffer->transform();
 
   //---
 

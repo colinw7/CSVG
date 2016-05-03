@@ -267,7 +267,7 @@ draw()
 
       saveBuffer->clear();
 
-      svg_.beginDrawBuffer(saveBuffer, svg_.scale()*xs, svg_.scale()*ys);
+      svg_.beginDrawBuffer(saveBuffer, svg_.offset(), svg_.scale()*xs, svg_.scale()*ys);
 
       if (oldBuffer->hasClipPath())
         saveBuffer->addClipPath(oldBuffer);

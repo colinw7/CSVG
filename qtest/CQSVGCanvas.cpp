@@ -53,9 +53,10 @@ redraw()
 
   CMatrixStack2D matrix;
 
+  matrix.translate(offset_.x, offset_.y);
   matrix.scale(scale_, scale_);
 
-  svg_->draw(matrix, scale_);
+  svg_->draw(matrix, offset_, scale_);
 
   opainter_->end();
 }
@@ -195,8 +196,18 @@ keyPressEvent(QKeyEvent *ke)
     scale_ *= 1.20;
   else if (ke->key() == Qt::Key_Minus)
     scale_ /= 1.20;
-  else if (ke->key() == Qt::Key_Home)
-    scale_ = 1;
+  else if (ke->key() == Qt::Key_Home) {
+    offset_ = CPoint2D(0, 0);
+    scale_  = 1;
+  }
+  else if (ke->key() == Qt::Key_Left)
+    offset_.x -= 4;
+  else if (ke->key() == Qt::Key_Right)
+    offset_.x += 4;
+  else if (ke->key() == Qt::Key_Up)
+    offset_.y -= 4;
+  else if (ke->key() == Qt::Key_Down)
+    offset_.y += 4;
   else if (ke->key() == Qt::Key_A)
     autoScale_ = ! autoScale_;
 

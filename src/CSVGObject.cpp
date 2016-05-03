@@ -2346,7 +2346,11 @@ printTransform(std::ostream &os, const CMatrixStack2D &m) const
         for (int i = 0; i < 6; ++i) {
           if (i > 0) os << " ";
 
-          os << v[i];
+          // SVG is ((a c e) (b d f) (0 0 1))
+          if (i == 1 || i == 2)
+            os << v[3 - i];
+          else
+            os << v[i];
         }
 
         output = true;

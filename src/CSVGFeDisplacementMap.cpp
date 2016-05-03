@@ -104,6 +104,9 @@ filterImage(CSVGBuffer *inBuffer1, CSVGBuffer *inBuffer2, CSVGBuffer *outBuffer)
 
   double s = getScale();
 
+  CImagePtr dst_image = src_image1->displacementMap(src_image2, xcolor, ycolor, s);
+
+#if 0
   CImagePtr dst_image = src_image1->dup();
 
   int w = src_image1->getWidth ();
@@ -132,6 +135,7 @@ filterImage(CSVGBuffer *inBuffer1, CSVGBuffer *inBuffer2, CSVGBuffer *outBuffer)
         dst_image->setRGBAPixel(x1, y1, rgba1);
     }
   }
+#endif
 
   outBuffer->setImage(dst_image);
 }

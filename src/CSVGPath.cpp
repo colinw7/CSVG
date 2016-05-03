@@ -52,6 +52,8 @@ draw()
   if (svg_.getDebug())
     CSVGLog() << *this;
 
+  bbox_.setInvalid();
+
   svg_.drawParts(parts_, &marker_);
 }
 
@@ -89,13 +91,20 @@ bool
 CSVGPath::
 getBBox(CBBox2D &bbox) const
 {
-  if (! viewBox_.isValid())
-    return svg_.getPartsBBox(parts_, bbox);
-  else {
-    bbox = getViewBox();
+  bool rc = true;
 
-    return true;
+  if (! bbox_.isValid()) {
+    if (viewBox_.isValid())
+      bbox = getViewBox();
+    else
+      rc = svg_.getPartsBBox(parts_, bbox);
+
+    bbox_ = bbox;
   }
+  else
+    bbox = bbox_.getValue();
+
+  return rc;
 }
 
 std::ostream &

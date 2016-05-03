@@ -34,3 +34,10 @@
  + Improve UTF8 support for text rendering
  + More object properties
  + Checkerboard drawing for SVG background
+
+### 5/3/2016
+ + Add offset to Qt draw
+ + Move draw code into buffer
+ + Fix bad matrix transform read/write
+ + Move displacement map code to CImageLib
+ + Handle relative move to path command correctly

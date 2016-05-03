@@ -1,4 +1,5 @@
 #include <CSVGMarker.h>
+#include <CSVGBuffer.h>
 #include <CSVG.h>
 
 /* Attributes:
@@ -105,9 +106,9 @@ drawMarker(double x, double y, double autoAngle)
 
   //---
 
-  CMatrixStack2D transform;
+  CSVGBuffer *currentBuffer = svg_.getBuffer();
 
-  svg_.getTransform(transform);
+  CMatrixStack2D transform = currentBuffer->transform();
 
   double refX = getRefX();
   double refY = getRefY();

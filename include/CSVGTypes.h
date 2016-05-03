@@ -143,6 +143,7 @@ enum class CSVGLengthType {
 
 enum class CSVGPathPartType {
   MOVE_TO,
+  RMOVE_TO,
   LINE_TO,
   RLINE_TO,
   HLINE_TO,

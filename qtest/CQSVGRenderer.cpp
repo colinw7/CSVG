@@ -199,6 +199,8 @@ pathInit()
   delete path_;
 
   path_ = new QPainterPath;
+
+  path_->setFillRule(Qt::WindingFill);
 }
 
 void
@@ -350,34 +352,6 @@ pathClip(CSVGRenderer *renderer)
   CQSVGRenderer *qrenderer = dynamic_cast<CQSVGRenderer *>(renderer);
 
   if (qrenderer) {
-#if 0
-    painter_->setClipPath(*qrenderer->path_);
-
-    QTransform matrix = CQUtil::toQTransform(m);
-
-    QList<QPolygonF> polygons = qrenderer->path_->toSubpathPolygons(matrix);
-
-    for (int i = 0; i < polygons.size(); ++i) {
-      const QPolygonF &polygon = polygons[i];
-
-      for (int j = 0; j < polygon.size(); ++j) {
-        const QPointF &p = polygon[j];
-
-        std::cout << p.x() << " " << p.y() << std::endl;
-      }
-    }
-
-    for (int i = 0; i < polygons.size(); ++i)
-      painter_->drawPolygon(polygons[i]);
-
-    QPainterPath path;
-
-    for (int i = 0; i < polygons.size(); ++i)
-      path.addPolygon(polygons[i]);
-
-    painter_->setClipPath(path);
-#endif
-
     if (qrenderer->savePath_)
       painter_->setClipPath(*qrenderer->savePath_);
   }
@@ -393,36 +367,6 @@ pathEoclip(CSVGRenderer *renderer)
   CQSVGRenderer *qrenderer = dynamic_cast<CQSVGRenderer *>(renderer);
 
   if (qrenderer) {
-#if 0
-    painter_->setClipPath(*qrenderer->path_);
-
-    QTransform matrix = CQUtil::toQTransform(m);
-
-    QList<QPolygonF> polygons = qrenderer->path_->toSubpathPolygons(matrix);
-
-    for (int i = 0; i < polygons.size(); ++i) {
-      const QPolygonF &polygon = polygons[i];
-
-      for (int j = 0; j < polygon.size(); ++j) {
-        const QPointF &p = polygon[j];
-
-        std::cout << p.x() << " " << p.y() << std::endl;
-      }
-    }
-
-    for (int i = 0; i < polygons.size(); ++i)
-      painter_->drawPolygon(polygons[i]);
-
-    painter_->strokePath(*qrenderer->path_, QColor(Qt::black));
-
-    QPainterPath path;
-
-    for (int i = 0; i < polygons.size(); ++i)
-      path.addPolygon(polygons[i]);
-
-    painter_->setClipPath(path);
-#endif
-
     if (qrenderer->savePath_)
       painter_->setClipPath(*qrenderer->savePath_);
   }
