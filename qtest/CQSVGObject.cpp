@@ -299,7 +299,7 @@ double
 CQSVGObject::
 getFontSize() const
 {
-  return obj_->getFontSize();
+  return obj_->getFontSize().value();
 }
 
 void

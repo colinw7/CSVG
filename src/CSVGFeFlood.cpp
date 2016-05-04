@@ -97,20 +97,10 @@ filterImage(CSVGBuffer *outBuffer)
     }
   }
 
-  // create image to flood
-  CImageNoSrc src;
-
-  CImagePtr dst_image = CImageMgrInst->createImage(src);
-
   int pw = CSVGUtil::round(w);
   int ph = CSVGUtil::round(h);
 
-  dst_image->setDataSize(pw, ph);
-
-  // flood
-  dst_image->setRGBAData(color_.getValue(CRGBA(0,0,0,0)));
-
-  outBuffer->setImage(dst_image);
+  CSVGBuffer::floodBuffers(color_.getValue(CRGBA(0,0,0,0)), pw, ph, outBuffer);
 }
 
 void

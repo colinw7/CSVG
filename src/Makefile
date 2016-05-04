@@ -65,6 +65,7 @@ CSVGGlyph.cpp \
 CSVGGroup.cpp \
 CSVGHKern.cpp \
 CSVGImage.cpp \
+CSVGFeLighting.cpp \
 CSVGLinearGradient.cpp \
 CSVGLine.cpp \
 CSVGMarker.cpp \

@@ -29,11 +29,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   std::string str;
   Reals       reals;
 
-  if      (svg_.stringOption(opt_name, opt_value, "class", str))
-    class_ = str;
-  else if (svg_.stringOption(opt_name, opt_value, "style", str))
-    style_ = str;
-  else if (svg_.stringOption(opt_name, opt_value, "in", str))
+  if      (svg_.stringOption(opt_name, opt_value, "in", str))
     filterIn_ = str;
   else if (svg_.stringOption(opt_name, opt_value, "order", str))
     order_ = str;
@@ -88,14 +84,7 @@ void
 CSVGFeConvolveMatrix::
 filterImage(CSVGBuffer *inBuffer)
 {
-  CImagePtr src_image = inBuffer->getImage();
-  CImagePtr dst_image = src_image->dup();
-
-  if (kernelMatrix_.isValid()) {
-    src_image->convolve(dst_image, kernelMatrix_.getValue());
-  }
-
-  inBuffer->setImage(dst_image);
+  CSVGBuffer::convolveMatrixBuffers(inBuffer, kernelMatrix_.getValue());
 }
 
 void
@@ -105,8 +94,6 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<feConvolveMatrix";
 
-    printNameValue (os, "class"           , class_);
-    printNameValue (os, "style"           , style_);
     printNameValue (os, "in"              , filterIn_);
     printNameValue (os, "order"           , order_);
     printNameValues(os, "kernelMatrix"    , kernelMatrix_);

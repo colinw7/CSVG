@@ -32,8 +32,6 @@ class CSVGFeMorphology : public CSVGFilterBase {
   friend std::ostream &operator<<(std::ostream &os, const CSVGFeMorphology &filter);
 
  private:
-  COptValT<std::string>            class_;
-  COptValT<std::string>            style_;
   COptValT<std::string>            filterIn_;
   COptValT<CSVGMorphologyOperator> operator_;
   COptValT<std::string>            radius_;

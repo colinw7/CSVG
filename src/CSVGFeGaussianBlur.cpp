@@ -73,12 +73,7 @@ void
 CSVGFeGaussianBlur::
 filterImage(CSVGBuffer *inBuffer, CSVGBuffer *outBuffer)
 {
-  CImagePtr src_image = inBuffer->getImage();
-  CImagePtr dst_image = src_image->dup();
-
-  src_image->gaussianBlur(dst_image, getStdDev(), getStdDev());
-
-  outBuffer->setImage(dst_image);
+  CSVGBuffer::gaussianBlurBuffers(inBuffer, getStdDev(), outBuffer);
 }
 
 void

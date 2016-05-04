@@ -1,6 +1,7 @@
 #ifndef CSVG_BUFFER_H
 #define CSVG_BUFFER_H
 
+#include <CSVGTypes.h>
 #include <CImage.h>
 #include <CFont.h>
 #include <CBBox2D.h>
@@ -12,6 +13,7 @@
 #include <map>
 
 class CSVG;
+class CSVGFeFunc;
 class CSVGRenderer;
 class CSVGBuffer;
 class CGenGradient;
@@ -51,6 +53,9 @@ class CSVGBufferMgr {
 
 class CSVGBuffer {
  public:
+  typedef std::vector<CSVGFeFunc *> FeFuncs;
+
+ public:
   CSVGBuffer(CSVG &svg, const std::string &name);
   CSVGBuffer(CSVGBuffer *refBuffer);
 
@@ -60,6 +65,27 @@ class CSVGBuffer {
 
   bool isAntiAlias() const;
   void setAntiAlias(bool flag);
+
+  static void blendBuffers(CSVGBuffer *inBuffer1, CSVGBuffer *inBuffer2,
+                           CSVGBlendMode mode, CSVGBuffer *outBuffer);
+  static void colorMatrixBuffers(CSVGBuffer *inBuffer, CSVGColorMatrixType type,
+                                 const std::vector<double> &values, CSVGBuffer *outBuffer);
+  static void componentTransferBuffers(CSVGBuffer *inBuffer, const FeFuncs &funcs,
+                                       CSVGBuffer *outBuffer);
+  static void compositeBuffers(CSVGBuffer *inBuffer1, CSVGBuffer *inBuffer2, CRGBACombineFunc func,
+                               double k1, double k2, double k3, double k4, CSVGBuffer *outBuffer);
+  static void convolveMatrixBuffers(CSVGBuffer *inBuffer,
+                                    const std::vector<double> &kernelMatrix);
+  static void displacementMapBuffers(CSVGBuffer *inBuffer1, CSVGBuffer *inBuffer2,
+                                     const std::string &xchannel, const std::string &ychannel,
+                                     double scale, CSVGBuffer *outBuffer);
+  static void floodBuffers(const CRGBA &c, int w, int h, CSVGBuffer *outBuffer);
+  static void gaussianBlurBuffers(CSVGBuffer *inBuffer, double stdDev, CSVGBuffer *outBuffer);
+  static void morphologyBuffers(CSVGBuffer *inBuffer, CSVGMorphologyOperator op, int r);
+  static void offsetBuffers(CSVGBuffer *inBuffer, double dx, double dy, CSVGBuffer *outBuffer);
+  static void tileBuffers(CSVGBuffer *inBuffer, int w, int h, CSVGBuffer *outBuffer);
+  static void turbulenceBuffers(CSVGBuffer *inBuffer, bool fractalNoise, double baseFreq,
+                                int numOctaves, int seed, CSVGBuffer *outBuffer);
 
   const CMatrixStack2D &transform() const { return transform_; }
   void setTransform(const CMatrixStack2D &v);

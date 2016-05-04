@@ -398,7 +398,7 @@ getFontStyle() const
   return CFONT_STYLE_NORMAL;
 }
 
-double
+CSVGLengthValue
 CSVGObject::
 getFontSize() const
 {
@@ -414,14 +414,20 @@ getFontSize() const
     parent = parent->getParent();
   }
 
-  return 10;
+  return CSVGLengthValue(8);
 }
 
 CFontPtr
 CSVGObject::
 getFont() const
 {
-  return CFontMgrInst->lookupFont(getFontFamily(), getFontStyle().value(), getFontSize());
+  std::string fontFamily = getFontFamily();
+  CFontStyles fontStyles = getFontStyle();
+  CFontStyle  fontStyle  = (fontStyles | CFONT_STYLE_FULL_SIZE).value();
+  double      fontSize   = getFontSize().value();
+
+  // want full size font
+  return CFontMgrInst->lookupFont(fontFamily, fontStyle, fontSize);
 }
 
 void

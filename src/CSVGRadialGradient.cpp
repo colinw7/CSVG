@@ -180,6 +180,7 @@ print(std::ostream &os, bool hier) const
     os << "radialGradient ";
 }
 
+#if 0
 CImagePtr
 CSVGRadialGradient::
 getImage(CBBox2D &bbox)
@@ -218,6 +219,7 @@ getImage(CBBox2D &bbox)
 
   return image;
 }
+#endif
 
 CRadialGradient *
 CSVGRadialGradient::

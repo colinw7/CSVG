@@ -76,19 +76,7 @@ void
 CSVGFeOffset::
 filterImage(CSVGBuffer *inBuffer, CSVGBuffer *outBuffer)
 {
-  CImagePtr src_image = inBuffer->getImage();
-
-  CImagePtr dst_image = src_image->dup();
-
-  dst_image->setRGBAData(CRGBA(0,0,0,0));
-
-  double dx, dy;
-
-  svg_.lengthToPixel(getDX(), getDY(), &dx, &dy);
-
-  dst_image->subCopyFrom(src_image, 0, 0, -1, -1, dx, dy);
-
-  outBuffer->setImage(dst_image);
+  CSVGBuffer::offsetBuffers(inBuffer, getDX(), getDY(), outBuffer);
 }
 
 void

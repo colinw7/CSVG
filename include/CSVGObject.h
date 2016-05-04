@@ -347,9 +347,9 @@ class CSVGObject {
   //------
 
   // font
-  std::string getFontFamily() const;
-  CFontStyles getFontStyle() const;
-  double      getFontSize() const;
+  std::string     getFontFamily() const;
+  CFontStyles     getFontStyle() const;
+  CSVGLengthValue getFontSize() const;
 
   CFontPtr getFont() const;
   void setFont(CFontPtr f);

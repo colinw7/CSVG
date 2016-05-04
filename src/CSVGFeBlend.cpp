@@ -83,27 +83,7 @@ void
 CSVGFeBlend::
 filterImage(CSVGBuffer *inBuffer1, CSVGBuffer *inBuffer2, CSVGBuffer *outBuffer)
 {
-  CImagePtr src_image1 = inBuffer1->getImage();
-  CImagePtr src_image2 = inBuffer2->getImage();
-
-  CImagePtr dst_image = src_image1->dup();
-
-  CRGBABlendMode mode;
-
-  if      (mode_ == CSVGBlendMode::NORMAL)
-    mode = CRGBA_BLEND_NORMAL;
-  else if (mode_ == CSVGBlendMode::MULTIPLY)
-    mode = CRGBA_BLEND_MULTIPLY;
-  else if (mode_ == CSVGBlendMode::SCREEN)
-    mode = CRGBA_BLEND_SCREEN;
-  else if (mode_ == CSVGBlendMode::DARKEN)
-    mode = CRGBA_BLEND_DARKEN;
-  else if (mode_ == CSVGBlendMode::LIGHTEN)
-    mode = CRGBA_BLEND_LIGHTEN;
-
-  dst_image->combine(src_image2, mode);
-
-  outBuffer->setImage(dst_image);
+  CSVGBuffer::blendBuffers(inBuffer1, inBuffer2, getMode(), outBuffer);
 }
 
 void

@@ -27,11 +27,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
 {
   std::string str;
 
-  if      (svg_.stringOption(opt_name, opt_value, "class", str))
-    class_ = str;
-  else if (svg_.stringOption(opt_name, opt_value, "style", str))
-    style_ = str;
-  else if (svg_.stringOption(opt_name, opt_value, "in", str))
+  if      (svg_.stringOption(opt_name, opt_value, "in", str))
     filterIn_ = str;
   else if (svg_.stringOption(opt_name, opt_value, "operator", str)) {
     if      (str == "erode" ) operator_ = CSVGMorphologyOperator::ERODE;
@@ -74,23 +70,12 @@ void
 CSVGFeMorphology::
 filterImage(CSVGBuffer *inBuffer)
 {
-  CImagePtr src_image = inBuffer->getImage();
-
-  CImagePtr dst_image;
-
-  CSVGMorphologyOperator op = getOperator();
-
   int r = 1;
 
   if (! radius_.isValid() || ! CStrUtil::toInteger(radius_.getValue(), &r))
     r = 1;
 
-  if      (op == CSVGMorphologyOperator::ERODE)
-    dst_image = src_image->erode (r, /*isAlpha*/true);
-  else if (op == CSVGMorphologyOperator::DILATE)
-    dst_image = src_image->dilate(r, /*isAlpha*/true);
-
-  inBuffer->setImage(dst_image);
+  CSVGBuffer::morphologyBuffers(inBuffer, getOperator(), r);
 }
 
 void
@@ -102,9 +87,7 @@ print(std::ostream &os, bool hier) const
 
     CSVGObject::printValues(os);
 
-    printNameValue(os, "class", class_);
-    printNameValue(os, "style", style_);
-    printNameValue(os, "in"   , filterIn_);
+    printNameValue(os, "in", filterIn_);
 
     if (operator_.isValid()) {
       CSVGMorphologyOperator op = getOperator();

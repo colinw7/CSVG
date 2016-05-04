@@ -17,12 +17,6 @@ class CSVGFeDisplacementMap : public CSVGFilterBase {
 
   CSVGFeDisplacementMap *dup() const override;
 
-  std::string getClass() const { return class_.getValue(""); }
-  void setClass(const std::string &c) { class_ = c; }
-
-  std::string getStyle() const { return style_.getValue(""); }
-  void setStyle(const std::string &c) { style_ = c; }
-
   std::string getFilterIn1() const { return filterIn1_.getValue("SourceGraphic"); }
   void setFilterIn1(const std::string &s) { filterIn1_ = s; }
 
@@ -52,8 +46,6 @@ class CSVGFeDisplacementMap : public CSVGFilterBase {
   friend std::ostream &operator<<(std::ostream &os, const CSVGFeDisplacementMap &filter);
 
  private:
-  COptValT<std::string> class_;
-  COptValT<std::string> style_;
   COptValT<std::string> filterIn1_;
   COptValT<std::string> filterIn2_;
   COptValT<std::string> filterOut_;

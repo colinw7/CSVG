@@ -43,6 +43,8 @@ processOption(const std::string &opt_name, const std::string &opt_value)
     numOctaves_ = integer;
   else if (svg_.integerOption(opt_name, opt_value, "seed", &integer))
     seed_ = integer;
+  else if (svg_.stringOption (opt_name, opt_value, "stitchTiles", str))
+    stitchTiles_ = str;
   else if (svg_.stringOption (opt_name, opt_value, "in", str))
     filterIn_ = str;
   else if (svg_.stringOption (opt_name, opt_value, "result", str))
@@ -83,12 +85,8 @@ void
 CSVGFeTurbulence::
 filterImage(CSVGBuffer *inBuffer, CSVGBuffer *outBuffer)
 {
-  CImagePtr src_image = inBuffer->getImage();
-  CImagePtr dst_image = src_image->dup();
-
-  dst_image->turbulence(isFractalNoise(), getBaseFreq(), getNumOctaves(), getSeed());
-
-  outBuffer->setImage(dst_image);
+  CSVGBuffer::turbulenceBuffers(inBuffer, isFractalNoise(), getBaseFreq(),
+                                getNumOctaves(), getSeed(), outBuffer);
 }
 
 void
@@ -104,6 +102,7 @@ print(std::ostream &os, bool hier) const
     printNameValue(os, "baseFrequency", baseFreq_);
     printNameValue(os, "numOctaves"   , numOctaves_);
     printNameValue(os, "seed"         , seed_);
+    printNameValue(os, "stitchTiles"  , stitchTiles_);
     printNameValue(os, "in"           , filterIn_);
     printNameValue(os, "result"       , filterOut_);
 

@@ -41,3 +41,7 @@
  + Fix bad matrix transform read/write
  + Move displacement map code to CImageLib
  + Handle relative move to path command correctly
+
+### 5/4/2016
+ + Improve font size selection
+ + Move CImagePtr calls to CSVGBuffer

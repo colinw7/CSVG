@@ -96,27 +96,8 @@ void
 CSVGFeComposite::
 filterImage(CSVGBuffer *inBuffer1, CSVGBuffer *inBuffer2, CSVGBuffer *outBuffer)
 {
-  CImagePtr src_image1 = inBuffer1->getImage();
-  CImagePtr src_image2 = inBuffer2->getImage();
-
-  if (! src_image1.isValid() || ! src_image2.isValid())
-    return;
-
-  CImagePtr dst_image = src_image1->dup();
-
-  CRGBACombineDef def;
-
-  def.src_mode = CRGBA_COMBINE_ONE;
-  def.dst_mode = CRGBA_COMBINE_ONE;
-  def.func     = getType();
-  def.k1       = getK1();
-  def.k2       = getK2();
-  def.k3       = getK3();
-  def.k4       = getK4();
-
-  dst_image->combine(src_image2, def);
-
-  outBuffer->setImage(dst_image);
+  CSVGBuffer::compositeBuffers(inBuffer1, inBuffer2, getType(),
+                               getK1(), getK2(), getK3(), getK4(), outBuffer);
 }
 
 void

@@ -14,12 +14,13 @@ class CSVGFeTurbulence : public CSVGFilterBase {
 
   CSVGFeTurbulence *dup() const override;
 
-  std::string getType() const { return type_.getValue(""); }
+  std::string getType() const { return type_.getValue("turbulence"); }
+  void setType(const std::string &s) { type_ = s; }
 
   bool isFractalNoise() const { return (getType() == "fractalNoise"); }
-  void setFractalNoise(bool b) { type_ = (b ? "fractalNoise" : "turbulence"); }
+  void setFractalNoise(bool b) { setType(b ? "fractalNoise" : "turbulence"); }
 
-  double getBaseFreq() const { return baseFreq_.getValue(0.1); }
+  double getBaseFreq() const { return baseFreq_.getValue(0); }
   void setBaseFreq(double r) { baseFreq_ = r; }
 
   int getNumOctaves() const { return numOctaves_.getValue(1); }
@@ -27,6 +28,9 @@ class CSVGFeTurbulence : public CSVGFilterBase {
 
   int getSeed() const { return seed_.getValue(0); }
   void setSeed(int i) { seed_ = i; }
+
+  std::string getStitchTiles() const { return stitchTiles_.getValue("noStitch"); }
+  void setStitchTiles(const std::string &s) { stitchTiles_ = s; }
 
   std::string getFilterIn() const { return filterIn_.getValue("SourceGraphic"); }
   void setFilterIn(const std::string &s) { filterIn_ = s; }
@@ -49,6 +53,7 @@ class CSVGFeTurbulence : public CSVGFilterBase {
   COptValT<double>      baseFreq_;
   COptValT<int>         numOctaves_;
   COptValT<int>         seed_;
+  COptValT<std::string> stitchTiles_;
   COptValT<std::string> filterIn_;
   COptValT<std::string> filterOut_;
 };

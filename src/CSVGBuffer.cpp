@@ -1,4 +1,5 @@
 #include <CSVGBuffer.h>
+#include <CSVGFeFunc.h>
 #include <CSVG.h>
 #include <CSVGRenderer.h>
 #include <CSVGUtil.h>
@@ -159,6 +160,276 @@ setAntiAlias(bool flag)
   //---
 
   getRenderer()->setAntiAlias(flag);
+}
+
+void
+CSVGBuffer::
+blendBuffers(CSVGBuffer *inBuffer1, CSVGBuffer *inBuffer2,
+             CSVGBlendMode mode, CSVGBuffer *outBuffer)
+{
+  CImagePtr src_image1 = inBuffer1->getImage();
+  CImagePtr src_image2 = inBuffer2->getImage();
+
+  CImagePtr dst_image = src_image1->dup();
+
+  CRGBABlendMode mode1 = CRGBA_BLEND_NORMAL;
+
+  if      (mode == CSVGBlendMode::NORMAL)
+    mode1 = CRGBA_BLEND_NORMAL;
+  else if (mode == CSVGBlendMode::MULTIPLY)
+    mode1 = CRGBA_BLEND_MULTIPLY;
+  else if (mode == CSVGBlendMode::SCREEN)
+    mode1 = CRGBA_BLEND_SCREEN;
+  else if (mode == CSVGBlendMode::DARKEN)
+    mode1 = CRGBA_BLEND_DARKEN;
+  else if (mode == CSVGBlendMode::LIGHTEN)
+    mode1 = CRGBA_BLEND_LIGHTEN;
+
+  dst_image->combine(src_image2, mode1);
+
+  outBuffer->setImage(dst_image);
+}
+
+void
+CSVGBuffer::
+colorMatrixBuffers(CSVGBuffer *inBuffer, CSVGColorMatrixType type,
+                   const std::vector<double> &values, CSVGBuffer *outBuffer)
+{
+  CImagePtr src_image = inBuffer->getImage();
+  CImagePtr dst_image = src_image->dup();
+
+  if      (type == CSVGColorMatrixType::MATRIX) {
+    dst_image->applyColorMatrix(values);
+  }
+  // For type="saturate", ‘values’ is a single real number value (0 to 1).
+  // A saturate operation is equivalent to the following matrix operation:
+  // | R' |   |0.213+0.787s 0.715-0.715s 0.072-0.072s 0 0 |   | R |
+  // | G' |   |0.213-0.213s 0.715+0.285s 0.072-0.072s 0 0 |   | G |
+  // | B' | = |0.213-0.213s 0.715-0.715s 0.072+0.928s 0 0 | * | B |
+  // | A' |   |           0            0            0 1 0 |   | A |
+  // | 1  |   |           0            0            0 0 1 |   | 1 |
+  else if (type == CSVGColorMatrixType::SATURATE) {
+    dst_image->saturate(values[0]);
+  }
+  // For type="hueRotate", ‘values’ is a single one real number value (degrees).
+  // A hueRotate operation is equivalent to the following matrix operation:
+  // | R' |   |a00 a01 a02 0 0 |   | R |
+  // | G' |   |a10 a11 a12 0 0 |   | G |
+  // | B' | = |a20 a21 a22 0 0 | * | B |
+  // | A' |   |  0   0   0 1 0 |   | A |
+  // | 1  |   |  0   0   0 0 1 |   | 1 |
+  //
+  // where the terms a00, a01, etc. are calculated as follows:
+  //  | a00 a01 a02 |   [+0.213 +0.715 +0.072]
+  //  | a10 a11 a12 | = [+0.213 +0.715 +0.072] +
+  //  | a20 a21 a22 |   [+0.213 +0.715 +0.072]
+  //
+  //                        [+0.787 -0.715 -0.072]
+  // cos(hueRotate value) * [-0.213 +0.285 -0.072] +
+  //                        [-0.213 -0.715 +0.928]
+  //                        [-0.213 -0.715 +0.928]
+  // sin(hueRotate value) * [+0.143 +0.140 -0.283]
+  //                        [-0.787 +0.715 +0.072]
+  // Thus, the upper left term of the hue matrix turns out to be:
+  //   .213 + cos(hueRotate value)*.787 - sin(hueRotate value)*.213
+  else if (type == CSVGColorMatrixType::HUE_ROTATE) {
+    dst_image->rotateHue(values[0]);
+  }
+  // For type="luminanceToAlpha", ‘values’ is not applicable.
+  // A luminanceToAlpha operation is equivalent to the following matrix operation:
+  // | R' |   |      0      0      0 0 0 |   | R |
+  // | G' |   |      0      0      0 0 0 |   | G |
+  // | B' | = |      0      0      0 0 0 | * | B |
+  // | A' |   | 0.2125 0.7154 0.0721 0 0 |   | A |
+  // | 1  |   |      0      0      0 0 1 |   | 1 |
+  else if (type == CSVGColorMatrixType::LUMINANCE_TO_ALPHA) {
+    dst_image->luminanceToAlpha();
+  }
+
+  outBuffer->setImage(dst_image);
+}
+
+void
+CSVGBuffer::
+componentTransferBuffers(CSVGBuffer *inBuffer, const FeFuncs &funcs, CSVGBuffer *outBuffer)
+{
+  CImagePtr src_image = inBuffer->getImage();
+  CImagePtr dst_image = src_image->dup();
+
+  for (const auto &func : funcs)
+    dst_image = func->filterImage(dst_image);
+
+  outBuffer->setImage(dst_image);
+}
+
+void
+CSVGBuffer::
+compositeBuffers(CSVGBuffer *inBuffer1, CSVGBuffer *inBuffer2, CRGBACombineFunc func,
+                 double k1, double k2, double k3, double k4, CSVGBuffer *outBuffer)
+{
+  CImagePtr src_image1 = inBuffer1->getImage();
+  CImagePtr src_image2 = inBuffer2->getImage();
+
+  if (! src_image1.isValid() || ! src_image2.isValid())
+    return;
+
+  CImagePtr dst_image = src_image1->dup();
+
+  CRGBACombineDef def;
+
+  def.src_mode = CRGBA_COMBINE_ONE;
+  def.dst_mode = CRGBA_COMBINE_ONE;
+  def.func     = func;
+  def.k1       = k1;
+  def.k2       = k2;
+  def.k3       = k3;
+  def.k4       = k4;
+
+  dst_image->combine(src_image2, def);
+
+  outBuffer->setImage(dst_image);
+}
+
+void
+CSVGBuffer::
+convolveMatrixBuffers(CSVGBuffer *inBuffer, const std::vector<double> &kernelMatrix)
+{
+  CImagePtr src_image = inBuffer->getImage();
+  CImagePtr dst_image = src_image->dup();
+
+  if (! kernelMatrix.empty())
+    src_image->convolve(dst_image, kernelMatrix);
+
+  inBuffer->setImage(dst_image);
+}
+
+void
+CSVGBuffer::
+displacementMapBuffers(CSVGBuffer *inBuffer1, CSVGBuffer *inBuffer2,
+                       const std::string &xchannel, const std::string &ychannel,
+                       double scale, CSVGBuffer *outBuffer)
+{
+  CImagePtr src_image1 = inBuffer1->getImage();
+  CImagePtr src_image2 = inBuffer2->getImage();
+
+  CColorComponent xcolor = CCOLOR_COMPONENT_RED;
+  CColorComponent ycolor = CCOLOR_COMPONENT_RED;
+
+  if      (xchannel == "R") xcolor = CCOLOR_COMPONENT_RED;
+  else if (xchannel == "G") xcolor = CCOLOR_COMPONENT_GREEN;
+  else if (xchannel == "B") xcolor = CCOLOR_COMPONENT_BLUE;
+  else if (xchannel == "A") xcolor = CCOLOR_COMPONENT_ALPHA;
+
+  if      (ychannel == "R") ycolor = CCOLOR_COMPONENT_RED;
+  else if (ychannel == "G") ycolor = CCOLOR_COMPONENT_GREEN;
+  else if (ychannel == "B") ycolor = CCOLOR_COMPONENT_BLUE;
+  else if (ychannel == "A") ycolor = CCOLOR_COMPONENT_ALPHA;
+
+  CImagePtr dst_image = src_image1->displacementMap(src_image2, xcolor, ycolor, scale);
+
+  outBuffer->setImage(dst_image);
+}
+
+void
+CSVGBuffer::
+floodBuffers(const CRGBA &c, int w, int h, CSVGBuffer *outBuffer)
+{
+  // create image to flood
+  CImageNoSrc src;
+
+  CImagePtr dst_image = CImageMgrInst->createImage(src);
+
+  dst_image->setDataSize(w, h);
+
+  // flood
+  dst_image->setRGBAData(c);
+
+  outBuffer->setImage(dst_image);
+}
+
+void
+CSVGBuffer::
+gaussianBlurBuffers(CSVGBuffer *inBuffer, double stdDev, CSVGBuffer *outBuffer)
+{
+  CImagePtr src_image = inBuffer->getImage();
+  CImagePtr dst_image = src_image->dup();
+
+  src_image->gaussianBlur(dst_image, stdDev, stdDev);
+
+  outBuffer->setImage(dst_image);
+}
+
+void
+CSVGBuffer::
+morphologyBuffers(CSVGBuffer *inBuffer, CSVGMorphologyOperator op, int r)
+{
+  CImagePtr src_image = inBuffer->getImage();
+
+  CImagePtr dst_image;
+
+  if      (op == CSVGMorphologyOperator::ERODE)
+    dst_image = src_image->erode (r, /*isAlpha*/true);
+  else if (op == CSVGMorphologyOperator::DILATE)
+    dst_image = src_image->dilate(r, /*isAlpha*/true);
+
+  inBuffer->setImage(dst_image);
+}
+
+void
+CSVGBuffer::
+offsetBuffers(CSVGBuffer *inBuffer, double dx, double dy, CSVGBuffer *outBuffer)
+{
+  CImagePtr src_image = inBuffer->getImage();
+
+  CImagePtr dst_image = src_image->dup();
+
+  dst_image->setRGBAData(CRGBA(0,0,0,0));
+
+  double dx1, dy1;
+
+  inBuffer->svg_.lengthToPixel(dx, dy, &dx1, &dy1);
+
+  dst_image->subCopyFrom(src_image, 0, 0, -1, -1, dx1, dy1);
+
+  outBuffer->setImage(dst_image);
+}
+
+void
+CSVGBuffer::
+tileBuffers(CSVGBuffer *inBuffer, int w, int h, CSVGBuffer *outBuffer)
+{
+  // TODO:
+  CImagePtr inImage = inBuffer->getImage();
+
+#if 0
+  CBBox2D inBBox = inBuffer->bbox();
+
+  if (inBBox.isSet()) {
+    double pw, ph;
+
+    inBuffer->svg_.lengthToPixel(inBBox.getWidth(), inBBox.getHeight(), &pw, &ph);
+
+    inImage = inImage->subImage(0, 0, pw, ph);
+  }
+#endif
+
+  // tile
+  CImagePtr outImage = inImage->tile(w, h);
+
+  outBuffer->setImage(outImage);
+}
+
+void
+CSVGBuffer::
+turbulenceBuffers(CSVGBuffer *inBuffer, bool fractalNoise, double baseFreq,
+                  int numOctaves, int seed, CSVGBuffer *outBuffer)
+{
+  CImagePtr src_image = inBuffer->getImage();
+  CImagePtr dst_image = src_image->dup();
+
+  dst_image->turbulence(fractalNoise, baseFreq, numOctaves, seed);
+
+  outBuffer->setImage(dst_image);
 }
 
 CISize2D

@@ -94,58 +94,7 @@ void
 CSVGFeColorMatrix::
 filterImage(CSVGBuffer *inBuffer, CSVGBuffer *outBuffer)
 {
-  CImagePtr src_image = inBuffer->getImage();
-  CImagePtr dst_image = src_image->dup();
-
-  if      (getType() == CSVGColorMatrixType::MATRIX) {
-    dst_image->applyColorMatrix(values_);
-  }
-  // For type="saturate", ‘values’ is a single real number value (0 to 1).
-  // A saturate operation is equivalent to the following matrix operation:
-  // | R' |   |0.213+0.787s 0.715-0.715s 0.072-0.072s 0 0 |   | R |
-  // | G' |   |0.213-0.213s 0.715+0.285s 0.072-0.072s 0 0 |   | G |
-  // | B' | = |0.213-0.213s 0.715-0.715s 0.072+0.928s 0 0 | * | B |
-  // | A' |   |           0            0            0 1 0 |   | A |
-  // | 1  |   |           0            0            0 0 1 |   | 1 |
-  else if (getType() == CSVGColorMatrixType::SATURATE) {
-    dst_image->saturate(values_[0]);
-  }
-  // For type="hueRotate", ‘values’ is a single one real number value (degrees).
-  // A hueRotate operation is equivalent to the following matrix operation:
-  // | R' |   |a00 a01 a02 0 0 |   | R |
-  // | G' |   |a10 a11 a12 0 0 |   | G |
-  // | B' | = |a20 a21 a22 0 0 | * | B |
-  // | A' |   |  0   0   0 1 0 |   | A |
-  // | 1  |   |  0   0   0 0 1 |   | 1 |
-  //
-  // where the terms a00, a01, etc. are calculated as follows:
-  //  | a00 a01 a02 |   [+0.213 +0.715 +0.072]
-  //  | a10 a11 a12 | = [+0.213 +0.715 +0.072] +
-  //  | a20 a21 a22 |   [+0.213 +0.715 +0.072]
-  //
-  //                        [+0.787 -0.715 -0.072]
-  // cos(hueRotate value) * [-0.213 +0.285 -0.072] +
-  //                        [-0.213 -0.715 +0.928]
-  //                        [-0.213 -0.715 +0.928]
-  // sin(hueRotate value) * [+0.143 +0.140 -0.283]
-  //                        [-0.787 +0.715 +0.072]
-  // Thus, the upper left term of the hue matrix turns out to be:
-  //   .213 + cos(hueRotate value)*.787 - sin(hueRotate value)*.213
-  else if (getType() == CSVGColorMatrixType::HUE_ROTATE) {
-    dst_image->rotateHue(values_[0]);
-  }
-  // For type="luminanceToAlpha", ‘values’ is not applicable.
-  // A luminanceToAlpha operation is equivalent to the following matrix operation:
-  // | R' |   |      0      0      0 0 0 |   | R |
-  // | G' |   |      0      0      0 0 0 |   | G |
-  // | B' | = |      0      0      0 0 0 | * | B |
-  // | A' |   | 0.2125 0.7154 0.0721 0 0 |   | A |
-  // | 1  |   |      0      0      0 0 1 |   | 1 |
-  else if (getType() == CSVGColorMatrixType::LUMINANCE_TO_ALPHA) {
-    dst_image->luminanceToAlpha();
-  }
-
-  outBuffer->setImage(dst_image);
+  CSVGBuffer::colorMatrixBuffers(inBuffer, getType(), getValues(), outBuffer);
 }
 
 void

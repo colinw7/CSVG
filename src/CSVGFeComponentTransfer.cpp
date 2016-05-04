@@ -70,17 +70,16 @@ void
 CSVGFeComponentTransfer::
 filterImage(CSVGBuffer *inBuffer, CSVGBuffer *outBuffer)
 {
-  CImagePtr src_image = inBuffer->getImage();
-  CImagePtr dst_image = src_image->dup();
+  std::vector<CSVGFeFunc *> funcs;
 
   for (const auto &c : children()) {
     CSVGFeFunc *func = dynamic_cast<CSVGFeFunc *>(c);
     if (! func) continue;
 
-    dst_image = func->filterImage(dst_image);
+    funcs.push_back(func);
   }
 
-  outBuffer->setImage(dst_image);
+  CSVGBuffer::componentTransferBuffers(inBuffer, funcs, outBuffer);
 }
 
 void

@@ -174,6 +174,7 @@ print(std::ostream &os, bool hier) const
     os << "linearGradient ";
 }
 
+#if 0
 CImagePtr
 CSVGLinearGradient::
 getImage(CBBox2D &bbox)
@@ -209,6 +210,7 @@ getImage(CBBox2D &bbox)
 
   return image;
 }
+#endif
 
 CLinearGradient *
 CSVGLinearGradient::

@@ -11,6 +11,7 @@
    + Filter area
    + Only filter bbox
    + FeColorMatrix luminanceToAlpha for black image (fig_1020.svg, fig_1021.svg)
+   + FeConvolveMatrix (order, divisor, bias, targetX, targetY, edgeMode, kernelUnitLength, preserveAlpha)
    + FeTile leaving gaps
    + FeTurbulence bounds
  + Text

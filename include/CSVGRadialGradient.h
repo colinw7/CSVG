@@ -69,7 +69,7 @@ class CSVGRadialGradient : public CSVGObject {
 
   void print(std::ostream &os, bool hier) const override;
 
-  CImagePtr getImage(CBBox2D &bbox);
+  //CImagePtr getImage(CBBox2D &bbox);
 
   CRadialGradient *createGradient(CSVGObject *);
 

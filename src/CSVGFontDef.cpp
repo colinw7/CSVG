@@ -4,10 +4,7 @@
 
 CSVGFontDef::
 CSVGFontDef(CSVG &svg) :
- svg_   (svg),
- family_(),
- size_  (),
- style_ ()
+ svg_(svg)
 {
 }
 
@@ -52,13 +49,6 @@ CSVGFontDef::
 setSize(const CSVGLengthValue &size)
 {
   size_ = size;
-}
-
-void
-CSVGFontDef::
-setSize(double size)
-{
-  size_ = CSVGLengthValue(CSVGLengthType::NONE, size);
 }
 
 void
