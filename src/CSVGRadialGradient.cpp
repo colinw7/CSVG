@@ -87,9 +87,8 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   }
   else if (svg_.stringOption(opt_name, opt_value, "xlink:href", str)) {
     CSVGObject *object;
-    CImagePtr   image;
 
-    if (! decodeXLink(opt_value, &object, image))
+    if (! decodeXLink(opt_value, &object, 0))
       return false;
 
     if  (object != 0) {
@@ -179,47 +178,6 @@ print(std::ostream &os, bool hier) const
   else
     os << "radialGradient ";
 }
-
-#if 0
-CImagePtr
-CSVGRadialGradient::
-getImage(CBBox2D &bbox)
-{
-  CImageNameSrc src("CSVG/CSVGRadialGradient::getImage");
-
-  CImagePtr image = CImageMgrInst->createImage(src);
-
-  double width  = bbox.getWidth ();
-  double height = bbox.getHeight();
-
-  double pwidth, pheight;
-
-  svg_.lengthToPixel(width, height, &pwidth, &pheight);
-
-  image->setDataSize(pwidth, pheight);
-
-  CRadialGradient gradient;
-
-  double pxc, pyc, prx, pry, pxf, pyf;
-
-  svg_.windowToPixel(getCenterX(), getCenterY(), &pxc, &pyc);
-  svg_.lengthToPixel(getRadius (), getRadius (), &prx, &pry);
-  svg_.windowToPixel(getFocusX (), getFocusY (), &pxf, &pyf);
-
-  gradient.setCenter(pxc, pyc);
-  gradient.setRadius(std::max(prx, pry));
-  gradient.setFocus (pxf, pyf);
-
-  gradient.setSpread(getSpread());
-
-  for (const auto &s : stops())
-    gradient.addStop(s->getOffset(), s->getColor());
-
-  image->radialGradient(gradient);
-
-  return image;
-}
-#endif
 
 CRadialGradient *
 CSVGRadialGradient::

@@ -4,6 +4,7 @@
 #include <CImageLib.h>
 
 class CSVGObject;
+class CSVGBuffer;
 
 class CSVGXLink {
  public:
@@ -13,10 +14,6 @@ class CSVGXLink {
 
   CSVGXLink(CSVGObject *parent, CSVGObject *object) :
    parent_(parent), resolved_(true), object_(object) {
-  }
-
-  CSVGXLink(CSVGObject *parent, CImagePtr image) :
-   parent_(parent), resolved_(true), image_(image) {
   }
 
   CSVGXLink(const CSVGXLink &xlink);
@@ -61,6 +58,8 @@ class CSVGXLink {
     resolved_ = true;
   }
 
+  bool getImage(CSVGBuffer *buffer) const;
+
  private:
   void resolve() const;
 
@@ -70,6 +69,7 @@ class CSVGXLink {
   std::string  str_;
   CSVGObject  *object_   { 0 };
   CImagePtr    image_;
+  double       scale_    { 0 };
 };
 
 #endif

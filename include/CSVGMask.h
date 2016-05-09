@@ -33,7 +33,7 @@ class CSVGMask : public CSVGObject {
 
   void draw() override;
 
-  void drawMask(const CSVGObject &object);
+  void drawMask(const CSVGObject *object);
 
   void print(std::ostream &os, bool hier) const override;
 

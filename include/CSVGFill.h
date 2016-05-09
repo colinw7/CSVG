@@ -87,13 +87,14 @@ class CSVGFill {
   void setRule(CFillType rule) { rule_ = rule; }
 
   // url
+  bool getUrlValid() const { return url_.isValid(); }
   std::string getUrl() const { return url_.getValue(""); }
   void setUrl(const std::string &url) { url_ = url; }
 
   void resetUrl() { url_.setInvalid(); }
 
   // fill object
-  bool        getFillObjectValid() const;
+  bool getFillObjectValid() const;
   CSVGObject *getFillObject     () const;
 
   void setFillObject(CSVGObject *fillObject) { fillObject_ = fillObject; }

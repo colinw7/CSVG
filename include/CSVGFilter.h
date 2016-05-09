@@ -52,8 +52,6 @@ class CSVGFilter : public CSVGObject {
 
   void draw() override;
 
-  virtual CImagePtr filterImage(CImagePtr src_image);
-
   void print(std::ostream &os, bool hier) const override;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGFilter &filter);

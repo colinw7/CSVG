@@ -87,6 +87,8 @@ print(std::ostream &os, bool hier) const
 
     CSVGObject::printValues(os);
 
+    CSVGFilterBase::printValues(os);
+
     printNameValue(os, "in", filterIn_);
 
     if (operator_.isValid()) {

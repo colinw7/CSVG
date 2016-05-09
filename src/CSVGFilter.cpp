@@ -68,24 +68,6 @@ draw()
 {
 }
 
-CImagePtr
-CSVGFilter::
-filterImage(CImagePtr image)
-{
-  CSVGBuffer *buffer = svg_.getBuffer("SourceGraphic");
-
-  buffer->setImage(image);
-
-  for (const auto &c : children()) {
-    CSVGFilter *filter = dynamic_cast<CSVGFilter *>(c);
-
-    if (filter)
-      filter->draw();
-  }
-
-  return buffer->getImage();
-}
-
 void
 CSVGFilter::
 print(std::ostream &os, bool hier) const

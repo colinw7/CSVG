@@ -101,27 +101,6 @@ getSize(CSize2D &size) const
   return true;
 }
 
-CImagePtr
-CSVGImage::
-getImage() const
-{
-  if (xlink_.isValid()) {
-    if (xlink_.getValue().isObject()) {
-      CSVGImage *th = const_cast<CSVGImage *>(this);
-
-      CImagePtr image = xlink_.getValue().getObject()->toImage();
-
-      th->xlink_.getValue().setObject(0);
-      th->xlink_.getValue().setImage (image);
-    }
-
-    if (xlink_.getValue().isImage())
-      return xlink_.getValue().getImage();
-  }
-
-  return CImagePtr();
-}
-
 void
 CSVGImage::
 setOrigin(const CPoint2D &pos)
@@ -138,6 +117,7 @@ setSize(const CSize2D &size)
   h_ = size.height;
 }
 
+#if 0
 void
 CSVGImage::
 setImage(const std::string &filename)
@@ -149,6 +129,7 @@ setImage(const std::string &filename)
   if (xlink_.isValid())
     xlink_.getValue().setImage(image);
 }
+#endif
 
 void
 CSVGImage::
@@ -203,6 +184,28 @@ draw()
 
   if (oldDrawing)
     oldBuffer->startDraw();
+}
+
+CImagePtr
+CSVGImage::
+getImage() const
+{
+  if (xlink_.isValid()) {
+    if (xlink_.getValue().isObject()) {
+      CSVGImage *th = const_cast<CSVGImage *>(this);
+
+      CImagePtr image = xlink_.getValue().getObject()->toImage();
+
+      // TODO: don't cache image as could be rescaled
+      th->xlink_.getValue().setObject(0);
+      th->xlink_.getValue().setImage (image);
+    }
+
+    if (xlink_.getValue().isImage())
+      return xlink_.getValue().getImage();
+  }
+
+  return CImagePtr();
 }
 
 bool

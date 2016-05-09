@@ -72,11 +72,11 @@ draw()
 
 void
 CSVGMask::
-drawMask(const CSVGObject &object)
+drawMask(const CSVGObject *object)
 {
   CBBox2D bbox;
 
-  if (! object.getBBox(bbox))
+  if (! object->getBBox(bbox))
     return;
 
   //---
@@ -84,7 +84,7 @@ drawMask(const CSVGObject &object)
   CSVGBuffer *oldBuffer = svg_.getBuffer();
 
   // set temp buffer for mask image
-  CSVGBuffer *buffer = svg_.getBuffer("mask_" + object.getUniqueName());
+  CSVGBuffer *buffer = svg_.getBuffer("mask_" + object->getUniqueName());
 
   svg_.setBuffer(buffer);
 
@@ -134,20 +134,6 @@ drawMask(const CSVGObject &object)
 
   //---
 
-  // create mask image
-  CImagePtr mask_image  = buffer->getImage();
-  CImagePtr mask_image1 = mask_image->createRGBAMask();
-
-  if (svg_.getDebugMask()) {
-    std::string maskBufferName = "rgb_mask_" + object.getUniqueName();
-
-    CSVGBuffer *buffer = svg_.getBuffer(maskBufferName);
-
-    buffer->setImage(mask_image1);
-  }
-
-  //---
-
   // get offset
   double x1 = 0, y1 = 0;
 
@@ -160,30 +146,9 @@ drawMask(const CSVGObject &object)
 
   oldBuffer->lengthToPixel(x1, y1, &px1, &py1);
 
-  // combine mask with image
-  CImagePtr dest_image = oldBuffer->getImage();
-
-  dest_image->copyAlpha(mask_image1, px1, py1);
-
   //---
 
-  if (svg_.getDebugMask()) {
-    std::string maskBufferName = "alpha_mask_" + object.getUniqueName();
-
-    CSVGBuffer *buffer = svg_.getBuffer(maskBufferName);
-
-    buffer->setImage(dest_image);
-  }
-
-  bool oldDrawing = oldBuffer->isDrawing();
-
-  if (oldDrawing)
-    oldBuffer->stopDraw();
-
-  oldBuffer->setImage(dest_image);
-
-  if (oldDrawing)
-    oldBuffer->startDraw();
+  CSVGBuffer::maskBuffers(oldBuffer, buffer, object, px1, py1);
 }
 
 void

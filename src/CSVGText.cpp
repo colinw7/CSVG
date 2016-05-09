@@ -153,7 +153,7 @@ draw()
     CSVGLog() << *this;
 
   std::string text   = getText();
-  CHAlignType anchor = getTextAnchor();
+  CHAlignType anchor = getFlatTextAnchor();
   CFontPtr    font   = getFont();
 
   bool topBottom = (getWritingMode() == "tb");

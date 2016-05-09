@@ -5,7 +5,6 @@
 #include <CSVGBuffer.h>
 #include <CSVG.h>
 #include <CRGBName.h>
-#include <CVector3D.h>
 
 CSVGFeDiffuseLighting::
 CSVGFeDiffuseLighting(CSVG &svg) :

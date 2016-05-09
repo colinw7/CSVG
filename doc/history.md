@@ -45,3 +45,9 @@
 ### 5/4/2016
  + Improve font size selection
  + Move CImagePtr calls to CSVGBuffer
+
+### 5/8/2016
+ + Support iterating through list of svg files
+ + Improve no color default for fill/stroke
+ + Move more CImagePtr calls to CSVGBuffer
+ + Fix filter print

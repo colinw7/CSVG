@@ -109,6 +109,8 @@ print(std::ostream &os, bool hier) const
 
     CSVGObject::printValues(os);
 
+    CSVGFilterBase::printValues(os);
+
     printNameValue(os, "in"    , filterIn1_);
     printNameValue(os, "in2"   , filterIn2_);
     printNameValue(os, "result", filterOut_);

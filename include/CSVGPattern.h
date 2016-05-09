@@ -49,7 +49,7 @@ class CSVGPattern : public CSVGObject {
 
   CSVGObject *getObject();
 
-  CImagePtr getImage(CSVGObject *parent, double *w1, double *h1);
+  void setFillImage(CSVGObject *parent, CSVGBuffer *buffer, double *w1, double *h1);
 
  private:
   CSVGPattern &operator=(const CSVGPattern &rhs);

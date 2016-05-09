@@ -98,6 +98,8 @@ print(std::ostream &os, bool hier) const
 
     CSVGObject::printValues(os);
 
+    CSVGFilterBase::printValues(os);
+
     printNameValue(os, "type"         , type_);
     printNameValue(os, "baseFrequency", baseFreq_);
     printNameValue(os, "numOctaves"   , numOctaves_);

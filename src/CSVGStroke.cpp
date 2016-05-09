@@ -25,22 +25,20 @@ void
 CSVGStroke::
 setColor(const std::string &color_def)
 {
+  noColor_.setInvalid();
+
+  resetColor();
+
   if (color_def == "none") {
     noColor_ = true;
-
-    resetColor();
 
     resetOpacity();
   }
   else {
-    noColor_ = false;
-
     CRGBA rgba;
 
     if (svg_.decodeColorString(color_def, rgba)) {
       setColor(rgba);
-
-      //resetOpacity();
     }
   }
 }
@@ -213,6 +211,7 @@ void
 CSVGStroke::
 reset()
 {
+  noColor_.setInvalid();
   color_  .setInvalid();
   width_  .setInvalid();
   opacity_.setInvalid();
@@ -226,19 +225,36 @@ void
 CSVGStroke::
 update(const CSVGStroke &stroke)
 {
-  if (stroke.getColorValid())
-    setColor(stroke.getColor());
+  if (stroke.noColor_.isValid())
+    noColor_ = stroke.noColor_;
+  else {
+    if (svg_.styleObject()) {
+      bool b;
+
+      if (svg_.getStyleStrokeNoColor(svg_.styleObject(), b))
+        noColor_ = b;
+    }
+  }
+
+  if (stroke.getColorValid()) {
+    color_ = stroke.color_;
+
+    noColor_.setInvalid();
+  }
   else {
     if (svg_.styleObject()) {
       CRGBA c;
 
-      if (svg_.getStyleStrokeColor(svg_.styleObject(), c))
-        setColor(c);
+      if (svg_.getStyleStrokeColor(svg_.styleObject(), c)) {
+        color_ = c;
+
+        noColor_.setInvalid();
+      }
     }
   }
 
   if (stroke.getOpacityValid())
-    setOpacity(stroke.getOpacity());
+    opacity_ = stroke.opacity_;
   else {
     if (svg_.styleObject()) {
       double a;
@@ -284,7 +300,7 @@ void
 CSVGStroke::
 print(std::ostream &os) const
 {
-  if (noColor_)
+  if (noColor_.isValid())
     os << "stroke: none;";
 
   if (color_.isValid())

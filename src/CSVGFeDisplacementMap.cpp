@@ -90,13 +90,15 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<feDisplacementMap";
 
+    CSVGObject::printValues(os);
+
+    CSVGFilterBase::printValues(os);
+
     printNameValue(os, "in"              , filterIn1_);
     printNameValue(os, "in2"             , filterIn2_);
     printNameValue(os, "scale"           , scale_);
     printNameValue(os, "xChannelSelector", xChannelSelector_);
     printNameValue(os, "yChannelSelector", yChannelSelector_);
-
-    CSVGObject::printValues(os);
 
     os << "/>" << std::endl;
   }

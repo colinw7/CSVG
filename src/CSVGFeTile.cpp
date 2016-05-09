@@ -73,38 +73,7 @@ void
 CSVGFeTile::
 filterImage(CSVGBuffer *inBuffer, CSVGBuffer *outBuffer)
 {
-  CImagePtr inImage = inBuffer->getImage();
-
-  CBBox2D inBBox = inBuffer->bbox();
-
-  if (inBBox.isSet()) {
-    double pw, ph;
-
-    svg_.lengthToPixel(inBBox.getWidth(), inBBox.getHeight(), &pw, &ph);
-
-    inImage = inImage->subImage(0, 0, pw, ph);
-  }
-
-  // get filtered object size
-  int w = inImage->getWidth ();
-  int h = inImage->getHeight();
-
-  CBBox2D bbox;
-
-  if (getParentBBox(bbox)) {
-    double pw, ph;
-
-    svg_.lengthToPixel(bbox.getWidth(), bbox.getHeight(), &pw, &ph);
-
-    w = CSVGUtil::round(pw);
-    h = CSVGUtil::round(ph);
-  }
-
-  // tile
-  CImagePtr outImage = inImage->tile(w, h);
-
-  outBuffer->setImage(outImage);
-  outBuffer->setBBox (bbox);
+  CSVGBuffer::tileBuffers(inBuffer, this, outBuffer);
 }
 
 void
@@ -115,6 +84,8 @@ print(std::ostream &os, bool hier) const
     os << "<feTile";
 
     CSVGObject::printValues(os);
+
+    CSVGFilterBase::printValues(os);
 
     printNameValue(os, "in"    , filterIn_ );
     printNameValue(os, "result", filterOut_);

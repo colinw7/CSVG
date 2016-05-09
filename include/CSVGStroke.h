@@ -30,8 +30,8 @@ class CSVGStroke {
   }
 
   const CSVGStroke &operator=(const CSVGStroke &stroke) {
-    color_   = stroke.color_;
     noColor_ = stroke.noColor_;
+    color_   = stroke.color_;
     opacity_ = stroke.opacity_;
     width_   = stroke.width_;
     dash_    = stroke.dash_;
@@ -43,7 +43,8 @@ class CSVGStroke {
   }
 
   bool isSet() const {
-    return color_  .isValid() ||
+    return noColor_.isValid() ||
+           color_  .isValid() ||
            opacity_.isValid() ||
            width_  .isValid() ||
            dash_   .isValid() ||
@@ -51,6 +52,10 @@ class CSVGStroke {
            join_   .isValid() ||
            mlimit_ .isValid();
   }
+
+  bool getNoColorValid() const { return noColor_.isValid(); }
+  bool getNoColor() const { return noColor_.getValue(true); }
+  void setNoColor(bool b) { noColor_ = b; }
 
   // color
   CRGBA getAlphaColor() const;
@@ -122,7 +127,7 @@ class CSVGStroke {
 
  private:
   CSVG&                    svg_;
-  bool                     noColor_ { true };
+  COptValT<bool>           noColor_;
   COptValT<CRGBA>          color_;
   COptValT<CRGBA>          defColor_;
   COptValT<double>         opacity_;

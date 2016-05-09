@@ -84,7 +84,7 @@ draw()
   //---
 
   std::string text   = getText();
-  CHAlignType anchor = getTextAnchor();
+  CHAlignType anchor = getFlatTextAnchor();
   CFontPtr    font   = getFont();
 
   const CSVGPathPartList &parts = path->getPartList();
@@ -101,7 +101,7 @@ draw()
 
   svg_.textSize(text, font, &w, &a, &d);
 
-  CHAlignType textAnchor = this->getTextAnchor();
+  CHAlignType textAnchor = this->getFlatTextAnchor();
 
   if (textAnchor == CHALIGN_TYPE_CENTER)
     s2 -= w/(2*l);

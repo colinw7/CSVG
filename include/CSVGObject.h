@@ -253,6 +253,9 @@ class CSVGObject {
 
   CImagePtr toNamedImage(const std::string &name);
 
+  CSVGBuffer *toBufferImage();
+  CSVGBuffer *toNamedBufferImage(const std::string &bufferName);
+
   virtual void moveTo  (const CPoint2D &point);
   virtual void moveBy  (const CVector2D &delta);
   virtual void resizeTo(const CSize2D &size);
@@ -317,10 +320,11 @@ class CSVGObject {
 
   //---
 
-//CRGBA            getStrokeColor   () const;
-  double           getStrokeOpacity () const;
-  double           getStrokeWidth   () const;
-  const CLineDash &getStrokeLineDash() const;
+  bool             getFlatStrokeNoColor () const;
+  CRGBA            getFlatStrokeColor   () const;
+  double           getFlatStrokeOpacity () const;
+  double           getFlatStrokeWidth   () const;
+  const CLineDash &getFlatStrokeLineDash() const;
 
   //------
 
@@ -341,16 +345,13 @@ class CSVGObject {
 
   //---
 
-//CRGBA  getFillColor  () const;
-  double getFillOpacity() const;
+  bool   getFlatFillNoColor() const;
+  CRGBA  getFlatFillColor  () const;
+  double getFlatFillOpacity() const;
 
   //------
 
   // font
-  std::string     getFontFamily() const;
-  CFontStyles     getFontStyle() const;
-  CSVGLengthValue getFontSize() const;
-
   CFontPtr getFont() const;
   void setFont(CFontPtr f);
 
@@ -360,6 +361,10 @@ class CSVGObject {
   void setFontWeight(const std::string &weight);
   void setFontStyle (const std::string &style );
   void setFontStyle (CFontStyle s);
+
+  std::string     getFlatFontFamily() const;
+  CFontStyles     getFlatFontStyle() const;
+  CSVGLengthValue getFlatFontSize() const;
 
   // visible
   std::string getVisibility() const { return visibility_.getValue(""); }
@@ -406,7 +411,7 @@ class CSVGObject {
   void setTextBaselineShift(const std::string &str);
 
   void setTextAnchor(const std::string &str);
-  CHAlignType getTextAnchor() const;
+  CHAlignType getFlatTextAnchor() const;
 
   CSVGTextDecoration getTextDecoration() const {
     return textDecoration_.getValue(CSVGTextDecoration::NONE);
@@ -441,7 +446,7 @@ class CSVGObject {
 
   void setShapeRendering(const std::string &rendering);
 
-  bool decodeXLink(const std::string &str, CSVGObject **object, CImagePtr &image);
+  bool decodeXLink(const std::string &str, CSVGObject **object, CImagePtr *image);
 
   static CSVGObject *lookupById(const std::string &id);
 

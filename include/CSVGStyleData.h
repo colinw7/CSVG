@@ -13,6 +13,8 @@ class CSVGStyleData {
 
   void setValue(const std::string &name, const std::string &value);
 
+  bool      getStrokeNoColorValid() const { return stroke_.getNoColorValid(); }
+  bool      getStrokeNoColor     () const { return stroke_.getNoColor(); }
   bool      getStrokeColorValid  () const { return stroke_.getColorValid(); }
   CRGBA     getStrokeColor       () const { return stroke_.getColor(); }
   bool      getStrokeOpacityValid() const { return stroke_.getOpacityValid(); }

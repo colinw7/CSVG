@@ -169,7 +169,7 @@ update(const CSVGFill &fill)
     noColor_.setInvalid();
   }
 
-  if (fill.color_.isValid()) {
+  if (fill.getColorValid()) {
     color_ = fill.color_;
 
     noColor_.setInvalid();
@@ -186,13 +186,13 @@ update(const CSVGFill &fill)
     }
   }
 
-  if (fill.opacity_.isValid())
+  if (fill.getOpacityValid())
     opacity_ = fill.opacity_;
 
-  if (fill.rule_.isValid())
+  if (fill.getRuleValid())
     rule_ = fill.rule_;
 
-  if (fill.url_.isValid()) {
+  if (fill.getUrlValid()) {
     url_ = fill.url_;
 
     noColor_.setInvalid();

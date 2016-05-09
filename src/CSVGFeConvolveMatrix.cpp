@@ -94,6 +94,10 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<feConvolveMatrix";
 
+    CSVGObject::printValues(os);
+
+    CSVGFilterBase::printValues(os);
+
     printNameValue (os, "in"              , filterIn_);
     printNameValue (os, "order"           , order_);
     printNameValues(os, "kernelMatrix"    , kernelMatrix_);
@@ -104,8 +108,6 @@ print(std::ostream &os, bool hier) const
     printNameValue (os, "edgeMode"        , edgeMode_);
     printNameValue (os, "kernelUnitLength", kernelUnitLength_);
     printNameValue (os, "preserveAlpha"   , preserveAlpha_);
-
-    CSVGObject::printValues(os);
 
     os << "/>" << std::endl;
   }

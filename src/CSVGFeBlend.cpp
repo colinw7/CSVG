@@ -95,6 +95,8 @@ print(std::ostream &os, bool hier) const
 
     CSVGObject::printValues(os);
 
+    CSVGFilterBase::printValues(os);
+
     if (mode_.isValid()) {
       CSVGBlendMode mode = getMode();
 

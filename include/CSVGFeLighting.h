@@ -2,7 +2,6 @@
 #define CSVGFeLighting_H
 
 #include <CSVGFilterBase.h>
-#include <CSVGLightData.h>
 
 class CSVGBuffer;
 class CSVGFeDistantLight;
@@ -40,14 +39,7 @@ class CSVGFeLighting : public CSVGFilterBase {
   double getSurfaceScale() const { return surfaceScale_.getValue(1); }
   void setSurfaceScale(double r) { surfaceScale_ = r; }
 
- protected:
   void filterImage(CSVGBuffer *inBuffer, CSVGBuffer *outBuffer);
-
-  void distantLight(CImagePtr image, CSVGFeDistantLight *pl);
-  void pointLight  (CImagePtr image, CSVGFePointLight *pl);
-  void spotLight   (CImagePtr image, CSVGFeSpotLight *pl);
-
-  CRGBA lightPoint(CImagePtr image, int x, int y) const;
 
  protected:
   COptValT<std::string> filterIn_;
@@ -57,7 +49,6 @@ class CSVGFeLighting : public CSVGFilterBase {
   COptValT<double>      specularConstant_;
   COptValT<double>      specularExponent_;
   COptValT<double>      surfaceScale_;
-  mutable CSVGLightData lightData_;
 };
 
 #endif

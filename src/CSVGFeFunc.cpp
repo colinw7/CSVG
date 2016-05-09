@@ -62,26 +62,6 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   return true;
 }
 
-CImagePtr
-CSVGFeFunc::
-filterImage(CImagePtr src_image)
-{
-  CImagePtr dst_image = src_image->dup();
-
-  if      (getType() == CSVGFilterFuncType::IDENTITY) {
-  }
-  else if (getType() == CSVGFilterFuncType::LINEAR)
-    dst_image->linearFunc(component_, getSlope(), getIntercept());
-  else if (getType() == CSVGFilterFuncType::GAMMA)
-    dst_image->gammaFunc(component_, getAmplitude(), getExponent(), getOffset());
-  else if (getType() == CSVGFilterFuncType::TABLE)
-    dst_image->tableFunc(component_, table_);
-  else if (getType() == CSVGFilterFuncType::DISCRETE)
-    dst_image->discreteFunc(component_, table_);
-
-  return dst_image;
-}
-
 void
 CSVGFeFunc::
 print(std::ostream &os, bool hier) const

@@ -19,18 +19,23 @@ class CSVGFilterBase : public CSVGObject {
     return primitiveUnits_.getValue(CSVGCoordUnits::USER_SPACE); }
   void setPrimitiveUnits(CSVGCoordUnits units) { primitiveUnits_ = units; }
 
+  bool hasX() const { return x_.isValid(); }
   double getX() const { return x_.isValid() ? x_.getValue().value() : 0; }
   void setX(double x) { x_ = x; }
 
+  bool hasY() const { return y_.isValid(); }
   double getY() const { return y_.isValid() ? y_.getValue().value() : 0; }
   void setY(double y) { y_ = y; }
 
-  double getWidth () const { return width_.getValue(CSVGLengthValue(100)).value(); }
+  bool hasWidth() const { return width_.isValid(); }
+  double getWidth() const { return width_.getValue(CSVGLengthValue(100)).value(); }
   void setWidth(double w) { width_ = w; }
 
+  bool hasHeight() const { return height_.isValid(); }
   double getHeight() const { return height_.getValue(CSVGLengthValue(100)).value(); }
   void setHeight(double h) { height_ = h; }
 
+  bool hasLink() const { return xlink_.isValid(); }
   const CSVGXLink &xlink() const { return xlink_.getValue(); }
 
   std::string getLinkName() const { return (xlink_.isValid() ? xlink_.getValue().str() : ""); }
@@ -45,10 +50,11 @@ class CSVGFilterBase : public CSVGObject {
   void setObject(CSVGObject *object) { object_ = object; }
   CSVGObject *getObject() const { return object_; }
 
- protected:
   bool getParentBBox(CBBox2D &bbox) const;
 
   CSVGFilter *getParentFilter() const;
+
+  void printValues(std::ostream &os) const;
 
  protected:
   CSVGObject*               object_ { 0 };

@@ -88,6 +88,8 @@ print(std::ostream &os, bool hier) const
 
     CSVGObject::printValues(os);
 
+    CSVGFilterBase::printValues(os);
+
     printNameValue(os, "in"    , filterIn_ );
     printNameValue(os, "result", filterOut_);
     printNameValue(os, "dx"    , dx_       );

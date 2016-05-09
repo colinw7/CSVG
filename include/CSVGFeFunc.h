@@ -5,6 +5,9 @@
 
 class CSVGFeFunc : public CSVGObject {
  public:
+  typedef std::vector<double> ValueTable;
+
+ public:
   CSVG_OBJECT_DEF("feFunc", CSVGObjTypeId::FE_FUNC)
 
   CSVGFeFunc(CSVG &svg, CColorComponent component);
@@ -12,31 +15,38 @@ class CSVGFeFunc : public CSVGObject {
 
   CSVGFeFunc *dup() const override;
 
+  CColorComponent getComponent() const { return component_; }
+  void setComponent(CColorComponent c) { component_ = c; }
+
   CSVGFilterFuncType getType() const { return type_.getValue(CSVGFilterFuncType::LINEAR); }
 
   double getSlope() const { return slope_.getValue(1); }
+  void setSlope(double r) { slope_ = r; }
 
   double getIntercept() const { return intercept_.getValue(0); }
+  void setIntercept(double r) { intercept_ = r; }
 
   double getAmplitude() const { return amplitude_.getValue(1); }
+  void setAmplitude(double r) { amplitude_ = r; }
 
   double getExponent() const { return exponent_.getValue(1); }
+  void setExponent(double r) { exponent_ = r; }
 
   double getOffset() const { return offset_.getValue(0); }
+  void setOffset(double r) { offset_ = r; }
+
+  const ValueTable &getTable() const { return table_; }
+  void setTable(const ValueTable &t) { table_ = t; }
 
   bool processOption(const std::string &name, const std::string &value) override;
 
   bool isDrawable() const override { return false; }
-
-  CImagePtr filterImage(CImagePtr src_image);
 
   void print(std::ostream &os, bool hier) const override;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGFeFunc &filter);
 
  private:
-  typedef std::vector<double> ValueTable;
-
   CColorComponent              component_;
   COptValT<CSVGFilterFuncType> type_;
   // linear

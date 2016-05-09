@@ -161,6 +161,8 @@ class CSVG {
 
   void init();
 
+  void clear();
+
   bool read(const std::string &filename);
   bool read(const std::string &filename, CSVGObject *object);
 
@@ -250,14 +252,14 @@ class CSVG {
   CSVGGlyph *getCharGlyph(char c) const;
   CSVGGlyph *getUnicodeGlyph(const std::string &unicode) const;
 
-  CImagePtr drawToImage(int w, int h);
+  CImagePtr drawToImage(int w, int h, const CPoint2D &offset=CPoint2D(0,0), double scale=1);
 
   void draw();
-  void draw(const CMatrixStack2D &matrix, const CPoint2D &offset, double scale=1);
+  void draw(const CMatrixStack2D &matrix, const CPoint2D &offset=CPoint2D(0,0), double scale=1);
 
   void drawBlock(CSVGBlock *block);
   void drawBlock(CSVGBlock *block, const CMatrixStack2D &matrix,
-                 const CPoint2D &offset, double scale=1);
+                 const CPoint2D &offset=CPoint2D(0,0), double scale=1);
 
   void resetStroke();
   void updateStroke(const CSVGStroke &stroke);
@@ -428,12 +430,14 @@ class CSVG {
   CSVGStyleData &getClassStyleData    (const std::string &objClass);
   CSVGStyleData &getTypeClassStyleData(const std::string &objType, const std::string &objClass);
 
+  bool getStyleStrokeNoColor(const CSVGObject *obj, bool &noColor);
   bool getStyleStrokeColor  (const CSVGObject *obj, CRGBA &rgba);
   bool getStyleStrokeOpacity(const CSVGObject *obj, double &opacity);
   bool getStyleStrokeWidth  (const CSVGObject *obj, double &width);
   bool getStyleStrokeDash   (const CSVGObject *obj, CLineDash &dash);
-  bool getStyleFillColor    (const CSVGObject *obj, CRGBA &rgba);
-  bool getStyleFillNoColor  (const CSVGObject *obj, bool &noColor);
+
+  bool getStyleFillNoColor(const CSVGObject *obj, bool &noColor);
+  bool getStyleFillColor  (const CSVGObject *obj, CRGBA &rgba);
 
   void getObjectsAtPoint(const CPoint2D &p, ObjectList &objects) const;
 
@@ -457,7 +461,7 @@ class CSVG {
   typedef std::map<std::string, StyleDataMap>  TypeStyleDataMap;
 
   CSVGRenderer*           renderer_      { 0 };
-  CAutoPtr<CSVGBufferMgr> buffer_mgr_;
+  CAutoPtr<CSVGBufferMgr> bufferMgr_;
   CSVGBuffer*             buffer_        { 0 };
   CMatrixStack2D          viewMatrix_;
   CPoint2D                offset_        { 0, 0 };

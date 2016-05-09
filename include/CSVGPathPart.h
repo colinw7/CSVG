@@ -43,7 +43,12 @@ class CSVGPathPart {
 
 class CSVGPathPartList {
  public:
+  typedef std::vector<CSVGPathPart *> Parts;
+
+ public:
   CSVGPathPartList() { }
+
+  const Parts &parts() const { return parts_; }
 
   void push_back(CSVGPathPart *part) {
     parts_.push_back(part);
@@ -72,8 +77,6 @@ class CSVGPathPartList {
   }
 
  private:
-  typedef std::vector<CSVGPathPart *> Parts;
-
   Parts            parts_;
   mutable COptReal length_;
 };
@@ -175,6 +178,8 @@ class CSVGPathHLineTo : public CSVGPathPart {
  public:
   CSVGPathHLineTo(CSVG &svg, double d);
 
+  double getDistance() const { return d_; }
+
   double getLength(const CPoint2D &) const override { return d_; }
 
   CPoint2D getEndPoint(const CPoint2D &p) const override { return p + CPoint2D(d_, 0); }
@@ -194,6 +199,8 @@ class CSVGPathHLineTo : public CSVGPathPart {
 class CSVGPathVLineTo : public CSVGPathPart {
  public:
   CSVGPathVLineTo(CSVG &svg, double d);
+
+  double getDistance() const { return d_; }
 
   double getLength(const CPoint2D &) const override { return d_; }
 

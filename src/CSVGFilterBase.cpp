@@ -118,3 +118,17 @@ getParentFilter() const
 
   return 0;
 }
+
+void
+CSVGFilterBase::
+printValues(std::ostream &os) const
+{
+  printNameCoordUnits(os, "filterUnits"   , units_);
+  printNameCoordUnits(os, "primitiveUnits", primitiveUnits_);
+  printNameLength    (os, "x"             , x_);
+  printNameLength    (os, "y"             , y_);
+  printNameLength    (os, "width"         , width_);
+  printNameLength    (os, "height"        , height_);
+  printNameValue     (os, "filterRes"     , filterRes_);
+  printNameXLink     (os, "xlink:href"    , xlink_);
+}

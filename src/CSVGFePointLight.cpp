@@ -45,11 +45,13 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<fePointLight";
 
+    CSVGObject::printValues(os);
+
+    CSVGFilterBase::printValues(os);
+
     printNameValue(os, "x", x_);
     printNameValue(os, "y", y_);
     printNameValue(os, "z", z_);
-
-    CSVGObject::printValues(os);
 
     os << "/>" << std::endl;
   }

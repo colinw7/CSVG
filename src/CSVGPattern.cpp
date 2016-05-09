@@ -80,37 +80,8 @@ processOption(const std::string &opt_name, const std::string &opt_value)
     contentUnits_ = units;
   else if (svg_.transformOption(opt_name, opt_value, "patternTransform", transform))
     patternTransform_ = transform;
-  else if (svg_.stringOption(opt_name, opt_value, "xlink:href", str)) {
+  else if (svg_.stringOption(opt_name, opt_value, "xlink:href", str))
     xlink_ = CSVGXLink(this, str);
-#if 0
-    // TODO: delayed paint ?
-    CSVGObject *object;
-    CImagePtr   image;
-
-    if (! decodeXLink(opt_value, &object, image))
-      return false;
-
-    if (object) {
-      CSVGPattern *p = dynamic_cast<CSVGPattern *>(object);
-
-      if (p) {
-        x_                = p->x_;
-        y_                = p->y_;
-        width_            = p->width_;
-        height_           = p->height_;
-        units_            = p->units_;
-        contentUnits_     = p->contentUnits_;
-        patternTransform_ = p->patternTransform_;
-
-        for (const auto &c : children()) {
-          CSVGObject *child = c->dup();
-
-          addChildObject(child);
-        }
-      }
-    }
-#endif
-  }
   else
     return CSVGObject::processOption(opt_name, opt_value);
 
@@ -147,9 +118,9 @@ print(std::ostream &os, bool hier) const
     os << "pattern ";
 }
 
-CImagePtr
+void
 CSVGPattern::
-getImage(CSVGObject *parent, double *w1, double *h1)
+setFillImage(CSVGObject *parent, CSVGBuffer *buffer, double *w1, double *h1)
 {
   double w = getWidth ();
   double h = getHeight();
@@ -228,14 +199,15 @@ getImage(CSVGObject *parent, double *w1, double *h1)
 
   svg_.endDrawBuffer(patternBuffer);
 
-  CImagePtr image = patternBuffer->getImage();
-
   // restore original buffer
   svg_.setBuffer(oldBuffer);
 
   svg_.setTransform(transform);
 
-  return image;
+  //---
+
+  // set fill image from buffer
+  buffer->setFillBuffer(patternBuffer);
 }
 
 CSVGObject *

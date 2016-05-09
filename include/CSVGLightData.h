@@ -2,6 +2,7 @@
 #define CSVGLightData_H
 
 #include <CPoint3D.h>
+#include <CRGBA.h>
 
 struct CSVGLightData {
   CSVGObjTypeId ltype;

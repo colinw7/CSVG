@@ -1,4 +1,5 @@
 #include <CSVGXLink.h>
+#include <CSVGBuffer.h>
 #include <CSVG.h>
 
 CSVGXLink::
@@ -7,7 +8,8 @@ CSVGXLink(const CSVGXLink &xlink) :
  resolved_(xlink.resolved_),
  str_     (xlink.str_),
  object_  (xlink.object_),
- image_   (xlink.image_)
+ image_   (xlink.image_),
+ scale_   (xlink.scale_)
 {
 }
 
@@ -20,6 +22,7 @@ operator=(const CSVGXLink &xlink)
   str_      = xlink.str_;
   object_   = xlink.object_;
   image_    = xlink.image_;
+  scale_    = xlink.scale_;
 
   return *this;
 }
@@ -28,11 +31,30 @@ void
 CSVGXLink::
 resolve() const
 {
-  if (resolved_) return;
+  double scale = parent_->getSVG().scale();
+
+  if (resolved_ && scale_ == scale)
+    return;
 
   CSVGXLink *th = const_cast<CSVGXLink *>(this);
 
-  parent_->decodeXLink(str_, &th->object_, th->image_);
+  if (str_ != "")
+    parent_->decodeXLink(str_, &th->object_, &th->image_);
 
+  th->scale_    = scale;
   th->resolved_ = true;
+}
+
+bool
+CSVGXLink::
+getImage(CSVGBuffer *buffer) const
+{
+  if      (isImage())
+    buffer->setImage(getImage());
+  else if (isObject())
+    buffer->setImage(getObject()->toImage());
+  else
+    return false;
+
+  return true;
 }

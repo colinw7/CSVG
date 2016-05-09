@@ -15,15 +15,10 @@ class CSVGFeImage : public CSVGFilterBase {
 
   CSVGFeImage *dup() const override;
 
-  const CSVGXLink &xlink() const { return xlink_.getValue(); }
-
-  std::string getLinkName() const { return (xlink_.isValid() ? xlink_.getValue().str() : ""); }
-  void setLinkName(const std::string &str);
-
   std::string getFilterOut() const { return filterOut_.getValue("SourceGraphic"); }
   void setFilterOut(const std::string &s) { filterOut_ = s; }
 
-  CSVGPreserveAspect preserveAspect() const {
+  CSVGPreserveAspect getPreserveAspect() const {
     return preserveAspect_.getValue(CSVGPreserveAspect()); }
   void setPreserveAspect(const CSVGPreserveAspect &a) { preserveAspect_ = a; }
 
@@ -31,14 +26,11 @@ class CSVGFeImage : public CSVGFilterBase {
 
   void draw() override;
 
-  void filterImage(CImagePtr src_image, CSVGBuffer *outBuffer);
-
   void print(std::ostream &os, bool hier) const override;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGFeImage &filter);
 
  private:
-  COptValT<CSVGXLink>          xlink_;
   COptValT<std::string>        filterOut_;
   COptValT<CSVGPreserveAspect> preserveAspect_;
 };

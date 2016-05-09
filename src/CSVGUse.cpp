@@ -307,8 +307,6 @@ draw()
       //---
 
       if (drawn) {
-        CImagePtr image = saveBuffer->getImage();
-
         if (symbol) {
           double x = getX    (), y = getY     ();
           double w = getWidth(), h = getHeight();
@@ -326,12 +324,10 @@ draw()
           double px2 = (dx + w)*svg_.scale();
           double py2 = (dy + h)*svg_.scale();
 
-          image->clipOutside(px1, py1, px2, py2);
-
           double x1 = x*svg_.scale();
           double y1 = y*svg_.scale();
 
-          oldBuffer->addImage(x1 - px1, y1 - py1, image);
+          oldBuffer->addClippedBuffer(saveBuffer, x1, y1, px1, py1, px2, py2);
         }
         else {
           double x = 0, y = 0;
@@ -342,7 +338,7 @@ draw()
 
           oldBuffer->lengthToPixel(x, y, &px, &py);
 
-          oldBuffer->addImage(px, py, image);
+          oldBuffer->addBuffer(saveBuffer, px, py);
         }
       }
 

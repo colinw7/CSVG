@@ -66,12 +66,20 @@ filterImage(CSVGBuffer *outBuffer)
 
   getChildrenOfType(CSVGObjTypeId::FE_MERGE_NODE, objects);
 
-  // get max image size
-  int w = 0, h = 0;
+  std::vector<CSVGFeMergeNode *> nodes;
 
   for (const auto &o : objects) {
     CSVGFeMergeNode *node = dynamic_cast<CSVGFeMergeNode *>(o);
 
+    nodes.push_back(node);
+  }
+
+  //---
+
+  // get max image size
+  int w = 0, h = 0;
+
+  for (const auto &node : nodes) {
     std::string filterIn = node->getFilterIn();
     CSVGBuffer* bufferIn = svg_.getBuffer(filterIn);
 
@@ -83,54 +91,7 @@ filterImage(CSVGBuffer *outBuffer)
 
   //---
 
-  // create image to merge into
-  CImageNoSrc src;
-
-  CImagePtr dst_image = CImageMgrInst->createImage(src);
-
-  dst_image->setDataSize(w, h);
-
-  dst_image->setRGBAData(CRGBA(0,0,0,0));
-
-  //---
-
-  // add merge node images
-  int i = 1;
-
-  for (const auto &o : objects) {
-    CSVGFeMergeNode *node = dynamic_cast<CSVGFeMergeNode *>(o);
-
-    std::string filterIn = node->getFilterIn();
-    CSVGBuffer* bufferIn = svg_.getBuffer(filterIn);
-
-    if (svg_.getDebugFilter()) {
-      std::string objectBufferName = "_" + getUniqueName();
-
-      CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_node_" + std::to_string(i) + "_in");
-
-      buffer->setImage(bufferIn->getImage());
-    }
-
-    //---
-
-    CImagePtr imageIn = bufferIn->getImage();
-
-    dst_image->combine(imageIn);
-
-    //---
-
-    if (svg_.getDebugFilter()) {
-      std::string objectBufferName = "_" + getUniqueName();
-
-      CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_node_" + std::to_string(i) + "_out");
-
-      buffer->setImage(dst_image);
-    }
-
-    ++i;
-  }
-
-  outBuffer->setImage(dst_image);
+  CSVGBuffer::mergeBuffers(this, nodes, w, h, outBuffer);
 }
 
 void
@@ -141,6 +102,8 @@ print(std::ostream &os, bool hier) const
     os << "<feMerge";
 
     CSVGObject::printValues(os);
+
+    CSVGFilterBase::printValues(os);
 
     printNameValue(os, "in"    , filterIn_ );
     printNameValue(os, "result", filterOut_);

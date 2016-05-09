@@ -52,6 +52,7 @@
 #include <CQSVGRenderer.h>
 #include <CQPropertyTree.h>
 #include <CQPropertyItem.h>
+#include <CQPixmapCache.h>
 
 #include <CQApp.h>
 #include <CQStyle.h>
@@ -62,6 +63,12 @@
 #include <QLabel>
 #include <QMenuBar>
 #include <QMenu>
+#include <QToolBar>
+
+#include <svg/next_svg.h>
+#include <svg/prev_svg.h>
+#include <svg/properties_svg.h>
+#include <svg/buffers_svg.h>
 
 int
 main(int argc, char **argv)
@@ -105,8 +112,19 @@ main(int argc, char **argv)
   if (debug)
     window->svg()->setDebug(true);
 
-  if (! files.empty())
-    window->loadFile(files[0], image, imageDir, print);
+  if (image)
+    window->setImage(image);
+
+  if (imageDir != "")
+    window->setImageDir(imageDir);
+
+  if (print)
+    window->setPrint(print);
+
+  for (const auto &file : files)
+    window->addFile(file);
+
+  window->loadFile();
 
   if (image || print)
     exit(0);
@@ -192,13 +210,29 @@ CQSVGWindow() :
 
   QMenu *viewMenu = menuBar()->addMenu("&View");
 
+  prevAction_ = new QAction("&Prev", this);
+  prevAction_->setIcon(CQPixmapCacheInst->getIcon("PREV"));
+
+  connect(prevAction_, SIGNAL(triggered()), this, SLOT(prevFile()));
+
+  viewMenu->addAction(prevAction_);
+
+  nextAction_ = new QAction("&Next", this);
+  nextAction_->setIcon(CQPixmapCacheInst->getIcon("NEXT"));
+
+  connect(nextAction_, SIGNAL(triggered()), this, SLOT(nextFile()));
+
+  viewMenu->addAction(nextAction_);
+
   QAction *propertiesAction = new QAction("&Properties", this);
+  propertiesAction->setIcon(CQPixmapCacheInst->getIcon("PROPERTIES"));
 
   connect(propertiesAction, SIGNAL(triggered()), this, SLOT(showProperties()));
 
   viewMenu->addAction(propertiesAction);
 
   QAction *buffersAction = new QAction("&Buffers", this);
+  buffersAction->setIcon(CQPixmapCacheInst->getIcon("BUFFERS"));
 
   connect(buffersAction, SIGNAL(triggered()), this, SLOT(showBuffers()));
 
@@ -217,18 +251,80 @@ CQSVGWindow() :
   statusBar()->addPermanentWidget(zoomLabel_);
 
   showPos(QPoint(0, 0), QPointF(0, 0));
+
+  //---
+
+  QToolBar *toolBar = new QToolBar(this);
+
+  toolBar->addAction(prevAction_);
+  toolBar->addAction(nextAction_);
+  toolBar->addAction(propertiesAction);
+  toolBar->addAction(buffersAction);
+
+  addToolBar(toolBar);
 }
 
 void
 CQSVGWindow::
-loadFile(const std::string &filename, bool image, const std::string &imageDir, bool print)
+addFile(const std::string &file)
 {
-  if (! CFile::isRegular(filename)) {
-    std::cerr << "Invalid file \"" << filename << "\"" << std::endl;
+  if (! CFile::isRegular(file)) {
+    std::cerr << "Invalid file \"" << file << "\"" << std::endl;
     return;
   }
 
-  if      (image) {
+  files_.push_back(file);
+}
+
+void
+CQSVGWindow::
+nextFile()
+{
+  if (ind_ < 0)
+    ind_ = 0;
+  else {
+    ++ind_;
+
+    if (ind_ >= int(files_.size()))
+      ind_ = files_.size() - 1;
+  }
+
+  loadFile();
+}
+
+void
+CQSVGWindow::
+prevFile()
+{
+  if (ind_ < 0)
+    ind_ = 0;
+  else {
+    --ind_;
+
+    if (ind_ < 0)
+      ind_ = 0;
+  }
+
+  loadFile();
+}
+
+void
+CQSVGWindow::
+loadFile()
+{
+  if (ind_ < 0)
+    ind_ = 0;
+
+  updateState();
+
+  if (ind_ < 0 || ind_ >= int(files_.size()))
+    return;
+
+  std::string filename = files_[ind_];
+
+  setWindowTitle(filename.c_str());
+
+  if      (isImage()) {
     CImageNoSrc src;
 
     CImagePtr image = CImageMgrInst->createImage(src);
@@ -249,14 +345,14 @@ loadFile(const std::string &filename, bool image, const std::string &imageDir, b
 
     std::string name;
 
-    if (imageDir != "")
-      name = CStrUtil::strprintf("%s/svg_%s.png", imageDir.c_str(), base.c_str());
+    if (imageDir() != "")
+      name = CStrUtil::strprintf("%s/svg_%s.png", imageDir().c_str(), base.c_str());
     else
       name = CStrUtil::strprintf("svg_%s.png", base.c_str());
 
     renderer.getImage()->write(name, CFILE_TYPE_IMAGE_PNG);
   }
-  else if (print) {
+  else if (isPrint()) {
     svg_->print(std::cout, true);
   }
   else {
@@ -268,6 +364,16 @@ loadFile(const std::string &filename, bool image, const std::string &imageDir, b
 
     svg_->startTimer();
   }
+
+  redraw();
+}
+
+void
+CQSVGWindow::
+updateState()
+{
+  prevAction_->setEnabled(ind_ > 0);
+  nextAction_->setEnabled(ind_ < int(files_.size()) - 1);
 }
 
 void

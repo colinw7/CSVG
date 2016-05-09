@@ -1,6 +1,9 @@
 #ifndef CSVGPreserveAspect_H
 #define CSVGPreserveAspect_H
 
+#include <CSVGTypes.h>
+#include <CAlignType.h>
+
 class CSVGPreserveAspect {
  public:
   CSVGPreserveAspect(const CHAlignType &halign=CHALIGN_TYPE_CENTER,

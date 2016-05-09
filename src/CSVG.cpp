@@ -91,7 +91,7 @@ CSVG(CSVGRenderer *renderer) :
 
   xml_ = new CXML();
 
-  buffer_mgr_ = new CSVGBufferMgr(*this);
+  bufferMgr_ = new CSVGBufferMgr(*this);
 
   //---
 
@@ -153,7 +153,7 @@ void
 CSVG::
 setAntiAlias(bool flag)
 {
-  buffer_mgr_->setAntiAlias(flag);
+  bufferMgr_->setAntiAlias(flag);
 }
 
 void
@@ -213,10 +213,42 @@ init()
 {
 }
 
+void
+CSVG::
+clear()
+{
+  if (bufferMgr_.isValid())
+    bufferMgr_->clear();
+
+  if (xml_.isValid())
+    xml_->clear();
+
+  buffer_     = 0;
+  viewMatrix_ = CMatrixStack2D();
+  offset_     = CPoint2D(0, 0);
+  scale_      = 1;
+  block_      = 0;
+  xmlTag_     = 0;
+  background_ = CRGBA(1,1,1);
+
+  fontList_.clear();
+
+  idObjectMap_       .clear();
+  globalStyleData_   .clear();
+  typeStyleData_     .clear();
+  classStyleData_    .clear();
+  typeClassStyleData_.clear();
+
+  styleObject_ = 0;
+  drawObject_  = 0;
+}
+
 bool
 CSVG::
 read(const std::string &filename)
 {
+  clear();
+
   return read(filename, getBlock());
 }
 
@@ -978,18 +1010,23 @@ getUnicodeGlyph(const std::string &unicode) const
 
 CImagePtr
 CSVG::
-drawToImage(int w, int h)
+drawToImage(int w, int h, const CPoint2D &offset, double scale)
 {
   CAutoPtr<CSVGRenderer> renderer;
 
   renderer = createRenderer();
 
   if (renderer) {
-    renderer->setSize(w, h);
+    renderer->setSize(scale*w, scale*h);
 
     setRenderer(renderer);
 
-    draw();
+    CMatrixStack2D matrix;
+
+    matrix.translate(offset.x, offset.y);
+    matrix.scale(scale, scale);
+
+    draw(matrix, offset, scale);
 
     return renderer->getImage();
   }
@@ -1101,17 +1138,17 @@ CSVG::
 getBuffer(const std::string &name)
 {
   if      (name == "SourceAlpha") {
-    CSVGBuffer *buffer = buffer_mgr_->lookupBuffer("SourceGraphic", /*create*/true);
+    CSVGBuffer *buffer = bufferMgr_->lookupBuffer("SourceGraphic", /*create*/true);
 
-    return buffer_mgr_->lookupAlphaBuffer(buffer, /*create*/true);
+    return bufferMgr_->lookupAlphaBuffer(buffer, /*create*/true);
   }
   else if (name == "BackgroundAlpha") {
-    CSVGBuffer *buffer = buffer_mgr_->lookupBuffer("BackgroundImage", /*create*/true);
+    CSVGBuffer *buffer = bufferMgr_->lookupBuffer("BackgroundImage", /*create*/true);
 
-    return buffer_mgr_->lookupAlphaBuffer(buffer, /*create*/true);
+    return bufferMgr_->lookupAlphaBuffer(buffer, /*create*/true);
   }
 
-  CSVGBuffer *buffer = buffer_mgr_->lookupBuffer(name, /*create*/true);
+  CSVGBuffer *buffer = bufferMgr_->lookupBuffer(name, /*create*/true);
 
   return buffer;
 }
@@ -1120,7 +1157,7 @@ void
 CSVG::
 getBufferNames(std::vector<std::string> &names) const
 {
-  buffer_mgr_->getBufferNames(names);
+  bufferMgr_->getBufferNames(names);
 }
 
 void
@@ -1316,9 +1353,7 @@ setFillBuffer(CSVGBuffer *buffer)
     else if (pt) {
       double w1, h1;
 
-      CImagePtr image = pt->getImage(drawObject_, &w1, &h1);
-
-      buffer->setFillImage(image);
+      pt->setFillImage(drawObject_, buffer, &w1, &h1);
     }
     else
       assert(false);
@@ -2518,9 +2553,7 @@ pathStringToParts(const std::string &data, CSVGPathPartList &parts)
   if (! flag) {
     CSVGLog() << "Path parse fail :";
 
-    std::cout << parse.getBefore() << ">" <<
-                 parse.getAt    () << "<" <<
-                 parse.getAfter ();
+    std::cerr << parse.getBefore() << ">" << parse.getAt() << "<" << parse.getAfter();
   }
 
   return flag;
@@ -4113,6 +4146,45 @@ getTypeClassStyleData(const std::string &objType, const std::string &objClass)
   CSVGStyleData &styleData = (*p2).second;
 
   return styleData;
+}
+
+bool
+CSVG::
+getStyleStrokeNoColor(const CSVGObject *obj, bool &noColor)
+{
+  for (const auto &c : obj->getClasses()) {
+    CSVGStyleData &typeClassStyleData = getTypeClassStyleData(obj->getObjName(), c);
+
+    if (typeClassStyleData.getStrokeNoColorValid()) {
+      noColor = typeClassStyleData.getStrokeNoColor();
+      return true;
+    }
+  }
+
+  CSVGStyleData &typeStyleData = getTypeStyleData(obj->getObjName());
+
+  if (typeStyleData.getStrokeNoColorValid()) {
+    noColor = typeStyleData.getStrokeNoColor();
+    return true;
+  }
+
+  for (const auto &c : obj->getClasses()) {
+    CSVGStyleData &classStyleData = getClassStyleData(c);
+
+    if (classStyleData.getStrokeNoColorValid()) {
+      noColor = classStyleData.getStrokeNoColor();
+      return true;
+    }
+  }
+
+  CSVGStyleData &globalStyleData = getGlobalStyleData();
+
+  if (globalStyleData.getStrokeNoColorValid()) {
+    noColor = globalStyleData.getStrokeNoColor();
+    return true;
+  }
+
+  return false;
 }
 
 bool

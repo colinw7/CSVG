@@ -172,10 +172,42 @@ updateFill(const CSVGFill &fill, bool recurse)
   }
 }
 
-#if 0
+bool
+CSVGObject::
+getFlatStrokeNoColor() const
+{
+  if (stroke_.getNoColorValid())
+    return stroke_.getNoColor();
+
+  CSVGObject *parent = getParent();
+
+  while (parent) {
+    if (parent->stroke_.getNoColorValid())
+      return parent->stroke_.getNoColor();
+
+    parent = parent->getParent();
+  }
+
+  // if object or parent has color then no color is false
+  if (stroke_.getColorValid())
+    return false;
+
+  parent = getParent();
+
+  while (parent) {
+    if (parent->stroke_.getColorValid())
+      return false;
+
+    parent = parent->getParent();
+  }
+
+  // default to no color (no stroke)
+  return true;
+}
+
 CRGBA
 CSVGObject::
-getStrokeColor() const
+getFlatStrokeColor() const
 {
   COptValT<CRGBA> color;
 
@@ -210,11 +242,10 @@ getStrokeColor() const
 
   return color.getValue();
 }
-#endif
 
 double
 CSVGObject::
-getStrokeOpacity() const
+getFlatStrokeOpacity() const
 {
   COptValT<double> opacity;
 
@@ -234,12 +265,12 @@ getStrokeOpacity() const
   }
 
   if (! opacity.isValid()) {
-    double opacity1 = 0.0;
+    double opacity1 = 1.0;
 
     if (svg_.getStyleStrokeOpacity(this, opacity1))
       opacity.setValue(opacity1);
     else
-      opacity.setValue(0.0);
+      opacity.setValue(1.0);
   }
 
   return opacity.getValue();
@@ -247,7 +278,7 @@ getStrokeOpacity() const
 
 double
 CSVGObject::
-getStrokeWidth() const
+getFlatStrokeWidth() const
 {
   if (stroke_.getWidthValid())
     return stroke_.getWidth();
@@ -256,7 +287,7 @@ getStrokeWidth() const
 
   while (parent) {
     if (parent->stroke_.getWidthValid())
-      return parent->getStrokeWidth();
+      return parent->getFlatStrokeWidth();
 
     parent = parent->getParent();
   }
@@ -271,7 +302,7 @@ getStrokeWidth() const
 
 const CLineDash &
 CSVGObject::
-getStrokeLineDash() const
+getFlatStrokeLineDash() const
 {
   if (stroke_.getDashValid())
     return stroke_.getDash();
@@ -280,7 +311,7 @@ getStrokeLineDash() const
 
   while (parent) {
     if (parent->stroke_.getDashValid())
-      return parent->getStrokeLineDash();
+      return parent->getFlatStrokeLineDash();
 
     parent = parent->getParent();
   }
@@ -293,10 +324,29 @@ getStrokeLineDash() const
   return dash;
 }
 
-#if 0
+bool
+CSVGObject::
+getFlatFillNoColor() const
+{
+  if (fill_.getNoColorValid())
+    return fill_.getNoColor();
+
+  CSVGObject *parent = getParent();
+
+  while (parent) {
+    if (parent->fill_.getNoColorValid())
+      return parent->fill_.getNoColor();
+
+    parent = parent->getParent();
+  }
+
+  // default false (filled)
+  return false;
+}
+
 CRGBA
 CSVGObject::
-getFillColor() const
+getFlatFillColor() const
 {
   COptValT<CRGBA> color;
 
@@ -331,11 +381,10 @@ getFillColor() const
 
   return color.getValue();
 }
-#endif
 
 double
 CSVGObject::
-getFillOpacity() const
+getFlatFillOpacity() const
 {
   COptValT<double> opacity;
 
@@ -362,7 +411,7 @@ getFillOpacity() const
 
 std::string
 CSVGObject::
-getFontFamily() const
+getFlatFontFamily() const
 {
   if (fontDef_.hasFamily())
     return fontDef_.getFamily();
@@ -371,7 +420,7 @@ getFontFamily() const
 
   while (parent) {
     if (parent->fontDef_.hasFamily())
-      return parent->getFontFamily();
+      return parent->getFlatFontFamily();
 
     parent = parent->getParent();
   }
@@ -381,7 +430,7 @@ getFontFamily() const
 
 CFontStyles
 CSVGObject::
-getFontStyle() const
+getFlatFontStyle() const
 {
   if (fontDef_.hasStyle())
     return fontDef_.getStyle();
@@ -390,7 +439,7 @@ getFontStyle() const
 
   while (parent) {
     if (parent->fontDef_.hasStyle())
-      return parent->getFontStyle();
+      return parent->getFlatFontStyle();
 
     parent = parent->getParent();
   }
@@ -400,7 +449,7 @@ getFontStyle() const
 
 CSVGLengthValue
 CSVGObject::
-getFontSize() const
+getFlatFontSize() const
 {
   if (fontDef_.hasSize())
     return fontDef_.getSize();
@@ -409,7 +458,7 @@ getFontSize() const
 
   while (parent) {
     if (parent->fontDef_.hasSize())
-      return parent->getFontSize();
+      return parent->getFlatFontSize();
 
     parent = parent->getParent();
   }
@@ -421,10 +470,10 @@ CFontPtr
 CSVGObject::
 getFont() const
 {
-  std::string fontFamily = getFontFamily();
-  CFontStyles fontStyles = getFontStyle();
+  std::string fontFamily = getFlatFontFamily();
+  CFontStyles fontStyles = getFlatFontStyle();
   CFontStyle  fontStyle  = (fontStyles | CFONT_STYLE_FULL_SIZE).value();
-  double      fontSize   = getFontSize().value();
+  double      fontSize   = getFlatFontSize().value();
 
   // want full size font
   return CFontMgrInst->lookupFont(fontFamily, fontStyle, fontSize);
@@ -1246,7 +1295,7 @@ setTextAnchor(const std::string &str)
 
 CHAlignType
 CSVGObject::
-getTextAnchor() const
+getFlatTextAnchor() const
 {
   if (textAnchor_.isValid())
     return textAnchor_.getValue();
@@ -1255,7 +1304,7 @@ getTextAnchor() const
 
   while (parent) {
     if (parent->textAnchor_.isValid())
-      return parent->getTextAnchor();
+      return parent->getFlatTextAnchor();
 
     parent = parent->getParent();
   }
@@ -1599,7 +1648,7 @@ drawSubObject(bool forceDraw)
   bool isMasked = (getMask() && getMasked());
 
   if (isMasked)
-    getMask()->drawMask(*this);
+    getMask()->drawMask(this);
 
   //------
 
@@ -1634,13 +1683,37 @@ CImagePtr
 CSVGObject::
 toImage()
 {
+  CSVGBuffer *imageBuffer = toBufferImage();
+
+  if (! imageBuffer)
+    return CImagePtr();
+
+  return imageBuffer->getImage();
+}
+
+CImagePtr
+CSVGObject::
+toNamedImage(const std::string &bufferName)
+{
+  CSVGBuffer *buffer = toNamedBufferImage(bufferName);
+
+  if (! buffer)
+    return CImagePtr();
+
+  return buffer->getImage();
+}
+
+CSVGBuffer *
+CSVGObject::
+toBufferImage()
+{
+  // TODO: use toNamedBufferImage, optional filter ?
   CBBox2D bbox;
 
   if (! getBBox(bbox))
-    return CImagePtr();
+    return 0;
 
-  CSVGBuffer *oldBuffer = svg_.getBuffer();
-
+  CSVGBuffer *oldBuffer   = svg_.getBuffer();
   CSVGBuffer *imageBuffer = svg_.getBuffer("_" + getUniqueName() + "_image");
 
   svg_.setBuffer(imageBuffer);
@@ -1656,45 +1729,42 @@ toImage()
 
   svg_.endDrawBuffer(imageBuffer);
 
-  CImagePtr image = imageBuffer->getImage();
-
   svg_.setBuffer(oldBuffer);
 
-  return image;
+  return imageBuffer;
 }
 
-CImagePtr
+CSVGBuffer *
 CSVGObject::
-toNamedImage(const std::string &bufferName)
+toNamedBufferImage(const std::string &bufferName)
 {
   CBBox2D bbox;
 
   if (! getBBox(bbox))
-    return CImagePtr();
+    return 0;
 
   CSVGFilter *saveFilter { 0 };
 
   std::swap(saveFilter, filter_);
 
-  CSVGBuffer *oldBuffer = svg_.getBuffer();
+  CSVGBuffer *oldBuffer   = svg_.getBuffer();
+  CSVGBuffer *imageBuffer = svg_.getBuffer(bufferName);
 
-  CSVGBuffer *buffer = svg_.getBuffer(bufferName);
+  svg_.setBuffer(imageBuffer);
 
-  svg_.setBuffer(buffer);
+  imageBuffer->clear();
 
-  svg_.beginDrawBuffer(buffer, bbox);
+  svg_.beginDrawBuffer(imageBuffer, bbox);
 
   (void) drawSubObject(true);
 
-  svg_.endDrawBuffer(buffer);
-
-  CImagePtr image = buffer->getImage();
+  svg_.endDrawBuffer(imageBuffer);
 
   svg_.setBuffer(oldBuffer);
 
   std::swap(saveFilter, filter_);
 
-  return image;
+  return imageBuffer;
 }
 
 void
@@ -1941,16 +2011,18 @@ setClasses(const std::vector<std::string> &classes)
 
 bool
 CSVGObject::
-decodeXLink(const std::string &str, CSVGObject **object, CImagePtr &image)
+decodeXLink(const std::string &str, CSVGObject **object, CImagePtr *image)
 {
   if (object)
     *object = 0;
 
-  CSVGObject *object1 = 0;
+  //---
 
+  // check for inline image data
   uint len = str.size();
 
   if (len >= 5 && str.substr(0, 5) == "data:") {
+    // get format
     uint pos = 5;
 
     std::string format;
@@ -1958,11 +2030,15 @@ decodeXLink(const std::string &str, CSVGObject **object, CImagePtr &image)
     while (pos < len && str[pos] != ',')
       format += str[pos++];
 
-    if (pos >= len) return false;
+    if (pos >= len) {
+      // error ?
+      return false;
+    }
 
     ++pos;
 
     if (format == "image/png;base64") {
+      // image string to buffer
       std::string str1 = CEncode64Inst->decode(str.substr(pos));
 
       CFile file(".svg.png");
@@ -1975,41 +2051,63 @@ decodeXLink(const std::string &str, CSVGObject **object, CImagePtr &image)
 
       CImageFileSrc src(".svg.png");
 
-      image = CImageMgrInst->createImage(src);
+      CImagePtr image1 = CImageMgrInst->createImage(src);
+
+      CSVGBuffer *imgBuffer = svg_.getBuffer(getUniqueName() + "_xlink");
+
+      imgBuffer->setImage(image1);
+
+      if (image)
+        *image = image1;
 
       return true;
     }
-    else
+    else {
+      std::cerr << "Unhandled images format '" + format + "'" << std::endl;
       return false;
+    }
   }
 
-  CImagePtr image1;
+  //---
 
+  // get link name
   std::string::size_type pos = str.find('#');
 
   if (pos != std::string::npos) {
+    CSVGObject *object1 = 0;
+
     std::string lhs = str.substr(0, pos);
     std::string rhs = str.substr(pos + 1);
 
+    // Handle file: <filename>#<id>
     if (lhs != "") {
+      // read file
       CSVGBlock *block = svg_.createBlock();
 
       svg_.read(lhs, block);
 
+      // get object from id
       if (rhs != "")
         object1 = svg_.lookupObjectById(rhs);
       else
         object1 = block;
     }
-    else
+    // handle id: <id>
+    else {
       object1 = svg_.lookupObjectById(rhs);
+    }
 
     if (! object1) {
       CSVGLog() << "Object " << rhs << " does not exist";
       return false;
     }
+
+    if (object)
+      *object = object1;
   }
+  // handle file
   else {
+    // check valid
     CFile file(str);
 
     if (! file.exists()) {
@@ -2022,10 +2120,16 @@ decodeXLink(const std::string &str, CSVGObject **object, CImagePtr &image)
       return false;
     }
 
+    // get type from contents/suffix
     CFileType type = CFileUtil::getType(&file);
 
+    // handle image file
     if      (type & CFILE_TYPE_IMAGE) {
+      CImagePtr image1;
+
+      // svg image
       if (type == CFILE_TYPE_IMAGE_SVG) {
+        // draw SVG file to image at current scale
         CImageNameSrc src(file.getPath());
 
         image1 = CImageMgrInst->createImage(src);
@@ -2047,8 +2151,9 @@ decodeXLink(const std::string &str, CSVGObject **object, CImagePtr &image)
         int w = svg.getIWidth();
         int h = svg.getIHeight();
 
-        image1 = svg.drawToImage(w, h);
+        image1 = svg.drawToImage(w, h, CPoint2D(0, 0), svg_.scale());
       }
+      // image file (png, jpeg, ...)
       else {
         CImageFileSrc src(file);
 
@@ -2056,24 +2161,31 @@ decodeXLink(const std::string &str, CSVGObject **object, CImagePtr &image)
 
         image1->read(str);
       }
+
+      if (image1.isValid()) {
+        CSVGBuffer *imgBuffer = svg_.getBuffer(getUniqueName() + "_xlink");
+
+        imgBuffer->setImage(image1);
+      }
+
+      if (image)
+        *image = image1;
     }
+    // handle svg file
     else if (type == CFILE_TYPE_TEXT_HTML) {
+      // read svg file
       CSVGBlock *block = svg_.createBlock();
 
       svg_.read(str, block);
 
-      object1 = block;
+      if (object)
+        *object = block;
     }
     else {
       CSVGLog() << "Unknown type of file for " << str;
       return false;
     }
   }
-
-  if (object)
-    *object = object1;
-
-  image = image1;
 
   return true;
 }

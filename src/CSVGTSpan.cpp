@@ -120,7 +120,7 @@ draw()
   CSVGText *parentText = getParentText();
 
   std::string text   = getText();
-  CHAlignType anchor = getTextAnchor();
+  CHAlignType anchor = getFlatTextAnchor();
   CFontPtr    font   = getFont();
 
   double x = 0, y = 0;
