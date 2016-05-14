@@ -4,14 +4,16 @@
 
 CSVGScript::
 CSVGScript(CSVG &svg) :
- CSVGObject(svg)
+ CSVGObject(svg),
+ xlink_    (this)
 {
 }
 
 CSVGScript::
 CSVGScript(const CSVGScript &use) :
  CSVGObject(use),
- type_     (use.type_)
+ type_     (use.type_),
+ xlink_    (use.xlink_)
 {
 }
 
@@ -43,8 +45,10 @@ processOption(const std::string &opt_name, const std::string &opt_value)
 {
   std::string str;
 
-  if (svg_.stringOption(opt_name, opt_value, "type", str))
+  if       (svg_.stringOption(opt_name, opt_value, "type", str))
     type_ = str;
+  else if (svg_.stringOption(opt_name, opt_value, "xlink:href", str))
+    xlink_ = CSVGXLink(this, str);
   else
     return CSVGObject::processOption(opt_name, opt_value);
 

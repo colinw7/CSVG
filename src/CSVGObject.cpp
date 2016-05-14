@@ -176,33 +176,20 @@ bool
 CSVGObject::
 getFlatStrokeNoColor() const
 {
+  // if no color set use it
   if (stroke_.getNoColorValid())
     return stroke_.getNoColor();
 
-  CSVGObject *parent = getParent();
-
-  while (parent) {
-    if (parent->stroke_.getNoColorValid())
-      return parent->stroke_.getNoColor();
-
-    parent = parent->getParent();
-  }
-
-  // if object or parent has color then no color is false
+  // if has stroke color then no color is false
   if (stroke_.getColorValid())
     return false;
 
-  parent = getParent();
+  CSVGObject *parent = getParent();
 
-  while (parent) {
-    if (parent->stroke_.getColorValid())
-      return false;
-
-    parent = parent->getParent();
-  }
-
-  // default to no color (no stroke)
-  return true;
+  if (parent)
+    return parent->getFlatStrokeNoColor();
+  else
+    return true; // default to no color (no stroke)
 }
 
 CRGBA
@@ -328,58 +315,47 @@ bool
 CSVGObject::
 getFlatFillNoColor() const
 {
+  // if no color set use it
   if (fill_.getNoColorValid())
     return fill_.getNoColor();
 
+  // if has fill color then no color is false
+  if (fill_.getColorValid())
+    return false;
+
   CSVGObject *parent = getParent();
 
-  while (parent) {
-    if (parent->fill_.getNoColorValid())
-      return parent->fill_.getNoColor();
-
-    parent = parent->getParent();
-  }
-
-  // default false (filled)
-  return false;
+  if (parent)
+    return parent->getFlatFillNoColor();
+  else
+    return false; // default false (filled)
 }
 
 CRGBA
 CSVGObject::
 getFlatFillColor() const
 {
-  COptValT<CRGBA> color;
-
   if (fill_.getColorValid())
-    color.setValue(fill_.getColor());
-  else {
-    CSVGObject *parent = getParent();
+    return fill_.getColor();
 
-    while (parent) {
-      if (parent->fill_.getColorValid()) {
-        color.setValue(parent->fill_.getColor());
-        break;
-      }
+  CSVGObject *parent = getParent();
 
-      parent = parent->getParent();
-    }
+  while (parent) {
+    if (parent->fill_.getColorValid())
+      return parent->fill_.getColor();
+
+    parent = parent->getParent();
   }
 
-  if (! color.isValid()) {
-    if (fill_.getDefColorValid())
-      color.setValue(fill_.getDefColor());
-  }
+  if (fill_.getDefColorValid())
+    return fill_.getDefColor();
 
-  if (! color.isValid()) {
-    CRGBA rgba(0,0,0);
+  CRGBA rgba(0,0,0);
 
-    if (svg_.getStyleFillColor(this, rgba))
-      color.setValue(rgba);
-    else
-      color.setValue(CRGBA(0,0,0));
-  }
+  if (svg_.getStyleFillColor(this, rgba))
+    return rgba;
 
-  return color.getValue();
+  return CRGBA(0,0,0);
 }
 
 double
@@ -582,7 +558,8 @@ setStyle(const std::string &style)
           ! processClipOption       (words1[0], words1[1]) &&
           ! processMaskOption       (words1[0], words1[1]) &&
           ! processTextOption       (words1[0], words1[1]) &&
-          ! processFilterOption     (words1[0], words1[1]))
+          ! processFilterOption     (words1[0], words1[1]) &&
+          ! processCSSOption        (words1[0], words1[1]))
         CSVGLog() << "Invalid style option " << words1[0] << ":" << words1[1] <<
                      " for " << getObjName();
     }
@@ -1214,6 +1191,20 @@ processTextContentOption(const std::string &optName, const std::string &optValue
     nameValues_["unicode-bidi"] = str;
   else if (svg_.lengthOption(optName, optValue, "word-spacing", length))
     wordSpacing_ = length;
+  else
+    return false;
+
+  return true;
+}
+
+bool
+CSVGObject::
+processCSSOption(const std::string &optName, const std::string &optValue)
+{
+  std::string str;
+
+  if (svg_.stringOption(optName, optValue, "background-color", str))
+    nameValues_["background-color"] = str;
   else
     return false;
 

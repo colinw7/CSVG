@@ -193,6 +193,7 @@ class CSVGObject {
   bool processTextOption           (const std::string &name, const std::string &value);
   bool processTextContentOption    (const std::string &name, const std::string &value);
   bool processPresentationOption   (const std::string &name, const std::string &value);
+  bool processCSSOption            (const std::string &name, const std::string &value);
 
   void notHandled(const std::string &name, const std::string &value);
 

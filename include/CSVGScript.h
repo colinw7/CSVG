@@ -25,6 +25,7 @@ class CSVGScript : public CSVGObject {
 
  private:
   COptValT<std::string> type_;
+  COptValT<CSVGXLink>   xlink_;
 };
 
 #endif
