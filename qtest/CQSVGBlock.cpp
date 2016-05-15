@@ -12,4 +12,6 @@ CQSVGBlock::
 drawTerm()
 {
   drawSelected();
+
+  CSVGBlock::drawTerm();
 }

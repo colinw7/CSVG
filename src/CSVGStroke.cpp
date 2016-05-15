@@ -109,12 +109,12 @@ void
 CSVGStroke::
 setDashOffset(const std::string &offset_str)
 {
-  CSVGLengthValue lvalue;
+  CScreenUnits lvalue;
 
   if (! svg_.decodeLengthValue(offset_str, lvalue))
     return;
 
-  setDashOffset(lvalue.value());
+  setDashOffset(lvalue.px().value());
 }
 
 void
@@ -199,12 +199,12 @@ void
 CSVGStroke::
 setMitreLimit(const std::string &limit_str)
 {
-  CSVGLengthValue lvalue;
+  CScreenUnits lvalue;
 
   if (! svg_.decodeLengthValue(limit_str, lvalue))
     return;
 
-  setMitreLimit(lvalue.value());
+  setMitreLimit(lvalue.px().value());
 }
 
 void

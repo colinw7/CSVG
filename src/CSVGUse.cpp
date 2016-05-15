@@ -68,9 +68,9 @@ bool
 CSVGUse::
 processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  std::string     str;
-  double          real;
-  CSVGLengthValue length;
+  std::string  str;
+  double       real;
+  CScreenUnits length;
 
   if      (svg_.coordOption (opt_name, opt_value, "x", &real))
     x_ = real;
@@ -267,7 +267,7 @@ draw()
 
       saveBuffer->clear();
 
-      svg_.beginDrawBuffer(saveBuffer, svg_.offset(), svg_.scale()*xs, svg_.scale()*ys);
+      svg_.beginDrawBuffer(saveBuffer, svg_.offset(), svg_.xscale()*xs, svg_.yscale()*ys);
 
       if (oldBuffer->hasClipPath())
         saveBuffer->addClipPath(oldBuffer);
@@ -319,13 +319,13 @@ draw()
 
           //saveBuffer->setOrigin(CPoint2D(x - dx, y - dy));
 
-          double px1 = (dx    )*svg_.scale();
-          double py1 = (dy    )*svg_.scale();
-          double px2 = (dx + w)*svg_.scale();
-          double py2 = (dy + h)*svg_.scale();
+          double px1 = (dx    )*svg_.xscale();
+          double py1 = (dy    )*svg_.yscale();
+          double px2 = (dx + w)*svg_.xscale();
+          double py2 = (dy + h)*svg_.yscale();
 
-          double x1 = x*svg_.scale();
-          double y1 = y*svg_.scale();
+          double x1 = x*svg_.xscale();
+          double y1 = y*svg_.yscale();
 
           oldBuffer->addClippedBuffer(saveBuffer, x1, y1, px1, py1, px2, py2);
         }

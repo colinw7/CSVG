@@ -34,9 +34,9 @@ bool
 CSVGFilter::
 processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  std::string     str;
-  CSVGCoordUnits  units;
-  CSVGLengthValue length;
+  std::string    str;
+  CSVGCoordUnits units;
+  CScreenUnits   length;
 
   if      (svg_.coordUnitsOption(opt_name, opt_value, "filterUnits", units))
     units_ = units;

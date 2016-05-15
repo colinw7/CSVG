@@ -25,7 +25,7 @@ double
 CQSVGTextPath::
 getStartOffset() const
 {
-  return CSVGTextPath::getStartOffset().value();
+  return CSVGTextPath::getStartOffset().px().value();
 }
 
 void

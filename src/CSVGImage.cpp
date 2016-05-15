@@ -71,7 +71,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
 {
   std::string        str;
   double             real;
-  CSVGLengthValue    length;
+  CScreenUnits       length;
   CSVGPreserveAspect preserveAspect;
 
   if      (svg_.coordOption (opt_name, opt_value, "x", &real))
@@ -194,7 +194,9 @@ getImage() const
     if (xlink_.getValue().isObject()) {
       CSVGImage *th = const_cast<CSVGImage *>(this);
 
-      CImagePtr image = xlink_.getValue().getObject()->toImage();
+      CSVGObject *object = xlink_.getValue().getObject();
+
+      CImagePtr image = object->toImage();
 
       // TODO: don't cache image as could be rescaled
       th->xlink_.getValue().setObject(0);

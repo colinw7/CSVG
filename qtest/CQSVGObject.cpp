@@ -299,7 +299,7 @@ double
 CQSVGObject::
 getFontSize() const
 {
-  return obj_->getFlatFontSize().value();
+  return obj_->getFlatFontSize().px().value();
 }
 
 void
@@ -335,9 +335,11 @@ drawSelected()
   if (obj_->getFlatTransformedBBox(bbox)) {
     CQSVGCanvas *canvas = qsvg_->window()->canvas();
 
-    double scale = obj_->getSVG().scale();
+    double xscale = obj_->getSVG().xscale();
+    double yscale = obj_->getSVG().yscale();
 
-    CBBox2D bbox1 = scale*bbox;
+    CBBox2D bbox1(xscale*bbox.getXMin(), yscale*bbox.getYMin(),
+                  xscale*bbox.getXMax(), yscale*bbox.getYMax());
 
     canvas->drawRect(bbox1, Qt::red);
   }

@@ -56,7 +56,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   double             real;
   CBBox2D            bbox;
   CSVGCoordUnits     units;
-  CSVGLengthValue    length;
+  CScreenUnits       length;
   CSVGPreserveAspect preserveAspect;
 
   if      (svg_.coordOption (opt_name, opt_value, "refX", &real))
@@ -113,8 +113,8 @@ drawMarker(double x, double y, double autoAngle)
   double refX = getRefX();
   double refY = getRefY();
 
-  double markerWidth  = getMarkerWidth ().value();
-  double markerHeight = getMarkerHeight().value();
+  double markerWidth  = getMarkerWidth ().px().value();
+  double markerHeight = getMarkerHeight().px().value();
 
   CBBox2D bbox;
 

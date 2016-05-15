@@ -6,7 +6,6 @@
 #include <CSVGClip.h>
 #include <CSVGFontDef.h>
 #include <CSVGBlock.h>
-#include <CSVGLengthValue.h>
 #include <CSVGEventValue.h>
 #include <CSVGTimeValue.h>
 #include <CSVGPreserveAspect.h>
@@ -14,6 +13,7 @@
 #include <CCSS.h>
 #include <CImageLib.h>
 #include <CFont.h>
+#include <CScreenUnits.h>
 #include <CMatrixStack2D.h>
 #include <CBBox2D.h>
 #include <CFillType.h>
@@ -106,8 +106,11 @@ class CSVG {
   const CPoint2D &offset() const { return offset_; }
   void setOffset(const CPoint2D &o) { offset_ = o; }
 
-  double scale() const { return scale_; }
-  void setScale(double s) { scale_ = s; }
+  double xscale() const { return xscale_; }
+  void setXScale(double s) { xscale_ = s; }
+
+  double yscale() const { return yscale_; }
+  void setYScale(double s) { yscale_ = s; }
 
   CSVGRenderer *createRenderer();
 
@@ -252,14 +255,16 @@ class CSVG {
   CSVGGlyph *getCharGlyph(char c) const;
   CSVGGlyph *getUnicodeGlyph(const std::string &unicode) const;
 
-  CImagePtr drawToImage(int w, int h, const CPoint2D &offset=CPoint2D(0,0), double scale=1);
+  CImagePtr drawToImage(int w, int h, const CPoint2D &offset=CPoint2D(0,0),
+                        double xscale=1, double yscale=1);
 
   void draw();
-  void draw(const CMatrixStack2D &matrix, const CPoint2D &offset=CPoint2D(0,0), double scale=1);
+  void draw(const CMatrixStack2D &matrix, const CPoint2D &offset=CPoint2D(0,0),
+            double xscale=1, double yscale=1);
 
   void drawBlock(CSVGBlock *block);
   void drawBlock(CSVGBlock *block, const CMatrixStack2D &matrix,
-                 const CPoint2D &offset=CPoint2D(0,0), double scale=1);
+                 const CPoint2D &offset=CPoint2D(0,0), double xscale=1, double yscale=1);
 
   void resetStroke();
   void updateStroke(const CSVGStroke &stroke);
@@ -339,11 +344,11 @@ class CSVG {
   void printParts(std::ostream &os, const CSVGPathPartList &parts) const;
 
   bool coordOption(const std::string &opt_name, const std::string &opt_value,
-                   const std::string &name, CSVGLengthValue &length);
+                   const std::string &name, CScreenUnits &length);
   bool coordOption(const std::string &opt_name, const std::string &opt_value,
                    const std::string &name, double *real);
   bool lengthOption(const std::string &opt_name, const std::string &opt_value,
-                    const std::string &name, CSVGLengthValue &length);
+                    const std::string &name, CScreenUnits &length);
   bool angleOption(const std::string &opt_name, const std::string &opt_value,
                    const std::string &name, double *real);
   bool realOption(const std::string &opt_name, const std::string &opt_value,
@@ -353,7 +358,7 @@ class CSVG {
   bool stringOption(const std::string &opt_name, const std::string &opt_value,
                     const std::string &name, std::string &str);
   bool percentOption(const std::string &opt_name, const std::string &opt_value,
-                     const std::string &name, CSVGLengthValue &length);
+                     const std::string &name, CScreenUnits &length);
   bool coordUnitsOption(const std::string &opt_name, const std::string &opt_value,
                         const std::string &name, CSVGCoordUnits &units);
   bool bboxOption(const std::string &opt_name, const std::string &opt_value,
@@ -378,7 +383,7 @@ class CSVG {
 
   bool stringToTime(const std::string &str, CSVGTimeValue &time) const;
 
-  bool decodeLengthValue(const std::string &str, CSVGLengthValue &lvalue);
+  bool decodeLengthValue(const std::string &str, CScreenUnits &lvalue);
 
   bool urlOption(const std::string &opt_name, const std::string &opt_value,
                  const std::string &name, CSVGObject **obj);
@@ -395,7 +400,7 @@ class CSVG {
   bool       decodeColorString(const std::string &color_str, CRGBA &rgba);
   CFontStyle decodeFontWeightString(const std::string &weight_str);
   CFontStyle decodeFontStyleString(const std::string &style_str);
-  bool       decodePercentString(const std::string &str, CSVGLengthValue &length);
+  bool       decodePercentString(const std::string &str, CScreenUnits &length);
 
   static bool decodeUnitsString(const std::string &str, CSVGCoordUnits &units);
   static std::string encodeUnitsString(const CSVGCoordUnits &units);
@@ -405,7 +410,7 @@ class CSVG {
 
   bool decodeUrlObject(const std::string &str, CSVGObject **object);
 
-  bool mmToPixel(double mm, double *pixel);
+  //bool mmToPixel(double mm, double *pixel);
 
   void skipCommaSpace(CStrParse &parse);
 
@@ -465,7 +470,8 @@ class CSVG {
   CSVGBuffer*             buffer_        { 0 };
   CMatrixStack2D          viewMatrix_;
   CPoint2D                offset_        { 0, 0 };
-  double                  scale_         { 1 };
+  double                  xscale_        { 1 };
+  double                  yscale_        { 1 };
   CAutoPtr<CSVGBlock>     block_;
   CAutoPtr<CXML>          xml_;
   CXMLTag*                xmlTag_        { 0 };

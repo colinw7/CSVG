@@ -75,11 +75,11 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   if (processCursorOption         (opt_name, opt_value)) return true;
   if (processExternalOption       (opt_name, opt_value)) return true;
 
-  std::string     str;
-  double          real;
-  Reals           reals;
-  CSVGLengthValue length;
-  CMatrixStack2D  transform;
+  std::string    str;
+  double         real;
+  Reals          reals;
+  CScreenUnits   length;
+  CMatrixStack2D transform;
 
   if      (svg_.coordOption (opt_name, opt_value, "x", &real))
     x_ = real;

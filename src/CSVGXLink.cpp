@@ -9,7 +9,8 @@ CSVGXLink(const CSVGXLink &xlink) :
  str_     (xlink.str_),
  object_  (xlink.object_),
  image_   (xlink.image_),
- scale_   (xlink.scale_)
+ xscale_  (xlink.xscale_),
+ yscale_  (xlink.yscale_)
 {
 }
 
@@ -22,7 +23,8 @@ operator=(const CSVGXLink &xlink)
   str_      = xlink.str_;
   object_   = xlink.object_;
   image_    = xlink.image_;
-  scale_    = xlink.scale_;
+  xscale_   = xlink.xscale_;
+  yscale_   = xlink.yscale_;
 
   return *this;
 }
@@ -31,9 +33,10 @@ void
 CSVGXLink::
 resolve() const
 {
-  double scale = parent_->getSVG().scale();
+  double xscale = parent_->getSVG().xscale();
+  double yscale = parent_->getSVG().yscale();
 
-  if (resolved_ && scale_ == scale)
+  if (resolved_ && xscale_ == xscale && yscale_ == yscale)
     return;
 
   CSVGXLink *th = const_cast<CSVGXLink *>(this);
@@ -41,7 +44,8 @@ resolve() const
   if (str_ != "")
     parent_->decodeXLink(str_, &th->object_, &th->image_);
 
-  th->scale_    = scale;
+  th->xscale_   = xscale;
+  th->yscale_   = yscale;
   th->resolved_ = true;
 }
 

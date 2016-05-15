@@ -1,7 +1,7 @@
 #ifndef CSVGFontDef_H
 #define CSVGFontDef_H
 
-#include <CSVGLengthValue.h>
+#include <CScreenUnits.h>
 #include <CFont.h>
 #include <COptVal.h>
 
@@ -25,8 +25,8 @@ class CSVGFontDef {
   void setFamily(const std::string &family);
 
   bool hasSize() const { return size_.isValid(); }
-  CSVGLengthValue getSize() const { return size_.getValue(CSVGLengthValue(8)); }
-  void setSize(const CSVGLengthValue &lvalue);
+  CScreenUnits getSize() const { return size_.getValue(CScreenUnits(12)); }
+  void setSize(const CScreenUnits &lvalue);
 
   bool hasStyle () const { return style_.isValid(); }
   CFontStyles getStyle() const { return style_.getValue(CFONT_STYLE_NORMAL); }
@@ -45,10 +45,10 @@ class CSVGFontDef {
   void print(std::ostream &os) const;
 
  private:
-  CSVG&                     svg_;
-  COptValT<std::string>     family_;
-  COptValT<CSVGLengthValue> size_;
-  COptValT<CFontStyles>     style_;
+  CSVG&                  svg_;
+  COptValT<std::string>  family_;
+  COptValT<CScreenUnits> size_;
+  COptValT<CFontStyles>  style_;
 };
 
 #endif

@@ -71,23 +71,23 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   if (processCursorOption         (opt_name, opt_value)) return true;
   if (processExternalOption       (opt_name, opt_value)) return true;
 
-  std::string     str;
-  double          real;
-  CSVGLengthValue length;
-  CMatrixStack2D  transform;
+  std::string    str;
+  double         real;
+  CScreenUnits   length;
+  CMatrixStack2D transform;
 
   if      (svg_.coordOption (opt_name, opt_value, "x", &real))
     x_ = real;
   else if (svg_.coordOption (opt_name, opt_value, "y", &real))
     y_ = real;
   else if (svg_.lengthOption(opt_name, opt_value, "width", length))
-    width_ = length.value();
+    width_ = length.px().value();
   else if (svg_.lengthOption(opt_name, opt_value, "height", length))
-    height_ = length.value();
+    height_ = length.px().value();
   else if (svg_.lengthOption(opt_name, opt_value, "rx", length))
-    rx_ = length.value();
+    rx_ = length.px().value();
   else if (svg_.lengthOption(opt_name, opt_value, "ry", length))
-    ry_ = length.value();
+    ry_ = length.px().value();
   else if (svg_.transformOption(opt_name, opt_value, "transform", transform))
     setTransform(transform);
   else

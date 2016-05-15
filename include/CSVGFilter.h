@@ -22,21 +22,21 @@ class CSVGFilter : public CSVGObject {
   void setPrimitiveUnits(CSVGCoordUnits units) { primitiveUnits_ = units; }
 
   bool hasX() const { return x_.isValid(); }
-  double getX(double x=0) const { return hasX() ? x_.getValue().value() : x; }
+  double getX(double x=0) const { return hasX() ? x_.getValue().px().value() : x; }
   void setX(double x) { x_ = x; }
 
   bool hasY() const { return y_.isValid(); }
-  double getY(double y=0) const { return y_.isValid() ? y_.getValue().value() : y; }
+  double getY(double y=0) const { return y_.isValid() ? y_.getValue().px().value() : y; }
   void setY(double y) { y_ = y; }
 
   bool hasWidth() const { return width_.isValid(); }
   double getWidth(double w=100) const {
-    return width_.getValue(CSVGLengthValue(w)).calcValue(w); }
+    return width_.getValue(CScreenUnits(w)).px(w).px().value(); }
   void setWidth(double w) { width_ = w; }
 
   bool hasHeight() const { return height_.isValid(); }
   double getHeight(double h=100) const {
-    return height_.getValue(CSVGLengthValue(h)).calcValue(h); }
+    return height_.getValue(CScreenUnits(h)).px(h).px().value(); }
   void setHeight(double h) { height_ = h; }
 
   const CSVGXLink &xlink() const { return xlink_.getValue(); }
@@ -60,15 +60,15 @@ class CSVGFilter : public CSVGObject {
   CSVGFilter &operator=(const CSVGFilter &rhs);
 
  private:
-  CSVGObject*               object_ { 0 };
-  COptValT<CSVGCoordUnits>  units_;
-  COptValT<CSVGCoordUnits>  primitiveUnits_;
-  COptValT<CSVGLengthValue> x_;
-  COptValT<CSVGLengthValue> y_;
-  COptValT<CSVGLengthValue> width_;
-  COptValT<CSVGLengthValue> height_;
-  COptValT<std::string>     filterRes_;
-  COptValT<CSVGXLink>       xlink_;
+  CSVGObject*              object_ { 0 };
+  COptValT<CSVGCoordUnits> units_;
+  COptValT<CSVGCoordUnits> primitiveUnits_;
+  COptValT<CScreenUnits>   x_;
+  COptValT<CScreenUnits>   y_;
+  COptValT<CScreenUnits>   width_;
+  COptValT<CScreenUnits>   height_;
+  COptValT<std::string>    filterRes_;
+  COptValT<CSVGXLink>      xlink_;
 };
 
 #endif

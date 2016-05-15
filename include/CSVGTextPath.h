@@ -15,8 +15,8 @@ class CSVGTextPath : public CSVGObject {
 
   CSVGTextPath *dup() const override;
 
-  CSVGLengthValue getStartOffset() const { return startOffset_.getValue(CSVGLengthValue(0)); }
-  void setStartOffset(const CSVGLengthValue &l) { startOffset_ = l; }
+  CScreenUnits getStartOffset() const { return startOffset_.getValue(CScreenUnits(0)); }
+  void setStartOffset(const CScreenUnits &l) { startOffset_ = l; }
 
   const CSVGXLink &xlink() const { return xlink_.getValue(); }
 
@@ -35,8 +35,8 @@ class CSVGTextPath : public CSVGObject {
   CSVGText *getParentText() const;
 
  private:
-  COptValT<CSVGLengthValue> startOffset_;
-  COptValT<CSVGXLink>       xlink_;
+  COptValT<CScreenUnits> startOffset_;
+  COptValT<CSVGXLink>    xlink_;
 };
 
 #endif

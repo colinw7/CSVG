@@ -55,7 +55,11 @@ class CSVGBlock : public CSVGObject {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
+  void drawInit() override;
+
   void draw() override;
+
+  void drawTerm() override;
 
   bool getBBox(CBBox2D &bbox) const override;
 
@@ -66,9 +70,12 @@ class CSVGBlock : public CSVGObject {
  private:
   COptValT<double>             x_;
   COptValT<double>             y_;
-  COptValT<CSVGLengthValue>    width_;
-  COptValT<CSVGLengthValue>    height_;
+  COptValT<CScreenUnits>       width_;
+  COptValT<CScreenUnits>       height_;
   COptValT<CSVGPreserveAspect> preserveAspect_;
+  mutable CSVGBuffer*          oldBuffer_ { 0 };
+  mutable double               xscale_ { 1 };
+  mutable double               yscale_ { 1 };
 };
 
 #endif

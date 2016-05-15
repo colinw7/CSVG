@@ -21,11 +21,11 @@ class CSVGText : public CSVGObject {
   double getY() const { return y_.getValue(0); }
   void setY(double y) { y_ = y; }
 
-  CSVGLengthValue getDX() const { return dx_.getValue(CSVGLengthValue(0)); }
-  void setDX(const CSVGLengthValue x) { dx_ = x; }
+  CScreenUnits getDX() const { return dx_.getValue(CScreenUnits(0)); }
+  void setDX(const CScreenUnits x) { dx_ = x; }
 
-  CSVGLengthValue getDY() const { return dy_.getValue(CSVGLengthValue(0)); }
-  void setDY(const CSVGLengthValue y) { dy_ = y; }
+  CScreenUnits getDY() const { return dy_.getValue(CScreenUnits(0)); }
+  void setDY(const CScreenUnits y) { dy_ = y; }
 
   Reals getRotate() const { return rotate_.getValue(Reals()); }
   void setRotate(const Reals &r) { rotate_ = r; }
@@ -57,14 +57,14 @@ class CSVGText : public CSVGObject {
   friend std::ostream &operator<<(std::ostream &os, const CSVGText &text);
 
  private:
-  COptValT<double>          x_;
-  COptValT<double>          y_;
-  COptValT<CSVGLengthValue> dx_;
-  COptValT<CSVGLengthValue> dy_;
-  COptValT<Reals>           rotate_;
-  COptValT<std::string>     textLength_;
-  COptValT<std::string>     lengthAdjust_;
-  CPoint2D                  lastPos_;
+  COptValT<double>       x_;
+  COptValT<double>       y_;
+  COptValT<CScreenUnits> dx_;
+  COptValT<CScreenUnits> dy_;
+  COptValT<Reals>        rotate_;
+  COptValT<std::string>  textLength_;
+  COptValT<std::string>  lengthAdjust_;
+  CPoint2D               lastPos_;
 };
 
 #endif

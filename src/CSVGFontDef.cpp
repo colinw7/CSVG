@@ -46,7 +46,7 @@ setFamily(const std::string &family)
 
 void
 CSVGFontDef::
-setSize(const CSVGLengthValue &size)
+setSize(const CScreenUnits &size)
 {
   size_ = size;
 }

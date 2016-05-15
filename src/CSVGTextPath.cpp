@@ -40,8 +40,8 @@ bool
 CSVGTextPath::
 processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  CSVGLengthValue length;
-  std::string     str;
+  std::string  str;
+  CScreenUnits length;
 
   if      (svg_.percentOption(opt_name, opt_value, "startOffset", length))
     startOffset_ = length;
@@ -92,7 +92,7 @@ draw()
   double l   = parts.getLength();
   int    len = text.length();
 
-  double s1   = 0, s2   = getStartOffset().value();
+  double s1   = 0, s2   = getStartOffset().px().value();
   int    pos1 = 0, pos2 = 0;
 
   //---

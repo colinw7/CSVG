@@ -19,10 +19,10 @@ class CSVGMask : public CSVGObject {
   double getY() const { return y_.getValue(0); }
   void setY(double y) { y_ = y; }
 
-  double getWidth() const { return width_.isValid() ? width_ .getValue().value() : 1; }
+  double getWidth() const { return width_.isValid() ? width_ .getValue().px().value() : 1; }
   void setWidth(double w) { width_ = w; }
 
-  double getHeight() const { return height_.isValid() ? height_.getValue().value() : 1; }
+  double getHeight() const { return height_.isValid() ? height_.getValue().px().value() : 1; }
   void setHeight(double h) { height_ = h; }
 
   bool getUnitsValid() const { return units_.isValid(); }
@@ -43,12 +43,12 @@ class CSVGMask : public CSVGObject {
   CSVGMask &operator=(const CSVGMask &rhs);
 
  private:
-  CSVGObject *              object_ { 0 };
-  COptValT<double>          x_;
-  COptValT<double>          y_;
-  COptValT<CSVGLengthValue> width_;
-  COptValT<CSVGLengthValue> height_;
-  COptValT<CSVGCoordUnits>  units_;
+  CSVGObject *             object_ { 0 };
+  COptValT<double>         x_;
+  COptValT<double>         y_;
+  COptValT<CScreenUnits>   width_;
+  COptValT<CScreenUnits>   height_;
+  COptValT<CSVGCoordUnits> units_;
 };
 
 #endif

@@ -69,7 +69,8 @@ class CSVGXLink {
   std::string  str_;
   CSVGObject  *object_   { 0 };
   CImagePtr    image_;
-  double       scale_    { 0 };
+  double       xscale_   { 0 };
+  double       yscale_   { 0 };
 };
 
 #endif

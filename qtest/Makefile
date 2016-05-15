@@ -3090,8 +3090,7 @@ compiler_moc_header_clean:
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
 		../include/CSVGFeDiffuseLighting.h \
-		../../CMath/include/CPoint3D.h \
-		../../CMath/include/CIPoint3D.h \
+		../include/CSVGFeLighting.h \
 		CQSVGFeDiffuseLighting.h
 	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGFeDiffuseLighting.h -o .moc/moc_CQSVGFeDiffuseLighting.cpp
 
@@ -5393,8 +5392,7 @@ compiler_moc_header_clean:
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
 		../include/CSVGFeSpecularLighting.h \
-		../../CMath/include/CPoint3D.h \
-		../../CMath/include/CIPoint3D.h \
+		../include/CSVGFeLighting.h \
 		CQSVGFeSpecularLighting.h
 	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGFeSpecularLighting.h -o .moc/moc_CQSVGFeSpecularLighting.cpp
 
@@ -11336,8 +11334,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFeComposite.h \
 		CQSVGFeDiffuseLighting.h \
 		../include/CSVGFeDiffuseLighting.h \
-		../../CMath/include/CPoint3D.h \
-		../../CMath/include/CIPoint3D.h \
+		../include/CSVGFeLighting.h \
 		CQSVGFeDistantLight.h \
 		../include/CSVGFeDistantLight.h \
 		CQSVGFeDisplacementMap.h \
@@ -11358,6 +11355,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFeOffset.h \
 		CQSVGFePointLight.h \
 		../include/CSVGFePointLight.h \
+		../../CMath/include/CPoint3D.h \
+		../../CMath/include/CIPoint3D.h \
 		CQSVGFeSpecularLighting.h \
 		../include/CSVGFeSpecularLighting.h \
 		CQSVGFeSpotLight.h \
@@ -12035,6 +12034,9 @@ compiler_clean: compiler_moc_header_clean
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h \
 		../include/CSVGBuffer.h \
+		../include/CSVGLightData.h \
+		../../CMath/include/CPoint3D.h \
+		../../CMath/include/CIPoint3D.h \
 		CQSVGUtil.h \
 		../../CQUtil/include/CQImage.h \
 		/usr/include/qt5/QtGui/QImage \
@@ -14367,8 +14369,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
 		../include/CSVGFeDiffuseLighting.h \
-		../../CMath/include/CPoint3D.h \
-		../../CMath/include/CIPoint3D.h \
+		../include/CSVGFeLighting.h \
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
@@ -16736,8 +16737,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
 		../include/CSVGFeSpecularLighting.h \
-		../../CMath/include/CPoint3D.h \
-		../../CMath/include/CIPoint3D.h \
+		../include/CSVGFeLighting.h \
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
@@ -22736,8 +22736,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFeComposite.h \
 		CQSVGFeDiffuseLighting.h \
 		../include/CSVGFeDiffuseLighting.h \
-		../../CMath/include/CPoint3D.h \
-		../../CMath/include/CIPoint3D.h \
+		../include/CSVGFeLighting.h \
 		CQSVGFeDisplacementMap.h \
 		../include/CSVGFeDisplacementMap.h \
 		CQSVGFeDistantLight.h \
@@ -22758,6 +22757,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFeOffset.h \
 		CQSVGFePointLight.h \
 		../include/CSVGFePointLight.h \
+		../../CMath/include/CPoint3D.h \
+		../../CMath/include/CIPoint3D.h \
 		CQSVGFeSpecularLighting.h \
 		../include/CSVGFeSpecularLighting.h \
 		CQSVGFeSpotLight.h \
@@ -22827,6 +22828,10 @@ compiler_clean: compiler_moc_header_clean
 		/usr/include/qt5/QtWidgets/QTreeWidgetItem \
 		/usr/include/qt5/QtCore/QPointer \
 		/usr/include/qt5/QtCore/qpointer.h \
+		../../CQUtil/include/CQPixmapCache.h \
+		/usr/include/qt5/QtCore/QString \
+		/usr/include/qt5/QtGui/QPixmap \
+		/usr/include/qt5/QtGui/QIcon \
 		../../CQUtil/include/CQApp.h \
 		/usr/include/qt5/QtWidgets/QApplication \
 		/usr/include/qt5/QtWidgets/qapplication.h \
@@ -22857,7 +22862,13 @@ compiler_clean: compiler_moc_header_clean
 		/usr/include/qt5/QtWidgets/qmenu.h \
 		/usr/include/qt5/QtWidgets/qaction.h \
 		/usr/include/qt5/QtWidgets/qactiongroup.h \
-		/usr/include/qt5/QtWidgets/QMenu
+		/usr/include/qt5/QtWidgets/QMenu \
+		/usr/include/qt5/QtWidgets/QToolBar \
+		/usr/include/qt5/QtWidgets/qtoolbar.h \
+		svg/next_svg.h \
+		svg/prev_svg.h \
+		svg/properties_svg.h \
+		svg/buffers_svg.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGWindow.o CQSVGWindow.cpp
 
 ../obj/CQSVGRenderer.o: CQSVGRenderer.cpp CQSVGRenderer.h \

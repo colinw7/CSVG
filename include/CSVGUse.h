@@ -26,10 +26,10 @@ class CSVGUse : public CSVGObject {
   double getY() const { return y_.getValue(0); }
   void setY(double y) { y_ = y; }
 
-  double getWidth() const { return width_.isValid() ? width_ .getValue().value() : 1; }
+  double getWidth() const { return width_.isValid() ? width_ .getValue().px().value() : 1; }
   void setWidth(double w) { width_ = w; }
 
-  double getHeight() const { return height_.isValid() ? height_.getValue().value() : 1; }
+  double getHeight() const { return height_.isValid() ? height_.getValue().px().value() : 1; }
   void setHeight(double h) { height_ = h; }
 
   bool processOption(const std::string &name, const std::string &value) override;
@@ -47,11 +47,11 @@ class CSVGUse : public CSVGObject {
   friend std::ostream &operator<<(std::ostream &os, const CSVGUse &use);
 
  private:
-  COptValT<CSVGXLink>       xlink_;
-  COptValT<double>          x_;
-  COptValT<double>          y_;
-  COptValT<CSVGLengthValue> width_;
-  COptValT<CSVGLengthValue> height_;
+  COptValT<CSVGXLink>    xlink_;
+  COptValT<double>       x_;
+  COptValT<double>       y_;
+  COptValT<CScreenUnits> width_;
+  COptValT<CScreenUnits> height_;
 };
 
 #endif

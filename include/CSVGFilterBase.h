@@ -20,19 +20,19 @@ class CSVGFilterBase : public CSVGObject {
   void setPrimitiveUnits(CSVGCoordUnits units) { primitiveUnits_ = units; }
 
   bool hasX() const { return x_.isValid(); }
-  double getX() const { return x_.isValid() ? x_.getValue().value() : 0; }
+  double getX() const { return x_.isValid() ? x_.getValue().px().value() : 0; }
   void setX(double x) { x_ = x; }
 
   bool hasY() const { return y_.isValid(); }
-  double getY() const { return y_.isValid() ? y_.getValue().value() : 0; }
+  double getY() const { return y_.isValid() ? y_.getValue().px().value() : 0; }
   void setY(double y) { y_ = y; }
 
   bool hasWidth() const { return width_.isValid(); }
-  double getWidth() const { return width_.getValue(CSVGLengthValue(100)).value(); }
+  double getWidth() const { return width_.getValue(CScreenUnits(100)).px().value(); }
   void setWidth(double w) { width_ = w; }
 
   bool hasHeight() const { return height_.isValid(); }
-  double getHeight() const { return height_.getValue(CSVGLengthValue(100)).value(); }
+  double getHeight() const { return height_.getValue(CScreenUnits(100)).px().value(); }
   void setHeight(double h) { height_ = h; }
 
   bool hasLink() const { return xlink_.isValid(); }
@@ -57,15 +57,15 @@ class CSVGFilterBase : public CSVGObject {
   void printValues(std::ostream &os) const;
 
  protected:
-  CSVGObject*               object_ { 0 };
-  COptValT<CSVGCoordUnits>  units_;
-  COptValT<CSVGCoordUnits>  primitiveUnits_;
-  COptValT<CSVGLengthValue> x_;
-  COptValT<CSVGLengthValue> y_;
-  COptValT<CSVGLengthValue> width_;
-  COptValT<CSVGLengthValue> height_;
-  COptValT<std::string>     filterRes_;
-  COptValT<CSVGXLink>       xlink_;
+  CSVGObject*              object_ { 0 };
+  COptValT<CSVGCoordUnits> units_;
+  COptValT<CSVGCoordUnits> primitiveUnits_;
+  COptValT<CScreenUnits>   x_;
+  COptValT<CScreenUnits>   y_;
+  COptValT<CScreenUnits>   width_;
+  COptValT<CScreenUnits>   height_;
+  COptValT<std::string>    filterRes_;
+  COptValT<CSVGXLink>      xlink_;
 };
 
 #endif

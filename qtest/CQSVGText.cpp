@@ -11,7 +11,7 @@ double
 CQSVGText::
 getDX() const
 {
-  return CSVGText::getDX().value();
+  return CSVGText::getDX().px().value();
 }
 
 void
@@ -25,7 +25,7 @@ double
 CQSVGText::
 getDY() const
 {
-  return CSVGText::getDY().value();
+  return CSVGText::getDY().px().value();
 }
 
 void

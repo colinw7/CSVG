@@ -64,19 +64,19 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   if (processCursorOption         (opt_name, opt_value)) return true;
   if (processExternalOption       (opt_name, opt_value)) return true;
 
-  double          real;
-  std::string     str;
-  CSVGLengthValue length;
-  CMatrixStack2D  transform;
+  double         real;
+  std::string    str;
+  CScreenUnits   length;
+  CMatrixStack2D transform;
 
   if      (svg_.coordOption    (opt_name, opt_value, "cx", &real))
     cx_ = real;
   else if (svg_.coordOption    (opt_name, opt_value, "cy", &real))
     cy_ = real;
   else if (svg_.lengthOption   (opt_name, opt_value, "rx" , length))
-    rx_ = length.value();
+    rx_ = length.px().value();
   else if (svg_.lengthOption   (opt_name, opt_value, "ry" , length))
-    ry_ = length.value();
+    ry_ = length.px().value();
   else if (svg_.transformOption(opt_name, opt_value, "transform", transform))
     setTransform(transform);
   else

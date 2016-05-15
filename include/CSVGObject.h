@@ -3,7 +3,6 @@
 
 #include <CSVGTypes.h>
 #include <CSVGStroke.h>
-#include <CSVGLengthValue.h>
 #include <CSVGTimeValue.h>
 #include <CSVGEventValue.h>
 #include <CSVGXLink.h>
@@ -12,6 +11,8 @@
 #include <CSVGFontDef.h>
 #include <CSVGPathPart.h>
 #include <CSVGObjectMarker.h>
+
+#include <CScreenUnits.h>
 #include <CBBox2D.h>
 #include <CMatrixStack2D.h>
 #include <COptVal.h>
@@ -358,14 +359,14 @@ class CSVGObject {
 
   void setFontFamily(const std::string &family);
   void setFontSize  (double size);
-  void setFontSize  (const CSVGLengthValue &lvalue);
+  void setFontSize  (const CScreenUnits &lvalue);
   void setFontWeight(const std::string &weight);
   void setFontStyle (const std::string &style );
   void setFontStyle (CFontStyle s);
 
-  std::string     getFlatFontFamily() const;
-  CFontStyles     getFlatFontStyle() const;
-  CSVGLengthValue getFlatFontSize() const;
+  std::string  getFlatFontFamily() const;
+  CFontStyles  getFlatFontStyle() const;
+  CScreenUnits getFlatFontSize() const;
 
   // visible
   std::string getVisibility() const { return visibility_.getValue(""); }
@@ -515,10 +516,10 @@ class CSVGObject {
   void printNameParts(std::ostream &os, const std::string &name,
                       const CSVGPathPartList &parts) const;
 
-  static void printLength(std::ostream &os, const CSVGLengthValue &l);
+  static void printLength(std::ostream &os, const CScreenUnits &l);
 
   void printNameLength(std::ostream &os, const std::string &name,
-                       const COptValT<CSVGLengthValue> &length) const {
+                       const COptValT<CScreenUnits> &length) const {
     if (length.isValid()) {
       os << " " << name << "=\""; printLength(os, length.getValue()); os << "\"";
     }
@@ -584,8 +585,8 @@ class CSVGObject {
   CSVGFontDef                  fontDef_;
   COptValT<CHAlignType>        textAnchor_;
   COptValT<CSVGTextDecoration> textDecoration_;
-  COptValT<CSVGLengthValue>    letterSpacing_;
-  COptValT<CSVGLengthValue>    wordSpacing_;
+  COptValT<CScreenUnits>       letterSpacing_;
+  COptValT<CScreenUnits>       wordSpacing_;
   NameValues                   nameValues_;
   CMatrixStack2D               transform_;
   ObjectList                   objects_;

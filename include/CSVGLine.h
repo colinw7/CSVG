@@ -12,10 +12,10 @@ class CSVGLine : public CSVGObject {
 
   CSVGLine *dup() const override;
 
-  double getX1() const { return (x1_.isValid() ? x1_.getValue().value() : 0); }
-  double getY1() const { return (y2_.isValid() ? y1_.getValue().value() : 0); }
-  double getX2() const { return (x2_.isValid() ? x2_.getValue().value() : 0); }
-  double getY2() const { return (y2_.isValid() ? y2_.getValue().value() : 0); }
+  double getX1() const { return (x1_.isValid() ? x1_.getValue().px().value() : 0); }
+  double getY1() const { return (y2_.isValid() ? y1_.getValue().px().value() : 0); }
+  double getX2() const { return (x2_.isValid() ? x2_.getValue().px().value() : 0); }
+  double getY2() const { return (y2_.isValid() ? y2_.getValue().px().value() : 0); }
 
   void setX1(double x1) { x1_ = x1; }
   void setY1(double y1) { y1_ = y1; }
@@ -44,10 +44,10 @@ class CSVGLine : public CSVGObject {
   friend std::ostream &operator<<(std::ostream &os, const CSVGLine &line);
 
  private:
-  COptValT<CSVGLengthValue> x1_;
-  COptValT<CSVGLengthValue> y1_;
-  COptValT<CSVGLengthValue> x2_;
-  COptValT<CSVGLengthValue> y2_;
+  COptValT<CScreenUnits> x1_;
+  COptValT<CScreenUnits> y1_;
+  COptValT<CScreenUnits> x2_;
+  COptValT<CScreenUnits> y2_;
 };
 
 #endif

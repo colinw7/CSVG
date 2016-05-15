@@ -218,7 +218,7 @@ class CSVGBuffer {
 
   void initClip();
 
-  bool mmToPixel(double mm, double *pixel);
+  //bool mmToPixel(double mm, double *pixel);
 
   void lengthToPixel(double xi, double yi, double *xo, double *yo);
   void windowToPixel(double xi, double yi, double *xo, double *yo);

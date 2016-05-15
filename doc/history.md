@@ -51,3 +51,7 @@
  + Improve no color default for fill/stroke
  + Move more CImagePtr calls to CSVGBuffer
  + Fix filter print
+
+### 5/15/2016
+ + Use new CScreenUnits class for units conversion
+ + improve block scale handling

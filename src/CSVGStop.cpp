@@ -39,13 +39,13 @@ bool
 CSVGStop::
 processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  std::string     str;
-  double          real;
-  CSVGLengthValue length;
+  std::string  str;
+  double       real;
+  CScreenUnits length;
 
   if      (svg_.percentOption(opt_name, opt_value, "offset", length)) {
-    if (length.value() < 0.0 || length.value() > 1)
-      length = CSVGLengthValue(std::min(std::max(length.value(), 0.0), 1.0));
+    if (length.px().value() < 0.0 || length.px().value() > 1)
+      length = CScreenUnits(std::min(std::max(length.px().value(), 0.0), 1.0));
 
     offset_ = length;
   }

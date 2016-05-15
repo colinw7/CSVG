@@ -19,16 +19,16 @@ class CSVGRadialGradient : public CSVGObject {
 
   CSVGRadialGradient *dup() const override;
 
-  double getCenterX() const { return cx_.isValid() ? cx_.getValue().value() : 0.5; }
+  double getCenterX() const { return cx_.isValid() ? cx_.getValue().px().value() : 0.5; }
   void setCenterX(double x) { cx_ = x; }
 
-  double getCenterY() const { return cy_.isValid() ? cy_.getValue().value() : 0.5; }
+  double getCenterY() const { return cy_.isValid() ? cy_.getValue().px().value() : 0.5; }
   void setCenterY(double y) { cy_ = y; }
 
   CPoint2D getCenter() { return CPoint2D(getCenterX(), getCenterY()); }
   void setCenter(const CPoint2D &center) { setCenterX(center.x); setCenterY(center.y); }
 
-  double getRadius() const { return radius_.isValid() ? radius_.getValue().value() : 0.5; }
+  double getRadius() const { return radius_.isValid() ? radius_.getValue().px().value() : 0.5; }
   void setRadius(double r) { radius_ = r; }
 
   double getFocusX() const { return focusX_.isValid() ? focusX_.getValue() : getCenterX(); }
@@ -76,9 +76,9 @@ class CSVGRadialGradient : public CSVGObject {
   friend std::ostream &operator<<(std::ostream &os, const CSVGRadialGradient &gradient);
 
  private:
-  COptValT<CSVGLengthValue>     cx_;
-  COptValT<CSVGLengthValue>     cy_;
-  COptValT<CSVGLengthValue>     radius_;
+  COptValT<CScreenUnits>        cx_;
+  COptValT<CScreenUnits>        cy_;
+  COptValT<CScreenUnits>        radius_;
   COptValT<double>              focusX_;
   COptValT<double>              focusY_;
   StopList                      stops_;

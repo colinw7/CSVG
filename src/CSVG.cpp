@@ -226,7 +226,8 @@ clear()
   buffer_     = 0;
   viewMatrix_ = CMatrixStack2D();
   offset_     = CPoint2D(0, 0);
-  scale_      = 1;
+  xscale_     = 1;
+  yscale_     = 1;
   block_      = 0;
   xmlTag_     = 0;
   background_ = CRGBA(1,1,1);
@@ -1010,23 +1011,23 @@ getUnicodeGlyph(const std::string &unicode) const
 
 CImagePtr
 CSVG::
-drawToImage(int w, int h, const CPoint2D &offset, double scale)
+drawToImage(int w, int h, const CPoint2D &offset, double xscale, double yscale)
 {
   CAutoPtr<CSVGRenderer> renderer;
 
   renderer = createRenderer();
 
   if (renderer) {
-    renderer->setSize(scale*w, scale*h);
+    renderer->setSize(xscale*w, yscale*h);
 
     setRenderer(renderer);
 
     CMatrixStack2D matrix;
 
     matrix.translate(offset.x, offset.y);
-    matrix.scale(scale, scale);
+    matrix.scale(xscale, yscale);
 
-    draw(matrix, offset, scale);
+    draw(matrix, offset, xscale, yscale);
 
     return renderer->getImage();
   }
@@ -1045,9 +1046,9 @@ draw()
 
 void
 CSVG::
-draw(const CMatrixStack2D &matrix, const CPoint2D &offset, double scale)
+draw(const CMatrixStack2D &matrix, const CPoint2D &offset, double xscale, double yscale)
 {
-  drawBlock(getBlock(), matrix, offset, scale);
+  drawBlock(getBlock(), matrix, offset, xscale, yscale);
 }
 
 void
@@ -1056,19 +1057,21 @@ drawBlock(CSVGBlock *block)
 {
   CMatrixStack2D matrix;
 
-  drawBlock(block, matrix, CPoint2D(0, 0), 1);
+  drawBlock(block, matrix, CPoint2D(0, 0), 1, 1);
 }
 
 void
 CSVG::
-drawBlock(CSVGBlock *block, const CMatrixStack2D &matrix, const CPoint2D &offset, double scale)
+drawBlock(CSVGBlock *block, const CMatrixStack2D &matrix, const CPoint2D &offset,
+          double xscale, double yscale)
 {
   if (! renderer_)
     return;
 
   viewMatrix_ = matrix;
   offset_     = offset;
-  scale_      = scale;
+  xscale_     = xscale;
+  yscale_     = yscale;
 
   //------
 
@@ -1164,7 +1167,7 @@ void
 CSVG::
 beginDrawBuffer(CSVGBuffer *buffer)
 {
-  beginDrawBuffer(buffer, offset(), scale(), scale());
+  beginDrawBuffer(buffer, offset(), xscale(), yscale());
 }
 
 void
@@ -1184,7 +1187,7 @@ void
 CSVG::
 beginDrawBuffer(CSVGBuffer *buffer, const CBBox2D &bbox)
 {
-  beginDrawBuffer(buffer, bbox, offset(), scale(), scale());
+  beginDrawBuffer(buffer, bbox, offset(), xscale(), yscale());
 }
 
 void
@@ -2694,7 +2697,7 @@ printParts(std::ostream &os, const CSVGPathPartList &parts) const
 bool
 CSVG::
 coordOption(const std::string &opt_name, const std::string &opt_value,
-            const std::string &name, CSVGLengthValue &length)
+            const std::string &name, CScreenUnits &length)
 {
   if (opt_name != name)
     return false;
@@ -2711,14 +2714,14 @@ coordOption(const std::string &opt_name, const std::string &opt_value,
       flag = false;
     }
 
-    length = CSVGLengthValue(CSVGLengthType::PERCENT, value/100.0);
+    length = CScreenUnits(CScreenUnits::Type::PERCENT, value/100.0);
   }
   else {
-    CSVGLengthValue length1;
+    CScreenUnits length1;
 
     if (! decodeLengthValue(opt_value, length1)) {
       CSVGLog() << "Illegal value for " << name;
-      length = CSVGLengthValue();
+      length = CScreenUnits();
       flag = false;
     }
 
@@ -2749,7 +2752,7 @@ coordOption(const std::string &opt_name, const std::string &opt_value,
     *value /= 100;
   }
   else {
-    CSVGLengthValue lvalue;
+    CScreenUnits lvalue;
 
     if (! decodeLengthValue(opt_value, lvalue)) {
       CSVGLog() << "Illegal value for " << name;
@@ -2757,7 +2760,7 @@ coordOption(const std::string &opt_name, const std::string &opt_value,
       flag = false;
     }
 
-    *value = lvalue.value();
+    *value = lvalue.px().value();
   }
 
   return flag;
@@ -2766,12 +2769,12 @@ coordOption(const std::string &opt_name, const std::string &opt_value,
 bool
 CSVG::
 lengthOption(const std::string &opt_name, const std::string &opt_value,
-             const std::string &name, CSVGLengthValue &length)
+             const std::string &name, CScreenUnits &length)
 {
   if (opt_name != name)
     return false;
 
-  CSVGLengthValue length1;
+  CScreenUnits length1;
 
   if (! decodeLengthValue(opt_value, length1)) {
     CSVGLog() << "Illegal value for " << name;
@@ -2785,7 +2788,7 @@ lengthOption(const std::string &opt_name, const std::string &opt_value,
 
 bool
 CSVG::
-decodeLengthValue(const std::string &str, CSVGLengthValue &lvalue)
+decodeLengthValue(const std::string &str, CScreenUnits &lvalue)
 {
   static CRegExp em_pattern("\\(.*\\)em");
   static CRegExp ex_pattern("\\(.*\\)ex");
@@ -2805,7 +2808,7 @@ decodeLengthValue(const std::string &str, CSVGLengthValue &lvalue)
     if (! CStrUtil::toReal(match_strs[0], &value))
       return false;
 
-    lvalue = CSVGLengthValue(CSVGLengthType::EM, value);
+    lvalue = CScreenUnits(CScreenUnits::Type::EM, value);
 
     CSVGLog() << "em conversion not handled";
   }
@@ -2813,7 +2816,7 @@ decodeLengthValue(const std::string &str, CSVGLengthValue &lvalue)
     if (! CStrUtil::toReal(match_strs[0], &value))
       return false;
 
-    lvalue = CSVGLengthValue(CSVGLengthType::EX, value);
+    lvalue = CScreenUnits(CScreenUnits::Type::EX, value);
 
     CSVGLog() << "ex conversion not handled";
   }
@@ -2821,69 +2824,64 @@ decodeLengthValue(const std::string &str, CSVGLengthValue &lvalue)
     if (! CStrUtil::toReal(match_strs[0], &value))
       return false;
 
-    double ivalue = value;
+    //double ivalue = value;
+    //mmToPixel((25.4*value)/72.0, &value);
 
-    mmToPixel((25.4*value)/72.0, &value);
-
-    lvalue = CSVGLengthValue(CSVGLengthType::PT, ivalue, value);
+    lvalue = CScreenUnits(CScreenUnits::Type::PT, value);
   }
   else if (CRegExpUtil::parse(str, pc_pattern, match_strs)) {
     if (! CStrUtil::toReal(match_strs[0], &value))
       return false;
 
-    double ivalue = value;
+    //double ivalue = value;
+    //mmToPixel((25.4*value)/6.0, &value);
 
-    mmToPixel((25.4*value)/6.0, &value);
-
-    lvalue = CSVGLengthValue(CSVGLengthType::PC, ivalue, value);
+    lvalue = CScreenUnits(CScreenUnits::Type::PC, value);
   }
   else if (CRegExpUtil::parse(str, cm_pattern, match_strs)) {
     if (! CStrUtil::toReal(match_strs[0], &value))
       return false;
 
-    double ivalue = value;
+    //double ivalue = value;
+    //mmToPixel(10*value, &value);
 
-    mmToPixel(10*value, &value);
-
-    lvalue = CSVGLengthValue(CSVGLengthType::CM, ivalue, value);
+    lvalue = CScreenUnits(CScreenUnits::Type::CM, value);
   }
   else if (CRegExpUtil::parse(str, mm_pattern, match_strs)) {
     if (! CStrUtil::toReal(match_strs[0], &value))
       return false;
 
-    double ivalue = value;
+    //double ivalue = value;
+    //mmToPixel(value, &value);
 
-    mmToPixel(value, &value);
-
-    lvalue = CSVGLengthValue(CSVGLengthType::MM, ivalue, value);
+    lvalue = CScreenUnits(CScreenUnits::Type::MM, value);
   }
   else if (CRegExpUtil::parse(str, in_pattern, match_strs)) {
     if (! CStrUtil::toReal(match_strs[0], &value))
       return false;
 
-    double ivalue = value;
+    //double ivalue = value;
+    //mmToPixel(25.4*value, &value);
 
-    mmToPixel(25.4*value, &value);
-
-    lvalue = CSVGLengthValue(CSVGLengthType::IN, ivalue, value);
+    lvalue = CScreenUnits(CScreenUnits::Type::IN, value);
   }
   else if (CRegExpUtil::parse(str, px_pattern, match_strs)) {
     if (! CStrUtil::toReal(match_strs[0], &value))
       return false;
 
-    lvalue = CSVGLengthValue(CSVGLengthType::PX, value);
+    lvalue = CScreenUnits(CScreenUnits::Type::PX, value);
   }
   else if (CRegExpUtil::parse(str, ph_pattern, match_strs)) {
     if (! CStrUtil::toReal(match_strs[0], &value))
       return false;
 
-    lvalue = CSVGLengthValue(CSVGLengthType::PERCENT, value);
+    lvalue = CScreenUnits(CScreenUnits::Type::PERCENT, value);
   }
   else {
     if (! CStrUtil::toReal(str, &value))
       return false;
 
-    lvalue = CSVGLengthValue(CSVGLengthType::NONE, value);
+    lvalue = CScreenUnits(CScreenUnits::Type::PX, value);
   }
 
   return true;
@@ -2957,7 +2955,7 @@ stringOption(const std::string &opt_name, const std::string &opt_value,
 bool
 CSVG::
 percentOption(const std::string &opt_name, const std::string &opt_value,
-              const std::string &name, CSVGLengthValue &length)
+              const std::string &name, CScreenUnits &length)
 {
   std::string str;
 
@@ -3610,7 +3608,10 @@ decodeWidthString(const std::string &width_str)
       width = 1.0;
     }
 
-    mmToPixel(25.4*width/72.0, &width);
+    CScreenUnits units(width, CScreenUnits::Type::PT);
+
+    width = units.px().value();
+    //mmToPixel(25.4*width/72.0, &width);
   }
   else if (CRegExpUtil::parse(width_str, "\\(.*\\)px", match_strs)) {
     if (! CStrUtil::toReal(match_strs[0], &width)) {
@@ -3784,7 +3785,7 @@ decodeFontStyleString(const std::string &font_style_str)
 
 bool
 CSVG::
-decodePercentString(const std::string &str, CSVGLengthValue &length)
+decodePercentString(const std::string &str, CScreenUnits &length)
 {
   bool flag = true;
 
@@ -3798,7 +3799,7 @@ decodePercentString(const std::string &str, CSVGLengthValue &length)
       flag = false;
     }
 
-    length = CSVGLengthValue(CSVGLengthType::PERCENT, value/100.0);
+    length = CScreenUnits(CScreenUnits::Type::PERCENT, value/100.0);
   }
   else {
     double value;
@@ -3808,7 +3809,7 @@ decodePercentString(const std::string &str, CSVGLengthValue &length)
       flag = false;
     }
 
-    length = CSVGLengthValue(value);
+    length = CScreenUnits(value);
   }
 
   return flag;
@@ -3918,6 +3919,7 @@ decodeUrlObject(const std::string &str, CSVGObject **object)
   return (*object != 0);
 }
 
+#if 0
 bool
 CSVG::
 mmToPixel(double mm, double *pixel)
@@ -3931,6 +3933,7 @@ mmToPixel(double mm, double *pixel)
     return true;
   }
 }
+#endif
 
 void
 CSVG::

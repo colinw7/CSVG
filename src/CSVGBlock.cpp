@@ -1,5 +1,6 @@
 #include <CSVGBlock.h>
 #include <CSVG.h>
+#include <CSVGBuffer.h>
 #include <CSVGLog.h>
 #include <CRegExp.h>
 
@@ -55,7 +56,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   std::string        str;
   double             real;
   CBBox2D            bbox;
-  CSVGLengthValue    length;
+  CScreenUnits       length;
   CSVGPreserveAspect preserveAspect;
 
   if (processCoreOption           (opt_name, opt_value)) return true;
@@ -125,9 +126,9 @@ CSVGBlock::
 getWidth() const
 {
   if      (width_.isValid())
-    return width_.getValue().value();
+    return width_.getValue().px().value();
   else if (height_.isValid())
-    return height_.getValue().value();
+    return height_.getValue().px().value();
   else
     return 400;
 }
@@ -137,9 +138,9 @@ CSVGBlock::
 getHeight() const
 {
   if      (height_.isValid())
-    return height_.getValue().value();
+    return height_.getValue().px().value();
   else if (width_.isValid())
-    return width_.getValue().value();
+    return width_.getValue().px().value();
   else
     return 400;
 }
@@ -148,8 +149,107 @@ void
 CSVGBlock::
 setSize(const CSize2D &size)
 {
-  width_ .setValue(CSVGLengthValue(size.getWidth ()));
-  height_.setValue(CSVGLengthValue(size.getHeight()));
+  width_ .setValue(CScreenUnits(size.getWidth ()));
+  height_.setValue(CScreenUnits(size.getHeight()));
+}
+
+void
+CSVGBlock::
+drawInit()
+{
+  oldBuffer_ = svg_.getBuffer();
+  xscale_    = svg_.xscale();
+  yscale_    = svg_.yscale();
+
+  CPoint2D bmin, bmax;
+
+  svg_.viewMatrix().multiplyPoint(CPoint2D(this->getXMin(), this->getYMin()), bmin);
+  svg_.viewMatrix().multiplyPoint(CPoint2D(this->getXMax(), this->getYMax()), bmax);
+
+  double bw = this->getWidth ();
+  double bh = this->getHeight();
+
+  double xscale = bw/(bmax.x - bmin.x);
+  double yscale = bh/(bmax.y - bmin.y);
+
+  if (preserveAspect_.isValid()) {
+    if (preserveAspect_.getValue().getScale() == CSVGScale::FIXED_MEET) {
+      double scale = std::min(xscale, yscale);
+
+      xscale = scale;
+      yscale = scale;
+    }
+  }
+
+  svg_.setXScale(xscale_*xscale);
+  svg_.setYScale(yscale_*yscale);
+
+  //------
+
+  if (parent_) {
+    CSVGBuffer *drawBuffer = svg_.getBuffer("_" + getUniqueName() + "_svg");
+
+    svg_.setBuffer(drawBuffer);
+
+    drawBuffer->clear();
+
+    svg_.beginDrawBuffer(drawBuffer);
+  }
+}
+
+void
+CSVGBlock::
+drawTerm()
+{
+  svg_.setXScale(xscale_);
+  svg_.setYScale(yscale_);
+
+  //------
+
+  if (parent_) {
+    CSVGBuffer *drawBuffer = svg_.getBuffer("_" + getUniqueName() + "_svg");
+
+    svg_.endDrawBuffer(drawBuffer);
+
+    //---
+
+    CMatrixStack2D transform = oldBuffer_->transform();
+
+    double bw = this->getWidth ();
+    double bh = this->getHeight();
+
+    double ix = 0, iy = 0;
+
+    if (preserveAspect_.isValid()) {
+      if      (preserveAspect_.getValue().getHAlign() == CHALIGN_TYPE_LEFT)
+        ix = 0;
+      else if (preserveAspect_.getValue().getHAlign() == CHALIGN_TYPE_CENTER)
+        ix = (bw - std::min(bw, bh))/2;
+      else if (preserveAspect_.getValue().getHAlign() == CHALIGN_TYPE_RIGHT)
+        ix = bw - std::min(bw, bh);
+
+      if      (preserveAspect_.getValue().getVAlign() == CVALIGN_TYPE_BOTTOM)
+        iy = 0;
+      else if (preserveAspect_.getValue().getVAlign() == CVALIGN_TYPE_CENTER)
+        iy = (bh - std::min(bw, bh))/2;
+      else if (preserveAspect_.getValue().getVAlign() == CVALIGN_TYPE_TOP)
+        iy = bh - std::min(bw, bh);
+    }
+
+    double x = 0, y = 0;
+
+    transform.multiplyPoint(ix, iy, &x, &y);
+
+    double px, py;
+
+    oldBuffer_->lengthToPixel(x, y, &px, &py);
+
+    oldBuffer_->addBuffer(drawBuffer, px, py);
+
+    //---
+
+    svg_.setBuffer(oldBuffer_);
+  }
 }
 
 void

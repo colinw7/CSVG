@@ -26,10 +26,10 @@ class CSVGImage : public CSVGObject {
   double getY() const { return y_.getValue(0); }
   void setY(double y) { y_ = y; }
 
-  double getWidth () const { return w_.getValue(CSVGLengthValue(100)).value(); }
+  double getWidth () const { return w_.getValue(CScreenUnits(100)).px().value(); }
   void setWidth(double w) { w_ = w; }
 
-  double getHeight() const { return h_.getValue(CSVGLengthValue(100)).value(); }
+  double getHeight() const { return h_.getValue(CScreenUnits(100)).px().value(); }
   void setHeight(double h) { h_ = h; }
 
   CPoint2D getPosition() const { return CPoint2D(getX(), getY()); }
@@ -67,8 +67,8 @@ class CSVGImage : public CSVGObject {
   COptValT<CSVGXLink>          xlink_;
   COptValT<double>             x_;
   COptValT<double>             y_;
-  COptValT<CSVGLengthValue>    w_;
-  COptValT<CSVGLengthValue>    h_;
+  COptValT<CScreenUnits>       w_;
+  COptValT<CScreenUnits>       h_;
   COptValT<CSVGPreserveAspect> preserveAspect_;
 };
 

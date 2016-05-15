@@ -43,10 +43,10 @@ bool
 CSVGMask::
 processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  std::string     str;
-  double          real;
-  CSVGCoordUnits  units;
-  CSVGLengthValue length;
+  std::string    str;
+  double         real;
+  CSVGCoordUnits units;
+  CScreenUnits   length;
 
   if      (svg_.coordOption (opt_name, opt_value, "x", &real))
     x_ = real;

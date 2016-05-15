@@ -21,11 +21,11 @@ class CSVGMarker : public CSVGObject {
   CSVGCoordUnits getUnits() const { return markerUnits_.getValue(CSVGCoordUnits::USER_SPACE); }
   void setUnits(CSVGCoordUnits units) { markerUnits_ = units; }
 
-  CSVGLengthValue getMarkerWidth() const { return markerWidth_.getValue(CSVGLengthValue(3)); }
-  void setMarkerWidth(const CSVGLengthValue &l) { markerWidth_ = l; }
+  CScreenUnits getMarkerWidth() const { return markerWidth_.getValue(CScreenUnits(3)); }
+  void setMarkerWidth(const CScreenUnits &l) { markerWidth_ = l; }
 
-  CSVGLengthValue getMarkerHeight() const { return markerHeight_.getValue(CSVGLengthValue(3)); }
-  void setMarkerHeight(const CSVGLengthValue &l) { markerHeight_ = l; }
+  CScreenUnits getMarkerHeight() const { return markerHeight_.getValue(CScreenUnits(3)); }
+  void setMarkerHeight(const CScreenUnits &l) { markerHeight_ = l; }
 
   std::string getOrient() const { return orient_.getValue(""); }
   void setOrient(const std::string &s) { orient_ = s; }
@@ -48,8 +48,8 @@ class CSVGMarker : public CSVGObject {
   COptValT<double>             refX_;
   COptValT<double>             refY_;
   COptValT<CSVGCoordUnits>     markerUnits_;
-  COptValT<CSVGLengthValue>    markerWidth_;
-  COptValT<CSVGLengthValue>    markerHeight_;
+  COptValT<CScreenUnits>       markerWidth_;
+  COptValT<CScreenUnits>       markerHeight_;
   COptValT<std::string>        orient_;
   COptValT<CSVGPreserveAspect> preserveAspect_;
 };

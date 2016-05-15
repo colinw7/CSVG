@@ -1745,6 +1745,7 @@ addClipPath(CSVGBuffer *origBuffer)
   renderer_->addClipPath(origBuffer->getRenderer());
 }
 
+#if 0
 bool
 CSVGBuffer::
 mmToPixel(double mm, double *pixel)
@@ -1761,6 +1762,7 @@ mmToPixel(double mm, double *pixel)
 
   return true;
 }
+#endif
 
 void
 CSVGBuffer::

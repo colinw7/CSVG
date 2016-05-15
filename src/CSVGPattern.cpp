@@ -60,11 +60,11 @@ bool
 CSVGPattern::
 processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  std::string     str;
-  double          real;
-  CSVGCoordUnits  units;
-  CSVGLengthValue length;
-  CMatrixStack2D  transform;
+  std::string    str;
+  double         real;
+  CSVGCoordUnits units;
+  CScreenUnits   length;
+  CMatrixStack2D transform;
 
   if      (svg_.realOption(opt_name, opt_value, "x", &real))
     x_ = real;

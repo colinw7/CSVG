@@ -29,16 +29,16 @@ class CSVGLinearGradient : public CSVGObject {
     return true;
   }
 
-  double getX1() const { return x1_.isValid() ? x1_.getValue().value() : 0; }
+  double getX1() const { return x1_.isValid() ? x1_.getValue().px().value() : 0; }
   void setX1(double x1) { x1_.setValue(x1); }
 
-  double getY1() const { return y1_.isValid() ? y1_.getValue().value() : 0; }
+  double getY1() const { return y1_.isValid() ? y1_.getValue().px().value() : 0; }
   void setY1(double y1) { y1_.setValue(y1); }
 
-  double getX2() const { return x2_.isValid() ? x2_.getValue().value() : 1; }
+  double getX2() const { return x2_.isValid() ? x2_.getValue().px().value() : 1; }
   void setX2(double x2) { x2_.setValue(x2); }
 
-  double getY2() const { return x2_.isValid() ? y2_.getValue().value() : 0; }
+  double getY2() const { return x2_.isValid() ? y2_.getValue().px().value() : 0; }
   void setY2(double y2) { y2_.setValue(y2); }
 
   void setBBox(const CBBox2D &bbox) {
@@ -84,10 +84,10 @@ class CSVGLinearGradient : public CSVGObject {
   friend std::ostream &operator<<(std::ostream &os, const CSVGLinearGradient &gradient);
 
  private:
-  COptValT<CSVGLengthValue>     x1_;
-  COptValT<CSVGLengthValue>     y1_;
-  COptValT<CSVGLengthValue>     x2_;
-  COptValT<CSVGLengthValue>     y2_;
+  COptValT<CScreenUnits>        x1_;
+  COptValT<CScreenUnits>        y1_;
+  COptValT<CScreenUnits>        x2_;
+  COptValT<CScreenUnits>        y2_;
   StopList                      stops_;
   COptValT<CMatrixStack2D>      gtransform_;
   COptValT<CSVGCoordUnits>      units_;

@@ -423,7 +423,7 @@ getFlatFontStyle() const
   return CFONT_STYLE_NORMAL;
 }
 
-CSVGLengthValue
+CScreenUnits
 CSVGObject::
 getFlatFontSize() const
 {
@@ -439,7 +439,7 @@ getFlatFontSize() const
     parent = parent->getParent();
   }
 
-  return CSVGLengthValue(8);
+  return CScreenUnits(12);
 }
 
 CFontPtr
@@ -449,7 +449,7 @@ getFont() const
   std::string fontFamily = getFlatFontFamily();
   CFontStyles fontStyles = getFlatFontStyle();
   CFontStyle  fontStyle  = (fontStyles | CFONT_STYLE_FULL_SIZE).value();
-  double      fontSize   = getFlatFontSize().value();
+  double      fontSize   = getFlatFontSize().px().value();
 
   // want full size font
   return CFontMgrInst->lookupFont(fontFamily, fontStyle, fontSize);
@@ -480,7 +480,7 @@ setFontSize(double size)
 
 void
 CSVGObject::
-setFontSize(const CSVGLengthValue &size)
+setFontSize(const CScreenUnits &size)
 {
   fontDef_.setSize(size);
 }
@@ -1116,8 +1116,8 @@ bool
 CSVGObject::
 processFontOption(const std::string &optName, const std::string &optValue)
 {
-  std::string     str;
-  CSVGLengthValue length;
+  std::string  str;
+  CScreenUnits length;
 
   if      (svg_.stringOption(optName, optValue, "font", str))
     notHandled(optName, optValue); //setFont(str)
@@ -1162,8 +1162,8 @@ bool
 CSVGObject::
 processTextContentOption(const std::string &optName, const std::string &optValue)
 {
-  std::string     str;
-  CSVGLengthValue length;
+  std::string  str;
+  CScreenUnits length;
 
   // Text content propeties
   if      (svg_.stringOption(optName, optValue, "alignment-baseline", str))
@@ -2114,6 +2114,9 @@ decodeXLink(const std::string &str, CSVGObject **object, CImagePtr *image)
     // get type from contents/suffix
     CFileType type = CFileUtil::getType(&file);
 
+    if (type == CFILE_TYPE_INODE_REG && file.getSuffix() == "svg")
+      type = CFILE_TYPE_IMAGE_SVG;
+
     // handle image file
     if      (type & CFILE_TYPE_IMAGE) {
       CImagePtr image1;
@@ -2142,7 +2145,7 @@ decodeXLink(const std::string &str, CSVGObject **object, CImagePtr *image)
         int w = svg.getIWidth();
         int h = svg.getIHeight();
 
-        image1 = svg.drawToImage(w, h, CPoint2D(0, 0), svg_.scale());
+        image1 = svg.drawToImage(w, h, CPoint2D(0, 0), svg_.xscale(), svg_.yscale());
       }
       // image file (png, jpeg, ...)
       else {
@@ -2485,26 +2488,26 @@ printNameParts(std::ostream &os, const std::string &name, const CSVGPathPartList
 
 void
 CSVGObject::
-printLength(std::ostream &os, const CSVGLengthValue &l)
+printLength(std::ostream &os, const CScreenUnits &l)
 {
-  if      (l.type() == CSVGLengthType::EM)
-    os << l.ivalue() << "em";
-  else if (l.type() == CSVGLengthType::EX)
-    os << l.ivalue() << "ex";
-  else if (l.type() == CSVGLengthType::PT)
-    os << l.ivalue() << "pt";
-  else if (l.type() == CSVGLengthType::PC)
-    os << l.ivalue() << "pc";
-  else if (l.type() == CSVGLengthType::CM)
-    os << l.ivalue() << "cm";
-  else if (l.type() == CSVGLengthType::MM)
-    os << l.ivalue() << "mm";
-  else if (l.type() == CSVGLengthType::IN)
-    os << l.ivalue() << "in";
-  else if (l.type() == CSVGLengthType::PX)
-    os << l.ivalue() << "px";
-  else if (l.type() == CSVGLengthType::PERCENT)
-    os << 100*l.ivalue() << "%";
+  if      (l.type() == CScreenUnits::Type::EM)
+    os << l.value() << "em";
+  else if (l.type() == CScreenUnits::Type::EX)
+    os << l.value() << "ex";
+  else if (l.type() == CScreenUnits::Type::PT)
+    os << l.value() << "pt";
+  else if (l.type() == CScreenUnits::Type::PC)
+    os << l.value() << "pc";
+  else if (l.type() == CScreenUnits::Type::CM)
+    os << l.value() << "cm";
+  else if (l.type() == CScreenUnits::Type::MM)
+    os << l.value() << "mm";
+  else if (l.type() == CScreenUnits::Type::IN)
+    os << l.value() << "in";
+  else if (l.type() == CScreenUnits::Type::PX)
+    os << l.value() << "px";
+  else if (l.type() == CScreenUnits::Type::PERCENT)
+    os << l.value() << "%";
   else
     os << l.value();
 }

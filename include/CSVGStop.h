@@ -12,7 +12,7 @@ class CSVGStop : public CSVGObject {
 
   CSVGStop *dup() const override;
 
-  double getOffset () const { return offset_ .getValue(CSVGLengthValue()).value(); }
+  double getOffset () const { return offset_ .getValue(CScreenUnits()).px().value(); }
   CRGBA  getColor  () const { return color_  .getValue(CRGBA(1,1,1)); }
   double getOpacity() const { return opacity_.getValue(1); }
 
@@ -33,9 +33,9 @@ class CSVGStop : public CSVGObject {
   friend std::ostream &operator<<(std::ostream &os, const CSVGStop &stop);
 
  private:
-  COptValT<CSVGLengthValue> offset_;
-  COptValT<CRGBA>           color_;
-  COptValT<double>          opacity_;
+  COptValT<CScreenUnits> offset_;
+  COptValT<CRGBA>        color_;
+  COptValT<double>       opacity_;
 };
 
 #endif
