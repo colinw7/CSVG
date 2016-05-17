@@ -46,7 +46,7 @@ class CScreenUnitsMgr {
 
 class CScreenUnits {
  public:
-  enum class Type {
+  enum class Units {
     EM,
     EX,
     PX,
@@ -61,143 +61,216 @@ class CScreenUnits {
  public:
   CScreenUnits() { }
 
-  CScreenUnits(double v, Type type=Type::PX) :
-   value_(v), type_(type) {
+  CScreenUnits(double v, Units units=Units::PX) :
+   value_(v), units_(units) {
   }
 
-  CScreenUnits(Type type, double v) :
-   value_(v), type_(type) {
+  CScreenUnits(Units units, double v) :
+   value_(v), units_(units) {
   }
 
   virtual ~CScreenUnits() { }
 
-  double value() const { return value_; }
-  Type   type () const { return type_ ; }
+  //---
+
+  double value(Units units=Units::PX) const {
+    assert(units_ == units);
+
+    return value_;
+  }
+
+  Units units() const { return units_; }
+
+  const CScreenUnits &setValue(double v, Units units=Units::PX) {
+    assert(units_ == units);
+
+    value_ = v;
+
+    return *this;
+  }
+
+  const CScreenUnits &setUnits(Units units, const CScreenUnits &rvalue=CScreenUnits()) {
+    if (units == units_) return *this;
+
+    switch (units) {
+      case Units::EM     : value_ = em     (rvalue).value_; break;
+      case Units::EX     : value_ = ex     (rvalue).value_; break;
+      case Units::PX     : value_ = px     (rvalue).value_; break;
+      case Units::PT     : value_ = pt     (rvalue).value_; break;
+      case Units::PC     : value_ = pc     (rvalue).value_; break;
+      case Units::CM     : value_ = cm     (rvalue).value_; break;
+      case Units::MM     : value_ = mm     (rvalue).value_; break;
+      case Units::IN     : value_ = in     (rvalue).value_; break;
+      case Units::PERCENT: value_ = percent(rvalue).value_; break;
+      default: assert(false); break;
+    }
+
+    units_ = units;
+
+    return *this;
+  }
+
+  int ivalue() const {
+    assert(units_ == Units::PX);
+
+    if (value_ >= 0)
+      return int(value_ + 0.5);
+    else
+      return int(value_ - 0.5);
+  }
+
+  //---
 
   CScreenUnits em(const CScreenUnits &rvalue=CScreenUnits()) const {
-    if (type_ == Type::EM) return *this;
+    if (units_ == Units::EM) return *this;
 
-    return toPixel(rvalue)/CScreenUnitsMgrInst->emSize();
+    return CScreenUnits(toPixel(rvalue)/CScreenUnitsMgrInst->emSize(), Units::EM);
   }
 
   CScreenUnits ex(const CScreenUnits &rvalue=CScreenUnits()) const {
-    if (type_ == Type::EX) return *this;
+    if (units_ == Units::EX) return *this;
 
-    return toPixel(rvalue)/CScreenUnitsMgrInst->exSize();
+    return CScreenUnits(toPixel(rvalue)/CScreenUnitsMgrInst->exSize(), Units::EX);
   }
 
   CScreenUnits px(const CScreenUnits &rvalue=CScreenUnits()) const {
-    if (type_ == Type::PX) return *this;
+    if (units_ == Units::PX) return *this;
 
-    return toPixel(rvalue);
+    return CScreenUnits(toPixel(rvalue), Units::PX);
   }
 
   CScreenUnits pt(const CScreenUnits &rvalue=CScreenUnits()) const {
-    if (type_ == Type::PT) return *this;
-    if (type_ == Type::PC) return 12.0*(*this);
+    if (units_ == Units::PT) return *this;
 
-    return 72.0*toInch(rvalue);
+    return CScreenUnits(72.0*toInch(rvalue), Units::PT);
   }
 
   CScreenUnits pc(const CScreenUnits &rvalue=CScreenUnits()) const {
-    if (type_ == Type::PC) return *this;
-    if (type_ == Type::PT) return (*this)/12.0;
+    if (units_ == Units::PC) return *this;
 
-    return 6.0*toInch(rvalue);
+    return CScreenUnits(6.0*toInch(rvalue), Units::PC);
   }
 
   CScreenUnits cm(const CScreenUnits &rvalue=CScreenUnits()) const {
-    if (type_ == Type::CM) return *this;
-    if (type_ == Type::MM) return 10.0*(*this);
+    if (units_ == Units::CM) return *this;
 
-    return 10*toMm(rvalue);
+    return CScreenUnits(toMm(rvalue)/10.0, Units::CM);
   }
 
   CScreenUnits mm(const CScreenUnits &rvalue=CScreenUnits()) const {
-    if (type_ == Type::MM) return *this;
-    if (type_ == Type::CM) return (*this)/10.0;
+    if (units_ == Units::MM) return *this;
 
-    return toMm(rvalue);
+    return CScreenUnits(toMm(rvalue), Units::MM);
   }
 
   CScreenUnits in(const CScreenUnits &rvalue=CScreenUnits()) const {
-    if (type_ == Type::IN) return *this;
+    if (units_ == Units::IN) return *this;
 
-    return toInch(rvalue);
+    return CScreenUnits(toInch(rvalue), Units::IN);
   }
 
   CScreenUnits percent(const CScreenUnits &rvalue=CScreenUnits()) const {
-    if (type_ == Type::PERCENT) return *this;
+    if (units_ == Units::PERCENT) return *this;
 
-    double value = 100.0*toPixel(rvalue).value()/rvalue.toPixel(rvalue).value();
+    double value = 100.0*toPixel(rvalue)/rvalue.toPixel(rvalue);
 
-    return CScreenUnits(value, Type::PERCENT);
+    return CScreenUnits(value, Units::PERCENT);
   }
+
+  //---
 
   std::string typeName() const {
-    return typeName(type_);
+    return typeName(units_);
   }
 
-  static std::string typeName(Type type) {
-    switch (type) {
-      case Type::EM:      return "em";
-      case Type::EX:      return "ex";
-      case Type::PX:      return "px";
-      case Type::PT:      return "pt";
-      case Type::PC:      return "pc";
-      case Type::CM:      return "cm";
-      case Type::MM:      return "mm";
-      case Type::IN:      return "in";
-      case Type::PERCENT: return "%";
-      default:            assert(false); return "";
+  static std::string typeName(Units units) {
+    switch (units) {
+      case Units::EM:      return "em";
+      case Units::EX:      return "ex";
+      case Units::PX:      return "px";
+      case Units::PT:      return "pt";
+      case Units::PC:      return "pc";
+      case Units::CM:      return "cm";
+      case Units::MM:      return "mm";
+      case Units::IN:      return "in";
+      case Units::PERCENT: return "%";
+      default: assert(false); return "";
     }
   }
 
+  //---
+
+  friend bool operator<(const CScreenUnits &lhs, const CScreenUnits &rhs) {
+    return lhs.px().ivalue() < rhs.px().ivalue();
+  }
+
+  friend bool operator<=(const CScreenUnits &lhs, const CScreenUnits &rhs) {
+    return lhs.px().ivalue() <= rhs.px().ivalue();
+  }
+
+  friend bool operator>(const CScreenUnits &lhs, const CScreenUnits &rhs) {
+    return lhs.px().ivalue() > rhs.px().ivalue();
+  }
+
+  friend bool operator>=(const CScreenUnits &lhs, const CScreenUnits &rhs) {
+    return lhs.px().ivalue() >= rhs.px().ivalue();
+  }
+
+  friend bool operator==(const CScreenUnits &lhs, const CScreenUnits &rhs) {
+    return lhs.px().ivalue() == rhs.px().ivalue();
+  }
+
+  friend bool operator!=(const CScreenUnits &lhs, const CScreenUnits &rhs) {
+    return lhs.px().ivalue() != rhs.px().ivalue();
+  }
+
   friend CScreenUnits operator*(const CScreenUnits &lhs, double rhs) {
-    return CScreenUnits(lhs.value_*rhs, lhs.type_);
+    return CScreenUnits(lhs.value_*rhs, lhs.units_);
   }
 
   friend CScreenUnits operator*(double lhs, const CScreenUnits &rhs) {
-    return CScreenUnits(rhs.value_*lhs, rhs.type_);
+    return CScreenUnits(rhs.value_*lhs, rhs.units_);
   }
 
   friend CScreenUnits operator/(const CScreenUnits &lhs, double rhs) {
-    return CScreenUnits(lhs.value_/rhs, lhs.type_);
+    return CScreenUnits(lhs.value_/rhs, lhs.units_);
   }
 
+  //---
+
  private:
-  CScreenUnits toPixel(const CScreenUnits &rvalue=CScreenUnits()) const {
-    if (type_ == Type::PERCENT)
+  double toPixel(const CScreenUnits &rvalue=CScreenUnits()) const {
+    if (units_ == Units::PERCENT)
       return rvalue.toPixel()*value_/100.0;
 
     double value1 = 0.0;
 
-    switch (type_) {
-      case Type::EM: value1 = value_*CScreenUnitsMgrInst->emSize(); break;
-      case Type::EX: value1 = value_*CScreenUnitsMgrInst->exSize(); break;
-      case Type::PX: value1 = value_; break;
-      case Type::PT: value1 = (CScreenUnitsMgrInst->mmSize()*25.4*value_)/72.0; break;
-      case Type::PC: value1 = (CScreenUnitsMgrInst->mmSize()*25.4*value_)/6.0; break;
-      case Type::CM: value1 = (CScreenUnitsMgrInst->mmSize()*10.0*value_); break;
-      case Type::MM: value1 = (CScreenUnitsMgrInst->mmSize()*value_); break;
-      case Type::IN: value1 = (CScreenUnitsMgrInst->mmSize()*25.4*value_); break;
-      default:       assert(false); break;
+    switch (units_) {
+      case Units::EM: value1 = value_*CScreenUnitsMgrInst->emSize(); break;
+      case Units::EX: value1 = value_*CScreenUnitsMgrInst->exSize(); break;
+      case Units::PX: value1 = value_; break;
+      case Units::PT: value1 = (CScreenUnitsMgrInst->mmSize()*25.4*value_)/72.0; break;
+      case Units::PC: value1 = (CScreenUnitsMgrInst->mmSize()*25.4*value_)/6.0; break;
+      case Units::CM: value1 = (CScreenUnitsMgrInst->mmSize()*10.0*value_); break;
+      case Units::MM: value1 = (CScreenUnitsMgrInst->mmSize()*value_); break;
+      case Units::IN: value1 = (CScreenUnitsMgrInst->mmSize()*25.4*value_); break;
+      default: assert(false); break;
     }
 
-    return CScreenUnits(value1, Type::PX);
+    return value1;
   }
 
-  CScreenUnits toMm(const CScreenUnits &rvalue=CScreenUnits()) const {
+  double toMm(const CScreenUnits &rvalue=CScreenUnits()) const {
     return toPixel(rvalue)/CScreenUnitsMgrInst->mmSize();
   }
 
-  CScreenUnits toInch(const CScreenUnits &rvalue=CScreenUnits()) const {
+  double toInch(const CScreenUnits &rvalue=CScreenUnits()) const {
     return toMm(rvalue)/25.4;
   }
 
  private:
   double value_ { 0.0 };
-  Type   type_  { Type::PX };
+  Units  units_ { Units::PX };
 };
 
 #endif

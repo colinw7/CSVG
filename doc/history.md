@@ -55,3 +55,6 @@
 ### 5/15/2016
  + Use new CScreenUnits class for units conversion
  + improve block scale handling
+
+### 5/16/2016
+ + handle slice in preserveAspectRatio

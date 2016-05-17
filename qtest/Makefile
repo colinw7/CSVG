@@ -745,7 +745,6 @@ compiler_moc_header_clean:
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -753,6 +752,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -954,7 +954,6 @@ compiler_moc_header_clean:
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -962,6 +961,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -1282,7 +1282,6 @@ compiler_moc_header_clean:
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -1290,6 +1289,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -1491,7 +1491,6 @@ compiler_moc_header_clean:
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -1499,6 +1498,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -1700,7 +1700,6 @@ compiler_moc_header_clean:
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -1708,6 +1707,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -1909,7 +1909,6 @@ compiler_moc_header_clean:
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -1917,6 +1916,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -2118,7 +2118,6 @@ compiler_moc_header_clean:
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -2126,6 +2125,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -2159,7 +2159,6 @@ compiler_moc_header_clean:
 		../include/CSVGClip.h \
 		../../CUtil/include/CLineDash.h \
 		../../CUtil/include/CILineDash.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -2190,6 +2189,7 @@ compiler_moc_header_clean:
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../../CFont/include/CFont.h \
 		../../CFont/include/CFontStyle.h \
 		../../CUtil/include/CFlags.h \
@@ -2452,7 +2452,6 @@ compiler_moc_header_clean:
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -2460,6 +2459,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -2661,7 +2661,6 @@ compiler_moc_header_clean:
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -2669,6 +2668,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -2869,7 +2869,6 @@ compiler_moc_header_clean:
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -2877,6 +2876,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -3078,7 +3078,6 @@ compiler_moc_header_clean:
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -3086,6 +3085,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -3288,7 +3288,6 @@ compiler_moc_header_clean:
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -3296,6 +3295,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -3497,7 +3497,6 @@ compiler_moc_header_clean:
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -3505,6 +3504,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -3706,7 +3706,6 @@ compiler_moc_header_clean:
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -3714,6 +3713,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -3915,7 +3915,6 @@ compiler_moc_header_clean:
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -3923,6 +3922,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -4124,7 +4124,6 @@ compiler_moc_header_clean:
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -4132,6 +4131,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -4333,7 +4333,6 @@ compiler_moc_header_clean:
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -4341,6 +4340,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -4542,7 +4542,6 @@ compiler_moc_header_clean:
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -4550,6 +4549,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -4751,7 +4751,6 @@ compiler_moc_header_clean:
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -4759,6 +4758,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -4960,7 +4960,6 @@ compiler_moc_header_clean:
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -4968,6 +4967,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -5169,7 +5169,6 @@ compiler_moc_header_clean:
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -5177,6 +5176,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -5380,7 +5380,6 @@ compiler_moc_header_clean:
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -5388,6 +5387,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -5590,7 +5590,6 @@ compiler_moc_header_clean:
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -5598,6 +5597,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -5801,7 +5801,6 @@ compiler_moc_header_clean:
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -5809,6 +5808,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -6010,7 +6010,6 @@ compiler_moc_header_clean:
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -6018,6 +6017,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -6219,7 +6219,6 @@ compiler_moc_header_clean:
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -6227,6 +6226,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -6428,7 +6428,6 @@ compiler_moc_header_clean:
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -6436,6 +6435,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -6532,14 +6532,14 @@ compiler_moc_header_clean:
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
 		../include/CSVGFontDef.h \
-		../include/CSVGLengthValue.h \
-		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../../CFont/include/CFont.h \
 		../../CUtil/include/CRefPtr.h \
 		../../CFont/include/CFontStyle.h \
 		../../CUtil/include/CFlags.h \
 		../include/CSVGBlock.h \
 		../include/CSVGObject.h \
+		../include/CSVGTypes.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -6774,7 +6774,6 @@ compiler_moc_header_clean:
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -6782,6 +6781,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -6983,7 +6983,6 @@ compiler_moc_header_clean:
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -6991,6 +6990,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -7193,7 +7193,6 @@ compiler_moc_header_clean:
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -7201,6 +7200,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -7402,7 +7402,6 @@ compiler_moc_header_clean:
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -7410,6 +7409,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -7611,7 +7611,6 @@ compiler_moc_header_clean:
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -7619,6 +7618,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -7820,7 +7820,6 @@ compiler_moc_header_clean:
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -7828,6 +7827,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -8028,7 +8028,6 @@ compiler_moc_header_clean:
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -8036,6 +8035,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -8236,7 +8236,6 @@ compiler_moc_header_clean:
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -8244,6 +8243,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -8445,7 +8445,6 @@ compiler_moc_header_clean:
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -8453,6 +8452,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -8654,7 +8654,6 @@ compiler_moc_header_clean:
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -8662,6 +8661,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -8863,7 +8863,6 @@ compiler_moc_header_clean:
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -8871,6 +8870,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -9072,7 +9072,6 @@ compiler_moc_header_clean:
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -9080,6 +9079,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -9287,7 +9287,6 @@ compiler_moc_header_clean:
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -9295,6 +9294,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -9496,7 +9496,6 @@ compiler_moc_header_clean:
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -9504,6 +9503,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -9706,7 +9706,6 @@ compiler_moc_header_clean:
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -9714,6 +9713,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -9915,7 +9915,6 @@ compiler_moc_header_clean:
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -9923,6 +9922,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -10124,7 +10124,6 @@ compiler_moc_header_clean:
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -10132,6 +10131,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -10333,7 +10333,6 @@ compiler_moc_header_clean:
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -10341,6 +10340,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -10542,7 +10542,6 @@ compiler_moc_header_clean:
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -10550,6 +10549,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -10751,7 +10751,6 @@ compiler_moc_header_clean:
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -10759,6 +10758,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -10960,7 +10960,6 @@ compiler_moc_header_clean:
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -10968,6 +10967,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -11193,14 +11193,14 @@ compiler_clean: compiler_moc_header_clean
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
 		../include/CSVGFontDef.h \
-		../include/CSVGLengthValue.h \
-		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../../CFont/include/CFont.h \
 		../../CUtil/include/CRefPtr.h \
 		../../CFont/include/CFontStyle.h \
 		../../CUtil/include/CFlags.h \
 		../include/CSVGBlock.h \
 		../include/CSVGObject.h \
+		../include/CSVGTypes.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -11618,7 +11618,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -11626,6 +11625,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -11833,7 +11833,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -11841,6 +11840,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -11996,13 +11996,13 @@ compiler_clean: compiler_moc_header_clean
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
 		../include/CSVGFontDef.h \
-		../include/CSVGLengthValue.h \
-		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../../CFont/include/CFont.h \
 		../../CFont/include/CFontStyle.h \
 		../../CUtil/include/CFlags.h \
 		../include/CSVGBlock.h \
 		../include/CSVGObject.h \
+		../include/CSVGTypes.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -12224,14 +12224,14 @@ compiler_clean: compiler_moc_header_clean
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
 		../include/CSVGFontDef.h \
-		../include/CSVGLengthValue.h \
-		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../../CFont/include/CFont.h \
 		../../CUtil/include/CRefPtr.h \
 		../../CFont/include/CFontStyle.h \
 		../../CUtil/include/CFlags.h \
 		../include/CSVGBlock.h \
 		../include/CSVGObject.h \
+		../include/CSVGTypes.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -12512,7 +12512,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -12520,6 +12519,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -12727,7 +12727,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -12735,6 +12734,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -12942,7 +12942,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -12950,6 +12949,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -13157,7 +13157,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -13165,6 +13164,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -13372,7 +13372,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -13380,6 +13379,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -13419,7 +13419,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGClip.h \
 		../../CUtil/include/CLineDash.h \
 		../../CUtil/include/CILineDash.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -13450,6 +13449,7 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../../CFont/include/CFont.h \
 		../../CFont/include/CFontStyle.h \
 		../../CUtil/include/CFlags.h \
@@ -13713,7 +13713,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -13721,6 +13720,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -13928,7 +13928,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -13936,6 +13935,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -14142,7 +14142,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -14150,6 +14149,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -14357,7 +14357,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -14365,6 +14364,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -14573,7 +14573,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -14581,6 +14580,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -14788,7 +14788,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -14796,6 +14795,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -15003,7 +15003,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -15011,6 +15010,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -15218,7 +15218,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -15226,6 +15225,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -15433,7 +15433,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -15441,6 +15440,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -15648,7 +15648,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -15656,6 +15655,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -15863,7 +15863,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -15871,6 +15870,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -16078,7 +16078,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -16086,6 +16085,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -16293,7 +16293,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -16301,6 +16300,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -16508,7 +16508,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -16516,6 +16515,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -16725,7 +16725,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -16733,6 +16732,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -16941,7 +16941,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -16949,6 +16948,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -17158,7 +17158,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -17166,6 +17165,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -17373,7 +17373,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -17381,6 +17380,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -17588,7 +17588,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -17596,6 +17595,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -17803,7 +17803,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -17811,6 +17810,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -18018,7 +18018,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -18026,6 +18025,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -18233,7 +18233,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -18241,6 +18240,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -18448,7 +18448,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -18456,6 +18455,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -18663,7 +18663,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -18671,6 +18670,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -18878,7 +18878,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -18886,6 +18885,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -19093,7 +19093,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -19101,6 +19100,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -19307,7 +19307,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -19315,6 +19314,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -19535,7 +19535,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -19543,6 +19542,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -19750,7 +19750,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -19758,6 +19757,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -19965,7 +19965,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -19973,6 +19972,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -20180,7 +20180,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -20188,6 +20187,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -20536,7 +20536,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -20544,6 +20543,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -20756,7 +20756,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -20764,6 +20763,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -20971,7 +20971,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -20979,6 +20978,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -21187,7 +21187,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -21195,6 +21194,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -21402,7 +21402,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -21410,6 +21409,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -21617,7 +21617,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -21625,6 +21624,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -21832,7 +21832,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -21840,6 +21839,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -22047,7 +22047,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -22055,6 +22054,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -22262,7 +22262,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -22270,6 +22269,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -22477,7 +22477,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGClip.h \
-		../include/CSVGLengthValue.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -22485,6 +22484,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../../CMath/include/CMatrixStack2D.h \
 		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -22635,14 +22635,14 @@ compiler_clean: compiler_moc_header_clean
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
 		../include/CSVGFontDef.h \
-		../include/CSVGLengthValue.h \
-		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../../CFont/include/CFont.h \
 		../../CUtil/include/CRefPtr.h \
 		../../CFont/include/CFontStyle.h \
 		../../CUtil/include/CFlags.h \
 		../include/CSVGBlock.h \
 		../include/CSVGObject.h \
+		../include/CSVGTypes.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \

@@ -2714,7 +2714,7 @@ coordOption(const std::string &opt_name, const std::string &opt_value,
       flag = false;
     }
 
-    length = CScreenUnits(CScreenUnits::Type::PERCENT, value/100.0);
+    length = CScreenUnits(CScreenUnits::Units::PERCENT, value/100.0);
   }
   else {
     CScreenUnits length1;
@@ -2808,7 +2808,7 @@ decodeLengthValue(const std::string &str, CScreenUnits &lvalue)
     if (! CStrUtil::toReal(match_strs[0], &value))
       return false;
 
-    lvalue = CScreenUnits(CScreenUnits::Type::EM, value);
+    lvalue = CScreenUnits(CScreenUnits::Units::EM, value);
 
     CSVGLog() << "em conversion not handled";
   }
@@ -2816,7 +2816,7 @@ decodeLengthValue(const std::string &str, CScreenUnits &lvalue)
     if (! CStrUtil::toReal(match_strs[0], &value))
       return false;
 
-    lvalue = CScreenUnits(CScreenUnits::Type::EX, value);
+    lvalue = CScreenUnits(CScreenUnits::Units::EX, value);
 
     CSVGLog() << "ex conversion not handled";
   }
@@ -2827,7 +2827,7 @@ decodeLengthValue(const std::string &str, CScreenUnits &lvalue)
     //double ivalue = value;
     //mmToPixel((25.4*value)/72.0, &value);
 
-    lvalue = CScreenUnits(CScreenUnits::Type::PT, value);
+    lvalue = CScreenUnits(CScreenUnits::Units::PT, value);
   }
   else if (CRegExpUtil::parse(str, pc_pattern, match_strs)) {
     if (! CStrUtil::toReal(match_strs[0], &value))
@@ -2836,7 +2836,7 @@ decodeLengthValue(const std::string &str, CScreenUnits &lvalue)
     //double ivalue = value;
     //mmToPixel((25.4*value)/6.0, &value);
 
-    lvalue = CScreenUnits(CScreenUnits::Type::PC, value);
+    lvalue = CScreenUnits(CScreenUnits::Units::PC, value);
   }
   else if (CRegExpUtil::parse(str, cm_pattern, match_strs)) {
     if (! CStrUtil::toReal(match_strs[0], &value))
@@ -2845,7 +2845,7 @@ decodeLengthValue(const std::string &str, CScreenUnits &lvalue)
     //double ivalue = value;
     //mmToPixel(10*value, &value);
 
-    lvalue = CScreenUnits(CScreenUnits::Type::CM, value);
+    lvalue = CScreenUnits(CScreenUnits::Units::CM, value);
   }
   else if (CRegExpUtil::parse(str, mm_pattern, match_strs)) {
     if (! CStrUtil::toReal(match_strs[0], &value))
@@ -2854,7 +2854,7 @@ decodeLengthValue(const std::string &str, CScreenUnits &lvalue)
     //double ivalue = value;
     //mmToPixel(value, &value);
 
-    lvalue = CScreenUnits(CScreenUnits::Type::MM, value);
+    lvalue = CScreenUnits(CScreenUnits::Units::MM, value);
   }
   else if (CRegExpUtil::parse(str, in_pattern, match_strs)) {
     if (! CStrUtil::toReal(match_strs[0], &value))
@@ -2863,25 +2863,25 @@ decodeLengthValue(const std::string &str, CScreenUnits &lvalue)
     //double ivalue = value;
     //mmToPixel(25.4*value, &value);
 
-    lvalue = CScreenUnits(CScreenUnits::Type::IN, value);
+    lvalue = CScreenUnits(CScreenUnits::Units::IN, value);
   }
   else if (CRegExpUtil::parse(str, px_pattern, match_strs)) {
     if (! CStrUtil::toReal(match_strs[0], &value))
       return false;
 
-    lvalue = CScreenUnits(CScreenUnits::Type::PX, value);
+    lvalue = CScreenUnits(CScreenUnits::Units::PX, value);
   }
   else if (CRegExpUtil::parse(str, ph_pattern, match_strs)) {
     if (! CStrUtil::toReal(match_strs[0], &value))
       return false;
 
-    lvalue = CScreenUnits(CScreenUnits::Type::PERCENT, value);
+    lvalue = CScreenUnits(CScreenUnits::Units::PERCENT, value);
   }
   else {
     if (! CStrUtil::toReal(str, &value))
       return false;
 
-    lvalue = CScreenUnits(CScreenUnits::Type::PX, value);
+    lvalue = CScreenUnits(CScreenUnits::Units::PX, value);
   }
 
   return true;
@@ -3608,7 +3608,7 @@ decodeWidthString(const std::string &width_str)
       width = 1.0;
     }
 
-    CScreenUnits units(width, CScreenUnits::Type::PT);
+    CScreenUnits units(width, CScreenUnits::Units::PT);
 
     width = units.px().value();
     //mmToPixel(25.4*width/72.0, &width);
@@ -3799,7 +3799,7 @@ decodePercentString(const std::string &str, CScreenUnits &length)
       flag = false;
     }
 
-    length = CScreenUnits(CScreenUnits::Type::PERCENT, value/100.0);
+    length = CScreenUnits(CScreenUnits::Units::PERCENT, value/100.0);
   }
   else {
     double value;

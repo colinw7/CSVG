@@ -173,8 +173,14 @@ drawInit()
   double yscale = bh/(bmax.y - bmin.y);
 
   if (preserveAspect_.isValid()) {
-    if (preserveAspect_.getValue().getScale() == CSVGScale::FIXED_MEET) {
+    if      (preserveAspect_.getValue().getScale() == CSVGScale::FIXED_MEET) {
       double scale = std::min(xscale, yscale);
+
+      xscale = scale;
+      yscale = scale;
+    }
+    else if (preserveAspect_.getValue().getScale() == CSVGScale::FIXED_SLICE) {
+      double scale = std::max(xscale, yscale);
 
       xscale = scale;
       yscale = scale;
@@ -218,33 +224,85 @@ drawTerm()
     double bw = this->getWidth ();
     double bh = this->getHeight();
 
+    bool   clipped = true;
     double ix = 0, iy = 0;
+    double s = 0;
 
     if (preserveAspect_.isValid()) {
-      if      (preserveAspect_.getValue().getHAlign() == CHALIGN_TYPE_LEFT)
-        ix = 0;
-      else if (preserveAspect_.getValue().getHAlign() == CHALIGN_TYPE_CENTER)
-        ix = (bw - std::min(bw, bh))/2;
-      else if (preserveAspect_.getValue().getHAlign() == CHALIGN_TYPE_RIGHT)
-        ix = bw - std::min(bw, bh);
+      if      (preserveAspect_.getValue().getScale() == CSVGScale::FIXED_MEET) {
+        s = std::min(bw, bh);
 
-      if      (preserveAspect_.getValue().getVAlign() == CVALIGN_TYPE_BOTTOM)
-        iy = 0;
-      else if (preserveAspect_.getValue().getVAlign() == CVALIGN_TYPE_CENTER)
-        iy = (bh - std::min(bw, bh))/2;
-      else if (preserveAspect_.getValue().getVAlign() == CVALIGN_TYPE_TOP)
-        iy = bh - std::min(bw, bh);
+        if      (preserveAspect_.getValue().getHAlign() == CHALIGN_TYPE_LEFT)
+          ix = 0;
+        else if (preserveAspect_.getValue().getHAlign() == CHALIGN_TYPE_CENTER)
+          ix = (bw - s)/2;
+        else if (preserveAspect_.getValue().getHAlign() == CHALIGN_TYPE_RIGHT)
+          ix = bw - s;
+
+        if      (preserveAspect_.getValue().getVAlign() == CVALIGN_TYPE_BOTTOM)
+          iy = 0;
+        else if (preserveAspect_.getValue().getVAlign() == CVALIGN_TYPE_CENTER)
+          iy = (bh - s)/2;
+        else if (preserveAspect_.getValue().getVAlign() == CVALIGN_TYPE_TOP)
+          iy = bh - s;
+      }
+      else if (preserveAspect_.getValue().getScale() == CSVGScale::FIXED_SLICE) {
+        s = std::max(bw, bh);
+
+        if      (preserveAspect_.getValue().getHAlign() == CHALIGN_TYPE_LEFT)
+          ix = 0;
+        else if (preserveAspect_.getValue().getHAlign() == CHALIGN_TYPE_CENTER)
+          ix = (bw - s)/2;
+        else if (preserveAspect_.getValue().getHAlign() == CHALIGN_TYPE_RIGHT)
+          ix = bw - s;
+
+        if      (preserveAspect_.getValue().getVAlign() == CVALIGN_TYPE_BOTTOM)
+          iy = 0;
+        else if (preserveAspect_.getValue().getVAlign() == CVALIGN_TYPE_CENTER)
+          iy = (bh - s)/2;
+        else if (preserveAspect_.getValue().getVAlign() == CVALIGN_TYPE_TOP)
+          iy = bh - std::max(bw, bh);;
+
+        clipped = true;
+      }
     }
 
     double x = 0, y = 0;
 
     transform.multiplyPoint(ix, iy, &x, &y);
 
-    double px, py;
+    if (clipped) {
+      //double px1, py1, px2, py2;
 
-    oldBuffer_->lengthToPixel(x, y, &px, &py);
+      //drawBuffer->windowToPixel(-ix     , -iy     , &px1, &py1);
+      //drawBuffer->windowToPixel(-ix + bw, -iy + bh, &px2, &py2);
 
-    oldBuffer_->addBuffer(drawBuffer, px, py);
+      CImagePtr image = drawBuffer->getImage();
+
+      //image->clipOutside(px1, py1, px2, py2);
+      image->clipOutside(-ix, -iy, -ix + bw, -iy + bh);
+
+      //---
+
+      CSVGBuffer *clipBuffer = svg_.getBuffer("_" + getUniqueName() + "_svg_clip");
+
+      clipBuffer->setImage(image);
+
+      //---
+
+      double px, py;
+
+      oldBuffer_->lengthToPixel(x, y, &px, &py);
+
+      oldBuffer_->addImage(px, py, image);
+    }
+    else {
+      double px, py;
+
+      oldBuffer_->lengthToPixel(x, y, &px, &py);
+
+      oldBuffer_->addBuffer(drawBuffer, px, py);
+    }
 
     //---
 

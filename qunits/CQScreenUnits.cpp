@@ -7,6 +7,7 @@
 #include <QPainter>
 #include <QFrame>
 #include <QLineEdit>
+#include <QLabel>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QScreen>
@@ -34,7 +35,7 @@ Window() :
 {
   QHBoxLayout *layout = new QHBoxLayout(this);
 
-  Canvas *canvas = new Canvas;
+  Canvas *canvas = new Canvas(this);
 
   layout->addWidget(canvas);
 
@@ -54,6 +55,10 @@ Window() :
 
   controlLayout->addWidget(dpiEdit_);
 
+  label_ = new QLabel;
+
+  controlLayout->addWidget(label_);
+
   controlLayout->addStretch(1);
 }
 
@@ -71,11 +76,18 @@ dpiSlot()
   update();
 }
 
+void
+Window::
+setLabel(const QString &s)
+{
+  label_->setText(s);
+}
+
 //------
 
 Canvas::
-Canvas() :
- QWidget(0)
+Canvas(Window *window) :
+ QWidget(window), window_(window)
 {
   QFontMetrics fm(qApp->font());
 
@@ -107,18 +119,18 @@ paintEvent(QPaintEvent *)
   int dx = 16;
   int dy = 2*fm.height();
 
-  typedef std::pair<CScreenUnits::Type,int> TypeSize;
+  typedef std::pair<CScreenUnits::Units,int> TypeSize;
 
   std::vector<TypeSize> typeSizes = {{
-   {CScreenUnits::Type::EM     ,  1},
-   {CScreenUnits::Type::EX     ,  4},
-   {CScreenUnits::Type::PX     , 5*tw},
-   {CScreenUnits::Type::PT     , 72},
-   {CScreenUnits::Type::PC     ,  6},
-   {CScreenUnits::Type::CM     ,  2},
-   {CScreenUnits::Type::MM     , 20},
-   {CScreenUnits::Type::IN     ,  1},
-   {CScreenUnits::Type::PERCENT, 10}
+   {CScreenUnits::Units::EM     ,  1},
+   {CScreenUnits::Units::EX     ,  4},
+   {CScreenUnits::Units::PX     , 5*tw},
+   {CScreenUnits::Units::PT     , 72},
+   {CScreenUnits::Units::PC     ,  6},
+   {CScreenUnits::Units::CM     ,  2},
+   {CScreenUnits::Units::MM     , 20},
+   {CScreenUnits::Units::IN     ,  1},
+   {CScreenUnits::Units::PERCENT, 10}
   }};
 
   double rw = width() - 2*dx;
@@ -156,6 +168,12 @@ paintEvent(QPaintEvent *)
 
     y += dy;
   }
+
+  if (pressed_) {
+    p.setPen(Qt::red);
+
+    p.drawLine(pressX_, 0, pressX_, height() - 1);
+  }
 }
 
 void
@@ -166,8 +184,60 @@ keyPressEvent(QKeyEvent *)
 
 void
 Canvas::
-mousePressEvent(QMouseEvent *)
+mousePressEvent(QMouseEvent *e)
 {
+  pressed_ = true;
+  pressX_  = e->pos().x();
+
+  setInfo();
+
+  update();
+}
+
+void
+Canvas::
+mouseReleaseEvent(QMouseEvent *)
+{
+  pressed_ = false;
+
+  update();
+}
+
+void
+Canvas::
+mouseMoveEvent(QMouseEvent *e)
+{
+  pressX_ = e->pos().x();
+
+  setInfo();
+
+  update();
+}
+
+void
+Canvas::
+setInfo()
+{
+  int dx = 16;
+
+  CScreenUnits px(pressX_ - dx);
+
+  double rv = width() - 2*dx;
+
+  double em1      = px.em     (rv).value(CScreenUnits::Units::EM);
+  double ex1      = px.ex     (rv).value(CScreenUnits::Units::EX);
+  double px1      = px.px     (rv).value(CScreenUnits::Units::PX);
+  double pt1      = px.pt     (rv).value(CScreenUnits::Units::PT);
+  double pc1      = px.pc     (rv).value(CScreenUnits::Units::PC);
+  double cm1      = px.cm     (rv).value(CScreenUnits::Units::CM);
+  double mm1      = px.mm     (rv).value(CScreenUnits::Units::MM);
+  double in1      = px.in     (rv).value(CScreenUnits::Units::IN);
+  double percent1 = px.percent(rv).value(CScreenUnits::Units::PERCENT);
+
+  QString info = QString("em=%1\nex=%2\npx=%3\npt=%4\npc=%5\ncm=%6\nmm=%7\nin=%8\n%=%9").
+   arg(em1).arg(ex1).arg(px1).arg(pt1).arg(pc1).arg(cm1).arg(mm1).arg(in1).arg(percent1);
+
+  window_->setLabel(info);
 }
 
 QSize

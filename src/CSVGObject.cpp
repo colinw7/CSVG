@@ -2490,23 +2490,23 @@ void
 CSVGObject::
 printLength(std::ostream &os, const CScreenUnits &l)
 {
-  if      (l.type() == CScreenUnits::Type::EM)
+  if      (l.units() == CScreenUnits::Units::EM)
     os << l.value() << "em";
-  else if (l.type() == CScreenUnits::Type::EX)
+  else if (l.units() == CScreenUnits::Units::EX)
     os << l.value() << "ex";
-  else if (l.type() == CScreenUnits::Type::PT)
+  else if (l.units() == CScreenUnits::Units::PT)
     os << l.value() << "pt";
-  else if (l.type() == CScreenUnits::Type::PC)
+  else if (l.units() == CScreenUnits::Units::PC)
     os << l.value() << "pc";
-  else if (l.type() == CScreenUnits::Type::CM)
+  else if (l.units() == CScreenUnits::Units::CM)
     os << l.value() << "cm";
-  else if (l.type() == CScreenUnits::Type::MM)
+  else if (l.units() == CScreenUnits::Units::MM)
     os << l.value() << "mm";
-  else if (l.type() == CScreenUnits::Type::IN)
+  else if (l.units() == CScreenUnits::Units::IN)
     os << l.value() << "in";
-  else if (l.type() == CScreenUnits::Type::PX)
+  else if (l.units() == CScreenUnits::Units::PX)
     os << l.value() << "px";
-  else if (l.type() == CScreenUnits::Type::PERCENT)
+  else if (l.units() == CScreenUnits::Units::PERCENT)
     os << l.value() << "%";
   else
     os << l.value();

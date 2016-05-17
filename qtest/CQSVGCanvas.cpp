@@ -56,7 +56,7 @@ redraw()
   matrix.translate(offset_.x, offset_.y);
   matrix.scale(scale_, scale_);
 
-  svg_->draw(matrix, offset_, scale_);
+  svg_->draw(matrix, offset_, scale_, scale_);
 
   opainter_->end();
 }
@@ -210,6 +210,8 @@ keyPressEvent(QKeyEvent *ke)
     offset_.y += 4;
   else if (ke->key() == Qt::Key_A)
     autoScale_ = ! autoScale_;
+  else
+    return;
 
   redraw();
 
