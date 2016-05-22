@@ -156,10 +156,11 @@ update(const CSVGFill &fill)
     noColor_ = fill.noColor_;
   else {
     if (svg_.styleObject()) {
-      bool b;
+      bool        noColor;
+      CSVGCSSType noColorType;
 
-      if (svg_.getStyleFillNoColor(svg_.styleObject(), b))
-        noColor_ = b;
+      if (svg_.getStyleFillNoColor(svg_.styleObject(), noColor, noColorType))
+        noColor_ = noColor;
     }
   }
 
@@ -176,18 +177,34 @@ update(const CSVGFill &fill)
   }
   else {
     if (svg_.styleObject()) {
-      CRGBA c;
+      CRGBA       color;
+      CSVGCSSType colorType;
 
-      if (svg_.getStyleFillColor(svg_.styleObject(), c)) {
-        color_ = c;
+      if (svg_.getStyleFillColor(svg_.styleObject(), color, colorType)) {
+        color_ = color;
 
         noColor_.setInvalid();
       }
     }
   }
 
-  if (fill.getOpacityValid())
-    opacity_ = fill.opacity_;
+  COptReal ga;
+
+  if (svg_.styleObject()) {
+    if (svg_.styleObject()->getOpacityValid())
+      ga = svg_.styleObject()->getOpacity();
+  }
+
+  if      (fill.getOpacityValid())
+    opacity_ = ga.getValue(1)*fill.opacity_.getValue();
+  else if (svg_.styleObject()) {
+    double a;
+
+    if (svg_.getStyleFillOpacity(svg_.styleObject(), a))
+      setOpacity(ga.getValue(1)*a);
+  }
+  else if (ga.isValid())
+    opacity_ = ga.getValue();
 
   if (fill.getRuleValid())
     rule_ = fill.rule_;

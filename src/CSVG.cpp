@@ -145,8 +145,8 @@ createRenderer()
 {
   if (renderer_)
     return renderer_->dup();
-  else
-    return 0;
+
+  return 0;
 }
 
 void
@@ -448,13 +448,13 @@ createObjectByName(const std::string &name)
   else if (name == "a")
     object = createAnchor();
   else if (name == "animate")
-    object = new CSVGAnimate(*this);
+    object = createAnimate();
   else if (name == "animateColor")
-    object = new CSVGAnimateColor(*this);
+    object = createAnimateColor();
   else if (name == "animateMotion")
-    object = new CSVGAnimateMotion(*this);
+    object = createAnimateMotion();
   else if (name == "animateTransform")
-    object = new CSVGAnimateTransform(*this);
+    object = createAnimateTransform();
   else if (name == "circle")
     object = createCircle();
   else if (name == "clipPath")
@@ -516,19 +516,19 @@ createObjectByName(const std::string &name)
   else if (name == "filter")
     object = createFilter();
   else if (name == "font")
-    object = new CSVGFont(*this);
+    object = createFont();
   else if (name == "font-face")
-    object = new CSVGFontFace(*this);
+    object = createFontFace();
   else if (name == "font-face-src")
-    object = new CSVGFontFaceSrc(*this);
+    object = createFontFaceSrc();
   else if (name == "font-face-uri")
-    object = new CSVGFontFaceUri(*this);
+    object = createFontFaceUri();
   else if (name == "glyph")
-    object = new CSVGGlyph(*this);
+    object = createGlyph();
   else if (name == "g")
     object = createGroup();
   else if (name == "hkern")
-    object = new CSVGHKern(*this);
+    object = createHKern();
   else if (name == "image")
     object = createImage();
   else if (name == "line")
@@ -540,7 +540,7 @@ createObjectByName(const std::string &name)
   else if (name == "mask")
     object = createMask();
   else if (name == "missing-glyph")
-    object = new CSVGMissingGlyph(*this);
+    object = createMissingGlyph();
   else if (name == "mpath")
     object = createMPath();
   else if (name == "path")
@@ -556,7 +556,7 @@ createObjectByName(const std::string &name)
   else if (name == "rect")
     object = createRect();
   else if (name == "script")
-    object = new CSVGScript(*this);
+    object = createScript();
   else if (name == "set")
     object = createSet();
   else if (name == "stop")
@@ -564,9 +564,9 @@ createObjectByName(const std::string &name)
   else if (name == "symbol")
     object = createSymbol();
   else if (name == "style")
-    object = new CSVGStyle(*this);
+    object = createStyle();
   else if (name == "switch")
-    object = new CSVGSwitch(*this);
+    object = createSwitch();
   else if (name == "text")
     object = createText();
   else if (name == "textPath")
@@ -602,6 +602,34 @@ CSVG::
 createAnchor()
 {
   return new CSVGAnchor(*this);
+}
+
+CSVGAnimate *
+CSVG::
+createAnimate()
+{
+  return new CSVGAnimate(*this);
+}
+
+CSVGAnimateColor *
+CSVG::
+createAnimateColor()
+{
+  return new CSVGAnimateColor(*this);
+}
+
+CSVGAnimateMotion *
+CSVG::
+createAnimateMotion()
+{
+  return new CSVGAnimateMotion(*this);
+}
+
+CSVGAnimateTransform *
+CSVG::
+createAnimateTransform()
+{
+  return new CSVGAnimateTransform(*this);
 }
 
 CSVGCircle *
@@ -793,11 +821,53 @@ createFilter()
   return new CSVGFilter(*this);
 }
 
+CSVGFont *
+CSVG::
+createFont()
+{
+  return new CSVGFont(*this);
+}
+
+CSVGFontFace *
+CSVG::
+createFontFace()
+{
+  return new CSVGFontFace(*this);
+}
+
+CSVGFontFaceSrc *
+CSVG::
+createFontFaceSrc()
+{
+  return new CSVGFontFaceSrc(*this);
+}
+
+CSVGFontFaceUri *
+CSVG::
+createFontFaceUri()
+{
+  return new CSVGFontFaceUri(*this);
+}
+
+CSVGGlyph *
+CSVG::
+createGlyph()
+{
+  return new CSVGGlyph(*this);
+}
+
 CSVGGroup *
 CSVG::
 createGroup()
 {
   return new CSVGGroup(*this);
+}
+
+CSVGHKern *
+CSVG::
+createHKern()
+{
+  return new CSVGHKern(*this);
 }
 
 CSVGImage *
@@ -833,6 +903,13 @@ CSVG::
 createMask()
 {
   return new CSVGMask(*this);
+}
+
+CSVGMissingGlyph *
+CSVG::
+createMissingGlyph()
+{
+  return new CSVGMissingGlyph(*this);
 }
 
 CSVGMPath *
@@ -884,6 +961,13 @@ createRect()
   return new CSVGRect(*this);
 }
 
+CSVGScript *
+CSVG::
+createScript()
+{
+  return new CSVGScript(*this);
+}
+
 CSVGSet *
 CSVG::
 createSet()
@@ -903,6 +987,20 @@ CSVG::
 createSymbol()
 {
   return new CSVGSymbol(*this);
+}
+
+CSVGStyle *
+CSVG::
+createStyle()
+{
+  return new CSVGStyle(*this);
+}
+
+CSVGSwitch *
+CSVG::
+createSwitch()
+{
+  return new CSVGSwitch(*this);
 }
 
 CSVGText *
@@ -939,6 +1037,150 @@ createUse()
 {
   return new CSVGUse(*this);
 }
+
+CSVGBuffer *
+CSVG::
+createBuffer(const std::string &name)
+{
+  return new CSVGBuffer(*this, name);
+}
+
+//------
+
+CSVGPathMoveTo *
+CSVG::
+createPathMoveTo(double x, double y)
+{
+  return new CSVGPathMoveTo(*this, x, y);
+}
+
+CSVGPathRMoveTo *
+CSVG::
+createPathRMoveTo(double x, double y)
+{
+  return new CSVGPathRMoveTo(*this, x, y);
+}
+
+CSVGPathLineTo *
+CSVG::
+createPathLineTo(double x, double y)
+{
+  return new CSVGPathLineTo(*this, x, y);
+}
+
+CSVGPathRLineTo *
+CSVG::
+createPathRLineTo(double x, double y)
+{
+  return new CSVGPathRLineTo(*this, x, y);
+}
+
+CSVGPathHLineTo *
+CSVG::
+createPathHLineTo(double x)
+{
+  return new CSVGPathHLineTo(*this, x);
+}
+
+CSVGPathRHLineTo *
+CSVG::
+createPathRHLineTo(double x)
+{
+  return new CSVGPathRHLineTo(*this, x);
+}
+
+CSVGPathVLineTo *
+CSVG::
+createPathVLineTo(double y)
+{
+  return new CSVGPathVLineTo(*this, y);
+}
+
+CSVGPathRVLineTo *
+CSVG::
+createPathRVLineTo(double y)
+{
+  return new CSVGPathRVLineTo(*this, y);
+}
+
+CSVGPathArcTo *
+CSVG::
+createPathArcTo(double rx, double ry, double xa, double fa, double fs, double x2, double y2)
+{
+  return new CSVGPathArcTo(*this, rx, ry, xa, fa, fs, x2, y2);
+}
+
+CSVGPathRArcTo *
+CSVG::
+createPathRArcTo(double rx, double ry, double xa, double fa, double fs, double x2, double y2)
+{
+  return new CSVGPathRArcTo(*this, rx, ry, xa, fa, fs, x2, y2);
+}
+
+CSVGPathBezier2To *
+CSVG::
+createPathBezier2To(double x1, double y1, double x2, double y2)
+{
+  return new CSVGPathBezier2To(*this, x1, y1, x2, y2);
+}
+
+CSVGPathMBezier2To *
+CSVG::
+createPathMBezier2To(double x2, double y2)
+{
+  return new CSVGPathMBezier2To(*this, x2, y2);
+}
+
+CSVGPathRBezier2To *
+CSVG::
+createPathRBezier2To(double x1, double y1, double x2, double y2)
+{
+  return new CSVGPathRBezier2To(*this, x1, y1, x2, y2);
+}
+
+CSVGPathMRBezier2To *
+CSVG::
+createPathMRBezier2To(double x2, double y2)
+{
+  return new CSVGPathMRBezier2To(*this, x2, y2);
+}
+
+CSVGPathBezier3To *
+CSVG::
+createPathBezier3To(double x1, double y1, double x2, double y2, double x3, double y3)
+{
+  return new CSVGPathBezier3To(*this, x1, y1, x2, y2, x3, y3);
+}
+
+CSVGPathMBezier3To *
+CSVG::
+createPathMBezier3To(double x2, double y2, double x3, double y3)
+{
+  return new CSVGPathMBezier3To(*this, x2, y2, x3, y3);
+}
+
+CSVGPathRBezier3To *
+CSVG::
+createPathRBezier3To(double x1, double y1, double x2, double y2, double x3, double y3)
+{
+  return new CSVGPathRBezier3To(*this, x1, y1, x2, y2, x3, y3);
+}
+
+CSVGPathMRBezier3To *
+CSVG::
+createPathMRBezier3To(double x2, double y2, double x3, double y3)
+{
+  return new CSVGPathMRBezier3To(*this, x2, y2, x3, y3);
+}
+
+CSVGPathClosePath *
+CSVG::
+createPathClosePath(bool relative)
+{
+  return new CSVGPathClosePath(*this, relative);
+}
+
+//------
 
 double
 CSVG::
@@ -1033,6 +1275,13 @@ drawToImage(int w, int h, const CPoint2D &offset, double xscale, double yscale)
   }
   else
     return CImagePtr();
+}
+
+bool
+CSVG::
+hasAnimation() const
+{
+  return getBlock()->hasAnimation();
 }
 
 void
@@ -1221,6 +1470,8 @@ endDrawBuffer(CSVGBuffer *buffer)
   buffer->endDraw();
 }
 
+//------
+
 void
 CSVG::
 resetStroke()
@@ -1249,11 +1500,20 @@ bool
 CSVG::
 isStroked() const
 {
+  if (stroke_.getNoColorValid() && stroke_.getNoColor())
+    return false;
+
   if (stroke_.getColorValid()) {
     CRGBA strokeColor = stroke_.getAlphaColor();
 
     return (strokeColor.getAlpha() > 0);
   }
+
+  if (stroke_.getUrlValid())
+    return true;
+
+  if (stroke_.getFillObjectValid())
+    return true;
 
   return false;
 }
@@ -1262,21 +1522,65 @@ void
 CSVG::
 setStrokeBuffer(CSVGBuffer *buffer)
 {
-  if (stroke_.getColorValid()) {
-    CRGBA strokeColor = stroke_.getAlphaColor();
+  CSVGObject *fillObject = stroke_.getFillObject();
 
-    if (stroke_.getOpacityValid()) {
-      CRGBA strokeColor1(strokeColor);
+  if (fillObject) {
+    buffer->setStrokeFilled(true);
 
-      strokeColor1.setAlpha(stroke_.getOpacity());
+    CSVGLinearGradient *lg = dynamic_cast<CSVGLinearGradient *>(fillObject);
+    CSVGRadialGradient *rg = dynamic_cast<CSVGRadialGradient *>(fillObject);
+    CSVGPattern        *pt = dynamic_cast<CSVGPattern        *>(fillObject);
 
-      buffer->setStrokeColor(strokeColor1);
+    if      (lg) {
+      CAutoPtr<CLinearGradient> lg1;
+
+      lg1 = lg->createGradient(drawObject_);
+
+      buffer->setStrokeFillGradient(lg1);
+    }
+    else if (rg) {
+      CAutoPtr<CRadialGradient> rg1;
+
+      rg1 = rg->createGradient(drawObject_);
+
+      buffer->setStrokeFillGradient(rg1);
+    }
+    else if (pt) {
+      double w1, h1;
+
+      pt->setStrokeImage(drawObject_, buffer, &w1, &h1);
     }
     else
-      buffer->setStrokeColor(strokeColor);
+      assert(false);
   }
+  else {
+    buffer->setStrokeFilled(false);
+
+    if (stroke_.getColorValid()) {
+      CRGBA strokeColor = stroke_.getAlphaColor();
+
+      if (stroke_.getOpacityValid()) {
+        CRGBA strokeColor1(strokeColor);
+
+        strokeColor1.setAlpha(stroke_.getOpacity());
+
+        buffer->setStrokeColor(strokeColor1);
+      }
+      else
+        buffer->setStrokeColor(strokeColor);
+    }
+    else
+      buffer->setStrokeColor(CRGBA(0,0,0));
+  }
+
+  //---
+
+  if (stroke_.getRuleValid())
+    buffer->setStrokeFillType(stroke_.getRule());
   else
-    buffer->setStrokeColor(CRGBA(0,0,0));
+    buffer->setStrokeFillType(FILL_TYPE_WINDING);
+
+  //---
 
   if (stroke_.getWidthValid())
     buffer->setLineWidth(stroke_.getWidth());
@@ -1303,6 +1607,8 @@ setStrokeBuffer(CSVGBuffer *buffer)
   else
     buffer->setLineMitreLimit(4.0);
 }
+
+//------
 
 void
 CSVG::
@@ -1363,13 +1669,23 @@ setFillBuffer(CSVGBuffer *buffer)
   }
   else {
     if (fill_.getColorValid()) {
-      CRGBA fill_color = fill_.getAlphaColor();
+      CRGBA fillColor = fill_.getAlphaColor();
 
-      buffer->setFillColor(fill_color);
+      if (fill_.getOpacityValid()) {
+        CRGBA fillColor1(fillColor);
+
+        fillColor1.setAlpha(fill_.getOpacity());
+
+        buffer->setFillColor(fillColor1);
+      }
+      else
+        buffer->setFillColor(fillColor);
     }
     else
       buffer->setFillColor(CRGBA(0,0,0));
   }
+
+  //---
 
   if (fill_.getRuleValid())
     buffer->setFillType(fill_.getRule());
@@ -1429,20 +1745,6 @@ CSVG::
 setTransform(const CMatrixStack2D &matrix)
 {
   buffer_->setTransform(matrix);
-}
-
-void
-CSVG::
-drawImage(double x, double y, CImagePtr image)
-{
-  buffer_->drawImage(x, y, image);
-}
-
-void
-CSVG::
-drawImage(const CBBox2D &bbox, CImagePtr image)
-{
-  buffer_->drawImage(bbox, image);
 }
 
 void
@@ -1764,131 +2066,6 @@ textSize(const std::string &text, CFontPtr font, double *w, double *a, double *d
   *d = font->getCharDescent();
 }
 
-void
-CSVG::
-pathMoveTo(double dx, double dy)
-{
-  buffer_->pathMoveTo(dx, dy);
-}
-
-void
-CSVG::
-pathRMoveTo(double dx, double dy)
-{
-  buffer_->pathRMoveTo(dx, dy);
-}
-
-void
-CSVG::
-pathLineTo(double dx, double dy)
-{
-  buffer_->pathLineTo(dx, dy);
-}
-
-void
-CSVG::
-pathRLineTo(double dx, double dy)
-{
-  buffer_->pathRLineTo(dx, dy);
-}
-
-void
-CSVG::
-pathArcTo(double cx, double cy, double rx, double ry, double theta1, double theta2)
-{
-  buffer_->pathArcTo(cx, cy, rx, ry, theta1, theta2);
-}
-
-void
-CSVG::
-pathArcSegment(double xc, double yc, double angle1, double angle2,
-               double rx, double ry, double phi)
-{
-  angle1 = CMathGen::DegToRad(angle1);
-  angle2 = CMathGen::DegToRad(angle2);
-  phi    = CMathGen::DegToRad(phi);
-
-  double sin_a1  = sin(angle1);
-  double cos_a1  = cos(angle1);
-  double sin_a2  = sin(angle2);
-  double cos_a2  = cos(angle2);
-  double sin_phi = sin(phi);
-  double cos_phi = cos(phi);
-
-  double a00 =  cos_phi*rx;
-  double a01 = -sin_phi*ry;
-  double a10 =  sin_phi*rx;
-  double a11 =  cos_phi*ry;
-
-  double da2 = 0.5*(angle2 - angle1);
-
-  double t = (8.0/3.0)*sin(da2*0.5)*sin(da2*0.5)/sin(da2);
-
-  double x1 = xc + cos_a1 - t*sin_a1;
-  double y1 = yc + sin_a1 + t*cos_a1;
-  double x3 = xc + cos_a2;
-  double y3 = yc + sin_a2;
-  double x2 = x3 + t*sin_a2;
-  double y2 = y3 - t*cos_a2;
-
-  pathBezier3To(a00*x1 + a01*y1, a10*x1 + a11*y1,
-                a00*x2 + a01*y2, a10*x2 + a11*y2,
-                a00*x3 + a01*y3, a10*x3 + a11*y3);
-}
-
-void
-CSVG::
-pathBezier2To(double x1, double y1, double x2, double y2)
-{
-  buffer_->pathBezier2To(x1, y1, x2, y2);
-}
-
-void
-CSVG::
-pathRBezier2To(double x1, double y1, double x2, double y2)
-{
-  buffer_->pathRBezier2To(x1, y1, x2, y2);
-}
-
-void
-CSVG::
-pathBezier3To(double x1, double y1, double x2, double y2, double x3, double y3)
-{
-  buffer_->pathBezier3To(x1, y1, x2, y2, x3, y3);
-}
-
-void
-CSVG::
-pathRBezier3To(double x1, double y1, double x2, double y2, double x3, double y3)
-{
-  buffer_->pathRBezier3To(x1, y1, x2, y2, x3, y3);
-}
-
-bool
-CSVG::
-pathGetCurrentPoint(double *x, double *y)
-{
-  return buffer_->pathGetCurrentPoint(x, y);
-}
-
-void
-CSVG::
-pathStroke()
-{
-  setStrokeBuffer(buffer_);
-
-  buffer_->pathStroke();
-}
-
-void
-CSVG::
-pathFill()
-{
-  setFillBuffer(buffer_);
-
-  buffer_->pathFill();
-}
-
 //--------------
 
 bool
@@ -1909,8 +2086,12 @@ bool
 CSVG::
 pathStringToParts(const std::string &data, CSVGPathPartList &parts)
 {
-  COptValT<double> bezier2_x2, bezier2_y2, bezier2_x3, bezier2_y3;
+#if 0
+  COptValT<double> bezier2_x1, bezier2_y1, bezier2_x2, bezier2_y2;
   COptValT<double> bezier3_x2, bezier3_y2, bezier3_x3, bezier3_y3;
+  COptValT<double> rbezier2_x1, rbezier2_y1, rbezier2_x2, rbezier2_y2;
+  COptValT<double> rbezier3_x2, rbezier3_y2, rbezier3_x3, rbezier3_y3;
+#endif
 
   char c = '\0', lastC = '\0';
 
@@ -1928,6 +2109,7 @@ pathStringToParts(const std::string &data, CSVGPathPartList &parts)
     else
       rereadCmd = false;
 
+    // relative move to
     if      (c == 'm') {
       lastC = c;
 
@@ -1943,8 +2125,9 @@ pathStringToParts(const std::string &data, CSVGPathPartList &parts)
 
       skipCommaSpace(parse);
 
-      parts.push_back(new CSVGPathRMoveTo(*this, x, y));
+      parts.push_back(createPathRMoveTo(x, y));
 
+      // TODO: leave to rereadCmd logic
       while (parse.isDigit() || parse.isChar('-')) {
         if (! parse.readReal(&x)) { flag = false; break; }
 
@@ -1954,9 +2137,10 @@ pathStringToParts(const std::string &data, CSVGPathPartList &parts)
 
         skipCommaSpace(parse);
 
-        parts.push_back(new CSVGPathRLineTo(*this, x, y));
+        parts.push_back(createPathRLineTo(x, y));
       }
     }
+    // absolute move to
     else if (c == 'M') {
       lastC = c;
 
@@ -1972,8 +2156,9 @@ pathStringToParts(const std::string &data, CSVGPathPartList &parts)
 
       skipCommaSpace(parse);
 
-      parts.push_back(new CSVGPathMoveTo(*this, x, y));
+      parts.push_back(createPathMoveTo(x, y));
 
+      // TODO: leave to rereadCmd logic
       while (parse.isDigit() || parse.isChar('-')) {
         if (! parse.readReal(&x)) { flag = false; break; }
 
@@ -1983,9 +2168,10 @@ pathStringToParts(const std::string &data, CSVGPathPartList &parts)
 
         skipCommaSpace(parse);
 
-        parts.push_back(new CSVGPathLineTo(*this, x, y));
+        parts.push_back(createPathLineTo(x, y));
       }
     }
+    // relative line to
     else if (c == 'l') {
       lastC = c;
 
@@ -2001,8 +2187,9 @@ pathStringToParts(const std::string &data, CSVGPathPartList &parts)
 
       skipCommaSpace(parse);
 
-      parts.push_back(new CSVGPathRLineTo(*this, x, y));
+      parts.push_back(createPathRLineTo(x, y));
 
+      // TODO: leave to rereadCmd logic
       while (parse.isDigit() || parse.isChar('-')) {
         if (! parse.readReal(&x)) { flag = false; break; }
 
@@ -2012,9 +2199,10 @@ pathStringToParts(const std::string &data, CSVGPathPartList &parts)
 
         skipCommaSpace(parse);
 
-        parts.push_back(new CSVGPathRLineTo(*this, x, y));
+        parts.push_back(createPathRLineTo(x, y));
       }
     }
+    // absolute line to
     else if (c == 'L') {
       lastC = c;
 
@@ -2030,8 +2218,9 @@ pathStringToParts(const std::string &data, CSVGPathPartList &parts)
 
       skipCommaSpace(parse);
 
-      parts.push_back(new CSVGPathLineTo(*this, x, y));
+      parts.push_back(createPathLineTo(x, y));
 
+      // TODO: leave to rereadCmd logic
       while (parse.isDigit() || parse.isChar('-')) {
         if (! parse.readReal(&x)) { flag = false; break; }
 
@@ -2041,9 +2230,10 @@ pathStringToParts(const std::string &data, CSVGPathPartList &parts)
 
         skipCommaSpace(parse);
 
-        parts.push_back(new CSVGPathLineTo(*this, x, y));
+        parts.push_back(createPathLineTo(x, y));
       }
     }
+    // relative hline to
     else if (c == 'h') {
       lastC = c;
 
@@ -2053,8 +2243,9 @@ pathStringToParts(const std::string &data, CSVGPathPartList &parts)
 
       if (! parse.readReal(&d)) { flag = false; break; }
 
-      parts.push_back(new CSVGPathRLineTo(*this, d, 0));
+      parts.push_back(createPathRHLineTo(d));
     }
+    // absolute hline to
     else if (c == 'H') {
       lastC = c;
 
@@ -2064,8 +2255,9 @@ pathStringToParts(const std::string &data, CSVGPathPartList &parts)
 
       if (! parse.readReal(&d)) { flag = false; break; }
 
-      parts.push_back(new CSVGPathHLineTo(*this, d));
+      parts.push_back(createPathHLineTo(d));
     }
+    // relative vline to
     else if (c == 'v') {
       lastC = c;
 
@@ -2075,8 +2267,9 @@ pathStringToParts(const std::string &data, CSVGPathPartList &parts)
 
       if (! parse.readReal(&d)) { flag = false; break; }
 
-      parts.push_back(new CSVGPathRLineTo(*this, 0, d));
+      parts.push_back(createPathRVLineTo(d));
     }
+    // absolute vline to
     else if (c == 'V') {
       lastC = c;
 
@@ -2086,8 +2279,9 @@ pathStringToParts(const std::string &data, CSVGPathPartList &parts)
 
       if (! parse.readReal(&d)) { flag = false; break; }
 
-      parts.push_back(new CSVGPathVLineTo(*this, d));
+      parts.push_back(createPathVLineTo(d));
     }
+    // relative arc to
     else if (c == 'a') {
       lastC = c;
 
@@ -2122,10 +2316,11 @@ pathStringToParts(const std::string &data, CSVGPathPartList &parts)
 
       if (! parse.readReal(&y2)) { flag = false; break; }
 
-      parts.push_back(new CSVGPathRArcTo(*this, rx, ry, xa, fa, fs, x2, y2));
+      parts.push_back(createPathRArcTo(rx, ry, xa, fa, fs, x2, y2));
 
       parse.skipSpace();
 
+      // TODO: leave to rereadCmd logic
       while (parse.isDigit() || parse.isChar('-')) {
         if (! parse.readReal(&rx)) { flag = false; break; }
 
@@ -2153,11 +2348,12 @@ pathStringToParts(const std::string &data, CSVGPathPartList &parts)
 
         if (! parse.readReal(&y2)) { flag = false; break; }
 
-        parts.push_back(new CSVGPathRArcTo(*this, rx, ry, xa, fa, fs, x2, y2));
+        parts.push_back(createPathRArcTo(rx, ry, xa, fa, fs, x2, y2));
 
         parse.skipSpace();
       }
     }
+    // absolute arc to
     else if (c == 'A') {
       lastC = c;
 
@@ -2192,9 +2388,10 @@ pathStringToParts(const std::string &data, CSVGPathPartList &parts)
 
       if (! parse.readReal(&y2)) { flag = false; break; }
 
-      parts.push_back(new CSVGPathArcTo(*this, rx, ry, xa, fa, fs, x2, y2));
+      parts.push_back(createPathArcTo(rx, ry, xa, fa, fs, x2, y2));
     }
-    else if (c == 'q') { // Quadratic Bezier (Relative)
+    // relative quadratic bezier to
+    else if (c == 'q') {
       lastC = c;
 
       double x1, y1, x2, y2;
@@ -2217,8 +2414,17 @@ pathStringToParts(const std::string &data, CSVGPathPartList &parts)
 
       skipCommaSpace(parse);
 
-      parts.push_back(new CSVGPathRBezier2To(*this, x1, y1, x2, y2));
+      parts.push_back(createPathRBezier2To(x1, y1, x2, y2));
 
+#if 0
+      bezier2_x1.setInvalid(); bezier2_y1.setInvalid();
+      bezier2_x2.setInvalid(); bezier2_y2.setInvalid();
+
+      rbezier2_x1.setValue(x1); rbezier2_y1.setValue(y1);
+      rbezier2_x2.setValue(x2); rbezier2_y2.setValue(y2);
+#endif
+
+      // TODO: leave to rereadCmd logic
       while (parse.isDigit() || parse.isChar('-')) {
         if (! parse.readReal(&x1)) { flag = false; break; }
 
@@ -2236,10 +2442,16 @@ pathStringToParts(const std::string &data, CSVGPathPartList &parts)
 
         skipCommaSpace(parse);
 
-        parts.push_back(new CSVGPathRBezier2To(*this, x1, y1, x2, y2));
+        parts.push_back(createPathRBezier2To(x1, y1, x2, y2));
+
+#if 0
+        rbezier2_x1.setValue(x1); rbezier2_y1.setValue(y1);
+        rbezier2_x2.setValue(x2); rbezier2_y2.setValue(y2);
+#endif
       }
     }
-    else if (c == 'Q') { // Quadratic Bezier (Absolute)
+    // absolute quadratic bezier to
+    else if (c == 'Q') {
       lastC = c;
 
       double x1, y1, x2, y2;
@@ -2262,11 +2474,17 @@ pathStringToParts(const std::string &data, CSVGPathPartList &parts)
 
       skipCommaSpace(parse);
 
-      parts.push_back(new CSVGPathBezier2To(*this, x1, y1, x2, y2));
+      parts.push_back(createPathBezier2To(x1, y1, x2, y2));
 
-      bezier2_x2.setValue(x1); bezier2_y2.setValue(y1);
-      bezier2_x3.setValue(x2); bezier2_y3.setValue(y2);
+#if 0
+      rbezier2_x1.setInvalid(); rbezier2_y1.setInvalid();
+      rbezier2_x2.setInvalid(); rbezier2_y2.setInvalid();
 
+      bezier2_x1.setValue(x1); bezier2_y1.setValue(y1);
+      bezier2_x2.setValue(x2); bezier2_y2.setValue(y2);
+#endif
+
+      // TODO: leave to rereadCmd logic
       while (parse.isDigit() || parse.isChar('-')) {
         if (! parse.readReal(&x1)) { flag = false; break; }
 
@@ -2284,12 +2502,15 @@ pathStringToParts(const std::string &data, CSVGPathPartList &parts)
 
         skipCommaSpace(parse);
 
-        parts.push_back(new CSVGPathBezier2To(*this, x1, y1, x2, y2));
+        parts.push_back(createPathBezier2To(x1, y1, x2, y2));
 
-        bezier2_x2.setValue(x1); bezier2_y2.setValue(y1);
-        bezier2_x3.setValue(x2); bezier2_y3.setValue(y2);
+#if 0
+        bezier2_x1.setValue(x1); bezier2_y1.setValue(y1);
+        bezier2_x2.setValue(x2); bezier2_y2.setValue(y2);
+#endif
       }
     }
+    // relative quadratic bezier to (with mirrored control point)
     else if (c == 't') {
       lastC = c;
 
@@ -2303,13 +2524,21 @@ pathStringToParts(const std::string &data, CSVGPathPartList &parts)
 
       if (! parse.readReal(&y2)) { flag = false; break; }
 
-      if (bezier2_x2.isValid()) {
-        double x1 = 2*bezier2_x3.getValue() - bezier2_x2.getValue();
-        double y1 = 2*bezier2_y3.getValue() - bezier2_y2.getValue();
+#if 0
+      if (rbezier2_x2.isValid()) {
+        double x1 =  rbezier2_x2.getValue();
+        double y1 = -rbezier2_y2.getValue();
 
-        parts.push_back(new CSVGPathRBezier2To(*this, x1, y1, x2, y2));
+        parts.push_back(createPathRBezier2To(x1, y1, x2, y2));
       }
+      else {
+        std::cerr << "No previous bezier for 't'" << std::endl;
+        flag = false;
+      }
+#endif
+      parts.push_back(createPathMRBezier2To(x2, y2));
     }
+    // absolute quadratic bezier to (with mirrored control point)
     else if (c == 'T') {
       lastC = c;
 
@@ -2323,17 +2552,25 @@ pathStringToParts(const std::string &data, CSVGPathPartList &parts)
 
       if (! parse.readReal(&y2)) { flag = false; break; }
 
+#if 0
       if (bezier2_x2.isValid()) {
-        double x1 = 2*bezier2_x3.getValue() - bezier2_x2.getValue();
-        double y1 = 2*bezier2_y3.getValue() - bezier2_y2.getValue();
+        double x1 = 2*bezier2_x2.getValue() - bezier2_x1.getValue();
+        double y1 = 2*bezier2_y2.getValue() - bezier2_y1.getValue();
 
-        parts.push_back(new CSVGPathBezier2To(*this, x1, y1, x2, y2));
+        parts.push_back(createPathBezier2To(x1, y1, x2, y2));
 
-        bezier2_x2.setValue(x1); bezier2_y2.setValue(y1);
-        bezier2_x3.setValue(x2); bezier2_y3.setValue(y2);
+        bezier2_x1.setValue(x1); bezier2_y1.setValue(y1);
+        bezier2_x2.setValue(x2); bezier2_y2.setValue(y2);
       }
+      else {
+        std::cerr << "No previous bezier for 'T'" << std::endl;
+        flag = false;
+      }
+#endif
+      parts.push_back(createPathMBezier2To(x2, y2));
     }
-    else if (c == 'c') { // Cubic Bezier (Relative)
+    // relative cubic bezier to
+    else if (c == 'c') {
       lastC = c;
 
       double x1, y1, x2, y2, x3, y3;
@@ -2364,8 +2601,17 @@ pathStringToParts(const std::string &data, CSVGPathPartList &parts)
 
       skipCommaSpace(parse);
 
-      parts.push_back(new CSVGPathRBezier3To(*this, x1, y1, x2, y2, x3, y3));
+      parts.push_back(createPathRBezier3To(x1, y1, x2, y2, x3, y3));
 
+#if 0
+      bezier3_x2.setInvalid(); bezier3_y2.setInvalid();
+      bezier3_x3.setInvalid(); bezier3_y3.setInvalid();
+
+      rbezier3_x2.setValue(x2); rbezier3_y2.setValue(y2);
+      rbezier3_x3.setValue(x3); rbezier3_y3.setValue(y3);
+#endif
+
+      // TODO: leave to rereadCmd logic
       while (parse.isDigit() || parse.isChar('-')) {
         if (! parse.readReal(&x1)) { flag = false; break; }
 
@@ -2391,10 +2637,16 @@ pathStringToParts(const std::string &data, CSVGPathPartList &parts)
 
         skipCommaSpace(parse);
 
-        parts.push_back(new CSVGPathRBezier3To(*this, x1, y1, x2, y2, x3, y3));
+        parts.push_back(createPathRBezier3To(x1, y1, x2, y2, x3, y3));
+
+#if 0
+        rbezier3_x2.setValue(x2); rbezier3_y2.setValue(y2);
+        rbezier3_x3.setValue(x3); rbezier3_y3.setValue(y3);
+#endif
       }
     }
-    else if (c == 'C') { // Cubic Bezier (Absolute)
+    // absolute cubic bezier to
+    else if (c == 'C') {
       lastC = c;
 
       double x1, y1, x2, y2, x3, y3;
@@ -2425,11 +2677,17 @@ pathStringToParts(const std::string &data, CSVGPathPartList &parts)
 
       skipCommaSpace(parse);
 
-      parts.push_back(new CSVGPathBezier3To(*this, x1, y1, x2, y2, x3, y3));
+      parts.push_back(createPathBezier3To(x1, y1, x2, y2, x3, y3));
+
+#if 0
+      rbezier3_x2.setInvalid(); rbezier3_y2.setInvalid();
+      rbezier3_x3.setInvalid(); rbezier3_y3.setInvalid();
 
       bezier3_x2.setValue(x2); bezier3_y2.setValue(y2);
       bezier3_x3.setValue(x3); bezier3_y3.setValue(y3);
+#endif
 
+      // TODO: leave to rereadCmd logic
       while (parse.isDigit() || parse.isChar('-')) {
         if (! parse.readReal(&x1)) { flag = false; break; }
 
@@ -2455,12 +2713,15 @@ pathStringToParts(const std::string &data, CSVGPathPartList &parts)
 
         skipCommaSpace(parse);
 
-        parts.push_back(new CSVGPathBezier3To(*this, x1, y1, x2, y2, x3, y3));
+        parts.push_back(createPathBezier3To(x1, y1, x2, y2, x3, y3));
 
+#if 0
         bezier3_x2.setValue(x2); bezier3_y2.setValue(y2);
         bezier3_x3.setValue(x3); bezier3_y3.setValue(y3);
+#endif
       }
     }
+    // relative cubic bezier to (with mirrored control point)
     else if (c == 's') {
       lastC = c;
 
@@ -2482,16 +2743,24 @@ pathStringToParts(const std::string &data, CSVGPathPartList &parts)
 
       if (! parse.readReal(&y3)) { flag = false; break; }
 
-      if (bezier3_x2.isValid()) {
-        double x1 = 2*bezier3_x3.getValue() - bezier3_x2.getValue();
-        double y1 = 2*bezier3_y3.getValue() - bezier3_y2.getValue();
+#if 0
+      if (rbezier3_x3.isValid()) {
+        double x1 =  rbezier3_x3.getValue();
+        double y1 = -rbezier3_y3.getValue();
 
-        parts.push_back(new CSVGPathRBezier3To(*this, x1, y1, x2, y2, x3, y3));
+        parts.push_back(createPathRBezier3To(x1, y1, x2, y2, x3, y3));
 
-        bezier3_x2.setValue(x2); bezier3_y2.setValue(y2);
-        bezier3_x3.setValue(x3); bezier3_y3.setValue(y3);
+        rbezier3_x2.setValue(x2); rbezier3_y2.setValue(y2);
+        rbezier3_x3.setValue(x3); rbezier3_y3.setValue(y3);
       }
+      else {
+        std::cerr << "No previous bezier for 's'" << std::endl;
+        flag = false;
+      }
+#endif
+      parts.push_back(createPathMRBezier3To(x2, y2, x3, y3));
     }
+    // absolute cubic bezier to (with mirrored control point)
     else if (c == 'S') {
       lastC = c;
 
@@ -2513,29 +2782,48 @@ pathStringToParts(const std::string &data, CSVGPathPartList &parts)
 
       if (! parse.readReal(&y3)) { flag = false; break; }
 
-      if (bezier3_x2.isValid()) {
+#if 0
+      if (bezier3_x3.isValid()) {
         double x1 = 2*bezier3_x3.getValue() - bezier3_x2.getValue();
         double y1 = 2*bezier3_y3.getValue() - bezier3_y2.getValue();
 
-        parts.push_back(new CSVGPathBezier3To(*this, x1, y1, x2, y2, x3, y3));
+        parts.push_back(createPathBezier3To(x1, y1, x2, y2, x3, y3));
 
         bezier3_x2.setValue(x2); bezier3_y2.setValue(y2);
         bezier3_x3.setValue(x3); bezier3_y3.setValue(y3);
       }
+      else {
+        std::cerr << "No previous bezier for 'S'" << std::endl;
+        flag = false;
+      }
+#endif
+      parts.push_back(createPathMBezier3To(x2, y2, x3, y3));
     }
+    // relative close path
     else if (c == 'z') {
       lastC = c;
 
-      parts.push_back(new CSVGPathClosePath(*this));
+      parts.push_back(createPathClosePath(/*relative*/true));
     }
+    // absolute close path
     else if (c == 'Z') {
       lastC = c;
 
-      parts.push_back(new CSVGPathClosePath(*this));
+      parts.push_back(createPathClosePath(/*relative*/false));
     }
     else {
       // repeat last command if any
-      if (isdigit(c) && lastC != '\0') {
+      bool isNumber = false;
+
+      if (c == '-' || c == '+') {
+        if (isdigit(parse.getCharAt()))
+          isNumber = true;
+      }
+      else if (isdigit(c)) {
+        isNumber = true;
+      }
+
+      if (isNumber && lastC != '\0') {
         parse.unreadChar();
 
         c = lastC;
@@ -2547,7 +2835,9 @@ pathStringToParts(const std::string &data, CSVGPathPartList &parts)
 
       CSVGLog() << "Invalid path command " << c;
 
-      return false;
+      flag = false;
+
+      break;
     }
 
     skipCommaSpace(parse);
@@ -2555,8 +2845,7 @@ pathStringToParts(const std::string &data, CSVGPathPartList &parts)
 
   if (! flag) {
     CSVGLog() << "Path parse fail :";
-
-    std::cerr << parse.getBefore() << ">" << parse.getAt() << "<" << parse.getAfter();
+    CSVGLog() << parse.getBefore() << ">" << parse.getAt() << "<" << parse.getAfter();
   }
 
   return flag;
@@ -2575,14 +2864,23 @@ drawParts(const CSVGPathPartList &parts, CSVGObjectMarker *omarker)
 
   // fill and/or stroke path
   if (isFilled() || isStroked()) {
-    if (isFilled())
-      pathFill();
+    if (isFilled()) {
+      setFillBuffer(buffer_);
 
-    if (isStroked())
-      pathStroke();
+      buffer_->pathFill();
+    }
+
+    if (isStroked()) {
+      setStrokeBuffer(buffer_);
+
+      buffer_->pathStroke();
+    }
   }
-  else
-    pathFill();
+  else {
+    setFillBuffer(buffer_);
+
+    buffer_->pathFill();
+  }
 
   //------
 
@@ -2702,33 +3000,30 @@ coordOption(const std::string &opt_name, const std::string &opt_value,
   if (opt_name != name)
     return false;
 
-  bool flag = true;
+  double value;
 
   std::vector<std::string> match_strs;
 
   if (CRegExpUtil::parse(opt_value, "\\(.*\\)%", match_strs)) {
-    double value;
-
     if (! CStrUtil::toReal(match_strs[0], &value)) {
-      value = 0.0;
-      flag = false;
+      CSVGLog() << "Illegal coord value " << match_strs[0];
+      return false;
     }
 
-    length = CScreenUnits(CScreenUnits::Units::PERCENT, value/100.0);
+    length = CScreenUnits(CScreenUnits::Units::PERCENT, value);
   }
   else {
     CScreenUnits length1;
 
     if (! decodeLengthValue(opt_value, length1)) {
-      CSVGLog() << "Illegal value for " << name;
-      length = CScreenUnits();
-      flag = false;
+      CSVGLog() << "Illegal coord value " << opt_value;
+      return false;
     }
 
     length = length1;
   }
 
-  return flag;
+  return true;
 }
 
 bool
@@ -2872,8 +3167,10 @@ decodeLengthValue(const std::string &str, CScreenUnits &lvalue)
     lvalue = CScreenUnits(CScreenUnits::Units::PX, value);
   }
   else if (CRegExpUtil::parse(str, ph_pattern, match_strs)) {
-    if (! CStrUtil::toReal(match_strs[0], &value))
+    if (! CStrUtil::toReal(match_strs[0], &value)) {
+      CSVGLog() << "Illegal coord value " << match_strs[0];
       return false;
+    }
 
     lvalue = CScreenUnits(CScreenUnits::Units::PERCENT, value);
   }
@@ -3787,32 +4084,26 @@ bool
 CSVG::
 decodePercentString(const std::string &str, CScreenUnits &length)
 {
-  bool flag = true;
+  double value;
 
   std::vector<std::string> match_strs;
 
   if (CRegExpUtil::parse(str, "\\(.*\\)%", match_strs)) {
-    double value;
-
     if (! CStrUtil::toReal(match_strs[0], &value)) {
-      value = 0.0;
-      flag = false;
+      CSVGLog() << "Illegal coord value " << match_strs[0];
+      return false;
     }
 
-    length = CScreenUnits(CScreenUnits::Units::PERCENT, value/100.0);
+    length = CScreenUnits(CScreenUnits::Units::PERCENT, value);
   }
   else {
-    double value;
+    if (! CStrUtil::toReal(str, &value))
+      return false;
 
-    if (! CStrUtil::toReal(str, &value)) {
-      value = 0.0;
-      flag = false;
-    }
-
-    length = CScreenUnits(value);
+    length = CScreenUnits(CScreenUnits::Units::RATIO, value);
   }
 
-  return flag;
+  return true;
 }
 
 bool
@@ -4153,13 +4444,14 @@ getTypeClassStyleData(const std::string &objType, const std::string &objClass)
 
 bool
 CSVG::
-getStyleStrokeNoColor(const CSVGObject *obj, bool &noColor)
+getStyleStrokeNoColor(const CSVGObject *obj, bool &noColor, CSVGCSSType &type)
 {
   for (const auto &c : obj->getClasses()) {
     CSVGStyleData &typeClassStyleData = getTypeClassStyleData(obj->getObjName(), c);
 
     if (typeClassStyleData.getStrokeNoColorValid()) {
       noColor = typeClassStyleData.getStrokeNoColor();
+      type = CSVGCSSType::TYPE_CLASS;
       return true;
     }
   }
@@ -4168,6 +4460,7 @@ getStyleStrokeNoColor(const CSVGObject *obj, bool &noColor)
 
   if (typeStyleData.getStrokeNoColorValid()) {
     noColor = typeStyleData.getStrokeNoColor();
+    type = CSVGCSSType::TYPE;
     return true;
   }
 
@@ -4176,6 +4469,7 @@ getStyleStrokeNoColor(const CSVGObject *obj, bool &noColor)
 
     if (classStyleData.getStrokeNoColorValid()) {
       noColor = classStyleData.getStrokeNoColor();
+      type = CSVGCSSType::CLASS;
       return true;
     }
   }
@@ -4184,6 +4478,7 @@ getStyleStrokeNoColor(const CSVGObject *obj, bool &noColor)
 
   if (globalStyleData.getStrokeNoColorValid()) {
     noColor = globalStyleData.getStrokeNoColor();
+    type = CSVGCSSType::GLOBAL;
     return true;
   }
 
@@ -4192,12 +4487,23 @@ getStyleStrokeNoColor(const CSVGObject *obj, bool &noColor)
 
 bool
 CSVG::
-getStyleStrokeColor(const CSVGObject *obj, CRGBA &rgba)
+getStyleStrokeColor(const CSVGObject *obj, CRGBA &rgba, CSVGCSSType &type)
 {
+  for (const auto &c : obj->getClasses()) {
+    CSVGStyleData &typeClassStyleData = getTypeClassStyleData(obj->getObjName(), c);
+
+    if (typeClassStyleData.getStrokeColorValid()) {
+      rgba = typeClassStyleData.getStrokeColor();
+      type = CSVGCSSType::TYPE_CLASS;
+      return true;
+    }
+  }
+
   CSVGStyleData &typeStyleData = getTypeStyleData(obj->getObjName());
 
   if (typeStyleData.getStrokeColorValid()) {
     rgba = typeStyleData.getStrokeColor();
+    type = CSVGCSSType::TYPE_CLASS;
     return true;
   }
 
@@ -4206,6 +4512,7 @@ getStyleStrokeColor(const CSVGObject *obj, CRGBA &rgba)
 
     if (classStyleData.getStrokeColorValid()) {
       rgba = classStyleData.getStrokeColor();
+      type = CSVGCSSType::TYPE_CLASS;
       return true;
     }
   }
@@ -4214,6 +4521,7 @@ getStyleStrokeColor(const CSVGObject *obj, CRGBA &rgba)
 
   if (globalStyleData.getStrokeColorValid()) {
     rgba = globalStyleData.getStrokeColor();
+    type = CSVGCSSType::GLOBAL;
     return true;
   }
 
@@ -4312,52 +4620,14 @@ getStyleStrokeDash(const CSVGObject *obj, CLineDash &dash)
 
 bool
 CSVG::
-getStyleFillColor(const CSVGObject *obj, CRGBA &rgba)
-{
-  for (const auto &c : obj->getClasses()) {
-    CSVGStyleData &typeClassStyleData = getTypeClassStyleData(obj->getObjName(), c);
-
-    if (typeClassStyleData.getFillColorValid()) {
-      rgba = typeClassStyleData.getFillColor();
-      return true;
-    }
-  }
-
-  CSVGStyleData &typeStyleData = getTypeStyleData(obj->getObjName());
-
-  if (typeStyleData.getFillColorValid()) {
-    rgba = typeStyleData.getFillColor();
-    return true;
-  }
-
-  for (const auto &c : obj->getClasses()) {
-    CSVGStyleData &classStyleData = getClassStyleData(c);
-
-    if (classStyleData.getFillColorValid()) {
-      rgba = classStyleData.getFillColor();
-      return true;
-    }
-  }
-
-  CSVGStyleData &globalStyleData = getGlobalStyleData();
-
-  if (globalStyleData.getFillColorValid()) {
-    rgba = globalStyleData.getFillColor();
-    return true;
-  }
-
-  return false;
-}
-
-bool
-CSVG::
-getStyleFillNoColor(const CSVGObject *obj, bool &noColor)
+getStyleFillNoColor(const CSVGObject *obj, bool &noColor, CSVGCSSType &type)
 {
   for (const auto &c : obj->getClasses()) {
     CSVGStyleData &typeClassStyleData = getTypeClassStyleData(obj->getObjName(), c);
 
     if (typeClassStyleData.getFillNoColorValid()) {
       noColor = typeClassStyleData.getFillNoColor();
+      type = CSVGCSSType::TYPE_CLASS;
       return true;
     }
   }
@@ -4366,6 +4636,7 @@ getStyleFillNoColor(const CSVGObject *obj, bool &noColor)
 
   if (typeStyleData.getFillNoColorValid()) {
     noColor = typeStyleData.getFillNoColor();
+    type = CSVGCSSType::TYPE;
     return true;
   }
 
@@ -4374,6 +4645,7 @@ getStyleFillNoColor(const CSVGObject *obj, bool &noColor)
 
     if (classStyleData.getFillNoColorValid()) {
       noColor = classStyleData.getFillNoColor();
+      type = CSVGCSSType::CLASS;
       return true;
     }
   }
@@ -4382,6 +4654,80 @@ getStyleFillNoColor(const CSVGObject *obj, bool &noColor)
 
   if (globalStyleData.getFillNoColorValid()) {
     noColor = globalStyleData.getFillNoColor();
+    type = CSVGCSSType::GLOBAL;
+    return true;
+  }
+
+  return false;
+}
+
+bool
+CSVG::
+getStyleFillColor(const CSVGObject *obj, CRGBA &rgba, CSVGCSSType &type)
+{
+  for (const auto &c : obj->getClasses()) {
+    CSVGStyleData &typeClassStyleData = getTypeClassStyleData(obj->getObjName(), c);
+
+    if (typeClassStyleData.getFillColorValid()) {
+      rgba = typeClassStyleData.getFillColor();
+      type = CSVGCSSType::TYPE_CLASS;
+      return true;
+    }
+  }
+
+  CSVGStyleData &typeStyleData = getTypeStyleData(obj->getObjName());
+
+  if (typeStyleData.getFillColorValid()) {
+    rgba = typeStyleData.getFillColor();
+      type = CSVGCSSType::TYPE;
+    return true;
+  }
+
+  for (const auto &c : obj->getClasses()) {
+    CSVGStyleData &classStyleData = getClassStyleData(c);
+
+    if (classStyleData.getFillColorValid()) {
+      rgba = classStyleData.getFillColor();
+      type = CSVGCSSType::CLASS;
+      return true;
+    }
+  }
+
+  CSVGStyleData &globalStyleData = getGlobalStyleData();
+
+  if (globalStyleData.getFillColorValid()) {
+    rgba = globalStyleData.getFillColor();
+    type = CSVGCSSType::GLOBAL;
+    return true;
+  }
+
+  return false;
+}
+
+bool
+CSVG::
+getStyleFillOpacity(const CSVGObject *obj, double &opacity)
+{
+  CSVGStyleData &typeStyleData = getTypeStyleData(obj->getObjName());
+
+  if (typeStyleData.getFillOpacityValid()) {
+    opacity = typeStyleData.getFillOpacity();
+    return true;
+  }
+
+  for (const auto &c : obj->getClasses()) {
+    CSVGStyleData &classStyleData = getClassStyleData(c);
+
+    if (classStyleData.getFillOpacityValid()) {
+      opacity = classStyleData.getFillOpacity();
+      return true;
+    }
+  }
+
+  CSVGStyleData &globalStyleData = getGlobalStyleData();
+
+  if (globalStyleData.getFillOpacityValid()) {
+    opacity = globalStyleData.getFillOpacity();
     return true;
   }
 

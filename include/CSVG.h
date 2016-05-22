@@ -28,6 +28,10 @@ class CSVGBuffer;
 class CSVGObject;
 
 class CSVGAnchor;
+class CSVGAnimate;
+class CSVGAnimateColor;
+class CSVGAnimateMotion;
+class CSVGAnimateTransform;
 class CSVGCircle;
 class CSVGDefs;
 class CSVGDesc;
@@ -41,6 +45,10 @@ class CSVGFeDiffuseLighting;
 class CSVGFeDisplacementMap;
 class CSVGFeDistantLight;
 class CSVGFeFlood;
+class CSVGFont;
+class CSVGFontFace;
+class CSVGFontFaceSrc;
+class CSVGFontFaceUri;
 class CSVGFeFunc;
 class CSVGFeGaussianBlur;
 class CSVGFeImage;
@@ -55,11 +63,13 @@ class CSVGFeTile;
 class CSVGFeTurbulence;
 class CSVGFilter;
 class CSVGGroup;
+class CSVGHKern;
 class CSVGImage;
 class CSVGLine;
 class CSVGLinearGradient;
 class CSVGMarker;
 class CSVGMask;
+class CSVGMissingGlyph;
 class CSVGMPath;
 class CSVGPath;
 class CSVGPattern;
@@ -67,16 +77,18 @@ class CSVGPolygon;
 class CSVGPolyLine;
 class CSVGRadialGradient;
 class CSVGRect;
+class CSVGScript;
 class CSVGSet;
 class CSVGStop;
+class CSVGStyle;
 class CSVGSymbol;
+class CSVGSwitch;
 class CSVGText;
 class CSVGTextPath;
 class CSVGTitle;
 class CSVGTSpan;
 class CSVGUse;
 
-class CSVGFont;
 class CSVGGlyph;
 class CSVGObjectMarker;
 class CSVGStyleData;
@@ -112,7 +124,7 @@ class CSVG {
   double yscale() const { return yscale_; }
   void setYScale(double s) { yscale_ = s; }
 
-  CSVGRenderer *createRenderer();
+  virtual CSVGRenderer *createRenderer();
 
   CSVGBlock *getBlock() const;
 
@@ -173,6 +185,10 @@ class CSVG {
 
   virtual CSVGBlock               *createBlock();
   virtual CSVGAnchor              *createAnchor();
+  virtual CSVGAnimate             *createAnimate();
+  virtual CSVGAnimateColor        *createAnimateColor();
+  virtual CSVGAnimateMotion       *createAnimateMotion();
+  virtual CSVGAnimateTransform    *createAnimateTransform();
   virtual CSVGCircle              *createCircle();
   virtual CSVGClipPath            *createClipPath();
   virtual CSVGDefs                *createDefs();
@@ -200,12 +216,19 @@ class CSVG {
   virtual CSVGFeTile              *createFeTile();
   virtual CSVGFeTurbulence        *createFeTurbulence();
   virtual CSVGFilter              *createFilter();
+  virtual CSVGFont                *createFont();
+  virtual CSVGFontFace            *createFontFace();
+  virtual CSVGFontFaceSrc         *createFontFaceSrc();
+  virtual CSVGFontFaceUri         *createFontFaceUri();
+  virtual CSVGGlyph               *createGlyph();
   virtual CSVGGroup               *createGroup();
+  virtual CSVGHKern               *createHKern();
   virtual CSVGImage               *createImage();
   virtual CSVGLine                *createLine();
   virtual CSVGLinearGradient      *createLinearGradient();
   virtual CSVGMarker              *createMarker();
   virtual CSVGMask                *createMask();
+  virtual CSVGMissingGlyph        *createMissingGlyph();
   virtual CSVGMPath               *createMPath();
   virtual CSVGPath                *createPath();
   virtual CSVGPattern             *createPattern();
@@ -213,14 +236,43 @@ class CSVG {
   virtual CSVGPolyLine            *createPolyLine();
   virtual CSVGRadialGradient      *createRadialGradient();
   virtual CSVGRect                *createRect();
+  virtual CSVGScript              *createScript();
   virtual CSVGSet                 *createSet();
   virtual CSVGStop                *createStop();
   virtual CSVGSymbol              *createSymbol();
+  virtual CSVGStyle               *createStyle();
+  virtual CSVGSwitch              *createSwitch();
   virtual CSVGText                *createText();
   virtual CSVGTextPath            *createTextPath();
   virtual CSVGTitle               *createTitle();
   virtual CSVGTSpan               *createTSpan();
   virtual CSVGUse                 *createUse();
+
+  virtual CSVGBuffer *createBuffer(const std::string &name);
+
+  virtual CSVGPathMoveTo      *createPathMoveTo (double x, double y);
+  virtual CSVGPathRMoveTo     *createPathRMoveTo(double x, double y);
+  virtual CSVGPathLineTo      *createPathLineTo (double x, double y);
+  virtual CSVGPathRLineTo     *createPathRLineTo(double x, double y);
+  virtual CSVGPathHLineTo     *createPathHLineTo (double x);
+  virtual CSVGPathRHLineTo    *createPathRHLineTo(double x);
+  virtual CSVGPathVLineTo     *createPathVLineTo (double y);
+  virtual CSVGPathRVLineTo    *createPathRVLineTo(double y);
+  virtual CSVGPathArcTo       *createPathArcTo (double rx, double ry, double xa, double fa,
+                                                double fs, double x2, double y2);
+  virtual CSVGPathRArcTo      *createPathRArcTo(double rx, double ry, double xa, double fa,
+                                                double fs, double x2, double y2);
+  virtual CSVGPathBezier2To   *createPathBezier2To  (double x1, double y1, double x2, double y2);
+  virtual CSVGPathMBezier2To  *createPathMBezier2To (double x2, double y2);
+  virtual CSVGPathRBezier2To  *createPathRBezier2To (double x1, double y1, double x2, double y2);
+  virtual CSVGPathMRBezier2To *createPathMRBezier2To(double x2, double y2);
+  virtual CSVGPathBezier3To   *createPathBezier3To  (double x1, double y1, double x2, double y2,
+                                                     double x3, double y3);
+  virtual CSVGPathMBezier3To  *createPathMBezier3To (double x2, double y2, double x3, double y3);
+  virtual CSVGPathRBezier3To  *createPathRBezier3To (double x1, double y1, double x2, double y2,
+                                                     double x3, double y3);
+  virtual CSVGPathMRBezier3To *createPathMRBezier3To(double x2, double y2, double x3, double y3);
+  virtual CSVGPathClosePath   *createPathClosePath(bool relative);
 
   virtual void redraw() { }
 
@@ -258,7 +310,10 @@ class CSVG {
   CImagePtr drawToImage(int w, int h, const CPoint2D &offset=CPoint2D(0,0),
                         double xscale=1, double yscale=1);
 
+  bool hasAnimation() const;
+
   void draw();
+
   void draw(const CMatrixStack2D &matrix, const CPoint2D &offset=CPoint2D(0,0),
             double xscale=1, double yscale=1);
 
@@ -289,9 +344,6 @@ class CSVG {
 
   void setTransform(const CMatrixStack2D &matrix);
 
-  void drawImage(double x, double y, CImagePtr image);
-  void drawImage(const CBBox2D &bbox, CImagePtr image);
-
   void drawLine(double x1, double y1, double x2, double y2);
 
   void drawCircle (double x, double y, double r);
@@ -310,25 +362,6 @@ class CSVG {
   void fillText(double x, double y, const std::string &text, CFontPtr font, CHAlignType align);
 
   void textSize(const std::string &text, CFontPtr font, double *w, double *a, double *d) const;
-
-  void pathTerm();
-  void pathMoveTo(double x, double y);
-  void pathRMoveTo(double x, double y);
-  void pathLineTo(double x, double y);
-  void pathRLineTo(double dx, double dy);
-  void pathArcTo(double cx, double cy, double rx, double ry, double theta1, double theta2);
-  void pathArcSegment(double xc, double yc, double th0, double th1,
-                      double rx, double ry, double xAxisRotation);
-  void pathBezier2To(double x1, double y1, double x2, double y2);
-  void pathRBezier2To(double x1, double y1, double x2, double y2);
-  void pathBezier3To(double x1, double y1, double x2, double y2, double x3, double y3);
-  void pathRBezier3To(double x1, double y1, double x2, double y2, double x3, double y3);
-  bool pathGetCurrentPoint(double *x, double *y);
-  void pathStroke();
-  void pathFill();
-
-  void addWidthToPoint(double x, double y, double angle, double width,
-                       double *x1, double *y1, double *x2, double *y2) const;
 
   bool pathOption(const std::string &opt_name, const std::string &opt_value,
                   const std::string &name, CSVGPathPartList &parts);
@@ -435,14 +468,15 @@ class CSVG {
   CSVGStyleData &getClassStyleData    (const std::string &objClass);
   CSVGStyleData &getTypeClassStyleData(const std::string &objType, const std::string &objClass);
 
-  bool getStyleStrokeNoColor(const CSVGObject *obj, bool &noColor);
-  bool getStyleStrokeColor  (const CSVGObject *obj, CRGBA &rgba);
+  bool getStyleStrokeNoColor(const CSVGObject *obj, bool &noColor, CSVGCSSType &type);
+  bool getStyleStrokeColor  (const CSVGObject *obj, CRGBA &rgba, CSVGCSSType &type);
   bool getStyleStrokeOpacity(const CSVGObject *obj, double &opacity);
   bool getStyleStrokeWidth  (const CSVGObject *obj, double &width);
   bool getStyleStrokeDash   (const CSVGObject *obj, CLineDash &dash);
 
-  bool getStyleFillNoColor(const CSVGObject *obj, bool &noColor);
-  bool getStyleFillColor  (const CSVGObject *obj, CRGBA &rgba);
+  bool getStyleFillNoColor(const CSVGObject *obj, bool &noColor, CSVGCSSType &type);
+  bool getStyleFillColor  (const CSVGObject *obj, CRGBA &rgba, CSVGCSSType &type);
+  bool getStyleFillOpacity(const CSVGObject *obj, double &opacity);
 
   void getObjectsAtPoint(const CPoint2D &p, ObjectList &objects) const;
 

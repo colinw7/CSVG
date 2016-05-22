@@ -21,6 +21,28 @@ class CSVGPreserveAspect {
   const CSVGScale &getScale() const { return scale_ ; }
   void setScale(const CSVGScale &s) { scale_ = s; }
 
+  void print(std::ostream &os) const {
+    if      (getHAlign() == CHALIGN_TYPE_LEFT  ) os << "xMin";
+    else if (getHAlign() == CHALIGN_TYPE_CENTER) os << "xMid";
+    else if (getHAlign() == CHALIGN_TYPE_RIGHT ) os << "xMax";
+
+    if      (getVAlign() == CVALIGN_TYPE_BOTTOM) os << "YMin";
+    else if (getVAlign() == CVALIGN_TYPE_CENTER) os << "YMid";
+    else if (getVAlign() == CVALIGN_TYPE_TOP   ) os << "YMax";
+
+    os << " ";
+
+    if      (getScale() == CSVGScale::FIXED_MEET ) os << "meet";
+    else if (getScale() == CSVGScale::FIXED_SLICE) os << "slice";
+    else if (getScale() == CSVGScale::FREE       ) os << "none";
+  }
+
+  friend std::ostream &operator<<(std::ostream &os, const CSVGPreserveAspect &v) {
+    v.print(os);
+
+    return os;
+  }
+
  public:
   CHAlignType halign_;
   CVAlignType valign_;

@@ -32,6 +32,8 @@ class CSVGAnimation {
 
   void tick(double dt);
 
+  void setTime(double t);
+
   void handleEvent(CSVGEventType type, const std::string &id, const std::string &data);
 
  private:

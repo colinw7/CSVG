@@ -17,6 +17,10 @@ class CQSVGRadialGradient : public CQSVGObject, public CSVGRadialGradient {
 
  public:
   CQSVGRadialGradient(CQSVG *svg);
+
+  double getCenterX() const;
+  double getCenterY() const;
+  double getRadius () const;
 };
 
 #endif

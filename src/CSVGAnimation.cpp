@@ -47,6 +47,22 @@ prevObject(CSVGObject *obj) const
 
 void
 CSVGAnimation::
+setTime(double t)
+{
+  if (objects_.empty())
+    return;
+
+  if (! t_.isValid())
+    t_ = parent_->getTransform();
+  else
+    parent_->setTransform(t_.getValue());
+
+  for (const auto &c : objects())
+    c->setTime(t);
+}
+
+void
+CSVGAnimation::
 tick(double dt)
 {
   if (objects_.empty())

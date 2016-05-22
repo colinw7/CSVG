@@ -6,3 +6,10 @@ CQSVGStop(CQSVG *svg) :
  CQSVGObject(svg, this), CSVGStop(*svg)
 {
 }
+
+double
+CQSVGStop::
+getOffset() const
+{
+  return CSVGStop::getOffset().px(1).value();
+}

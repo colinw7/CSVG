@@ -28,6 +28,44 @@ class CSVGEventValue {
     return (type_ == type && (id_ == "" || id_ == id) && (args_ == "" || args_ == args));
   }
 
+  void print(std::ostream &os) const {
+    if      (type() == CSVGEventType::TIMEOUT)
+      os << time();
+    else if (type() == CSVGEventType::CLICK)
+      os << "click";
+    else if (type() == CSVGEventType::MOUSE_DOWN)
+      os << "mousedown";
+    else if (type() == CSVGEventType::MOUSE_UP)
+      os << "mouseup";
+    else if (type() == CSVGEventType::MOUSE_OVER)
+      os << "mouseover";
+    else if (type() == CSVGEventType::MOUSE_OUT)
+      os << "mouseout";
+    else if (type() == CSVGEventType::ANIMATE_BEGIN)
+      os << id() << ".begin";
+    else if (type() == CSVGEventType::ANIMATE_END)
+      os << id() << ".end";
+    else if (type() == CSVGEventType::ANIMATE_REPEAT)
+      os << id() << ".repeat";
+
+    if (type() != CSVGEventType::TIMEOUT) {
+      if (args() != "")
+        os << "(" << args() << ")";
+
+      if (time().type() != CSVGTimeValueType::NONE) {
+        os << "+";
+
+        os << time();
+      }
+    }
+  }
+
+  friend std::ostream &operator<<(std::ostream &os, const CSVGEventValue &v) {
+    v.print(os);
+
+    return os;
+  }
+
  public:
   CSVGEventType type_;
   std::string   id_;

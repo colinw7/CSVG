@@ -91,6 +91,7 @@ class CSVGImageRenderer : public CSVGRenderer {
   void setFont(CFontPtr f) override { renderer_->setFont(f); }
 
   void setStrokeColor(const CRGBA &c) override { renderer_->setForeground(c); }
+
   void setLineWidth(double w) override { renderer_->setLineWidth(w); }
   void setLineDash(const CLineDash &d) override { renderer_->setLineDash(d); }
   void setLineCap(const CLineCapType &c) override { renderer_->setLineCap(c); }
@@ -101,6 +102,11 @@ class CSVGImageRenderer : public CSVGRenderer {
   void setFillColor(const CRGBA &c) override { renderer_->setForeground(c); }
   void setFillGradient(CGenGradient *) override { }
   void setFillImage(CImagePtr) override { }
+
+  void setStrokeFilled(bool) override { }
+  void setStrokeFillType(CFillType) override { }
+  void setStrokeFillGradient(CGenGradient *) override { }
+  void setStrokeFillImage(CImagePtr) override { }
 
   void setAlign(CHAlignType halign, CVAlignType valign) override {
     renderer_->setAlign(halign, valign); }

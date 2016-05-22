@@ -88,6 +88,7 @@ class CSVGLogRenderer : public CSVGRenderer {
   void setFont(CFontPtr) override { logNL("setFont"); }
 
   void setStrokeColor(const CRGBA &) override { logNL("setStrokeColor"); }
+
   void setLineWidth(double) override { logNL("setLineWidth"); }
   void setLineDash(const CLineDash &) override { logNL("setLineDash"); }
   void setLineCap(const CLineCapType &) override { logNL("setLineCap"); }
@@ -95,10 +96,14 @@ class CSVGLogRenderer : public CSVGRenderer {
   void setMitreLimit(double) override { logNL("setMitreLimit"); }
 
   void setFillType(CFillType) override { logNL("setFillType"); }
-
   void setFillColor(const CRGBA &) override { logNL("setFillColor"); }
   void setFillGradient(CGenGradient *) override { logNL("setFillGradient"); }
   void setFillImage(CImagePtr) override { logNL("setFillImage"); }
+
+  void setStrokeFilled(bool) override { logNL("setStrokeFilled"); }
+  void setStrokeFillType(CFillType) override { logNL("setStrokeFillType"); }
+  void setStrokeFillGradient(CGenGradient *) override { logNL("setStrokeFillGradient"); }
+  void setStrokeFillImage(CImagePtr) override { logNL("setStrokeFillImage"); }
 
   void setAlign(CHAlignType, CVAlignType) override { logNL("setAlign"); }
 

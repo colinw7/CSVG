@@ -51,6 +51,8 @@ class CSVGImage : public CSVGObject {
 
   CImagePtr getImage() const;
 
+  CSVGObject *getObject() const;
+
   bool getBBox(CBBox2D &bbox) const override;
 
   void moveBy(const CVector2D &delta) override;

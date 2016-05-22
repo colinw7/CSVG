@@ -210,6 +210,98 @@ setFillImage(CSVGObject *parent, CSVGBuffer *buffer, double *w1, double *h1)
   buffer->setFillBuffer(patternBuffer);
 }
 
+void
+CSVGPattern::
+setStrokeImage(CSVGObject *parent, CSVGBuffer *buffer, double *w1, double *h1)
+{
+  double w = getWidth ();
+  double h = getHeight();
+
+  double pw = 100;
+  double ph = 100;
+
+  if (getUnits() == CSVGCoordUnits::OBJECT_BBOX) {
+    CBBox2D parentBBox;
+
+    if (parent && parent->getBBox(parentBBox)) {
+      pw = parentBBox.getWidth ();
+      ph = parentBBox.getHeight();
+    }
+
+    *w1 = w*pw;
+    *h1 = h*ph;
+  }
+  else {
+    *w1 = w;
+    *h1 = h;
+  }
+
+  //---
+
+  CSVGBuffer *oldBuffer = svg_.getBuffer();
+
+  CMatrixStack2D transform = oldBuffer->transform();
+
+  //---
+
+  // switch to pattern buffer
+  CSVGBuffer *patternBuffer;
+
+  std::string bufferId = (getId() != "" ? getId() : "pattern");
+
+  if (parent)
+    patternBuffer = svg_.getBuffer("_" + parent->getUniqueName() + "_" + bufferId);
+  else
+    patternBuffer = svg_.getBuffer("_" + bufferId);
+
+  svg_.setBuffer(patternBuffer);
+
+  patternBuffer->clear();
+
+  // draw pattern to buffer
+  svg_.beginDrawBuffer(patternBuffer, CBBox2D(getX(), getY(), *w1, *h1));
+  //svg_.beginDrawBuffer(patternBuffer);
+
+  //---
+
+  CMatrixStack2D matrix;
+
+  if      (getContentUnits() == CSVGCoordUnits::OBJECT_BBOX) {
+    if (parent) {
+      //matrix.translate(0, 0);
+      matrix.scale(*w1/w, *h1/h);
+
+      svg_.setTransform(matrix);
+    }
+  }
+  else if (viewBox_.isValid()) {
+    CBBox2D viewBox = viewBox_.getValue();
+
+    //matrix.translate(0, 0);
+    matrix.scale(*w1/viewBox.getWidth(), *h1/viewBox.getHeight());
+
+    svg_.setTransform(matrix);
+  }
+
+  //--
+
+  drawSubObject();
+
+  //---
+
+  svg_.endDrawBuffer(patternBuffer);
+
+  // restore original buffer
+  svg_.setBuffer(oldBuffer);
+
+  svg_.setTransform(transform);
+
+  //---
+
+  // set fill image from buffer
+  buffer->setStrokeFillBuffer(patternBuffer);
+}
+
 CSVGObject *
 CSVGPattern::
 getObject()

@@ -24,22 +24,25 @@ class CSVGLinearGradient : public CSVGObject {
     if (! x1_.isValid() || ! y1_.isValid() || ! x2_.isValid() || ! y2_.isValid())
       return false;
 
-    bbox = CBBox2D(getX1(), getY1(), getX2(), getY2());
+    double s = 1;
+
+    bbox = CBBox2D(getX1().pxValue(s), getY1().pxValue(s),
+                   getX2().pxValue(s), getY2().pxValue(s));
 
     return true;
   }
 
-  double getX1() const { return x1_.isValid() ? x1_.getValue().px().value() : 0; }
-  void setX1(double x1) { x1_.setValue(x1); }
+  CScreenUnits getX1(double x=0) const { return x1_.getValue(CScreenUnits(x)); }
+  void setX1(const CScreenUnits &x1) { x1_ = x1; }
 
-  double getY1() const { return y1_.isValid() ? y1_.getValue().px().value() : 0; }
-  void setY1(double y1) { y1_.setValue(y1); }
+  CScreenUnits getY1(double y=0) const { return y1_.getValue(CScreenUnits(y)); }
+  void setY1(const CScreenUnits &y1) { y1_ = y1; }
 
-  double getX2() const { return x2_.isValid() ? x2_.getValue().px().value() : 1; }
-  void setX2(double x2) { x2_.setValue(x2); }
+  CScreenUnits getX2(double x=0) const { return x2_.getValue(CScreenUnits(x)); }
+  void setX2(const CScreenUnits &x2) { x2_ = x2; }
 
-  double getY2() const { return x2_.isValid() ? y2_.getValue().px().value() : 0; }
-  void setY2(double y2) { y2_.setValue(y2); }
+  CScreenUnits getY2(double y=0) const { return y2_.getValue(CScreenUnits(y)); }
+  void setY2(const CScreenUnits &y2) { y2_ = y2; }
 
   void setBBox(const CBBox2D &bbox) {
     setX1(bbox.getXMin());
@@ -66,9 +69,6 @@ class CSVGLinearGradient : public CSVGObject {
 
   const StopList &stops() const { return stops_; }
 
-  //StopList::const_iterator beginStops() const { return stops_.begin(); }
-  //StopList::const_iterator endStops  () const { return stops_.end  (); }
-
   bool processOption(const std::string &name, const std::string &value) override;
 
   void termParse();
@@ -76,8 +76,6 @@ class CSVGLinearGradient : public CSVGObject {
   bool isDrawable() const override { return false; }
 
   void print(std::ostream &os, bool hier) const override;
-
-  //CImagePtr getImage(CBBox2D &bbox);
 
   CLinearGradient *createGradient(CSVGObject *);
 

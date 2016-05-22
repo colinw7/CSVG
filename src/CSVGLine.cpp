@@ -77,18 +77,18 @@ draw()
 
   buffer->pathInit();
 
-  svg_.pathMoveTo(getX1(), getY1());
-  svg_.pathLineTo(getX2(), getY2());
+  buffer->pathMoveTo(getX1(), getY1());
+  buffer->pathLineTo(getX2(), getY2());
 
   if (svg_.isFilled() || svg_.isStroked()) {
     if (svg_.isFilled())
-      svg_.pathFill();
+      buffer->pathFill();
 
     if (svg_.isStroked())
-      svg_.pathStroke();
+      buffer->pathStroke();
   }
   else
-    svg_.pathFill();
+    buffer->pathFill();
 }
 
 bool

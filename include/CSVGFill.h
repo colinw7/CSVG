@@ -47,10 +47,12 @@ class CSVGFill {
            fillObject_  .isValid();
   }
 
+  // no color
   bool getNoColorValid() const { return noColor_.isValid(); }
   bool getNoColor() const { return noColor_.getValue(false); }
   void setNoColor(bool b) { noColor_ = b; }
 
+  // current color
   bool isCurrentColor() const { return currentColor_.getValue(false); }
   void setIsCurrentColor(bool b) { currentColor_ = b; }
 
@@ -95,7 +97,7 @@ class CSVGFill {
 
   // fill object
   bool getFillObjectValid() const;
-  CSVGObject *getFillObject     () const;
+  CSVGObject *getFillObject() const;
 
   void setFillObject(CSVGObject *fillObject) { fillObject_ = fillObject; }
 
@@ -107,16 +109,17 @@ class CSVGFill {
   // update
   void update(const CSVGFill &fill);
 
+  // print
   void print(std::ostream &os) const;
 
  private:
   CSVG &                 svg_;
   COptValT<bool>         noColor_;
   COptValT<bool>         currentColor_;
-  COptValT<CRGBA>        color_;  // inherited
-  COptValT<CRGBA>        defColor_;  // inherited
-  COptValT<double>       opacity_;  // inherited
-  COptValT<CFillType>    rule_;  // inherited
+  COptValT<CRGBA>        color_;
+  COptValT<CRGBA>        defColor_;
+  COptValT<double>       opacity_;
+  COptValT<CFillType>    rule_;
   COptValT<std::string>  url_;
   COptValT<CSVGObject *> fillObject_;
 };

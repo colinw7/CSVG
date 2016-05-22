@@ -5,6 +5,10 @@
 #include <CQSVGBufferView.h>
 
 #include <CQSVGAnchor.h>
+#include <CQSVGAnimateColor.h>
+#include <CQSVGAnimate.h>
+#include <CQSVGAnimateMotion.h>
+#include <CQSVGAnimateTransform.h>
 #include <CQSVGBlock.h>
 #include <CQSVGCircle.h>
 #include <CQSVGClipPath.h>
@@ -61,6 +65,7 @@
 #include <QVBoxLayout>
 #include <QStatusBar>
 #include <QLabel>
+#include <QLineEdit>
 #include <QMenuBar>
 #include <QMenu>
 #include <QToolBar>
@@ -69,6 +74,10 @@
 #include <svg/prev_svg.h>
 #include <svg/properties_svg.h>
 #include <svg/buffers_svg.h>
+#include <svg/play_svg.h>
+#include <svg/pause_svg.h>
+#include <svg/play_one_svg.h>
+#include <svg/rewind_one_svg.h>
 
 int
 main(int argc, char **argv)
@@ -240,6 +249,38 @@ CQSVGWindow() :
 
   //---
 
+  animateMenu_ = menuBar()->addMenu("&Animate");
+
+  playAction_ = new QAction("&Play", this);
+  playAction_->setIcon(CQPixmapCacheInst->getIcon("PLAY"));
+
+  connect(playAction_, SIGNAL(triggered()), this, SLOT(playSlot()));
+
+  animateMenu_->addAction(playAction_);
+
+  pauseAction_ = new QAction("Pa&use", this);
+  pauseAction_->setIcon(CQPixmapCacheInst->getIcon("PAUSE"));
+
+  connect(pauseAction_, SIGNAL(triggered()), this, SLOT(pauseSlot()));
+
+  animateMenu_->addAction(pauseAction_);
+
+  stepAction_ = new QAction("Step &Forward", this);
+  stepAction_->setIcon(CQPixmapCacheInst->getIcon("PLAY_ONE"));
+
+  connect(stepAction_, SIGNAL(triggered()), this, SLOT(stepSlot()));
+
+  animateMenu_->addAction(stepAction_);
+
+  bstepAction_ = new QAction("Step &Backward", this);
+  bstepAction_->setIcon(CQPixmapCacheInst->getIcon("REWIND_ONE"));
+
+  connect(bstepAction_, SIGNAL(triggered()), this, SLOT(bstepSlot()));
+
+  animateMenu_->addAction(bstepAction_);
+
+  //---
+
   posLabel_ = new QLabel;
   posLabel_->setObjectName("posLabel");
 
@@ -254,14 +295,34 @@ CQSVGWindow() :
 
   //---
 
-  QToolBar *toolBar = new QToolBar(this);
+  QToolBar *viewToolBar = new QToolBar(this);
 
-  toolBar->addAction(prevAction_);
-  toolBar->addAction(nextAction_);
-  toolBar->addAction(propertiesAction);
-  toolBar->addAction(buffersAction);
+  viewToolBar->addAction(prevAction_);
+  viewToolBar->addAction(nextAction_);
+  viewToolBar->addAction(propertiesAction);
+  viewToolBar->addAction(buffersAction);
 
-  addToolBar(toolBar);
+  addToolBar(viewToolBar);
+
+  //---
+
+  timeEdit_ = new QLineEdit;
+
+  connect(timeEdit_, SIGNAL(editingFinished()), this, SLOT(timeSlot()));
+
+  animateToolBar_ = new QToolBar(this);
+
+  animateToolBar_->addAction(playAction_);
+  animateToolBar_->addAction(pauseAction_);
+  animateToolBar_->addAction(stepAction_);
+  animateToolBar_->addAction(bstepAction_);
+  animateToolBar_->addWidget(timeEdit_);
+
+  addToolBar(animateToolBar_);
+
+  //---
+
+  updateState();
 }
 
 void
@@ -362,7 +423,10 @@ loadFile()
 
     addProperties();
 
-    svg_->startTimer();
+    if (svg_->hasAnimation())
+      svg_->startTimer();
+
+    updateState();
   }
 
   redraw();
@@ -374,6 +438,20 @@ updateState()
 {
   prevAction_->setEnabled(ind_ > 0);
   nextAction_->setEnabled(ind_ < int(files_.size()) - 1);
+
+  if (svg_->hasAnimation()) {
+    animateMenu_   ->menuAction()->setVisible(true);
+    animateToolBar_->setVisible(true);
+
+    playAction_ ->setEnabled(! svg_->isAnimating());
+    pauseAction_->setEnabled(svg_->isAnimating());
+    stepAction_ ->setEnabled(! svg_->isAnimating());
+    bstepAction_->setEnabled(! svg_->isAnimating());
+  }
+  else {
+    animateMenu_   ->menuAction()->setVisible(false);
+    animateToolBar_->setVisible(false);
+  }
 }
 
 void
@@ -414,6 +492,10 @@ addObjectToTree(const std::string &name, CSVGObject *obj)
   if (qobj) {
     CQSVGBlock              *qblock    = dynamic_cast<CQSVGBlock              *>(obj);
     CQSVGAnchor             *qanchor   = dynamic_cast<CQSVGAnchor             *>(obj);
+    CQSVGAnimate            *qanim     = dynamic_cast<CQSVGAnimate            *>(obj);
+    CQSVGAnimateColor       *qanimcol  = dynamic_cast<CQSVGAnimateColor       *>(obj);
+    CQSVGAnimateMotion      *qanimmot  = dynamic_cast<CQSVGAnimateMotion      *>(obj);
+    CQSVGAnimateTransform   *qanimtran = dynamic_cast<CQSVGAnimateTransform   *>(obj);
     CQSVGCircle             *qcircle   = dynamic_cast<CQSVGCircle             *>(obj);
     CQSVGClipPath           *qclippath = dynamic_cast<CQSVGClipPath           *>(obj);
     CQSVGDefs               *qdefs     = dynamic_cast<CQSVGDefs               *>(obj);
@@ -459,11 +541,15 @@ addObjectToTree(const std::string &name, CSVGObject *obj)
 
     //---
 
+    bool hasChildren = qobj->object()->hasChildren();
+
+    //---
+
     QString objName = name.c_str();
 
     tree_->addProperty(objName, qobj, "id");
 
-    if (qobj->object()->isDrawable() || qobj->object()->hasChildren())
+    if (qobj->object()->isDrawable() || hasChildren)
       tree_->addProperty(objName, qobj, "visible");
 
     if (qobj->object()->getFilter())
@@ -485,6 +571,22 @@ addObjectToTree(const std::string &name, CSVGObject *obj)
     }
     else if (qanchor) {
       tree_->addProperty(objName, qanchor, "xlink");
+    }
+    else if (qanim) {
+      tree_->addProperty(objName, qanim, "attributeName");
+      tree_->addProperty(objName, qanim, "attributeType");
+      tree_->addProperty(objName, qanim, "from");
+      tree_->addProperty(objName, qanim, "to");
+      tree_->addProperty(objName, qanim, "begin");
+      tree_->addProperty(objName, qanim, "end");
+      tree_->addProperty(objName, qanim, "dur");
+      tree_->addProperty(objName, qanim, "fill");
+    }
+    else if (qanimcol) {
+    }
+    else if (qanimmot) {
+    }
+    else if (qanimtran) {
     }
     else if (qdefs) {
     }
@@ -681,42 +783,61 @@ addObjectToTree(const std::string &name, CSVGObject *obj)
 
     //---
 
-    if (qobj->object()->isDrawable() || qobj->object()->hasChildren())
-      tree_->addProperty(objName, qobj, "transform");
+    if (! qobj->object()->isAnimated()) {
+      if (qobj->object()->isDrawable() || hasChildren)
+        tree_->addProperty(objName, qobj, "transform");
 
-    if (qobj->object()->isDrawable() || qobj->object()->hasChildren()) {
-      QString strokeName = objName + "/stroke";
+      if (qobj->object()->isDrawable() || hasChildren) {
+        tree_->addProperty(objName, qobj, "opacity");
 
-      tree_->addProperty(strokeName, qobj, "strokeColor"  )->setLabel("color"  );
-      tree_->addProperty(strokeName, qobj, "strokeOpacity")->setLabel("opacity");
-      tree_->addProperty(strokeName, qobj, "strokeWidth"  )->setLabel("width"  );
-      tree_->addProperty(strokeName, qobj, "strokeDash"   )->setLabel("dash"   );
-      tree_->addProperty(strokeName, qobj, "strokeCap"    )->setLabel("cap"    );
-      tree_->addProperty(strokeName, qobj, "strokeJoin"   )->setLabel("join"   );
-    }
+        //---
 
-    if (qobj->object()->isDrawable() || qobj->object()->hasChildren()) {
-      QString fillName = objName + "/fill";
+        QString strokeName = objName + "/stroke";
 
-      tree_->addProperty(fillName, qobj, "fillIsNoColor"     )->setLabel("isNoColor"     );
-      tree_->addProperty(fillName, qobj, "fillIsCurrentColor")->setLabel("isCurrentColor");
-      tree_->addProperty(fillName, qobj, "fillColor"         )->setLabel("color"         );
-      tree_->addProperty(fillName, qobj, "fillOpacity"       )->setLabel("opacity"       );
-      tree_->addProperty(fillName, qobj, "fillRule"          )->setLabel("rule"          );
-      tree_->addProperty(fillName, qobj, "fillUrl"           )->setLabel("url"           );
-    }
+        tree_->addProperty(strokeName, qobj, "strokeColor"  )->setLabel("color"  );
+        tree_->addProperty(strokeName, qobj, "strokeOpacity")->setLabel("opacity");
+        tree_->addProperty(strokeName, qobj, "strokeWidth"  )->setLabel("width"  );
+        tree_->addProperty(strokeName, qobj, "strokeDash"   )->setLabel("dash"   );
+        tree_->addProperty(strokeName, qobj, "strokeCap"    )->setLabel("cap"    );
+        tree_->addProperty(strokeName, qobj, "strokeJoin"   )->setLabel("join"   );
 
-    if (qobj->object()->hasFont()) {
-      QString fontName = objName + "/font";
+        //---
 
-      tree_->addProperty(fontName, qobj, "fontFamily")->setLabel("family");
-//    tree_->addProperty(fontName, qobj, "fontStyle" )->setLabel("style");
-      tree_->addProperty(fontName, qobj, "fontSize"  )->setLabel("size");
-      tree_->addProperty(fontName, qobj, "font"      )->setLabel("font");
+        QString fillName = objName + "/fill";
+
+        tree_->addProperty(fillName, qobj, "fillIsNoColor"     )->setLabel("isNoColor"     );
+        tree_->addProperty(fillName, qobj, "fillIsCurrentColor")->setLabel("isCurrentColor");
+        tree_->addProperty(fillName, qobj, "fillColor"         )->setLabel("color"         );
+        tree_->addProperty(fillName, qobj, "fillOpacity"       )->setLabel("opacity"       );
+        tree_->addProperty(fillName, qobj, "fillRule"          )->setLabel("rule"          );
+        tree_->addProperty(fillName, qobj, "fillUrl"           )->setLabel("url"           );
+      }
+
+      if (qobj->object()->hasFont()) {
+        QString fontName = objName + "/font";
+
+        tree_->addProperty(fontName, qobj, "fontFamily")->setLabel("family");
+      //tree_->addProperty(fontName, qobj, "fontStyle" )->setLabel("style");
+        tree_->addProperty(fontName, qobj, "fontSize"  )->setLabel("size");
+        tree_->addProperty(fontName, qobj, "font"      )->setLabel("font");
+      }
     }
   }
 
   for (const auto &o : obj->children()) {
+    std::string id = o->getId();
+
+    if (id == "")
+      id = o->getUniqueName();
+    else
+      id += "(" + o->getObjName() + ")";
+
+    std::string name1 = name + "/" + id;
+
+    addObjectToTree(name1, o);
+  }
+
+  for (const auto &o : obj->getAnimation().objects()) {
     std::string id = o->getId();
 
     if (id == "")
@@ -819,6 +940,57 @@ showBuffers()
     bufferView_ = new CQSVGBufferView(svg_);
 
   bufferView_->show();
+}
+
+void
+CQSVGWindow::
+playSlot()
+{
+  svg_->startTimer();
+
+  updateState();
+}
+
+void
+CQSVGWindow::
+pauseSlot()
+{
+  svg_->stopTimer();
+
+  updateState();
+}
+
+void
+CQSVGWindow::
+stepSlot()
+{
+  svg_->stepTimer();
+}
+
+void
+CQSVGWindow::
+bstepSlot()
+{
+  svg_->bstepTimer();
+}
+
+void
+CQSVGWindow::
+timeSlot()
+{
+  bool ok;
+
+  double t = timeEdit_->text().toDouble(&ok);
+
+  if (ok)
+    svg_->setTime(t);
+}
+
+void
+CQSVGWindow::
+setTime(double t)
+{
+  timeEdit_->setText(QString("%1").arg(t));
 }
 
 QSize

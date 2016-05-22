@@ -12,9 +12,9 @@ class CSVGStop : public CSVGObject {
 
   CSVGStop *dup() const override;
 
-  double getOffset () const { return offset_ .getValue(CScreenUnits()).px().value(); }
-  CRGBA  getColor  () const { return color_  .getValue(CRGBA(1,1,1)); }
-  double getOpacity() const { return opacity_.getValue(1); }
+  CScreenUnits getOffset () const { return offset_ .getValue(CScreenUnits()); }
+  CRGBA        getColor  () const { return color_  .getValue(CRGBA(1,1,1)); }
+  double       getOpacity() const { return opacity_.getValue(1); }
 
   CRGBA getAlphaColor() const;
 

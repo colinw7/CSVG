@@ -3,6 +3,7 @@
 
 #include <cassert>
 #include <string>
+#include <iostream>
 
 #define CScreenUnitsMgrInst CScreenUnitsMgr::instance()
 
@@ -47,6 +48,7 @@ class CScreenUnitsMgr {
 class CScreenUnits {
  public:
   enum class Units {
+    NONE,
     EM,
     EX,
     PX,
@@ -55,18 +57,19 @@ class CScreenUnits {
     CM,
     MM,
     IN,
-    PERCENT
+    PERCENT,
+    RATIO
   };
 
  public:
   CScreenUnits() { }
 
-  CScreenUnits(double v, Units units=Units::PX) :
-   value_(v), units_(units) {
+  CScreenUnits(double value, Units units=Units::PX) :
+   value_(value), units_(units) {
   }
 
-  CScreenUnits(Units units, double v) :
-   value_(v), units_(units) {
+  CScreenUnits(Units units, double value) :
+   value_(value), units_(units) {
   }
 
   virtual ~CScreenUnits() { }
@@ -81,10 +84,10 @@ class CScreenUnits {
 
   Units units() const { return units_; }
 
-  const CScreenUnits &setValue(double v, Units units=Units::PX) {
+  const CScreenUnits &setValue(double value, Units units=Units::PX) {
     assert(units_ == units);
 
-    value_ = v;
+    value_ = value;
 
     return *this;
   }
@@ -102,6 +105,7 @@ class CScreenUnits {
       case Units::MM     : value_ = mm     (rvalue).value_; break;
       case Units::IN     : value_ = in     (rvalue).value_; break;
       case Units::PERCENT: value_ = percent(rvalue).value_; break;
+      case Units::RATIO  : value_ = ratio  (rvalue).value_; break;
       default: assert(false); break;
     }
 
@@ -171,10 +175,38 @@ class CScreenUnits {
 
   CScreenUnits percent(const CScreenUnits &rvalue=CScreenUnits()) const {
     if (units_ == Units::PERCENT) return *this;
+    if (units_ == Units::RATIO  ) return CScreenUnits(value_*100, Units::PERCENT);
 
-    double value = 100.0*toPixel(rvalue)/rvalue.toPixel(rvalue);
+    assert(rvalue.units_ != Units::NONE);
+
+    double value = 100.0*toPixel(rvalue)/rvalue.toPixel();
 
     return CScreenUnits(value, Units::PERCENT);
+  }
+
+  CScreenUnits ratio(const CScreenUnits &rvalue=CScreenUnits()) const {
+    if (units_ == Units::RATIO  ) return *this;
+    if (units_ == Units::PERCENT) return CScreenUnits(value_/100, Units::RATIO);
+
+    assert(rvalue.units_ != Units::NONE);
+
+    double value = toPixel(rvalue)/rvalue.toPixel();
+
+    return CScreenUnits(value, Units::RATIO);
+  }
+
+  //---
+
+  double pxValue(const CScreenUnits &rvalue=CScreenUnits()) const {
+    return px(rvalue).value_;
+  }
+
+  double percentValue(const CScreenUnits &rvalue=CScreenUnits()) const {
+    return percent(rvalue).value_;
+  }
+
+  double ratioValue(const CScreenUnits &rvalue=CScreenUnits()) const {
+    return ratio(rvalue).value_;
   }
 
   //---
@@ -194,6 +226,7 @@ class CScreenUnits {
       case Units::MM:      return "mm";
       case Units::IN:      return "in";
       case Units::PERCENT: return "%";
+      case Units::RATIO:   return "ratio";
       default: assert(false); return "";
     }
   }
@@ -238,10 +271,51 @@ class CScreenUnits {
 
   //---
 
+  void print(std::ostream &os) const {
+    if      (units_ == CScreenUnits::Units::EM)
+      os << value_ << "em";
+    else if (units_ == CScreenUnits::Units::EX)
+      os << value_ << "ex";
+    else if (units_ == CScreenUnits::Units::PT)
+      os << value_ << "pt";
+    else if (units_ == CScreenUnits::Units::PC)
+      os << value_ << "pc";
+    else if (units_ == CScreenUnits::Units::CM)
+      os << value_ << "cm";
+    else if (units_ == CScreenUnits::Units::MM)
+      os << value_ << "mm";
+    else if (units_ == CScreenUnits::Units::IN)
+      os << value_ << "in";
+    else if (units_ == CScreenUnits::Units::PX)
+      os << value_ << "px";
+    else if (units_ == CScreenUnits::Units::PERCENT)
+      os << value_ << "%";
+    else if (units_ == CScreenUnits::Units::RATIO)
+      os << value_ << "ratio";
+    else
+      os << value_;
+  }
+
+  friend std::ostream &operator<<(std::ostream &os, const CScreenUnits &units) {
+    units.print(os);
+
+    return os;
+  }
+
+  //---
+
  private:
   double toPixel(const CScreenUnits &rvalue=CScreenUnits()) const {
-    if (units_ == Units::PERCENT)
+    if      (units_ == Units::PERCENT) {
+      assert(rvalue.units_ != Units::NONE);
+
       return rvalue.toPixel()*value_/100.0;
+    }
+    else if (units_ == Units::RATIO) {
+      assert(rvalue.units_ != Units::NONE);
+
+      return rvalue.toPixel()*value_;
+    }
 
     double value1 = 0.0;
 
@@ -270,7 +344,7 @@ class CScreenUnits {
 
  private:
   double value_ { 0.0 };
-  Units  units_ { Units::PX };
+  Units  units_ { Units::NONE };
 };
 
 #endif

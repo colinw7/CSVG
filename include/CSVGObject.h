@@ -18,9 +18,9 @@
 #include <COptVal.h>
 #include <CImagePtr.h>
 #include <CAlignType.h>
-#include <list>
-
 #include <CObjTypeOld.h>
+
+#include <list>
 
 #define CSVG_OBJECT_DEF(name,id) \
 const CObjType &getObjType() const { \
@@ -74,13 +74,17 @@ class CSVGObject {
 
   void autoName();
 
+  bool hasStroke() const { return stroke_.isSet(); }
   const CSVGStroke &getStroke() const { return stroke_; }
   void setStroke(const CSVGStroke &s) { stroke_ = s; }
 
+  bool hasFill() const { return fill_.isSet(); }
   const CSVGFill &getFill() const { return fill_; }
   void setFill(const CSVGFill &f) { fill_ = f; }
 
-  const CSVGClip    &getClip   () const { return clip_   ; }
+  const CSVGClip &getClip() const { return clip_; }
+
+  bool hasFontDef() const { return fontDef_.isSet(); }
   const CSVGFontDef &getFontDef() const { return fontDef_; }
 
   void updateStroke(const CSVGStroke &stroke, bool recurse=false);
@@ -212,6 +216,8 @@ class CSVGObject {
 
   bool hasChildren(bool includeAnimated=true) const;
 
+  bool hasAnimation() const;
+
   const ObjectList &children() const { return objects_; }
 
   //ObjectList::iterator childrenBegin() { return objects_.begin(); }
@@ -322,11 +328,11 @@ class CSVGObject {
 
   //---
 
-  bool             getFlatStrokeNoColor () const;
-  CRGBA            getFlatStrokeColor   () const;
-  double           getFlatStrokeOpacity () const;
-  double           getFlatStrokeWidth   () const;
-  const CLineDash &getFlatStrokeLineDash() const;
+  bool      getFlatStrokeNoColor () const;
+  CRGBA     getFlatStrokeColor   () const;
+  double    getFlatStrokeOpacity () const;
+  double    getFlatStrokeWidth   () const;
+  CLineDash getFlatStrokeLineDash() const;
 
   //------
 
@@ -444,6 +450,12 @@ class CSVGObject {
     return getNameValue("glyph-orientation-vertical").getValue("auto");
   }
 
+  bool hasLetterSpacing() const { return letterSpacing_.isValid(); }
+  CScreenUnits getLetterSpacing() const { return letterSpacing_.getValue(CScreenUnits()); }
+
+  bool hasWordSpacing() const { return wordSpacing_.isValid(); }
+  CScreenUnits getWordSpacing() const { return wordSpacing_.getValue(CScreenUnits()); }
+
   //---
 
   void setShapeRendering(const std::string &rendering);
@@ -457,6 +469,8 @@ class CSVGObject {
   //---
 
   virtual void tick(double dt);
+
+  virtual void setTime(double t);
 
   virtual void handleEvent(CSVGEventType type, const std::string &id="",
                            const std::string &data="");
@@ -516,48 +530,38 @@ class CSVGObject {
   void printNameParts(std::ostream &os, const std::string &name,
                       const CSVGPathPartList &parts) const;
 
-  static void printLength(std::ostream &os, const CScreenUnits &l);
-
   void printNameLength(std::ostream &os, const std::string &name,
                        const COptValT<CScreenUnits> &length) const {
     if (length.isValid()) {
-      os << " " << name << "=\""; printLength(os, length.getValue()); os << "\"";
+      os << " " << name << "=\"" << length.getValue() << "\"";
     }
   }
-
-  static void printTime(std::ostream &os, const CSVGTimeValue &l);
 
   void printNameTime(std::ostream &os, const std::string &name,
                      const COptValT<CSVGTimeValue> &time) const {
     if (time.isValid()) {
-      os << " " << name << "=\""; printTime(os, time.getValue()); os << "\"";
+      os << " " << name << "=\"" << time.getValue() << "\"";
     }
   }
-
-  static void printEvent(std::ostream &os, const CSVGEventValue &l);
 
   void printNameEvent(std::ostream &os, const std::string &name,
                       const COptValT<CSVGEventValue> &event) const {
     if (event.isValid()) {
-      os << " " << name << "=\""; printEvent(os, event.getValue()); os << "\"";
+      os << " " << name << "=\"" << event.getValue() << "\"";
     }
   }
-
-  static void printXLink(std::ostream &os, const CSVGXLink &xlink);
 
   void printNameXLink(std::ostream &os, const std::string &name,
                       const COptValT<CSVGXLink> &xlink) const {
     if (xlink.isValid()) {
-      os << " " << name << "=\""; printXLink(os, xlink.getValue()); os << "\"";
+      os << " " << name << "=\"" << xlink.getValue().str() << "\"";
     }
   }
-
-  static void printPreserveAspect(std::ostream &os, const CSVGPreserveAspect &a);
 
   void printNamePreserveAspect(std::ostream &os, const std::string &name,
                                const COptValT<CSVGPreserveAspect> &a) const {
     if (a.isValid()) {
-      os << " " << name << "=\""; printPreserveAspect(os, a.getValue()); os << "\"";
+      os << " " << name << "=\"" << a.getValue() << "\"";
     }
   }
 

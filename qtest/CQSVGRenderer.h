@@ -92,6 +92,11 @@ class CQSVGRenderer : public CSVGRenderer {
   void setFillGradient(CGenGradient *g) override;
   void setFillImage   (CImagePtr image) override;
 
+  void setStrokeFilled      (bool b) override;
+  void setStrokeFillType    (CFillType fillType) override;
+  void setStrokeFillGradient(CGenGradient *g) override;
+  void setStrokeFillImage   (CImagePtr image) override;
+
   void setAlign(CHAlignType halign, CVAlignType valign) override;
 
   void windowToPixel(const CPoint2D &w, CPoint2D &p) override;
@@ -112,21 +117,28 @@ class CQSVGRenderer : public CSVGRenderer {
   void paint(QPainter *painter);
 
  private:
-  QImage           qimage_;
-  QPainter        *painter_ { 0 };
-  QPainterPath    *path_ { 0 };
-  QPainterPath    *savePath_ { 0 };
-  QBrush           brush_;
-  QPen             pen_;
-  QFont            qfont_;
-  CMatrix2D        viewMatrix_;
-  bool             antiAlias_ { true };
-  CDisplayRange2D  range_;
-  QTransform       transform_;
-  QTransform       itransform_;
-  CFillType        fillType_ { FILL_TYPE_EVEN_ODD };
-  CRGBA            background_ { 1, 1, 1 };
-  bool             drawing_ { false };
+  QImage          qimage_;
+  QPainter*       painter_ { 0 };
+  QPainterPath*   path_ { 0 };
+  QPainterPath*   savePath_ { 0 };
+  QPen            pen_;
+  QFont           qfont_;
+  CMatrix2D       viewMatrix_;
+  bool            antiAlias_ { true };
+  CDisplayRange2D range_;
+  QTransform      transform_;
+  QTransform      itransform_;
+  CRGBA           background_ { 1, 1, 1 };
+  bool            drawing_ { false };
+
+  // fill
+  QBrush          fillBrush_;
+  CFillType       fillType_ { FILL_TYPE_EVEN_ODD };
+
+  // stroke
+  QBrush          strokeBrush_;
+  bool            strokeFilled_ { false };
+  CFillType       strokeFillType_ { FILL_TYPE_EVEN_ODD };
 };
 
 #endif

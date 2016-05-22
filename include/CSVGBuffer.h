@@ -71,6 +71,8 @@ class CSVGBuffer {
 
  ~CSVGBuffer();
 
+  CSVGBuffer *dup() const;
+
   const std::string &getName() const { return name_; }
 
   bool isAntiAlias() const;
@@ -168,6 +170,11 @@ class CSVGBuffer {
   void fill(const CRGBA &bg);
 
   void setStrokeColor(const CRGBA &color);
+  void setStrokeFilled(bool b);
+  void setStrokeFillType(CFillType type);
+  void setStrokeFillGradient(CGenGradient *g);
+  void setStrokeFillBuffer(CSVGBuffer *buffer);
+  void setStrokeImage(CImagePtr image);
   void setLineWidth(double width);
   void setLineDash(const CLineDash &dash);
   void setLineDashOffset(double offset);
@@ -197,6 +204,8 @@ class CSVGBuffer {
   void pathLineTo(double x, double y);
   void pathRLineTo(double dx, double dy);
   void pathArcTo(double cx, double cy, double rx, double ry, double theta1, double theta2);
+  void pathArcSegment(double xc, double yc, double angle1, double angle2,
+                      double rx, double ry, double phi);
   void pathBezier2To(double x1, double y1, double x2, double y2);
   void pathRBezier2To(double x1, double y1, double x2, double y2);
   void pathBezier3To(double x1, double y1, double x2, double y2, double x3, double y3);
@@ -204,7 +213,14 @@ class CSVGBuffer {
   void pathText(const std::string &text, CFontPtr font, CHAlignType align);
   void pathClose();
 
-  bool pathGetCurrentPoint(double *x, double *y);
+  bool pathGetCurrentPoint(double *x, double *y) const;
+  bool pathGetCurrentPoint(CPoint2D &point) const;
+
+  bool pathGetLastControlPoint(CPoint2D &p) const;
+  bool pathGetLastMControlPoint(CPoint2D &p) const;
+  bool pathGetLastMRControlPoint(CPoint2D &p) const;
+  void pathSetLastControlPoint1(const CPoint2D &p);
+  void pathSetLastControlPoint2(const CPoint2D &p);
 
   void pathStroke();
   void pathFill();
@@ -218,6 +234,8 @@ class CSVGBuffer {
 
   void initClip();
 
+  CPoint2D pathMirrorPoint(const CPoint2D &p) const;
+
   //bool mmToPixel(double mm, double *pixel);
 
   void lengthToPixel(double xi, double yi, double *xo, double *yo);
@@ -228,17 +246,19 @@ class CSVGBuffer {
   CSVGBuffer &operator=(const CSVGBuffer &rhs);
 
  private:
-  CSVG&          svg_;
-  std::string    name_;
-  CSVGRenderer*  renderer_    { 0 };
-  CMatrixStack2D transform_;
-  CLineDash      lineDash_;
-  CPoint2D       origin_      { 0, 0 };
-  CBBox2D        bbox_;
-  bool           clip_        { false };
-  bool           hasClipPath_ { false };
-  bool           drawing_     { false };
-  CSVGBuffer*    refBuffer_   { 0 };
+  CSVG&              svg_;
+  std::string        name_;
+  CSVGRenderer*      renderer_ { 0 };
+  CMatrixStack2D     transform_;
+  CLineDash          lineDash_;
+  CPoint2D           origin_ { 0, 0 };
+  CBBox2D            bbox_;
+  COptValT<CPoint2D> pathLastControlPoint1_;
+  COptValT<CPoint2D> pathLastControlPoint2_;
+  bool               clip_ { false };
+  bool               hasClipPath_ { false };
+  bool               drawing_ { false };
+  CSVGBuffer*        refBuffer_ { 0 };
 };
 
 #endif

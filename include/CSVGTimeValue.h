@@ -23,6 +23,25 @@ class CSVGTimeValue {
     else                                               return value_;
   }
 
+  void print(std::ostream &os) const {
+    if      (type() == CSVGTimeValueType::HOURS)
+      os << value() << "h";
+    else if (type() == CSVGTimeValueType::MINUTES)
+      os << value() << "min";
+    else if (type() == CSVGTimeValueType::SECONDS)
+      os << value() << "s";
+    else if (type() == CSVGTimeValueType::MILLISECONDS)
+      os << value() << "ms";
+    else
+      os << value();
+  }
+
+  friend std::ostream &operator<<(std::ostream &os, const CSVGTimeValue &v) {
+    v.print(os);
+
+    return os;
+  }
+
  public:
   CSVGTimeValueType type_;
   double            value_;

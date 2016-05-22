@@ -21,7 +21,6 @@
     gradientTransform <TransformList>
     spreadMethod ( pad | reflect | repeat )
 */
-
 CSVGLinearGradient::
 CSVGLinearGradient(CSVG &svg) :
  CSVGObject(svg)
@@ -84,11 +83,11 @@ processOption(const std::string &opt_name, const std::string &opt_value)
     if (! decodeXLink(opt_value, &object, 0))
       return false;
 
-    if  (object != 0) {
+    if (object) {
       CSVGRadialGradient *rg = dynamic_cast<CSVGRadialGradient *>(object);
       CSVGLinearGradient *lg = dynamic_cast<CSVGLinearGradient *>(object);
 
-      if      (lg != 0) {
+      if      (lg) {
         if (lg->x1_.isValid()) x1_ = lg->x1_;
         if (lg->y1_.isValid()) y1_ = lg->y1_;
         if (lg->x2_.isValid()) x2_ = lg->x2_;
@@ -105,7 +104,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
             addStop(s);
         }
       }
-      else if (rg != 0) {
+      else if (rg) {
         if (rg->getGTransformValid()) gtransform_ = rg->getGTransform();
         if (rg->getUnitsValid     ()) units_      = rg->getUnits();
         if (rg->getSpreadValid    ()) spread_     = rg->getSpread();
@@ -177,17 +176,21 @@ CLinearGradient *
 CSVGLinearGradient::
 createGradient(CSVGObject *obj)
 {
-  CSVGBuffer *currentBuffer = svg_.getBuffer();
+  //CSVGBuffer *currentBuffer = svg_.getBuffer();
 
   CLinearGradient *gradient = new CLinearGradient;
 
-  double x1 = getX1(), y1 = getY1();
-  double x2 = getX2(), y2 = getY2();
+  double x1 = getX1(0).pxValue(1), y1 = getY1(0).pxValue(1);
+  double x2 = getX2(1).pxValue(1), y2 = getY2(1).pxValue(1);
+
+  double l = hypot(x2 - x1, y2 - y1);
 
   //---
 
   // remap points to absolute
   if      (getUnits() == CSVGCoordUnits::USER_SPACE) {
+    // TODO: parent transform ?
+#if 0
     CMatrixStack2D m = currentBuffer->transform();
 
     CPoint2D p1(x1, y1);
@@ -195,6 +198,7 @@ createGradient(CSVGObject *obj)
 
     m.multiplyPoint(p1.x, p1.y, &x1, &y1);
     m.multiplyPoint(p2.x, p2.y, &x2, &y2);
+#endif
   }
   else if (getUnits() == CSVGCoordUnits::OBJECT_BBOX) {
     CBBox2D bbox;
@@ -220,7 +224,9 @@ createGradient(CSVGObject *obj)
 
     rgba.setAlpha(alpha);
 
-    gradient->addStop(s->getOffset(), rgba);
+    double sv = s->getOffset().ratioValue(l);
+
+    gradient->addStop(sv, rgba);
   }
 
   gradient->init(1, 1);

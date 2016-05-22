@@ -19,22 +19,26 @@ class CSVGRadialGradient : public CSVGObject {
 
   CSVGRadialGradient *dup() const override;
 
-  double getCenterX() const { return cx_.isValid() ? cx_.getValue().px().value() : 0.5; }
-  void setCenterX(double x) { cx_ = x; }
+  CScreenUnits getCenterX(double x=0.5) const { return cx_.getValue(CScreenUnits(x)); }
+  void setCenterX(const CScreenUnits &x) { cx_ = x; }
 
-  double getCenterY() const { return cy_.isValid() ? cy_.getValue().px().value() : 0.5; }
-  void setCenterY(double y) { cy_ = y; }
+  CScreenUnits getCenterY(double y=0.5) const { return cy_.getValue(CScreenUnits(y)); }
+  void setCenterY(const CScreenUnits &y) { cy_ = y; }
 
-  CPoint2D getCenter() { return CPoint2D(getCenterX(), getCenterY()); }
+  CPoint2D getCenter() { return CPoint2D(getCenterX().pxValue(1), getCenterY().pxValue(1)); }
   void setCenter(const CPoint2D &center) { setCenterX(center.x); setCenterY(center.y); }
 
-  double getRadius() const { return radius_.isValid() ? radius_.getValue().px().value() : 0.5; }
-  void setRadius(double r) { radius_ = r; }
+  CScreenUnits getRadius(double r=0.5) const { return radius_.getValue(CScreenUnits(r)); }
+  void setRadius(const CScreenUnits &r) { radius_ = r; }
 
-  double getFocusX() const { return focusX_.isValid() ? focusX_.getValue() : getCenterX(); }
+  double getFocusX() const {
+    return focusX_.isValid() ? focusX_.getValue() : getCenterX().pxValue(1);
+  }
   void setFocusX(double x) { focusX_ = x; }
 
-  double getFocusY() const { return focusY_.isValid() ? focusY_.getValue() : getCenterY(); }
+  double getFocusY() const {
+    return focusY_.isValid() ? focusY_.getValue() : getCenterY().pxValue(1);
+  }
   void setFocusY(double y) { focusY_ = y; }
 
   CPoint2D getFocus() const { return CPoint2D(getFocusX(), getFocusY()); }
@@ -68,8 +72,6 @@ class CSVGRadialGradient : public CSVGObject {
   bool isDrawable() const override { return false; }
 
   void print(std::ostream &os, bool hier) const override;
-
-  //CImagePtr getImage(CBBox2D &bbox);
 
   CRadialGradient *createGradient(CSVGObject *);
 

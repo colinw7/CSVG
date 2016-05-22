@@ -315,7 +315,21 @@ pathStroke()
 {
   assert(drawing_);
 
-  painter_->strokePath(*path_, pen_);
+  if (strokeFilled_) {
+    QPainterPathStroker stroker;
+
+    stroker.setCapStyle   (pen_.capStyle());
+    stroker.setDashOffset (pen_.dashOffset());
+    stroker.setDashPattern(pen_.dashPattern());
+    stroker.setJoinStyle  (pen_.joinStyle());
+    stroker.setMiterLimit (pen_.miterLimit());
+    stroker.setWidth      (pen_.widthF());
+
+    painter_->fillPath(stroker.createStroke(*path_), strokeBrush_);
+  }
+  else {
+    painter_->strokePath(*path_, pen_);
+  }
 }
 
 void
@@ -326,7 +340,7 @@ pathFill()
 
   path_->setFillRule(fillType_ == FILL_TYPE_EVEN_ODD ? Qt::OddEvenFill : Qt::WindingFill);
 
-  painter_->fillPath(*path_, brush_);
+  painter_->fillPath(*path_, fillBrush_);
 }
 
 void
@@ -541,10 +555,10 @@ setFillColor(const CRGBA &fg)
 {
   assert(drawing_);
 
-  brush_.setColor(CQUtil::rgbaToColor(fg));
-  brush_.setStyle(Qt::SolidPattern);
+  fillBrush_.setColor(CQUtil::rgbaToColor(fg));
+  fillBrush_.setStyle(Qt::SolidPattern);
 
-  painter_->setBrush(brush_);
+  painter_->setBrush(fillBrush_);
 }
 
 void
@@ -566,11 +580,11 @@ setFillGradient(CGenGradient *g)
   const CRadialGradient *rg = 0;
 
   if      ((lg = dynamic_cast<const CLinearGradient *>(g)) != 0)
-    brush_ = QBrush(CQUtil::toQGradient(lg, QGradient::LogicalMode));
+    fillBrush_ = QBrush(CQUtil::toQGradient(lg, QGradient::LogicalMode));
   else if ((rg = dynamic_cast<const CRadialGradient *>(g)) != 0)
-    brush_ = QBrush(CQUtil::toQGradient(rg, QGradient::LogicalMode));
+    fillBrush_ = QBrush(CQUtil::toQGradient(rg, QGradient::LogicalMode));
 
-  painter_->setBrush(brush_);
+  painter_->setBrush(fillBrush_);
 }
 
 void
@@ -586,9 +600,60 @@ setFillImage(CImagePtr image)
 
   QImage qimage = cqimage->getQImage();
 
-  brush_.setTextureImage(qimage);
+  fillBrush_.setTextureImage(qimage);
 
-  painter_->setBrush(brush_);
+  painter_->setBrush(fillBrush_);
+}
+
+void
+CQSVGRenderer::
+setStrokeFilled(bool b)
+{
+  strokeFilled_ = b;
+}
+
+void
+CQSVGRenderer::
+setStrokeFillType(CFillType fillType)
+{
+  strokeFillType_ = fillType;
+}
+
+void
+CQSVGRenderer::
+setStrokeFillGradient(CGenGradient *g)
+{
+  assert(drawing_);
+
+  painter_->setBrushOrigin(QPointF(0,0));
+
+  const CLinearGradient *lg = 0;
+  const CRadialGradient *rg = 0;
+
+  if      ((lg = dynamic_cast<const CLinearGradient *>(g)) != 0)
+    strokeBrush_ = QBrush(CQUtil::toQGradient(lg, QGradient::LogicalMode));
+  else if ((rg = dynamic_cast<const CRadialGradient *>(g)) != 0)
+    strokeBrush_ = QBrush(CQUtil::toQGradient(rg, QGradient::LogicalMode));
+
+  painter_->setBrush(strokeBrush_);
+}
+
+void
+CQSVGRenderer::
+setStrokeFillImage(CImagePtr image)
+{
+  assert(drawing_);
+
+  if (! image.isValid())
+    return;
+
+  CQImage *cqimage = image.cast<CQImage>();
+
+  QImage qimage = cqimage->getQImage();
+
+  strokeBrush_.setTextureImage(qimage);
+
+  painter_->setBrush(strokeBrush_);
 }
 
 void

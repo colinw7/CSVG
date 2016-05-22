@@ -1,5 +1,9 @@
 #include <CQSVG.h>
 #include <CQSVGAnchor.h>
+#include <CQSVGAnimateColor.h>
+#include <CQSVGAnimate.h>
+#include <CQSVGAnimateMotion.h>
+#include <CQSVGAnimateTransform.h>
 #include <CQSVGBlock.h>
 #include <CQSVGCircle.h>
 #include <CQSVGClipPath.h>
@@ -97,6 +101,34 @@ CQSVG::
 createAnchor()
 {
   return new CQSVGAnchor(this);
+}
+
+CSVGAnimate *
+CQSVG::
+createAnimate()
+{
+  return new CQSVGAnimate(this);
+}
+
+CSVGAnimateColor *
+CQSVG::
+createAnimateColor()
+{
+  return new CQSVGAnimateColor(this);
+}
+
+CSVGAnimateMotion *
+CQSVG::
+createAnimateMotion()
+{
+  return new CQSVGAnimateMotion(this);
+}
+
+CSVGAnimateTransform *
+CQSVG::
+createAnimateTransform()
+{
+  return new CQSVGAnimateTransform(this);
 }
 
 CSVGCircle *
@@ -418,21 +450,67 @@ void
 CQSVG::
 startTimer()
 {
-  timer_->start(dt_);
+  if (! isAnimating()) {
+    timer_->start(dt_);
+
+    setAnimating(true);
+  }
 }
 
 void
 CQSVG::
 stopTimer()
 {
-  timer_->stop();
+  if (isAnimating()) {
+    timer_->stop();
+
+    setAnimating(false);
+  }
+}
+
+void
+CQSVG::
+stepTimer()
+{
+  tickStep(1);
+}
+
+void
+CQSVG::
+bstepTimer()
+{
+  tickStep(-1);
 }
 
 void
 CQSVG::
 tickSlot()
 {
-  getBlock()->tick(dt_/1000.0);
+  tickStep(1);
+}
+
+void
+CQSVG::
+setTime(double t)
+{
+  t_ = t;
+
+  getBlock()->setTime(t_);
+
+  window_->setTime(t_);
+}
+
+void
+CQSVG::
+tickStep(int n)
+{
+  double dt = n*dt_/1000.0;
+
+  t_ += dt;
+
+  getBlock()->tick(dt);
+
+  window_->setTime(t_);
 }
 
 void

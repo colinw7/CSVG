@@ -90,6 +90,20 @@ transformStr() const
   return obj_->getTransform().getMatrix().toString().c_str();
 }
 
+double
+CQSVGObject::
+getDrawOpacity() const
+{
+  return obj_->getOpacity();
+}
+
+void
+CQSVGObject::
+setDrawOpacity(double r)
+{
+  obj_->setOpacity(r);
+}
+
 QColor
 CQSVGObject::
 strokeColor() const

@@ -85,20 +85,20 @@ draw()
 
   for (uint i = 0; i < num_points; ++i) {
     if (i == 0)
-      svg_.pathMoveTo(points_[i].x, points_[i].y);
+      buffer->pathMoveTo(points_[i].x, points_[i].y);
     else
-      svg_.pathLineTo(points_[i].x, points_[i].y);
+      buffer->pathLineTo(points_[i].x, points_[i].y);
   }
 
   if (svg_.isFilled() || svg_.isStroked()) {
     if (svg_.isFilled())
-      svg_.pathFill();
+      buffer->pathFill();
 
     if (svg_.isStroked())
-      svg_.pathStroke();
+      buffer->pathStroke();
   }
   else
-    svg_.pathFill();
+    buffer->pathFill();
 }
 
 bool

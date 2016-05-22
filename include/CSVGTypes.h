@@ -147,13 +147,19 @@ enum class CSVGPathPartType {
   LINE_TO,
   RLINE_TO,
   HLINE_TO,
+  RHLINE_TO,
   VLINE_TO,
+  RVLINE_TO,
   ARC_TO,
   RARC_TO,
   BEZIER2_TO,
+  MBEZIER2_TO,
   RBEZIER2_TO,
+  MRBEZIER2_TO,
   BEZIER3_TO,
+  MBEZIER3_TO,
   RBEZIER3_TO,
+  MRBEZIER3_TO,
   CLOSE_PATH
 };
 
@@ -168,6 +174,14 @@ enum class CSVGTimeValueType {
   MINUTES,
   SECONDS,
   MILLISECONDS
+};
+
+enum class CSVGCSSType {
+  NONE,
+  GLOBAL,
+  CLASS,
+  TYPE,
+  TYPE_CLASS
 };
 
 #endif

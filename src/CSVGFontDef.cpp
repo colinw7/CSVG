@@ -132,7 +132,7 @@ print(std::ostream &os) const
   if (size_.isValid()) {
     if (output) os << " ";
 
-    os << "font-size: "; CSVGObject::printLength(os, size_.getValue()); os << ";";
+    os << "font-size: " << size_.getValue() << ";";
 
     output = true;
   }

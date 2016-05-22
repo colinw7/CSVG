@@ -2,6 +2,8 @@
 #include <CSVG.h>
 #include <CSVGLog.h>
 #include <CSVGUtil.h>
+#include <CRegExp.h>
+#include <CStrParse.h>
 
 CRGBA
 CSVGStroke::
@@ -25,32 +27,74 @@ void
 CSVGStroke::
 setColor(const std::string &color_def)
 {
-  noColor_.setInvalid();
+  CStrParse parse(color_def);
 
-  resetColor();
+  parse.skipSpace();
 
-  if (color_def == "none") {
-    noColor_ = true;
+  while (true) {
+    std::string word;
 
-    resetOpacity();
-  }
-  else {
-    CRGBA rgba;
+    if (parse.isChar('#')) {
+      word += '#';
 
-    if (svg_.decodeColorString(color_def, rgba)) {
-      setColor(rgba);
+      parse.skipChar();
+
+      char c(0);
+
+      while (parse.readChar(&c) && ! isspace(c))
+        word += c;
     }
-  }
-}
+    else {
+      if (! parse.readIdentifier(word))
+        break;
 
-double
-CSVGStroke::
-getOpacity() const
-{
-  if (opacity_.isValid())
-    return opacity_.getValue();
-  else
-    return 1.0;
+      if (parse.isChar('(')) {
+        word += '(';
+
+        parse.skipChar();
+
+        char c(0);
+
+        while (parse.readChar(&c) && c != ')')
+          word += c;
+
+        if (c == ')')
+          word += c;
+      }
+    }
+
+    //------
+
+    noColor_.setInvalid();
+
+    resetColor();
+  //resetUrl       ();
+  //resetFillObject();
+
+    std::vector<std::string> match_strs;
+
+    if      (word == "none") {
+      noColor_ = true;
+
+      resetOpacity();
+    }
+    else if (word == "currentColor") {
+      currentColor_ = true;
+    }
+    else if (CRegExpUtil::parse(word, "url(#\\(.*\\))", match_strs)) {
+      setUrl(match_strs[0]);
+    }
+    else {
+      CRGBA rgba;
+
+      if (svg_.decodeColorString(word, rgba))
+        setColor(rgba);
+    }
+
+    //------
+
+    parse.skipSpace();
+  }
 }
 
 void
@@ -62,14 +106,32 @@ setOpacity(const std::string &opacity_def)
   setOpacity(opacity);
 }
 
-double
+void
 CSVGStroke::
-getWidth() const
+setRule(const std::string &rule_def)
 {
-  if (width_.isValid())
-    return width_.getValue();
+  CFillType rule = svg_.decodeFillRuleString(rule_def);
+
+  setRule(rule);
+}
+
+bool
+CSVGStroke::
+getFillObjectValid() const
+{
+  return url_.isValid() || fillObject_.isValid();
+}
+
+CSVGObject *
+CSVGStroke::
+getFillObject() const
+{
+  if      (url_.isValid())
+    return svg_.lookupObjectById(url_.getValue());
+  else if (fillObject_.isValid())
+    return fillObject_.getValue();
   else
-    return 1.0;
+    return 0;
 }
 
 void
@@ -79,19 +141,6 @@ setWidth(const std::string &width_def)
   double width = svg_.decodeWidthString(width_def);
 
   setWidth(width);
-}
-
-const CLineDash &
-CSVGStroke::
-getDash() const
-{
-  if (dash_.isValid())
-    return dash_.getValue();
-  else {
-    static CLineDash dash;
-
-    return dash;
-  }
 }
 
 void
@@ -125,16 +174,6 @@ setDashOffset(double offset)
     dash_.getValue().setOffset(offset);
 }
 
-CLineCapType
-CSVGStroke::
-getLineCap() const
-{
-  if (cap_.isValid())
-    return cap_.getValue();
-  else
-    return LINE_CAP_TYPE_BUTT;
-}
-
 void
 CSVGStroke::
 setLineCap(const std::string &cap_str)
@@ -153,16 +192,6 @@ setLineCap(const std::string &cap_str)
   }
 
   setLineCap(cap);
-}
-
-CLineJoinType
-CSVGStroke::
-getLineJoin() const
-{
-  if (join_.isValid())
-    return join_.getValue();
-  else
-    return LINE_JOIN_TYPE_MITRE;
 }
 
 void
@@ -185,16 +214,6 @@ setLineJoin(const std::string &join_str)
   setLineJoin(join);
 }
 
-double
-CSVGStroke::
-getMitreLimit() const
-{
-  if (mlimit_.isValid())
-    return mlimit_.getValue();
-  else
-    return 0.0;
-}
-
 void
 CSVGStroke::
 setMitreLimit(const std::string &limit_str)
@@ -211,29 +230,41 @@ void
 CSVGStroke::
 reset()
 {
-  noColor_.setInvalid();
-  color_  .setInvalid();
-  width_  .setInvalid();
-  opacity_.setInvalid();
-  dash_   .setInvalid();
-  cap_    .setInvalid();
-  join_   .setInvalid();
-  mlimit_ .setInvalid();
+  noColor_     .setInvalid();
+  currentColor_.setInvalid();
+  color_       .setInvalid();
+  opacity_     .setInvalid();
+  rule_        .setInvalid();
+  url_         .setInvalid();
+  fillObject_  .setInvalid();
+  width_       .setInvalid();
+  dash_        .setInvalid();
+  cap_         .setInvalid();
+  join_        .setInvalid();
+  mlimit_      .setInvalid();
 }
 
 void
 CSVGStroke::
 update(const CSVGStroke &stroke)
 {
+  // TODO: return priority and use highest priority for fill (only use one fill)
   if (stroke.noColor_.isValid())
     noColor_ = stroke.noColor_;
   else {
     if (svg_.styleObject()) {
-      bool b;
+      bool        noColor;
+      CSVGCSSType noColorType;
 
-      if (svg_.getStyleStrokeNoColor(svg_.styleObject(), b))
-        noColor_ = b;
+      if (svg_.getStyleStrokeNoColor(svg_.styleObject(), noColor, noColorType))
+        noColor_ = noColor;
     }
+  }
+
+  if (stroke.currentColor_.isValid()) {
+    currentColor_ = stroke.currentColor_;
+
+    noColor_.setInvalid();
   }
 
   if (stroke.getColorValid()) {
@@ -243,25 +274,48 @@ update(const CSVGStroke &stroke)
   }
   else {
     if (svg_.styleObject()) {
-      CRGBA c;
+      CRGBA       color;
+      CSVGCSSType colorType;
 
-      if (svg_.getStyleStrokeColor(svg_.styleObject(), c)) {
-        color_ = c;
+      if (svg_.getStyleStrokeColor(svg_.styleObject(), color, colorType)) {
+        color_ = color;
 
         noColor_.setInvalid();
       }
     }
   }
 
-  if (stroke.getOpacityValid())
-    opacity_ = stroke.opacity_;
-  else {
-    if (svg_.styleObject()) {
-      double a;
+  COptReal ga;
 
-      if (svg_.getStyleStrokeOpacity(svg_.styleObject(), a))
-        setOpacity(a);
-    }
+  if (svg_.styleObject()) {
+    if (svg_.styleObject()->getOpacityValid())
+      ga = svg_.styleObject()->getOpacity();
+  }
+
+  if      (stroke.getOpacityValid())
+    opacity_ = ga.getValue(1)*stroke.opacity_.getValue();
+  else if (svg_.styleObject()) {
+    double a;
+
+    if (svg_.getStyleStrokeOpacity(svg_.styleObject(), a))
+      opacity_ = ga.getValue(1)*a;
+  }
+  else if (ga.isValid())
+    opacity_ = ga.getValue();
+
+  if (stroke.getRuleValid())
+    rule_ = stroke.rule_;
+
+  if (stroke.getUrlValid()) {
+    url_ = stroke.url_;
+
+    noColor_.setInvalid();
+  }
+
+  if (stroke.fillObject_.isValid()) {
+    fillObject_ = stroke.fillObject_;
+
+    noColor_.setInvalid();
   }
 
   if (stroke.getWidthValid())
@@ -300,44 +354,57 @@ void
 CSVGStroke::
 print(std::ostream &os) const
 {
+  std::stringstream ss;
+
   if (noColor_.isValid())
-    os << "stroke: none;";
+    ss << "stroke: none;";
 
   if (color_.isValid())
-    os << "stroke: " << color_.getValue().getRGB().stringEncode() << ";";
+    ss << "stroke: " << color_.getValue().getRGB().stringEncode() << ";";
+
+  if (opacity_.isValid()) {
+    if (ss.str() != "") ss << " ";
+
+    ss << "stroke-opacity: " << opacity_.getValue() << ";";
+  }
+
+  if (url_.isValid())
+    ss << "stroke: url(#" << url_.getValue() << ");";
 
   if (width_.isValid())
-    os << " stroke-width: " << width_.getValue() << ";";
+    ss << " stroke-width: " << width_.getValue() << ";";
 
   if (dash_.isValid()) {
-    os << " stroke-dasharray: " << dash_.getValue().toString() << ";"; // TODO: no offset, format
+    ss << " stroke-dasharray: " << dash_.getValue().toString() << ";"; // TODO: no offset, format
 
     if (dash_.getValue().getOffset() != 0)
-      os << " stroke-dashoffset: " << dash_.getValue().getOffset() << ";";
+      ss << " stroke-dashoffset: " << dash_.getValue().getOffset() << ";";
   }
 
   if (cap_.isValid()) {
-    os << " stroke-linecap: ";
+    ss << " stroke-linecap: ";
 
-    if      (cap_.getValue() == LINE_CAP_TYPE_BUTT  ) os << "butt";
-    else if (cap_.getValue() == LINE_CAP_TYPE_ROUND ) os << "round";
-    else if (cap_.getValue() == LINE_CAP_TYPE_SQUARE) os << "square";
-    else                                              os << CSVGUtil::round(cap_.getValue());
+    if      (cap_.getValue() == LINE_CAP_TYPE_BUTT  ) ss << "butt";
+    else if (cap_.getValue() == LINE_CAP_TYPE_ROUND ) ss << "round";
+    else if (cap_.getValue() == LINE_CAP_TYPE_SQUARE) ss << "square";
+    else                                              ss << CSVGUtil::round(cap_.getValue());
 
-    os << ";";
+    ss << ";";
   }
 
   if (join_.isValid()) {
-    os << " stroke-linejoin: ";
+    ss << " stroke-linejoin: ";
 
-    if      (join_.getValue() == LINE_JOIN_TYPE_MITRE) os << "miter";
-    else if (join_.getValue() == LINE_JOIN_TYPE_ROUND) os << "round";
-    else if (join_.getValue() == LINE_JOIN_TYPE_BEVEL) os << "bevel";
-    else                                               os << CSVGUtil::round(join_.getValue());
+    if      (join_.getValue() == LINE_JOIN_TYPE_MITRE) ss << "miter";
+    else if (join_.getValue() == LINE_JOIN_TYPE_ROUND) ss << "round";
+    else if (join_.getValue() == LINE_JOIN_TYPE_BEVEL) ss << "bevel";
+    else                                               ss << CSVGUtil::round(join_.getValue());
 
-    os << ";";
+    ss << ";";
   }
 
   if (mlimit_.isValid())
-    os << " stroke-miterlimit: " << mlimit_.getValue() << ";";
+    ss << " stroke-miterlimit: " << mlimit_.getValue() << ";";
+
+  os << ss.str();
 }

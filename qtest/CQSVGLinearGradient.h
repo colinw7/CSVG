@@ -16,6 +16,11 @@ class CQSVGLinearGradient : public CQSVGObject, public CSVGLinearGradient {
 
  public:
   CQSVGLinearGradient(CQSVG *svg);
+
+  double getX1() const;
+  double getY1() const;
+  double getX2() const;
+  double getY2() const;
 };
 
 #endif

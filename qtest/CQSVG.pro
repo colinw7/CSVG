@@ -16,6 +16,10 @@ CONFIG += debug
 SOURCES += \
 CQSVG.cpp \
 CQSVGAnchor.cpp \
+CQSVGAnimate.cpp \
+CQSVGAnimateColor.cpp \
+CQSVGAnimateMotion.cpp \
+CQSVGAnimateTransform.cpp \
 CQSVGBlock.cpp \
 CQSVGBufferView.cpp \
 CQSVGCanvas.cpp \
@@ -75,6 +79,10 @@ CQSVGUtil.cpp \
 HEADERS += \
 CEnumConv.h \
 CQSVGAnchor.h \
+CQSVGAnimate.h \
+CQSVGAnimateColor.h \
+CQSVGAnimateMotion.h \
+CQSVGAnimateTransform.h \
 CQSVGBlock.h \
 CQSVGBufferView.h \
 CQSVGCanvas.h \

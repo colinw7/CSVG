@@ -348,8 +348,11 @@ draw()
     }
   }
   else if (xlink_.isValid()) {
-    if (xlink_.getValue().isImage())
-      svg_.drawImage(0, 0, xlink_.getValue().getImage());
+    if (xlink_.getValue().isImage()) {
+      CSVGBuffer *buffer = svg_.getBuffer();
+
+      buffer->drawImage(0, 0, xlink_.getValue().getImage());
+    }
   }
 }
 

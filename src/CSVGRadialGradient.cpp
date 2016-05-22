@@ -23,7 +23,6 @@
     gradientTransform <TransformList>
     spreadMethod ( pad | reflect | repeat )
 */
-
 CSVGRadialGradient::
 CSVGRadialGradient(CSVG &svg) :
  CSVGObject(svg)
@@ -62,11 +61,11 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   CScreenUnits   length;
   CMatrixStack2D transform;
 
-  if      (svg_.percentOption(opt_name, opt_value, "cx", length))
+  if      (svg_.lengthOption(opt_name, opt_value, "cx", length))
     cx_ = length;
-  else if (svg_.percentOption(opt_name, opt_value, "cy", length))
+  else if (svg_.lengthOption(opt_name, opt_value, "cy", length))
     cy_ = length;
-  else if (svg_.percentOption(opt_name, opt_value, "r" , length))
+  else if (svg_.lengthOption(opt_name, opt_value, "r" , length))
     radius_ = length;
   else if (svg_.coordOption(opt_name, opt_value, "fx", &real))
     focusX_ = real;
@@ -91,11 +90,11 @@ processOption(const std::string &opt_name, const std::string &opt_value)
     if (! decodeXLink(opt_value, &object, 0))
       return false;
 
-    if  (object != 0) {
+    if (object) {
       CSVGRadialGradient *rg = dynamic_cast<CSVGRadialGradient *>(object);
       CSVGLinearGradient *lg = dynamic_cast<CSVGLinearGradient *>(object);
 
-      if      (rg != 0) {
+      if      (rg) {
         if (rg->cx_    .isValid()) cx_     = rg->cx_;
         if (rg->cy_    .isValid()) cy_     = rg->cy_;
         if (rg->radius_.isValid()) radius_ = rg->radius_;
@@ -113,7 +112,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
             addStop(s);
         }
       }
-      else if (lg != 0) {
+      else if (lg) {
         if (lg->getGTransformValid()) gtransform_ = lg->getGTransform();
         if (lg->getUnitsValid     ()) units_      = lg->getUnits();
         if (lg->getSpreadValid    ()) spread_     = lg->getSpread();
@@ -183,13 +182,14 @@ CRadialGradient *
 CSVGRadialGradient::
 createGradient(CSVGObject *obj)
 {
-  CSVGBuffer *currentBuffer = svg_.getBuffer();
+  //CSVGBuffer *currentBuffer = svg_.getBuffer();
 
   CRadialGradient *gradient = new CRadialGradient;
 
-  double xc = getCenterX();
-  double yc = getCenterX();
-  double r  = getRadius();
+  double xc = getCenterX(0.5).pxValue(1);
+  double yc = getCenterY(0.5).pxValue(1);
+  double r  = getRadius (0.5).pxValue(1);
+
   double xf = getFocusX();
   double yf = getFocusY();
 
@@ -197,6 +197,8 @@ createGradient(CSVGObject *obj)
 
   // remap points to absolute
   if      (getUnits() == CSVGCoordUnits::USER_SPACE) {
+    // TODO: parent transform ?
+#if 0
     CMatrixStack2D m = currentBuffer->transform();
 
     // radius ?
@@ -205,6 +207,7 @@ createGradient(CSVGObject *obj)
 
     m.multiplyPoint(p1.x, p1.y, &xc, &yc);
     m.multiplyPoint(p2.x, p2.y, &xf, &yf);
+#endif
   }
   else if (getUnits() == CSVGCoordUnits::OBJECT_BBOX) {
     CBBox2D bbox;
@@ -233,7 +236,9 @@ createGradient(CSVGObject *obj)
 
     rgba.setAlpha(alpha);
 
-    gradient->addStop(s->getOffset(), rgba);
+    double sv = s->getOffset().ratioValue(r);
+
+    gradient->addStop(sv, rgba);
   }
 
   gradient->init(1, 1);

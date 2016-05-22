@@ -23,7 +23,7 @@ class CSVGPathPart {
 
   virtual void moveBy(const CVector2D &d) = 0;
 
-  virtual void draw() = 0;
+  virtual void draw(CSVGBuffer *buffer) = 0;
 
   virtual double getLength(const CPoint2D &) const;
 
@@ -91,7 +91,7 @@ class CSVGPathMoveTo : public CSVGPathPart {
 
   void moveBy(const CVector2D &d) override;
 
-  void draw() override;
+  void draw(CSVGBuffer *buffer) override;
 
   double getLength(const CPoint2D &) const override { return 0; }
 
@@ -113,7 +113,7 @@ class CSVGPathRMoveTo : public CSVGPathPart {
 
   void moveBy(const CVector2D &d) override;
 
-  void draw() override;
+  void draw(CSVGBuffer *buffer) override;
 
   double getLength(const CPoint2D &) const override { return 0; }
 
@@ -135,7 +135,7 @@ class CSVGPathLineTo : public CSVGPathPart {
 
   void moveBy(const CVector2D &d) override;
 
-  void draw() override;
+  void draw(CSVGBuffer *buffer) override;
 
   double getLength(const CPoint2D &p) const override;
 
@@ -164,7 +164,7 @@ class CSVGPathRLineTo : public CSVGPathPart {
 
   CPoint2D getEndPoint(const CPoint2D &p) const override { return p + point_; }
 
-  void draw() override;
+  void draw(CSVGBuffer *buffer) override;
 
   void print(std::ostream &os) const override;
 
@@ -176,22 +176,44 @@ class CSVGPathRLineTo : public CSVGPathPart {
 
 class CSVGPathHLineTo : public CSVGPathPart {
  public:
-  CSVGPathHLineTo(CSVG &svg, double d);
+  CSVGPathHLineTo(CSVG &svg, double x);
 
-  double getDistance() const { return d_; }
+  double getX() const { return x_; }
 
-  double getLength(const CPoint2D &) const override { return d_; }
+  double getLength(const CPoint2D &p) const override;
 
-  CPoint2D getEndPoint(const CPoint2D &p) const override { return p + CPoint2D(d_, 0); }
+  CPoint2D getEndPoint(const CPoint2D &p) const override { return CPoint2D(x_, p.y); }
 
   void moveBy(const CVector2D &d) override;
 
-  void draw() override;
+  void draw(CSVGBuffer *buffer) override;
 
   void print(std::ostream &os) const override;
 
  private:
-  double d_ { 0 };
+  double x_ { 0 };
+};
+
+//---
+
+class CSVGPathRHLineTo : public CSVGPathPart {
+ public:
+  CSVGPathRHLineTo(CSVG &svg, double dx);
+
+  double getDistance() const { return dx_; }
+
+  double getLength(const CPoint2D &) const override { return dx_; }
+
+  CPoint2D getEndPoint(const CPoint2D &p) const override { return p + CPoint2D(dx_, 0); }
+
+  void moveBy(const CVector2D &d) override;
+
+  void draw(CSVGBuffer *buffer) override;
+
+  void print(std::ostream &os) const override;
+
+ private:
+  double dx_ { 0 };
 };
 
 //---
@@ -200,20 +222,42 @@ class CSVGPathVLineTo : public CSVGPathPart {
  public:
   CSVGPathVLineTo(CSVG &svg, double d);
 
-  double getDistance() const { return d_; }
+  double getY() const { return y_; }
 
-  double getLength(const CPoint2D &) const override { return d_; }
+  double getLength(const CPoint2D &p) const override;
 
-  CPoint2D getEndPoint(const CPoint2D &p) const override { return p + CPoint2D(0, d_); }
+  CPoint2D getEndPoint(const CPoint2D &p) const override { return p + CPoint2D(p.x, y_); }
 
   void moveBy(const CVector2D &d) override;
 
-  void draw() override;
+  void draw(CSVGBuffer *buffer) override;
 
   void print(std::ostream &os) const override;
 
  private:
-  double d_ { 0 };
+  double y_ { 0 };
+};
+
+//---
+
+class CSVGPathRVLineTo : public CSVGPathPart {
+ public:
+  CSVGPathRVLineTo(CSVG &svg, double dy);
+
+  double getDistance() const { return dy_; }
+
+  double getLength(const CPoint2D &) const override { return dy_; }
+
+  CPoint2D getEndPoint(const CPoint2D &p) const override { return p + CPoint2D(0, dy_); }
+
+  void moveBy(const CVector2D &d) override;
+
+  void draw(CSVGBuffer *buffer) override;
+
+  void print(std::ostream &os) const override;
+
+ private:
+  double dy_ { 0 };
 };
 
 //---
@@ -235,7 +279,7 @@ class CSVGPathArcTo : public CSVGPathPart {
 
   void moveBy(const CVector2D &d) override;
 
-  void draw() override;
+  void draw(CSVGBuffer *buffer) override;
 
   double getLength(const CPoint2D &p) const override;
 
@@ -280,7 +324,7 @@ class CSVGPathRArcTo : public CSVGPathPart {
 
   void moveBy(const CVector2D &d) override;
 
-  void draw() override;
+  void draw(CSVGBuffer *buffer) override;
 
   CPoint2D getEndPoint(const CPoint2D &p) const override { return p + point2_; }
 
@@ -306,7 +350,31 @@ class CSVGPathBezier2To : public CSVGPathPart {
 
   void moveBy(const CVector2D &d) override;
 
-  void draw() override;
+  void draw(CSVGBuffer *buffer) override;
+
+  CPoint2D getEndPoint(const CPoint2D &) const override { return point2_; }
+
+  bool interp(double s, const CPoint2D &p1, const CPoint2D &p2,
+              CPoint2D &pi, double &a) const override;
+
+  void print(std::ostream &os) const override;
+
+ private:
+  CPoint2D point1_;
+  CPoint2D point2_;
+};
+
+//---
+
+class CSVGPathMBezier2To : public CSVGPathPart {
+ public:
+  CSVGPathMBezier2To(CSVG &svg, double x2, double y2);
+
+  const CPoint2D &getPoint2() const { return point2_; }
+
+  void moveBy(const CVector2D &d) override;
+
+  void draw(CSVGBuffer *buffer) override;
 
   CPoint2D getEndPoint(const CPoint2D &) const override { return point2_; }
 
@@ -331,7 +399,31 @@ class CSVGPathRBezier2To : public CSVGPathPart {
 
   void moveBy(const CVector2D &d) override;
 
-  void draw() override;
+  void draw(CSVGBuffer *buffer) override;
+
+  CPoint2D getEndPoint(const CPoint2D &p) const override { return p + point2_; }
+
+  bool interp(double s, const CPoint2D &p1, const CPoint2D &p2,
+              CPoint2D &pi, double &a) const override;
+
+  void print(std::ostream &os) const override;
+
+ private:
+  CPoint2D point1_;
+  CPoint2D point2_;
+};
+
+//---
+
+class CSVGPathMRBezier2To : public CSVGPathPart {
+ public:
+  CSVGPathMRBezier2To(CSVG &svg, double x2, double y2);
+
+  const CPoint2D &getPoint2() const { return point2_; }
+
+  void moveBy(const CVector2D &d) override;
+
+  void draw(CSVGBuffer *buffer) override;
 
   CPoint2D getEndPoint(const CPoint2D &p) const override { return p + point2_; }
 
@@ -349,8 +441,7 @@ class CSVGPathRBezier2To : public CSVGPathPart {
 
 class CSVGPathBezier3To : public CSVGPathPart {
  public:
-  CSVGPathBezier3To(CSVG &svg, double x1, double y1,
-                    double x2, double y2, double x3, double y3);
+  CSVGPathBezier3To(CSVG &svg, double x1, double y1, double x2, double y2, double x3, double y3);
 
   const CPoint2D &getPoint1() const { return point1_; }
   const CPoint2D &getPoint2() const { return point2_; }
@@ -358,7 +449,37 @@ class CSVGPathBezier3To : public CSVGPathPart {
 
   void moveBy(const CVector2D &d) override;
 
-  void draw() override;
+  void draw(CSVGBuffer *buffer) override;
+
+  double getLength(const CPoint2D &p) const override;
+
+  CPoint2D getEndPoint(const CPoint2D &) const override { return point3_; }
+
+  bool interp(double s, const CPoint2D &p1, const CPoint2D &p2,
+              CPoint2D &pi, double &a) const override;
+
+  void print(std::ostream &os) const override;
+
+ private:
+  CPoint2D point1_;
+  CPoint2D point2_;
+  CPoint2D point3_;
+
+  mutable COptReal length_;
+};
+
+//---
+
+class CSVGPathMBezier3To : public CSVGPathPart {
+ public:
+  CSVGPathMBezier3To(CSVG &svg, double x2, double y2, double x3, double y3);
+
+  const CPoint2D &getPoint2() const { return point2_; }
+  const CPoint2D &getPoint3() const { return point3_; }
+
+  void moveBy(const CVector2D &d) override;
+
+  void draw(CSVGBuffer *buffer) override;
 
   double getLength(const CPoint2D &p) const override;
 
@@ -381,8 +502,7 @@ class CSVGPathBezier3To : public CSVGPathPart {
 
 class CSVGPathRBezier3To : public CSVGPathPart {
  public:
-  CSVGPathRBezier3To(CSVG &svg, double x1, double y1,
-                     double x2, double y2, double x3, double y3);
+  CSVGPathRBezier3To(CSVG &svg, double x1, double y1, double x2, double y2, double x3, double y3);
 
   const CPoint2D &getPoint1() const { return point1_; }
   const CPoint2D &getPoint2() const { return point2_; }
@@ -390,7 +510,37 @@ class CSVGPathRBezier3To : public CSVGPathPart {
 
   void moveBy(const CVector2D &d) override;
 
-  void draw() override;
+  void draw(CSVGBuffer *buffer) override;
+
+  double getLength(const CPoint2D &p) const override;
+
+  CPoint2D getEndPoint(const CPoint2D &p) const override { return p + point3_; }
+
+  bool interp(double s, const CPoint2D &p1, const CPoint2D &p2,
+              CPoint2D &pi, double &a) const override;
+
+  void print(std::ostream &os) const override;
+
+ private:
+  CPoint2D point1_;
+  CPoint2D point2_;
+  CPoint2D point3_;
+
+  mutable COptReal length_;
+};
+
+//---
+
+class CSVGPathMRBezier3To : public CSVGPathPart {
+ public:
+  CSVGPathMRBezier3To(CSVG &svg, double x2, double y2, double x3, double y3);
+
+  const CPoint2D &getPoint2() const { return point2_; }
+  const CPoint2D &getPoint3() const { return point3_; }
+
+  void moveBy(const CVector2D &d) override;
+
+  void draw(CSVGBuffer *buffer) override;
 
   double getLength(const CPoint2D &p) const override;
 
@@ -413,17 +563,20 @@ class CSVGPathRBezier3To : public CSVGPathPart {
 
 class CSVGPathClosePath : public CSVGPathPart {
  public:
-  CSVGPathClosePath(CSVG &svg);
+  CSVGPathClosePath(CSVG &svg, bool relative);
 
   void moveBy(const CVector2D &d) override;
 
-  void draw() override;
+  void draw(CSVGBuffer *buffer) override;
 
   double getLength(const CPoint2D &) const override { return 0; }
 
   CPoint2D getEndPoint(const CPoint2D &p) const override { return p; }
 
   void print(std::ostream &os) const override;
+
+ private:
+  bool relative_ { false };
 };
 
 #endif

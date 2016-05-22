@@ -58,3 +58,10 @@
 
 ### 5/16/2016
  + handle slice in preserveAspectRatio
+
+### 5/22/2016
+ + add mirror path part beziers
+ + fix issues in absolute horizontal/vertical path parts
+ + support global opacity
+ + support gradient fill for stroke
+ + add animation controls to gui

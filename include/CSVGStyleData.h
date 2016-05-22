@@ -13,6 +13,7 @@ class CSVGStyleData {
 
   void setValue(const std::string &name, const std::string &value);
 
+  // stroke
   bool      getStrokeNoColorValid() const { return stroke_.getNoColorValid(); }
   bool      getStrokeNoColor     () const { return stroke_.getNoColor(); }
   bool      getStrokeColorValid  () const { return stroke_.getColorValid(); }
@@ -23,10 +24,14 @@ class CSVGStyleData {
   double    getStrokeWidth       () const { return stroke_.getWidth(); }
   bool      getStrokeDashValid   () const { return stroke_.getDashValid(); }
   CLineDash getStrokeDash        () const { return stroke_.getDash(); }
-  bool      getFillColorValid    () const { return fill_  .getColorValid(); }
-  CRGBA     getFillColor         () const { return fill_  .getColor(); }
-  bool      getFillNoColorValid  () const { return fill_  .getNoColorValid(); }
-  bool      getFillNoColor       () const { return fill_  .getNoColor(); }
+
+  // fill
+  bool      getFillNoColorValid() const { return fill_.getNoColorValid(); }
+  bool      getFillNoColor     () const { return fill_.getNoColor(); }
+  bool      getFillColorValid  () const { return fill_.getColorValid(); }
+  CRGBA     getFillColor       () const { return fill_.getColor(); }
+  bool      getFillOpacityValid() const { return fill_.getOpacityValid(); }
+  double    getFillOpacity     () const { return fill_.getOpacity(); }
 
  private:
   CSVG&            svg_;

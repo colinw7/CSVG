@@ -119,12 +119,26 @@ void
 CSVGAnimateBase::
 tick(double dt)
 {
-  if (! getParent())
-    return;
-
   currentTime_ += dt;
 
-  //---
+  updateAnimation();
+}
+
+void
+CSVGAnimateBase::
+setTime(double t)
+{
+  currentTime_ = t;
+
+  updateAnimation();
+}
+
+void
+CSVGAnimateBase::
+updateAnimation()
+{
+  if (! getParent())
+    return;
 
   if (! isAnimating()) {
     if (startTime_.isValid()) {

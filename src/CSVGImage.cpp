@@ -190,24 +190,38 @@ CImagePtr
 CSVGImage::
 getImage() const
 {
-  if (xlink_.isValid()) {
-    if (xlink_.getValue().isObject()) {
-      CSVGImage *th = const_cast<CSVGImage *>(this);
+  if (! xlink_.isValid())
+    return CImagePtr();
 
-      CSVGObject *object = xlink_.getValue().getObject();
+  if (xlink_.getValue().isObject()) {
+    CSVGImage *th = const_cast<CSVGImage *>(this);
 
-      CImagePtr image = object->toImage();
+    CSVGObject *object = xlink_.getValue().getObject();
 
-      // TODO: don't cache image as could be rescaled
-      th->xlink_.getValue().setObject(0);
-      th->xlink_.getValue().setImage (image);
-    }
+    CImagePtr image = object->toImage();
 
-    if (xlink_.getValue().isImage())
-      return xlink_.getValue().getImage();
+    // TODO: don't cache image as could be rescaled
+    th->xlink_.getValue().setObject(0);
+    th->xlink_.getValue().setImage (image);
   }
 
+  if (xlink_.getValue().isImage())
+    return xlink_.getValue().getImage();
+
   return CImagePtr();
+}
+
+CSVGObject *
+CSVGImage::
+getObject() const
+{
+  if (! xlink_.isValid())
+    return 0;
+
+  if (! xlink_.getValue().isObject())
+    return 0;
+
+  return xlink_.getValue().getObject();
 }
 
 bool

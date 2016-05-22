@@ -90,6 +90,11 @@ class CSVGRenderer {
   virtual void setFillGradient(CGenGradient *g) = 0;
   virtual void setFillImage(CImagePtr image) = 0;
 
+  virtual void setStrokeFilled(bool b) = 0;
+  virtual void setStrokeFillType(CFillType fillType) = 0;
+  virtual void setStrokeFillGradient(CGenGradient *g) = 0;
+  virtual void setStrokeFillImage(CImagePtr image) = 0;
+
   virtual void setAlign(CHAlignType halign, CVAlignType valign) = 0;
 
   virtual void windowToPixel(const CPoint2D &w, CPoint2D &p) = 0;

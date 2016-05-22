@@ -10,6 +10,7 @@ class CQSVGBufferView;
 class CQPropertyTree;
 class CSVGObject;
 class QLabel;
+class QLineEdit;
 
 class CQSVGWindow : public QMainWindow {
   Q_OBJECT
@@ -38,6 +39,8 @@ class CQSVGWindow : public QMainWindow {
 
   void showPos(const QPoint &ppos, const QPointF &wpos);
 
+  void setTime(double t);
+
   void deselectAllObjects();
 
   QSize sizeHint() const;
@@ -65,23 +68,36 @@ class CQSVGWindow : public QMainWindow {
   void showProperties();
   void showBuffers();
 
+  void playSlot();
+  void pauseSlot();
+  void stepSlot();
+  void bstepSlot();
+  void timeSlot();
+
  private:
   typedef std::vector<std::string> Files;
 
-  CQSVG*              svg_           { 0 };
-  CQSVGCanvas*        canvas_        { 0 };
-  CQPropertyTree*     tree_          { 0 };
-  QLabel*             posLabel_      { 0 };
-  QLabel*             zoomLabel_     { 0 };
-  CQSVGPropertiesDlg* propertiesDlg_ { 0 };
-  CQSVGBufferView*    bufferView_    { 0 };
-  QAction*            nextAction_    { 0 };
-  QAction*            prevAction_    { 0 };
-  bool                image_         { false };
+  CQSVG*              svg_            { 0 };
+  CQSVGCanvas*        canvas_         { 0 };
+  CQPropertyTree*     tree_           { 0 };
+  QLabel*             posLabel_       { 0 };
+  QLabel*             zoomLabel_      { 0 };
+  CQSVGPropertiesDlg* propertiesDlg_  { 0 };
+  CQSVGBufferView*    bufferView_     { 0 };
+  QAction*            nextAction_     { 0 };
+  QAction*            prevAction_     { 0 };
+  QMenu*              animateMenu_    { 0 };
+  QAction*            playAction_     { 0 };
+  QAction*            pauseAction_    { 0 };
+  QAction*            stepAction_     { 0 };
+  QAction*            bstepAction_    { 0 };
+  QToolBar*           animateToolBar_ { 0 };
+  QLineEdit*          timeEdit_       { 0 };
+  bool                image_          { false };
   std::string         imageDir_;
-  bool                print_         { false };
+  bool                print_          { false };
   Files               files_;
-  int                 ind_           { -1 };
+  int                 ind_            { -1 };
 };
 
 #endif

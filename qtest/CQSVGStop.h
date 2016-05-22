@@ -14,6 +14,8 @@ class CQSVGStop : public CQSVGObject, public CSVGStop {
 
  public:
   CQSVGStop(CQSVG *svg);
+
+  double getOffset() const;
 };
 
 #endif

@@ -44,8 +44,8 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   CScreenUnits length;
 
   if      (svg_.percentOption(opt_name, opt_value, "offset", length)) {
-    if (length.px().value() < 0.0 || length.px().value() > 1)
-      length = CScreenUnits(std::min(std::max(length.px().value(), 0.0), 1.0));
+    if (length.ratioValue() < 0.0 || length.ratioValue() > 1)
+      length = CScreenUnits(std::min(std::max(length.ratioValue(), 0.0), 1.0));
 
     offset_ = length;
   }
@@ -82,7 +82,7 @@ print(std::ostream &os, bool hier) const
     CSVGObject::printValues(os);
 
     if (offset_.isValid()) {
-      os << " offset=\""; printLength(os, offset_.getValue()); os << "\"";
+      os << " offset=\"" << offset_.getValue() << "\"";
     }
 
     if (color_.isValid())

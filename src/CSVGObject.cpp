@@ -184,6 +184,25 @@ getFlatStrokeNoColor() const
   if (stroke_.getColorValid())
     return false;
 
+  bool  noColor; CSVGCSSType noColorType;
+  CRGBA rgba   ; CSVGCSSType colorType;
+
+  if (svg_.getStyleStrokeNoColor(this, noColor, noColorType)) {
+    if (svg_.getStyleStrokeColor(this, rgba, colorType)) {
+      if (noColorType > colorType)
+        return noColor;
+
+      return false;
+    }
+    else
+      return noColor;
+  }
+  else if (svg_.getStyleStrokeColor(this, rgba, colorType)) {
+    return false;
+  }
+
+  //---
+
   CSVGObject *parent = getParent();
 
   if (parent)
@@ -196,38 +215,37 @@ CRGBA
 CSVGObject::
 getFlatStrokeColor() const
 {
+  // if color set use it
+  if (stroke_.getColorValid())
+    return stroke_.getColor();
+
   COptValT<CRGBA> color;
 
-  if (stroke_.getColorValid())
-    color.setValue(stroke_.getColor());
-  else {
-    CSVGObject *parent = getParent();
+  CSVGObject *parent = getParent();
 
-    while (parent) {
-      if (parent->stroke_.getColorValid()) {
-        color.setValue(parent->stroke_.getColor());
-        break;
-      }
+  while (parent) {
+    if (parent->stroke_.getColorValid())
+      return parent->stroke_.getColor();
 
-      parent = parent->getParent();
-    }
+    parent = parent->getParent();
   }
 
-  if (! color.isValid()) {
-    if (stroke_.getDefColorValid())
-      color.setValue(stroke_.getDefColor());
-  }
+  //---
 
-  if (! color.isValid()) {
-    CRGBA rgba(0,0,0);
+  CRGBA       rgba(0,0,0);
+  CSVGCSSType colorType;
 
-    if (svg_.getStyleStrokeColor(this, rgba))
-      color.setValue(rgba);
-    else
-      color.setValue(CRGBA(0,0,0));
-  }
+  if (svg_.getStyleStrokeColor(this, rgba, colorType))
+    return rgba;
 
-  return color.getValue();
+  //---
+
+  if (stroke_.getDefColorValid())
+    return stroke_.getDefColor();
+
+  //---
+
+  return CRGBA(0,0,0);
 }
 
 double
@@ -287,7 +305,7 @@ getFlatStrokeWidth() const
   return 1.0;
 }
 
-const CLineDash &
+CLineDash
 CSVGObject::
 getFlatStrokeLineDash() const
 {
@@ -303,7 +321,7 @@ getFlatStrokeLineDash() const
     parent = parent->getParent();
   }
 
-  static CLineDash dash;
+  CLineDash dash;
 
   if (svg_.getStyleStrokeDash(this, dash))
     return dash;
@@ -322,6 +340,24 @@ getFlatFillNoColor() const
   // if has fill color then no color is false
   if (fill_.getColorValid())
     return false;
+
+  bool  noColor; CSVGCSSType noColorType;
+  CRGBA rgba   ; CSVGCSSType colorType;
+
+  if (svg_.getStyleFillNoColor(this, noColor, noColorType)) {
+    if (svg_.getStyleFillColor(this, rgba, colorType)) {
+      if (noColorType > colorType)
+        return noColor;
+
+      return false;
+    }
+    else
+      return noColor;
+  }
+  else if (svg_.getStyleFillColor(this, rgba, colorType))
+    return false;
+
+  //---
 
   CSVGObject *parent = getParent();
 
@@ -350,9 +386,10 @@ getFlatFillColor() const
   if (fill_.getDefColorValid())
     return fill_.getDefColor();
 
-  CRGBA rgba(0,0,0);
+  CRGBA       rgba(0,0,0);
+  CSVGCSSType colorType;
 
-  if (svg_.getStyleFillColor(this, rgba))
+  if (svg_.getStyleFillColor(this, rgba, colorType))
     return rgba;
 
   return CRGBA(0,0,0);
@@ -563,9 +600,9 @@ setStyle(const std::string &style)
         CSVGLog() << "Invalid style option " << words1[0] << ":" << words1[1] <<
                      " for " << getObjName();
     }
-    else
-      CSVGLog() << "Invalid style option format " << words1[0] << ":" << words1[1] <<
-                   " for " << getObjName();
+    else {
+      CSVGLog() << "Invalid style option format " << words1[0] << " for " << getObjName();
+    }
   }
 }
 
@@ -1986,6 +2023,16 @@ tick(double dt)
 
 void
 CSVGObject::
+setTime(double t)
+{
+  for (const auto &c : children())
+    c->setTime(t);
+
+  animation_.setTime(t);
+}
+
+void
+CSVGObject::
 setId(const std::string &id)
 {
   id_ = id;
@@ -2276,6 +2323,20 @@ hasChildren(bool includeAnimated) const
     return ! children().empty();
 }
 
+bool
+CSVGObject::
+hasAnimation() const
+{
+  if (! animation_.objects().empty())
+    return true;
+
+  for (const auto &c : children())
+    if (c->hasAnimation())
+      return true;
+
+  return false;
+}
+
 void
 CSVGObject::
 printChildren(std::ostream &os, bool hier) const
@@ -2299,48 +2360,60 @@ void
 CSVGObject::
 printStyle(std::ostream &os) const
 {
-  if (! fontDef_.isSet() && ! stroke_.isSet() && ! fill_.isSet() &&
-      ! letterSpacing_.isValid() && ! wordSpacing_.isValid())
+  if (! hasFontDef() &&
+      ! getOpacityValid() &&
+      ! hasStroke() &&
+      ! hasFill() &&
+      ! hasLetterSpacing() &&
+      ! hasWordSpacing())
     return;
 
   os << " style=\"";
 
   bool output = false;
 
-  if (fontDef_.isSet()) {
+  if (hasFontDef()) {
     printFontDef(os);
 
     output = true;
   }
 
-  if (stroke_.isSet()) {
+  if (getOpacityValid()) {
     if (output) os << " ";
 
-    stroke_.print(os);
+    os << "opacity: " << getOpacity() << ";";
 
     output = true;
   }
 
-  if (fill_.isSet()) {
+  if (hasStroke()) {
     if (output) os << " ";
 
-    fill_.print(os);
+    getStroke().print(os);
 
     output = true;
   }
 
-  if (letterSpacing_.isValid()) {
+  if (hasFill()) {
     if (output) os << " ";
 
-    os << "letter-spacing: "; printLength(os, letterSpacing_.getValue());
+    getFill().print(os);
 
     output = true;
   }
 
-  if (wordSpacing_.isValid()) {
+  if (hasLetterSpacing()) {
     if (output) os << " ";
 
-    os << "word-spacing: "; printLength(os, wordSpacing_.getValue());
+    os << "letter-spacing: " << getLetterSpacing() << ";";
+
+    output = true;
+  }
+
+  if (hasWordSpacing()) {
+    if (output) os << " ";
+
+    os << "word-spacing: " << getWordSpacing() << ";";
 
     output = true;
   }
@@ -2465,6 +2538,8 @@ printTransform(std::ostream &os, const CMatrixStack2D &m) const
             os << v[i];
         }
 
+        os << ")";
+
         output = true;
 
         break;
@@ -2484,109 +2559,6 @@ printNameParts(std::ostream &os, const std::string &name, const CSVGPathPartList
 
     os << "\"";
   }
-}
-
-void
-CSVGObject::
-printLength(std::ostream &os, const CScreenUnits &l)
-{
-  if      (l.units() == CScreenUnits::Units::EM)
-    os << l.value() << "em";
-  else if (l.units() == CScreenUnits::Units::EX)
-    os << l.value() << "ex";
-  else if (l.units() == CScreenUnits::Units::PT)
-    os << l.value() << "pt";
-  else if (l.units() == CScreenUnits::Units::PC)
-    os << l.value() << "pc";
-  else if (l.units() == CScreenUnits::Units::CM)
-    os << l.value() << "cm";
-  else if (l.units() == CScreenUnits::Units::MM)
-    os << l.value() << "mm";
-  else if (l.units() == CScreenUnits::Units::IN)
-    os << l.value() << "in";
-  else if (l.units() == CScreenUnits::Units::PX)
-    os << l.value() << "px";
-  else if (l.units() == CScreenUnits::Units::PERCENT)
-    os << l.value() << "%";
-  else
-    os << l.value();
-}
-
-void
-CSVGObject::
-printTime(std::ostream &os, const CSVGTimeValue &t)
-{
-  if      (t.type() == CSVGTimeValueType::HOURS)
-    os << t.value() << "h";
-  else if (t.type() == CSVGTimeValueType::MINUTES)
-    os << t.value() << "min";
-  else if (t.type() == CSVGTimeValueType::SECONDS)
-    os << t.value() << "s";
-  else if (t.type() == CSVGTimeValueType::MILLISECONDS)
-    os << t.value() << "ms";
-  else
-    os << t.value();
-}
-
-void
-CSVGObject::
-printEvent(std::ostream &os, const CSVGEventValue &e)
-{
-  if      (e.type() == CSVGEventType::TIMEOUT)
-    printTime(os, e.time());
-  else if (e.type() == CSVGEventType::CLICK)
-    os << "click";
-  else if (e.type() == CSVGEventType::MOUSE_DOWN)
-    os << "mousedown";
-  else if (e.type() == CSVGEventType::MOUSE_UP)
-    os << "mouseup";
-  else if (e.type() == CSVGEventType::MOUSE_OVER)
-    os << "mouseover";
-  else if (e.type() == CSVGEventType::MOUSE_OUT)
-    os << "mouseout";
-  else if (e.type() == CSVGEventType::ANIMATE_BEGIN)
-    os << e.id() << ".begin";
-  else if (e.type() == CSVGEventType::ANIMATE_END)
-    os << e.id() << ".end";
-  else if (e.type() == CSVGEventType::ANIMATE_REPEAT)
-    os << e.id() << ".repeat";
-
-  if (e.type() != CSVGEventType::TIMEOUT) {
-    if (e.args() != "")
-      os << "(" << e.args() << ")";
-
-    if (e.time().type() != CSVGTimeValueType::NONE) {
-      os << "+";
-
-      printTime(os, e.time());
-    }
-  }
-}
-
-void
-CSVGObject::
-printXLink(std::ostream &os, const CSVGXLink &xlink)
-{
-  os << xlink.str();
-}
-
-void
-CSVGObject::
-printPreserveAspect(std::ostream &os, const CSVGPreserveAspect &a)
-{
-  if      (a.getHAlign() == CHALIGN_TYPE_LEFT  ) os << "xMin";
-  else if (a.getHAlign() == CHALIGN_TYPE_CENTER) os << "xMid";
-  else if (a.getHAlign() == CHALIGN_TYPE_RIGHT ) os << "xMax";
-
-  if      (a.getVAlign() == CVALIGN_TYPE_BOTTOM) os << "YMin";
-  else if (a.getVAlign() == CVALIGN_TYPE_CENTER) os << "YMid";
-  else if (a.getVAlign() == CVALIGN_TYPE_TOP   ) os << "YMax";
-
-  os << " ";
-
-  if      (a.getScale() == CSVGScale::FIXED_MEET ) os << "meet";
-  else if (a.getScale() == CSVGScale::FIXED_SLICE) os << "slice";
-  else if (a.getScale() == CSVGScale::FREE       ) os << "none";
 }
 
 void

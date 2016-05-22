@@ -12,6 +12,7 @@ class CQSVG : public QObject, public CSVG {
   Q_OBJECT
 
   Q_PROPERTY(QColor background   READ background     WRITE setBackground  )
+  Q_PROPERTY(bool   animating    READ isAnimating)
   Q_PROPERTY(bool   checkerboard READ isCheckerboard WRITE setCheckerboard)
 
  public:
@@ -24,11 +25,18 @@ class CQSVG : public QObject, public CSVG {
   QColor background() const;
   void setBackground(const QColor &v);
 
+  bool isAnimating() const { return animating_; }
+  void setAnimating(bool b) { animating_ = b; }
+
   bool isCheckerboard() const { return checkerboard_; }
   void setCheckerboard(bool b);
 
   CSVGBlock              *createBlock() override;
   CSVGAnchor             *createAnchor() override;
+  CSVGAnimate            *createAnimate() override;
+  CSVGAnimateColor       *createAnimateColor() override;
+  CSVGAnimateMotion      *createAnimateMotion() override;
+  CSVGAnimateTransform   *createAnimateTransform() override;
   CSVGCircle             *createCircle() override;
   CSVGClipPath           *createClipPath() override;
   CSVGDefs               *createDefs() override;
@@ -77,6 +85,12 @@ class CQSVG : public QObject, public CSVG {
 
   void startTimer();
   void stopTimer ();
+  void stepTimer ();
+  void bstepTimer();
+
+  void setTime(double t);
+
+  void tickStep(int n=1);
 
   void redraw() override;
 
@@ -86,7 +100,9 @@ class CQSVG : public QObject, public CSVG {
  private:
   CQSVGWindow *window_       { 0 };
   QTimer      *timer_        { 0 };
+  double       t_            { 0 };
   int          dt_           { 100 };
+  bool         animating_    { false };
   bool         checkerboard_ { false };
 };
 

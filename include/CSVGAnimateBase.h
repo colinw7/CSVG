@@ -18,8 +18,20 @@ class CSVGAnimateBase : public CSVGObject {
   std::string getAttributeType() const { return attributeType_.getValue(""); }
   void setAttributeType(const std::string &s) { attributeType_ = s; }
 
+  CSVGEventValue getBegin() const { return begin_.getValue(CSVGEventValue()); }
+
+  CSVGEventValue getEnd() const { return end_.getValue(CSVGEventValue()); }
+
+  CSVGTimeValue getDur() const { return dur_.getValue(CSVGTimeValue()); }
+
   std::string getFrom() const { return from_.getValue(""); }
-  std::string getTo  () const { return to_  .getValue(""); }
+  void setFrom(const std::string &s) { from_ = s; }
+
+  std::string getTo() const { return to_.getValue(""); }
+  void setTo(const std::string &s) { to_ = s; }
+
+  std::string getFill() const { return fill_.getValue(""); }
+  void setFill(const std::string &s) { fill_ = s; }
 
   bool isAnimating() const { return animating_; }
   void setAnimating(bool b);
@@ -34,7 +46,11 @@ class CSVGAnimateBase : public CSVGObject {
 
   void tick(double dt) override;
 
+  void setTime(double t) override;
+
   virtual void animate(double t) = 0;
+
+  void updateAnimation();
 
   void handleEvent(CSVGEventType type, const std::string &id, const std::string &data) override;
 

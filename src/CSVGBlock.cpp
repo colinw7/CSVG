@@ -161,10 +161,11 @@ drawInit()
   xscale_    = svg_.xscale();
   yscale_    = svg_.yscale();
 
-  CPoint2D bmin, bmax;
+  CPoint2D bmin(this->getXMin(), this->getYMin());
+  CPoint2D bmax(this->getXMax(), this->getYMax());
 
-  svg_.viewMatrix().multiplyPoint(CPoint2D(this->getXMin(), this->getYMin()), bmin);
-  svg_.viewMatrix().multiplyPoint(CPoint2D(this->getXMax(), this->getYMax()), bmax);
+  //svg_.viewMatrix().multiplyPoint(CPoint2D(this->getXMin(), this->getYMin()), bmin);
+  //svg_.viewMatrix().multiplyPoint(CPoint2D(this->getXMax(), this->getYMax()), bmax);
 
   double bw = this->getWidth ();
   double bh = this->getHeight();
@@ -221,10 +222,23 @@ drawTerm()
 
     CMatrixStack2D transform = oldBuffer_->transform();
 
+    //---
+
+    //CPoint2D bmin(this->getXMin(), this->getYMin());
+    //CPoint2D bmax(this->getXMax(), this->getYMax());
+
+    //svg_.viewMatrix().multiplyPoint(CPoint2D(this->getXMin(), this->getYMin()), bmin);
+    //svg_.viewMatrix().multiplyPoint(CPoint2D(this->getXMax(), this->getYMax()), bmax);
+
     double bw = this->getWidth ();
     double bh = this->getHeight();
 
-    bool   clipped = true;
+    //double xscale = bw/(bmax.x - bmin.x);
+    //double yscale = bh/(bmax.y - bmin.y);
+
+    //---
+
+    bool   clipped = false;
     double ix = 0, iy = 0;
     double s = 0;
 
@@ -267,7 +281,10 @@ drawTerm()
       }
     }
 
-    double x = 0, y = 0;
+    ix += getX();
+    iy += getY();
+
+    double x, y;
 
     transform.multiplyPoint(ix, iy, &x, &y);
 
@@ -280,7 +297,8 @@ drawTerm()
       CImagePtr image = drawBuffer->getImage();
 
       //image->clipOutside(px1, py1, px2, py2);
-      image->clipOutside(-ix, -iy, -ix + bw, -iy + bh);
+      //image->clipOutside(-ix, -iy, -ix + bw, -iy + bh);
+      image->clipOutside(-ix*xscale_, -iy*yscale_, (-ix + bw)*xscale_, (-iy + bh)*yscale_);
 
       //---
 

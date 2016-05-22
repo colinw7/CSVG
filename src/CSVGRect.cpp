@@ -117,10 +117,10 @@ draw()
 
   CSVGBuffer *buffer = svg_.getBuffer();
 
-  double rx = getRX();
-  double ry = getRY();
+  if (hasRX() || hasRY()) {
+    double rx = getRX();
+    double ry = getRY();
 
-  if (rx > 0 || ry > 0) {
     if (rx <= 0) rx = ry;
     if (ry <= 0) ry = rx;
 
@@ -131,8 +131,10 @@ draw()
       if (svg_.isStroked())
         buffer->drawRoundedRectangle(bbox_, rx, ry);
     }
-    else
+    else {
+      std::cerr << "rectangle not filled or stroked" << std::endl;
       buffer->fillRoundedRectangle(bbox_, rx, ry);
+    }
   }
   else {
     if (svg_.isFilled() || svg_.isStroked()) {
@@ -143,6 +145,7 @@ draw()
         buffer->drawRectangle(bbox_);
     }
     else {
+      std::cerr << "rectangle not filled or stroked" << std::endl;
       buffer->fillRectangle(bbox_);
     }
   }

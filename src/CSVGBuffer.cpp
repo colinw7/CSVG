@@ -66,7 +66,7 @@ CSVGBuffer *
 CSVGBufferMgr::
 createBuffer(const std::string &name)
 {
-  CSVGBuffer *buffer = new CSVGBuffer(svg_, name);
+  CSVGBuffer *buffer = svg_.createBuffer(name);
 
   buffer->setAntiAlias(antiAlias_);
 
@@ -79,7 +79,7 @@ CSVGBuffer *
 CSVGBufferMgr::
 createAlphaBuffer(CSVGBuffer *buffer)
 {
-  CSVGBuffer *alphaBuffer = new CSVGBuffer(buffer);
+  CSVGBuffer *alphaBuffer = buffer->dup();
 
   addAlphaBuffer(alphaBuffer);
 
@@ -133,6 +133,13 @@ CSVGBuffer::
 ~CSVGBuffer()
 {
   delete renderer_;
+}
+
+CSVGBuffer *
+CSVGBuffer::
+dup() const
+{
+  return new CSVGBuffer(const_cast<CSVGBuffer *>(this));
 }
 
 CSVGRenderer *
@@ -1213,6 +1220,56 @@ setStrokeColor(const CRGBA &color)
 
 void
 CSVGBuffer::
+setStrokeFilled(bool b)
+{
+  if (refBuffer_)
+    return refBuffer_->setStrokeFilled(b);
+
+  //---
+
+  renderer_->setStrokeFilled(b);
+}
+
+void
+CSVGBuffer::
+setStrokeFillType(CFillType type)
+{
+  if (refBuffer_)
+    return refBuffer_->setStrokeFillType(type);
+
+  //---
+
+  renderer_->setStrokeFillType(type);
+}
+
+void
+CSVGBuffer::
+setStrokeFillGradient(CGenGradient *g)
+{
+  if (refBuffer_)
+    return refBuffer_->setStrokeFillGradient(g);
+
+  //---
+
+  renderer_->setStrokeFillGradient(g);
+}
+
+void
+CSVGBuffer::
+setStrokeFillBuffer(CSVGBuffer *buffer)
+{
+  if (refBuffer_)
+    return refBuffer_->setStrokeFillBuffer(buffer);
+
+  //---
+
+  CImagePtr image = buffer->getImage();
+
+  renderer_->setStrokeFillImage(image);
+}
+
+void
+CSVGBuffer::
 setLineWidth(double width)
 {
   if (refBuffer_)
@@ -1327,6 +1384,11 @@ void
 CSVGBuffer::
 setFillBuffer(CSVGBuffer *buffer)
 {
+  if (refBuffer_)
+    return refBuffer_->setFillBuffer(buffer);
+
+  //---
+
   CImagePtr image = buffer->getImage();
 
   setFillImage(image);
@@ -1401,10 +1463,14 @@ pathText(const std::string &text, CFontPtr font, CHAlignType align)
 
   if      (align == CHALIGN_TYPE_LEFT)
     dx = 0;
-  else if (align == CHALIGN_TYPE_CENTER)
-    dx = -box.getWidth()/2;
-  else if (align == CHALIGN_TYPE_RIGHT)
-    dx = -box.getWidth();
+  else if (align == CHALIGN_TYPE_CENTER) {
+    if (box.isSet())
+      dx = -box.getWidth()/2;
+  }
+  else if (align == CHALIGN_TYPE_RIGHT) {
+    if (box.isSet())
+      dx = -box.getWidth();
+  }
 
   renderer_->pathRMoveTo(CPoint2D(dx, 0));
 
@@ -1509,6 +1575,9 @@ pathInit()
   //---
 
   renderer_->pathInit();
+
+  pathLastControlPoint1_.setInvalid();
+  pathLastControlPoint2_.setInvalid();
 }
 
 void
@@ -1569,6 +1638,43 @@ pathArcTo(double cx, double cy, double rx, double ry, double theta1, double thet
   //---
 
   renderer_->pathArcTo(CPoint2D(cx, cy), rx, ry, theta1, theta2);
+}
+
+void
+CSVGBuffer::
+pathArcSegment(double xc, double yc, double angle1, double angle2,
+               double rx, double ry, double phi)
+{
+  angle1 = CMathGen::DegToRad(angle1);
+  angle2 = CMathGen::DegToRad(angle2);
+  phi    = CMathGen::DegToRad(phi);
+
+  double sin_a1  = sin(angle1);
+  double cos_a1  = cos(angle1);
+  double sin_a2  = sin(angle2);
+  double cos_a2  = cos(angle2);
+  double sin_phi = sin(phi);
+  double cos_phi = cos(phi);
+
+  double a00 =  cos_phi*rx;
+  double a01 = -sin_phi*ry;
+  double a10 =  sin_phi*rx;
+  double a11 =  cos_phi*ry;
+
+  double da2 = 0.5*(angle2 - angle1);
+
+  double t = (8.0/3.0)*sin(da2*0.5)*sin(da2*0.5)/sin(da2);
+
+  double x1 = xc + cos_a1 - t*sin_a1;
+  double y1 = yc + sin_a1 + t*cos_a1;
+  double x3 = xc + cos_a2;
+  double y3 = yc + sin_a2;
+  double x2 = x3 + t*sin_a2;
+  double y2 = y3 - t*cos_a2;
+
+  pathBezier3To(a00*x1 + a01*y1, a10*x1 + a11*y1,
+                a00*x2 + a01*y2, a10*x2 + a11*y2,
+                a00*x3 + a01*y3, a10*x3 + a11*y3);
 }
 
 void
@@ -1636,7 +1742,21 @@ pathClose()
 
 bool
 CSVGBuffer::
-pathGetCurrentPoint(double *x, double *y)
+pathGetCurrentPoint(CPoint2D &point) const
+{
+  double x, y;
+
+  if (! pathGetCurrentPoint(&x, &y))
+    return false;
+
+  point = CPoint2D(x, y);
+
+  return true;
+}
+
+bool
+CSVGBuffer::
+pathGetCurrentPoint(double *x, double *y) const
 {
   if (refBuffer_)
     return refBuffer_->pathGetCurrentPoint(x, y);
@@ -1655,6 +1775,87 @@ pathGetCurrentPoint(double *x, double *y)
   *y = p.y;
 
   return true;
+}
+
+bool
+CSVGBuffer::
+pathGetLastControlPoint(CPoint2D &p) const
+{
+  if (refBuffer_)
+    return refBuffer_->pathGetLastControlPoint(p);
+
+  //---
+
+  if (! pathLastControlPoint1_.isValid())
+    return false;
+
+  p = pathLastControlPoint1_.getValue();
+
+  return true;
+}
+
+bool
+CSVGBuffer::
+pathGetLastMControlPoint(CPoint2D &p) const
+{
+  if (refBuffer_)
+    return refBuffer_->pathGetLastMControlPoint(p);
+
+  //---
+
+  if (! pathLastControlPoint1_.isValid())
+    return false;
+
+  p = pathMirrorPoint(pathLastControlPoint1_.getValue());
+
+  return true;
+}
+
+bool
+CSVGBuffer::
+pathGetLastMRControlPoint(CPoint2D &p) const
+{
+  if (refBuffer_)
+    return refBuffer_->pathGetLastMRControlPoint(p);
+
+  //---
+
+  if (! pathLastControlPoint1_.isValid())
+    return false;
+
+  p = pathMirrorPoint(pathLastControlPoint1_.getValue());
+
+  CPoint2D cp;
+
+  pathGetCurrentPoint(cp);
+
+  p -= cp;
+
+  return true;
+}
+
+void
+CSVGBuffer::
+pathSetLastControlPoint1(const CPoint2D &p)
+{
+  if (refBuffer_)
+    return refBuffer_->pathSetLastControlPoint1(p);
+
+  //---
+
+  pathLastControlPoint1_ = p;
+}
+
+void
+CSVGBuffer::
+pathSetLastControlPoint2(const CPoint2D &p)
+{
+  if (refBuffer_)
+    return refBuffer_->pathSetLastControlPoint2(p);
+
+  //---
+
+  pathLastControlPoint2_ = p;
 }
 
 void
@@ -1763,6 +1964,20 @@ mmToPixel(double mm, double *pixel)
   return true;
 }
 #endif
+
+CPoint2D
+CSVGBuffer::
+pathMirrorPoint(const CPoint2D &p) const
+{
+  CPoint2D cp;
+
+  pathGetCurrentPoint(cp);
+
+  double x1 = 2*cp.x - p.x;
+  double y1 = 2*cp.y - p.y;
+
+  return CPoint2D(x1, y1);
+}
 
 void
 CSVGBuffer::

@@ -24,6 +24,8 @@ class CQSVGObject : public QObject {
 
   Q_PROPERTY(QString transform READ transformStr)
 
+  Q_PROPERTY(double opacity READ getDrawOpacity WRITE setDrawOpacity)
+
   Q_PROPERTY(QColor                  strokeColor   READ strokeColor   WRITE setStrokeColor  )
   Q_PROPERTY(double                  strokeOpacity READ strokeOpacity WRITE setStrokeOpacity)
   Q_PROPERTY(double                  strokeWidth   READ strokeWidth   WRITE setStrokeWidth  )
@@ -68,6 +70,9 @@ class CQSVGObject : public QObject {
   void setVisible(bool b);
 
   QString transformStr() const;
+
+  double getDrawOpacity() const;
+  void setDrawOpacity(double r);
 
   QColor strokeColor() const;
   void setStrokeColor(const QColor &c);
