@@ -52,6 +52,10 @@ class CSVGFilterBase : public CSVGObject {
 
   bool getParentBBox(CBBox2D &bbox) const;
 
+  bool getTransformedParentBBox(CBBox2D &bbox) const;
+
+  CSVGObject *getParentFilterObject() const;
+
   CSVGFilter *getParentFilter() const;
 
   void printValues(std::ostream &os) const;

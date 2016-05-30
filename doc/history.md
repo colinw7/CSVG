@@ -65,3 +65,13 @@
  + support global opacity
  + support gradient fill for stroke
  + add animation controls to gui
+
+### 5/30/2016
+ + Move more image handling into buffer and renderer
+ + Speed up gaussian blur by only applying to object region
+ + buffers render to internal temp buffer instead of SourceGraphic
+ + Add translate for animateTransform
+ + Add support for enable-background
+ + Debug support for filter box and gradient control points
+ + Add animation properties to dialog
+ + Add path parts to properites dialog

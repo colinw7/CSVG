@@ -92,7 +92,7 @@ draw()
   double l   = parts.getLength();
   int    len = text.length();
 
-  double s1   = 0, s2   = getStartOffset().px().value();
+  double s1   = 0, s2   = getStartOffset().ratioValue(l);
   int    pos1 = 0, pos2 = 0;
 
   //---

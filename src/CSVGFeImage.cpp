@@ -44,7 +44,10 @@ void
 CSVGFeImage::
 draw()
 {
+  // get object or file image into buffer (untransformed)
   CSVGBuffer *inBuffer = svg_.getBuffer(getUniqueName() + "_xlink");
+
+  CMatrixStack2D transform = svg_.getBuffer()->transform();
 
   if (hasLink()) {
     if (! xlink().getImage(inBuffer))
@@ -53,6 +56,8 @@ draw()
   else
     return;
 
+  //---
+
   CSVGBuffer *outBuffer = svg_.getBuffer(getFilterOut());
 
   if (svg_.getDebugFilter()) {
@@ -60,17 +65,18 @@ draw()
 
     CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_in");
 
-    buffer->setImage(inBuffer->getImage());
+    buffer->setImage(inBuffer);
   }
 
-  CSVGBuffer::imageBuffers(inBuffer, this, getPreserveAspect(), outBuffer);
+  // put image into output buffer (transformed)
+  CSVGBuffer::imageBuffers(inBuffer, this, transform, getPreserveAspect(), outBuffer);
 
   if (svg_.getDebugFilter()) {
     std::string objectBufferName = "_" + getUniqueName();
 
     CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_out");
 
-    buffer->setImage(outBuffer->getImage());
+    buffer->setImage(outBuffer);
     buffer->setBBox (outBuffer->bbox());
   }
 }

@@ -62,6 +62,101 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   return true;
 }
 
+bool
+CSVGFilter::
+getRegion(CSVGObject *obj, CBBox2D &bbox) const
+{
+  CBBox2D bbox1;
+
+  if (! obj->getBBox(bbox1))
+  //if (! obj->getFlatTransformedBBox(bbox1))
+    return false;
+
+  if (! bbox1.isSet())
+    return false;
+
+  double w = bbox1.getWidth ();
+  double h = bbox1.getHeight();
+
+  double x1, y1, x2, y2;
+
+  if (hasX())
+    x1 = getX().pxValue(w);
+  else
+    x1 = bbox1.getXMin() - 0.1*w;
+
+  if (hasY())
+    y1 = getY().pxValue(h);
+  else
+    y1 = bbox1.getYMin() - 0.1*h;
+
+  if (hasWidth())
+    x2 = x1 + getWidth().pxValue(w);
+  else
+    x2 = bbox1.getXMax() + 0.1*w;
+
+  if (hasHeight())
+    y2 = y1 + getHeight().pxValue(h);
+  else
+    y2 = bbox1.getYMax() + 0.1*h;
+
+  bbox = CBBox2D(x1, y1, x2, y2);
+
+  return true;
+}
+
+void
+CSVGFilter::
+initDraw(CSVGBuffer *buffer)
+{
+  // store current buffer image into SourceGraphic and FilterGraphic
+  CSVGBuffer *srcBuffer = svg_.getBuffer("SourceGraphic");
+  CSVGBuffer *fltBuffer = svg_.getBuffer("FilterGraphic");
+
+  //bool srcDrawing = srcBuffer->isDrawing();
+  // stop drawing to SourceGraphic if needed
+  //if (srcDrawing) srcBuffer->stopDraw();
+
+  oldDrawing_ = buffer->isDrawing();
+
+  if (oldDrawing_)
+    buffer->stopDraw();
+
+  srcBuffer->setImage(buffer);
+  fltBuffer->setImage(buffer);
+
+  // save current image into filter in
+  if (svg_.getDebugFilter()) {
+    CSVGBuffer *filterInBuffer = svg_.getBuffer(buffer->getName() + "_filter_in");
+
+    filterInBuffer->setImage(srcBuffer);
+  }
+}
+
+void
+CSVGFilter::
+termDraw(CSVGBuffer *buffer)
+{
+  CSVGBuffer *fltBuffer = svg_.getBuffer("FilterGraphic");
+
+  if (svg_.getDebugFilter()) {
+    // save FilterGraphic (output of filter) into filter_out
+    CSVGBuffer *filterOutBuffer = svg_.getBuffer(buffer->getName() + "_filter_out");
+
+    filterOutBuffer->setImage(fltBuffer);
+  }
+
+  // store filter image back into current buffer
+  buffer->setImage(fltBuffer);
+
+  // restart drawing to SourceGraphic if needed
+  //if (srcDrawing)
+  //  fltBuffer->startDraw();
+
+  if (oldDrawing_)
+    buffer->startDraw();
+}
+
 void
 CSVGFilter::
 draw()

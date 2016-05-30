@@ -197,6 +197,8 @@ class CRenderer2D : public CPath2DRenderer, public CPath2DFlattener {
   virtual void setImage(CImagePtr image);
   virtual void setAlphaImage(CImagePtr image);
 
+  virtual void setImage(CRenderer2D *renderer);
+
   //------
 
   void clipPolygons();

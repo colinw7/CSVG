@@ -23,6 +23,8 @@ class CSVGRenderer {
   virtual void setSize(int width, int height) = 0;
   virtual void getSize(int *width, int *height) const = 0;
 
+  virtual void setPixelRange(int width, int height) = 0;
+
   virtual void setDataRange(double xmin, double ymin, double xmax, double ymax) = 0;
   virtual void getDataRange(double *xmin, double *ymin, double *xmax, double *ymax) const = 0;
 
@@ -85,10 +87,12 @@ class CSVGRenderer {
   virtual void setLineJoin(const CLineJoinType &join) = 0;
   virtual void setMitreLimit(double limit) = 0;
 
+  virtual void resetFill() = 0;
   virtual void setFillType(CFillType fillType) = 0;
   virtual void setFillColor(const CRGBA &bg) = 0;
   virtual void setFillGradient(CGenGradient *g) = 0;
   virtual void setFillImage(CImagePtr image) = 0;
+  virtual void setFillMatrix(const CMatrix2D &m) = 0;
 
   virtual void setStrokeFilled(bool b) = 0;
   virtual void setStrokeFillType(CFillType fillType) = 0;
@@ -105,7 +109,25 @@ class CSVGRenderer {
   virtual CISize2D getImageSize() const = 0;
 
   virtual CImagePtr getImage() const = 0;
-  virtual void      setImage(CImagePtr image) = 0;
+
+  virtual void setImage(CSVGRenderer *renderer) = 0;
+  virtual void setImage(CImagePtr image) = 0;
+
+  //---
+
+  virtual void addResizedImage(CSVGRenderer *src, int x, int y, int w, int h);
+
+  virtual void addClippedImage(CSVGRenderer *src, int x, int y,
+                               int px1, int py1, int px2, int py2);
+  virtual void setClippedImage(CSVGRenderer *src, int px1, int py1, int px2, int py2);
+
+  virtual void setOffsetImage(CSVGRenderer *src, int dx, int dy);
+
+  virtual void addImage(int x, int y, CImagePtr image);
+
+  virtual void combine(int x, int y, CSVGRenderer *r);
+
+  virtual void gaussianBlur(CSVGRenderer *dst, CBBox2D &bbox, double stdDev);
 };
 
 #endif

@@ -3,6 +3,6 @@
 
 CQSVGAnimateTransform::
 CQSVGAnimateTransform(CQSVG *svg) :
- CQSVGObject(svg, this), CSVGAnimateTransform(*svg)
+ CQSVGAnimateBase(svg, this), CSVGAnimateTransform(*svg)
 {
 }

@@ -22,22 +22,22 @@ class CSVGFilter : public CSVGObject {
   void setPrimitiveUnits(CSVGCoordUnits units) { primitiveUnits_ = units; }
 
   bool hasX() const { return x_.isValid(); }
-  double getX(double x=0) const { return hasX() ? x_.getValue().px().value() : x; }
-  void setX(double x) { x_ = x; }
+  CScreenUnits getX(const CScreenUnits &x=CScreenUnits()) const { return x_.getValue(x); }
+  void setX(const CScreenUnits &x) { x_ = x; }
 
   bool hasY() const { return y_.isValid(); }
-  double getY(double y=0) const { return y_.isValid() ? y_.getValue().px().value() : y; }
-  void setY(double y) { y_ = y; }
+  CScreenUnits getY(const CScreenUnits &y=CScreenUnits()) const { return y_.getValue(y); }
+  void setY(const CScreenUnits &y) { y_ = y; }
 
   bool hasWidth() const { return width_.isValid(); }
-  double getWidth(double w=100) const {
-    return width_.getValue(CScreenUnits(w)).px(w).px().value(); }
-  void setWidth(double w) { width_ = w; }
+  CScreenUnits getWidth(const CScreenUnits &w=CScreenUnits()) const {
+    return width_.getValue(w); }
+  void setWidth(const CScreenUnits &w) { width_ = w; }
 
   bool hasHeight() const { return height_.isValid(); }
-  double getHeight(double h=100) const {
-    return height_.getValue(CScreenUnits(h)).px(h).px().value(); }
-  void setHeight(double h) { height_ = h; }
+  CScreenUnits getHeight(const CScreenUnits &h=CScreenUnits()) const {
+    return height_.getValue(h); }
+  void setHeight(const CScreenUnits &h) { height_ = h; }
 
   const CSVGXLink &xlink() const { return xlink_.getValue(); }
 
@@ -47,8 +47,15 @@ class CSVGFilter : public CSVGObject {
   bool processOption(const std::string &name, const std::string &value) override;
 
   void setObject(CSVGObject *object) { object_ = object; }
-
   CSVGObject *getObject() const { return object_; }
+
+  void setContentsBBox(const CBBox2D &bbox) { contentsBBox_ = bbox; }
+  const CBBox2D &getContentsBBox() const { return contentsBBox_; }
+
+  bool getRegion(CSVGObject *obj, CBBox2D &bbox) const;
+
+  void initDraw(CSVGBuffer *buffer);
+  void termDraw(CSVGBuffer *buffer);
 
   void draw() override;
 
@@ -69,6 +76,8 @@ class CSVGFilter : public CSVGObject {
   COptValT<CScreenUnits>   height_;
   COptValT<std::string>    filterRes_;
   COptValT<CSVGXLink>      xlink_;
+  CBBox2D                  contentsBBox_;
+  bool                     oldDrawing_ { false };
 };
 
 #endif

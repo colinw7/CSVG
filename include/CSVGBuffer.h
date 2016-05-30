@@ -78,6 +78,8 @@ class CSVGBuffer {
   bool isAntiAlias() const;
   void setAntiAlias(bool flag);
 
+  bool isAlpha() const { return refBuffer_; }
+
   static void blendBuffers(CSVGBuffer *inBuffer1, CSVGBuffer *inBuffer2,
                            CSVGBlendMode mode, CSVGBuffer *outBuffer);
   static void colorMatrixBuffers(CSVGBuffer *inBuffer, CSVGColorMatrixType type,
@@ -92,27 +94,24 @@ class CSVGBuffer {
                                      const std::string &xchannel, const std::string &ychannel,
                                      double scale, CSVGBuffer *outBuffer);
   static void floodBuffers(const CRGBA &c, int w, int h, CSVGBuffer *outBuffer);
-  static void gaussianBlurBuffers(CSVGBuffer *inBuffer, double stdDev, CSVGBuffer *outBuffer);
+  static void gaussianBlurBuffers(CSVGBuffer *inBuffer, CSVGFilterBase *filter,
+                                  double stdDev, CSVGBuffer *outBuffer);
   static void imageBuffers(CSVGBuffer *inBuffer, CSVGFilterBase *filter,
-                           CSVGPreserveAspect preserveAspect, CSVGBuffer *outBuffer);
+                           const CMatrixStack2D &transform, CSVGPreserveAspect preserveAspect,
+                           CSVGBuffer *outBuffer);
   static void maskBuffers(CSVGBuffer *oldBuffer, CSVGBuffer *buffer,
                           const CSVGObject *object, double x, double y);
   static void mergeBuffers(CSVGFilterBase *filter, const std::vector<CSVGFeMergeNode *> &nodes,
                            int w, int h, CSVGBuffer *outBuffer);
   static void morphologyBuffers(CSVGBuffer *inBuffer, CSVGMorphologyOperator op, int r);
   static void offsetBuffers(CSVGBuffer *inBuffer, double dx, double dy, CSVGBuffer *outBuffer);
-  static void tileBuffers(CSVGBuffer *inBuffer, CSVGFilterBase *filter, CSVGBuffer *outBuffer);
+  static void tileBuffers(CSVGBuffer *inBuffer, CSVGFilterBase *filter,
+                          const CMatrixStack2D &transform, CSVGBuffer *outBuffer);
   static void turbulenceBuffers(CSVGBuffer *inBuffer, bool fractalNoise, double baseFreq,
                                 int numOctaves, int seed, CSVGBuffer *outBuffer);
 
   static void lightBuffers(CSVGBuffer *inBuffer, const std::vector<CSVGFilterBase *> &lights,
                            const CSVGLightData &lightData, CSVGBuffer *outBuffer);
-
-  static void distantLight(CImagePtr image, CSVGFeDistantLight *pl, CSVGLightData &lightData);
-  static void pointLight  (CImagePtr image, CSVGFePointLight *pl, CSVGLightData &lightData);
-  static void spotLight   (CImagePtr image, CSVGFeSpotLight *pl, CSVGLightData &lightData);
-
-  static CRGBA lightPoint(CImagePtr image, int x, int y, const CSVGLightData &lightData);
 
   const CMatrixStack2D &transform() const { return transform_; }
   void setTransform(const CMatrixStack2D &v);
@@ -130,11 +129,13 @@ class CSVGBuffer {
   bool hasClipPath() const { return hasClipPath_; }
   void setHasClipPath(bool b) { hasClipPath_ = b; }
 
-  bool isDrawing() const { return drawing_; }
-  void setDrawing(bool b) { drawing_ = b; }
+  bool isDrawing() const;
+  void setDrawing(bool b);
 
   void addClippedBuffer(CSVGBuffer *buffer, double x, double y,
                         double px1, double py1, double px2, double py2);
+
+  void setClippedBuffer(CSVGBuffer *buffer, double px1, double py1, double px2, double py2);
 
   void addBuffer(CSVGBuffer *buffer, double x, double y);
 
@@ -142,10 +143,17 @@ class CSVGBuffer {
 
   CImagePtr getImage() const;
 
-  void setImage(CImagePtr image);
+  void setImageFile(const std::string &filename);
+  void setImageFile(CFile &file);
 
-  void addImage(CImagePtr image);
-  void addImage(double x, double y, CImagePtr image);
+  void setImage(double x, double y, CSVGBuffer *buffer);
+  void setImage(CSVGBuffer *buffer);
+
+  void addReshapeImage(CSVGBuffer *buffer, double x1, double y1, int pw, int ph);
+
+  void addImage(double x, double y, CSVGBuffer *buffer);
+  void addImage(double x, double y, const CImagePtr &image);
+  void addImage(CSVGBuffer *buffer);
 
   void reset();
 
@@ -174,7 +182,6 @@ class CSVGBuffer {
   void setStrokeFillType(CFillType type);
   void setStrokeFillGradient(CGenGradient *g);
   void setStrokeFillBuffer(CSVGBuffer *buffer);
-  void setStrokeImage(CImagePtr image);
   void setLineWidth(double width);
   void setLineDash(const CLineDash &dash);
   void setLineDashOffset(double offset);
@@ -182,14 +189,14 @@ class CSVGBuffer {
   void setLineJoin(CLineJoinType line_join);
   void setLineMitreLimit(double limit);
 
+  void resetFill();
   void setFillColor(const CRGBA &color);
   void setFillType(CFillType type);
   void setFillGradient(CGenGradient *g);
   void setFillBuffer(CSVGBuffer *buffer);
-  void setFillImage(CImagePtr image);
+  void setFillMatrix(const CMatrix2D &m);
 
-  void drawImage(double x, double y, CImagePtr image);
-  void drawImage(const CBBox2D &bbox, CImagePtr image);
+  void drawImage(double x, double y, CSVGBuffer *buffer);
 
   void drawRoundedRectangle(const CBBox2D &bbox, double rx, double ry);
   void fillRoundedRectangle(const CBBox2D &bbox, double rx, double ry);
@@ -238,8 +245,15 @@ class CSVGBuffer {
 
   //bool mmToPixel(double mm, double *pixel);
 
-  void lengthToPixel(double xi, double yi, double *xo, double *yo);
-  void windowToPixel(double xi, double yi, double *xo, double *yo);
+  //void lengthToPixel(double xi, double yi, double *xo, double *yo);
+  //void windowToPixel(double xi, double yi, double *xo, double *yo);
+
+ private:
+  static void distantLight(CImagePtr image, CSVGFeDistantLight *pl, CSVGLightData &lightData);
+  static void pointLight  (CImagePtr image, CSVGFePointLight *pl, CSVGLightData &lightData);
+  static void spotLight   (CImagePtr image, CSVGFeSpotLight *pl, CSVGLightData &lightData);
+
+  static CRGBA lightPoint(CImagePtr image, int x, int y, const CSVGLightData &lightData);
 
  private:
   CSVGBuffer(const CSVGBuffer &rhs);

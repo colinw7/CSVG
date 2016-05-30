@@ -39,6 +39,34 @@ std::cerr << "CSVGPathPart::getEndPoint" << std::endl;
   return p;
 }
 
+std::string
+CSVGPathPart::
+partTypeName(CSVGPathPartType type)
+{
+  switch (type) {
+    case CSVGPathPartType::MOVE_TO     : return "MoveTo";
+    case CSVGPathPartType::RMOVE_TO    : return "RMoveTo";
+    case CSVGPathPartType::LINE_TO     : return "LineTo";
+    case CSVGPathPartType::RLINE_TO    : return "RLineTo";
+    case CSVGPathPartType::HLINE_TO    : return "HLineTo";
+    case CSVGPathPartType::RHLINE_TO   : return "RHLineTo";
+    case CSVGPathPartType::VLINE_TO    : return "VLIneTo";
+    case CSVGPathPartType::RVLINE_TO   : return "RVLineTo";
+    case CSVGPathPartType::ARC_TO      : return "ArcTo";
+    case CSVGPathPartType::RARC_TO     : return "RArcTo";
+    case CSVGPathPartType::BEZIER2_TO  : return "Bezier2To";
+    case CSVGPathPartType::MBEZIER2_TO : return "MBezier2To";
+    case CSVGPathPartType::RBEZIER2_TO : return "RBezier2To";
+    case CSVGPathPartType::MRBEZIER2_TO: return "MRBezier2To";
+    case CSVGPathPartType::BEZIER3_TO  : return "Bezier3To";
+    case CSVGPathPartType::MBEZIER3_TO : return "MBezier3To";
+    case CSVGPathPartType::RBEZIER3_TO : return "RBezier3To";
+    case CSVGPathPartType::MRBEZIER3_TO: return "MRbezier3To";
+    case CSVGPathPartType::CLOSE_PATH  : return "ClosePath";
+    default                            : return "???";
+  }
+}
+
 //------
 
 void
@@ -704,6 +732,26 @@ draw(CSVGBuffer *buffer)
   buffer->pathSetLastControlPoint2(point2_);
 }
 
+double
+CSVGPathBezier2To::
+getLength(const CPoint2D &p) const
+{
+  if (length_.isValid())
+    return length_.getValue();
+
+  //---
+
+  C2Bezier2D bezier(p.x, p.y, point1_.x, point1_.y, point2_.x, point2_.y);
+
+  double l = bezier.arcLength();
+
+  //---
+
+  length_ = l;
+
+  return l;
+}
+
 bool
 CSVGPathBezier2To::
 interp(double s, const CPoint2D &p1, const CPoint2D & /*p2*/, CPoint2D &pi, double &a) const
@@ -755,6 +803,26 @@ draw(CSVGBuffer *buffer)
   buffer->pathSetLastControlPoint2(point2_);
 }
 
+double
+CSVGPathMBezier2To::
+getLength(const CPoint2D &p) const
+{
+  if (length_.isValid())
+    return length_.getValue();
+
+  //---
+
+  C2Bezier2D bezier(p.x, p.y, point1_.x, point1_.y, point2_.x, point2_.y);
+
+  double l = bezier.arcLength();
+
+  //---
+
+  length_ = l;
+
+  return l;
+}
+
 bool
 CSVGPathMBezier2To::
 interp(double s, const CPoint2D &p1, const CPoint2D & /*p2*/, CPoint2D &pi, double &a) const
@@ -804,6 +872,26 @@ draw(CSVGBuffer *buffer)
 
   buffer->pathSetLastControlPoint1(cp + point1_);
   buffer->pathSetLastControlPoint2(cp + point2_);
+}
+
+double
+CSVGPathRBezier2To::
+getLength(const CPoint2D &p) const
+{
+  if (length_.isValid())
+    return length_.getValue();
+
+  //---
+
+  C2Bezier2D bezier(p.x, p.y, point1_.x, point1_.y, point2_.x, point2_.y);
+
+  double l = bezier.arcLength();
+
+  //---
+
+  length_ = l;
+
+  return l;
 }
 
 bool
@@ -861,6 +949,26 @@ draw(CSVGBuffer *buffer)
 
   buffer->pathSetLastControlPoint1(cp + point1_);
   buffer->pathSetLastControlPoint2(cp + point2_);
+}
+
+double
+CSVGPathMRBezier2To::
+getLength(const CPoint2D &p) const
+{
+  if (length_.isValid())
+    return length_.getValue();
+
+  //---
+
+  C2Bezier2D bezier(p.x, p.y, point1_.x, point1_.y, point2_.x, point2_.y);
+
+  double l = bezier.arcLength();
+
+  //---
+
+  length_ = l;
+
+  return l;
 }
 
 bool

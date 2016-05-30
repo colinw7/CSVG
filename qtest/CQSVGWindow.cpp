@@ -5,8 +5,8 @@
 #include <CQSVGBufferView.h>
 
 #include <CQSVGAnchor.h>
-#include <CQSVGAnimateColor.h>
 #include <CQSVGAnimate.h>
+#include <CQSVGAnimateColor.h>
 #include <CQSVGAnimateMotion.h>
 #include <CQSVGAnimateTransform.h>
 #include <CQSVGBlock.h>
@@ -53,7 +53,9 @@
 #include <CQSVGTSpan.h>
 #include <CQSVGUse.h>
 
+#include <CQSVGPathPart.h>
 #include <CQSVGRenderer.h>
+
 #include <CQPropertyTree.h>
 #include <CQPropertyItem.h>
 #include <CQPixmapCache.h>
@@ -83,6 +85,7 @@ int
 main(int argc, char **argv)
 {
   bool        debug    = false;
+  bool        nofilter = false;
   bool        image    = false;
   std::string imageDir = "";
   bool        print    = false;
@@ -103,6 +106,8 @@ main(int argc, char **argv)
       }
       else if (strcmp(&argv[i][1], "print") == 0)
         print = true;
+      else if (strcmp(&argv[i][1], "nofilter") == 0)
+        nofilter = true;
       else
         std::cerr << "Invalid option: " << argv[i] << std::endl;
     }
@@ -117,6 +122,9 @@ main(int argc, char **argv)
   app.setStyle(new CQStyle);
 
   CQSVGWindow *window = new CQSVGWindow;
+
+  if (nofilter)
+    window->svg()->setIgnoreFilter(true);
 
   if (debug)
     window->svg()->setDebug(true);
@@ -392,11 +400,11 @@ loadFile()
 
     svg_->read(filename);
 
-    CQSVGRenderer renderer;
+    CQSVGRenderer *renderer = new CQSVGRenderer;
 
-    renderer.setSize(svg_->getIWidth(), svg_->getIHeight());
+    renderer->setSize(svg_->getIWidth(), svg_->getIHeight());
 
-    svg_->setRenderer(&renderer);
+    svg_->setRenderer(renderer);
 
     svg_->draw();
 
@@ -411,7 +419,11 @@ loadFile()
     else
       name = CStrUtil::strprintf("svg_%s.png", base.c_str());
 
-    renderer.getImage()->write(name, CFILE_TYPE_IMAGE_PNG);
+    renderer->getImage()->write(name, CFILE_TYPE_IMAGE_PNG);
+
+    delete renderer;
+
+    svg_->setRenderer(0);
   }
   else if (isPrint()) {
     svg_->print(std::cout, true);
@@ -467,7 +479,11 @@ addProperties()
   tree_->clear();
 
   tree_->addProperty("", svg_, "background");
+  tree_->addProperty("", svg_, "animating");
   tree_->addProperty("", svg_, "checkerboard");
+  tree_->addProperty("", svg_, "showGradient");
+  tree_->addProperty("", svg_, "showFilterBox");
+  tree_->addProperty("", svg_, "ignoreFilter");
 
   CSVGBlock *block = svg_->getBlock();
 
@@ -575,18 +591,56 @@ addObjectToTree(const std::string &name, CSVGObject *obj)
     else if (qanim) {
       tree_->addProperty(objName, qanim, "attributeName");
       tree_->addProperty(objName, qanim, "attributeType");
-      tree_->addProperty(objName, qanim, "from");
-      tree_->addProperty(objName, qanim, "to");
       tree_->addProperty(objName, qanim, "begin");
       tree_->addProperty(objName, qanim, "end");
       tree_->addProperty(objName, qanim, "dur");
+      tree_->addProperty(objName, qanim, "from");
+      tree_->addProperty(objName, qanim, "to");
+      tree_->addProperty(objName, qanim, "repeatCount");
+      tree_->addProperty(objName, qanim, "repeatDur");
       tree_->addProperty(objName, qanim, "fill");
     }
     else if (qanimcol) {
+      tree_->addProperty(objName, qanimcol, "attributeName");
+      tree_->addProperty(objName, qanimcol, "attributeType");
+      tree_->addProperty(objName, qanimcol, "begin");
+      tree_->addProperty(objName, qanimcol, "end");
+      tree_->addProperty(objName, qanimcol, "dur");
+      tree_->addProperty(objName, qanimcol, "from");
+      tree_->addProperty(objName, qanimcol, "to");
+      tree_->addProperty(objName, qanimcol, "repeatCount");
+      tree_->addProperty(objName, qanimcol, "repeatDur");
+      tree_->addProperty(objName, qanimcol, "fill");
+      tree_->addProperty(objName, qanimcol, "type");
+      tree_->addProperty(objName, qanimcol, "additive");
     }
     else if (qanimmot) {
+      tree_->addProperty(objName, qanimmot, "attributeName");
+      tree_->addProperty(objName, qanimmot, "attributeType");
+      tree_->addProperty(objName, qanimmot, "begin");
+      tree_->addProperty(objName, qanimmot, "end");
+      tree_->addProperty(objName, qanimmot, "dur");
+      tree_->addProperty(objName, qanimmot, "from");
+      tree_->addProperty(objName, qanimmot, "to");
+      tree_->addProperty(objName, qanimmot, "repeatCount");
+      tree_->addProperty(objName, qanimmot, "repeatDur");
+      tree_->addProperty(objName, qanimmot, "fill");
+      tree_->addProperty(objName, qanimmot, "pathStr");
+      tree_->addProperty(objName, qanimmot, "keyPoints");
+      tree_->addProperty(objName, qanimmot, "rotate");
+      tree_->addProperty(objName, qanimmot, "origin");
     }
     else if (qanimtran) {
+      tree_->addProperty(objName, qanimtran, "attributeName");
+      tree_->addProperty(objName, qanimtran, "attributeType");
+      tree_->addProperty(objName, qanimtran, "begin");
+      tree_->addProperty(objName, qanimtran, "end");
+      tree_->addProperty(objName, qanimtran, "dur");
+      tree_->addProperty(objName, qanimtran, "from");
+      tree_->addProperty(objName, qanimtran, "to");
+      tree_->addProperty(objName, qanimtran, "repeatCount");
+      tree_->addProperty(objName, qanimtran, "repeatDur");
+      tree_->addProperty(objName, qanimtran, "fill");
     }
     else if (qdefs) {
     }
@@ -716,6 +770,132 @@ addObjectToTree(const std::string &name, CSVGObject *obj)
     }
     else if (qpath) {
       tree_->addProperty(objName, qpath, "pathString");
+
+      QString partsName = objName + "/parts";
+
+      for (const auto &part : qpath->getPartList().parts()) {
+        CQSVGPathPart *qpathpart = dynamic_cast<CQSVGPathPart *>(part);
+
+        CQSVGPathMoveTo      *qmoveto   = dynamic_cast<CQSVGPathMoveTo      *>(qpathpart);
+        CQSVGPathRMoveTo     *qrmoveto  = dynamic_cast<CQSVGPathRMoveTo     *>(qpathpart);
+        CQSVGPathLineTo      *qlineto   = dynamic_cast<CQSVGPathLineTo      *>(qpathpart);
+        CQSVGPathRLineTo     *qrlineto  = dynamic_cast<CQSVGPathRLineTo     *>(qpathpart);
+        CQSVGPathHLineTo     *qhlineto  = dynamic_cast<CQSVGPathHLineTo     *>(qpathpart);
+        CQSVGPathRHLineTo    *qrhlineto = dynamic_cast<CQSVGPathRHLineTo    *>(qpathpart);
+        CQSVGPathVLineTo     *qvlineto  = dynamic_cast<CQSVGPathVLineTo     *>(qpathpart);
+        CQSVGPathRVLineTo    *qrvlineto = dynamic_cast<CQSVGPathRVLineTo    *>(qpathpart);
+        CQSVGPathArcTo       *qarcto    = dynamic_cast<CQSVGPathArcTo       *>(qpathpart);
+        CQSVGPathRArcTo      *qrarcto   = dynamic_cast<CQSVGPathRArcTo      *>(qpathpart);
+        CQSVGPathBezier2To   *qbez2to   = dynamic_cast<CQSVGPathBezier2To   *>(qpathpart);
+        CQSVGPathMBezier2To  *qmbez2to  = dynamic_cast<CQSVGPathMBezier2To  *>(qpathpart);
+        CQSVGPathRBezier2To  *qrbez2to  = dynamic_cast<CQSVGPathRBezier2To  *>(qpathpart);
+        CQSVGPathMRBezier2To *qmrbez2to = dynamic_cast<CQSVGPathMRBezier2To *>(qpathpart);
+        CQSVGPathBezier3To   *qbez3to   = dynamic_cast<CQSVGPathBezier3To   *>(qpathpart);
+        CQSVGPathMBezier3To  *qmbez3to  = dynamic_cast<CQSVGPathMBezier3To  *>(qpathpart);
+        CQSVGPathRBezier3To  *qrbez3to  = dynamic_cast<CQSVGPathRBezier3To  *>(qpathpart);
+        CQSVGPathMRBezier3To *qmrbez3to = dynamic_cast<CQSVGPathMRBezier3To *>(qpathpart);
+
+        QString typeName = CSVGPathPart::partTypeName(qpathpart->getType()).c_str();
+        QString partName = partsName + "/" + typeName;
+
+        if      (qmoveto) {
+          tree_->addProperty(partName, qmoveto, "x");
+          tree_->addProperty(partName, qmoveto, "y");
+        }
+        else if (qrmoveto) {
+          tree_->addProperty(partName, qrmoveto, "dx");
+          tree_->addProperty(partName, qrmoveto, "dy");
+        }
+        else if (qlineto) {
+          tree_->addProperty(partName, qlineto, "x");
+          tree_->addProperty(partName, qlineto, "y");
+        }
+        else if (qrlineto) {
+          tree_->addProperty(partName, qrlineto, "dx");
+          tree_->addProperty(partName, qrlineto, "dy");
+        }
+        else if (qhlineto) {
+          tree_->addProperty(partName, qhlineto, "x");
+        }
+        else if (qrhlineto) {
+          tree_->addProperty(partName, qrhlineto, "dx");
+        }
+        else if (qvlineto) {
+          tree_->addProperty(partName, qvlineto, "y");
+        }
+        else if (qrvlineto) {
+          tree_->addProperty(partName, qrvlineto, "dy");
+        }
+        else if (qarcto) {
+          tree_->addProperty(partName, qarcto, "rx");
+          tree_->addProperty(partName, qarcto, "ry");
+          tree_->addProperty(partName, qarcto, "xa");
+          tree_->addProperty(partName, qarcto, "fa");
+          tree_->addProperty(partName, qarcto, "fs");
+          tree_->addProperty(partName, qarcto, "x2");
+          tree_->addProperty(partName, qarcto, "y2");
+        }
+        else if (qrarcto) {
+          tree_->addProperty(partName, qrarcto, "rx");
+          tree_->addProperty(partName, qrarcto, "ry");
+          tree_->addProperty(partName, qrarcto, "xa");
+          tree_->addProperty(partName, qrarcto, "fa");
+          tree_->addProperty(partName, qrarcto, "fs");
+          tree_->addProperty(partName, qrarcto, "x2");
+          tree_->addProperty(partName, qrarcto, "y2");
+        }
+        else if (qbez2to) {
+          tree_->addProperty(partName, qbez2to, "x1");
+          tree_->addProperty(partName, qbez2to, "y1");
+          tree_->addProperty(partName, qbez2to, "x2");
+          tree_->addProperty(partName, qbez2to, "y2");
+        }
+        else if (qmbez2to) {
+          tree_->addProperty(partName, qmbez2to, "x2");
+          tree_->addProperty(partName, qmbez2to, "y2");
+        }
+        else if (qrbez2to) {
+          tree_->addProperty(partName, qrbez2to, "x1");
+          tree_->addProperty(partName, qrbez2to, "y1");
+          tree_->addProperty(partName, qrbez2to, "x2");
+          tree_->addProperty(partName, qrbez2to, "y2");
+        }
+        else if (qmrbez2to) {
+          tree_->addProperty(partName, qmrbez2to, "x2");
+          tree_->addProperty(partName, qmrbez2to, "y2");
+        }
+        else if (qbez3to) {
+          tree_->addProperty(partName, qbez3to, "x1");
+          tree_->addProperty(partName, qbez3to, "y1");
+          tree_->addProperty(partName, qbez3to, "x2");
+          tree_->addProperty(partName, qbez3to, "y2");
+          tree_->addProperty(partName, qbez3to, "x3");
+          tree_->addProperty(partName, qbez3to, "y3");
+        }
+        else if (qmbez3to) {
+          tree_->addProperty(partName, qmbez3to, "x2");
+          tree_->addProperty(partName, qmbez3to, "y2");
+          tree_->addProperty(partName, qmbez3to, "x3");
+          tree_->addProperty(partName, qmbez3to, "y3");
+        }
+        else if (qrbez3to) {
+          tree_->addProperty(partName, qrbez3to, "x1");
+          tree_->addProperty(partName, qrbez3to, "y1");
+          tree_->addProperty(partName, qrbez3to, "x2");
+          tree_->addProperty(partName, qrbez3to, "y2");
+          tree_->addProperty(partName, qrbez3to, "x3");
+          tree_->addProperty(partName, qrbez3to, "y3");
+        }
+        else if (qmrbez3to) {
+          tree_->addProperty(partName, qmrbez3to, "x2");
+          tree_->addProperty(partName, qmrbez3to, "y2");
+          tree_->addProperty(partName, qmrbez3to, "x3");
+          tree_->addProperty(partName, qmrbez3to, "y3");
+        }
+        else {
+          tree_->addProperty(partName, qpathpart, "type");
+        }
+      }
     }
     else if (qpattern) {
       tree_->addProperty(objName, qpattern, "x"           );

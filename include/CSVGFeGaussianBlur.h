@@ -14,10 +14,10 @@ class CSVGFeGaussianBlur : public CSVGFilterBase {
 
   CSVGFeGaussianBlur *dup() const override;
 
-  std::string getFilterIn() const { return filterIn_.getValue("SourceGraphic"); }
+  std::string getFilterIn() const { return filterIn_.getValue("FilterGraphic"); }
   void setFilterIn(const std::string &s) { filterIn_ = s; }
 
-  std::string getFilterOut() const { return filterOut_.getValue("SourceGraphic"); }
+  std::string getFilterOut() const { return filterOut_.getValue("FilterGraphic"); }
   void setFilterOut(const std::string &s) { filterOut_ = s; }
 
   double getStdDev() const { return stdDev_.getValue(0); }

@@ -18,7 +18,8 @@ class CQSVGBufferView : public QFrame {
 
   QString bufferName() const;
 
-  CImagePtr bufferImage() const;
+  //CImagePtr bufferImage() const;
+  QImage bufferImage() const;
 
   CPoint2D bufferOrigin() const;
 

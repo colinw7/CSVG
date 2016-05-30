@@ -72,11 +72,11 @@ draw()
 
     CSVGBuffer *buffer1 = svg_.getBuffer(objectBufferName + "_in1");
 
-    buffer1->setImage(inBuffer1->getImage());
+    buffer1->setImage(inBuffer1);
 
     CSVGBuffer *buffer2 = svg_.getBuffer(objectBufferName + "_in2");
 
-    buffer2->setImage(inBuffer2->getImage());
+    buffer2->setImage(inBuffer2);
   }
 
   CSVGBuffer *outBuffer = svg_.getBuffer(getFilterOut());
@@ -88,7 +88,7 @@ draw()
 
     CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_out");
 
-    buffer->setImage(outBuffer->getImage());
+    buffer->setImage(outBuffer);
   }
 }
 

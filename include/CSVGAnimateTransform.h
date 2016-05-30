@@ -18,6 +18,9 @@ class CSVGAnimateTransform : public CSVGAnimateBase {
   std::string getAdditive() const { return additive_.getValue(""); }
   void setAdditive(const std::string &s) { additive_ = s; }
 
+  std::string getAccumulate() const { return accumulate_.getValue(""); }
+  void setAccumulate(const std::string &s) { accumulate_ = s; }
+
   bool processOption(const std::string &name, const std::string &value) override;
 
   void animate(double t);
@@ -29,6 +32,10 @@ class CSVGAnimateTransform : public CSVGAnimateBase {
  private:
   COptValT<std::string> type_;
   COptValT<std::string> additive_;
+  COptValT<std::string> accumulate_;
+  COptValT<std::string> calcMode_;
+  COptValT<std::string> values_;
+  COptValT<std::string> keySplines_;
 };
 
 #endif

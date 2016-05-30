@@ -122,20 +122,31 @@ void
 CSVGPattern::
 setFillImage(CSVGObject *parent, CSVGBuffer *buffer, double *w1, double *h1)
 {
-  double w = getWidth ();
-  double h = getHeight();
+  CSVGPattern *linkPattern = dynamic_cast< CSVGPattern *>(getObject());
+
+  if (linkPattern) {
+    if (patternTransform_.isValid())
+      buffer->setFillMatrix(patternTransform_.getValue().getMatrix());
+
+    return linkPattern->setFillImage(parent, buffer, w1, h1);
+  }
+
+  //---
 
   double pw = 100;
   double ph = 100;
 
+  CBBox2D parentBBox;
+
+  if (parent && parent->getBBox(parentBBox)) {
+    pw = parentBBox.getWidth ();
+    ph = parentBBox.getHeight();
+  }
+
+  double w = getWidth (1);
+  double h = getHeight(1);
+
   if (getUnits() == CSVGCoordUnits::OBJECT_BBOX) {
-    CBBox2D parentBBox;
-
-    if (parent && parent->getBBox(parentBBox)) {
-      pw = parentBBox.getWidth ();
-      ph = parentBBox.getHeight();
-    }
-
     *w1 = w*pw;
     *h1 = h*ph;
   }
@@ -208,26 +219,29 @@ setFillImage(CSVGObject *parent, CSVGBuffer *buffer, double *w1, double *h1)
 
   // set fill image from buffer
   buffer->setFillBuffer(patternBuffer);
+
+  if (patternTransform_.isValid())
+    buffer->setFillMatrix(patternTransform_.getValue().getMatrix());
 }
 
 void
 CSVGPattern::
 setStrokeImage(CSVGObject *parent, CSVGBuffer *buffer, double *w1, double *h1)
 {
-  double w = getWidth ();
-  double h = getHeight();
-
   double pw = 100;
   double ph = 100;
 
+  CBBox2D parentBBox;
+
+  if (parent && parent->getBBox(parentBBox)) {
+    pw = parentBBox.getWidth ();
+    ph = parentBBox.getHeight();
+  }
+
+  double w = getWidth (1);
+  double h = getHeight(1);
+
   if (getUnits() == CSVGCoordUnits::OBJECT_BBOX) {
-    CBBox2D parentBBox;
-
-    if (parent && parent->getBBox(parentBBox)) {
-      pw = parentBBox.getWidth ();
-      ph = parentBBox.getHeight();
-    }
-
     *w1 = w*pw;
     *h1 = h*ph;
   }

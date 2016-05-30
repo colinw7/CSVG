@@ -117,20 +117,6 @@ setSize(const CSize2D &size)
   h_ = size.height;
 }
 
-#if 0
-void
-CSVGImage::
-setImage(const std::string &filename)
-{
-  CImageFileSrc src(filename);
-
-  CImagePtr image = CImageMgrInst->lookupImage(src);
-
-  if (xlink_.isValid())
-    xlink_.getValue().setImage(image);
-}
-#endif
-
 void
 CSVGImage::
 draw()
@@ -138,9 +124,7 @@ draw()
   if (svg_.getDebug())
     CSVGLog() << *this;
 
-  CImagePtr image = getImage();
-
-  if (! image.isValid())
+  if (! initImage())
     return;
 
   //---
@@ -157,58 +141,44 @@ draw()
   // resize image to bbox
   double x1, y1, x2, y2;
 
-  oldBuffer->windowToPixel(bbox.getXMin(), bbox.getYMin(), &x1, &y1);
-  oldBuffer->windowToPixel(bbox.getXMax(), bbox.getYMax(), &x2, &y2);
+  svg_.windowToPixel(bbox.getXMin(), bbox.getYMin(), &x1, &y1);
+  svg_.windowToPixel(bbox.getXMax(), bbox.getYMax(), &x2, &y2);
 
   int pw = CSVGUtil::round(fabs(x2 - x1));
   int ph = CSVGUtil::round(fabs(y2 - y1));
 
-  image->reshape(pw, ph);
-
-  if (svg_.getDebugImage()) {
-    std::string imageBufferName = "image_" + getUniqueName();
-
-    CSVGBuffer *imageBuffer = svg_.getBuffer(imageBufferName);
-
-    imageBuffer->setImage(image);
-  }
-
-  //---
-
-  bool oldDrawing = oldBuffer->isDrawing();
-
-  if (oldDrawing)
-    oldBuffer->stopDraw();
-
-  oldBuffer->addImage(x1, y1, image);
-
-  if (oldDrawing)
-    oldBuffer->startDraw();
+  oldBuffer->addReshapeImage(getImageBuffer(), x1, y1, pw, ph);
 }
 
-CImagePtr
+bool
 CSVGImage::
-getImage() const
+initImage() const
 {
   if (! xlink_.isValid())
-    return CImagePtr();
+    return false;
 
-  if (xlink_.getValue().isObject()) {
-    CSVGImage *th = const_cast<CSVGImage *>(this);
+  CSVGBuffer *imageBuffer = getImageBuffer();
 
+  if      (xlink_.getValue().isObject()) {
     CSVGObject *object = xlink_.getValue().getObject();
 
-    CImagePtr image = object->toImage();
+    CSVGBuffer *objImageBuffer = object->toBufferImage();
 
     // TODO: don't cache image as could be rescaled
-    th->xlink_.getValue().setObject(0);
-    th->xlink_.getValue().setImage (image);
+    //th->xlink_.getValue().setObject(0);
+
+    if (objImageBuffer)
+      imageBuffer->setImage(objImageBuffer);
+
+    return true;
   }
+  else if (xlink_.getValue().isImage()) {
+    imageBuffer->setImage(xlink_.getValue().getImageBuffer());
 
-  if (xlink_.getValue().isImage())
-    return xlink_.getValue().getImage();
-
-  return CImagePtr();
+    return true;
+  }
+  else
+    return false;
 }
 
 CSVGObject *
@@ -222,6 +192,15 @@ getObject() const
     return 0;
 
   return xlink_.getValue().getObject();
+}
+
+CSVGBuffer *
+CSVGImage::
+getImageBuffer() const
+{
+  std::string imageBufferName = "image_" + getUniqueName();
+
+  return svg_.getBuffer(imageBufferName);
 }
 
 bool

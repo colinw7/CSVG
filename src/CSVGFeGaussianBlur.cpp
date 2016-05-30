@@ -50,12 +50,17 @@ draw()
   CSVGBuffer *inBuffer  = svg_.getBuffer(getFilterIn ());
   CSVGBuffer *outBuffer = svg_.getBuffer(getFilterOut());
 
+  bool inDrawing = inBuffer->isDrawing();
+
+  if (inDrawing)
+    inBuffer->stopDraw();
+
   if (svg_.getDebugFilter()) {
     std::string objectBufferName = "_" + getUniqueName();
 
     CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_in");
 
-    buffer->setImage(inBuffer->getImage());
+    buffer->setImage(inBuffer);
   }
 
   filterImage(inBuffer, outBuffer);
@@ -65,15 +70,18 @@ draw()
 
     CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_out");
 
-    buffer->setImage(outBuffer->getImage());
+    buffer->setImage(outBuffer);
   }
+
+  if (inDrawing)
+    inBuffer->startDraw();
 }
 
 void
 CSVGFeGaussianBlur::
 filterImage(CSVGBuffer *inBuffer, CSVGBuffer *outBuffer)
 {
-  CSVGBuffer::gaussianBlurBuffers(inBuffer, getStdDev(), outBuffer);
+  CSVGBuffer::gaussianBlurBuffers(inBuffer, this, getStdDev(), outBuffer);
 }
 
 void

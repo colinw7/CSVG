@@ -80,23 +80,56 @@ getParentBBox(CBBox2D &bbox) const
   if (! filter)
     return false;
 
-  CBBox2D bbox1;
+  CSVGObject *obj = filter->getObject();
 
-  if (! filter->getObject()->getBBox(bbox1))
-  //if (! filter->getObject()->getFlatTransformedBBox(bbox1))
+  if (! filter->getRegion(obj, bbox))
     return false;
-
-  if (! bbox1.isSet())
-    return false;
-
-  double x = filter->getX     (bbox1.getXMin  ());
-  double y = filter->getY     (bbox1.getYMin  ());
-  double w = filter->getWidth (bbox1.getWidth ());
-  double h = filter->getHeight(bbox1.getHeight());
-
-  bbox = CBBox2D(x, y, x + w, y + h);
 
   return true;
+}
+
+bool
+CSVGFilterBase::
+getTransformedParentBBox(CBBox2D &bbox) const
+{
+  if (! getParentBBox(bbox))
+    return false;
+
+  CSVGCoordUnits punits = getParentFilter()->getPrimitiveUnits();
+
+  if (hasX()) {
+    if (punits == CSVGCoordUnits::USER_SPACE)
+      bbox.moveXTo(getX());
+    else
+      bbox.moveXTo(getXMin() + getX());
+  }
+
+  if (hasY()) {
+    if (punits == CSVGCoordUnits::USER_SPACE)
+      bbox.moveYTo(getY());
+    else
+      bbox.moveYTo(getYMin() + getY());
+  }
+
+  if (hasWidth())
+    bbox.setWidth(getWidth());
+
+  if (hasHeight())
+    bbox.setHeight(getHeight());
+
+  return true;
+}
+
+CSVGObject *
+CSVGFilterBase::
+getParentFilterObject() const
+{
+  CSVGFilter *filter = getParentFilter();
+
+  if (! filter)
+    return 0;
+
+  return filter->getObject();
 }
 
 CSVGFilter *

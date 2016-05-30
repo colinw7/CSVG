@@ -50,6 +50,14 @@ processOption(const std::string &opt_name, const std::string &opt_value)
     type_ = str;
   else if (svg_.stringOption(opt_name, opt_value, "additive", str))
     additive_ = str;
+  else if (svg_.stringOption(opt_name, opt_value, "accumulate", str))
+    accumulate_ = str;
+  else if (svg_.stringOption(opt_name, opt_value, "calcMode", str))
+    calcMode_ = str;
+  else if (svg_.stringOption(opt_name, opt_value, "values", str))
+    values_ = str;
+  else if (svg_.stringOption(opt_name, opt_value, "keySplines", str))
+    keySplines_ = str;
   else
     return false;
 
@@ -66,7 +74,32 @@ animate(double t)
     svg_.stringToReals(getFrom(), fromValues);
     svg_.stringToReals(getTo  (), toValues  );
 
-    if      (getType() == "rotate") {
+    if      (getType() == "translate") {
+      if (fromValues.size() == 1) fromValues.push_back(fromValues[0]);
+      if (toValues  .size() == 1) toValues  .push_back(toValues  [0]);
+
+      if (fromValues.size() < 2 || toValues.size() < 2)
+        return;
+
+      double xs = CSVGUtil::map(t, 0, 1, fromValues[0], toValues[0]);
+      double ys = CSVGUtil::map(t, 0, 1, fromValues[1], toValues[1]);
+
+      //std::cerr << "CSVGAnimateTransform: translate " << currentTime_ << ":" <<
+      //             xs << " " << ys << std::endl;
+      CMatrixStack2D m;
+
+      if (getAdditive() == "sum")
+        m = getParent()->getTransform();
+      else
+        m = getParent()->getAnimation().getTransform();
+
+      m.translate(xs, ys);
+
+      getParent()->setTransform(m);
+
+      svg_.redraw();
+    }
+    else if (getType() == "rotate") {
       if (fromValues.size() == 1) { fromValues.push_back(0); fromValues.push_back(0); }
       if (toValues  .size() == 1) { toValues  .push_back(0); toValues  .push_back(0); }
 
@@ -115,6 +148,9 @@ animate(double t)
       getParent()->setTransform(m);
 
       svg_.redraw();
+    }
+    else {
+      CSVGLog() << "Unhandled animateTransform type " << getType();
     }
   }
 }

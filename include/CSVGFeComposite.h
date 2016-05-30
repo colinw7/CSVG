@@ -17,13 +17,13 @@ class CSVGFeComposite : public CSVGFilterBase {
   CRGBACombineFunc getType() const { return type_.getValue(CRGBA_COMBINE_OVER); }
   void setType(CRGBACombineFunc t) { type_ = t; }
 
-  std::string getFilterIn1() const { return filterIn1_.getValue("SourceGraphic"); }
+  std::string getFilterIn1() const { return filterIn1_.getValue("FilterGraphic"); }
   void setFilterIn1(const std::string &s) { filterIn1_ = s; }
 
-  std::string getFilterIn2() const { return filterIn2_.getValue("SourceGraphic"); }
+  std::string getFilterIn2() const { return filterIn2_.getValue("FilterGraphic"); }
   void setFilterIn2(const std::string &s) { filterIn2_ = s; }
 
-  std::string getFilterOut() const { return filterOut_.getValue("SourceGraphic"); }
+  std::string getFilterOut() const { return filterOut_.getValue("FilterGraphic"); }
   void setFilterOut(const std::string &s) { filterOut_ = s; }
 
   double getK1() const { return k1_.getValue(0); }

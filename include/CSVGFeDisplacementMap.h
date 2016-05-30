@@ -17,13 +17,13 @@ class CSVGFeDisplacementMap : public CSVGFilterBase {
 
   CSVGFeDisplacementMap *dup() const override;
 
-  std::string getFilterIn1() const { return filterIn1_.getValue("SourceGraphic"); }
+  std::string getFilterIn1() const { return filterIn1_.getValue("FilterGraphic"); }
   void setFilterIn1(const std::string &s) { filterIn1_ = s; }
 
-  std::string getFilterIn2() const { return filterIn2_.getValue("SourceGraphic"); }
+  std::string getFilterIn2() const { return filterIn2_.getValue("FilterGraphic"); }
   void setFilterIn2(const std::string &s) { filterIn2_ = s; }
 
-  std::string getFilterOut() const { return filterOut_.getValue("SourceGraphic"); }
+  std::string getFilterOut() const { return filterOut_.getValue("FilterGraphic"); }
   void setFilterOut(const std::string &s) { filterOut_ = s; }
 
   double getScale() const { return scale_.getValue(1); }

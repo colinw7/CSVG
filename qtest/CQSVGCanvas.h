@@ -13,6 +13,13 @@ class CQSVGCanvas : public QWidget {
   Q_OBJECT
 
  public:
+  enum class Shape {
+    CROSS,
+    PLUS,
+    CIRCLE
+  };
+
+ public:
   CQSVGCanvas(CQSVGWindow *window, CQSVG *svg);
 
   CQSVGRenderer *renderer() const { return renderer_; }
@@ -36,6 +43,12 @@ class CQSVGCanvas : public QWidget {
   void drawSelected();
 
   void drawRect(const CBBox2D &bbox, const QColor &c);
+  void drawLine(const CPoint2D &p1, const CPoint2D &p2, const QColor &c);
+
+  void drawPoints(std::initializer_list<CPoint2D> points, Shape shape, int size,
+                  const QColor &bg, const QColor &fg);
+
+  void drawPoint(const CPoint2D &p, Shape shape, int size, const QColor &bg, const QColor &fg);
 
   void pixelToWindow(const CPoint2D &p, CPoint2D &w);
 

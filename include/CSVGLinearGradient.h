@@ -38,7 +38,7 @@ class CSVGLinearGradient : public CSVGObject {
   CScreenUnits getY1(double y=0) const { return y1_.getValue(CScreenUnits(y)); }
   void setY1(const CScreenUnits &y1) { y1_ = y1; }
 
-  CScreenUnits getX2(double x=0) const { return x2_.getValue(CScreenUnits(x)); }
+  CScreenUnits getX2(double x=1) const { return x2_.getValue(CScreenUnits(x)); }
   void setX2(const CScreenUnits &x2) { x2_ = x2; }
 
   CScreenUnits getY2(double y=0) const { return y2_.getValue(CScreenUnits(y)); }
@@ -77,7 +77,12 @@ class CSVGLinearGradient : public CSVGObject {
 
   void print(std::ostream &os, bool hier) const override;
 
+  void setFillBuffer(CSVGBuffer *buffer, CSVGObject *obj);
+  void setStrokeBuffer(CSVGBuffer *buffer, CSVGObject *obj);
+
   CLinearGradient *createGradient(CSVGObject *);
+
+  void getEndPoints(CSVGObject *obj, double *x1, double *y1, double *x2, double *y2) const;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGLinearGradient &gradient);
 

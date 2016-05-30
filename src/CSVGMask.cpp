@@ -144,7 +144,7 @@ drawMask(const CSVGObject *object)
 
   double px1, py1;
 
-  oldBuffer->lengthToPixel(x1, y1, &px1, &py1);
+  svg_.lengthToPixel(x1, y1, &px1, &py1);
 
   //---
 

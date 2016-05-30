@@ -54,7 +54,7 @@ draw()
 
     CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_out");
 
-    buffer->setImage(outBuffer->getImage());
+    buffer->setImage(outBuffer);
   }
 }
 

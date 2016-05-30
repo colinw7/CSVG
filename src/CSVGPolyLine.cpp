@@ -91,14 +91,23 @@ draw()
   }
 
   if (svg_.isFilled() || svg_.isStroked()) {
-    if (svg_.isFilled())
-      buffer->pathFill();
+    if (svg_.isFilled()) {
+      svg_.setFillBuffer(buffer);
 
-    if (svg_.isStroked())
+      buffer->pathFill();
+    }
+
+    if (svg_.isStroked()) {
+      svg_.setStrokeBuffer(buffer);
+
       buffer->pathStroke();
+    }
   }
-  else
+  else {
+    svg_.setFillBuffer(buffer);
+
     buffer->pathFill();
+  }
 }
 
 bool

@@ -9,6 +9,8 @@
 #include <QBrush>
 #include <QPen>
 
+class CQImage;
+
 class CQSVGRenderer : public CSVGRenderer {
  public:
   CQSVGRenderer();
@@ -87,10 +89,12 @@ class CQSVGRenderer : public CSVGRenderer {
   void setLineJoin  (const CLineJoinType &join) override;
   void setMitreLimit(double limit) override;
 
+  void resetFill      () override;
   void setFillType    (CFillType fillType) override;
   void setFillColor   (const CRGBA &bg) override;
   void setFillGradient(CGenGradient *g) override;
   void setFillImage   (CImagePtr image) override;
+  void setFillMatrix  (const CMatrix2D &m) override;
 
   void setStrokeFilled      (bool b) override;
   void setStrokeFillType    (CFillType fillType) override;
@@ -107,7 +111,31 @@ class CQSVGRenderer : public CSVGRenderer {
   CISize2D getImageSize() const override;
 
   CImagePtr getImage() const override;
-  void      setImage(CImagePtr image) override;
+
+  void setImage(CSVGRenderer *renderer) override;
+  void setImage(CImagePtr image) override;
+
+  void addImage(int x, int y, CImagePtr image) override;
+
+  void combine(int x, int y, CSVGRenderer *r) override;
+
+  void addResizedImage(CSVGRenderer *src, int x, int y, int w, int h) override;
+
+  void addClippedImage(CSVGRenderer *src, int x, int y,
+                       int px1, int py1, int px2, int py2) override;
+
+  void setClippedImage(CSVGRenderer *src, int px1, int py1, int px2, int py2) override;
+
+  void setOffsetImage(CSVGRenderer *src, int dx, int dy) override;
+
+  void gaussianBlur(CSVGRenderer *dst, CBBox2D &bbox, double stdDev) override;
+
+  //---
+
+  void setQImage(CQImage *cqimage);
+  void setQImage(const QImage &image);
+
+  QImage getQImage() const;
 
   CDisplayRange2D &getRange() { return range_; }
 
@@ -117,9 +145,13 @@ class CQSVGRenderer : public CSVGRenderer {
   void paint(QPainter *painter);
 
  private:
+  static void combineImage(QImage &image1, int x, int y, QImage &image2);
+
+ private:
   QImage          qimage_;
   QPainter*       painter_ { 0 };
   QPainterPath*   path_ { 0 };
+  bool            pathEmpty_ { true };
   QPainterPath*   savePath_ { 0 };
   QPen            pen_;
   QFont           qfont_;

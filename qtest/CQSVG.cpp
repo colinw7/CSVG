@@ -51,6 +51,7 @@
 #include <CQSVGTSpan.h>
 #include <CQSVGUse.h>
 #include <CQSVGWindow.h>
+#include <CQSVGPathPart.h>
 #include <QTimer>
 
 CQSVG::
@@ -445,6 +446,143 @@ createUse()
 {
   return new CQSVGUse(this);
 }
+
+//------
+
+CSVGPathMoveTo *
+CQSVG::
+createPathMoveTo(double x, double y)
+{
+  return new CQSVGPathMoveTo(*this, x, y);
+}
+
+CSVGPathRMoveTo *
+CQSVG::
+createPathRMoveTo(double x, double y)
+{
+  return new CQSVGPathRMoveTo(*this, x, y);
+}
+
+CSVGPathLineTo *
+CQSVG::
+createPathLineTo(double x, double y)
+{
+  return new CQSVGPathLineTo(*this, x, y);
+}
+
+CSVGPathRLineTo *
+CQSVG::
+createPathRLineTo(double x, double y)
+{
+  return new CQSVGPathRLineTo(*this, x, y);
+}
+
+CSVGPathHLineTo *
+CQSVG::
+createPathHLineTo(double x)
+{
+  return new CQSVGPathHLineTo(*this, x);
+}
+
+CSVGPathRHLineTo *
+CQSVG::
+createPathRHLineTo(double x)
+{
+  return new CQSVGPathRHLineTo(*this, x);
+}
+
+CSVGPathVLineTo *
+CQSVG::
+createPathVLineTo(double y)
+{
+  return new CQSVGPathVLineTo(*this, y);
+}
+
+CSVGPathRVLineTo *
+CQSVG::
+createPathRVLineTo(double y)
+{
+  return new CQSVGPathRVLineTo(*this, y);
+}
+
+CSVGPathArcTo *
+CQSVG::
+createPathArcTo(double rx, double ry, double xa, double fa, double fs, double x2, double y2)
+{
+  return new CQSVGPathArcTo(*this, rx, ry, xa, fa, fs, x2, y2);
+}
+
+CSVGPathRArcTo *
+CQSVG::
+createPathRArcTo(double rx, double ry, double xa, double fa, double fs, double x2, double y2)
+{
+  return new CQSVGPathRArcTo(*this, rx, ry, xa, fa, fs, x2, y2);
+}
+
+CSVGPathBezier2To *
+CQSVG::
+createPathBezier2To(double x1, double y1, double x2, double y2)
+{
+  return new CQSVGPathBezier2To(*this, x1, y1, x2, y2);
+}
+
+CSVGPathMBezier2To *
+CQSVG::
+createPathMBezier2To(double x2, double y2)
+{
+  return new CQSVGPathMBezier2To(*this, x2, y2);
+}
+
+CSVGPathRBezier2To *
+CQSVG::
+createPathRBezier2To(double x1, double y1, double x2, double y2)
+{
+  return new CQSVGPathRBezier2To(*this, x1, y1, x2, y2);
+}
+
+CSVGPathMRBezier2To *
+CQSVG::
+createPathMRBezier2To(double x2, double y2)
+{
+  return new CQSVGPathMRBezier2To(*this, x2, y2);
+}
+
+CSVGPathBezier3To *
+CQSVG::
+createPathBezier3To(double x1, double y1, double x2, double y2, double x3, double y3)
+{
+  return new CQSVGPathBezier3To(*this, x1, y1, x2, y2, x3, y3);
+}
+
+CSVGPathMBezier3To *
+CQSVG::
+createPathMBezier3To(double x2, double y2, double x3, double y3)
+{
+  return new CQSVGPathMBezier3To(*this, x2, y2, x3, y3);
+}
+
+CSVGPathRBezier3To *
+CQSVG::
+createPathRBezier3To (double x1, double y1, double x2, double y2, double x3, double y3)
+{
+  return new CQSVGPathRBezier3To(*this, x1, y1, x2, y2, x3, y3);
+}
+
+CSVGPathMRBezier3To *
+CQSVG::
+createPathMRBezier3To(double x2, double y2, double x3, double y3)
+{
+  return new CQSVGPathMRBezier3To(*this, x2, y2, x3, y3);
+}
+
+CSVGPathClosePath *
+CQSVG::
+createPathClosePath(bool relative)
+{
+  return new CQSVGPathClosePath(*this, relative);
+}
+
+//------
 
 void
 CQSVG::

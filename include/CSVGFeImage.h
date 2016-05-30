@@ -15,7 +15,7 @@ class CSVGFeImage : public CSVGFilterBase {
 
   CSVGFeImage *dup() const override;
 
-  std::string getFilterOut() const { return filterOut_.getValue("SourceGraphic"); }
+  std::string getFilterOut() const { return filterOut_.getValue("FilterGraphic"); }
   void setFilterOut(const std::string &s) { filterOut_ = s; }
 
   CSVGPreserveAspect getPreserveAspect() const {

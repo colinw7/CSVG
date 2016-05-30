@@ -3,6 +3,7 @@
 #include <CSVGStop.h>
 #include <CSVGBuffer.h>
 #include <CSVG.h>
+#include <CSVGLog.h>
 #include <CSVGUtil.h>
 #include <CLinearGradient.h>
 
@@ -80,7 +81,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   else if (svg_.stringOption(opt_name, opt_value, "xlink:href", str)) {
     CSVGObject *object;
 
-    if (! decodeXLink(opt_value, &object, 0))
+    if (! decodeXLink(opt_value, &object))
       return false;
 
     if (object) {
@@ -115,6 +116,9 @@ processOption(const std::string &opt_name, const std::string &opt_value)
           for (const auto &s : rg->stops())
             addStop(s);
         }
+      }
+      else {
+        CSVGLog() << "Unhandled linear gradient link";
       }
     }
   }
@@ -172,46 +176,42 @@ print(std::ostream &os, bool hier) const
     os << "linearGradient ";
 }
 
+void
+CSVGLinearGradient::
+setFillBuffer(CSVGBuffer *buffer, CSVGObject *obj)
+{
+  CAutoPtr<CLinearGradient> lg;
+
+  lg = createGradient(obj);
+
+  buffer->setFillGradient(lg);
+
+//if (gtransform_.isValid())
+//  buffer->setFillMatrix(gtransform_.getValue().getMatrix());
+}
+
+void
+CSVGLinearGradient::
+setStrokeBuffer(CSVGBuffer *buffer, CSVGObject *obj)
+{
+  CAutoPtr<CLinearGradient> lg;
+
+  lg = createGradient(obj);
+
+  buffer->setStrokeFillGradient(lg);
+}
+
 CLinearGradient *
 CSVGLinearGradient::
 createGradient(CSVGObject *obj)
 {
-  //CSVGBuffer *currentBuffer = svg_.getBuffer();
+  double x1, y1, x2, y2;
 
-  CLinearGradient *gradient = new CLinearGradient;
-
-  double x1 = getX1(0).pxValue(1), y1 = getY1(0).pxValue(1);
-  double x2 = getX2(1).pxValue(1), y2 = getY2(1).pxValue(1);
+  getEndPoints(obj, &x1, &y1, &x2, &y2);
 
   double l = hypot(x2 - x1, y2 - y1);
 
-  //---
-
-  // remap points to absolute
-  if      (getUnits() == CSVGCoordUnits::USER_SPACE) {
-    // TODO: parent transform ?
-#if 0
-    CMatrixStack2D m = currentBuffer->transform();
-
-    CPoint2D p1(x1, y1);
-    CPoint2D p2(x2, y2);
-
-    m.multiplyPoint(p1.x, p1.y, &x1, &y1);
-    m.multiplyPoint(p2.x, p2.y, &x2, &y2);
-#endif
-  }
-  else if (getUnits() == CSVGCoordUnits::OBJECT_BBOX) {
-    CBBox2D bbox;
-
-    obj->getBBox(bbox);
-
-    x1 = CSVGUtil::map(x1, 0, 1, bbox.getXMin(), bbox.getXMax());
-    y1 = CSVGUtil::map(y1, 0, 1, bbox.getYMin(), bbox.getYMax());
-    x2 = CSVGUtil::map(x2, 0, 1, bbox.getXMin(), bbox.getXMax());
-    y2 = CSVGUtil::map(y2, 0, 1, bbox.getYMin(), bbox.getYMax());
-  }
-
-  //---
+  CLinearGradient *gradient = new CLinearGradient;
 
   gradient->setLine(x1, y1, x2, y2);
 
@@ -232,6 +232,43 @@ createGradient(CSVGObject *obj)
   gradient->init(1, 1);
 
   return gradient;
+}
+
+void
+CSVGLinearGradient::
+getEndPoints(CSVGObject *obj, double *x1, double *y1, double *x2, double *y2) const
+{
+  *x1 = getX1(0).pxValue(1);
+  *y1 = getY1(0).pxValue(1);
+  *x2 = getX2(1).pxValue(1);
+  *y2 = getY2(0).pxValue(1);
+
+  // remap points to object bounding box (will be mapped to flat coord by drawing code)
+  if      (getUnits() == CSVGCoordUnits::USER_SPACE) {
+  }
+  else if (getUnits() == CSVGCoordUnits::OBJECT_BBOX) {
+    CPoint2D p1(*x1, *y1);
+    CPoint2D p2(*x2, *y2);
+
+    CBBox2D bbox;
+
+    obj->getBBox(bbox);
+
+    *x1 = CSVGUtil::map(p1.x, 0, 1, bbox.getXMin(), bbox.getXMax());
+    *y1 = CSVGUtil::map(p1.y, 0, 1, bbox.getYMin(), bbox.getYMax());
+    *x2 = CSVGUtil::map(p2.x, 0, 1, bbox.getXMin(), bbox.getXMax());
+    *y2 = CSVGUtil::map(p2.y, 0, 1, bbox.getYMin(), bbox.getYMax());
+  }
+
+  //---
+
+  if (getGTransformValid()) {
+    CPoint2D p1(*x1, *y1);
+    CPoint2D p2(*x2, *y2);
+
+    getGTransform().multiplyPoint(p1.x, p1.y, x1, y1);
+    getGTransform().multiplyPoint(p2.x, p2.y, x2, y2);
+  }
 }
 
 std::ostream &

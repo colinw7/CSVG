@@ -215,7 +215,8 @@ draw()
     //------
 
     // get current buffer
-    CSVGBuffer *oldBuffer = svg_.getBuffer();
+    CSVGBuffer *oldBuffer     = svg_.getBuffer();
+    CSVGBuffer *currentBuffer = oldBuffer;
 
     //------
 
@@ -271,32 +272,35 @@ draw()
 
       if (oldBuffer->hasClipPath())
         saveBuffer->addClipPath(oldBuffer);
+
+      currentBuffer = saveBuffer;
     }
 
     //------
 
+    // set current transform
     CMatrixStack2D transform = oldBuffer->transform();
 
-    if (! saveImage) {
-      // set current transform
-      CMatrixStack2D transform1 = transform;
+    CMatrixStack2D transform1(transform);
 
-      transform1.append(object->getTransform());
+    transform1.append(object->getTransform());
 
-      svg_.setTransform(transform1);
-    }
+    //if (! saveImage)
+    if (! symbol)
+      currentBuffer->setTransform(transform1);
 
     //------
 
+    // draw object
     if (object->drawSubObject())
       drawn = true;
 
     //------
 
-    if (! saveImage) {
-      // restore transform
-      svg_.setTransform(transform);
-    }
+    // restore transform
+    //if (! saveImage) {
+    if (! symbol)
+      currentBuffer->setTransform(transform);
 
     //------
 
@@ -336,7 +340,7 @@ draw()
 
           double px, py;
 
-          oldBuffer->lengthToPixel(x, y, &px, &py);
+          svg_.lengthToPixel(x, y, &px, &py);
 
           oldBuffer->addBuffer(saveBuffer, px, py);
         }
@@ -351,7 +355,7 @@ draw()
     if (xlink_.getValue().isImage()) {
       CSVGBuffer *buffer = svg_.getBuffer();
 
-      buffer->drawImage(0, 0, xlink_.getValue().getImage());
+      buffer->drawImage(0, 0, xlink_.getValue().getImageBuffer());
     }
   }
 }

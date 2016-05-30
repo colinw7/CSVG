@@ -12,6 +12,10 @@ class CSVGAnimateColor : public CSVGAnimateBase {
 
   CSVGAnimateColor *dup() const override;
 
+  std::string getType() const { return type_.getValue(""); }
+
+  std::string getAdditive() const { return additive_.getValue(""); }
+
   bool processOption(const std::string &name, const std::string &value) override;
 
   void animate(double t);

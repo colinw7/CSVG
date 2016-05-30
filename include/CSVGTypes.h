@@ -184,4 +184,9 @@ enum class CSVGCSSType {
   TYPE_CLASS
 };
 
+enum class CSVGEnableBackground {
+  ACCUMULATE,
+  NEW
+};
+
 #endif

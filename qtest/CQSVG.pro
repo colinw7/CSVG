@@ -17,6 +17,7 @@ SOURCES += \
 CQSVG.cpp \
 CQSVGAnchor.cpp \
 CQSVGAnimate.cpp \
+CQSVGAnimateBase.cpp \
 CQSVGAnimateColor.cpp \
 CQSVGAnimateMotion.cpp \
 CQSVGAnimateTransform.cpp \
@@ -57,6 +58,7 @@ CQSVGMask.cpp \
 CQSVGMPath.cpp \
 CQSVGObject.cpp \
 CQSVGPath.cpp \
+CQSVGPathPart.cpp \
 CQSVGPattern.cpp \
 CQSVGPolygon.cpp \
 CQSVGPolyLine.cpp \
@@ -80,6 +82,7 @@ HEADERS += \
 CEnumConv.h \
 CQSVGAnchor.h \
 CQSVGAnimate.h \
+CQSVGAnimateBase.h \
 CQSVGAnimateColor.h \
 CQSVGAnimateMotion.h \
 CQSVGAnimateTransform.h \
@@ -121,6 +124,7 @@ CQSVGMask.h \
 CQSVGMPath.h \
 CQSVGObject.h \
 CQSVGPath.h \
+CQSVGPathPart.h \
 CQSVGPattern.h \
 CQSVGPolygon.h \
 CQSVGPolyLine.h \

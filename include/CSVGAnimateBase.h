@@ -33,6 +33,11 @@ class CSVGAnimateBase : public CSVGObject {
   std::string getFill() const { return fill_.getValue(""); }
   void setFill(const std::string &s) { fill_ = s; }
 
+  std::string getRepeatCount() const { return repeatCount_.getValue(""); }
+  void setRepeatCount(const std::string &s) { repeatCount_ = s; }
+
+  CSVGTimeValue getRepeatDur() const { return repeatDur_.getValue(CSVGTimeValue()); }
+
   bool isAnimating() const { return animating_; }
   void setAnimating(bool b);
 

@@ -98,11 +98,7 @@ print(std::ostream &os, bool hier) const
     os << "/>" << std::endl;
   }
   else {
-    os << "glyph " << unicode_ << " " << glyphName_ << "(";
-
-    svg_.printParts(os, parts_);
-
-    os << ")";
+    os << "glyph " << unicode_ << " " << glyphName_ << "(" << parts_ << ")";
   }
 }
 

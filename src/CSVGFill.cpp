@@ -200,8 +200,10 @@ update(const CSVGFill &fill)
   else if (svg_.styleObject()) {
     double a;
 
-    if (svg_.getStyleFillOpacity(svg_.styleObject(), a))
+    if      (svg_.getStyleFillOpacity(svg_.styleObject(), a))
       setOpacity(ga.getValue(1)*a);
+    else if (ga.isValid())
+      opacity_ = ga.getValue();
   }
   else if (ga.isValid())
     opacity_ = ga.getValue();

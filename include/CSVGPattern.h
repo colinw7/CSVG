@@ -19,10 +19,10 @@ class CSVGPattern : public CSVGObject {
   double getY() const { return y_.getValue(0); }
   void setY(double y) { y_ = y; }
 
-  double getWidth() const { return width_.isValid() ? width_.getValue().px().value() : 1; }
+  double getWidth(double w=100) const { return width_.getValue(w).px(w).value(); }
   void setWidth(double w) { width_ = w; }
 
-  double getHeight() const { return height_.isValid() ? height_.getValue().px().value() : 1; }
+  double getHeight(double h=100) const { return height_.getValue(h).px(h).value(); }
   void setHeight(double h) { height_ = h; }
 
   bool getUnitsValid() const { return units_.isValid(); }

@@ -118,6 +118,12 @@ class CSVG {
   const CPoint2D &offset() const { return offset_; }
   void setOffset(const CPoint2D &o) { offset_ = o; }
 
+  double blockXScale() const { return blockXScale_; }
+  void setBlockXScale(double s) { blockXScale_ = s; }
+
+  double blockYScale() const { return blockYScale_; }
+  void setBlockYScale(double s) { blockYScale_ = s; }
+
   double xscale() const { return xscale_; }
   void setXScale(double s) { xscale_ = s; }
 
@@ -135,7 +141,8 @@ class CSVG {
 
   void getBufferNames(std::vector<std::string> &names) const;
 
-  void beginDrawBuffer(CSVGBuffer *buffer);
+  //void beginDrawBuffer(CSVGBuffer *buffer);
+
   void beginDrawBuffer(CSVGBuffer *buffer, const CPoint2D &offset, double xs, double ys);
   void beginDrawBuffer(CSVGBuffer *buffer, const CBBox2D &bbox);
   void beginDrawBuffer(CSVGBuffer *buffer, const CBBox2D &bbox,
@@ -150,29 +157,32 @@ class CSVG {
   CSVGObject *drawObject() const { return drawObject_; }
   void setDrawObject(CSVGObject *o) { drawObject_ = o; }
 
-  void setUniquify(bool uniquify) { uniquify_ = uniquify; }
   bool getUniquify() const { return uniquify_; }
+  void setUniquify(bool uniquify) { uniquify_ = uniquify; }
 
-  void setAutoName(bool autoName);
   bool getAutoName() const { return autoName_; }
+  void setAutoName(bool autoName);
 
-  void setDebug(bool b);
+  bool getIgnoreFilter() const { return ignoreFilter_; }
+  void setIgnoreFilter(bool b) { ignoreFilter_ = b; }
+
   bool getDebug() const { return debug_; }
+  void setDebug(bool b);
 
-  void setDebugObjImage(bool b);
   bool getDebugObjImage() const { return debugObjImage_; }
+  void setDebugObjImage(bool b);
 
-  void setDebugImage(bool b);
   bool getDebugImage() const { return debugImage_; }
+  void setDebugImage(bool b);
 
-  void setDebugFilter(bool b);
   bool getDebugFilter() const { return debugFilter_; }
+  void setDebugFilter(bool b);
 
-  void setDebugMask(bool b);
   bool getDebugMask() const { return debugMask_; }
+  void setDebugMask(bool b);
 
-  void setDebugUse(bool b);
   bool getDebugUse() const { return debugUse_; }
+  void setDebugUse(bool b);
 
   void init();
 
@@ -250,18 +260,20 @@ class CSVG {
 
   virtual CSVGBuffer *createBuffer(const std::string &name);
 
-  virtual CSVGPathMoveTo      *createPathMoveTo (double x, double y);
-  virtual CSVGPathRMoveTo     *createPathRMoveTo(double x, double y);
-  virtual CSVGPathLineTo      *createPathLineTo (double x, double y);
-  virtual CSVGPathRLineTo     *createPathRLineTo(double x, double y);
-  virtual CSVGPathHLineTo     *createPathHLineTo (double x);
-  virtual CSVGPathRHLineTo    *createPathRHLineTo(double x);
-  virtual CSVGPathVLineTo     *createPathVLineTo (double y);
-  virtual CSVGPathRVLineTo    *createPathRVLineTo(double y);
-  virtual CSVGPathArcTo       *createPathArcTo (double rx, double ry, double xa, double fa,
-                                                double fs, double x2, double y2);
-  virtual CSVGPathRArcTo      *createPathRArcTo(double rx, double ry, double xa, double fa,
-                                                double fs, double x2, double y2);
+  virtual CSVGPathMoveTo   *createPathMoveTo  (double x, double y);
+  virtual CSVGPathRMoveTo  *createPathRMoveTo (double x, double y);
+  virtual CSVGPathLineTo   *createPathLineTo  (double x, double y);
+  virtual CSVGPathRLineTo  *createPathRLineTo (double x, double y);
+  virtual CSVGPathHLineTo  *createPathHLineTo (double x);
+  virtual CSVGPathRHLineTo *createPathRHLineTo(double x);
+  virtual CSVGPathVLineTo  *createPathVLineTo (double y);
+  virtual CSVGPathRVLineTo *createPathRVLineTo(double y);
+
+  virtual CSVGPathArcTo  *createPathArcTo (double rx, double ry, double xa, double fa,
+                                           double fs, double x2, double y2);
+  virtual CSVGPathRArcTo *createPathRArcTo(double rx, double ry, double xa, double fa,
+                                           double fs, double x2, double y2);
+
   virtual CSVGPathBezier2To   *createPathBezier2To  (double x1, double y1, double x2, double y2);
   virtual CSVGPathMBezier2To  *createPathMBezier2To (double x2, double y2);
   virtual CSVGPathRBezier2To  *createPathRBezier2To (double x1, double y1, double x2, double y2);
@@ -272,7 +284,8 @@ class CSVG {
   virtual CSVGPathRBezier3To  *createPathRBezier3To (double x1, double y1, double x2, double y2,
                                                      double x3, double y3);
   virtual CSVGPathMRBezier3To *createPathMRBezier3To(double x2, double y2, double x3, double y3);
-  virtual CSVGPathClosePath   *createPathClosePath(bool relative);
+
+  virtual CSVGPathClosePath *createPathClosePath(bool relative);
 
   virtual void redraw() { }
 
@@ -307,8 +320,11 @@ class CSVG {
   CSVGGlyph *getCharGlyph(char c) const;
   CSVGGlyph *getUnicodeGlyph(const std::string &unicode) const;
 
-  CImagePtr drawToImage(int w, int h, const CPoint2D &offset=CPoint2D(0,0),
-                        double xscale=1, double yscale=1);
+  void drawToBuffer(CSVGBuffer *buffer, int w, int h, const CPoint2D &offset=CPoint2D(0,0),
+                    double xscale=1, double yscale=1);
+
+  void drawToRenderer(CSVGRenderer *renderer, int w, int h, const CPoint2D &offset=CPoint2D(0,0),
+                      double xscale=1, double yscale=1);
 
   bool hasAnimation() const;
 
@@ -441,13 +457,15 @@ class CSVG {
   static bool decodeGradientSpread(const std::string &str, CGradientSpreadType &spread);
   static std::string encodeGradientSpread(const CGradientSpreadType &spread);
 
-  bool decodeUrlObject(const std::string &str, CSVGObject **object);
+  bool decodeUrlObject(const std::string &str, std::string &id, CSVGObject **object);
 
   //bool mmToPixel(double mm, double *pixel);
 
   void skipCommaSpace(CStrParse &parse);
 
   bool getTitle(std::string &str);
+
+  CBBox2D transformBBox(const CMatrixStack2D &m, const CBBox2D &bbox) const;
 
   void lengthToPixel(double xi, double yi, double *xo, double *yo);
   void windowToPixel(double xi, double yi, double *xo, double *yo);
@@ -504,6 +522,8 @@ class CSVG {
   CSVGBuffer*             buffer_        { 0 };
   CMatrixStack2D          viewMatrix_;
   CPoint2D                offset_        { 0, 0 };
+  double                  blockXScale_   { 1 };
+  double                  blockYScale_   { 1 };
   double                  xscale_        { 1 };
   double                  yscale_        { 1 };
   CAutoPtr<CSVGBlock>     block_;
@@ -525,6 +545,7 @@ class CSVG {
   CSVGObject*             drawObject_    { 0 };
   bool                    uniquify_      { false };
   bool                    autoName_      { false };
+  bool                    ignoreFilter_  { false };
   bool                    debug_         { false };
   bool                    debugObjImage_ { false };
   bool                    debugImage_    { false };

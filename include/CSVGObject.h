@@ -16,7 +16,6 @@
 #include <CBBox2D.h>
 #include <CMatrixStack2D.h>
 #include <COptVal.h>
-#include <CImagePtr.h>
 #include <CAlignType.h>
 #include <CObjTypeOld.h>
 
@@ -220,12 +219,6 @@ class CSVGObject {
 
   const ObjectList &children() const { return objects_; }
 
-  //ObjectList::iterator childrenBegin() { return objects_.begin(); }
-  //ObjectList::iterator childrenEnd  () { return objects_.end  (); }
-
-  //ObjectList::const_iterator childrenBegin() const { return objects_.begin(); }
-  //ObjectList::const_iterator childrenEnd  () const { return objects_.end  (); }
-
   virtual bool isHierDrawable() const { return true; }
 
   virtual bool isDrawable() const { return true; }
@@ -251,15 +244,9 @@ class CSVGObject {
 
   bool getFlatTransformedBBox(CBBox2D &bbox) const;
 
-  CBBox2D transformBBox(const CMatrixStack2D &m, const CBBox2D &bbox) const;
-
   virtual bool inside(const CPoint2D &pos) const;
 
   virtual bool getSize(CSize2D &size) const;
-
-  virtual CImagePtr toImage();
-
-  CImagePtr toNamedImage(const std::string &name);
 
   CSVGBuffer *toBufferImage();
   CSVGBuffer *toNamedBufferImage(const std::string &bufferName);
@@ -378,6 +365,10 @@ class CSVGObject {
   std::string getVisibility() const { return visibility_.getValue(""); }
   void setVisibility(const std::string &str) { visibility_ = str; }
 
+  // display
+  std::string getDisplay() const { return display_.getValue(""); }
+  void setDisplay(const std::string &str) { display_ = str; }
+
   // clip
   void setClipRule(const std::string &rule) { clip_.setRule(rule); }
 
@@ -458,9 +449,19 @@ class CSVGObject {
 
   //---
 
+  const CSVGEnableBackground &enableBackground() const { return enableBackground_; }
+  void setEnableBackground(const CSVGEnableBackground &v) { enableBackground_ = v; }
+
+  const CBBox2D &enableBackgroundRect() const { return enableBackgroundRect_; }
+  void setEnableBackgroundRect(const CBBox2D &v) { enableBackgroundRect_ = v; }
+
+  //---
+
   void setShapeRendering(const std::string &rendering);
 
-  bool decodeXLink(const std::string &str, CSVGObject **object, CImagePtr *image);
+  bool decodeXLink(const std::string &str, CSVGObject **object=0, CSVGBuffer **buffer=0);
+
+  CSVGBuffer *getXLinkBuffer();
 
   static CSVGObject *lookupById(const std::string &id);
 
@@ -585,6 +586,7 @@ class CSVGObject {
   CSVGStroke                   stroke_;
   CSVGFill                     fill_;
   COptValT<std::string>        visibility_;
+  COptValT<std::string>        display_;
   CSVGClip                     clip_;
   CSVGFontDef                  fontDef_;
   COptValT<CHAlignType>        textAnchor_;
@@ -593,6 +595,8 @@ class CSVGObject {
   COptValT<CScreenUnits>       wordSpacing_;
   NameValues                   nameValues_;
   CMatrixStack2D               transform_;
+  CSVGEnableBackground         enableBackground_ { CSVGEnableBackground::ACCUMULATE };
+  CBBox2D                      enableBackgroundRect_;
   ObjectList                   objects_;
   CSVGAnimation                animation_;
   CSVGFilter*                  filter_   { 0 };

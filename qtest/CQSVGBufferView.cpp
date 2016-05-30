@@ -1,5 +1,6 @@
 #include <CQSVGBufferView.h>
 #include <CQSVG.h>
+#include <CQSVGRenderer.h>
 #include <CSVGBuffer.h>
 #include <CQSVGUtil.h>
 #include <CQImage.h>
@@ -34,6 +35,8 @@ CQSVGBufferView(CQSVG *qsvg) :
 
   QFrame *status = new QFrame;
   status->setObjectName("status");
+
+  status->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
   layout->addWidget(status);
 
@@ -73,13 +76,27 @@ bufferName() const
   return combo_->currentText();
 }
 
+#if 0
 CImagePtr
 CQSVGBufferView::
 bufferImage() const
 {
   CSVGBuffer *buffer = qsvg_->getBuffer(bufferName().toStdString());
 
-  return buffer->getImage();
+  return buffer->getRenderer()->getImage();
+}
+#endif
+
+QImage
+CQSVGBufferView::
+bufferImage() const
+{
+  CSVGBuffer *buffer = qsvg_->getBuffer(bufferName().toStdString());
+
+  CQSVGRenderer *renderer = dynamic_cast<CQSVGRenderer *>(buffer->getRenderer());
+  if (! renderer) return QImage();
+
+  return renderer->getQImage();
 }
 
 CBBox2D
@@ -146,11 +163,14 @@ paintEvent(QPaintEvent *)
   else
     painter.fillRect(rect(), Qt::white);
 
-  CImagePtr image  = view_->bufferImage ();
+//CImagePtr image  = view_->bufferImage ();
+  QImage    image  = view_->bufferImage ();
   CPoint2D  origin = view_->bufferOrigin();
 
-  if (image.isValid())
-    painter.drawImage(QPointF(origin.x, origin.y), image.cast<CQImage>()->getQImage());
+//if (image.isValid())
+//  painter.drawImage(QPointF(origin.x, origin.y), image.cast<CQImage>()->getQImage());
+  if (! image.isNull())
+    painter.drawImage(QPointF(origin.x, origin.y), image);
 
   CBBox2D bbox = view_->bufferBBox();
 

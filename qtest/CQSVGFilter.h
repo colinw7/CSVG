@@ -16,6 +16,11 @@ class CQSVGFilter : public CQSVGObject, public CSVGFilter {
 
  public:
   CQSVGFilter(CQSVG *svg);
+
+  double getX() const;
+  double getY() const;
+  double getWidth() const;
+  double getHeight() const;
 };
 
 #endif

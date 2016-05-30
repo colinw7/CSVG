@@ -297,8 +297,10 @@ update(const CSVGStroke &stroke)
   else if (svg_.styleObject()) {
     double a;
 
-    if (svg_.getStyleStrokeOpacity(svg_.styleObject(), a))
+    if      (svg_.getStyleStrokeOpacity(svg_.styleObject(), a))
       opacity_ = ga.getValue(1)*a;
+    else if (ga.isValid())
+      opacity_ = ga.getValue();
   }
   else if (ga.isValid())
     opacity_ = ga.getValue();

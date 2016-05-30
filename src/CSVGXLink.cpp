@@ -8,10 +8,15 @@ CSVGXLink(const CSVGXLink &xlink) :
  resolved_(xlink.resolved_),
  str_     (xlink.str_),
  object_  (xlink.object_),
- image_   (xlink.image_),
+ isImage_ (xlink.isImage_),
  xscale_  (xlink.xscale_),
  yscale_  (xlink.yscale_)
 {
+  if (xlink.imageBuffer_) {
+    initImageBuffer();
+
+    imageBuffer_->setImage(xlink.imageBuffer_);
+  }
 }
 
 CSVGXLink &
@@ -22,43 +27,136 @@ operator=(const CSVGXLink &xlink)
   resolved_ = xlink.resolved_;
   str_      = xlink.str_;
   object_   = xlink.object_;
-  image_    = xlink.image_;
+  isImage_  = xlink.isImage_;
   xscale_   = xlink.xscale_;
   yscale_   = xlink.yscale_;
+
+  if (xlink.imageBuffer_) {
+    initImageBuffer();
+
+    imageBuffer_->setImage(xlink.imageBuffer_);
+  }
 
   return *this;
 }
 
+bool
+CSVGXLink::
+isObject() const
+{
+  resolve();
+
+  return (object_ != 0);
+}
+
+CSVGObject *
+CSVGXLink::
+getObject() const
+{
+  resolve();
+
+  return object_;
+}
+
 void
 CSVGXLink::
-resolve() const
+setObject(CSVGObject *object)
 {
-  double xscale = parent_->getSVG().xscale();
-  double yscale = parent_->getSVG().yscale();
+  object_   = object;
+  resolved_ = true;
+}
 
-  if (resolved_ && xscale_ == xscale && yscale_ == yscale)
-    return;
+bool
+CSVGXLink::
+isImage() const
+{
+  resolve();
 
-  CSVGXLink *th = const_cast<CSVGXLink *>(this);
+  return isImage_;
+}
 
-  if (str_ != "")
-    parent_->decodeXLink(str_, &th->object_, &th->image_);
+CSVGBuffer *
+CSVGXLink::
+getImageBuffer() const
+{
+  resolve();
 
-  th->xscale_   = xscale;
-  th->yscale_   = yscale;
-  th->resolved_ = true;
+  return imageBuffer_;
+}
+
+void
+CSVGXLink::
+setImage(CSVGBuffer *buffer)
+{
+  initImageBuffer();
+
+  imageBuffer_->setImage(buffer);
+
+  isImage_  = true;
+  resolved_ = true;
 }
 
 bool
 CSVGXLink::
 getImage(CSVGBuffer *buffer) const
 {
-  if      (isImage())
-    buffer->setImage(getImage());
-  else if (isObject())
-    buffer->setImage(getObject()->toImage());
+  if      (isImage()) {
+    buffer->setImage(getImageBuffer());
+  }
+  else if (isObject()) {
+    CSVGBuffer *imageBuffer = getObject()->toBufferImage();
+
+    if (! imageBuffer)
+      return false;
+
+    buffer->setImage(imageBuffer);
+  //buffer->setImage(getObject()->toImage());
+  }
   else
     return false;
 
   return true;
+}
+
+void
+CSVGXLink::
+resolve() const
+{
+  CSVGXLink *th = const_cast<CSVGXLink *>(this);
+
+  CSVG &svg = parent_->getSVG();
+
+  double xscale = svg.xscale();
+  double yscale = svg.yscale();
+
+  if (resolved_ && xscale_ == xscale && yscale_ == yscale)
+    return;
+
+  if (str_ != "") {
+    CSVGBuffer *buffer;
+
+    parent_->decodeXLink(str_, &th->object_, &buffer);
+
+    if (buffer) {
+      th->initImageBuffer();
+
+      th->isImage_     = true;
+      th->imageBuffer_ = svg.getBuffer(parent_->getUniqueName() + "_xlink_image");
+
+      th->imageBuffer_->setImage(buffer);
+    }
+  }
+
+  th->xscale_   = xscale;
+  th->yscale_   = yscale;
+  th->resolved_ = true;
+}
+
+void
+CSVGXLink::
+initImageBuffer()
+{
+  CSVG &svg = parent_->getSVG();
+
+  imageBuffer_ = svg.getBuffer(parent_->getUniqueName() + "_xlink_image");
 }

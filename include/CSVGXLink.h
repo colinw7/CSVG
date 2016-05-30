@@ -1,7 +1,8 @@
 #ifndef CSVGXLink_H
 #define CSVGXLink_H
 
-#include <CImageLib.h>
+#include <CMatrixStack2D.h>
+#include <string>
 
 class CSVGObject;
 class CSVGBuffer;
@@ -24,53 +25,34 @@ class CSVGXLink {
 
   std::string str() const { return str_; }
 
-  bool isObject() const {
-    resolve();
+  bool isObject() const;
 
-    return (object_ != 0);
-  }
+  CSVGObject *getObject() const;
 
-  CSVGObject *getObject() const {
-    resolve();
+  void setObject(CSVGObject *object);
 
-    return object_;
-  }
+  bool isImage() const;
 
-  void setObject(CSVGObject *object) {
-    object_   = object;
-    resolved_ = true;
-  }
+  CSVGBuffer *getImageBuffer() const;
 
-  bool isImage() const {
-    resolve();
-
-    return (image_.isValid());
-  }
-
-  CImagePtr getImage() const {
-    resolve();
-
-    return image_;
-  }
-
-  void setImage(CImagePtr image) {
-    image_    = image;
-    resolved_ = true;
-  }
+  void setImage(CSVGBuffer *buffer);
 
   bool getImage(CSVGBuffer *buffer) const;
 
  private:
   void resolve() const;
 
+  void initImageBuffer();
+
  private:
-  CSVGObject  *parent_   { 0 };
-  bool         resolved_ { false };
+  CSVGObject  *parent_      { 0 };
+  bool         resolved_    { false };
   std::string  str_;
-  CSVGObject  *object_   { 0 };
-  CImagePtr    image_;
-  double       xscale_   { 0 };
-  double       yscale_   { 0 };
+  CSVGObject  *object_      { 0 };
+  bool         isImage_     { false };
+  CSVGBuffer*  imageBuffer_ { 0 };
+  double       xscale_      { 0 };
+  double       yscale_      { 0 };
 };
 
 #endif

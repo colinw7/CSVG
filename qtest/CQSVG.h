@@ -11,14 +11,19 @@ class QTimer;
 class CQSVG : public QObject, public CSVG {
   Q_OBJECT
 
-  Q_PROPERTY(QColor background   READ background     WRITE setBackground  )
-  Q_PROPERTY(bool   animating    READ isAnimating)
-  Q_PROPERTY(bool   checkerboard READ isCheckerboard WRITE setCheckerboard)
+  Q_PROPERTY(QColor background    READ background      WRITE setBackground  )
+  Q_PROPERTY(bool   animating     READ isAnimating)
+  Q_PROPERTY(bool   checkerboard  READ isCheckerboard  WRITE setCheckerboard)
+  Q_PROPERTY(bool   showGradient  READ isShowGradient  WRITE setShowGradient)
+  Q_PROPERTY(bool   showFilterBox READ isShowFilterBox WRITE setShowFilterBox)
+  Q_PROPERTY(bool   ignoreFilter  READ getIgnoreFilter WRITE setIgnoreFilter)
 
  public:
   CQSVG(CQSVGWindow *w);
 
  ~CQSVG();
+
+  //---
 
   CQSVGWindow *window() const { return window_; }
 
@@ -30,6 +35,14 @@ class CQSVG : public QObject, public CSVG {
 
   bool isCheckerboard() const { return checkerboard_; }
   void setCheckerboard(bool b);
+
+  bool isShowGradient() const { return showGradient_; }
+  void setShowGradient(bool b) { showGradient_ = b; }
+
+  bool isShowFilterBox() const { return showFilterBox_; }
+  void setShowFilterBox(bool b) { showFilterBox_ = b; }
+
+  //---
 
   CSVGBlock              *createBlock() override;
   CSVGAnchor             *createAnchor() override;
@@ -83,6 +96,35 @@ class CQSVG : public QObject, public CSVG {
   CSVGTSpan              *createTSpan() override;
   CSVGUse                *createUse() override;
 
+  CSVGPathMoveTo   *createPathMoveTo  (double x, double y) override;
+  CSVGPathRMoveTo  *createPathRMoveTo (double x, double y) override;
+  CSVGPathLineTo   *createPathLineTo  (double x, double y) override;
+  CSVGPathRLineTo  *createPathRLineTo (double x, double y) override;
+  CSVGPathHLineTo  *createPathHLineTo (double x) override;
+  CSVGPathRHLineTo *createPathRHLineTo(double x) override;
+  CSVGPathVLineTo  *createPathVLineTo (double y) override;
+  CSVGPathRVLineTo *createPathRVLineTo(double y) override;
+
+  CSVGPathArcTo  *createPathArcTo (double rx, double ry, double xa, double fa,
+                                   double fs, double x2, double y2) override;
+  CSVGPathRArcTo *createPathRArcTo(double rx, double ry, double xa, double fa,
+                                   double fs, double x2, double y2) override;
+
+  CSVGPathBezier2To   *createPathBezier2To  (double x1, double y1, double x2, double y2) override;
+  CSVGPathMBezier2To  *createPathMBezier2To (double x2, double y2) override;
+  CSVGPathRBezier2To  *createPathRBezier2To (double x1, double y1, double x2, double y2) override;
+  CSVGPathMRBezier2To *createPathMRBezier2To(double x2, double y2) override;
+  CSVGPathBezier3To   *createPathBezier3To  (double x1, double y1, double x2, double y2,
+                                                     double x3, double y3) override;
+  CSVGPathMBezier3To  *createPathMBezier3To (double x2, double y2, double x3, double y3) override;
+  CSVGPathRBezier3To  *createPathRBezier3To (double x1, double y1, double x2, double y2,
+                                                     double x3, double y3) override;
+  CSVGPathMRBezier3To *createPathMRBezier3To(double x2, double y2, double x3, double y3) override;
+
+  CSVGPathClosePath *createPathClosePath(bool relative) override;
+
+  //---
+
   void startTimer();
   void stopTimer ();
   void stepTimer ();
@@ -98,12 +140,14 @@ class CQSVG : public QObject, public CSVG {
   void tickSlot();
 
  private:
-  CQSVGWindow *window_       { 0 };
-  QTimer      *timer_        { 0 };
-  double       t_            { 0 };
-  int          dt_           { 100 };
-  bool         animating_    { false };
-  bool         checkerboard_ { false };
+  CQSVGWindow *window_        { 0 };
+  QTimer      *timer_         { 0 };
+  double       t_             { 0 };
+  int          dt_            { 100 };
+  bool         animating_     { false };
+  bool         checkerboard_  { false };
+  bool         showGradient_  { true };
+  bool         showFilterBox_ { true };
 };
 
 #endif

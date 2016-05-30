@@ -404,7 +404,7 @@ tokenToObject(CSVGObject *parent, const CXMLToken *token)
     const std::string &opt_value = option->getValue();
 
     if (! object->processOption(opt_name, opt_value))
-      CSVGLog() << "Unhandled option " << opt_name << "=" << opt_value <<
+      CSVGLog() << "Unhandled tag option " << opt_name << "=" << opt_value <<
                    " for " << object->getObjName();
   }
 
@@ -1251,30 +1251,29 @@ getUnicodeGlyph(const std::string &unicode) const
   return font->getUnicodeGlyph(unicode);
 }
 
-CImagePtr
+void
 CSVG::
-drawToImage(int w, int h, const CPoint2D &offset, double xscale, double yscale)
+drawToBuffer(CSVGBuffer *buffer, int w, int h, const CPoint2D &offset,
+             double xscale, double yscale)
 {
-  CAutoPtr<CSVGRenderer> renderer;
+  drawToRenderer(buffer->getRenderer(), w, h, offset, xscale, yscale);
+}
 
-  renderer = createRenderer();
+void
+CSVG::
+drawToRenderer(CSVGRenderer *renderer, int w, int h, const CPoint2D &offset,
+               double xscale, double yscale)
+{
+  renderer->setSize(xscale*w, yscale*h);
 
-  if (renderer) {
-    renderer->setSize(xscale*w, yscale*h);
+  setRenderer(renderer);
 
-    setRenderer(renderer);
+  CMatrixStack2D matrix;
 
-    CMatrixStack2D matrix;
+  matrix.translate(offset.x, offset.y);
+  matrix.scale(xscale, yscale);
 
-    matrix.translate(offset.x, offset.y);
-    matrix.scale(xscale, yscale);
-
-    draw(matrix, offset, xscale, yscale);
-
-    return renderer->getImage();
-  }
-  else
-    return CImagePtr();
+  draw(matrix, offset, xscale, yscale);
 }
 
 bool
@@ -1317,10 +1316,14 @@ drawBlock(CSVGBlock *block, const CMatrixStack2D &matrix, const CPoint2D &offset
   if (! renderer_)
     return;
 
-  viewMatrix_ = matrix;
-  offset_     = offset;
-  xscale_     = xscale;
-  yscale_     = yscale;
+  setBlockXScale(xscale);
+  setBlockYScale(yscale);
+
+  setViewMatrix(matrix);
+
+  setOffset(offset);
+  setXScale(xscale);
+  setYScale(yscale);
 
   //------
 
@@ -1348,7 +1351,7 @@ drawBlock(CSVGBlock *block, const CMatrixStack2D &matrix, const CPoint2D &offset
 
   bgBuffer->clear();
 
-  beginDrawBuffer(bgBuffer);
+  beginDrawBuffer(bgBuffer, this->offset(), this->xscale(), this->yscale());
 
   //------
 
@@ -1360,9 +1363,7 @@ drawBlock(CSVGBlock *block, const CMatrixStack2D &matrix, const CPoint2D &offset
 
   //------
 
-  CImagePtr image = bgBuffer->getImage();
-
-  renderer_->setImage(image);
+  renderer_->setImage(bgBuffer->getRenderer());
 
   //------
 
@@ -1412,12 +1413,14 @@ getBufferNames(std::vector<std::string> &names) const
   bufferMgr_->getBufferNames(names);
 }
 
+#if 0
 void
 CSVG::
 beginDrawBuffer(CSVGBuffer *buffer)
 {
-  beginDrawBuffer(buffer, offset(), xscale(), yscale());
+  beginDrawBuffer(buffer, offset(), blockXScale(), blockYScale());
 }
+#endif
 
 void
 CSVG::
@@ -1436,7 +1439,7 @@ void
 CSVG::
 beginDrawBuffer(CSVGBuffer *buffer, const CBBox2D &bbox)
 {
-  beginDrawBuffer(buffer, bbox, offset(), xscale(), yscale());
+  beginDrawBuffer(buffer, bbox, offset(), blockXScale(), blockYScale());
 }
 
 void
@@ -1532,11 +1535,7 @@ setStrokeBuffer(CSVGBuffer *buffer)
     CSVGPattern        *pt = dynamic_cast<CSVGPattern        *>(fillObject);
 
     if      (lg) {
-      CAutoPtr<CLinearGradient> lg1;
-
-      lg1 = lg->createGradient(drawObject_);
-
-      buffer->setStrokeFillGradient(lg1);
+      lg->setStrokeBuffer(buffer, drawObject_);
     }
     else if (rg) {
       CAutoPtr<CRadialGradient> rg1;
@@ -1638,6 +1637,8 @@ void
 CSVG::
 setFillBuffer(CSVGBuffer *buffer)
 {
+  buffer->resetFill();
+
   CSVGObject *fillObject = fill_.getFillObject();
 
   if (fillObject) {
@@ -1646,11 +1647,7 @@ setFillBuffer(CSVGBuffer *buffer)
     CSVGPattern        *pt = dynamic_cast<CSVGPattern        *>(fillObject);
 
     if      (lg) {
-      CAutoPtr<CLinearGradient> lg1;
-
-      lg1 = lg->createGradient(drawObject_);
-
-      buffer->setFillGradient(lg1);
+      lg->setFillBuffer(buffer, drawObject_);
     }
     else if (rg) {
       CAutoPtr<CRadialGradient> rg1;
@@ -2983,13 +2980,6 @@ getPartsBBox(const CSVGPathPartList &parts, CBBox2D &bbox) const
   return parts.getBBox(th->buffer_, bbox);
 }
 
-void
-CSVG::
-printParts(std::ostream &os, const CSVGPathPartList &parts) const
-{
-  parts.print(os);
-}
-
 //--------------
 
 bool
@@ -3050,7 +3040,7 @@ coordOption(const std::string &opt_name, const std::string &opt_value,
     CScreenUnits lvalue;
 
     if (! decodeLengthValue(opt_value, lvalue)) {
-      CSVGLog() << "Illegal value for " << name;
+      CSVGLog() << "Illegal length value '" << opt_value << "' for " << name;
       *value = 0;
       flag = false;
     }
@@ -3072,7 +3062,7 @@ lengthOption(const std::string &opt_name, const std::string &opt_value,
   CScreenUnits length1;
 
   if (! decodeLengthValue(opt_value, length1)) {
-    CSVGLog() << "Illegal value for " << name;
+    CSVGLog() << "Illegal length value '" << opt_value << "' for " << name;
     return false;
   }
 
@@ -3194,7 +3184,7 @@ angleOption(const std::string &opt_name, const std::string &opt_value,
     return false;
 
   if (! CStrUtil::toReal(opt_value, value)) {
-    CSVGLog() << "Illegal value for " << name;
+    CSVGLog() << "Illegal real value for " << name;
     return false;
   }
 
@@ -3213,7 +3203,7 @@ realOption(const std::string &opt_name, const std::string &opt_value,
     return false;
 
   if (! CStrUtil::toReal(opt_value, value)) {
-    CSVGLog() << "Illegal value for " << name;
+    CSVGLog() << "Illegal real value for " << name;
     return false;
   }
 
@@ -3229,7 +3219,7 @@ integerOption(const std::string &opt_name, const std::string &opt_value,
     return false;
 
   if (! CStrUtil::toInteger(opt_value, value)) {
-    CSVGLog() << "Illegal value for " << name;
+    CSVGLog() << "Illegal integer value for " << name;
     return false;
   }
 
@@ -4174,15 +4164,16 @@ urlOption(const std::string &opt_name, const std::string &opt_value,
   if (opt_name != name)
     return false;
 
-  if (opt_value == "none") {
-    *obj = 0;
+  *obj = 0;
+
+  if (opt_value == "none")
     return true;
-  }
 
-  CSVGObject *obj1;
+  std::string  id;
+  CSVGObject  *obj1;
 
-  if (! decodeUrlObject(opt_value, &obj1)) {
-    CSVGLog() << "Illegal value for " << name;
+  if (! decodeUrlObject(opt_value, id, &obj1)) {
+    CSVGLog() << "Illegal url value '" << id << "' for " << name;
     return false;
   }
 
@@ -4193,9 +4184,8 @@ urlOption(const std::string &opt_name, const std::string &opt_value,
 
 bool
 CSVG::
-decodeUrlObject(const std::string &str, CSVGObject **object)
+decodeUrlObject(const std::string &str, std::string &id, CSVGObject **object)
 {
-  std::string              id;
   std::vector<std::string> match_strs;
 
   if      (CRegExpUtil::parse(str, "url(#\\(.*\\))", match_strs))
@@ -4266,6 +4256,25 @@ getTitle(std::string &str)
   return true;
 }
 
+CBBox2D
+CSVG::
+transformBBox(const CMatrixStack2D &m, const CBBox2D &bbox) const
+{
+  CPoint2D p1, p2, p3, p4;
+
+  m.multiplyPoint(bbox.getLL(), p1);
+  m.multiplyPoint(bbox.getLR(), p2);
+  m.multiplyPoint(bbox.getUL(), p3);
+  m.multiplyPoint(bbox.getUR(), p4);
+
+  CBBox2D bbox1(p1, p2);
+
+  bbox1 += p3;
+  bbox1 += p4;
+
+  return bbox1;
+}
+
 void
 CSVG::
 lengthToPixel(double xi, double yi, double *xo, double *yo)
@@ -4283,7 +4292,25 @@ void
 CSVG::
 windowToPixel(double xi, double yi, double *xo, double *yo)
 {
-  buffer_->windowToPixel(xi, yi, xo, yo);
+#if 0
+  CSVGBuffer *buffer = getBuffer("BackgroundImage");
+
+  buffer->windowToPixel(xi, yi, xo, yo);
+#endif
+
+#if 0
+  CPoint2D pi(xi, yi);
+
+  CPoint2D po;
+
+  renderer_->windowToPixel(pi, po);
+
+  *xo = po.x;
+  *yo = po.y;
+#endif
+
+  *xo = blockXScale_*xi;
+  *yo = blockYScale_*yi;
 }
 
 void

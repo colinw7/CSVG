@@ -75,6 +75,9 @@ class CSVGRadialGradient : public CSVGObject {
 
   CRadialGradient *createGradient(CSVGObject *);
 
+  void getControlPoints(CSVGObject *obj, double *xc, double *yc, double *r,
+                        double *xf, double *yf);
+
   friend std::ostream &operator<<(std::ostream &os, const CSVGRadialGradient &gradient);
 
  private:

@@ -14,6 +14,7 @@
 #include <CEncode64.h>
 #include <CRegExp.h>
 #include <CFileUtil.h>
+#include <CStrParse.h>
 
 namespace {
 
@@ -596,9 +597,11 @@ setStyle(const std::string &style)
           ! processMaskOption       (words1[0], words1[1]) &&
           ! processTextOption       (words1[0], words1[1]) &&
           ! processFilterOption     (words1[0], words1[1]) &&
-          ! processCSSOption        (words1[0], words1[1]))
+          ! processCSSOption        (words1[0], words1[1]) &&
+          ! processContainerOption  (words1[0], words1[1])) {
         CSVGLog() << "Invalid style option " << words1[0] << ":" << words1[1] <<
                      " for " << getObjName();
+      }
     }
     else {
       CSVGLog() << "Invalid style option format " << words1[0] << " for " << getObjName();
@@ -639,6 +642,7 @@ processOption(const std::string &optName, const std::string &optValue)
   if (processExternalOption       (optName, optValue)) return true;
   if (processFontOption           (optName, optValue)) return true;
   if (processTextContentOption    (optName, optValue)) return true;
+  if (processContainerOption      (optName, optValue)) return true;
 
   std::string    str;
   CBBox2D        bbox;
@@ -663,7 +667,7 @@ processOption(const std::string &optName, const std::string &optValue)
 
   else {
     CSVGLog() << "Unhandled option " << optName << " for " << getObjName();
-    return false;
+    return true; // don't propagate warning
   }
 
   return true;
@@ -766,9 +770,9 @@ processPaintOption(const std::string &optName, const std::string &optValue)
   else if (svg_.stringOption(optName, optValue, "overflow", str))
     nameValues_["overflow"] = str;
   else if (svg_.stringOption(optName, optValue, "visibility", str))
-    setVisibility(str); // visible | hidden | inherit
+    setVisibility(str); // visible | hidden | collapse | inherit
   else if (svg_.stringOption(optName, optValue, "display", str))
-    nameValues_["display"] = str;
+    setDisplay(str); // inline | block | list-item| run-in | compact | marker
   else
     return false;
 
@@ -869,7 +873,9 @@ processGraphicsOption(const std::string &optName, const std::string &optValue)
     // auto | optimizeSpeed | optimizeLegibility | geometricPrecision | inherit
     nameValues_["text-renderer"] = str;
   else if (svg_.stringOption(optName, optValue, "visibility", str))
-    setVisibility(str); // visible | hidden | inherit
+    setVisibility(str); // visible | hidden | collapse | inherit
+  else if (svg_.stringOption(optName, optValue, "display", str))
+    setDisplay(str); // inline | block | list-item| run-in | compact | marker
   else
     return false;
 
@@ -1037,8 +1043,27 @@ processContainerOption(const std::string &optName, const std::string &optValue)
   std::string str;
 
   // Container Properties
-  if (svg_.stringOption(optName, optValue, "enable-background", str))
-    nameValues_["enable-background"] = str;
+  if (svg_.stringOption(optName, optValue, "enable-background", str)) {
+    CStrParse parse(str);
+
+    parse.skipSpace();
+
+    std::string word;
+
+    parse.readNonSpace(word);
+
+    if      (word == "accumulate")
+      enableBackground_ = CSVGEnableBackground::ACCUMULATE;
+    else if (word == "new")
+      enableBackground_ = CSVGEnableBackground::NEW;
+
+    parse.skipSpace();
+
+    double x1, y1, x2, y2;
+
+    if (parse.readReal(&x1) && parse.readReal(&y1) && parse.readReal(&x2) && parse.readReal(&y2))
+      enableBackgroundRect_ = CBBox2D(x1, y1, x2, y2);
+  }
   else
     return false;
 
@@ -1052,25 +1077,25 @@ processGraphicalEventsOption(const std::string &optName, const std::string &optV
   std::string str;
 
   if      (svg_.stringOption(optName, optValue, "onfocusin"  , str))
-    notHandled(optName, optValue);
+    nameValues_["onfocusin"] = str;
   else if (svg_.stringOption(optName, optValue, "onfocusout" , str))
-    notHandled(optName, optValue);
+    nameValues_["onfocusout"] = str;
   else if (svg_.stringOption(optName, optValue, "onactivate" , str))
-    notHandled(optName, optValue);
+    nameValues_["onactivate"] = str;
   else if (svg_.stringOption(optName, optValue, "onclick"    , str))
-    notHandled(optName, optValue);
+    nameValues_["onclick"] = str;
   else if (svg_.stringOption(optName, optValue, "onmousedown", str))
-    notHandled(optName, optValue);
+    nameValues_["onmousedown"] = str;
   else if (svg_.stringOption(optName, optValue, "onmouseup"  , str))
-    notHandled(optName, optValue);
+    nameValues_["onmouseup"] = str;
   else if (svg_.stringOption(optName, optValue, "onmouseover", str))
-    notHandled(optName, optValue);
+    nameValues_["onmouseover"] = str;
   else if (svg_.stringOption(optName, optValue, "onmousemove", str))
-    notHandled(optName, optValue);
+    nameValues_["onmousemove"] = str;
   else if (svg_.stringOption(optName, optValue, "onmouseout" , str))
-    notHandled(optName, optValue);
+    nameValues_["onmouseout"] = str;
   else if (svg_.stringOption(optName, optValue, "onload"     , str))
-    notHandled(optName, optValue);
+    nameValues_["onload"] = str;
   else
     return false;
 
@@ -1108,13 +1133,13 @@ processAnimationEventsOption(const std::string &optName, const std::string &optV
   std::string str;
 
   if      (svg_.stringOption(optName, optValue, "onbegin", str))
-    notHandled(optName, optValue);
+    nameValues_["onbegin"] = str;
   else if (svg_.stringOption(optName, optValue, "onend", str))
-    notHandled(optName, optValue);
+    nameValues_["onend"] = str;
   else if (svg_.stringOption(optName, optValue, "onrepeat", str))
-    notHandled(optName, optValue);
+    nameValues_["onrepeat"] = str;
   else if (svg_.stringOption(optName, optValue, "onload", str))
-    notHandled(optName, optValue);
+    nameValues_["onload"] = str;
   else
     return false;
 
@@ -1219,7 +1244,7 @@ processTextContentOption(const std::string &optName, const std::string &optValue
     setTextAnchor(str);
 
   else if (svg_.stringOption(optName, optValue, "direction", str))
-    notHandled(optName, optValue);
+    nameValues_["direction"] = str;
   else if (svg_.lengthOption(optName, optValue, "letter-spacing", length))
     letterSpacing_ = length;
   else if (svg_.stringOption(optName, optValue, "text-decoration", str))
@@ -1453,7 +1478,33 @@ drawObject()
   if (! isHierDrawable())
     return false;
 
+  if (getDisplay() == "none")
+    return false;
+
   bool drawn = false;
+
+  //------
+
+  // draw to new temp background
+  if (enableBackground() == CSVGEnableBackground::NEW) {
+    CSVGBuffer *bgBuffer      = svg_.getBuffer("BackgroundImage");
+    CSVGBuffer *tempBgBuffer1 = svg_.getBuffer(getUniqueName() + "_BackgroundImage1");
+
+    if (tempBgBuffer1->isDrawing())
+      tempBgBuffer1->stopDraw();
+
+    bool oldBgDrawing = bgBuffer->isDrawing();
+
+    if (oldBgDrawing)
+      bgBuffer->stopDraw();
+
+    tempBgBuffer1->setImage(bgBuffer);
+
+    bgBuffer->clear();
+
+    if (oldBgDrawing)
+      bgBuffer->startDraw();
+  }
 
   //------
 
@@ -1475,6 +1526,9 @@ drawObject()
 
   bool isFiltered = (getFilter() && getFiltered());
 
+  if (svg_.getIgnoreFilter())
+    isFiltered = false;
+
   if (isFiltered)
     saveImage = true;
 
@@ -1495,21 +1549,26 @@ drawObject()
 
     saveBuffer->clear();
 
-    svg_.beginDrawBuffer(saveBuffer);
+    CSVGBlock *block = dynamic_cast<CSVGBlock *>(this);
+
+    if (block)
+      svg_.beginDrawBuffer(saveBuffer, svg_.offset(), svg_.xscale(), svg_.yscale());
+    else
+      svg_.beginDrawBuffer(saveBuffer, svg_.offset(), svg_.blockXScale(), svg_.blockYScale());
 
     currentBuffer = saveBuffer;
   }
 
   //------
 
-  // set current transform (if no filter)
+  // set current transform
   CMatrixStack2D transform = oldBuffer->transform();
 
   CMatrixStack2D transform1(transform);
 
   transform1.append(getTransform());
 
-  if (! isFiltered)
+  //if (! isFiltered)
     currentBuffer->setTransform(transform1);
 
   //------
@@ -1521,7 +1580,7 @@ drawObject()
   //------
 
   // restore transform
-  if (! isFiltered)
+  //if (! isFiltered)
     currentBuffer->setTransform(transform);
 
   //------
@@ -1533,9 +1592,25 @@ drawObject()
     //---
 
     if (drawn) {
-      CImagePtr image = saveBuffer->getImage();
-
       if (isFiltered) {
+        // filtered image draw in local coords so neeed to place
+        // image at expected position
+
+#if 1
+        double x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+
+        transform .multiplyPoint(0, 0, &x1, &y1);
+        transform1.multiplyPoint(0, 0, &x2, &y2);
+
+        double dx = x2 - x1;
+        double dy = y2 - y1;
+
+        saveBuffer->setOrigin(CPoint2D(dx, dy));
+
+        double px, py;
+
+        svg_.lengthToPixel(dx, dy, &px, &py);
+#else
         double x = 0, y = 0;
 
         transform1.multiplyPoint(0, 0, &x, &y);
@@ -1544,18 +1619,64 @@ drawObject()
 
         double px, py;
 
-        oldBuffer->lengthToPixel(x, y, &px, &py);
+        svg_.lengthToPixel(x, y, &px, &py);
+#endif
 
-        oldBuffer->addImage(px, py, image);
+        bool oldDrawing = oldBuffer->isDrawing();
+
+        if (oldDrawing)
+          oldBuffer->stopDraw();
+
+        px = 0; py = 0;
+
+        oldBuffer->addImage(px, py, saveBuffer);
+
+        if (oldDrawing)
+          oldBuffer->startDraw();
       }
-      else
-        oldBuffer->addImage(image);
+      else {
+        bool oldDrawing = oldBuffer->isDrawing();
+
+        if (oldDrawing)
+          oldBuffer->stopDraw();
+
+        oldBuffer->addImage(saveBuffer);
+
+        if (oldDrawing)
+          oldBuffer->startDraw();
+      }
     }
 
     //---
 
     svg_.setBuffer(oldBuffer);
   }
+
+  //---
+
+  // add new background to original
+  if (enableBackground() == CSVGEnableBackground::NEW) {
+    CSVGBuffer *bgBuffer      = svg_.getBuffer("BackgroundImage");
+    CSVGBuffer *tempBgBuffer1 = svg_.getBuffer(getUniqueName() + "_BackgroundImage1");
+    CSVGBuffer *tempBgBuffer2 = svg_.getBuffer(getUniqueName() + "_BackgroundImage2");
+
+    bool oldBgDrawing = bgBuffer->isDrawing();
+
+    if (oldBgDrawing)
+      bgBuffer->stopDraw();
+
+    tempBgBuffer2->setImage(bgBuffer);
+
+    bgBuffer->clear();
+
+    bgBuffer->addImage(tempBgBuffer1);
+    bgBuffer->addImage(tempBgBuffer2);
+
+    if (oldBgDrawing)
+      bgBuffer->startDraw();
+  }
+
+  //---
 
   return drawn;
 }
@@ -1618,51 +1739,27 @@ drawSubObject(bool forceDraw)
   // apply filter
   bool isFiltered = (getFilter() && getFiltered());
 
+  if (svg_.getIgnoreFilter())
+    isFiltered = false;
+
   if (isFiltered) {
-    // store current buffer image into SourceGraphic
-    CSVGBuffer *srcBuffer = svg_.getBuffer("SourceGraphic");
+    // init filter
+    filter_->initDraw(oldBuffer);
 
-    srcBuffer->setImage(oldBuffer->getImage());
-
-    //bool srcDrawing = srcBuffer->isDrawing();
-    // stop drawing to SourceGraphic if needed
-    //if (srcDrawing) srcBuffer->stopDraw();
-
-    bool oldDrawing = oldBuffer->isDrawing();
-    if (oldDrawing) oldBuffer->stopDraw();
-
-    if (svg_.getDebugFilter()) {
-      // save current image into filter in
-      CSVGBuffer *filterInBuffer = svg_.getBuffer(oldBuffer->getName() + "_filter_in");
-
-      filterInBuffer->setImage(srcBuffer->getImage());
-    }
-
-    //--
-
-    // apply filter
     filter_->setObject(this);
 
+    CBBox2D filterBBox;
+
+    if (filter_->getRegion(this, filterBBox))
+      filter_->setContentsBBox(filterBBox);
+
+    // draw filter
     if (filter_->drawSubObject(true))
       drawn = true;
 
     //--
 
-    if (svg_.getDebugFilter()) {
-      // save SourceGraphic (output of filter) into filter_out
-      CSVGBuffer *filterOutBuffer = svg_.getBuffer(oldBuffer->getName() + "_filter_out");
-
-      filterOutBuffer->setImage(srcBuffer->getImage());
-    }
-
-    //---
-
-    oldBuffer->setImage(srcBuffer->getImage());
-
-    // restart drawing to SourceGraphic if needed
-    //if (srcDrawing) srcBuffer->startDraw();
-
-    if (oldDrawing) oldBuffer->startDraw();
+    filter_->termDraw(oldBuffer);
   }
 
   //---
@@ -1705,30 +1802,6 @@ setVisible(bool b)
     visibility_ = "hidden";
   else
     visibility_.setInvalid();
-}
-
-CImagePtr
-CSVGObject::
-toImage()
-{
-  CSVGBuffer *imageBuffer = toBufferImage();
-
-  if (! imageBuffer)
-    return CImagePtr();
-
-  return imageBuffer->getImage();
-}
-
-CImagePtr
-CSVGObject::
-toNamedImage(const std::string &bufferName)
-{
-  CSVGBuffer *buffer = toNamedBufferImage(bufferName);
-
-  if (! buffer)
-    return CImagePtr();
-
-  return buffer->getImage();
 }
 
 CSVGBuffer *
@@ -1887,7 +1960,7 @@ getTransformedBBox(CBBox2D &bbox) const
   if (! getBBox(bbox))
     return false;
 
-  bbox = transformBBox(m, bbox);
+  bbox = svg_.transformBBox(m, bbox);
 
   return true;
 }
@@ -1898,31 +1971,16 @@ getFlatTransformedBBox(CBBox2D &bbox) const
 {
   CMatrixStack2D m = getFlatTransform();
 
-  if (! getBBox(bbox))
-    return false;
+  if (! getBBox(bbox)) {
+    if (! getParent())
+      return false;
 
-  bbox = transformBBox(m, bbox);
+    return getParent()->getFlatTransformedBBox(bbox);
+  }
+
+  bbox = svg_.transformBBox(m, bbox);
 
   return true;
-}
-
-CBBox2D
-CSVGObject::
-transformBBox(const CMatrixStack2D &m, const CBBox2D &bbox) const
-{
-  CPoint2D p1, p2, p3, p4;
-
-  m.multiplyPoint(bbox.getLL(), p1);
-  m.multiplyPoint(bbox.getLR(), p2);
-  m.multiplyPoint(bbox.getUL(), p3);
-  m.multiplyPoint(bbox.getUR(), p4);
-
-  CBBox2D bbox1(p1, p2);
-
-  bbox1 += p3;
-  bbox1 += p4;
-
-  return bbox1;
 }
 
 bool
@@ -2049,10 +2107,10 @@ setClasses(const std::vector<std::string> &classes)
 
 bool
 CSVGObject::
-decodeXLink(const std::string &str, CSVGObject **object, CImagePtr *image)
+decodeXLink(const std::string &str, CSVGObject **object, CSVGBuffer **buffer)
 {
-  if (object)
-    *object = 0;
+  if (object) *object = 0;
+  if (buffer) *buffer = 0;
 
   //---
 
@@ -2077,9 +2135,11 @@ decodeXLink(const std::string &str, CSVGObject **object, CImagePtr *image)
 
     if (format == "image/png;base64") {
       // image string to buffer
+      std::string filename(".svg.png");
+
       std::string str1 = CEncode64Inst->decode(str.substr(pos));
 
-      CFile file(".svg.png");
+      CFile file(filename);
 
       file.write(str1);
 
@@ -2087,22 +2147,20 @@ decodeXLink(const std::string &str, CSVGObject **object, CImagePtr *image)
 
       file.close();
 
-      CImageFileSrc src(".svg.png");
+      //---
 
-      CImagePtr image1 = CImageMgrInst->createImage(src);
+      CSVGBuffer *imgBuffer = getXLinkBuffer();
 
-      CSVGBuffer *imgBuffer = svg_.getBuffer(getUniqueName() + "_xlink");
+      imgBuffer->setImageFile(filename);
 
-      imgBuffer->setImage(image1);
-
-      if (image)
-        *image = image1;
+      if (buffer)
+        *buffer = imgBuffer;
 
       return true;
     }
     else {
-      std::cerr << "Unhandled images format '" + format + "'" << std::endl;
-      return false;
+      CSVGLog() << "Unhandled images format '" + format + "'";
+      return true; // don't propagate warning
     }
   }
 
@@ -2136,8 +2194,8 @@ decodeXLink(const std::string &str, CSVGObject **object, CImagePtr *image)
     }
 
     if (! object1) {
-      CSVGLog() << "Object " << rhs << " does not exist";
-      return false;
+      CSVGLog() << "Object '" << rhs << "' does not exist";
+      return true; // don't propagate warning
     }
 
     if (object)
@@ -2149,13 +2207,13 @@ decodeXLink(const std::string &str, CSVGObject **object, CImagePtr *image)
     CFile file(str);
 
     if (! file.exists()) {
-      CSVGLog() << "File " << str << " does not exist";
-      return false;
+      CSVGLog() << "File '" << str << "' does not exist";
+      return true; // don't propagate warning
     }
 
     if (! file.isRegular()) {
-      CSVGLog() << "File " << str << " is not a regular file";
-      return false;
+      CSVGLog() << "File '" << str << "' is not a regular file";
+      return true; // don't propagate warning
     }
 
     // get type from contents/suffix
@@ -2166,15 +2224,9 @@ decodeXLink(const std::string &str, CSVGObject **object, CImagePtr *image)
 
     // handle image file
     if      (type & CFILE_TYPE_IMAGE) {
-      CImagePtr image1;
-
       // svg image
       if (type == CFILE_TYPE_IMAGE_SVG) {
         // draw SVG file to image at current scale
-        CImageNameSrc src(file.getPath());
-
-        image1 = CImageMgrInst->createImage(src);
-
         CSVG svg;
 
         svg.setRenderer(svg_.getRenderer());
@@ -2189,28 +2241,25 @@ decodeXLink(const std::string &str, CSVGObject **object, CImagePtr *image)
 
         svg.getBlock()->setSize(size);
 
+        CSVGBuffer *imgBuffer = getXLinkBuffer();
+
         int w = svg.getIWidth();
         int h = svg.getIHeight();
 
-        image1 = svg.drawToImage(w, h, CPoint2D(0, 0), svg_.xscale(), svg_.yscale());
+        svg.drawToBuffer(imgBuffer, w, h, CPoint2D(0, 0), svg_.xscale(), svg_.yscale());
+
+        if (buffer)
+          *buffer = imgBuffer;
       }
       // image file (png, jpeg, ...)
       else {
-        CImageFileSrc src(file);
+        CSVGBuffer *imgBuffer = getXLinkBuffer();
 
-        image1 = CImageMgrInst->createImage(src);
+        imgBuffer->setImageFile(file);
 
-        image1->read(str);
+        if (buffer)
+          *buffer = imgBuffer;
       }
-
-      if (image1.isValid()) {
-        CSVGBuffer *imgBuffer = svg_.getBuffer(getUniqueName() + "_xlink");
-
-        imgBuffer->setImage(image1);
-      }
-
-      if (image)
-        *image = image1;
     }
     // handle svg file
     else if (type == CFILE_TYPE_TEXT_HTML) {
@@ -2223,12 +2272,19 @@ decodeXLink(const std::string &str, CSVGObject **object, CImagePtr *image)
         *object = block;
     }
     else {
-      CSVGLog() << "Unknown type of file for " << str;
-      return false;
+      CSVGLog() << "Unknown type of file for '" << str << "'";
+      return true; // don't propagate warning
     }
   }
 
   return true;
+}
+
+CSVGBuffer *
+CSVGObject::
+getXLinkBuffer()
+{
+  return svg_.getBuffer(getUniqueName() + "_xlink");
 }
 
 bool
@@ -2553,11 +2609,7 @@ CSVGObject::
 printNameParts(std::ostream &os, const std::string &name, const CSVGPathPartList &parts) const
 {
   if (! parts.empty()) {
-    os << " " << name << "=\"";
-
-    svg_.printParts(os, parts);
-
-    os << "\"";
+    os << " " << name << "=\"" << parts << "\"";
   }
 }
 

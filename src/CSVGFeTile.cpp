@@ -53,7 +53,7 @@ draw()
 
     CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_in");
 
-    buffer->setImage(inBuffer->getImage());
+    buffer->setImage(inBuffer);
     buffer->setBBox (inBuffer->bbox());
   }
 
@@ -64,7 +64,7 @@ draw()
 
     CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_out");
 
-    buffer->setImage(outBuffer->getImage());
+    buffer->setImage(outBuffer);
     buffer->setBBox (outBuffer->bbox());
   }
 }
@@ -73,7 +73,9 @@ void
 CSVGFeTile::
 filterImage(CSVGBuffer *inBuffer, CSVGBuffer *outBuffer)
 {
-  CSVGBuffer::tileBuffers(inBuffer, this, outBuffer);
+  CMatrixStack2D transform = svg_.getBuffer()->transform();
+
+  CSVGBuffer::tileBuffers(inBuffer, this, transform, outBuffer);
 }
 
 void

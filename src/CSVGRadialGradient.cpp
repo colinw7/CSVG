@@ -3,6 +3,7 @@
 #include <CSVGStop.h>
 #include <CSVGBuffer.h>
 #include <CSVG.h>
+#include <CSVGLog.h>
 #include <CMathGen.h>
 #include <CSVGUtil.h>
 #include <CRadialGradient.h>
@@ -87,7 +88,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   else if (svg_.stringOption(opt_name, opt_value, "xlink:href", str)) {
     CSVGObject *object;
 
-    if (! decodeXLink(opt_value, &object, 0))
+    if (! decodeXLink(opt_value, &object))
       return false;
 
     if (object) {
@@ -123,6 +124,9 @@ processOption(const std::string &opt_name, const std::string &opt_value)
           for (const auto &s : lg->stops())
             addStop(s);
         }
+      }
+      else {
+        CSVGLog() << "Unhandled radial gradient link";
       }
     }
   }
@@ -182,46 +186,11 @@ CRadialGradient *
 CSVGRadialGradient::
 createGradient(CSVGObject *obj)
 {
-  //CSVGBuffer *currentBuffer = svg_.getBuffer();
+  double xc, yc, r, xf, yf;
+
+  getControlPoints(obj, &xc, &yc, &r, &xf, &yf);
 
   CRadialGradient *gradient = new CRadialGradient;
-
-  double xc = getCenterX(0.5).pxValue(1);
-  double yc = getCenterY(0.5).pxValue(1);
-  double r  = getRadius (0.5).pxValue(1);
-
-  double xf = getFocusX();
-  double yf = getFocusY();
-
-  //---
-
-  // remap points to absolute
-  if      (getUnits() == CSVGCoordUnits::USER_SPACE) {
-    // TODO: parent transform ?
-#if 0
-    CMatrixStack2D m = currentBuffer->transform();
-
-    // radius ?
-    CPoint2D p1(xc, yc);
-    CPoint2D p2(xf, yf);
-
-    m.multiplyPoint(p1.x, p1.y, &xc, &yc);
-    m.multiplyPoint(p2.x, p2.y, &xf, &yf);
-#endif
-  }
-  else if (getUnits() == CSVGCoordUnits::OBJECT_BBOX) {
-    CBBox2D bbox;
-
-    obj->getBBox(bbox);
-
-    xc = CSVGUtil::map(xc, 0, 1, bbox.getXMin(), bbox.getXMax());
-    yc = CSVGUtil::map(yc, 0, 1, bbox.getYMin(), bbox.getYMax());
-    xf = CSVGUtil::map(xf, 0, 1, bbox.getXMin(), bbox.getXMax());
-    yf = CSVGUtil::map(yf, 0, 1, bbox.getYMin(), bbox.getYMax());
-    r  = CSVGUtil::map(r , 0, 1, 0, bbox.getWidth()); // w or h or both
-  }
-
-  //---
 
   gradient->setCenter(xc, yc);
   gradient->setRadius(r);
@@ -244,6 +213,46 @@ createGradient(CSVGObject *obj)
   gradient->init(1, 1);
 
   return gradient;
+}
+
+void
+CSVGRadialGradient::
+getControlPoints(CSVGObject *obj, double *xc, double *yc, double *r, double *xf, double *yf)
+{
+  *xc = getCenterX(0.5).pxValue(1);
+  *yc = getCenterY(0.5).pxValue(1);
+  *r  = getRadius (0.5).pxValue(1);
+
+  *xf = getFocusX();
+  *yf = getFocusY();
+
+  CPoint2D p1(*xc, *yc);
+  CPoint2D p2(*xf, *yf);
+
+  if (getGTransformValid()) {
+    getGTransform().multiplyPoint(p1.x, p1.y, xc, yc);
+    getGTransform().multiplyPoint(p2.x, p2.y, xf, yf);
+
+    p1 = CPoint2D(*xc, *yc);
+    p2 = CPoint2D(*xf, *yf);
+  }
+
+  //---
+
+  // remap points to object bounding box (will be mapped to flat coord by drawing code)
+  if      (getUnits() == CSVGCoordUnits::USER_SPACE) {
+  }
+  else if (getUnits() == CSVGCoordUnits::OBJECT_BBOX) {
+    CBBox2D bbox;
+
+    obj->getBBox(bbox);
+
+    *xc = CSVGUtil::map(*xc, 0, 1, bbox.getXMin(), bbox.getXMax());
+    *yc = CSVGUtil::map(*yc, 0, 1, bbox.getYMin(), bbox.getYMax());
+    *xf = CSVGUtil::map(*xf, 0, 1, bbox.getXMin(), bbox.getXMax());
+    *yf = CSVGUtil::map(*yf, 0, 1, bbox.getYMin(), bbox.getYMax());
+    *r  = CSVGUtil::map(*r , 0, 1, 0, bbox.getWidth()); // w or h or both
+  }
 }
 
 std::ostream &

@@ -1,12 +1,12 @@
 #ifndef CQSVGAnimateTransform_H
 #define CQSVGAnimateTransform_H
 
-#include <CQSVGObject.h>
+#include <CQSVGAnimateBase.h>
 #include <CSVGAnimateTransform.h>
 
 class CQSVG;
 
-class CQSVGAnimateTransform : public CQSVGObject, public CSVGAnimateTransform {
+class CQSVGAnimateTransform : public CQSVGAnimateBase, public CSVGAnimateTransform {
   Q_OBJECT
 
  public:

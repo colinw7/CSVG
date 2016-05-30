@@ -36,20 +36,12 @@ print(std::ostream &os, bool hier) const
 
     printNameValue(os, "horiz-adv-x", hax_);
 
-    os << " d=\"";
-
-    svg_.printParts(os, parts_);
-
-    os << "\"";
+    os << " d=\"" << parts_ << "\"";
 
     os << "/>" << std::endl;
   }
   else {
-    os << "missing-glyph " << "(";
-
-    svg_.printParts(os, parts_);
-
-    os << ")";
+    os << "missing-glyph " << "(" << parts_ << ")";
   }
 }
 

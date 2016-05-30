@@ -1,10 +1,14 @@
 #include <CQSVGObject.h>
 #include <CQSVG.h>
-#include <CQUtil.h>
 #include <CQSVGWindow.h>
 #include <CQSVGCanvas.h>
 #include <CQSVGRenderer.h>
+#include <CSVGLinearGradient.h>
+#include <CSVGRadialGradient.h>
 #include <CSVGObject.h>
+#include <CSVGFilter.h>
+
+#include <CQUtil.h>
 #include <QPainter>
 
 CQSVGObject::
@@ -344,17 +348,115 @@ drawSelected()
   if (! isSelected())
     return;
 
+  CQSVGCanvas *canvas = qsvg_->window()->canvas();
+
+  //---
+
   CBBox2D bbox;
 
   if (obj_->getFlatTransformedBBox(bbox)) {
-    CQSVGCanvas *canvas = qsvg_->window()->canvas();
-
     double xscale = obj_->getSVG().xscale();
     double yscale = obj_->getSVG().yscale();
 
-    CBBox2D bbox1(xscale*bbox.getXMin(), yscale*bbox.getYMin(),
-                  xscale*bbox.getXMax(), yscale*bbox.getYMax());
+    CPoint2D p1(xscale*bbox.getXMin(), yscale*bbox.getYMin());
+    CPoint2D p2(xscale*bbox.getXMax(), yscale*bbox.getYMax());
 
-    canvas->drawRect(bbox1, Qt::red);
+    CPoint2D w1, w2;
+
+    canvas->pixelToWindow(p1, w1);
+    canvas->pixelToWindow(p2, w2);
+
+    canvas->drawRect(CBBox2D(w1, w2), Qt::red);
+  }
+
+  //---
+
+  if (qsvg_->isShowFilterBox()) {
+    CSVGFilter *filter = obj_->getFilter();
+
+    if (filter) {
+      const CBBox2D &bbox = filter->getContentsBBox();
+
+      double xscale = obj_->getSVG().xscale();
+      double yscale = obj_->getSVG().yscale();
+
+      CPoint2D p1(xscale*bbox.getXMin(), yscale*bbox.getYMin());
+      CPoint2D p2(xscale*bbox.getXMax(), yscale*bbox.getYMax());
+
+      CPoint2D w1, w2;
+
+      canvas->pixelToWindow(p1, w1);
+      canvas->pixelToWindow(p2, w2);
+
+      canvas->drawRect(CBBox2D(w1, w2), Qt::red);
+    }
+  }
+
+  //---
+
+  if (qsvg_->isShowGradient()) {
+    const CSVGFill &fill = obj_->getFill();
+
+    CSVGObject *fillObj = fill.getFillObject();
+
+    CSVGLinearGradient *lgrad = dynamic_cast<CSVGLinearGradient *>(fillObj);
+    CSVGRadialGradient *rgrad = dynamic_cast<CSVGRadialGradient *>(fillObj);
+
+    QColor bg(Qt::white);
+    QColor fg(Qt::blue);
+
+    if      (lgrad) {
+      double x1, y1, x2, y2;
+
+      lgrad->getEndPoints(obj_, &x1, &y1, &x2, &y2);
+
+      CPoint2D p1(x1, y1);
+      CPoint2D p2(x2, y2);
+
+      CMatrixStack2D m = obj_->getFlatTransform();
+
+      m.multiplyPoint(p1.x, p1.y, &x1, &y1);
+      m.multiplyPoint(p2.x, p2.y, &x2, &y2);
+
+      p1 = CPoint2D(x1, y1);
+      p2 = CPoint2D(x2, y2);
+
+      canvas->drawLine(p1, p2, fg);
+
+      canvas->drawPoints({p1, p2}, CQSVGCanvas::Shape::CIRCLE, 4, bg, fg);
+
+      // TODO: draw stops
+    }
+    else if (rgrad) {
+      double xc, yc, r, xf, yf;
+
+      rgrad->getControlPoints(obj_, &xc, &yc, &r, &xf, &yf);
+
+      CPoint2D pc(xc, yc);
+      CPoint2D p1(xc + r, yc);
+      CPoint2D p2(xc, yc + r);
+      CPoint2D pf(xf, yf);
+
+      CMatrixStack2D m = obj_->getFlatTransform();
+
+      double x1, y1, x2, y2;
+
+      m.multiplyPoint(pc.x, pc.y, &xc, &yc);
+      m.multiplyPoint(p1.x, p1.y, &x1, &y1);
+      m.multiplyPoint(p2.x, p2.y, &x2, &y2);
+      m.multiplyPoint(pf.x, pf.y, &xf, &yf);
+
+      pc = CPoint2D(xc, yc);
+      p1 = CPoint2D(x1, y1);
+      p2 = CPoint2D(x2, y2);
+      pf = CPoint2D(xf, yf);
+
+      canvas->drawLine(pc, p1, fg);
+      canvas->drawLine(pc, p2, fg);
+
+      canvas->drawPoints({pc, p1, p2, pf}, CQSVGCanvas::Shape::CIRCLE, 4, bg, fg);
+
+      // TODO: draw stops
+    }
   }
 }

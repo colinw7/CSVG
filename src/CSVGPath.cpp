@@ -79,11 +79,7 @@ print(std::ostream &os, bool hier) const
       os << "/>" << std::endl;
   }
   else {
-    os << "path (";
-
-    svg_.printParts(os, parts_);
-
-    os << ")";
+    os << "path (" << parts_ << ")";
   }
 }
 

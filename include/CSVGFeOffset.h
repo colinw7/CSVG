@@ -14,10 +14,12 @@ class CSVGFeOffset : public CSVGFilterBase {
 
   CSVGFeOffset *dup() const override;
 
-  std::string getFilterIn() const { return filterIn_.getValue("SourceGraphic"); }
+  bool hasFilterIn() const { return filterIn_.isValid(); }
+  std::string getFilterIn() const { return filterIn_.getValue("FilterGraphic"); }
   void setFilterIn(const std::string &s) { filterIn_ = s; }
 
-  std::string getFilterOut() const { return filterOut_.getValue("SourceGraphic"); }
+  bool hasFilterOut() const { return filterOut_.isValid(); }
+  std::string getFilterOut() const { return filterOut_.getValue("FilterGraphic"); }
   void setFilterOut(const std::string &s) { filterOut_ = s; }
 
   double getDX() const { return dx_.getValue(0); }
@@ -29,8 +31,6 @@ class CSVGFeOffset : public CSVGFilterBase {
   bool processOption(const std::string &name, const std::string &value) override;
 
   void draw() override;
-
-  void filterImage(CSVGBuffer *inBuffer, CSVGBuffer *outBuffer);
 
   void print(std::ostream &os, bool hier) const override;
 

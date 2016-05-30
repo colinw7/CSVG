@@ -39,8 +39,6 @@ class CSVGImage : public CSVGObject {
   void setOrigin(const CPoint2D &point);
   void setSize(const CSize2D &size);
 
-  //void setImage(const std::string &filename);
-
   CSVGPreserveAspect preserveAspect() const {
     return preserveAspect_.getValue(CSVGPreserveAspect()); }
   void setPreserveAspect(const CSVGPreserveAspect &a) { preserveAspect_ = a; }
@@ -49,7 +47,7 @@ class CSVGImage : public CSVGObject {
 
   void draw() override;
 
-  CImagePtr getImage() const;
+  bool initImage() const;
 
   CSVGObject *getObject() const;
 
@@ -57,6 +55,8 @@ class CSVGImage : public CSVGObject {
 
   void moveBy(const CVector2D &delta) override;
   void resizeTo(const CSize2D &size) override;
+
+  CSVGBuffer *getImageBuffer() const;
 
   void print(std::ostream &os, bool hier) const override;
 

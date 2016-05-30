@@ -13,7 +13,7 @@ getPathString() const
 {
   std::stringstream ss;
 
-  qsvg_->printParts(ss, CSVGPath::getPartList());
+  ss << CSVGPath::getPartList();
 
   return ss.str().c_str();
 }

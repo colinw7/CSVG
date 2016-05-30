@@ -41,9 +41,10 @@ bool
 CSVGAnimateBase::
 processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  if (processCoreOption       (opt_name, opt_value)) return true;
-  if (processConditionalOption(opt_name, opt_value)) return true;
-  if (processExternalOption   (opt_name, opt_value)) return true;
+  if (processCoreOption           (opt_name, opt_value)) return true;
+  if (processConditionalOption    (opt_name, opt_value)) return true;
+  if (processExternalOption       (opt_name, opt_value)) return true;
+  if (processAnimationEventsOption(opt_name, opt_value)) return true;
 
   std::string    str;
   CSVGTimeValue  time;

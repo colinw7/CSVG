@@ -200,7 +200,7 @@ drawInit()
 
     drawBuffer->clear();
 
-    svg_.beginDrawBuffer(drawBuffer);
+    svg_.beginDrawBuffer(drawBuffer, svg_.offset(), svg_.xscale(), svg_.yscale());
   }
 }
 
@@ -294,32 +294,45 @@ drawTerm()
       //drawBuffer->windowToPixel(-ix     , -iy     , &px1, &py1);
       //drawBuffer->windowToPixel(-ix + bw, -iy + bh, &px2, &py2);
 
-      CImagePtr image = drawBuffer->getImage();
-
-      //image->clipOutside(px1, py1, px2, py2);
-      //image->clipOutside(-ix, -iy, -ix + bw, -iy + bh);
-      image->clipOutside(-ix*xscale_, -iy*yscale_, (-ix + bw)*xscale_, (-iy + bh)*yscale_);
-
-      //---
-
       CSVGBuffer *clipBuffer = svg_.getBuffer("_" + getUniqueName() + "_svg_clip");
 
-      clipBuffer->setImage(image);
+      double px1 = -ix*xscale_;
+      double py1 = -iy*xscale_;
+      double px2 = (-ix + bw)*xscale_;
+      double py2 = (-iy + bh)*yscale_;
+
+      clipBuffer->setClippedBuffer(drawBuffer, px1, py1, px2, py2);
 
       //---
 
       double px, py;
 
-      oldBuffer_->lengthToPixel(x, y, &px, &py);
+      svg_.lengthToPixel(x, y, &px, &py);
 
-      oldBuffer_->addImage(px, py, image);
+      bool oldDrawing = oldBuffer_->isDrawing();
+
+      if (oldDrawing)
+        oldBuffer_->stopDraw();
+
+      oldBuffer_->addImage(px, py, clipBuffer);
+
+      if (oldDrawing)
+        oldBuffer_->startDraw();
     }
     else {
       double px, py;
 
-      oldBuffer_->lengthToPixel(x, y, &px, &py);
+      svg_.lengthToPixel(x, y, &px, &py);
+
+      bool oldDrawing = oldBuffer_->isDrawing();
+
+      if (oldDrawing)
+        oldBuffer_->stopDraw();
 
       oldBuffer_->addBuffer(drawBuffer, px, py);
+
+      if (oldDrawing)
+        oldBuffer_->startDraw();
     }
 
     //---

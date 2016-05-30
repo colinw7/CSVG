@@ -17,7 +17,7 @@ class CSVGFeConvolveMatrix : public CSVGFilterBase {
 
   CSVGFeConvolveMatrix *dup() const override;
 
-  std::string getFilterIn() const { return filterIn_.getValue("SourceGraphic"); }
+  std::string getFilterIn() const { return filterIn_.getValue("FilterGraphic"); }
   void setFilterIn(const std::string &s) { filterIn_ = s; }
 
   std::string getOrder() const { return order_.getValue("3"); }

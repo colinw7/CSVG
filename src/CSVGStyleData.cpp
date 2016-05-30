@@ -1,5 +1,6 @@
 #include <CSVGStyleData.h>
 #include <CSVG.h>
+#include <CSVGLog.h>
 
 void
 CSVGStyleData::
@@ -24,23 +25,32 @@ setValue(const std::string &name, const std::string &value)
   else if (name == "stroke-dasharray")
     stroke_.setDash(value);
   else if (name == "marker-start") {
-    CSVGObject *obj;
+    std::string  id;
+    CSVGObject  *obj;
 
-    if (svg_.decodeUrlObject(value, &obj))
+    if (svg_.decodeUrlObject(value, id, &obj))
       marker_.setStart(obj);
+    else
+      CSVGLog() << "Illegal url value '" << id << "' for " << name;
   }
   else if (name == "marker-mid") {
-    CSVGObject *obj;
+    std::string  id;
+    CSVGObject  *obj;
 
-    if (svg_.decodeUrlObject(value, &obj))
+    if (svg_.decodeUrlObject(value, id, &obj))
       marker_.setMid(obj);
+    else
+      CSVGLog() << "Illegal url value '" << id << "' for " << name;
   }
   else if (name == "marker-end") {
-    CSVGObject *obj;
+    std::string  id;
+    CSVGObject  *obj;
 
-    if (svg_.decodeUrlObject(value, &obj))
+    if (svg_.decodeUrlObject(value, id, &obj))
       marker_.setEnd(obj);
+    else
+      CSVGLog() << "Illegal url value '" << id << "' for " << name;
   }
   else
-    std::cerr << "Unhandled: " << name << ":" << value << std::endl;
+    CSVGLog() << "Unhandled: " << name << ":" << value;
 }

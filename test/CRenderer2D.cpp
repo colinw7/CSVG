@@ -372,7 +372,8 @@ setFillType(CFillType fill_type)
 
   brush_.setFillRule(fill_type);
 
-  path_->setFillType(fill_type);
+  if (path_)
+    path_->setFillType(fill_type);
 }
 
 CFillType
@@ -600,6 +601,13 @@ CRenderer2D::
 setImage(CImagePtr image)
 {
   pixel_renderer_->setImage(image);
+}
+
+void
+CRenderer2D::
+setImage(CRenderer2D *renderer)
+{
+  pixel_renderer_->setImage(renderer->getImage());
 }
 
 void

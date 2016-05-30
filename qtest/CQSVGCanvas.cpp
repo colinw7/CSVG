@@ -268,6 +268,44 @@ drawRect(const CBBox2D &bbox, const QColor &c)
 
 void
 CQSVGCanvas::
+drawLine(const CPoint2D &p1, const CPoint2D &p2, const QColor &c)
+{
+  opainter_->setPen(c);
+
+  opainter_->setPen(c);
+
+  opainter_->drawLine(p1.x, p1.y, p2.x, p2.y);
+}
+
+void
+CQSVGCanvas::
+drawPoints(std::initializer_list<CPoint2D> points, Shape shape, int size,
+           const QColor &bg, const QColor &fg)
+{
+  for (const auto &p : points)
+    drawPoint(p, shape, size, bg, fg);
+}
+
+void
+CQSVGCanvas::
+drawPoint(const CPoint2D &p, Shape /*shape*/, int s, const QColor &bg, const QColor &fg)
+{
+  CPoint2D p1, p2;
+
+  renderer_->windowToPixel(CPoint2D(0, 0), p1);
+  renderer_->windowToPixel(CPoint2D(s, s), p2);
+
+  double w = std::abs(p2.x - p1.x);
+  double h = std::abs(p2.y - p1.y);
+
+  opainter_->setBrush(bg);
+  opainter_->setPen  (fg);
+
+  opainter_->drawEllipse(QRectF(QPointF(p.x - w/2, p.y - h/2), QSizeF(w, h)));
+}
+
+void
+CQSVGCanvas::
 pixelToWindow(const CPoint2D &p, CPoint2D &w)
 {
   renderer_->pixelToWindow(p, w);
