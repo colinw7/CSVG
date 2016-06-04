@@ -183,6 +183,6 @@ unix:LIBS += \
 -L../../CRegExp/lib \
 -L../../CRGBName/lib \
 -lCSVG -lCQPropertyTree -lCQUtil \
--lCXML -lCReadLine -lCUtil -lCFont -lCImageLib -lCConfig \
+-lCXML -lCReadLine -lCConfig -lCUtil -lCFont -lCImageLib \
 -lCRGBName -lCFile -lCOS -lCStrUtil -lCRegExp \
 -lpng -ljpeg -ltre -lreadline
