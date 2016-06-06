@@ -51,10 +51,11 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   return true;
 }
 
-void
+bool
 CSVGHKern::
 draw()
 {
+  return false;
 }
 
 void

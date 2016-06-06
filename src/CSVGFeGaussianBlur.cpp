@@ -13,7 +13,8 @@ CSVGFeGaussianBlur(const CSVGFeGaussianBlur &blur) :
  CSVGFilterBase(blur),
  filterIn_ (blur.filterIn_),
  filterOut_(blur.filterOut_),
- stdDev_   (blur.stdDev_)
+ stdDevX_  (blur.stdDevX_),
+ stdDevY_  (blur.stdDevY_)
 {
 }
 
@@ -28,22 +29,28 @@ bool
 CSVGFeGaussianBlur::
 processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  std::string str;
-  double      real;
+  std::string         str;
+  std::vector<double> reals;
 
   if      (svg_.stringOption(opt_name, opt_value, "in", str))
     filterIn_ = str;
   else if (svg_.stringOption(opt_name, opt_value, "result", str))
     filterOut_ = str;
-  else if (svg_.realOption  (opt_name, opt_value, "stdDeviation", &real))
-    stdDev_ = real;
+  else if (svg_.realListOption(opt_name, opt_value, "stdDeviation", reals)) {
+    if      (reals.size() == 1)
+      stdDevX_ = reals[0];
+    else if (reals.size() > 1) {
+      stdDevX_ = reals[0];
+      stdDevY_ = reals[1];
+    }
+  }
   else
     return CSVGFilterBase::processOption(opt_name, opt_value);
 
   return true;
 }
 
-void
+bool
 CSVGFeGaussianBlur::
 draw()
 {
@@ -60,7 +67,7 @@ draw()
 
     CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_in");
 
-    buffer->setImage(inBuffer);
+    buffer->setImageBuffer(inBuffer);
   }
 
   filterImage(inBuffer, outBuffer);
@@ -70,18 +77,20 @@ draw()
 
     CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_out");
 
-    buffer->setImage(outBuffer);
+    buffer->setImageBuffer(outBuffer);
   }
 
   if (inDrawing)
     inBuffer->startDraw();
+
+  return true;
 }
 
 void
 CSVGFeGaussianBlur::
 filterImage(CSVGBuffer *inBuffer, CSVGBuffer *outBuffer)
 {
-  CSVGBuffer::gaussianBlurBuffers(inBuffer, this, getStdDev(), outBuffer);
+  CSVGBuffer::gaussianBlurBuffers(inBuffer, this, getStdDevX(), getStdDevY(), outBuffer);
 }
 
 void
@@ -97,7 +106,11 @@ print(std::ostream &os, bool hier) const
 
     printNameValue(os, "in"          , filterIn_ );
     printNameValue(os, "result"      , filterOut_);
-    printNameValue(os, "stdDeviation", stdDev_   );
+
+    if      (stdDevX_.isValid() && ! stdDevY_.isValid())
+      printNameValue(os, "stdDeviation", stdDevX_);
+    else if (stdDevX_.isValid() && stdDevY_.isValid())
+      os << " stdDeviation=\"" << stdDevX_.getValue() << " " << stdDevY_.getValue() << "\"";
 
     os << "/>" << std::endl;
   }

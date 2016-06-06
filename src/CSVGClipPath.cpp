@@ -54,14 +54,12 @@ drawPath(CSVGObject* obj)
 
   //---
 
-  CSVGBuffer *oldBuffer = svg_.getBuffer();
+  CSVGBuffer *oldBuffer = svg_.getCurrentBuffer();
 
   // set temp buffer for clip path data
-  CSVGBuffer *buffer = svg_.getBuffer("clipPath_" + obj->getUniqueName());
+  CSVGBuffer *buffer = svg_.pushBuffer("clipPath_" + obj->getUniqueName());
 
   buffer->setClip(true);
-
-  svg_.setBuffer(buffer);
 
   //---
 
@@ -117,7 +115,7 @@ drawPath(CSVGObject* obj)
 
   svg_.endDrawBuffer(buffer);
 
-  svg_.setBuffer(oldBuffer);
+  svg_.popBuffer();
 }
 
 void

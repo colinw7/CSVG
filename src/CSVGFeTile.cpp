@@ -41,7 +41,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   return true;
 }
 
-void
+bool
 CSVGFeTile::
 draw()
 {
@@ -53,8 +53,9 @@ draw()
 
     CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_in");
 
-    buffer->setImage(inBuffer);
-    buffer->setBBox (inBuffer->bbox());
+    buffer->setImageBuffer(inBuffer);
+
+    buffer->setBBox(inBuffer->bbox());
   }
 
   filterImage(inBuffer, outBuffer);
@@ -64,16 +65,19 @@ draw()
 
     CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_out");
 
-    buffer->setImage(outBuffer);
-    buffer->setBBox (outBuffer->bbox());
+    buffer->setImageBuffer(outBuffer);
+
+    buffer->setBBox(outBuffer->bbox());
   }
+
+  return true;
 }
 
 void
 CSVGFeTile::
 filterImage(CSVGBuffer *inBuffer, CSVGBuffer *outBuffer)
 {
-  CMatrixStack2D transform = svg_.getBuffer()->transform();
+  CMatrixStack2D transform = svg_.getCurrentBuffer()->transform();
 
   CSVGBuffer::tileBuffers(inBuffer, this, transform, outBuffer);
 }

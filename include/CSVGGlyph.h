@@ -25,23 +25,23 @@ class CSVGGlyph : public CSVGObject {
 
   virtual bool processOption(const std::string &name, const std::string &value) override;
 
-  virtual void draw() override;
+  virtual bool draw() override;
 
   void print(std::ostream &os, bool hier) const override;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGGlyph &glyph);
 
  protected:
-  COptValT<std::string> unicode_;
-  COptValT<std::string> glyphName_;
-  CSVGPathPartList      parts_;
-  COptValT<std::string> orientation_;
-  COptValT<std::string> arabicForm_;
-  COptValT<std::string> lang_;
-  COptValT<int>         horizAdvX_;
-  COptValT<int>         vertAdvY_;
-  COptValT<int>         vertOriginX_;
-  COptValT<int>         vertOriginY_;
+  COptString       unicode_;
+  COptString       glyphName_;
+  CSVGPathPartList parts_;
+  COptString       orientation_;
+  COptString       arabicForm_;
+  COptString       lang_;
+  COptInt          horizAdvX_;
+  COptInt          vertAdvY_;
+  COptInt          vertOriginX_;
+  COptInt          vertOriginY_;
 };
 
 #endif

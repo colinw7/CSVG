@@ -22,7 +22,7 @@ class CQSVGWindow : public QMainWindow {
 
   CQSVGCanvas *canvas() const { return canvas_; }
 
-  CQPropertyTree *tree() const { return tree_; }
+  CQPropertyTree *propertiesTree() const { return propTree_; }
 
   bool isImage() const { return image_; }
   void setImage(bool b) { image_ = b; }
@@ -49,6 +49,8 @@ class CQSVGWindow : public QMainWindow {
   void updateState();
 
   void addProperties();
+
+  void loadCSS();
 
   void addObjectToTree(const std::string &name, CSVGObject *obj);
 
@@ -79,7 +81,7 @@ class CQSVGWindow : public QMainWindow {
 
   CQSVG*              svg_            { 0 };
   CQSVGCanvas*        canvas_         { 0 };
-  CQPropertyTree*     tree_           { 0 };
+  CQPropertyTree*     propTree_       { 0 };
   QLabel*             posLabel_       { 0 };
   QLabel*             zoomLabel_      { 0 };
   CQSVGPropertiesDlg* propertiesDlg_  { 0 };

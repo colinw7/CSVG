@@ -4,7 +4,6 @@
 #include <CSVGFeSpotLight.h>
 #include <CSVGBuffer.h>
 #include <CSVG.h>
-#include <CRGBName.h>
 
 CSVGFeSpecularLighting::
 CSVGFeSpecularLighting(CSVG &svg) :
@@ -37,7 +36,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   else if (svg_.stringOption(opt_name, opt_value, "result", str))
     filterOut_ = str;
   else if (svg_.stringOption(opt_name, opt_value, "lighting-color", str))
-    lightingColor_ = CRGBName::toRGBA(str);
+    lightingColor_ = svg_.nameToColor(str);
   else if (svg_.realOption(opt_name, opt_value, "specularConstant", &r))
     specularConstant_ = r;
   else if (svg_.realOption(opt_name, opt_value, "specularExponent", &r))
@@ -50,7 +49,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   return true;
 }
 
-void
+bool
 CSVGFeSpecularLighting::
 draw()
 {
@@ -62,7 +61,7 @@ draw()
 
     CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_in");
 
-    buffer->setImage(inBuffer);
+    buffer->setImageBuffer(inBuffer);
   }
 
   filterImage(inBuffer, outBuffer);
@@ -72,8 +71,10 @@ draw()
 
     CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_out");
 
-    buffer->setImage(outBuffer);
+    buffer->setImageBuffer(outBuffer);
   }
+
+  return true;
 }
 
 void

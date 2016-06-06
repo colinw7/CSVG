@@ -219,7 +219,13 @@ createGradient(CSVGObject *obj)
     gradient->setSpread(getSpread());
 
   for (const auto &s : stops()) {
-    CRGBA  rgba  = s->getColor ();
+    CRGBA rgba;
+
+    if (hasCurrentColor())
+      rgba = colorToRGBA(s->getColor());
+    else
+      rgba = obj->colorToRGBA(s->getColor());
+
     double alpha = s->getOpacity();
 
     rgba.setAlpha(alpha);

@@ -55,7 +55,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   return true;
 }
 
-void
+bool
 CSVGFeConvolveMatrix::
 draw()
 {
@@ -66,7 +66,7 @@ draw()
 
     CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_in1");
 
-    buffer->setImage(inBuffer);
+    buffer->setImageBuffer(inBuffer);
   }
 
   filterImage(inBuffer);
@@ -76,8 +76,10 @@ draw()
 
     CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_out");
 
-    buffer->setImage(inBuffer);
+    buffer->setImageBuffer(inBuffer);
   }
+
+  return true;
 }
 
 void

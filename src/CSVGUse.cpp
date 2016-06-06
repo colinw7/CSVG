@@ -200,7 +200,7 @@ moveBy(const CVector2D &delta)
     c->moveBy(delta);
 }
 
-void
+bool
 CSVGUse::
 draw()
 {
@@ -210,12 +210,15 @@ draw()
   CSVGObject *object = getLinkObject();
 
   if      (object) {
+    if (object->getDisplay() == "none")
+      return false;
+
     bool drawn = false;
 
     //------
 
     // get current buffer
-    CSVGBuffer *oldBuffer     = svg_.getBuffer();
+    CSVGBuffer *oldBuffer     = svg_.getCurrentBuffer();
     CSVGBuffer *currentBuffer = oldBuffer;
 
     //------
@@ -224,6 +227,9 @@ draw()
     bool saveImage = false;
 
     if (svg_.getDebugUse())
+      saveImage = true;
+
+    if (object->getOpacityValid())
       saveImage = true;
 
     CSVGSymbol *symbol = dynamic_cast<CSVGSymbol *>(object);
@@ -262,9 +268,7 @@ draw()
 
     // set buffer to temporary buffer
     if (saveImage) {
-      saveBuffer = svg_.getBuffer("_" + object->getUniqueName() + "_" + getUniqueName());
-
-      svg_.setBuffer(saveBuffer);
+      saveBuffer = svg_.pushBuffer("_" + object->getUniqueName() + "_" + getUniqueName());
 
       saveBuffer->clear();
 
@@ -288,6 +292,9 @@ draw()
     //if (! saveImage)
     if (! symbol)
       currentBuffer->setTransform(transform1);
+
+    if (object->getOpacityValid())
+      currentBuffer->setOpacity(object->getOpacity());
 
     //------
 
@@ -331,9 +338,18 @@ draw()
           double x1 = x*svg_.xscale();
           double y1 = y*svg_.yscale();
 
+          bool oldDrawing = oldBuffer->isDrawing();
+
+          if (oldDrawing)
+            oldBuffer->stopDraw();
+
           oldBuffer->addClippedBuffer(saveBuffer, x1, y1, px1, py1, px2, py2);
+
+          if (oldDrawing)
+            oldBuffer->startDraw();
         }
         else {
+#if 0
           double x = 0, y = 0;
 
           transform.multiplyPoint(0, 0, &x, &y);
@@ -341,23 +357,35 @@ draw()
           double px, py;
 
           svg_.lengthToPixel(x, y, &px, &py);
+#endif
 
-          oldBuffer->addBuffer(saveBuffer, px, py);
+          bool oldDrawing = oldBuffer->isDrawing();
+
+          if (oldDrawing)
+            oldBuffer->stopDraw();
+
+          //oldBuffer->addBuffer(saveBuffer, px, py);
+          oldBuffer->addBuffer(saveBuffer, 0, 0);
+
+          if (oldDrawing)
+            oldBuffer->startDraw();
         }
       }
 
       //---
 
-      svg_.setBuffer(oldBuffer);
+      svg_.popBuffer();
     }
   }
   else if (xlink_.isValid()) {
     if (xlink_.getValue().isImage()) {
-      CSVGBuffer *buffer = svg_.getBuffer();
+      CSVGBuffer *buffer = svg_.getCurrentBuffer();
 
       buffer->drawImage(0, 0, xlink_.getValue().getImageBuffer());
     }
   }
+
+  return true;
 }
 
 void

@@ -55,7 +55,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   return true;
 }
 
-void
+bool
 CSVGFeTurbulence::
 draw()
 {
@@ -67,7 +67,7 @@ draw()
 
     CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_in");
 
-    buffer->setImage(inBuffer);
+    buffer->setImageBuffer(inBuffer);
   }
 
   filterImage(inBuffer, outBuffer);
@@ -77,8 +77,10 @@ draw()
 
     CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_out");
 
-    buffer->setImage(outBuffer);
+    buffer->setImageBuffer(outBuffer);
   }
+
+  return true;
 }
 
 void

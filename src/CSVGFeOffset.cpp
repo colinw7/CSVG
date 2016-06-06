@@ -46,7 +46,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   return true;
 }
 
-void
+bool
 CSVGFeOffset::
 draw()
 {
@@ -63,7 +63,7 @@ draw()
   if (svg_.getDebugFilter()) {
     CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_in");
 
-    buffer->setImage(inBuffer);
+    buffer->setImageBuffer(inBuffer);
   }
 
   CSVGBuffer::offsetBuffers(inBuffer, getDX(), getDY(), outBuffer);
@@ -71,11 +71,13 @@ draw()
   if (svg_.getDebugFilter()) {
     CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_out");
 
-    buffer->setImage(outBuffer);
+    buffer->setImageBuffer(outBuffer);
   }
 
   if (inDrawing)
     inBuffer->startDraw();
+
+  return true;
 }
 
 void

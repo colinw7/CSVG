@@ -44,7 +44,7 @@ class CSVGBufferMgr {
   CSVGBuffer *lookupAlphaBuffer(CSVGBuffer *refBuffer, bool create=false);
   CSVGBuffer *createAlphaBuffer(CSVGBuffer *refBuffer);
 
-  void getBufferNames(std::vector<std::string> &names) const;
+  void getBufferNames(std::vector<std::string> &names, bool includeAlpha=true) const;
 
  private:
   void addBuffer(CSVGBuffer *buffer);
@@ -75,10 +75,17 @@ class CSVGBuffer {
 
   const std::string &getName() const { return name_; }
 
+  CSVGBuffer *parentBuffer() const { return parentBuffer_; }
+  void setParentBuffer(CSVGBuffer *p) { parentBuffer_ = p; }
+
   bool isAntiAlias() const;
   void setAntiAlias(bool flag);
 
-  bool isAlpha() const { return refBuffer_; }
+  bool isAlpha() const { return alpha_; }
+  void setAlpha(bool b);
+
+  double opacity() const { return opacity_.getValue(1); }
+  void setOpacity(double r);
 
   static void blendBuffers(CSVGBuffer *inBuffer1, CSVGBuffer *inBuffer2,
                            CSVGBlendMode mode, CSVGBuffer *outBuffer);
@@ -95,7 +102,7 @@ class CSVGBuffer {
                                      double scale, CSVGBuffer *outBuffer);
   static void floodBuffers(const CRGBA &c, int w, int h, CSVGBuffer *outBuffer);
   static void gaussianBlurBuffers(CSVGBuffer *inBuffer, CSVGFilterBase *filter,
-                                  double stdDev, CSVGBuffer *outBuffer);
+                                  double stdDevX, double stdDevY, CSVGBuffer *outBuffer);
   static void imageBuffers(CSVGBuffer *inBuffer, CSVGFilterBase *filter,
                            const CMatrixStack2D &transform, CSVGPreserveAspect preserveAspect,
                            CSVGBuffer *outBuffer);
@@ -146,14 +153,17 @@ class CSVGBuffer {
   void setImageFile(const std::string &filename);
   void setImageFile(CFile &file);
 
-  void setImage(double x, double y, CSVGBuffer *buffer);
-  void setImage(CSVGBuffer *buffer);
+  void setFlatImageBuffer(CSVGBuffer *buffer);
+
+  void setImageBuffer(double x, double y, CSVGBuffer *buffer);
+  void setImageBuffer(CSVGBuffer *buffer);
 
   void addReshapeImage(CSVGBuffer *buffer, double x1, double y1, int pw, int ph);
 
-  void addImage(double x, double y, CSVGBuffer *buffer);
+  void addImageBuffer(double x, double y, CSVGBuffer *buffer);
+  void addImageBuffer(CSVGBuffer *buffer);
+
   void addImage(double x, double y, const CImagePtr &image);
-  void addImage(CSVGBuffer *buffer);
 
   void reset();
 
@@ -177,6 +187,7 @@ class CSVGBuffer {
 
   void fill(const CRGBA &bg);
 
+  void resetStroke();
   void setStrokeColor(const CRGBA &color);
   void setStrokeFilled(bool b);
   void setStrokeFillType(CFillType type);
@@ -262,7 +273,11 @@ class CSVGBuffer {
  private:
   CSVG&              svg_;
   std::string        name_;
+  CSVGBuffer*        refBuffer_ { 0 };
+  CSVGBuffer*        parentBuffer_ { 0 };
   CSVGRenderer*      renderer_ { 0 };
+  bool               alpha_ { false };
+  COptReal           opacity_;
   CMatrixStack2D     transform_;
   CLineDash          lineDash_;
   CPoint2D           origin_ { 0, 0 };
@@ -272,7 +287,6 @@ class CSVGBuffer {
   bool               clip_ { false };
   bool               hasClipPath_ { false };
   bool               drawing_ { false };
-  CSVGBuffer*        refBuffer_ { 0 };
 };
 
 #endif

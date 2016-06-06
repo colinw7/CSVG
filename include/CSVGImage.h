@@ -45,7 +45,7 @@ class CSVGImage : public CSVGObject {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  void draw() override;
+  bool draw() override;
 
   bool initImage() const;
 
@@ -67,11 +67,12 @@ class CSVGImage : public CSVGObject {
 
  private:
   COptValT<CSVGXLink>          xlink_;
-  COptValT<double>             x_;
-  COptValT<double>             y_;
+  COptReal                     x_;
+  COptReal                     y_;
   COptValT<CScreenUnits>       w_;
   COptValT<CScreenUnits>       h_;
   COptValT<CSVGPreserveAspect> preserveAspect_;
+  COptString                   colorProfile_;
 };
 
 #endif

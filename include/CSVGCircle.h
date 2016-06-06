@@ -18,15 +18,16 @@ class CSVGCircle : public CSVGObject {
   double getCenterY() const { return cy_.getValue(0); }
   void setCenterY(double y) { cy_ = y; }
 
-  double getRadius() const { return radius_.getValue(1); }
-  void setRadius(double r) { radius_ = r; }
+  bool hasRadius() const { return radius_.isValid(); }
+  CScreenUnits getRadius() const { return radius_.getValue(CScreenUnits(1)); }
+  void setRadius(const CScreenUnits &r) { radius_ = r; }
 
   void setCenter(const CPoint2D &center) { setCenterX(center.x); setCenterY(center.y); }
   CPoint2D getCenter() const { return CPoint2D(getCenterX(), getCenterY()); }
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  void draw() override;
+  bool draw() override;
 
   bool getBBox(CBBox2D &bbox) const override;
 
@@ -39,9 +40,9 @@ class CSVGCircle : public CSVGObject {
   friend std::ostream &operator<<(std::ostream &os, const CSVGCircle &circle);
 
  private:
-  COptValT<double> cx_;
-  COptValT<double> cy_;
-  COptValT<double> radius_;
+  COptReal               cx_;
+  COptReal               cy_;
+  COptValT<CScreenUnits> radius_;
 };
 
 #endif

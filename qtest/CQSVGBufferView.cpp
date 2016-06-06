@@ -8,6 +8,7 @@
 
 #include <QVBoxLayout>
 #include <QComboBox>
+#include <QCheckBox>
 #include <QLabel>
 #include <QPainter>
 #include <QMouseEvent>
@@ -23,15 +24,37 @@ CQSVGBufferView(CQSVG *qsvg) :
   QVBoxLayout *layout = new QVBoxLayout(this);
   layout->setMargin(0); layout->setSpacing(2);
 
+  //---
+
+  QFrame *controlFrame = new QFrame;
+  controlFrame->setObjectName("control");
+
+  controlFrame->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+
+  layout->addWidget(controlFrame);
+
+  QHBoxLayout *controlLayout = new QHBoxLayout(controlFrame);
+  controlLayout->setMargin(0); controlLayout->setSpacing(2);
+
+  bgCheck_ = new QCheckBox("Checkerboard");
+
+  connect(bgCheck_, SIGNAL(stateChanged(int)), this, SLOT(updateBuffer()));
+
+  controlLayout->addWidget(bgCheck_);
+
   combo_ = new QComboBox;
 
-  layout->addWidget(combo_);
+  connect(combo_, SIGNAL(currentIndexChanged(int)), this, SLOT(updateBuffer()));
+
+  controlLayout->addWidget(combo_);
+
+  //---
 
   canvas_ = new CQSVGBufferCanvas(this);
 
   layout->addWidget(canvas_);
 
-  connect(combo_, SIGNAL(currentIndexChanged(int)), canvas_, SLOT(update()));
+  //---
 
   QFrame *status = new QFrame;
   status->setObjectName("status");
@@ -43,6 +66,11 @@ CQSVGBufferView(CQSVG *qsvg) :
   QHBoxLayout *statusLayout = new QHBoxLayout(status);
   statusLayout->setMargin(0); statusLayout->setSpacing(2);
 
+  statusLabel_ = new QLabel;
+  statusLabel_->setObjectName("statusLabel");
+
+  statusLayout->addWidget(statusLabel_);
+
   statusLayout->addStretch();
 
   posLabel_ = new QLabel;
@@ -53,6 +81,8 @@ CQSVGBufferView(CQSVG *qsvg) :
   //---
 
   updateState();
+
+  updateBuffer();
 }
 
 void
@@ -67,6 +97,29 @@ updateState()
 
   for (const auto &n : names)
     combo_->addItem(n.c_str());
+}
+
+void
+CQSVGBufferView::
+updateBuffer()
+{
+  QString text;
+
+  CSVGBuffer *buffer = qsvg_->getBuffer(bufferName().toStdString());
+
+  if (buffer) {
+    text += QString("Opacity: %1").arg(buffer->opacity());
+
+    if (buffer->isAlpha())
+      text += ", Alpha";
+
+    if (buffer->isClip())
+      text += ", Clip";
+  }
+
+  statusLabel_->setText(text);
+
+  canvas_->update();
 }
 
 QString
@@ -122,6 +175,13 @@ showPos(const QPoint &ppos)
   posLabel_->setText(QString("(%1)").arg(ptext));
 }
 
+bool
+CQSVGBufferView::
+isCheckerboard() const
+{
+  return bgCheck_->isChecked();
+}
+
 //---
 
 CQSVGBufferCanvas::
@@ -139,27 +199,8 @@ paintEvent(QPaintEvent *)
 {
   QPainter painter(this);
 
-  if (checked_) {
+  if (view_->isCheckerboard())
     CQSVGUtil::drawCheckerboard(&painter, 32);
-#if 0
-    int cs = 32;
-    int nc = (width () + cs - 1)/cs;
-    int nr = (height() + cs - 1)/cs;
-
-    for (int r = 0; r < nr; ++r) {
-      int y = r*cs;
-
-      for (int c = 0; c < nc; ++c) {
-        int x = c*cs;
-
-        if ((r + c) & 1)
-          painter.fillRect(QRect(x, y, cs, cs), QColor(200,200,200));
-        else
-          painter.fillRect(QRect(x, y, cs, cs), Qt::white);
-      }
-    }
-#endif
-  }
   else
     painter.fillRect(rect(), Qt::white);
 

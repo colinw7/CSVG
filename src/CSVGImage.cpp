@@ -19,7 +19,8 @@ CSVGImage(const CSVGImage &image) :
  y_             (image.y_),
  w_             (image.w_),
  h_             (image.h_),
- preserveAspect_(image.preserveAspect_)
+ preserveAspect_(image.preserveAspect_),
+ colorProfile_  (image.colorProfile_)
 {
 }
 
@@ -86,6 +87,8 @@ processOption(const std::string &opt_name, const std::string &opt_value)
     preserveAspect_ = preserveAspect;
   else if (svg_.stringOption(opt_name, opt_value, "xlink:href", str))
     xlink_ = CSVGXLink(this, str);
+  else if (svg_.stringOption(opt_name, opt_value, "color-profile", str))
+    colorProfile_ = str;
   else
     return CSVGObject::processOption(opt_name, opt_value);
 
@@ -117,7 +120,7 @@ setSize(const CSize2D &size)
   h_ = size.height;
 }
 
-void
+bool
 CSVGImage::
 draw()
 {
@@ -125,11 +128,11 @@ draw()
     CSVGLog() << *this;
 
   if (! initImage())
-    return;
+    return false;
 
   //---
 
-  CSVGBuffer *oldBuffer = svg_.getBuffer();
+  CSVGBuffer *oldBuffer = svg_.getCurrentBuffer();
 
   //---
 
@@ -148,6 +151,8 @@ draw()
   int ph = CSVGUtil::round(fabs(y2 - y1));
 
   oldBuffer->addReshapeImage(getImageBuffer(), x1, y1, pw, ph);
+
+  return true;
 }
 
 bool
@@ -168,12 +173,12 @@ initImage() const
     //th->xlink_.getValue().setObject(0);
 
     if (objImageBuffer)
-      imageBuffer->setImage(objImageBuffer);
+      imageBuffer->setImageBuffer(objImageBuffer);
 
     return true;
   }
   else if (xlink_.getValue().isImage()) {
-    imageBuffer->setImage(xlink_.getValue().getImageBuffer());
+    imageBuffer->setImageBuffer(xlink_.getValue().getImageBuffer());
 
     return true;
   }
@@ -251,6 +256,8 @@ print(std::ostream &os, bool hier) const
     printNamePreserveAspect(os, "preserveAspectRatio", preserveAspect_);
 
     printNameXLink(os, "xlink:href", xlink_);
+
+    printNameValue(os, "color-profile", colorProfile_);
 
     os << "/>" << std::endl;
   }

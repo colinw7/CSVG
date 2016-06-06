@@ -25,8 +25,8 @@ class CSVGAnimateColor : public CSVGAnimateBase {
   friend std::ostream &operator<<(std::ostream &os, const CSVGAnimateColor &animateColor);
 
  private:
-  COptValT<std::string> type_;
-  COptValT<std::string> additive_;
+  COptString type_;
+  COptString additive_;
 };
 
 #endif

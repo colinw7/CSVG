@@ -88,7 +88,7 @@ addPoint(const CPoint2D &point)
   points_.push_back(point);
 }
 
-void
+bool
 CSVGPolygon::
 draw()
 {
@@ -104,6 +104,8 @@ draw()
   }
   else
     svg_.fillPolygon(points_);
+
+  return true;
 }
 
 bool

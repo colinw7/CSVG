@@ -9,6 +9,8 @@
 #include <CSVGEventValue.h>
 #include <CSVGTimeValue.h>
 #include <CSVGPreserveAspect.h>
+#include <CSVGCSSData.h>
+#include <CSVGColor.h>
 
 #include <CCSS.h>
 #include <CImageLib.h>
@@ -17,7 +19,6 @@
 #include <CMatrixStack2D.h>
 #include <CBBox2D.h>
 #include <CFillType.h>
-#include <CLineDash.h>
 #include <CAutoPtr.h>
 #include <CGenGradient.h>
 
@@ -33,6 +34,7 @@ class CSVGAnimateColor;
 class CSVGAnimateMotion;
 class CSVGAnimateTransform;
 class CSVGCircle;
+class CSVGColorProfile;
 class CSVGDefs;
 class CSVGDesc;
 class CSVGEllipse;
@@ -91,7 +93,6 @@ class CSVGUse;
 
 class CSVGGlyph;
 class CSVGObjectMarker;
-class CSVGStyleData;
 class CSVGBufferMgr;
 
 class CStrParse;
@@ -134,12 +135,17 @@ class CSVG {
 
   CSVGBlock *getBlock() const;
 
-  CSVGBuffer *getBuffer() const;
-  void setBuffer(CSVGBuffer *buffer);
+  CSVGBuffer *pushBuffer(const std::string &name);
+  CSVGBuffer *popBuffer();
+
+  void printBufferStack(const std::string &desc) const;
+
+  CSVGBuffer *getCurrentBuffer() const;
+  void setCurrentBuffer(CSVGBuffer *buffer);
 
   CSVGBuffer *getBuffer(const std::string &name);
 
-  void getBufferNames(std::vector<std::string> &names) const;
+  void getBufferNames(std::vector<std::string> &names, bool includeAlpha=true) const;
 
   //void beginDrawBuffer(CSVGBuffer *buffer);
 
@@ -151,11 +157,9 @@ class CSVG {
 
   void setAntiAlias(bool flag);
 
-  CSVGObject *styleObject() const { return styleObject_; }
-  void setStyleObject(CSVGObject *o) { styleObject_ = o; }
-
-  CSVGObject *drawObject() const { return drawObject_; }
-  void setDrawObject(CSVGObject *o) { drawObject_ = o; }
+  CSVGObject *currentDrawObject() const;
+  void pushDrawObject(CSVGObject *o);
+  void popDrawObject();
 
   bool getUniquify() const { return uniquify_; }
   void setUniquify(bool uniquify) { uniquify_ = uniquify; }
@@ -201,6 +205,7 @@ class CSVG {
   virtual CSVGAnimateTransform    *createAnimateTransform();
   virtual CSVGCircle              *createCircle();
   virtual CSVGClipPath            *createClipPath();
+  virtual CSVGColorProfile        *createColorProfile();
   virtual CSVGDefs                *createDefs();
   virtual CSVGDesc                *createDesc();
   virtual CSVGEllipse             *createEllipse();
@@ -301,15 +306,26 @@ class CSVG {
   const CRGBA &background() const { return background_; }
   void setBackground(const CRGBA &v) { background_ = v; }
 
-  const CSVGStroke  &getStroke () const { return stroke_ ; }
-  const CSVGFill    &getFill   () const { return fill_   ; }
-  const CSVGClip    &getClip   () const { return clip_   ; }
-  const CSVGFontDef &getFontDef() const { return fontDef_; }
+  //---
 
-  void setStroke (const CSVGStroke  &stroke ) { stroke_  = stroke ; }
-  void setFill   (const CSVGFill    &fill   ) { fill_    = fill   ; }
-  void setClip   (const CSVGClip    &clip   ) { clip_    = clip   ; }
-  void setFontDef(const CSVGFontDef &fontDef) { fontDef_ = fontDef; }
+  const CSVGStroke &getStroke() const { return styleData_.stroke; }
+  void setStroke(const CSVGStroke &stroke) { styleData_.stroke = stroke; }
+
+  const CSVGFill &getFill() const { return styleData_.fill; }
+  void setFill(const CSVGFill &fill) { styleData_.fill = fill; }
+
+  const CSVGClip &getClip() const { return styleData_.clip; }
+  void setClip(const CSVGClip &clip) { styleData_.clip = clip; }
+
+  const CSVGFontDef &getFontDef() const { return styleData_.fontDef; }
+  void setFontDef(const CSVGFontDef &fontDef) { styleData_.fontDef = fontDef; }
+
+  CSVGObject *styleObject() const { return styleData_.object; }
+  void setStyleObject(CSVGObject *o) { styleData_.object = o; }
+
+  //---
+
+  const CSVGCSSData &getCSSData() const { return cssData_; }
 
   bool processOption(const std::string &opt_name, const std::string &opt_value);
 
@@ -337,6 +353,11 @@ class CSVG {
   void drawBlock(CSVGBlock *block, const CMatrixStack2D &matrix,
                  const CPoint2D &offset=CPoint2D(0,0), double xscale=1, double yscale=1);
 
+  //---
+
+  void pushStyle(CSVGObject *object);
+  void popStyle();
+
   void resetStroke();
   void updateStroke(const CSVGStroke &stroke);
   void setSelectedStroke();
@@ -357,6 +378,8 @@ class CSVG {
   void resetFontDef();
   void updateFontDef(const CSVGFontDef &fontDef);
   void setFontDef();
+
+  //---
 
   void setTransform(const CMatrixStack2D &matrix);
 
@@ -383,14 +406,9 @@ class CSVG {
                   const std::string &name, CSVGPathPartList &parts);
   bool pathStringToParts(const std::string &data, CSVGPathPartList &parts);
 
-  void drawParts(const CSVGPathPartList &parts, CSVGObjectMarker *marker=0);
+  void drawParts(const CSVGPathPartList &parts);
 
-  double partsLength(const CSVGPathPartList &parts) const;
-
-  bool interpParts(double s, const CSVGPathPartList &parts, double *xi, double *yi, double *a);
-
-  bool getPartsBBox(const CSVGPathPartList &parts, CBBox2D &bbox) const;
-  void printParts(std::ostream &os, const CSVGPathPartList &parts) const;
+  void drawMarkers(const std::vector<CPoint2D> &points, const std::vector<double> &angles);
 
   bool coordOption(const std::string &opt_name, const std::string &opt_value,
                    const std::string &name, CScreenUnits &length);
@@ -445,8 +463,11 @@ class CSVG {
   double     decodeWidthString(const std::string &width_str);
   double     decodeOpacityString(const std::string &opacity_str);
   CFillType  decodeFillRuleString(const std::string &rule_str);
-  bool       decodeDashString(const std::string &dash_str, CLineDash &dash);
-  bool       decodeColorString(const std::string &color_str, CRGBA &rgba);
+  bool       decodeDashString(const std::string &dash_str,
+                              std::vector<CScreenUnits> &lengths, bool &solid);
+  bool       decodeColorString(const std::string &color_str, CSVGColor &color);
+  bool       decodeRGBAString(const std::string &color_str, CRGBA &rgba);
+  CRGBA      nameToColor(const std::string &name) const;
   CFontStyle decodeFontWeightString(const std::string &weight_str);
   CFontStyle decodeFontStyleString(const std::string &style_str);
   bool       decodePercentString(const std::string &str, CScreenUnits &length);
@@ -482,19 +503,22 @@ class CSVG {
   void addStyleValues(CSVGStyleData &svgStyleData, const CCSS::StyleData &cssStyleData);
 
   CSVGStyleData &getGlobalStyleData   ();
+  CSVGStyleData &getNameStyleData     (const std::string &objName);
   CSVGStyleData &getTypeStyleData     (const std::string &objType);
   CSVGStyleData &getClassStyleData    (const std::string &objClass);
   CSVGStyleData &getTypeClassStyleData(const std::string &objType, const std::string &objClass);
 
-  bool getStyleStrokeNoColor(const CSVGObject *obj, bool &noColor, CSVGCSSType &type);
-  bool getStyleStrokeColor  (const CSVGObject *obj, CRGBA &rgba, CSVGCSSType &type);
+  bool getStyleStrokeColor  (const CSVGObject *obj, CSVGColor &color, CSVGCSSType &type);
   bool getStyleStrokeOpacity(const CSVGObject *obj, double &opacity);
   bool getStyleStrokeWidth  (const CSVGObject *obj, double &width);
-  bool getStyleStrokeDash   (const CSVGObject *obj, CLineDash &dash);
+  bool getStyleStrokeDash   (const CSVGObject *obj, CSVGStrokeDash &dash);
 
-  bool getStyleFillNoColor(const CSVGObject *obj, bool &noColor, CSVGCSSType &type);
-  bool getStyleFillColor  (const CSVGObject *obj, CRGBA &rgba, CSVGCSSType &type);
+  bool getStyleFillColor  (const CSVGObject *obj, CSVGColor &color, CSVGCSSType &type);
   bool getStyleFillOpacity(const CSVGObject *obj, double &opacity);
+
+  bool getStyleMarkerStart(const CSVGObject *obj, CSVGObject* &marker, CSVGCSSType &type);
+  bool getStyleMarkerMid  (const CSVGObject *obj, CSVGObject* &marker, CSVGCSSType &type);
+  bool getStyleMarkerEnd  (const CSVGObject *obj, CSVGObject* &marker, CSVGCSSType &type);
 
   void getObjectsAtPoint(const CPoint2D &p, ObjectList &objects) const;
 
@@ -512,14 +536,36 @@ class CSVG {
   CSVG &operator=(const CSVG &rhs);
 
  private:
-  typedef std::vector<CSVGFont *>              FontList;
-  typedef std::map<std::string, CSVGObject *>  NameObjectMap;
-  typedef std::map<std::string, CSVGStyleData> StyleDataMap;
-  typedef std::map<std::string, StyleDataMap>  TypeStyleDataMap;
+  struct StyleData {
+    StyleData(CSVG &svg) :
+     stroke(svg), fill(svg), clip(svg), fontDef(svg) {
+    }
+
+    void reset() {
+      stroke .reset();
+      fill   .reset();
+      clip   .reset();
+      fontDef.reset();
+
+      object = 0;
+    }
+
+    CSVGStroke  stroke;
+    CSVGFill    fill;
+    CSVGClip    clip;
+    CSVGFontDef fontDef;
+    CSVGObject* object { 0 };
+  };
+
+  typedef std::vector<CSVGBuffer *>           BufferStack;
+  typedef std::vector<CSVGFont *>             FontList;
+  typedef std::map<std::string, CSVGObject *> NameObjectMap;
+  typedef std::vector<StyleData>              StyleDataStack;
 
   CSVGRenderer*           renderer_      { 0 };
   CAutoPtr<CSVGBufferMgr> bufferMgr_;
   CSVGBuffer*             buffer_        { 0 };
+  BufferStack             bufferStack_;
   CMatrixStack2D          viewMatrix_;
   CPoint2D                offset_        { 0, 0 };
   double                  blockXScale_   { 1 };
@@ -530,19 +576,13 @@ class CSVG {
   CAutoPtr<CXML>          xml_;
   CXMLTag*                xmlTag_        { 0 };
   CRGBA                   background_    { 1, 1, 1};
-  CSVGStroke              stroke_;
-  CSVGFill                fill_;
-  CSVGClip                clip_;
-  CSVGFontDef             fontDef_;
+  StyleData               styleData_;
+  StyleDataStack          styleDataStack_;
   FontList                fontList_;
   NameObjectMap           idObjectMap_;
-  StyleDataMap            globalStyleData_;
-  StyleDataMap            typeStyleData_;
-  StyleDataMap            classStyleData_;
-  TypeStyleDataMap        typeClassStyleData_;
+  CSVGCSSData             cssData_;
   CCSS                    css_;
-  CSVGObject*             styleObject_   { 0 };
-  CSVGObject*             drawObject_    { 0 };
+  ObjectList              drawObjects_;
   bool                    uniquify_      { false };
   bool                    autoName_      { false };
   bool                    ignoreFilter_  { false };

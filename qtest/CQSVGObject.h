@@ -26,15 +26,19 @@ class CQSVGObject : public QObject {
 
   Q_PROPERTY(double opacity READ getDrawOpacity WRITE setDrawOpacity)
 
+  Q_PROPERTY(bool strokeNoColor      READ strokeIsNoColor      WRITE setStrokeIsNoColor     )
+  Q_PROPERTY(bool strokeCurrentColor READ strokeIsCurrentColor WRITE setStrokeIsCurrentColor)
+
   Q_PROPERTY(QColor                  strokeColor   READ strokeColor   WRITE setStrokeColor  )
   Q_PROPERTY(double                  strokeOpacity READ strokeOpacity WRITE setStrokeOpacity)
   Q_PROPERTY(double                  strokeWidth   READ strokeWidth   WRITE setStrokeWidth  )
   Q_PROPERTY(CLineDash               strokeDash    READ strokeDash    WRITE setStrokeDash   )
+  Q_PROPERTY(double                  strokeOffset  READ strokeOffset  WRITE setStrokeOffset )
   Q_PROPERTY(CQSVGEnum::LineCapType  strokeCap     READ strokeCap     WRITE setStrokeCap    )
   Q_PROPERTY(CQSVGEnum::LineJoinType strokeJoin    READ strokeJoin    WRITE setStrokeJoin   )
 
-  Q_PROPERTY(bool fillIsNoColor      READ fillIsNoColor      WRITE setFillIsNoColor     )
-  Q_PROPERTY(bool fillIsCurrentColor READ fillIsCurrentColor WRITE setFillIsCurrentColor)
+  Q_PROPERTY(bool fillNoColor      READ fillIsNoColor      WRITE setFillIsNoColor     )
+  Q_PROPERTY(bool fillCurrentColor READ fillIsCurrentColor WRITE setFillIsCurrentColor)
 
   Q_PROPERTY(QColor              fillColor   READ fillColor   WRITE setFillColor  )
   Q_PROPERTY(double              fillOpacity READ fillOpacity WRITE setFillOpacity)
@@ -74,6 +78,12 @@ class CQSVGObject : public QObject {
   double getDrawOpacity() const;
   void setDrawOpacity(double r);
 
+  bool strokeIsNoColor() const;
+  void setStrokeIsNoColor(bool b);
+
+  bool strokeIsCurrentColor() const;
+  void setStrokeIsCurrentColor(bool b);
+
   QColor strokeColor() const;
   void setStrokeColor(const QColor &c);
 
@@ -85,6 +95,9 @@ class CQSVGObject : public QObject {
 
   CLineDash strokeDash() const;
   void setStrokeDash(const CLineDash &dash);
+
+  double strokeOffset() const;
+  void setStrokeOffset(double o);
 
   CQSVGEnum::LineCapType strokeCap() const;
   void setStrokeCap(const CQSVGEnum::LineCapType &a);

@@ -80,7 +80,7 @@ animate(double t)
   if (! path_.empty()) {
     double x, y, a;
 
-    svg_.interpParts(t, path_, &x, &y, &a);
+    path_.interp(t, &x, &y, &a);
 
     CPoint2D p(x, y);
 
@@ -115,7 +115,7 @@ animate(double t)
     if (path) {
       double x, y, a;
 
-      svg_.interpParts(t, *path, &x, &y, &a);
+      path->interp(t, &x, &y, &a);
 
       CPoint2D p(x, y);
 

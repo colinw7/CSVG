@@ -61,15 +61,14 @@ CSVGPattern::
 processOption(const std::string &opt_name, const std::string &opt_value)
 {
   std::string    str;
-  double         real;
   CSVGCoordUnits units;
   CScreenUnits   length;
   CMatrixStack2D transform;
 
-  if      (svg_.realOption(opt_name, opt_value, "x", &real))
-    x_ = real;
-  else if (svg_.realOption(opt_name, opt_value, "y", &real))
-    y_ = real;
+  if      (svg_.coordOption(opt_name, opt_value, "x", length))
+    x_ = length;
+  else if (svg_.coordOption(opt_name, opt_value, "y", length))
+    y_ = length;
   else if (svg_.percentOption(opt_name, opt_value, "width", length))
     width_ = length;
   else if (svg_.percentOption(opt_name, opt_value, "height", length))
@@ -143,8 +142,8 @@ setFillImage(CSVGObject *parent, CSVGBuffer *buffer, double *w1, double *h1)
     ph = parentBBox.getHeight();
   }
 
-  double w = getWidth (1);
-  double h = getHeight(1);
+  double w = getWidth ().pxValue(1);
+  double h = getHeight().pxValue(1);
 
   if (getUnits() == CSVGCoordUnits::OBJECT_BBOX) {
     *w1 = w*pw;
@@ -157,7 +156,7 @@ setFillImage(CSVGObject *parent, CSVGBuffer *buffer, double *w1, double *h1)
 
   //---
 
-  CSVGBuffer *oldBuffer = svg_.getBuffer();
+  CSVGBuffer *oldBuffer = svg_.getCurrentBuffer();
 
   CMatrixStack2D transform = oldBuffer->transform();
 
@@ -169,16 +168,17 @@ setFillImage(CSVGObject *parent, CSVGBuffer *buffer, double *w1, double *h1)
   std::string bufferId = (getId() != "" ? getId() : "pattern");
 
   if (parent)
-    patternBuffer = svg_.getBuffer("_" + parent->getUniqueName() + "_" + bufferId);
+    patternBuffer = svg_.pushBuffer("_" + parent->getUniqueName() + "_" + bufferId);
   else
-    patternBuffer = svg_.getBuffer("_" + bufferId);
-
-  svg_.setBuffer(patternBuffer);
+    patternBuffer = svg_.pushBuffer("_" + bufferId);
 
   patternBuffer->clear();
 
   // draw pattern to buffer
-  svg_.beginDrawBuffer(patternBuffer, CBBox2D(getX(), getY(), *w1, *h1));
+  double x = getX().pxValue(pw);
+  double y = getY().pxValue(ph);
+
+  svg_.beginDrawBuffer(patternBuffer, CBBox2D(x, y, *w1, *h1));
   //svg_.beginDrawBuffer(patternBuffer);
 
   //---
@@ -204,14 +204,19 @@ setFillImage(CSVGObject *parent, CSVGBuffer *buffer, double *w1, double *h1)
 
   //--
 
-  drawSubObject();
+  svg_.pushStyle(0);
+
+  if (getDisplay() != "none")
+    drawSubObject();
+
+  svg_.popStyle();
 
   //---
 
   svg_.endDrawBuffer(patternBuffer);
 
   // restore original buffer
-  svg_.setBuffer(oldBuffer);
+  svg_.popBuffer();
 
   svg_.setTransform(transform);
 
@@ -238,8 +243,8 @@ setStrokeImage(CSVGObject *parent, CSVGBuffer *buffer, double *w1, double *h1)
     ph = parentBBox.getHeight();
   }
 
-  double w = getWidth (1);
-  double h = getHeight(1);
+  double w = getWidth ().pxValue(1);
+  double h = getHeight().pxValue(1);
 
   if (getUnits() == CSVGCoordUnits::OBJECT_BBOX) {
     *w1 = w*pw;
@@ -252,7 +257,7 @@ setStrokeImage(CSVGObject *parent, CSVGBuffer *buffer, double *w1, double *h1)
 
   //---
 
-  CSVGBuffer *oldBuffer = svg_.getBuffer();
+  CSVGBuffer *oldBuffer = svg_.getCurrentBuffer();
 
   CMatrixStack2D transform = oldBuffer->transform();
 
@@ -264,16 +269,17 @@ setStrokeImage(CSVGObject *parent, CSVGBuffer *buffer, double *w1, double *h1)
   std::string bufferId = (getId() != "" ? getId() : "pattern");
 
   if (parent)
-    patternBuffer = svg_.getBuffer("_" + parent->getUniqueName() + "_" + bufferId);
+    patternBuffer = svg_.pushBuffer("_" + parent->getUniqueName() + "_" + bufferId);
   else
-    patternBuffer = svg_.getBuffer("_" + bufferId);
-
-  svg_.setBuffer(patternBuffer);
+    patternBuffer = svg_.pushBuffer("_" + bufferId);
 
   patternBuffer->clear();
 
   // draw pattern to buffer
-  svg_.beginDrawBuffer(patternBuffer, CBBox2D(getX(), getY(), *w1, *h1));
+  double x = getX().pxValue(pw);
+  double y = getY().pxValue(ph);
+
+  svg_.beginDrawBuffer(patternBuffer, CBBox2D(x, y, *w1, *h1));
   //svg_.beginDrawBuffer(patternBuffer);
 
   //---
@@ -299,14 +305,15 @@ setStrokeImage(CSVGObject *parent, CSVGBuffer *buffer, double *w1, double *h1)
 
   //--
 
-  drawSubObject();
+  if (getDisplay() != "none")
+    drawSubObject();
 
   //---
 
   svg_.endDrawBuffer(patternBuffer);
 
   // restore original buffer
-  svg_.setBuffer(oldBuffer);
+  svg_.popBuffer();
 
   svg_.setTransform(transform);
 

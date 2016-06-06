@@ -9,7 +9,6 @@ CSVGMPath(CSVG &svg) :
  parts_    (),
  xlink_    (this)
 {
-  //fill_.setDefColor(CRGBA(0,0,0));
 }
 
 CSVGMPath::
@@ -51,12 +50,14 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   return true;
 }
 
-void
+bool
 CSVGMPath::
 draw()
 {
   if (svg_.getDebug())
     CSVGLog() << *this;
+
+  return false;
 }
 
 void
@@ -91,8 +92,11 @@ bool
 CSVGMPath::
 getBBox(CBBox2D &bbox) const
 {
-  if (! viewBox_.isValid())
-    return svg_.getPartsBBox(parts_, bbox);
+  if (! viewBox_.isValid()) {
+    CSVGBuffer *currentBuffer = svg_.getCurrentBuffer();
+
+    return parts_.getBBox(currentBuffer, bbox);
+  }
   else {
     bbox = getViewBox();
 

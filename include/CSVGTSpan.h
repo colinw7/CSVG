@@ -35,7 +35,7 @@ class CSVGTSpan : public CSVGObject {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  void draw() override;
+  bool draw() override;
 
   bool getBBox(CBBox2D &bbox) const override;
 
@@ -55,10 +55,10 @@ class CSVGTSpan : public CSVGObject {
   CSVGTSpan &operator=(const CSVGTSpan &rhs);
 
  private:
-  COptValT<double> x_;
-  COptValT<double> y_;
-  COptValT<Reals>  dx_;
-  COptValT<Reals>  dy_;
+  COptReal        x_;
+  COptReal        y_;
+  COptValT<Reals> dx_;
+  COptValT<Reals> dy_;
 };
 
 #endif

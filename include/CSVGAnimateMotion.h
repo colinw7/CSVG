@@ -34,10 +34,10 @@ class CSVGAnimateMotion : public CSVGAnimateBase {
   friend std::ostream &operator<<(std::ostream &os, const CSVGAnimateMotion &animateMotion);
 
  private:
-  CSVGPathPartList      path_;
-  COptValT<std::string> keyPoints_;
-  COptValT<std::string> rotate_;
-  COptValT<std::string> origin_;
+  CSVGPathPartList path_;
+  COptString       keyPoints_;
+  COptString       rotate_;
+  COptString       origin_;
 };
 
 #endif

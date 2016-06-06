@@ -11,14 +11,14 @@ class CSVGMissingGlyph : public CSVGGlyph {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  void draw() override;
+  bool draw() override;
 
   void print(std::ostream &os, bool hier) const override;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGMissingGlyph &glyph);
 
  private:
-  COptValT<int> hax_;
+  COptInt hax_;
 };
 
 #endif

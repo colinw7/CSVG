@@ -1,7 +1,7 @@
 #ifndef CSVG_FILL_H
 #define CSVG_FILL_H
 
-#include <CRGBA.h>
+#include <CSVGColor.h>
 #include <CFillType.h>
 #include <COptVal.h>
 
@@ -15,62 +15,40 @@ class CSVGFill {
   }
 
   CSVGFill(const CSVGFill &fill) :
-   svg_         (fill.svg_),
-   noColor_     (fill.noColor_),
-   currentColor_(fill.currentColor_),
-   color_       (fill.color_),
-   opacity_     (fill.opacity_),
-   rule_        (fill.rule_),
-   url_         (fill.url_),
-   fillObject_  (fill.fillObject_) {
+   svg_       (fill.svg_),
+   color_     (fill.color_),
+   opacity_   (fill.opacity_),
+   rule_      (fill.rule_),
+   url_       (fill.url_),
+   fillObject_(fill.fillObject_) {
   }
 
   const CSVGFill &operator=(const CSVGFill &fill) {
-    noColor_      = fill.noColor_;
-    currentColor_ = fill.currentColor_;
-    color_        = fill.color_;
-    opacity_      = fill.opacity_;
-    rule_         = fill.rule_;
-    url_          = fill.url_;
-    fillObject_   = fill.fillObject_;
+    color_      = fill.color_;
+    opacity_    = fill.opacity_;
+    rule_       = fill.rule_;
+    url_        = fill.url_;
+    fillObject_ = fill.fillObject_;
 
     return *this;
   }
 
   bool isSet() const {
-    return noColor_     .isValid() ||
-           currentColor_.isValid() ||
-           color_       .isValid() ||
-           opacity_     .isValid() ||
-           rule_        .isValid() ||
-           url_         .isValid() ||
-           fillObject_  .isValid();
+    return color_     .isValid() ||
+           opacity_   .isValid() ||
+           rule_      .isValid() ||
+           url_       .isValid() ||
+           fillObject_.isValid();
   }
 
-  // no color
-  bool getNoColorValid() const { return noColor_.isValid(); }
-  bool getNoColor() const { return noColor_.getValue(false); }
-  void setNoColor(bool b) { noColor_ = b; }
-
-  // current color
-  bool isCurrentColor() const { return currentColor_.getValue(false); }
-  void setIsCurrentColor(bool b) { currentColor_ = b; }
-
   // color
-  CRGBA getAlphaColor() const;
-
   bool getColorValid() const { return color_.isValid(); }
-  CRGBA getColor() const { return color_.getValue(CRGBA(0,0,0,0)); }
+  CSVGColor getColor() const { return color_.getValue(CSVGColor()); }
 
   void setColor(const std::string &color_str);
-  void setColor(const CRGBA &rgba) { color_ = rgba; }
+  void setColor(const CSVGColor &c) { color_ = c; }
 
   void resetColor() { color_.setInvalid(); }
-
-  bool getDefColorValid() const { return defColor_.isValid(); }
-  CRGBA getDefColor() const { return defColor_.getValue(CRGBA(0,0,0,0)); }
-
-  void setDefColor(const CRGBA &rgba) { defColor_ = rgba; }
 
   // opacity
   bool getOpacityValid() const { return opacity_.isValid(); }
@@ -96,12 +74,17 @@ class CSVGFill {
   void resetUrl() { url_.setInvalid(); }
 
   // fill object
-  bool getFillObjectValid() const;
-  CSVGObject *getFillObject() const;
-
+  bool getFillObjectValid() const { return fillObject_.isValid(); }
+  CSVGObject *getFillObject() const { return fillObject_.getValue(0); }
   void setFillObject(CSVGObject *fillObject) { fillObject_ = fillObject; }
 
   void resetFillObject() { fillObject_.setInvalid(); }
+
+  //---
+
+  CSVGObject *calcFillObject() const;
+
+  bool isFilled() const;
 
   // reset
   void reset();
@@ -114,13 +97,10 @@ class CSVGFill {
 
  private:
   CSVG &                 svg_;
-  COptValT<bool>         noColor_;
-  COptValT<bool>         currentColor_;
-  COptValT<CRGBA>        color_;
-  COptValT<CRGBA>        defColor_;
-  COptValT<double>       opacity_;
+  COptValT<CSVGColor>    color_;
+  COptReal               opacity_;
   COptValT<CFillType>    rule_;
-  COptValT<std::string>  url_;
+  COptString             url_;
   COptValT<CSVGObject *> fillObject_;
 };
 

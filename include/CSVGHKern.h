@@ -16,16 +16,16 @@ class CSVGHKern : public CSVGObject {
 
   bool isDrawable() const override { return false; }
 
-  void draw() override;
+  bool draw() override;
 
   void print(std::ostream &os, bool hier) const override;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGHKern &hkern);
 
  private:
-  COptValT<std::string> glyph1_;
-  COptValT<std::string> glyph2_;
-  COptValT<int>         k_;
+  COptString glyph1_;
+  COptString glyph2_;
+  COptInt    k_;
 };
 
 #endif

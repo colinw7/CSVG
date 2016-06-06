@@ -20,15 +20,15 @@ class CSVGFeDistantLight : public CSVGFilterBase {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  void draw() override;
+  bool draw() override;
 
   void print(std::ostream &os, bool hier) const override;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGFeDistantLight &fe);
 
  private:
-  COptValT<double> elevation_;
-  COptValT<double> azimuth_;
+  COptReal elevation_;
+  COptReal azimuth_;
 };
 
 #endif

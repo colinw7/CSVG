@@ -46,7 +46,7 @@ class CSVGFontDef {
 
  private:
   CSVG&                  svg_;
-  COptValT<std::string>  family_;
+  COptString             family_;
   COptValT<CScreenUnits> size_;
   COptValT<CFontStyles>  style_;
 };

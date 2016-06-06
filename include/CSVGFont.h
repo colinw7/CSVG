@@ -26,7 +26,7 @@ class CSVGFont : public CSVGObject {
 
   void termParse();
 
-  void draw() override;
+  bool draw() override;
 
   CSVGGlyph *getCharGlyph(char c) const;
   CSVGGlyph *getUnicodeGlyph(const std::string &unicode) const;
@@ -39,12 +39,12 @@ class CSVGFont : public CSVGObject {
   CSVGFont &operator=(const CSVGFont &rhs);
 
  private:
-  COptValT<int>     hxo_;
-  COptValT<int>     hyo_;
-  COptValT<int>     hdx_;
-  COptValT<int>     vdy_;
-  COptValT<int>     vxo_;
-  COptValT<int>     vyo_;
+  COptInt           hxo_;
+  COptInt           hyo_;
+  COptInt           hdx_;
+  COptInt           vdy_;
+  COptInt           vxo_;
+  COptInt           vyo_;
   CSVGFontFace     *font_face_     { 0 };
   CSVGMissingGlyph *missing_glyph_ { 0 };
   CharGlyphMap      char_glyph_map_;

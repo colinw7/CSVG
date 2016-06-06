@@ -62,21 +62,21 @@ class CSVGAnimateBase : public CSVGObject {
   void printValues(std::ostream &os) const;
 
  protected:
-  COptValT<std::string>    attributeName_;
-  COptValT<std::string>    attributeType_;
+  COptString               attributeName_;
+  COptString               attributeType_;
   COptValT<CSVGEventValue> begin_;
   COptValT<CSVGEventValue> end_;
   COptValT<CSVGTimeValue>  dur_;
-  COptValT<std::string>    from_;
-  COptValT<std::string>    to_;
-  COptValT<std::string>    repeatCount_;
+  COptString               from_;
+  COptString               to_;
+  COptString               repeatCount_;
   COptValT<CSVGTimeValue>  repeatDur_;
-  COptValT<std::string>    fill_;
+  COptString               fill_;
   double                   currentTime_ { 0.0 };
   bool                     animating_   { false };
-  COptValT<double>         startTime_;
-  COptValT<double>         endTime_;
-  COptValT<int>            repeatNum_;
+  COptReal                 startTime_;
+  COptReal                 endTime_;
+  COptInt                  repeatNum_;
   int                      repeatInd_;
 };
 

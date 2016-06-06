@@ -13,19 +13,31 @@ bool
 CCSS::
 processFile(const std::string &filename)
 {
-  if (! CFile::exists(filename) || ! CFile::isRegular(filename))
+  if (! CFile::exists(filename) || ! CFile::isRegular(filename)) {
+    if (isDebug())
+      std::cerr << "Invalid file '" << filename << "'" << std::endl;
     return false;
+  }
 
   CFile file(filename);
+
+  std::string str;
 
   std::string line;
 
   while (file.readLine(line)) {
     line = CStrUtil::stripSpaces(line);
 
-    if (! line.empty())
-      processLine(line);
+    if (line.empty())
+      continue;
+
+    if (! str.empty())
+      str += "\n";
+
+    str += line;
   }
+
+  processLine(str);
 
   return true;
 }
@@ -54,48 +66,38 @@ parse(const std::string &str)
 {
   CStrParse parse(str);
 
-  std::string id;
-
-  while (! parse.eof() && ! parse.isSpace() && ! parse.isChar('{')) {
-    char c;
-
-    parse.readChar(&c);
-
-    id += c;
-  }
-
-  if (id.empty()) return false;
-
-  //------
-
-  StyleData &styleData = getStyleData(id);
-
-  parse.skipSpace();
-
-  if (parse.isChar('{')) {
-    parse.skipChar();
-
+  while (! parse.eof()) {
     parse.skipSpace();
 
-    std::string str1;
+    if (parse.isString("/*")) {
+      skipComment(parse);
 
-    while (! parse.eof() && ! parse.isChar('}')) {
-      char c;
-
-      parse.readChar(&c);
-
-      str1 += c;
+      parse.skipSpace();
     }
 
-    if (! parse.isChar('}'))
+    // get id
+    std::string id;
+
+    if (! readId(parse, id)) {
+      if (isDebug())
+        std::cerr << "Empty id : '" << parse.stateStr() << "'" << std::endl;
       return false;
+    }
 
-    parse.skipChar();
+    //------
 
-    parse.skipSpace();
+    // get values
+    StyleData &styleData = getStyleData(id);
 
-    if (! parseAttr(str1, styleData))
-      return false;
+    if (parse.isChar('{')) {
+      std::string str1;
+
+      if (! readBracedString(parse, str1))
+        return false;
+
+      if (! parseAttr(str1, styleData))
+        return false;
+    }
   }
 
   return true;
@@ -142,13 +144,89 @@ parseAttr(const std::string &str, StyleData &styleData)
       }
     }
 
-    if (name.empty())
+    if (name.empty()) {
+      if (isDebug())
+        std::cerr << "Empty name : '" << parse.stateStr() << "'" << std::endl;
       return false;
+    }
 
     styleData.addOption(name, value);
   }
 
   return true;
+}
+
+bool
+CCSS::
+readId(CStrParse &parse, std::string &id) const
+{
+  id = "";
+
+  parse.skipSpace();
+
+  while (! parse.eof() && ! parse.isSpace() && ! parse.isChar('{')) {
+    char c;
+
+    parse.readChar(&c);
+
+    id += c;
+  }
+
+  parse.skipSpace();
+
+  return ! id.empty();
+}
+
+bool
+CCSS::
+readBracedString(CStrParse &parse, std::string &str) const
+{
+  str = "";
+
+  parse.skipChar();
+
+  parse.skipSpace();
+
+  while (! parse.eof() && ! parse.isChar('}')) {
+    char c;
+
+    parse.readChar(&c);
+
+    str += c;
+  }
+
+  if (! parse.isChar('}')) {
+    if (isDebug())
+      std::cerr << "Missing close brace : '" << parse.stateStr() << "'" << std::endl;
+    return false;
+  }
+
+  parse.skipChar();
+
+  parse.skipSpace();
+
+  return true;
+}
+
+bool
+CCSS::
+skipComment(CStrParse &parse) const
+{
+  parse.skipChars(2);
+
+  while (! parse.eof()) {
+    if (parse.isString("*/")) {
+      parse.skipChars(2);
+      return true;
+    }
+
+    parse.skipChar();
+  }
+
+  if (isDebug())
+    std::cerr << "Unterminated commend : '" << parse.stateStr() << "'" << std::endl;
+
+  return false;
 }
 
 CCSS::StyleData &

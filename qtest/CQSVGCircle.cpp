@@ -7,6 +7,13 @@ CQSVGCircle(CQSVG *svg) :
 {
 }
 
+double
+CQSVGCircle::
+getRadius() const
+{
+  return CSVGCircle::getRadius().pxValue(1);
+}
+
 void
 CQSVGCircle::
 drawTerm()

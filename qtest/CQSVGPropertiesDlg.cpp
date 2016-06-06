@@ -1,7 +1,9 @@
 #include <CQSVGPropertiesDlg.h>
 #include <CQSVGWindow.h>
 #include <CQPropertyTree.h>
+#include <CQSVGStyleTree.h>
 #include <QVBoxLayout>
+#include <QTabWidget>
 
 CQSVGPropertiesDlg::
 CQSVGPropertiesDlg(CQSVGWindow *window) :
@@ -12,15 +14,49 @@ CQSVGPropertiesDlg(CQSVGWindow *window) :
   QVBoxLayout *layout = new QVBoxLayout(this);
   layout->setMargin(0); layout->setSpacing(2);
 
-  tree_ = new CQPropertyTree;
+  QTabWidget *tab = new QTabWidget;
 
-  connect(tree_, SIGNAL(valueChanged(QObject *, const QString &)),
+  layout->addWidget(tab);
+
+  //---
+
+  QFrame *propertiesFrame = new QFrame;
+
+  QVBoxLayout *propertiesLayout = new QVBoxLayout(propertiesFrame);
+  propertiesLayout->setMargin(0); propertiesLayout->setSpacing(2);
+
+  propertiesTree_ = new CQPropertyTree;
+
+  connect(propertiesTree_, SIGNAL(valueChanged(QObject *, const QString &)),
           window, SLOT(redraw()));
 
-  connect(tree_, SIGNAL(itemSelected(QObject *, const QString &)),
+  connect(propertiesTree_, SIGNAL(itemSelected(QObject *, const QString &)),
           window, SLOT(itemSelectedSlot(QObject *, const QString &)));
 
-  layout->addWidget(tree_);
+  propertiesLayout->addWidget(propertiesTree_);
+
+  //---
+
+  QFrame *cssFrame = new QFrame;
+
+  QVBoxLayout *cssLayout = new QVBoxLayout(cssFrame);
+  cssLayout->setMargin(0); cssLayout->setSpacing(2);
+
+  cssTree_ = new CQSVGStyleTree(window->svg());
+
+  cssLayout->addWidget(cssTree_);
+
+  //---
+
+  tab->addTab(propertiesFrame, "Properties");
+  tab->addTab(cssFrame       , "CSS");
+}
+
+void
+CQSVGPropertiesDlg::
+loadCSS()
+{
+  cssTree()->load();
 }
 
 QSize

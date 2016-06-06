@@ -15,7 +15,7 @@ CSVGXLink(const CSVGXLink &xlink) :
   if (xlink.imageBuffer_) {
     initImageBuffer();
 
-    imageBuffer_->setImage(xlink.imageBuffer_);
+    imageBuffer_->setImageBuffer(xlink.imageBuffer_);
   }
 }
 
@@ -34,7 +34,7 @@ operator=(const CSVGXLink &xlink)
   if (xlink.imageBuffer_) {
     initImageBuffer();
 
-    imageBuffer_->setImage(xlink.imageBuffer_);
+    imageBuffer_->setImageBuffer(xlink.imageBuffer_);
   }
 
   return *this;
@@ -90,7 +90,7 @@ setImage(CSVGBuffer *buffer)
 {
   initImageBuffer();
 
-  imageBuffer_->setImage(buffer);
+  imageBuffer_->setImageBuffer(buffer);
 
   isImage_  = true;
   resolved_ = true;
@@ -101,7 +101,7 @@ CSVGXLink::
 getImage(CSVGBuffer *buffer) const
 {
   if      (isImage()) {
-    buffer->setImage(getImageBuffer());
+    buffer->setImageBuffer(getImageBuffer());
   }
   else if (isObject()) {
     CSVGBuffer *imageBuffer = getObject()->toBufferImage();
@@ -109,7 +109,7 @@ getImage(CSVGBuffer *buffer) const
     if (! imageBuffer)
       return false;
 
-    buffer->setImage(imageBuffer);
+    buffer->setImageBuffer(imageBuffer);
   //buffer->setImage(getObject()->toImage());
   }
   else
@@ -143,7 +143,7 @@ resolve() const
       th->isImage_     = true;
       th->imageBuffer_ = svg.getBuffer(parent_->getUniqueName() + "_xlink_image");
 
-      th->imageBuffer_->setImage(buffer);
+      th->imageBuffer_->setImageBuffer(buffer);
     }
   }
 

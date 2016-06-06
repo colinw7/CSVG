@@ -23,11 +23,11 @@ class CSVGRect : public CSVGObject {
   void setY(double y) { y_ = y; }
 
   bool hasWidth() const { return width_.isValid(); }
-  double getWidth () { return width_ .getValue(1); }
+  CScreenUnits getWidth() const { return width_.getValue(CScreenUnits(0)); }
   void setWidth(double w) { width_ = w; }
 
   bool hasHeight() const { return height_.isValid(); }
-  double getHeight() { return height_ .getValue(1); }
+  CScreenUnits getHeight() const { return height_ .getValue(CScreenUnits(0)); }
   void setHeight(double h) { height_ = h; }
 
   bool hasRX() const { return rx_.isValid(); }
@@ -43,7 +43,7 @@ class CSVGRect : public CSVGObject {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  void draw() override;
+  bool draw() override;
 
   bool getBBox(CBBox2D &bbox) const override;
 
@@ -60,13 +60,13 @@ class CSVGRect : public CSVGObject {
   void updateBBox();
 
  private:
-  COptValT<double> x_;
-  COptValT<double> y_;
-  COptValT<double> width_;
-  COptValT<double> height_;
-  COptValT<double> rx_;
-  COptValT<double> ry_;
-  mutable CBBox2D  bbox_;
+  COptReal               x_;
+  COptReal               y_;
+  COptValT<CScreenUnits> width_;
+  COptValT<CScreenUnits> height_;
+  COptReal               rx_;
+  COptReal               ry_;
+  mutable CBBox2D        bbox_;
 };
 
 #endif

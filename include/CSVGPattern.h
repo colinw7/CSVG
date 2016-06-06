@@ -13,17 +13,21 @@ class CSVGPattern : public CSVGObject {
 
   CSVGPattern *dup() const override;
 
-  double getX() const { return x_.getValue(0); }
-  void setX(double x) { x_ = x; }
+  bool getXValid() const { return x_.isValid(); }
+  CScreenUnits getX() const { return x_.getValue(CScreenUnits(0)); }
+  void setX(const CScreenUnits &x) { x_ = x; }
 
-  double getY() const { return y_.getValue(0); }
-  void setY(double y) { y_ = y; }
+  bool getYValid() const { return y_.isValid(); }
+  CScreenUnits getY() const { return y_.getValue(CScreenUnits(0)); }
+  void setY(const CScreenUnits &y) { y_ = y; }
 
-  double getWidth(double w=100) const { return width_.getValue(w).px(w).value(); }
-  void setWidth(double w) { width_ = w; }
+  bool getWidthValid() const { return width_.isValid(); }
+  CScreenUnits getWidth() const { return width_.getValue(CScreenUnits(0)); }
+  void setWidth(const CScreenUnits &w) { width_ = w; }
 
-  double getHeight(double h=100) const { return height_.getValue(h).px(h).value(); }
-  void setHeight(double h) { height_ = h; }
+  bool getHeightValid() const { return height_.isValid(); }
+  CScreenUnits getHeight() const { return height_.getValue(CScreenUnits(0)); }
+  void setHeight(const CScreenUnits &h) { height_ = h; }
 
   bool getUnitsValid() const { return units_.isValid(); }
   CSVGCoordUnits getUnits() const { return units_.getValue(CSVGCoordUnits::USER_SPACE); }
@@ -56,8 +60,8 @@ class CSVGPattern : public CSVGObject {
   CSVGPattern &operator=(const CSVGPattern &rhs);
 
  private:
-  COptValT<double>         x_;
-  COptValT<double>         y_;
+  COptValT<CScreenUnits>   x_;
+  COptValT<CScreenUnits>   y_;
   COptValT<CScreenUnits>   width_;
   COptValT<CScreenUnits>   height_;
   COptValT<CSVGCoordUnits> units_;

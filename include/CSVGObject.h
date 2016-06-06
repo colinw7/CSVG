@@ -162,6 +162,7 @@ class CSVGObject {
 
   //---
 
+  bool hasViewBox() const { return viewBox_.isValid(); }
   CBBox2D getViewBox() const { return viewBox_.getValue(CBBox2D()); }
   void setViewBox(const CBBox2D &box) { viewBox_ = box; }
 
@@ -199,6 +200,8 @@ class CSVGObject {
   bool processPresentationOption   (const std::string &name, const std::string &value);
   bool processCSSOption            (const std::string &name, const std::string &value);
 
+  bool parseFont(const std::string &str);
+
   void notHandled(const std::string &name, const std::string &value);
 
   void addChildObject(CSVGObject *object);
@@ -231,11 +234,14 @@ class CSVGObject {
 
   virtual void drawInit() { }
 
-  virtual void draw() { assert(! isDrawable()); }
+  virtual bool draw() { assert(! isDrawable()); return false; }
 
   virtual void drawTerm() { }
 
-  bool isVisible() const;
+  bool isHierVisible  (bool defValue=true) const;
+  bool anyChildVisible(bool defValue=true) const;
+
+  bool isVisible(bool defValue=true) const;
   void setVisible(bool b);
 
   virtual bool getBBox(CBBox2D &bbox) const;
@@ -288,7 +294,7 @@ class CSVGObject {
 
   // stroke
   void setStrokeColor(const std::string &color) { stroke_.setColor(color); }
-  void setStrokeColor(const CRGBA &color) { stroke_.setColor(color); }
+  void setStrokeColor(const CSVGColor &color) { stroke_.setColor(color); }
   bool getStrokeColorValid() const { return stroke_.getColorValid(); }
 
   void setStrokeOpacity(const std::string &opacity) { stroke_.setOpacity(opacity); }
@@ -296,12 +302,13 @@ class CSVGObject {
   bool getStrokeOpacityValid() const { return stroke_.getOpacityValid(); }
 
   void setStrokeWidth(const std::string &width) { stroke_.setWidth(width); }
-  void setStrokeWidth(double width            ) { stroke_.setWidth(width); }
+  void setStrokeWidth(double width) { stroke_.setWidth(width); }
 
-  void setStrokeDash(const std::string &dashStr) { stroke_.setDash(dashStr); }
-  void setStrokeDash(const CLineDash &dash) { stroke_.setDash(dash); }
-
+  void setStrokeDashArray(const std::string &dashStr) { stroke_.setDashArray(dashStr); }
   void setStrokeDashOffset(const std::string &offsetStr) { stroke_.setDashOffset(offsetStr); }
+
+  void setStrokeDash(const CSVGStrokeDash &dash) { stroke_.setDash(dash); }
+  CSVGStrokeDash getStrokeDash() const { return stroke_.getDash(); }
 
   void setStrokeLineCap(const std::string &capStr) { stroke_.setLineCap(capStr); }
   void setStrokeLineCap(const CLineCapType &cap) { stroke_.setLineCap(cap); }
@@ -315,17 +322,16 @@ class CSVGObject {
 
   //---
 
-  bool      getFlatStrokeNoColor () const;
-  CRGBA     getFlatStrokeColor   () const;
-  double    getFlatStrokeOpacity () const;
-  double    getFlatStrokeWidth   () const;
-  CLineDash getFlatStrokeLineDash() const;
+  CSVGColor      getFlatStrokeColor   () const;
+  double         getFlatStrokeOpacity () const;
+  double         getFlatStrokeWidth   () const;
+  CSVGStrokeDash getFlatStrokeLineDash() const;
 
   //------
 
   // fill
   void setFillColor(const std::string &color) { fill_.setColor(color); }
-  void setFillColor(const CRGBA &color) { fill_.setColor(color); }
+  void setFillColor(const CSVGColor &color) { fill_.setColor(color); }
   bool getFillColorValid() const { return fill_.getColorValid(); }
 
   void setFillOpacity(const std::string &opacity) { fill_.setOpacity(opacity); }
@@ -340,9 +346,8 @@ class CSVGObject {
 
   //---
 
-  bool   getFlatFillNoColor() const;
-  CRGBA  getFlatFillColor  () const;
-  double getFlatFillOpacity() const;
+  CSVGColor getFlatFillColor  () const;
+  double    getFlatFillOpacity() const;
 
   //------
 
@@ -361,6 +366,15 @@ class CSVGObject {
   CFontStyles  getFlatFontStyle() const;
   CScreenUnits getFlatFontSize() const;
 
+  //------
+
+  // overflow
+  void setOverflow(const std::string &str);
+
+  bool hasOverflow() const { return overflow_.isValid(); }
+  CSVGOverflowType getOverflow() const { return overflow_.getValue(CSVGOverflowType::VISIBLE); }
+  void setOverflow(CSVGOverflowType o) { overflow_ = o; }
+
   // visible
   std::string getVisibility() const { return visibility_.getValue(""); }
   void setVisibility(const std::string &str) { visibility_ = str; }
@@ -368,6 +382,15 @@ class CSVGObject {
   // display
   std::string getDisplay() const { return display_.getValue(""); }
   void setDisplay(const std::string &str) { display_ = str; }
+
+  // current color
+  bool hasCurrentColor() const { return currentColor_.isValid(); }
+  CSVGColor currentColor() const { return currentColor_.getValue(CSVGColor()); }
+  void setCurrentColor(const CSVGColor &c) { currentColor_ = c; }
+
+  CRGBA colorToRGBA(const CSVGColor &color) const;
+
+  CRGBA getFlatCurrentColor() const;
 
   // clip
   void setClipRule(const std::string &rule) { clip_.setRule(rule); }
@@ -385,8 +408,8 @@ class CSVGObject {
     nameValues_[name] = value;
   }
 
-  COptValT<std::string> getNameValue(const std::string &name) const {
-    COptValT<std::string> value;
+  COptString getNameValue(const std::string &name) const {
+    COptString value;
 
     auto p = nameValues_.find(name);
 
@@ -411,6 +434,14 @@ class CSVGObject {
 
   void setTextAnchor(const std::string &str);
   CHAlignType getFlatTextAnchor() const;
+
+  //---
+
+  CSVGObject *getFlatMarkerStart() const;
+  CSVGObject *getFlatMarkerMid  () const;
+  CSVGObject *getFlatMarkerEnd  () const;
+
+  //---
 
   CSVGTextDecoration getTextDecoration() const {
     return textDecoration_.getValue(CSVGTextDecoration::NONE);
@@ -577,16 +608,18 @@ class CSVGObject {
   typedef std::vector<std::string>          StringVector;
 
   CSVG&                        svg_;
-  COptValT<std::string>        id_;
+  COptString                   id_;
   COptValT<StringVector>       classes_;
   CSVGObject*                  parent_ { 0 };
   uint                         ind_;
-  COptValT<double>             opacity_;
-  COptValT<std::string>        text_;
+  COptReal                     opacity_;
+  COptString                   text_;
   CSVGStroke                   stroke_;
   CSVGFill                     fill_;
-  COptValT<std::string>        visibility_;
-  COptValT<std::string>        display_;
+  COptValT<CSVGOverflowType>   overflow_;
+  COptString                   visibility_;
+  COptString                   display_;
+  COptValT<CSVGColor>          currentColor_;
   CSVGClip                     clip_;
   CSVGFontDef                  fontDef_;
   COptValT<CHAlignType>        textAnchor_;
@@ -611,7 +644,7 @@ class CSVGObject {
   bool                         selected_ { false };
   bool                         inside_   { false };
   CXMLTag*                     xmlTag_   { 0 };
-  COptValT<std::string>        outBuffer_;
+  COptString                   outBuffer_;
 };
 
 #endif

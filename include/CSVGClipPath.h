@@ -37,7 +37,7 @@ class CSVGClipPath : public CSVGObject {
  private:
   CSVGPathPartList         parts_;
   COptValT<CSVGCoordUnits> clipPathUnits_;
-  COptValT<std::string>    markerEnd_;
+  COptString               markerEnd_;
 };
 
 #endif

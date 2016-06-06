@@ -61,24 +61,24 @@ CSVGAnimateColor::
 animate(double t)
 {
   if      (getAttributeName() == "fill") {
-    CRGBA fromColor, toColor;
+    CSVGColor fromColor, toColor;
 
     svg_.decodeColorString(getFrom(), fromColor);
     svg_.decodeColorString(getTo  (), toColor  );
 
-    CRGBA c = fromColor*(1 - t) + toColor*t;
+    CRGBA c = fromColor.rgba()*(1 - t) + toColor.rgba()*t;
 
     getParent()->setFillColor(c);
 
     svg_.redraw();
   }
   else if (getAttributeName() == "stroke") {
-    CRGBA fromColor, toColor;
+    CSVGColor fromColor, toColor;
 
     svg_.decodeColorString(getFrom(), fromColor);
     svg_.decodeColorString(getTo  (), toColor  );
 
-    CRGBA c = fromColor*(1 - t) + toColor*t;
+    CRGBA c = fromColor.rgba()*(1 - t) + toColor.rgba()*t;
 
     getParent()->setStrokeColor(c);
 

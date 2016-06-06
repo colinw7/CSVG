@@ -55,9 +55,11 @@ $(LDEBUG) \
 -L../../COS/lib \
 -L../../CRegExp/lib \
 -L../../CStrUtil/lib \
+-L../../CUtil/lib \
 
 LIBS = \
--lCSVG -lCXML -lCImageLib -lCFont -lCConfig -lCFile -lCOS -lCRGBName -lCRegExp -lCStrUtil \
+-lCSVG -lCXML -lCImageLib -lCFont -lCConfig -lCFile \
+-lCUtil -lCOS -lCRGBName -lCRegExp -lCStrUtil \
 -ltre -lpng -ljpeg -lfreetype
 
 clean:

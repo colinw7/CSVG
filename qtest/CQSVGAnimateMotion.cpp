@@ -32,7 +32,6 @@ setKeyPoints(const QString &s)
   CSVGAnimateMotion::setKeyPoints(s.toStdString());
 }
 
-
 QString
 CQSVGAnimateMotion::
 rotate() const
@@ -46,7 +45,6 @@ setRotate(const QString &s)
 {
   CSVGAnimateMotion::setRotate(s.toStdString());
 }
-
 
 QString
 CQSVGAnimateMotion::

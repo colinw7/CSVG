@@ -40,7 +40,7 @@ class CSVGUse : public CSVGObject {
 
   void moveBy(const CVector2D &delta) override;
 
-  void draw() override;
+  bool draw() override;
 
   void print(std::ostream &os, bool hier) const override;
 
@@ -48,8 +48,8 @@ class CSVGUse : public CSVGObject {
 
  private:
   COptValT<CSVGXLink>    xlink_;
-  COptValT<double>       x_;
-  COptValT<double>       y_;
+  COptReal               x_;
+  COptReal               y_;
   COptValT<CScreenUnits> width_;
   COptValT<CScreenUnits> height_;
 };

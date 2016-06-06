@@ -72,7 +72,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   else if (svg_.coordOption    (opt_name, opt_value, "cy"       , &real))
     cy_ = real;
   else if (svg_.lengthOption   (opt_name, opt_value, "r"        , length))
-    radius_ = length.px().value();
+    radius_ = length;
   else if (svg_.transformOption(opt_name, opt_value, "transform", transform))
     setTransform(transform);
   else
@@ -81,23 +81,37 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   return true;
 }
 
-void
+bool
 CSVGCircle::
 draw()
 {
   if (svg_.getDebug())
     CSVGLog() << *this;
 
-  svg_.drawCircle(getCenterX(), getCenterY(), getRadius());
+  double w = 1;
+
+  if (viewBox_.isValid())
+    w = getViewBox().getWidth();
+
+  double r = getRadius().pxValue(w);
+
+  if (r <= 0)
+    return false;
+
+  svg_.drawCircle(getCenterX(), getCenterY(), r);
+
+  return true;
 }
 
 bool
 CSVGCircle::
 getBBox(CBBox2D &bbox) const
 {
-  if (! viewBox_.isValid())
-    bbox = CBBox2D(getCenterX() - getRadius(), getCenterY() - getRadius(),
-                   getCenterX() + getRadius(), getCenterY() + getRadius());
+  if (! viewBox_.isValid()) {
+    double r = getRadius().pxValue(1);
+
+    bbox = CBBox2D(getCenterX() - r, getCenterY() - r, getCenterX() + r, getCenterY() + r);
+  }
   else
     bbox = getViewBox();
 

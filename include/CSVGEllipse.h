@@ -31,7 +31,7 @@ class CSVGEllipse : public CSVGObject {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  void draw() override;
+  bool draw() override;
 
   bool getBBox(CBBox2D &bbox) const override;
 
@@ -44,10 +44,10 @@ class CSVGEllipse : public CSVGObject {
   friend std::ostream &operator<<(std::ostream &os, const CSVGEllipse &ellipse);
 
  private:
-  COptValT<double> cx_;
-  COptValT<double> cy_;
-  COptValT<double> rx_;
-  COptValT<double> ry_;
+  COptReal cx_;
+  COptReal cy_;
+  COptReal rx_;
+  COptReal ry_;
 };
 
 #endif

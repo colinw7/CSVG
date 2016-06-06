@@ -49,7 +49,7 @@ class CSVGFeConvolveMatrix : public CSVGFilterBase {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  void draw() override;
+  bool draw() override;
 
   void filterImage(CSVGBuffer *inBuffer);
 
@@ -58,16 +58,16 @@ class CSVGFeConvolveMatrix : public CSVGFilterBase {
   friend std::ostream &operator<<(std::ostream &os, const CSVGFeConvolveMatrix &filter);
 
  private:
-  COptValT<std::string> filterIn_;
-  COptValT<std::string> order_;
-  COptValT<Reals>       kernelMatrix_;
-  COptValT<double>      divisor_;
-  COptValT<double>      bias_;
-  COptValT<double>      targetX_;
-  COptValT<double>      targetY_;
-  COptValT<std::string> edgeMode_;
-  COptValT<std::string> kernelUnitLength_;
-  COptValT<std::string> preserveAlpha_;
+  COptString      filterIn_;
+  COptString      order_;
+  COptValT<Reals> kernelMatrix_;
+  COptReal        divisor_;
+  COptReal        bias_;
+  COptReal        targetX_;
+  COptReal        targetY_;
+  COptString      edgeMode_;
+  COptString      kernelUnitLength_;
+  COptString      preserveAlpha_;
 };
 
 #endif

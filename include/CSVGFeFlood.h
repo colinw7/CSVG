@@ -25,7 +25,7 @@ class CSVGFeFlood : public CSVGFilterBase {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  void draw() override;
+  bool draw() override;
 
   void filterImage(CSVGBuffer *outBuffer);
 
@@ -34,10 +34,10 @@ class CSVGFeFlood : public CSVGFilterBase {
   friend std::ostream &operator<<(std::ostream &os, const CSVGFeFlood &fe);
 
  private:
-  COptValT<std::string> filterIn_;
-  COptValT<std::string> filterOut_;
-  COptValT<CRGBA>       color_;
-  COptValT<double>      opacity_;
+  COptString      filterIn_;
+  COptString      filterOut_;
+  COptValT<CRGBA> color_;
+  COptReal        opacity_;
 };
 
 #endif

@@ -11,6 +11,7 @@ enum class CSVGObjTypeId {
   BLOCK,
   CIRCLE,
   CLIP_PATH,
+  COLOR_PROFILE,
   DEFS,
   DESC,
   ELLIPSE,
@@ -181,12 +182,21 @@ enum class CSVGCSSType {
   GLOBAL,
   CLASS,
   TYPE,
-  TYPE_CLASS
+  TYPE_CLASS,
+  NAME
 };
 
 enum class CSVGEnableBackground {
   ACCUMULATE,
   NEW
+};
+
+enum class CSVGOverflowType {
+  VISIBLE,
+  HIDDEN,
+  SCROLL,
+  AUTO,
+  INHERIT
 };
 
 #endif

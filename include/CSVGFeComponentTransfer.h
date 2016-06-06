@@ -22,7 +22,7 @@ class CSVGFeComponentTransfer : public CSVGFilterBase {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  void draw() override;
+  bool draw() override;
 
   void filterImage(CSVGBuffer *inBuffer, CSVGBuffer *outBuffer);
 
@@ -31,8 +31,8 @@ class CSVGFeComponentTransfer : public CSVGFilterBase {
   friend std::ostream &operator<<(std::ostream &os, const CSVGFeComponentTransfer &fe);
 
  private:
-  COptValT<std::string> filterIn_;
-  COptValT<std::string> filterOut_;
+  COptString filterIn_;
+  COptString filterOut_;
 };
 
 #endif

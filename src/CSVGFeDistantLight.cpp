@@ -36,10 +36,11 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   return true;
 }
 
-void
+bool
 CSVGFeDistantLight::
 draw()
 {
+  return true;
 }
 
 void

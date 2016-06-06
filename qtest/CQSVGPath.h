@@ -10,6 +10,7 @@ class CQSVGPath : public CQSVGObject, public CSVGPath {
   Q_OBJECT
 
   Q_PROPERTY(QString pathString READ getPathString WRITE setPathString)
+  Q_PROPERTY(double  pathLength READ getPathLength WRITE setPathLength)
 
  public:
   CQSVGPath(CQSVG *svg);

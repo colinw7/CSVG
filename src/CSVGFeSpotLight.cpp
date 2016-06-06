@@ -48,10 +48,11 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   return true;
 }
 
-void
+bool
 CSVGFeSpotLight::
 draw()
 {
+  return true;
 }
 
 void

@@ -125,24 +125,38 @@ double
 CSVGBlock::
 getWidth() const
 {
+  CBBox2D bbox = getViewBox();
+
+  double w = 400;
+
+  if (bbox.isSet())
+    w = bbox.getWidth();
+
   if      (width_.isValid())
-    return width_.getValue().px().value();
+    return width_.getValue().px(w).value();
   else if (height_.isValid())
-    return height_.getValue().px().value();
+    return height_.getValue().px(w).value();
   else
-    return 400;
+    return w;
 }
 
 double
 CSVGBlock::
 getHeight() const
 {
+  CBBox2D bbox = getViewBox();
+
+  double h = 400;
+
+  if (bbox.isSet())
+    h = bbox.getHeight();
+
   if      (height_.isValid())
-    return height_.getValue().px().value();
+    return height_.getValue().px(h).value();
   else if (width_.isValid())
-    return width_.getValue().px().value();
+    return width_.getValue().px(h).value();
   else
-    return 400;
+    return h;
 }
 
 void
@@ -157,7 +171,7 @@ void
 CSVGBlock::
 drawInit()
 {
-  oldBuffer_ = svg_.getBuffer();
+  oldBuffer_ = svg_.getCurrentBuffer();
   xscale_    = svg_.xscale();
   yscale_    = svg_.yscale();
 
@@ -194,9 +208,7 @@ drawInit()
   //------
 
   if (parent_) {
-    CSVGBuffer *drawBuffer = svg_.getBuffer("_" + getUniqueName() + "_svg");
-
-    svg_.setBuffer(drawBuffer);
+    CSVGBuffer *drawBuffer = svg_.pushBuffer("_" + getUniqueName() + "_svg");
 
     drawBuffer->clear();
 
@@ -239,8 +251,9 @@ drawTerm()
     //---
 
     bool   clipped = false;
-    double ix = 0, iy = 0;
-    double s = 0;
+    double ix      = 0;
+    double iy      = 0;
+    double s       = 0;
 
     if (preserveAspect_.isValid()) {
       if      (preserveAspect_.getValue().getScale() == CSVGScale::FIXED_MEET) {
@@ -275,7 +288,7 @@ drawTerm()
         else if (preserveAspect_.getValue().getVAlign() == CVALIGN_TYPE_CENTER)
           iy = (bh - s)/2;
         else if (preserveAspect_.getValue().getVAlign() == CVALIGN_TYPE_TOP)
-          iy = bh - std::max(bw, bh);;
+          iy = bh - std::max(bw, bh);
 
         clipped = true;
       }
@@ -314,7 +327,7 @@ drawTerm()
       if (oldDrawing)
         oldBuffer_->stopDraw();
 
-      oldBuffer_->addImage(px, py, clipBuffer);
+      oldBuffer_->addImageBuffer(px, py, clipBuffer);
 
       if (oldDrawing)
         oldBuffer_->startDraw();
@@ -337,16 +350,18 @@ drawTerm()
 
     //---
 
-    svg_.setBuffer(oldBuffer_);
+    svg_.popBuffer();
   }
 }
 
-void
+bool
 CSVGBlock::
 draw()
 {
   if (svg_.getDebug())
     CSVGLog() << *this;
+
+  return false;
 }
 
 bool

@@ -110,7 +110,7 @@ moveBy(const CVector2D &delta)
   y_ = getY() + delta.y();
 }
 
-void
+bool
 CSVGTSpan::
 draw()
 {
@@ -177,6 +177,8 @@ draw()
     if (parentText)
       parentText->setLastPos(CPoint2D(x + w, y));
   }
+
+  return true;
 }
 
 void

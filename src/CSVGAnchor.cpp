@@ -58,12 +58,14 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   return true;
 }
 
-void
+bool
 CSVGAnchor::
 draw()
 {
   if (svg_.getDebug())
     CSVGLog() << *this;
+
+  return false;
 }
 
 void

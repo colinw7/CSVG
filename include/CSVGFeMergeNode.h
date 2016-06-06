@@ -27,8 +27,8 @@ class CSVGFeMergeNode : public CSVGObject {
   friend std::ostream &operator<<(std::ostream &os, const CSVGFeMergeNode &filter);
 
  private:
-  COptValT<std::string> filterIn_;
-  COptValT<std::string> filterOut_;
+  COptString filterIn_;
+  COptString filterOut_;
 };
 
 #endif

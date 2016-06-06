@@ -40,7 +40,7 @@ class CSVGFeComposite : public CSVGFilterBase {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  void draw() override;
+  bool draw() override;
 
   void print(std::ostream &os, bool hier) const override;
 
@@ -51,10 +51,10 @@ class CSVGFeComposite : public CSVGFilterBase {
 
  private:
   COptValT<CRGBACombineFunc> type_;
-  COptValT<std::string>      filterIn1_;
-  COptValT<std::string>      filterIn2_;
-  COptValT<std::string>      filterOut_;
-  COptValT<double>           k1_, k2_, k3_, k4_;
+  COptString                 filterIn1_;
+  COptString                 filterIn2_;
+  COptString                 filterOut_;
+  COptReal                   k1_, k2_, k3_, k4_;
 };
 
 #endif

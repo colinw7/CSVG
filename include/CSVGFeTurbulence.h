@@ -40,7 +40,7 @@ class CSVGFeTurbulence : public CSVGFilterBase {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  void draw() override;
+  bool draw() override;
 
   void filterImage(CSVGBuffer *inBuffer, CSVGBuffer *outBuffer);
 
@@ -49,13 +49,13 @@ class CSVGFeTurbulence : public CSVGFilterBase {
   friend std::ostream &operator<<(std::ostream &os, const CSVGFeTurbulence &filter);
 
  private:
-  COptValT<std::string> type_;
-  COptValT<double>      baseFreq_;
-  COptValT<int>         numOctaves_;
-  COptValT<int>         seed_;
-  COptValT<std::string> stitchTiles_;
-  COptValT<std::string> filterIn_;
-  COptValT<std::string> filterOut_;
+  COptString type_;
+  COptReal   baseFreq_;
+  COptInt    numOctaves_;
+  COptInt    seed_;
+  COptString stitchTiles_;
+  COptString filterIn_;
+  COptString filterOut_;
 };
 
 #endif

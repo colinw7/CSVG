@@ -20,6 +20,12 @@ class CQSVGPattern : public CQSVGObject, public CSVGPattern {
  public:
   CQSVGPattern(CQSVG *svg);
 
+  double getX() const;
+  double getY() const;
+
+  double getWidth() const;
+  double getHeight() const;
+
   CQSVGEnum::CoordUnitsType getUnits() const;
   void setUnits(const CQSVGEnum::CoordUnitsType &u);
 

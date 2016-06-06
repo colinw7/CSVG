@@ -31,7 +31,7 @@ class CSVGMask : public CSVGObject {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  void draw() override;
+  bool isDrawable() const override { return false; }
 
   void drawMask(const CSVGObject *object);
 
@@ -44,8 +44,8 @@ class CSVGMask : public CSVGObject {
 
  private:
   CSVGObject *             object_ { 0 };
-  COptValT<double>         x_;
-  COptValT<double>         y_;
+  COptReal                 x_;
+  COptReal                 y_;
   COptValT<CScreenUnits>   width_;
   COptValT<CScreenUnits>   height_;
   COptValT<CSVGCoordUnits> units_;

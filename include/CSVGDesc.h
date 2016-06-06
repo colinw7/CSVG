@@ -16,7 +16,7 @@ class CSVGDesc : public CSVGObject {
 
   bool isDrawable() const override { return false; }
 
-  void draw() override;
+  bool draw() override;
 
   void print(std::ostream &os, bool hier) const override;
 

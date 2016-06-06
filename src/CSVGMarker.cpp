@@ -1,5 +1,6 @@
 #include <CSVGMarker.h>
 #include <CSVGBuffer.h>
+#include <CSVGLog.h>
 #include <CSVG.h>
 
 /* Attributes:
@@ -106,59 +107,120 @@ drawMarker(double x, double y, double autoAngle)
 
   //---
 
-  CSVGBuffer *currentBuffer = svg_.getBuffer();
+  CSVGBuffer *currentBuffer = svg_.getCurrentBuffer();
 
   CMatrixStack2D transform = currentBuffer->transform();
 
   double refX = getRefX();
   double refY = getRefY();
 
-  double markerWidth  = getMarkerWidth ().px().value();
-  double markerHeight = getMarkerHeight().px().value();
-
-  CBBox2D bbox;
-
-  getChildrenBBox(bbox);
-
-  //double x1 = 0, y1 = 0;
-  double w1 = 1, h1 = 1;
-
-  if (bbox.isSet()) {
-    //x1 = bbox.getXMin();
-    //y1 = bbox.getYMin();
-    w1 = bbox.getWidth ();
-    h1 = bbox.getHeight();
-  }
-
-  double xs = markerWidth /w1;
-  double ys = markerHeight/h1;
+  double markerWidth  = getMarkerWidth ().pxValue();
+  double markerHeight = getMarkerHeight().pxValue();
 
   CMatrixStack2D matrix;
 
   matrix.append(transform);
 
-#if 0
-  matrix.translate(x - refX, y - refY);
+  CBBox2D bbox;
+
+  if (hasViewBox())
+    bbox = getViewBox();
+  else
+    getChildrenBBox(bbox);
+
+//double x1 = 0, y1 = 0;
+  double w1 = 1, h1 = 1;
+
+  if (bbox.isSet()) {
+  //x1 = bbox.getXMin();
+  //y1 = bbox.getYMin();
+    w1 = bbox.getWidth ();
+    h1 = bbox.getHeight();
+  }
+
+  double xs = 1, ys = 1;
+
+  if      (hasMarkerUnits()) {
+    if      (getMarkerUnits() == CSVGCoordUnits::USER_SPACE) {
+    //double xs = markerWidth /w1;
+    //double ys = markerHeight/h1;
+      xs = w1/markerWidth;
+      ys = h1/markerHeight;
+    }
+    else if (getMarkerUnits() == CSVGCoordUnits::STROKE_WIDTH) {
+      double lw = 1;
+
+      if (svg_.currentDrawObject())
+        lw = svg_.currentDrawObject()->getFlatStrokeWidth();
+
+      xs = markerWidth*lw/w1;
+      ys = markerWidth*lw/h1;
+    }
+    else {
+      CSVGLog() << "Invalid marker units";
+    }
+  }
+  else if (hasViewBox()) {
+    // fit inside view box
+    CBBox2D viewBox = getViewBox();
+
+    w1 = viewBox.getWidth ();
+    h1 = viewBox.getHeight();
+
+    xs = w1/markerWidth;
+    ys = h1/markerHeight;
+  }
+  else {
+  //double xs = markerWidth /w1;
+  //double ys = markerHeight/h1;
+    xs = w1/markerWidth;
+    ys = h1/markerHeight;
+  }
+
+  matrix.translate(x - refX*xs, y - refY*ys);
+
+  matrix.rotate(angle, CPoint2D(refX*xs, refY*ys));
 
   matrix.scale(xs, ys);
 
-  matrix.translate(w1/2, h1/2);
+  currentBuffer->setTransform(matrix);
 
-  matrix.rotate(angle);
+  //---
 
-  double xm = x1 + w1/2;
-  double ym = y1 + h1/2;
+  bool clip = true;
 
-  matrix.translate(-xm, -ym);
-#else
-  matrix.translate(x - refX, y - refY);
+  if (hasOverflow()) {
+    if (getOverflow() == CSVGOverflowType::VISIBLE || getOverflow() == CSVGOverflowType::AUTO)
+      clip = false;
+  }
 
-  matrix.rotate(angle, CPoint2D(refX, refY));
+  if (clip) {
+    // draw rectangle as clip
+    CSVGBuffer *buffer = svg_.pushBuffer("clipPath_" + getUniqueName());
 
-  matrix.scale(xs, ys);
-#endif
+    buffer->setClip(true);
 
-  svg_.setTransform(matrix);
+    svg_.beginDrawBuffer(buffer, bbox);
+
+    buffer->clear();
+
+    //buffer->setTransform(matrix);
+
+    buffer->pathInit();
+
+    // expand for line width/alias
+    CBBox2D bbox1 = bbox.expanded(-1, -1, 1, 1);
+
+    buffer->drawRectangle(bbox1);
+
+    currentBuffer->pathClip(buffer);
+
+    svg_.endDrawBuffer(buffer);
+
+    svg_.popBuffer();
+  }
+
+  //---
 
   // draw children
   for (const auto &c : children())
@@ -166,7 +228,12 @@ drawMarker(double x, double y, double autoAngle)
 
   //---
 
-  svg_.setTransform(transform);
+  if (clip)
+    currentBuffer->initClip();
+
+  //---
+
+  currentBuffer->setTransform(transform);
 }
 
 void

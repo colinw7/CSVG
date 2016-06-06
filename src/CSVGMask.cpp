@@ -66,12 +66,6 @@ processOption(const std::string &opt_name, const std::string &opt_value)
 
 void
 CSVGMask::
-draw()
-{
-}
-
-void
-CSVGMask::
 drawMask(const CSVGObject *object)
 {
   CBBox2D bbox;
@@ -81,14 +75,10 @@ drawMask(const CSVGObject *object)
 
   //---
 
-  CSVGBuffer *oldBuffer = svg_.getBuffer();
+  CSVGBuffer *oldBuffer = svg_.getCurrentBuffer();
 
   // set temp buffer for mask image
-  CSVGBuffer *buffer = svg_.getBuffer("mask_" + object->getUniqueName());
-
-  svg_.setBuffer(buffer);
-
-  //---
+  CSVGBuffer *buffer = svg_.pushBuffer("mask_" + object->getUniqueName());
 
   double x = bbox.getXMin  ();
   double y = bbox.getYMin  ();
@@ -119,8 +109,8 @@ drawMask(const CSVGObject *object)
   else
     transform1 = transform;
 
-  // draw mask object
-  drawSubObject();
+  // draw mask children
+  (void) drawSubObject();
 
   // reset transform
   if (getUnits() == CSVGCoordUnits::OBJECT_BBOX)
@@ -130,7 +120,7 @@ drawMask(const CSVGObject *object)
 
   svg_.endDrawBuffer(buffer);
 
-  svg_.setBuffer(oldBuffer);
+  svg_.popBuffer();
 
   //---
 

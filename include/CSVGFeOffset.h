@@ -30,17 +30,17 @@ class CSVGFeOffset : public CSVGFilterBase {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  void draw() override;
+  bool draw() override;
 
   void print(std::ostream &os, bool hier) const override;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGFeOffset &filter);
 
  private:
-  COptValT<std::string> filterIn_;
-  COptValT<std::string> filterOut_;
-  COptValT<double>      dx_;
-  COptValT<double>      dy_;
+  COptString filterIn_;
+  COptString filterOut_;
+  COptReal   dx_;
+  COptReal   dy_;
 };
 
 #endif

@@ -41,6 +41,9 @@ combine(int ix, int iy, CSVGRenderer *r)
   CImagePtr image1 = getImage();
   CImagePtr image2 = r->getImage();
 
+  if (r->opacity() < 1)
+    image2->scaleAlpha(r->opacity());
+
   if (w > iwidth1 || h > iheight1) {
     CImagePtr image3 = createImage(w, h);
 
@@ -123,15 +126,20 @@ setOffsetImage(CSVGRenderer *src, int dx, int dy)
 
 void
 CSVGRenderer::
-gaussianBlur(CSVGRenderer *dst, CBBox2D &bbox, double stdDev)
+gaussianBlur(CSVGRenderer *dst, CBBox2D &bbox, double stdDevX, double stdDevY)
 {
   CImagePtr src_image = getImage();
+
+  // set alpha
+  if (isAlpha())
+    src_image->setAlphaGray(0);
+
   CImagePtr dst_image = src_image->dup();
 
   if (bbox.isSet())
     src_image->setWindow(bbox.getXMin(), bbox.getYMin(), bbox.getXMax(), bbox.getYMax());
 
-  src_image->gaussianBlur(dst_image, stdDev, stdDev);
+  src_image->gaussianBlur(dst_image, stdDevX, stdDevY);
 
   dst->setImage(dst_image);
 }

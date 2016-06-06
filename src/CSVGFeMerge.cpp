@@ -41,7 +41,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   return true;
 }
 
-void
+bool
 CSVGFeMerge::
 draw()
 {
@@ -54,8 +54,10 @@ draw()
 
     CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_out");
 
-    buffer->setImage(outBuffer);
+    buffer->setImageBuffer(outBuffer);
   }
+
+  return true;
 }
 
 void

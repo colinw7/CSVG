@@ -31,7 +31,7 @@ class CSVGFeColorMatrix : public CSVGFilterBase {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  void draw() override;
+  bool draw() override;
 
   void filterImage(CSVGBuffer *inBuffer, CSVGBuffer *outBuffer);
 
@@ -40,8 +40,8 @@ class CSVGFeColorMatrix : public CSVGFilterBase {
   friend std::ostream &operator<<(std::ostream &os, const CSVGFeColorMatrix &filter);
 
  private:
-  COptValT<std::string>         filterIn_;
-  COptValT<std::string>         filterOut_;
+  COptString                    filterIn_;
+  COptString                    filterOut_;
   COptValT<CSVGColorMatrixType> type_;
   ValueList                     values_;
 };

@@ -31,9 +31,9 @@ class CSVGFePointLight : public CSVGFilterBase {
   friend std::ostream &operator<<(std::ostream &os, const CSVGFePointLight &fe);
 
  private:
-  COptValT<double> x_;
-  COptValT<double> y_;
-  COptValT<double> z_;
+  COptReal x_;
+  COptReal y_;
+  COptReal z_;
 };
 
 #endif

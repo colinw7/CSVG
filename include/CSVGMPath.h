@@ -26,7 +26,7 @@ class CSVGMPath : public CSVGObject {
   std::string getLinkName() const { return (xlink_.isValid() ? xlink_.getValue().str() : ""); }
   void setLinkName(const std::string &str);
 
-  void draw() override;
+  bool draw() override;
 
   bool getBBox(CBBox2D &bbox) const override;
 

@@ -65,7 +65,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   return true;
 }
 
-void
+bool
 CSVGGlyph::
 draw()
 {
@@ -73,6 +73,8 @@ draw()
     CSVGLog() << *this;
 
   svg_.drawParts(parts_);
+
+  return true;
 }
 
 void

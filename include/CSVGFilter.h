@@ -57,7 +57,7 @@ class CSVGFilter : public CSVGObject {
   void initDraw(CSVGBuffer *buffer);
   void termDraw(CSVGBuffer *buffer);
 
-  void draw() override;
+  bool draw() override;
 
   void print(std::ostream &os, bool hier) const override;
 
@@ -74,7 +74,7 @@ class CSVGFilter : public CSVGObject {
   COptValT<CScreenUnits>   y_;
   COptValT<CScreenUnits>   width_;
   COptValT<CScreenUnits>   height_;
-  COptValT<std::string>    filterRes_;
+  COptString               filterRes_;
   COptValT<CSVGXLink>      xlink_;
   CBBox2D                  contentsBBox_;
   bool                     oldDrawing_ { false };

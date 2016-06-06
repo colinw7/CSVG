@@ -109,9 +109,42 @@ void
 CSVGFilter::
 initDraw(CSVGBuffer *buffer)
 {
+  // use update background image
+  if (buffer->parentBuffer()) {
+    CSVGBuffer *bgBuffer  = svg_.getBuffer("BackgroundImage");
+    CSVGBuffer *bgBuffer1 = svg_.getBuffer(buffer->getName() + "_FilterBackgroundImage1");
+    CSVGBuffer *bgBuffer2 = svg_.getBuffer(buffer->getName() + "_FilterBackgroundImage2");
+
+    bool bg_drawing = bgBuffer->isDrawing();
+
+    if (bg_drawing)
+      bgBuffer->stopDraw();
+
+    bgBuffer1->setImageBuffer(bgBuffer);
+
+    bool parent_drawing = buffer->parentBuffer()->isDrawing();
+
+    if (parent_drawing)
+      buffer->parentBuffer()->stopDraw();
+
+    bgBuffer2->setFlatImageBuffer(buffer->parentBuffer());
+
+    bgBuffer->setImageBuffer(bgBuffer2);
+
+    if (bg_drawing)
+      bgBuffer->startDraw();
+
+    if (parent_drawing)
+      buffer->parentBuffer()->startDraw();
+  }
+
+  //---
+
   // store current buffer image into SourceGraphic and FilterGraphic
   CSVGBuffer *srcBuffer = svg_.getBuffer("SourceGraphic");
   CSVGBuffer *fltBuffer = svg_.getBuffer("FilterGraphic");
+
+  //---
 
   //bool srcDrawing = srcBuffer->isDrawing();
   // stop drawing to SourceGraphic if needed
@@ -122,14 +155,15 @@ initDraw(CSVGBuffer *buffer)
   if (oldDrawing_)
     buffer->stopDraw();
 
-  srcBuffer->setImage(buffer);
-  fltBuffer->setImage(buffer);
+  //srcBuffer->setFlatImageBuffer(buffer);
+  srcBuffer->setImageBuffer(buffer);
+  fltBuffer->setImageBuffer(srcBuffer);
 
   // save current image into filter in
   if (svg_.getDebugFilter()) {
     CSVGBuffer *filterInBuffer = svg_.getBuffer(buffer->getName() + "_filter_in");
 
-    filterInBuffer->setImage(srcBuffer);
+    filterInBuffer->setImageBuffer(srcBuffer);
   }
 }
 
@@ -137,17 +171,35 @@ void
 CSVGFilter::
 termDraw(CSVGBuffer *buffer)
 {
+  // restore background
+  if (buffer->parentBuffer()) {
+    CSVGBuffer *bgBuffer  = svg_.getBuffer("BackgroundImage");
+    CSVGBuffer *bgBuffer1 = svg_.getBuffer(buffer->getName() + "_FilterBackgroundImage1");
+
+    bool bg_drawing = bgBuffer->isDrawing();
+
+    if (bg_drawing)
+      bgBuffer->stopDraw();
+
+    bgBuffer->setImageBuffer(bgBuffer1);
+
+    if (bg_drawing)
+      bgBuffer->startDraw();
+  }
+
+  //---
+
   CSVGBuffer *fltBuffer = svg_.getBuffer("FilterGraphic");
 
   if (svg_.getDebugFilter()) {
     // save FilterGraphic (output of filter) into filter_out
     CSVGBuffer *filterOutBuffer = svg_.getBuffer(buffer->getName() + "_filter_out");
 
-    filterOutBuffer->setImage(fltBuffer);
+    filterOutBuffer->setImageBuffer(fltBuffer);
   }
 
   // store filter image back into current buffer
-  buffer->setImage(fltBuffer);
+  buffer->setImageBuffer(fltBuffer);
 
   // restart drawing to SourceGraphic if needed
   //if (srcDrawing)
@@ -157,10 +209,11 @@ termDraw(CSVGBuffer *buffer)
     buffer->startDraw();
 }
 
-void
+bool
 CSVGFilter::
 draw()
 {
+  return false;
 }
 
 void

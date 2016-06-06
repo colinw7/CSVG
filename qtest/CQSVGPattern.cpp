@@ -7,6 +7,35 @@ CQSVGPattern(CQSVG *svg) :
 {
 }
 
+double
+CQSVGPattern::
+getX() const
+{
+  return CSVGPattern::getX().pxValue(1);
+}
+
+double
+CQSVGPattern::
+getY() const
+{
+  return CSVGPattern::getY().pxValue(1);
+}
+
+
+double
+CQSVGPattern::
+getWidth() const
+{
+  return CSVGPattern::getWidth().pxValue(1);
+}
+
+double
+CQSVGPattern::
+getHeight() const
+{
+  return CSVGPattern::getHeight().pxValue(1);
+}
+
 CQSVGEnum::CoordUnitsType
 CQSVGPattern::
 getUnits() const

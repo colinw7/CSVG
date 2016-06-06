@@ -13,7 +13,7 @@ bool
 CSVGPathPart::
 interp(double s, const CPoint2D &p1, const CPoint2D &p2, CPoint2D &pi, double &a) const
 {
-std::cerr << "CSVGPathPart::interp" << std::endl;
+std::cerr << "CSVGPathPart::interp " << id() << std::endl;
   double xi = CSVGUtil::map(s, 0, 1, p1.x, p2.x);
   double yi = CSVGUtil::map(s, 0, 1, p1.y, p2.y);
 
@@ -27,7 +27,7 @@ double
 CSVGPathPart::
 getLength(const CPoint2D &) const
 {
-std::cerr << "CSVGPathPart::getLength" << std::endl;
+std::cerr << "CSVGPathPart::getLength " << id() << std::endl;
   return 0;
 }
 
@@ -35,7 +35,7 @@ CPoint2D
 CSVGPathPart::
 getEndPoint(const CPoint2D &p) const
 {
-std::cerr << "CSVGPathPart::getEndPoint" << std::endl;
+std::cerr << "CSVGPathPart::getEndPoint " << id() << std::endl;
   return p;
 }
 
@@ -69,9 +69,23 @@ partTypeName(CSVGPathPartType type)
 
 //------
 
+CSVGPathPartList::
+CSVGPathPartList()
+{
+}
+
 void
 CSVGPathPartList::
-draw(CSVGBuffer *buffer, std::vector<CPoint2D> &points) const
+push_back(CSVGPathPart *part)
+{
+  parts_.push_back(part);
+
+  invalidate();
+}
+
+void
+CSVGPathPartList::
+draw(CSVGBuffer *buffer, std::vector<CPoint2D> &points, std::vector<double> &angles) const
 {
   auto p = parts_.begin();
 
@@ -87,22 +101,46 @@ draw(CSVGBuffer *buffer, std::vector<CPoint2D> &points) const
     return;
 
   points.push_back(CPoint2D(x1, y1));
+  angles.push_back(0);
+
+  double x0 = 0, y0 = 0, x2 = 0, y2 = 0;
 
   while (p != parts_.end()) {
     (*p)->draw(buffer);
 
     ++p;
 
-    double x2, y2;
-
     buffer->pathGetCurrentPoint(&x2, &y2);
 
     if (! REAL_EQ(x1, x2) || ! REAL_EQ(y1, y2)) {
-      points.push_back(CPoint2D(x2, y2));
+      if (points.size() == 1) {
+        double g = atan2(y2 - y1, x2 - x1);
 
+        angles.back() = g;
+      }
+      else {
+        double g1 = atan2(y1 - y0, x1 - x0);
+        double g2 = atan2(y2 - y1, x2 - x1);
+
+        double gg = (g1 + g2)/2;
+
+        angles.back() = gg;
+      }
+
+      points.push_back(CPoint2D(x2, y2));
+      angles.push_back(0);
+
+      x0 = x1;
+      y0 = y1;
       x1 = x2;
       y1 = y2;
     }
+  }
+
+  if (points.size() > 1) {
+    double g = atan2(y1 - y0, x1 - x0);
+
+    angles.back() = g;
   }
 }
 
@@ -149,13 +187,15 @@ interp(double s, double *xi, double *yi, double *a, int *pi) const
 
   //---
 
-  *xi = 0;
-  *yi = 0;
-  *pi = 0;
+  if (xi) *xi = 0;
+  if (yi) *yi = 0;
+  if (pi) *pi = 0;
 
   auto ppart = parts_.begin();
 
   CPoint2D p(0, 0);
+
+  int i = 0;
 
   for ( ; ppart != parts_.end(); ++ppart) {
     if ((*ppart)->getType() == CSVGPathPartType::MOVE_TO ||
@@ -164,7 +204,7 @@ interp(double s, double *xi, double *yi, double *a, int *pi) const
       break;
     }
 
-    ++(*pi);
+    ++i;
   }
 
   CSVGPathPart *part = 0;
@@ -183,7 +223,7 @@ interp(double s, double *xi, double *yi, double *a, int *pi) const
     if (s >= s1 && s <= s2 && s2 > s1)
       break;
 
-    ++(*pi);
+    ++i;
   }
 
   if (! part)
@@ -195,8 +235,9 @@ interp(double s, double *xi, double *yi, double *a, int *pi) const
 
   part->interp(ss, p1, p2, ip, *a);
 
-  *xi = ip.x;
-  *yi = ip.y;
+  if (xi) *xi = ip.x;
+  if (yi) *yi = ip.y;
+  if (pi) *pi = i;
 
   return true;
 }
@@ -238,6 +279,13 @@ print(std::ostream &os) const
   }
 }
 
+void
+CSVGPathPartList::
+invalidate()
+{
+  length_.setInvalid();
+}
+
 //------
 
 CSVGPathMoveTo::
@@ -258,6 +306,16 @@ CSVGPathMoveTo::
 draw(CSVGBuffer *buffer)
 {
   buffer->pathMoveTo(point_.x, point_.y);
+}
+
+bool
+CSVGPathMoveTo::
+interp(double /*s*/, const CPoint2D &p1, const CPoint2D & /*p2*/, CPoint2D &pi, double &a) const
+{
+  pi = p1;
+  a  = 0;
+
+  return false;
 }
 
 void
@@ -286,6 +344,16 @@ CSVGPathRMoveTo::
 draw(CSVGBuffer *buffer)
 {
   buffer->pathRMoveTo(point_.x, point_.y);
+}
+
+bool
+CSVGPathRMoveTo::
+interp(double /*s*/, const CPoint2D &p1, const CPoint2D & /*p2*/, CPoint2D &pi, double &a) const
+{
+  pi = p1;
+  a  = 0;
+
+  return false;
 }
 
 void
@@ -372,6 +440,19 @@ getLength(const CPoint2D &) const
   return point_.distanceTo(CPoint2D(0, 0));
 }
 
+bool
+CSVGPathRLineTo::
+interp(double s, const CPoint2D &p1, const CPoint2D & /*p2*/, CPoint2D &pi, double &a) const
+{
+  double dx = CSVGUtil::map(s, 0, 1, 0, point_.x);
+  double dy = CSVGUtil::map(s, 0, 1, 0, point_.y);
+
+  pi = CPoint2D(p1.x + dx, p1.y + dy);
+  a  = CMathGen::atan2(dx, dy);
+
+  return true;
+}
+
 void
 CSVGPathRLineTo::
 print(std::ostream &os) const
@@ -415,6 +496,18 @@ draw(CSVGBuffer *buffer)
   buffer->pathLineTo(x_, y1);
 }
 
+bool
+CSVGPathHLineTo::
+interp(double s, const CPoint2D &p1, const CPoint2D & /*p2*/, CPoint2D &pi, double &a) const
+{
+  double x = CSVGUtil::map(s, 0, 1, p1.x, x_);
+
+  pi = CPoint2D(x, p1.y);
+  a  = CMathGen::atan2(1.0, 0.0);
+
+  return false;
+}
+
 void
 CSVGPathHLineTo::
 print(std::ostream &os) const
@@ -445,6 +538,18 @@ draw(CSVGBuffer *buffer)
   buffer->pathGetCurrentPoint(&x1, &y1);
 
   buffer->pathLineTo(x1 + dx_, y1);
+}
+
+bool
+CSVGPathRHLineTo::
+interp(double s, const CPoint2D &p1, const CPoint2D & /*p2*/, CPoint2D &pi, double &a) const
+{
+  double dx = CSVGUtil::map(s, 0, 1, 0, dx_);
+
+  pi = CPoint2D(p1.x + dx, p1.y);
+  a  = CMathGen::atan2(dx_, 0.0);
+
+  return true;
 }
 
 void
@@ -490,6 +595,18 @@ draw(CSVGBuffer *buffer)
   buffer->pathLineTo(x1, y_);
 }
 
+bool
+CSVGPathVLineTo::
+interp(double s, const CPoint2D &p1, const CPoint2D & /*p2*/, CPoint2D &pi, double &a) const
+{
+  double y = CSVGUtil::map(s, 0, 1, p1.y, y_);
+
+  pi = CPoint2D(p1.x, y);
+  a  = CMathGen::atan2(0.0, 1.0);
+
+  return false;
+}
+
 void
 CSVGPathVLineTo::
 print(std::ostream &os) const
@@ -520,6 +637,18 @@ draw(CSVGBuffer *buffer)
   buffer->pathGetCurrentPoint(&x1, &y1);
 
   buffer->pathLineTo(x1, y1 + dy_);
+}
+
+bool
+CSVGPathRVLineTo::
+interp(double s, const CPoint2D &p1, const CPoint2D & /*p2*/, CPoint2D &pi, double &a) const
+{
+  double dy = CSVGUtil::map(s, 0, 1, 0, dy_);
+
+  pi = CPoint2D(p1.x, p1.y + dy);
+  a  = CMathGen::atan2(0.0, dy_);
+
+  return true;
 }
 
 void
@@ -698,6 +827,84 @@ draw(CSVGBuffer *buffer)
                       CMathGen::DegToRad(theta + delta));
 }
 
+double
+CSVGPathRArcTo::
+getLength(const CPoint2D &p) const
+{
+  if (length_.isValid())
+    return length_.getValue();
+
+  //---
+
+  bool   unit_circle = false;
+  double cx, cy, rx, ry, theta, delta;
+
+  CSVGUtil::convertArcCoords(p.x, p.y, p.x + point2_.x, p.y + point2_.y,
+                             xa_, rx_, ry_, fa_, fs_,
+                             unit_circle, &cx, &cy, &rx, &ry, &theta, &delta);
+
+  CArcToBezier::BezierList beziers;
+
+  CMathGeom2D::ArcToBeziers(cx, cy, rx, ry, CMathGen::DegToRad(theta),
+                            CMathGen::DegToRad(theta + delta), beziers);
+
+  double l = 0;
+
+  for (const auto &b : beziers)
+    l += b.arcLength();
+
+  //---
+
+  length_ = l;
+
+  return l;
+}
+
+bool
+CSVGPathRArcTo::
+interp(double s, const CPoint2D &p1, const CPoint2D & /*p2*/, CPoint2D &pi, double &a) const
+{
+  double l = getLength(p1);
+
+  //---
+
+  bool   unit_circle = false;
+  double cx, cy, rx, ry, theta, delta;
+
+  CSVGUtil::convertArcCoords(p1.x, p1.y, p1.x + point2_.x, p1.y + point2_.y,
+                             xa_, rx_, ry_, fa_, fs_,
+                             unit_circle, &cx, &cy, &rx, &ry, &theta, &delta);
+
+  CArcToBezier::BezierList beziers;
+
+  CMathGeom2D::ArcToBeziers(cx, cy, rx, ry, CMathGen::DegToRad(theta),
+                            CMathGen::DegToRad(theta + delta), beziers);
+
+  double t = CSVGUtil::map(s, 0, 1, 0, l);
+
+  double l1 = 0, l2 = 0;
+
+  for (const auto &b : beziers) {
+    l1 = l2;
+    l2 = l1 + b.arcLength();
+
+    double xi, yi;
+
+    if (t >= l1 && t <= l2) {
+      double t1 = CSVGUtil::map(t, l1, l2, 0, 1);
+
+      b.calc(t1, &xi, &yi);
+
+      pi = CPoint2D(xi, yi);
+      a  = b.gradient(t1);
+
+      return true;
+    }
+  }
+
+  return false;
+}
+
 void
 CSVGPathRArcTo::
 print(std::ostream &os) const
@@ -795,7 +1002,8 @@ void
 CSVGPathMBezier2To::
 draw(CSVGBuffer *buffer)
 {
-  buffer->pathGetLastMControlPoint(point1_);
+  if (! buffer->pathGetLastMControlPoint(point1_))
+    buffer->pathGetCurrentPoint(point1_);
 
   buffer->pathBezier2To(point1_.x, point1_.y, point2_.x, point2_.y);
 
@@ -1090,7 +1298,8 @@ void
 CSVGPathMBezier3To::
 draw(CSVGBuffer *buffer)
 {
-  buffer->pathGetLastMControlPoint(point1_);
+  if (! buffer->pathGetLastMControlPoint(point1_))
+    buffer->pathGetCurrentPoint(point1_);
 
   buffer->pathBezier3To(point1_.x, point1_.y, point2_.x, point2_.y, point3_.x, point3_.y);
 
@@ -1315,6 +1524,16 @@ CSVGPathClosePath::
 draw(CSVGBuffer *buffer)
 {
   buffer->pathClose();
+}
+
+bool
+CSVGPathClosePath::
+interp(double, const CPoint2D &p1, const CPoint2D & /*p2*/, CPoint2D &pi, double &a) const
+{
+  pi = p1;
+  a  = 0;
+
+  return false;
 }
 
 void

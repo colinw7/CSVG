@@ -18,7 +18,7 @@ class CSVGStyle : public CSVGObject {
 
   void setText(const std::string &text) override;
 
-  void draw() override;
+  bool draw() override;
 
   void print(std::ostream &os, bool hier) const override;
 

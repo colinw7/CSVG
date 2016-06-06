@@ -1,13 +1,14 @@
 #include <CSVGObject.h>
 #include <CSVGFilter.h>
+#include <CSVGGroup.h>
 #include <CSVGStop.h>
 #include <CSVGMask.h>
 #include <CSVGClipPath.h>
 #include <CSVGBuffer.h>
 #include <CSVG.h>
 #include <CSVGLog.h>
-#include <CSVGTempStroke.h>
-#include <CSVGTempFont.h>
+//#include <CSVGTempStroke.h>
+//#include <CSVGTempFont.h>
 #include <CSVGUtil.h>
 
 #include <CFontMgr.h>
@@ -173,54 +174,13 @@ updateFill(const CSVGFill &fill, bool recurse)
   }
 }
 
-bool
-CSVGObject::
-getFlatStrokeNoColor() const
-{
-  // if no color set use it
-  if (stroke_.getNoColorValid())
-    return stroke_.getNoColor();
-
-  // if has stroke color then no color is false
-  if (stroke_.getColorValid())
-    return false;
-
-  bool  noColor; CSVGCSSType noColorType;
-  CRGBA rgba   ; CSVGCSSType colorType;
-
-  if (svg_.getStyleStrokeNoColor(this, noColor, noColorType)) {
-    if (svg_.getStyleStrokeColor(this, rgba, colorType)) {
-      if (noColorType > colorType)
-        return noColor;
-
-      return false;
-    }
-    else
-      return noColor;
-  }
-  else if (svg_.getStyleStrokeColor(this, rgba, colorType)) {
-    return false;
-  }
-
-  //---
-
-  CSVGObject *parent = getParent();
-
-  if (parent)
-    return parent->getFlatStrokeNoColor();
-  else
-    return true; // default to no color (no stroke)
-}
-
-CRGBA
+CSVGColor
 CSVGObject::
 getFlatStrokeColor() const
 {
   // if color set use it
   if (stroke_.getColorValid())
     return stroke_.getColor();
-
-  COptValT<CRGBA> color;
 
   CSVGObject *parent = getParent();
 
@@ -231,22 +191,16 @@ getFlatStrokeColor() const
     parent = parent->getParent();
   }
 
-  //---
+  //if (stroke_.getDefColorValid())
+  //  return stroke_.getDefColor();
 
-  CRGBA       rgba(0,0,0);
+  CSVGColor   color;
   CSVGCSSType colorType;
 
-  if (svg_.getStyleStrokeColor(this, rgba, colorType))
-    return rgba;
+  if (svg_.getStyleStrokeColor(this, color, colorType))
+    return color;
 
-  //---
-
-  if (stroke_.getDefColorValid())
-    return stroke_.getDefColor();
-
-  //---
-
-  return CRGBA(0,0,0);
+  return CSVGColor();
 }
 
 double
@@ -306,7 +260,7 @@ getFlatStrokeWidth() const
   return 1.0;
 }
 
-CLineDash
+CSVGStrokeDash
 CSVGObject::
 getFlatStrokeLineDash() const
 {
@@ -322,7 +276,7 @@ getFlatStrokeLineDash() const
     parent = parent->getParent();
   }
 
-  CLineDash dash;
+  CSVGStrokeDash dash;
 
   if (svg_.getStyleStrokeDash(this, dash))
     return dash;
@@ -330,48 +284,11 @@ getFlatStrokeLineDash() const
   return dash;
 }
 
-bool
-CSVGObject::
-getFlatFillNoColor() const
-{
-  // if no color set use it
-  if (fill_.getNoColorValid())
-    return fill_.getNoColor();
-
-  // if has fill color then no color is false
-  if (fill_.getColorValid())
-    return false;
-
-  bool  noColor; CSVGCSSType noColorType;
-  CRGBA rgba   ; CSVGCSSType colorType;
-
-  if (svg_.getStyleFillNoColor(this, noColor, noColorType)) {
-    if (svg_.getStyleFillColor(this, rgba, colorType)) {
-      if (noColorType > colorType)
-        return noColor;
-
-      return false;
-    }
-    else
-      return noColor;
-  }
-  else if (svg_.getStyleFillColor(this, rgba, colorType))
-    return false;
-
-  //---
-
-  CSVGObject *parent = getParent();
-
-  if (parent)
-    return parent->getFlatFillNoColor();
-  else
-    return false; // default false (filled)
-}
-
-CRGBA
+CSVGColor
 CSVGObject::
 getFlatFillColor() const
 {
+  // if color set use it
   if (fill_.getColorValid())
     return fill_.getColor();
 
@@ -384,16 +301,16 @@ getFlatFillColor() const
     parent = parent->getParent();
   }
 
-  if (fill_.getDefColorValid())
-    return fill_.getDefColor();
+  //if (fill_.getDefColorValid())
+  //  return fill_.getDefColor();
 
-  CRGBA       rgba(0,0,0);
+  CSVGColor   color;
   CSVGCSSType colorType;
 
-  if (svg_.getStyleFillColor(this, rgba, colorType))
-    return rgba;
+  if (svg_.getStyleFillColor(this, color, colorType))
+    return color;
 
-  return CRGBA(0,0,0);
+  return CSVGColor();
 }
 
 double
@@ -542,6 +459,44 @@ CSVGObject::
 setFontStyle(CFontStyle s)
 {
   fontDef_.setStyle(s);
+}
+
+CRGBA
+CSVGObject::
+colorToRGBA(const CSVGColor &color) const
+{
+  if (color.isRGBA())
+    return color.rgba();
+
+  if (color.isCurrent())
+    return getFlatCurrentColor();
+
+  // inherit, none
+  if (color.isInherit()) {
+    if (parent_)
+      return parent_->colorToRGBA(color);
+    else
+      return CRGBA(0,0,0);
+  }
+
+  return CRGBA(0,0,0,0);
+}
+
+CRGBA
+CSVGObject::
+getFlatCurrentColor() const
+{
+  if (hasCurrentColor()) {
+    CSVGColor color = currentColor();
+
+    if (color.isRGBA())
+      return color.rgba();
+  }
+
+  if (parent_)
+    return parent_->getFlatCurrentColor();
+
+  return CRGBA(0,0,0);
 }
 
 CMatrixStack2D
@@ -756,7 +711,7 @@ processPaintOption(const std::string &optName, const std::string &optValue)
   else if (svg_.stringOption(optName, optValue, "stroke", str))
     setStrokeColor(str);
   else if (svg_.stringOption(optName, optValue, "stroke-dasharray", str))
-    setStrokeDash(str);
+    setStrokeDashArray(str);
   else if (svg_.stringOption(optName, optValue, "stroke-dashoffset", str))
     setStrokeDashOffset(str);
   else if (svg_.stringOption(optName, optValue, "stroke-linecap", str))
@@ -768,7 +723,7 @@ processPaintOption(const std::string &optName, const std::string &optValue)
   else if (svg_.stringOption(optName, optValue, "stroke-width", str))
     setStrokeWidth(str);
   else if (svg_.stringOption(optName, optValue, "overflow", str))
-    nameValues_["overflow"] = str;
+    setOverflow(str);
   else if (svg_.stringOption(optName, optValue, "visibility", str))
     setVisibility(str); // visible | hidden | collapse | inherit
   else if (svg_.stringOption(optName, optValue, "display", str))
@@ -786,8 +741,14 @@ processColorOption(const std::string &optName, const std::string &optValue)
   std::string str;
 
   // Color Attributes
-  if      (svg_.stringOption(optName, optValue, "color", str))
-    nameValues_["color"] = str; // fill and stroke color ?
+  if      (svg_.stringOption(optName, optValue, "color", str)) {
+    CSVGColor color;
+
+    if (svg_.decodeColorString(str, color))
+      setCurrentColor(color);
+    else
+      CLog() << "Invalid color '" << str << "'";
+  }
   else if (svg_.stringOption(optName, optValue, "color-interpolation", str))
     nameValues_["color-interpolation"] = str;
   else if (svg_.stringOption(optName, optValue, "color-rendering", str))
@@ -891,9 +852,14 @@ processMarkerOption(const std::string &optName, const std::string &optValue)
 
   // Marker
   if      (svg_.urlOption(optName, optValue, "marker", &obj)) {
-    setMarkerStart(obj);
-    setMarkerMid  (obj);
-    setMarkerEnd  (obj);
+    // no shortcut "marker" for group (other grouping svg)
+    CSVGGroup *group = dynamic_cast<CSVGGroup *>(this);
+
+    if (! group) {
+      setMarkerStart(obj);
+      setMarkerMid  (obj);
+      setMarkerEnd  (obj);
+    }
   }
   else if (svg_.urlOption(optName, optValue, "marker-start", &obj))
     setMarkerStart(obj);
@@ -998,9 +964,9 @@ processViewportOption(const std::string &optName, const std::string &optValue)
   std::string str;
 
   if      (svg_.stringOption(optName, optValue, "clip", str))
-    notHandled(optName, optValue);
+    nameValues_["clip"] = str;
   else if (svg_.stringOption(optName, optValue, "overflow", str))
-    notHandled(optName, optValue);
+    setOverflow(str);
   else
     return false;
 
@@ -1181,11 +1147,10 @@ processFontOption(const std::string &optName, const std::string &optValue)
   std::string  str;
   CScreenUnits length;
 
-  if      (svg_.stringOption(optName, optValue, "font", str))
-    notHandled(optName, optValue); //setFont(str)
-
   // Font properties
-  if      (svg_.stringOption(optName, optValue, "font-family", str))
+  if      (svg_.stringOption(optName, optValue, "font", str))
+    parseFont(str);
+  else if (svg_.stringOption(optName, optValue, "font-family", str))
     setFontFamily(str);
   else if (svg_.lengthOption(optName, optValue, "font-size", length))
     setFontSize(length);
@@ -1201,6 +1166,45 @@ processFontOption(const std::string &optName, const std::string &optValue)
     setFontWeight(str);
   else
     return false;
+
+  return true;
+}
+
+bool
+CSVGObject::
+parseFont(const std::string &str)
+{
+  CStrParse parse(str);
+
+  parse.skipSpace();
+
+  if (parse.isDigit()) {
+    std::string word;
+
+    parse.readNonSpace(word);
+
+    CScreenUnits length;
+
+    if (! svg_.decodeLengthValue(word, length)) {
+      CSVGLog() << "Illegal length value '" << word << "'";
+      return false;
+    }
+
+    parse.skipSpace();
+
+    parse.readNonSpace(word);
+
+    std::vector<std::string> words;
+
+    CStrUtil::addFields(word, words, ",");
+
+    if (! words.empty())
+      setFontFamily(words[0]);
+  }
+  else {
+    CSVGLog() << "Invalid font string '" << str << "'";
+    return false;
+  }
 
   return true;
 }
@@ -1287,17 +1291,17 @@ interpValue(const std::string &name, const std::string &from, const std::string 
             double x, std::string &ystr) const
 {
   if (name == "fill") {
-    CRGBA fromColor;
+    CSVGColor fromColor;
 
     if (! svg_.decodeColorString(from, fromColor))
       return false;
 
-    CRGBA toColor;
+    CSVGColor toColor;
 
     if (! svg_.decodeColorString(to, toColor))
       return false;
 
-    CRGBA c = fromColor*(1 - x) + toColor*x;
+    CRGBA c = fromColor.rgba()*(1 - x) + toColor.rgba()*x;
 
     ystr = CStrUtil::strprintf("rgb(%d,%d,%d)", c.getRedI(), c.getGreenI(), c.getBlueI());
 
@@ -1326,14 +1330,25 @@ interpValue(const std::string &name, const std::string &from, const std::string 
 
 void
 CSVGObject::
+setOverflow(const std::string &str)
+{
+  if      (str == "visible") overflow_ = CSVGOverflowType::VISIBLE;
+  else if (str == "hidden" ) overflow_ = CSVGOverflowType::HIDDEN;
+  else if (str == "scroll" ) overflow_ = CSVGOverflowType::SCROLL;
+  else if (str == "auto"   ) overflow_ = CSVGOverflowType::AUTO;
+  else if (str == "inherit") overflow_ = CSVGOverflowType::INHERIT;
+  else                       notHandled("overflow", str);
+}
+
+void
+CSVGObject::
 setTextBaselineShift(const std::string &str)
 {
   nameValues_["baseline-shift"] = str;
 
-  if (str == "super")
-    fontDef_.setSuperscript(true);
-  else if (str == "sub")
-    fontDef_.setSubscript(true);
+  if      (str == "super") fontDef_.setSuperscript(true);
+  else if (str == "sub"  ) fontDef_.setSubscript(true);
+  else                     notHandled("baseline-shift", str);
 }
 
 void
@@ -1363,6 +1378,66 @@ getFlatTextAnchor() const
   }
 
   return CHALIGN_TYPE_LEFT;
+}
+
+CSVGObject *
+CSVGObject::
+getFlatMarkerStart() const
+{
+  CSVGObject *marker = marker_.getStart();
+
+  if (marker)
+    return marker;
+
+  CSVGCSSType cssType;
+
+  if (svg_.getStyleMarkerStart(this, marker, cssType))
+    return marker;
+
+  if (parent_)
+    return parent_->getFlatMarkerStart();
+
+  return 0;
+}
+
+CSVGObject *
+CSVGObject::
+getFlatMarkerMid() const
+{
+  CSVGObject *marker = marker_.getMid();
+
+  if (marker)
+    return marker;
+
+  CSVGCSSType cssType;
+
+  if (svg_.getStyleMarkerMid(this, marker, cssType))
+    return marker;
+
+  if (parent_)
+    return parent_->getFlatMarkerMid();
+
+  return 0;
+}
+
+CSVGObject *
+CSVGObject::
+getFlatMarkerEnd() const
+{
+  CSVGObject *marker = marker_.getEnd();
+
+  if (marker)
+    return marker;
+
+  CSVGCSSType cssType;
+
+  if (svg_.getStyleMarkerEnd(this, marker, cssType))
+    return marker;
+
+  if (parent_)
+    return parent_->getFlatMarkerEnd();
+
+  return 0;
 }
 
 void
@@ -1498,7 +1573,7 @@ drawObject()
     if (oldBgDrawing)
       bgBuffer->stopDraw();
 
-    tempBgBuffer1->setImage(bgBuffer);
+    tempBgBuffer1->setImageBuffer(bgBuffer);
 
     bgBuffer->clear();
 
@@ -1509,7 +1584,7 @@ drawObject()
   //------
 
   // get current buffer
-  CSVGBuffer *oldBuffer     = svg_.getBuffer();
+  CSVGBuffer *oldBuffer     = svg_.getCurrentBuffer();
   CSVGBuffer *currentBuffer = oldBuffer;
 
   //------
@@ -1523,6 +1598,9 @@ drawObject()
     if (! isDrawable() && ! hasChildren())
       saveImage = false;
   }
+
+  if (getOpacityValid())
+    saveImage = true;
 
   bool isFiltered = (getFilter() && getFiltered());
 
@@ -1543,9 +1621,7 @@ drawObject()
 
   // set buffer to temporary buffer
   if (saveImage) {
-    saveBuffer = svg_.getBuffer("_" + getUniqueName());
-
-    svg_.setBuffer(saveBuffer);
+    saveBuffer = svg_.pushBuffer("_" + getUniqueName());
 
     saveBuffer->clear();
 
@@ -1570,6 +1646,9 @@ drawObject()
 
   //if (! isFiltered)
     currentBuffer->setTransform(transform1);
+
+  if (getOpacityValid())
+    currentBuffer->setOpacity(getOpacity());
 
   //------
 
@@ -1629,7 +1708,7 @@ drawObject()
 
         px = 0; py = 0;
 
-        oldBuffer->addImage(px, py, saveBuffer);
+        oldBuffer->addImageBuffer(px, py, saveBuffer);
 
         if (oldDrawing)
           oldBuffer->startDraw();
@@ -1640,7 +1719,7 @@ drawObject()
         if (oldDrawing)
           oldBuffer->stopDraw();
 
-        oldBuffer->addImage(saveBuffer);
+        oldBuffer->addImageBuffer(saveBuffer);
 
         if (oldDrawing)
           oldBuffer->startDraw();
@@ -1649,7 +1728,7 @@ drawObject()
 
     //---
 
-    svg_.setBuffer(oldBuffer);
+    svg_.popBuffer();
   }
 
   //---
@@ -1665,12 +1744,12 @@ drawObject()
     if (oldBgDrawing)
       bgBuffer->stopDraw();
 
-    tempBgBuffer2->setImage(bgBuffer);
+    tempBgBuffer2->setImageBuffer(bgBuffer);
 
     bgBuffer->clear();
 
-    bgBuffer->addImage(tempBgBuffer1);
-    bgBuffer->addImage(tempBgBuffer2);
+    bgBuffer->addImageBuffer(tempBgBuffer1);
+    bgBuffer->addImageBuffer(tempBgBuffer2);
 
     if (oldBgDrawing)
       bgBuffer->startDraw();
@@ -1685,20 +1764,22 @@ bool
 CSVGObject::
 drawSubObject(bool forceDraw)
 {
-  if (! isVisible())
+  bool visible      = isVisible();
+  bool childVisible = (! visible ? anyChildVisible(visible) : true);
+
+  if (! visible && ! childVisible)
     return false;
+
+  //------
 
   bool drawn = false;
 
-  //------
-
-  CSVGBuffer *oldBuffer = svg_.getBuffer();
+  CSVGBuffer *oldBuffer = svg_.getCurrentBuffer();
 
   // set stroke
-  CSVGTempStroke tempStroke(*this);
-  CSVGTempFont   tempFont  (*this);
-
-  //------
+  //CSVGTempStroke tempStroke(*this);
+  //CSVGTempFont   tempFont  (*this);
+  svg_.pushStyle(this);
 
   drawInit();
 
@@ -1713,14 +1794,16 @@ drawSubObject(bool forceDraw)
   //------
 
   // draw object (virtual)
-  if (isDrawable() || isFilter()) {
-    svg_.setDrawObject(this);
+  if (visible) {
+    if (isDrawable() || isFilter()) {
+      svg_.pushDrawObject(this);
 
-    draw();
+      draw();
 
-    drawn = true;
+      drawn = true;
 
-    svg_.setDrawObject(0);
+      svg_.popDrawObject();
+    }
   }
 
   //------
@@ -1779,19 +1862,55 @@ drawSubObject(bool forceDraw)
 
   drawTerm();
 
+  svg_.popStyle();
+
   return drawn;
 }
 
 bool
 CSVGObject::
-isVisible() const
+isHierVisible(bool defValue) const
 {
+  if (! visibility_.isValid()) {
+    if (parent_)
+      return parent_->isHierVisible();
+
+    return defValue;
+  }
+  else
+    return isVisible(defValue);
+}
+
+bool
+CSVGObject::
+anyChildVisible(bool defValue) const
+{
+  for (const auto &c : children()) {
+    if (c->isVisible(defValue))
+      return true;
+  }
+
+  for (const auto &c : children()) {
+    if (c->anyChildVisible(defValue))
+      return true;
+  }
+
+  return defValue;
+}
+
+bool
+CSVGObject::
+isVisible(bool defValue) const
+{
+  // visible | hidden | collapse | inherit
   if (visibility_.isValid()) {
-    if (visibility_.getValue() == "hidden")
+    if      (visibility_.getValue() == "visible")
+      return true;
+    else if (visibility_.getValue() == "hidden" || visibility_.getValue() == "collapse")
       return false;
   }
 
-  return true;
+  return defValue;
 }
 
 void
@@ -1814,10 +1933,7 @@ toBufferImage()
   if (! getBBox(bbox))
     return 0;
 
-  CSVGBuffer *oldBuffer   = svg_.getBuffer();
-  CSVGBuffer *imageBuffer = svg_.getBuffer("_" + getUniqueName() + "_image");
-
-  svg_.setBuffer(imageBuffer);
+  CSVGBuffer *imageBuffer = svg_.pushBuffer("_" + getUniqueName() + "_image");
 
   imageBuffer->clear();
 
@@ -1830,7 +1946,7 @@ toBufferImage()
 
   svg_.endDrawBuffer(imageBuffer);
 
-  svg_.setBuffer(oldBuffer);
+  svg_.popBuffer();
 
   return imageBuffer;
 }
@@ -1848,10 +1964,7 @@ toNamedBufferImage(const std::string &bufferName)
 
   std::swap(saveFilter, filter_);
 
-  CSVGBuffer *oldBuffer   = svg_.getBuffer();
-  CSVGBuffer *imageBuffer = svg_.getBuffer(bufferName);
-
-  svg_.setBuffer(imageBuffer);
+  CSVGBuffer *imageBuffer = svg_.pushBuffer(bufferName);
 
   imageBuffer->clear();
 
@@ -1861,7 +1974,7 @@ toNamedBufferImage(const std::string &bufferName)
 
   svg_.endDrawBuffer(imageBuffer);
 
-  svg_.setBuffer(oldBuffer);
+  svg_.popBuffer();
 
   std::swap(saveFilter, filter_);
 
@@ -2133,7 +2246,7 @@ decodeXLink(const std::string &str, CSVGObject **object, CSVGBuffer **buffer)
 
     ++pos;
 
-    if (format == "image/png;base64") {
+    if (format == "image/png;base64" || format == "image/jpeg;base64") {
       // image string to buffer
       std::string filename(".svg.png");
 

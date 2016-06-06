@@ -43,8 +43,12 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   std::string  str;
   CScreenUnits length;
 
-  if      (svg_.percentOption(opt_name, opt_value, "startOffset", length))
-    startOffset_ = length;
+  if      (svg_.percentOption(opt_name, opt_value, "startOffset", length)) {
+    if (length.units() != CScreenUnits::Units::PERCENT)
+      startOffset_ = length.ratioValue(1);
+    else
+      startOffset_ = length;
+  }
   else if (svg_.stringOption(opt_name, opt_value, "xlink:href", str))
     xlink_ = CSVGXLink(this, str);
   else
@@ -53,7 +57,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   return true;
 }
 
-void
+bool
 CSVGTextPath::
 draw()
 {
@@ -61,17 +65,17 @@ draw()
     CSVGLog() << *this;
 
   CSVGObject *obj = (xlink_.isValid() ? xlink_.getValue().getObject() : 0);
-  if (! obj) return;
+  if (! obj) return false;
 
   CSVGPath *path = dynamic_cast<CSVGPath *>(obj);
-  if (! path) return;
+  if (! path) return false;
 
   CSVGText *parentText = getParentText();
-  if (! parentText) return;
+  if (! parentText) return false;
 
   //---
 
-  CSVGBuffer *currentBuffer = svg_.getBuffer();
+  CSVGBuffer *currentBuffer = svg_.getCurrentBuffer();
 
   CMatrixStack2D transform = currentBuffer->transform();
 
@@ -92,8 +96,19 @@ draw()
   double l   = parts.getLength();
   int    len = text.length();
 
-  double s1   = 0, s2   = getStartOffset().ratioValue(l);
+  double s1   = 0, s2   = 0;
   int    pos1 = 0, pos2 = 0;
+
+  if (getStartOffset().units() == CScreenUnits::Units::PERCENT)
+    s2 = getStartOffset().ratioValue(l);
+  else {
+    s2 = getStartOffset().pxValue();
+
+    if (path->hasPathLength())
+      s2 /= path->getPathLength();
+    else
+      s2 /= l;
+  }
 
   //---
 
@@ -140,11 +155,15 @@ draw()
 
     double ai = ai1;
 
+#if 0
     if (pi1 == pi2) {
+std::cerr << "Adjust angles " << ai1 << " " << ai2 << std::endl;
       CSVGUtil::adjustAngles(ai1, ai2);
 
       ai = (ai1 + ai2)/2;
+std::cerr << "New angles " << ai1 << " " << ai2 << std::endl;
     }
+#endif
 
     //---
 
@@ -162,6 +181,8 @@ draw()
   //---
 
   svg_.setTransform(transform);
+
+  return true;
 }
 
 CSVGText *

@@ -37,7 +37,7 @@ class CSVGFeDisplacementMap : public CSVGFilterBase {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  void draw() override;
+  bool draw() override;
 
   void filterImage(CSVGBuffer *inBuffer1, CSVGBuffer *inBuffer2, CSVGBuffer *outBuffer);
 
@@ -46,12 +46,12 @@ class CSVGFeDisplacementMap : public CSVGFilterBase {
   friend std::ostream &operator<<(std::ostream &os, const CSVGFeDisplacementMap &filter);
 
  private:
-  COptValT<std::string> filterIn1_;
-  COptValT<std::string> filterIn2_;
-  COptValT<std::string> filterOut_;
-  COptValT<double>      scale_;
-  COptValT<std::string> xChannelSelector_;
-  COptValT<std::string> yChannelSelector_;
+  COptString filterIn1_;
+  COptString filterIn2_;
+  COptString filterOut_;
+  COptReal   scale_;
+  COptString xChannelSelector_;
+  COptString yChannelSelector_;
 };
 
 #endif

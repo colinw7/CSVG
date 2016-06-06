@@ -60,7 +60,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   return true;
 }
 
-void
+bool
 CSVGFeComposite::
 draw()
 {
@@ -72,11 +72,11 @@ draw()
 
     CSVGBuffer *buffer1 = svg_.getBuffer(objectBufferName + "_in1");
 
-    buffer1->setImage(inBuffer1);
+    buffer1->setImageBuffer(inBuffer1);
 
     CSVGBuffer *buffer2 = svg_.getBuffer(objectBufferName + "_in2");
 
-    buffer2->setImage(inBuffer2);
+    buffer2->setImageBuffer(inBuffer2);
   }
 
   CSVGBuffer *outBuffer = svg_.getBuffer(getFilterOut());
@@ -88,8 +88,10 @@ draw()
 
     CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_out");
 
-    buffer->setImage(outBuffer);
+    buffer->setImageBuffer(outBuffer);
   }
+
+  return true;
 }
 
 void

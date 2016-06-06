@@ -70,25 +70,32 @@ addPoint(const CPoint2D &point)
   points_.push_back(point);
 }
 
-void
+bool
 CSVGPolyLine::
 draw()
 {
   if (svg_.getDebug())
     CSVGLog() << *this;
 
-  CSVGBuffer *buffer = svg_.getBuffer();
+  int num_points = points_.size();
+
+  if (! num_points)
+    return false;
+
+  //---
+
+  CSVGBuffer *buffer = svg_.getCurrentBuffer();
 
   buffer->pathInit();
 
-  uint num_points = points_.size();
-
-  for (uint i = 0; i < num_points; ++i) {
+  for (int i = 0; i < num_points; ++i) {
     if (i == 0)
       buffer->pathMoveTo(points_[i].x, points_[i].y);
     else
       buffer->pathLineTo(points_[i].x, points_[i].y);
   }
+
+  //---
 
   if (svg_.isFilled() || svg_.isStroked()) {
     if (svg_.isFilled()) {
@@ -108,6 +115,25 @@ draw()
 
     buffer->pathFill();
   }
+
+  //---
+
+  std::vector<double> angles;
+
+  for (int i = 0; i < num_points; ++i) {
+    double a = 0;
+
+    if      (i > 0)
+      a = atan2(points_[i].y - points_[i - 1].y, points_[i].x - points_[i - 1].x);
+    else if (i < num_points - 1)
+      a = atan2(points_[i + 1].y - points_[i].y, points_[i + 1].x - points_[i].x);
+
+    angles.push_back(a);
+  }
+
+  svg_.drawMarkers(points_, angles);
+
+  return true;
 }
 
 bool

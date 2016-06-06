@@ -84,8 +84,8 @@ class CSVGRadialGradient : public CSVGObject {
   COptValT<CScreenUnits>        cx_;
   COptValT<CScreenUnits>        cy_;
   COptValT<CScreenUnits>        radius_;
-  COptValT<double>              focusX_;
-  COptValT<double>              focusY_;
+  COptReal                      focusX_;
+  COptReal                      focusY_;
   StopList                      stops_;
   COptValT<CMatrixStack2D>      gtransform_;
   COptValT<CSVGCoordUnits>      units_;

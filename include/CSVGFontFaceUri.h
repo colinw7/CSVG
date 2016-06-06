@@ -6,7 +6,7 @@
 
 class CSVGFontFaceUri : public CSVGObject {
  public:
-  CSVG_OBJECT_DEF("font-face-uri", CSVGObjTypeId::FONT_FACE_SRC)
+  CSVG_OBJECT_DEF("font-face-uri", CSVGObjTypeId::FONT_FACE_URI)
 
   CSVGFontFaceUri(CSVG &svg);
   CSVGFontFaceUri(const CSVGFontFaceUri &font_face);
@@ -20,7 +20,7 @@ class CSVGFontFaceUri : public CSVGObject {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  void draw() override;
+  bool draw() override;
 
   void print(std::ostream &os, bool hier) const override;
 

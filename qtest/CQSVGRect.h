@@ -19,6 +19,9 @@ class CQSVGRect : public CQSVGObject, public CSVGRect {
  public:
   CQSVGRect(CQSVG *svg);
 
+  double getWidth () const;
+  double getHeight() const;
+
   void drawTerm() override;
 };
 

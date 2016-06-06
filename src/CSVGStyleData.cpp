@@ -6,24 +6,18 @@ void
 CSVGStyleData::
 setValue(const std::string &name, const std::string &value)
 {
-  if      (name == "fill") {
-    if (value == "none")
-      fill_.setNoColor(true);
-    else
-      fill_.setColor(value);
-  }
+  nameValues_[name] = value;
+
+  if      (name == "fill")
+    fill_.setColor(value);
   else if (name == "fill-opacity")
     fill_.setOpacity(value);
-  else if (name == "stroke") {
-    if (value == "none")
-      stroke_.setNoColor(true);
-    else
-      stroke_.setColor(value);
-  }
+  else if (name == "stroke")
+    stroke_.setColor(value);
   else if (name == "stroke-width")
     stroke_.setWidth(value);
   else if (name == "stroke-dasharray")
-    stroke_.setDash(value);
+    stroke_.setDashArray(value);
   else if (name == "marker-start") {
     std::string  id;
     CSVGObject  *obj;
@@ -51,6 +45,18 @@ setValue(const std::string &name, const std::string &value)
     else
       CSVGLog() << "Illegal url value '" << id << "' for " << name;
   }
+  else if (name == "marker") {
+    std::string  id;
+    CSVGObject  *obj;
+
+    if (svg_.decodeUrlObject(value, id, &obj)) {
+      marker_.setStart(obj);
+      marker_.setMid  (obj);
+      marker_.setEnd  (obj);
+    }
+    else
+      CSVGLog() << "Illegal url value '" << id << "' for " << name;
+  }
   else
-    CSVGLog() << "Unhandled: " << name << ":" << value;
+    CSVGLog() << "Unhandled style name: " << name << ":" << value;
 }

@@ -2,6 +2,7 @@
 #define CSVGStop_H
 
 #include <CSVGObject.h>
+#include <CSVGColor.h>
 
 class CSVGStop : public CSVGObject {
  public:
@@ -12,21 +13,20 @@ class CSVGStop : public CSVGObject {
 
   CSVGStop *dup() const override;
 
-  CScreenUnits getOffset () const { return offset_ .getValue(CScreenUnits(0)); }
-  CRGBA        getColor  () const { return color_  .getValue(CRGBA(1,1,1)); }
-  double       getOpacity() const { return opacity_.getValue(1); }
+  CScreenUnits getOffset () const { return offset_.getValue(CScreenUnits(0)); }
+  void setOffset(double offset) { offset_ = offset ; }
 
-  CRGBA getAlphaColor() const;
+  CSVGColor getColor  () const { return color_.getValue(CSVGColor()); }
+  void setColor(const CSVGColor &color) { color_ = color  ; }
 
-  void setOffset (double offset     ) { offset_  = offset ; }
-  void setColor  (const CRGBA &color) { color_   = color  ; }
-  void setOpacity(double opacity    ) { opacity_ = opacity; }
+  double getOpacity() const { return opacity_.getValue(1); }
+  void setOpacity(double opacity) { opacity_ = opacity; }
 
   bool processOption(const std::string &name, const std::string &value) override;
 
   bool isDrawable() const override { return false; }
 
-  void draw() override;
+  bool draw() override;
 
   void print(std::ostream &os, bool hier) const override;
 
@@ -34,8 +34,8 @@ class CSVGStop : public CSVGObject {
 
  private:
   COptValT<CScreenUnits> offset_;
-  COptValT<CRGBA>        color_;
-  COptValT<double>       opacity_;
+  COptValT<CSVGColor>    color_;
+  COptReal               opacity_;
 };
 
 #endif

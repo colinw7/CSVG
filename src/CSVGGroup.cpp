@@ -40,12 +40,14 @@ processOption(const std::string &opt_name, const std::string &opt_value)
     return CSVGObject::processOption(opt_name, opt_value);
 }
 
-void
+bool
 CSVGGroup::
 draw()
 {
   if (svg_.getDebug())
     CSVGLog() << *this;
+
+  return false;
 }
 
 void

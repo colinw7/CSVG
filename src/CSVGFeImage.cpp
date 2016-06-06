@@ -40,21 +40,21 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   return true;
 }
 
-void
+bool
 CSVGFeImage::
 draw()
 {
   // get object or file image into buffer (untransformed)
   CSVGBuffer *inBuffer = svg_.getBuffer(getUniqueName() + "_xlink");
 
-  CMatrixStack2D transform = svg_.getBuffer()->transform();
+  CMatrixStack2D transform = svg_.getCurrentBuffer()->transform();
 
   if (hasLink()) {
     if (! xlink().getImage(inBuffer))
-      return;
+      return false;
   }
   else
-    return;
+    return false;
 
   //---
 
@@ -65,7 +65,7 @@ draw()
 
     CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_in");
 
-    buffer->setImage(inBuffer);
+    buffer->setImageBuffer(inBuffer);
   }
 
   // put image into output buffer (transformed)
@@ -76,9 +76,12 @@ draw()
 
     CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_out");
 
-    buffer->setImage(outBuffer);
-    buffer->setBBox (outBuffer->bbox());
+    buffer->setImageBuffer(outBuffer);
+
+    buffer->setBBox(outBuffer->bbox());
   }
+
+  return true;
 }
 
 void

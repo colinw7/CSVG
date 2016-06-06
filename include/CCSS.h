@@ -7,6 +7,8 @@
 #include <iostream>
 #include <sys/types.h>
 
+class CStrParse;
+
 class CCSS {
  public:
   class Option {
@@ -83,6 +85,12 @@ class CCSS {
  private:
   bool parse(const std::string &str);
   bool parseAttr(const std::string &str, StyleData &styleData);
+
+  bool readId(CStrParse &parse, std::string &id) const;
+
+  bool readBracedString(CStrParse &parse, std::string &str) const;
+
+  bool skipComment(CStrParse &parse) const;
 
  private:
   bool         debug_ { false };

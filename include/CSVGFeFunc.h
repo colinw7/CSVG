@@ -50,12 +50,12 @@ class CSVGFeFunc : public CSVGObject {
   CColorComponent              component_;
   COptValT<CSVGFilterFuncType> type_;
   // linear
-  COptValT<double>             slope_;
-  COptValT<double>             intercept_;
+  COptReal                     slope_;
+  COptReal                     intercept_;
   // gamma
-  COptValT<double>             amplitude_;
-  COptValT<double>             exponent_;
-  COptValT<double>             offset_;
+  COptReal                     amplitude_;
+  COptReal                     exponent_;
+  COptReal                     offset_;
   // table/discrete
   ValueTable                   table_;
 };

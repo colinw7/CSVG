@@ -145,7 +145,7 @@ moveBy(const CVector2D &delta)
   y_ = getY() + delta.y();
 }
 
-void
+bool
 CSVGText::
 draw()
 {
@@ -276,6 +276,8 @@ draw()
 
     setLastPos(CPoint2D(x + w, y));
   }
+
+  return true;
 }
 
 void

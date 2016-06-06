@@ -21,7 +21,7 @@ class CSVGPolyLine : public CSVGObject {
 
   void addPoint(const CPoint2D &point);
 
-  void draw() override;
+  bool draw() override;
 
   bool getBBox(CBBox2D &bbox) const override;
 

@@ -20,6 +20,12 @@ class CSVGRenderer {
 
   virtual CSVGRenderer *dup() const = 0;
 
+  bool isAlpha() const { return alpha_; }
+  void setAlpha(bool b) { alpha_ = b; }
+
+  double opacity() const { return opacity_; }
+  void setOpacity(double r) { opacity_ = r; }
+
   virtual void setSize(int width, int height) = 0;
   virtual void getSize(int *width, int *height) const = 0;
 
@@ -127,7 +133,11 @@ class CSVGRenderer {
 
   virtual void combine(int x, int y, CSVGRenderer *r);
 
-  virtual void gaussianBlur(CSVGRenderer *dst, CBBox2D &bbox, double stdDev);
+  virtual void gaussianBlur(CSVGRenderer *dst, CBBox2D &bbox, double stdDevX, double stdDevY);
+
+ protected:
+  bool   alpha_   { false };
+  double opacity_ { 1.0 };
 };
 
 #endif

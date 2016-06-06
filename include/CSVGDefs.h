@@ -23,7 +23,7 @@ class CSVGDefs : public CSVGObject {
 
   bool getBBox(CBBox2D &) const override { return false; }
 
-  void draw() override { }
+  bool draw() override { return false; }
 
   void print(std::ostream &os, bool hier) const override;
 

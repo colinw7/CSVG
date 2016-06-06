@@ -83,16 +83,21 @@ setText(const std::string &text)
     if (! svg_.readCSSString(str))
       std::cerr << "Invalid Style: " << str << std::endl;
   }
-  else
-    std::cerr << "Invalid Text: " << text << std::endl;
+  else {
+    if (! svg_.readCSSString(text))
+      std::cerr << "Invalid Style Text: " << text << std::endl;
+
+    //std::cerr << "Invalid Text: " << text << std::endl;
+  }
 
   text_ = text;
 }
 
-void
+bool
 CSVGStyle::
 draw()
 {
+  return false;
 }
 
 void

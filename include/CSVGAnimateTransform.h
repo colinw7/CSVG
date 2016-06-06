@@ -30,12 +30,12 @@ class CSVGAnimateTransform : public CSVGAnimateBase {
   friend std::ostream &operator<<(std::ostream &os, const CSVGAnimateTransform &animateTransform);
 
  private:
-  COptValT<std::string> type_;
-  COptValT<std::string> additive_;
-  COptValT<std::string> accumulate_;
-  COptValT<std::string> calcMode_;
-  COptValT<std::string> values_;
-  COptValT<std::string> keySplines_;
+  COptString type_;
+  COptString additive_;
+  COptString accumulate_;
+  COptString calcMode_;
+  COptString values_;
+  COptString keySplines_;
 };
 
 #endif

@@ -23,18 +23,6 @@ dup() const
   return new CSVGStop(*this);
 }
 
-CRGBA
-CSVGStop::
-getAlphaColor() const
-{
-  CRGBA rgba = getColor();
-
-  if (opacity_.isValid())
-    rgba.setAlpha(opacity_.getValue());
-
-  return rgba;
-}
-
 bool
 CSVGStop::
 processOption(const std::string &opt_name, const std::string &opt_value)
@@ -50,12 +38,12 @@ processOption(const std::string &opt_name, const std::string &opt_value)
     offset_ = length;
   }
   else if (svg_.stringOption(opt_name, opt_value, "stop-color", str)) {
-    CRGBA rgba;
+    CSVGColor color;
 
-    if (! svg_.decodeColorString(str, rgba))
+    if (! svg_.decodeColorString(str, color))
       return false;
 
-    color_ = rgba;
+    color_ = color;
   }
   else if (svg_.realOption(opt_name, opt_value, "stop-opacity", &real)) {
     opacity_ = real;
@@ -66,10 +54,11 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   return true;
 }
 
-void
+bool
 CSVGStop::
 draw()
 {
+  return false;
 }
 
 void
@@ -81,15 +70,12 @@ print(std::ostream &os, bool hier) const
 
     CSVGObject::printValues(os);
 
-    if (offset_.isValid()) {
-      os << " offset=\"" << offset_.getValue() << "\"";
-    }
+    printNameValue(os, "offset", offset_);
 
     if (color_.isValid())
-      os << " stop-color=\"" << color_.getValue().getRGB().stringEncode() << "\"";
+      os << " stop-color=\"" << color_.getValue() << "\"";
 
-    if (opacity_.isValid())
-      os << " stop-opacity=\"" << opacity_.getValue() << "\"";
+    printNameValue(os, "stop-opacity=", opacity_);
 
     os << "/>" << std::endl;
   }

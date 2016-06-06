@@ -108,11 +108,52 @@ setDrawOpacity(double r)
   obj_->setOpacity(r);
 }
 
+bool
+CQSVGObject::
+strokeIsNoColor() const
+{
+  return obj_->getStroke().getColor().isNone();
+}
+
+void
+CQSVGObject::
+setStrokeIsNoColor(bool b)
+{
+  CSVGStroke stroke = obj_->getStroke();
+
+  if (b)
+    stroke.setColor(CSVGColor(CSVGColor::Type::NONE));
+
+  obj_->setStroke(stroke);
+}
+
+bool
+CQSVGObject::
+strokeIsCurrentColor() const
+{
+  return obj_->getStroke().getColor().isCurrent();
+}
+
+void
+CQSVGObject::
+setStrokeIsCurrentColor(bool b)
+{
+  CSVGStroke stroke = obj_->getStroke();
+
+  if (b)
+    stroke.setColor(CSVGColor(CSVGColor::Type::CURRENT));
+
+  obj_->setStroke(stroke);
+}
+
 QColor
 CQSVGObject::
 strokeColor() const
 {
-  return CQUtil::rgbaToColor(obj_->getStroke().getColor());
+  if (obj_->getStroke().getColor().isRGBA())
+    return CQUtil::rgbaToColor(obj_->getStroke().getColor().rgba());
+  else
+    return QColor();
 }
 
 void
@@ -154,14 +195,41 @@ CLineDash
 CQSVGObject::
 strokeDash() const
 {
-  return obj_->getFlatStrokeLineDash();
+  return obj_->getFlatStrokeLineDash().getLineDash();
 }
 
 void
 CQSVGObject::
 setStrokeDash(const CLineDash &dash)
 {
-  obj_->setStrokeDash(dash);
+  CSVGStrokeDash sdash = obj_->getStrokeDash();
+
+  CSVGStrokeDash::Dashes dashes;
+
+  for (uint i = 0; i < dash.getNumLengths(); ++i)
+    dashes.push_back(dash.getLength(i));
+
+  sdash.setDashes(dashes);
+
+  obj_->setStrokeDash(sdash);
+}
+
+double
+CQSVGObject::
+strokeOffset() const
+{
+  return obj_->getFlatStrokeLineDash().offset().pxValue(0);
+}
+
+void
+CQSVGObject::
+setStrokeOffset(double o)
+{
+  CSVGStrokeDash sdash = obj_->getStrokeDash();
+
+  sdash.setOffset(o);
+
+  obj_->setStrokeDash(sdash);
 }
 
 CQSVGEnum::LineCapType
@@ -196,7 +264,7 @@ bool
 CQSVGObject::
 fillIsNoColor() const
 {
-  return obj_->getFill().getNoColor();
+  return obj_->getFill().getColor().isNone();
 }
 
 void
@@ -205,7 +273,8 @@ setFillIsNoColor(bool b)
 {
   CSVGFill fill = obj_->getFill();
 
-  fill.setNoColor(b);
+  if (b)
+    fill.setColor(CSVGColor(CSVGColor::Type::NONE));
 
   obj_->setFill(fill);
 }
@@ -214,7 +283,7 @@ bool
 CQSVGObject::
 fillIsCurrentColor() const
 {
-  return obj_->getFill().isCurrentColor();
+  return obj_->getFill().getColor().isCurrent();
 }
 
 void
@@ -223,7 +292,8 @@ setFillIsCurrentColor(bool b)
 {
   CSVGFill fill = obj_->getFill();
 
-  fill.setIsCurrentColor(b);
+  if (b)
+    fill.setColor(CSVGColor(CSVGColor::Type::CURRENT));
 
   obj_->setFill(fill);
 }
@@ -232,7 +302,10 @@ QColor
 CQSVGObject::
 fillColor() const
 {
-  return CQUtil::rgbaToColor(obj_->getFill().getColor());
+  if (obj_->getFill().getColor().isRGBA())
+    return CQUtil::rgbaToColor(obj_->getFill().getColor().rgba());
+  else
+    return QColor();
 }
 
 void

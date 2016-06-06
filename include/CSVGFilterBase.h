@@ -68,7 +68,7 @@ class CSVGFilterBase : public CSVGObject {
   COptValT<CScreenUnits>   y_;
   COptValT<CScreenUnits>   width_;
   COptValT<CScreenUnits>   height_;
-  COptValT<std::string>    filterRes_;
+  COptString               filterRes_;
   COptValT<CSVGXLink>      xlink_;
 };
 

@@ -128,7 +128,7 @@ class CQSVGRenderer : public CSVGRenderer {
 
   void setOffsetImage(CSVGRenderer *src, int dx, int dy) override;
 
-  void gaussianBlur(CSVGRenderer *dst, CBBox2D &bbox, double stdDev) override;
+  void gaussianBlur(CSVGRenderer *dst, CBBox2D &bbox, double stdDevX, double stdDevY) override;
 
   //---
 

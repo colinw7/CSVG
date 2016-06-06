@@ -23,7 +23,7 @@ class CSVGFeMorphology : public CSVGFilterBase {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  void draw() override;
+  bool draw() override;
 
   void filterImage(CSVGBuffer *inBuffer);
 
@@ -32,9 +32,9 @@ class CSVGFeMorphology : public CSVGFilterBase {
   friend std::ostream &operator<<(std::ostream &os, const CSVGFeMorphology &filter);
 
  private:
-  COptValT<std::string>            filterIn_;
+  COptString                       filterIn_;
   COptValT<CSVGMorphologyOperator> operator_;
-  COptValT<std::string>            radius_;
+  COptString                       radius_;
 };
 
 #endif

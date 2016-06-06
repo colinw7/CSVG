@@ -85,14 +85,19 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   return true;
 }
 
-void
+bool
 CSVGEllipse::
 draw()
 {
   if (svg_.getDebug())
     CSVGLog() << *this;
 
+  if (getRadiusX() <= 0 || getRadiusY() <= 0)
+    return false;
+
   svg_.drawEllipse(getCenterX(), getCenterY(), getRadiusX(), getRadiusY());
+
+  return true;
 }
 
 bool

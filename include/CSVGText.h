@@ -42,7 +42,7 @@ class CSVGText : public CSVGObject {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  void draw() override;
+  bool draw() override;
 
   bool getBBox(CBBox2D &bbox) const override;
 
@@ -57,13 +57,13 @@ class CSVGText : public CSVGObject {
   friend std::ostream &operator<<(std::ostream &os, const CSVGText &text);
 
  private:
-  COptValT<double>       x_;
-  COptValT<double>       y_;
+  COptReal               x_;
+  COptReal               y_;
   COptValT<CScreenUnits> dx_;
   COptValT<CScreenUnits> dy_;
   COptValT<Reals>        rotate_;
-  COptValT<std::string>  textLength_;
-  COptValT<std::string>  lengthAdjust_;
+  COptString             textLength_;
+  COptString             lengthAdjust_;
   CPoint2D               lastPos_;
 };
 

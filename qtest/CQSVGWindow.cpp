@@ -183,20 +183,20 @@ CQSVGWindow() :
   QVBoxLayout *rlayout = new QVBoxLayout(rframe);
   rlayout->setMargin(2); rlayout->setSpacing(2);
 
-  tree_ = new CQPropertyTree;
+  propTree_ = new CQPropertyTree;
 
-  connect(tree_, SIGNAL(valueChanged(QObject *, const QString &)),
+  connect(propTree_, SIGNAL(valueChanged(QObject *, const QString &)),
           this, SLOT(redraw()));
 
-  connect(tree_, SIGNAL(itemSelected(QObject *, const QString &)),
+  connect(propTree_, SIGNAL(itemSelected(QObject *, const QString &)),
           this, SLOT(itemSelectedSlot(QObject *, const QString &)));
 
-  //connect(tree_, SIGNAL(menuExec(QObject *, const QPoint &)),
+  //connect(propTree_, SIGNAL(menuExec(QObject *, const QPoint &)),
   //        this, SLOT(treeMenuExec(QObject *, const QPoint &)));
 
   rframe->setMaximumWidth(400);
 
-  rlayout->addWidget(tree_);
+  rlayout->addWidget(propTree_);
 
   splitter->addWidget(rframe);
 
@@ -431,9 +431,13 @@ loadFile()
   else {
     svg_->stopTimer();
 
+    svg_->setTime(0);
+
     svg_->read(filename);
 
     addProperties();
+
+    loadCSS();
 
     if (svg_->hasAnimation())
       svg_->startTimer();
@@ -468,22 +472,30 @@ updateState()
 
 void
 CQSVGWindow::
+loadCSS()
+{
+  if (propertiesDlg_)
+    propertiesDlg_->loadCSS();
+}
+
+void
+CQSVGWindow::
 addProperties()
 {
   if (propertiesDlg_)
-    tree_ = propertiesDlg_->tree();
+    propTree_ = propertiesDlg_->propertiesTree();
 
-  if (! tree_)
+  if (! propTree_)
     return;
 
-  tree_->clear();
+  propTree_->clear();
 
-  tree_->addProperty("", svg_, "background");
-  tree_->addProperty("", svg_, "animating");
-  tree_->addProperty("", svg_, "checkerboard");
-  tree_->addProperty("", svg_, "showGradient");
-  tree_->addProperty("", svg_, "showFilterBox");
-  tree_->addProperty("", svg_, "ignoreFilter");
+  propTree_->addProperty("", svg_, "background");
+  propTree_->addProperty("", svg_, "animating");
+  propTree_->addProperty("", svg_, "checkerboard");
+  propTree_->addProperty("", svg_, "showGradient");
+  propTree_->addProperty("", svg_, "showFilterBox");
+  propTree_->addProperty("", svg_, "ignoreFilter");
 
   CSVGBlock *block = svg_->getBlock();
 
@@ -563,135 +575,136 @@ addObjectToTree(const std::string &name, CSVGObject *obj)
 
     QString objName = name.c_str();
 
-    tree_->addProperty(objName, qobj, "id");
+    propTree_->addProperty(objName, qobj, "id");
 
     if (qobj->object()->isDrawable() || hasChildren)
-      tree_->addProperty(objName, qobj, "visible");
+      propTree_->addProperty(objName, qobj, "visible");
 
     if (qobj->object()->getFilter())
-      tree_->addProperty(objName, qobj, "filtered");
+      propTree_->addProperty(objName, qobj, "filtered");
 
     if (qobj->object()->getClipPath())
-      tree_->addProperty(objName, qobj, "clipped");
+      propTree_->addProperty(objName, qobj, "clipped");
 
     if (qobj->object()->getMask())
-      tree_->addProperty(objName, qobj, "masked");
+      propTree_->addProperty(objName, qobj, "masked");
 
     //---
 
     if      (qblock) {
-      tree_->addProperty(objName, qblock, "x"     );
-      tree_->addProperty(objName, qblock, "y"     );
-      tree_->addProperty(objName, qblock, "width" );
-      tree_->addProperty(objName, qblock, "height");
+      propTree_->addProperty(objName, qblock, "x"     );
+      propTree_->addProperty(objName, qblock, "y"     );
+      propTree_->addProperty(objName, qblock, "width" );
+      propTree_->addProperty(objName, qblock, "height");
     }
     else if (qanchor) {
-      tree_->addProperty(objName, qanchor, "xlink");
+      propTree_->addProperty(objName, qanchor, "xlink");
     }
     else if (qanim) {
-      tree_->addProperty(objName, qanim, "attributeName");
-      tree_->addProperty(objName, qanim, "attributeType");
-      tree_->addProperty(objName, qanim, "begin");
-      tree_->addProperty(objName, qanim, "end");
-      tree_->addProperty(objName, qanim, "dur");
-      tree_->addProperty(objName, qanim, "from");
-      tree_->addProperty(objName, qanim, "to");
-      tree_->addProperty(objName, qanim, "repeatCount");
-      tree_->addProperty(objName, qanim, "repeatDur");
-      tree_->addProperty(objName, qanim, "fill");
+      propTree_->addProperty(objName, qanim, "attributeName");
+      propTree_->addProperty(objName, qanim, "attributeType");
+      propTree_->addProperty(objName, qanim, "begin");
+      propTree_->addProperty(objName, qanim, "end");
+      propTree_->addProperty(objName, qanim, "dur");
+      propTree_->addProperty(objName, qanim, "from");
+      propTree_->addProperty(objName, qanim, "to");
+      propTree_->addProperty(objName, qanim, "repeatCount");
+      propTree_->addProperty(objName, qanim, "repeatDur");
+      propTree_->addProperty(objName, qanim, "fill");
     }
     else if (qanimcol) {
-      tree_->addProperty(objName, qanimcol, "attributeName");
-      tree_->addProperty(objName, qanimcol, "attributeType");
-      tree_->addProperty(objName, qanimcol, "begin");
-      tree_->addProperty(objName, qanimcol, "end");
-      tree_->addProperty(objName, qanimcol, "dur");
-      tree_->addProperty(objName, qanimcol, "from");
-      tree_->addProperty(objName, qanimcol, "to");
-      tree_->addProperty(objName, qanimcol, "repeatCount");
-      tree_->addProperty(objName, qanimcol, "repeatDur");
-      tree_->addProperty(objName, qanimcol, "fill");
-      tree_->addProperty(objName, qanimcol, "type");
-      tree_->addProperty(objName, qanimcol, "additive");
+      propTree_->addProperty(objName, qanimcol, "attributeName");
+      propTree_->addProperty(objName, qanimcol, "attributeType");
+      propTree_->addProperty(objName, qanimcol, "begin");
+      propTree_->addProperty(objName, qanimcol, "end");
+      propTree_->addProperty(objName, qanimcol, "dur");
+      propTree_->addProperty(objName, qanimcol, "from");
+      propTree_->addProperty(objName, qanimcol, "to");
+      propTree_->addProperty(objName, qanimcol, "repeatCount");
+      propTree_->addProperty(objName, qanimcol, "repeatDur");
+      propTree_->addProperty(objName, qanimcol, "fill");
+      propTree_->addProperty(objName, qanimcol, "type");
+      propTree_->addProperty(objName, qanimcol, "additive");
     }
     else if (qanimmot) {
-      tree_->addProperty(objName, qanimmot, "attributeName");
-      tree_->addProperty(objName, qanimmot, "attributeType");
-      tree_->addProperty(objName, qanimmot, "begin");
-      tree_->addProperty(objName, qanimmot, "end");
-      tree_->addProperty(objName, qanimmot, "dur");
-      tree_->addProperty(objName, qanimmot, "from");
-      tree_->addProperty(objName, qanimmot, "to");
-      tree_->addProperty(objName, qanimmot, "repeatCount");
-      tree_->addProperty(objName, qanimmot, "repeatDur");
-      tree_->addProperty(objName, qanimmot, "fill");
-      tree_->addProperty(objName, qanimmot, "pathStr");
-      tree_->addProperty(objName, qanimmot, "keyPoints");
-      tree_->addProperty(objName, qanimmot, "rotate");
-      tree_->addProperty(objName, qanimmot, "origin");
+      propTree_->addProperty(objName, qanimmot, "attributeName");
+      propTree_->addProperty(objName, qanimmot, "attributeType");
+      propTree_->addProperty(objName, qanimmot, "begin");
+      propTree_->addProperty(objName, qanimmot, "end");
+      propTree_->addProperty(objName, qanimmot, "dur");
+      propTree_->addProperty(objName, qanimmot, "from");
+      propTree_->addProperty(objName, qanimmot, "to");
+      propTree_->addProperty(objName, qanimmot, "repeatCount");
+      propTree_->addProperty(objName, qanimmot, "repeatDur");
+      propTree_->addProperty(objName, qanimmot, "fill");
+      propTree_->addProperty(objName, qanimmot, "pathStr");
+      propTree_->addProperty(objName, qanimmot, "keyPoints");
+      propTree_->addProperty(objName, qanimmot, "rotate");
+      propTree_->addProperty(objName, qanimmot, "origin");
     }
     else if (qanimtran) {
-      tree_->addProperty(objName, qanimtran, "attributeName");
-      tree_->addProperty(objName, qanimtran, "attributeType");
-      tree_->addProperty(objName, qanimtran, "begin");
-      tree_->addProperty(objName, qanimtran, "end");
-      tree_->addProperty(objName, qanimtran, "dur");
-      tree_->addProperty(objName, qanimtran, "from");
-      tree_->addProperty(objName, qanimtran, "to");
-      tree_->addProperty(objName, qanimtran, "repeatCount");
-      tree_->addProperty(objName, qanimtran, "repeatDur");
-      tree_->addProperty(objName, qanimtran, "fill");
+      propTree_->addProperty(objName, qanimtran, "attributeName");
+      propTree_->addProperty(objName, qanimtran, "attributeType");
+      propTree_->addProperty(objName, qanimtran, "begin");
+      propTree_->addProperty(objName, qanimtran, "end");
+      propTree_->addProperty(objName, qanimtran, "dur");
+      propTree_->addProperty(objName, qanimtran, "from");
+      propTree_->addProperty(objName, qanimtran, "to");
+      propTree_->addProperty(objName, qanimtran, "repeatCount");
+      propTree_->addProperty(objName, qanimtran, "repeatDur");
+      propTree_->addProperty(objName, qanimtran, "fill");
     }
     else if (qdefs) {
     }
     else if (qdesc) {
-      tree_->addProperty(objName, qdesc, "text");
+      propTree_->addProperty(objName, qdesc, "text");
     }
     else if (qcircle) {
-      tree_->addProperty(objName, qcircle, "cx");
-      tree_->addProperty(objName, qcircle, "cy");
-      tree_->addProperty(objName, qcircle, "r" );
+      propTree_->addProperty(objName, qcircle, "cx");
+      propTree_->addProperty(objName, qcircle, "cy");
+      propTree_->addProperty(objName, qcircle, "r" );
     }
     else if (qclippath) {
     }
     else if (qellipse) {
-      tree_->addProperty(objName, qellipse, "cx");
-      tree_->addProperty(objName, qellipse, "cy");
-      tree_->addProperty(objName, qellipse, "rx");
-      tree_->addProperty(objName, qellipse, "ry");
+      propTree_->addProperty(objName, qellipse, "cx");
+      propTree_->addProperty(objName, qellipse, "cy");
+      propTree_->addProperty(objName, qellipse, "rx");
+      propTree_->addProperty(objName, qellipse, "ry");
     }
     else if (qfeblend) {
     }
     else if (qfecmtrx) {
-      tree_->addProperty(objName, qfecmtrx, "type");
+      propTree_->addProperty(objName, qfecmtrx, "type");
     }
     else if (qfecomp) {
-      tree_->addProperty(objName, qfecomp, "k1");
-      tree_->addProperty(objName, qfecomp, "k2");
-      tree_->addProperty(objName, qfecomp, "k3");
-      tree_->addProperty(objName, qfecomp, "k4");
+      propTree_->addProperty(objName, qfecomp, "k1");
+      propTree_->addProperty(objName, qfecomp, "k2");
+      propTree_->addProperty(objName, qfecomp, "k3");
+      propTree_->addProperty(objName, qfecomp, "k4");
     }
     else if (qfediffl) {
-      tree_->addProperty(objName, qfediffl, "lightingColor");
-      tree_->addProperty(objName, qfediffl, "surfaceScale");
-      tree_->addProperty(objName, qfediffl, "diffuseConstant");
+      propTree_->addProperty(objName, qfediffl, "lightingColor");
+      propTree_->addProperty(objName, qfediffl, "surfaceScale");
+      propTree_->addProperty(objName, qfediffl, "diffuseConstant");
     }
     else if (qfedmap) {
-      tree_->addProperty(objName, qfedmap, "scale");
+      propTree_->addProperty(objName, qfedmap, "scale");
     }
     else if (qfedlight) {
-      tree_->addProperty(objName, qfedlight, "elevation");
-      tree_->addProperty(objName, qfedlight, "azimuth"  );
+      propTree_->addProperty(objName, qfedlight, "elevation");
+      propTree_->addProperty(objName, qfedlight, "azimuth"  );
     }
     else if (qfeflood) {
-      tree_->addProperty(objName, qfeflood, "opacity");
+      propTree_->addProperty(objName, qfeflood, "opacity");
     }
     else if (qfegauss) {
-      tree_->addProperty(objName, qfegauss, "stdDev");
+      propTree_->addProperty(objName, qfegauss, "stdDevX");
+      propTree_->addProperty(objName, qfegauss, "stdDevY");
     }
     else if (qfeimage) {
-      tree_->addProperty(objName, qfeimage, "width" );
-      tree_->addProperty(objName, qfeimage, "height");
+      propTree_->addProperty(objName, qfeimage, "width" );
+      propTree_->addProperty(objName, qfeimage, "height");
     }
     else if (femerge) {
     }
@@ -700,78 +713,80 @@ addObjectToTree(const std::string &name, CSVGObject *obj)
     else if (femorph) {
     }
     else if (qfilter) {
-      tree_->addProperty(objName, qfilter, "x");
-      tree_->addProperty(objName, qfilter, "y");
-      tree_->addProperty(objName, qfilter, "width");
-      tree_->addProperty(objName, qfilter, "height");
+      propTree_->addProperty(objName, qfilter, "x");
+      propTree_->addProperty(objName, qfilter, "y");
+      propTree_->addProperty(objName, qfilter, "width");
+      propTree_->addProperty(objName, qfilter, "height");
     }
     else if (qfeoff) {
-      tree_->addProperty(objName, qfeoff, "dx");
-      tree_->addProperty(objName, qfeoff, "dy");
+      propTree_->addProperty(objName, qfeoff, "dx");
+      propTree_->addProperty(objName, qfeoff, "dy");
     }
     else if (qfepl) {
-      tree_->addProperty(objName, qfepl, "x");
-      tree_->addProperty(objName, qfepl, "y");
-      tree_->addProperty(objName, qfepl, "z");
+      propTree_->addProperty(objName, qfepl, "x");
+      propTree_->addProperty(objName, qfepl, "y");
+      propTree_->addProperty(objName, qfepl, "z");
     }
     else if (qfespec) {
-      tree_->addProperty(objName, qfespec, "lightingColor");
-      tree_->addProperty(objName, qfespec, "specularConstant");
-      tree_->addProperty(objName, qfespec, "specularExponent");
-      tree_->addProperty(objName, qfespec, "surfaceScale");
+      propTree_->addProperty(objName, qfespec, "lightingColor");
+      propTree_->addProperty(objName, qfespec, "specularConstant");
+      propTree_->addProperty(objName, qfespec, "specularExponent");
+      propTree_->addProperty(objName, qfespec, "surfaceScale");
     }
     else if (qfespot) {
-      tree_->addProperty(objName, qfespot, "x");
-      tree_->addProperty(objName, qfespot, "y");
-      tree_->addProperty(objName, qfespot, "z");
-      tree_->addProperty(objName, qfespot, "pointsAtX");
-      tree_->addProperty(objName, qfespot, "pointsAtY");
-      tree_->addProperty(objName, qfespot, "pointsAtZ");
-      tree_->addProperty(objName, qfespot, "specularExponent");
-      tree_->addProperty(objName, qfespot, "limitingConeAngle");
+      propTree_->addProperty(objName, qfespot, "x");
+      propTree_->addProperty(objName, qfespot, "y");
+      propTree_->addProperty(objName, qfespot, "z");
+      propTree_->addProperty(objName, qfespot, "pointsAtX");
+      propTree_->addProperty(objName, qfespot, "pointsAtY");
+      propTree_->addProperty(objName, qfespot, "pointsAtZ");
+      propTree_->addProperty(objName, qfespot, "specularExponent");
+      propTree_->addProperty(objName, qfespot, "limitingConeAngle");
     }
     else if (qfetile) {
     }
     else if (qfeturb) {
-      tree_->addProperty(objName, qfeturb, "fractalNoise");
-      tree_->addProperty(objName, qfeturb, "baseFreq");
-      tree_->addProperty(objName, qfeturb, "numOctaves");
-      tree_->addProperty(objName, qfeturb, "seed");
+      propTree_->addProperty(objName, qfeturb, "fractalNoise");
+      propTree_->addProperty(objName, qfeturb, "baseFreq");
+      propTree_->addProperty(objName, qfeturb, "numOctaves");
+      propTree_->addProperty(objName, qfeturb, "seed");
     }
     else if (qgroup) {
     }
     else if (qimage) {
-      tree_->addProperty(objName, qimage, "x"     );
-      tree_->addProperty(objName, qimage, "y"     );
-      tree_->addProperty(objName, qimage, "width" );
-      tree_->addProperty(objName, qimage, "height");
+      propTree_->addProperty(objName, qimage, "x"     );
+      propTree_->addProperty(objName, qimage, "y"     );
+      propTree_->addProperty(objName, qimage, "width" );
+      propTree_->addProperty(objName, qimage, "height");
     }
     else if (qline) {
-      tree_->addProperty(objName, qline, "x1");
-      tree_->addProperty(objName, qline, "y1");
-      tree_->addProperty(objName, qline, "x2");
-      tree_->addProperty(objName, qline, "y2");
+      propTree_->addProperty(objName, qline, "x1");
+      propTree_->addProperty(objName, qline, "y1");
+      propTree_->addProperty(objName, qline, "x2");
+      propTree_->addProperty(objName, qline, "y2");
     }
     else if (qlgrad) {
-      tree_->addProperty(objName, qlgrad, "x1");
-      tree_->addProperty(objName, qlgrad, "y1");
-      tree_->addProperty(objName, qlgrad, "x2");
-      tree_->addProperty(objName, qlgrad, "y2");
+      propTree_->addProperty(objName, qlgrad, "x1");
+      propTree_->addProperty(objName, qlgrad, "y1");
+      propTree_->addProperty(objName, qlgrad, "x2");
+      propTree_->addProperty(objName, qlgrad, "y2");
     }
     else if (qmarker) {
-      tree_->addProperty(objName, qmarker, "refX");
-      tree_->addProperty(objName, qmarker, "refY");
+      propTree_->addProperty(objName, qmarker, "refX");
+      propTree_->addProperty(objName, qmarker, "refY");
     }
     else if (qmask) {
-      tree_->addProperty(objName, qmask, "x"     );
-      tree_->addProperty(objName, qmask, "y"     );
-      tree_->addProperty(objName, qmask, "width" );
-      tree_->addProperty(objName, qmask, "height");
+      propTree_->addProperty(objName, qmask, "x"     );
+      propTree_->addProperty(objName, qmask, "y"     );
+      propTree_->addProperty(objName, qmask, "width" );
+      propTree_->addProperty(objName, qmask, "height");
     }
     else if (qpath) {
-      tree_->addProperty(objName, qpath, "pathString");
+      propTree_->addProperty(objName, qpath, "pathString");
 
       QString partsName = objName + "/parts";
+
+      int ind = 0;
 
       for (const auto &part : qpath->getPartList().parts()) {
         CQSVGPathPart *qpathpart = dynamic_cast<CQSVGPathPart *>(part);
@@ -796,210 +811,215 @@ addObjectToTree(const std::string &name, CSVGObject *obj)
         CQSVGPathMRBezier3To *qmrbez3to = dynamic_cast<CQSVGPathMRBezier3To *>(qpathpart);
 
         QString typeName = CSVGPathPart::partTypeName(qpathpart->getType()).c_str();
-        QString partName = partsName + "/" + typeName;
+        QString partName = partsName + "/" + typeName + ":" + QString("%1").arg(ind + 1);
 
         if      (qmoveto) {
-          tree_->addProperty(partName, qmoveto, "x");
-          tree_->addProperty(partName, qmoveto, "y");
+          propTree_->addProperty(partName, qmoveto, "x");
+          propTree_->addProperty(partName, qmoveto, "y");
         }
         else if (qrmoveto) {
-          tree_->addProperty(partName, qrmoveto, "dx");
-          tree_->addProperty(partName, qrmoveto, "dy");
+          propTree_->addProperty(partName, qrmoveto, "dx");
+          propTree_->addProperty(partName, qrmoveto, "dy");
         }
         else if (qlineto) {
-          tree_->addProperty(partName, qlineto, "x");
-          tree_->addProperty(partName, qlineto, "y");
+          propTree_->addProperty(partName, qlineto, "x");
+          propTree_->addProperty(partName, qlineto, "y");
         }
         else if (qrlineto) {
-          tree_->addProperty(partName, qrlineto, "dx");
-          tree_->addProperty(partName, qrlineto, "dy");
+          propTree_->addProperty(partName, qrlineto, "dx");
+          propTree_->addProperty(partName, qrlineto, "dy");
         }
         else if (qhlineto) {
-          tree_->addProperty(partName, qhlineto, "x");
+          propTree_->addProperty(partName, qhlineto, "x");
         }
         else if (qrhlineto) {
-          tree_->addProperty(partName, qrhlineto, "dx");
+          propTree_->addProperty(partName, qrhlineto, "dx");
         }
         else if (qvlineto) {
-          tree_->addProperty(partName, qvlineto, "y");
+          propTree_->addProperty(partName, qvlineto, "y");
         }
         else if (qrvlineto) {
-          tree_->addProperty(partName, qrvlineto, "dy");
+          propTree_->addProperty(partName, qrvlineto, "dy");
         }
         else if (qarcto) {
-          tree_->addProperty(partName, qarcto, "rx");
-          tree_->addProperty(partName, qarcto, "ry");
-          tree_->addProperty(partName, qarcto, "xa");
-          tree_->addProperty(partName, qarcto, "fa");
-          tree_->addProperty(partName, qarcto, "fs");
-          tree_->addProperty(partName, qarcto, "x2");
-          tree_->addProperty(partName, qarcto, "y2");
+          propTree_->addProperty(partName, qarcto, "rx");
+          propTree_->addProperty(partName, qarcto, "ry");
+          propTree_->addProperty(partName, qarcto, "xa");
+          propTree_->addProperty(partName, qarcto, "fa");
+          propTree_->addProperty(partName, qarcto, "fs");
+          propTree_->addProperty(partName, qarcto, "x2");
+          propTree_->addProperty(partName, qarcto, "y2");
         }
         else if (qrarcto) {
-          tree_->addProperty(partName, qrarcto, "rx");
-          tree_->addProperty(partName, qrarcto, "ry");
-          tree_->addProperty(partName, qrarcto, "xa");
-          tree_->addProperty(partName, qrarcto, "fa");
-          tree_->addProperty(partName, qrarcto, "fs");
-          tree_->addProperty(partName, qrarcto, "x2");
-          tree_->addProperty(partName, qrarcto, "y2");
+          propTree_->addProperty(partName, qrarcto, "rx");
+          propTree_->addProperty(partName, qrarcto, "ry");
+          propTree_->addProperty(partName, qrarcto, "xa");
+          propTree_->addProperty(partName, qrarcto, "fa");
+          propTree_->addProperty(partName, qrarcto, "fs");
+          propTree_->addProperty(partName, qrarcto, "x2");
+          propTree_->addProperty(partName, qrarcto, "y2");
         }
         else if (qbez2to) {
-          tree_->addProperty(partName, qbez2to, "x1");
-          tree_->addProperty(partName, qbez2to, "y1");
-          tree_->addProperty(partName, qbez2to, "x2");
-          tree_->addProperty(partName, qbez2to, "y2");
+          propTree_->addProperty(partName, qbez2to, "x1");
+          propTree_->addProperty(partName, qbez2to, "y1");
+          propTree_->addProperty(partName, qbez2to, "x2");
+          propTree_->addProperty(partName, qbez2to, "y2");
         }
         else if (qmbez2to) {
-          tree_->addProperty(partName, qmbez2to, "x2");
-          tree_->addProperty(partName, qmbez2to, "y2");
+          propTree_->addProperty(partName, qmbez2to, "x2");
+          propTree_->addProperty(partName, qmbez2to, "y2");
         }
         else if (qrbez2to) {
-          tree_->addProperty(partName, qrbez2to, "x1");
-          tree_->addProperty(partName, qrbez2to, "y1");
-          tree_->addProperty(partName, qrbez2to, "x2");
-          tree_->addProperty(partName, qrbez2to, "y2");
+          propTree_->addProperty(partName, qrbez2to, "x1");
+          propTree_->addProperty(partName, qrbez2to, "y1");
+          propTree_->addProperty(partName, qrbez2to, "x2");
+          propTree_->addProperty(partName, qrbez2to, "y2");
         }
         else if (qmrbez2to) {
-          tree_->addProperty(partName, qmrbez2to, "x2");
-          tree_->addProperty(partName, qmrbez2to, "y2");
+          propTree_->addProperty(partName, qmrbez2to, "x2");
+          propTree_->addProperty(partName, qmrbez2to, "y2");
         }
         else if (qbez3to) {
-          tree_->addProperty(partName, qbez3to, "x1");
-          tree_->addProperty(partName, qbez3to, "y1");
-          tree_->addProperty(partName, qbez3to, "x2");
-          tree_->addProperty(partName, qbez3to, "y2");
-          tree_->addProperty(partName, qbez3to, "x3");
-          tree_->addProperty(partName, qbez3to, "y3");
+          propTree_->addProperty(partName, qbez3to, "x1");
+          propTree_->addProperty(partName, qbez3to, "y1");
+          propTree_->addProperty(partName, qbez3to, "x2");
+          propTree_->addProperty(partName, qbez3to, "y2");
+          propTree_->addProperty(partName, qbez3to, "x3");
+          propTree_->addProperty(partName, qbez3to, "y3");
         }
         else if (qmbez3to) {
-          tree_->addProperty(partName, qmbez3to, "x2");
-          tree_->addProperty(partName, qmbez3to, "y2");
-          tree_->addProperty(partName, qmbez3to, "x3");
-          tree_->addProperty(partName, qmbez3to, "y3");
+          propTree_->addProperty(partName, qmbez3to, "x2");
+          propTree_->addProperty(partName, qmbez3to, "y2");
+          propTree_->addProperty(partName, qmbez3to, "x3");
+          propTree_->addProperty(partName, qmbez3to, "y3");
         }
         else if (qrbez3to) {
-          tree_->addProperty(partName, qrbez3to, "x1");
-          tree_->addProperty(partName, qrbez3to, "y1");
-          tree_->addProperty(partName, qrbez3to, "x2");
-          tree_->addProperty(partName, qrbez3to, "y2");
-          tree_->addProperty(partName, qrbez3to, "x3");
-          tree_->addProperty(partName, qrbez3to, "y3");
+          propTree_->addProperty(partName, qrbez3to, "x1");
+          propTree_->addProperty(partName, qrbez3to, "y1");
+          propTree_->addProperty(partName, qrbez3to, "x2");
+          propTree_->addProperty(partName, qrbez3to, "y2");
+          propTree_->addProperty(partName, qrbez3to, "x3");
+          propTree_->addProperty(partName, qrbez3to, "y3");
         }
         else if (qmrbez3to) {
-          tree_->addProperty(partName, qmrbez3to, "x2");
-          tree_->addProperty(partName, qmrbez3to, "y2");
-          tree_->addProperty(partName, qmrbez3to, "x3");
-          tree_->addProperty(partName, qmrbez3to, "y3");
+          propTree_->addProperty(partName, qmrbez3to, "x2");
+          propTree_->addProperty(partName, qmrbez3to, "y2");
+          propTree_->addProperty(partName, qmrbez3to, "x3");
+          propTree_->addProperty(partName, qmrbez3to, "y3");
         }
         else {
-          tree_->addProperty(partName, qpathpart, "type");
+          propTree_->addProperty(partName, qpathpart, "type");
         }
+
+        ++ind;
       }
     }
     else if (qpattern) {
-      tree_->addProperty(objName, qpattern, "x"           );
-      tree_->addProperty(objName, qpattern, "y"           );
-      tree_->addProperty(objName, qpattern, "width"       );
-      tree_->addProperty(objName, qpattern, "height"      );
-      tree_->addProperty(objName, qpattern, "units"       );
-      tree_->addProperty(objName, qpattern, "contentUnits");
+      propTree_->addProperty(objName, qpattern, "x"           );
+      propTree_->addProperty(objName, qpattern, "y"           );
+      propTree_->addProperty(objName, qpattern, "width"       );
+      propTree_->addProperty(objName, qpattern, "height"      );
+      propTree_->addProperty(objName, qpattern, "units"       );
+      propTree_->addProperty(objName, qpattern, "contentUnits");
     }
     else if (qpolygon) {
     }
     else if (qpolyline) {
     }
     else if (qrgrad) {
-      tree_->addProperty(objName, qrgrad, "cx");
-      tree_->addProperty(objName, qrgrad, "cy");
-      tree_->addProperty(objName, qrgrad, "r" );
-      tree_->addProperty(objName, qrgrad, "fx");
-      tree_->addProperty(objName, qrgrad, "fy");
+      propTree_->addProperty(objName, qrgrad, "cx");
+      propTree_->addProperty(objName, qrgrad, "cy");
+      propTree_->addProperty(objName, qrgrad, "r" );
+      propTree_->addProperty(objName, qrgrad, "fx");
+      propTree_->addProperty(objName, qrgrad, "fy");
     }
     else if (qrect) {
-      tree_->addProperty(objName, qrect, "x" );
-      tree_->addProperty(objName, qrect, "y" );
-      tree_->addProperty(objName, qrect, "w" );
-      tree_->addProperty(objName, qrect, "h" );
-      tree_->addProperty(objName, qrect, "rx");
-      tree_->addProperty(objName, qrect, "ry");
+      propTree_->addProperty(objName, qrect, "x" );
+      propTree_->addProperty(objName, qrect, "y" );
+      propTree_->addProperty(objName, qrect, "w" );
+      propTree_->addProperty(objName, qrect, "h" );
+      propTree_->addProperty(objName, qrect, "rx");
+      propTree_->addProperty(objName, qrect, "ry");
     }
     else if (qstop) {
-      tree_->addProperty(objName, qstop, "offset" );
-      tree_->addProperty(objName, qstop, "opacity");
+      propTree_->addProperty(objName, qstop, "offset" );
+      propTree_->addProperty(objName, qstop, "opacity");
     }
     else if (qtext) {
-      tree_->addProperty(objName, qtext, "x"           );
-      tree_->addProperty(objName, qtext, "y"           );
-      tree_->addProperty(objName, qtext, "dx"          );
-      tree_->addProperty(objName, qtext, "dy"          );
-      tree_->addProperty(objName, qtext, "text"        );
-      tree_->addProperty(objName, qtext, "rotate"      );
-      tree_->addProperty(objName, qtext, "textLength"  );
-      tree_->addProperty(objName, qtext, "lengthAdjust");
+      propTree_->addProperty(objName, qtext, "x"           );
+      propTree_->addProperty(objName, qtext, "y"           );
+      propTree_->addProperty(objName, qtext, "dx"          );
+      propTree_->addProperty(objName, qtext, "dy"          );
+      propTree_->addProperty(objName, qtext, "text"        );
+      propTree_->addProperty(objName, qtext, "rotate"      );
+      propTree_->addProperty(objName, qtext, "textLength"  );
+      propTree_->addProperty(objName, qtext, "lengthAdjust");
     }
     else if (qtextpath) {
-      tree_->addProperty(objName, qtextpath, "text"       );
-      tree_->addProperty(objName, qtextpath, "xlink"      );
-      tree_->addProperty(objName, qtextpath, "startOffset");
+      propTree_->addProperty(objName, qtextpath, "text"       );
+      propTree_->addProperty(objName, qtextpath, "xlink"      );
+      propTree_->addProperty(objName, qtextpath, "startOffset");
     }
     else if (qtitle) {
-      tree_->addProperty(objName, qtitle, "text");
+      propTree_->addProperty(objName, qtitle, "text");
 
       setWindowTitle(qtitle->getQText());
     }
     else if (qtspan) {
-      tree_->addProperty(objName, qtspan, "x"   );
-      tree_->addProperty(objName, qtspan, "y"   );
-      tree_->addProperty(objName, qtspan, "text");
+      propTree_->addProperty(objName, qtspan, "x"   );
+      propTree_->addProperty(objName, qtspan, "y"   );
+      propTree_->addProperty(objName, qtspan, "text");
     }
     else if (quse) {
-      tree_->addProperty(objName, quse, "x"     );
-      tree_->addProperty(objName, quse, "y"     );
-      tree_->addProperty(objName, quse, "width" );
-      tree_->addProperty(objName, quse, "height");
-      tree_->addProperty(objName, quse, "xlink" );
+      propTree_->addProperty(objName, quse, "x"     );
+      propTree_->addProperty(objName, quse, "y"     );
+      propTree_->addProperty(objName, quse, "width" );
+      propTree_->addProperty(objName, quse, "height");
+      propTree_->addProperty(objName, quse, "xlink" );
     }
 
     //---
 
     if (! qobj->object()->isAnimated()) {
       if (qobj->object()->isDrawable() || hasChildren)
-        tree_->addProperty(objName, qobj, "transform");
+        propTree_->addProperty(objName, qobj, "transform");
 
       if (qobj->object()->isDrawable() || hasChildren) {
-        tree_->addProperty(objName, qobj, "opacity");
+        propTree_->addProperty(objName, qobj, "opacity");
 
         //---
 
         QString strokeName = objName + "/stroke";
 
-        tree_->addProperty(strokeName, qobj, "strokeColor"  )->setLabel("color"  );
-        tree_->addProperty(strokeName, qobj, "strokeOpacity")->setLabel("opacity");
-        tree_->addProperty(strokeName, qobj, "strokeWidth"  )->setLabel("width"  );
-        tree_->addProperty(strokeName, qobj, "strokeDash"   )->setLabel("dash"   );
-        tree_->addProperty(strokeName, qobj, "strokeCap"    )->setLabel("cap"    );
-        tree_->addProperty(strokeName, qobj, "strokeJoin"   )->setLabel("join"   );
+        propTree_->addProperty(strokeName, qobj, "strokeNoColor"     )->setLabel("noColor"     );
+        propTree_->addProperty(strokeName, qobj, "strokeCurrentColor")->setLabel("currentColor");
+        propTree_->addProperty(strokeName, qobj, "strokeColor"       )->setLabel("color"       );
+        propTree_->addProperty(strokeName, qobj, "strokeOpacity"     )->setLabel("opacity"     );
+        propTree_->addProperty(strokeName, qobj, "strokeWidth"       )->setLabel("width"       );
+        propTree_->addProperty(strokeName, qobj, "strokeDash"        )->setLabel("dash"        );
+        propTree_->addProperty(strokeName, qobj, "strokeOffset"      )->setLabel("offset"      );
+        propTree_->addProperty(strokeName, qobj, "strokeCap"         )->setLabel("cap"         );
+        propTree_->addProperty(strokeName, qobj, "strokeJoin"        )->setLabel("join"        );
 
         //---
 
         QString fillName = objName + "/fill";
 
-        tree_->addProperty(fillName, qobj, "fillIsNoColor"     )->setLabel("isNoColor"     );
-        tree_->addProperty(fillName, qobj, "fillIsCurrentColor")->setLabel("isCurrentColor");
-        tree_->addProperty(fillName, qobj, "fillColor"         )->setLabel("color"         );
-        tree_->addProperty(fillName, qobj, "fillOpacity"       )->setLabel("opacity"       );
-        tree_->addProperty(fillName, qobj, "fillRule"          )->setLabel("rule"          );
-        tree_->addProperty(fillName, qobj, "fillUrl"           )->setLabel("url"           );
+        propTree_->addProperty(fillName, qobj, "fillNoColor"     )->setLabel("noColor"     );
+        propTree_->addProperty(fillName, qobj, "fillCurrentColor")->setLabel("currentColor");
+        propTree_->addProperty(fillName, qobj, "fillColor"       )->setLabel("color"       );
+        propTree_->addProperty(fillName, qobj, "fillOpacity"     )->setLabel("opacity"     );
+        propTree_->addProperty(fillName, qobj, "fillRule"        )->setLabel("rule"        );
+        propTree_->addProperty(fillName, qobj, "fillUrl"         )->setLabel("url"         );
       }
 
       if (qobj->object()->hasFont()) {
         QString fontName = objName + "/font";
 
-        tree_->addProperty(fontName, qobj, "fontFamily")->setLabel("family");
-      //tree_->addProperty(fontName, qobj, "fontStyle" )->setLabel("style");
-        tree_->addProperty(fontName, qobj, "fontSize"  )->setLabel("size");
-        tree_->addProperty(fontName, qobj, "font"      )->setLabel("font");
+        propTree_->addProperty(fontName, qobj, "fontFamily")->setLabel("family");
+      //propTree_->addProperty(fontName, qobj, "fontStyle" )->setLabel("style");
+        propTree_->addProperty(fontName, qobj, "fontSize"  )->setLabel("size");
+        propTree_->addProperty(fontName, qobj, "font"      )->setLabel("font");
       }
     }
   }
@@ -1107,9 +1127,13 @@ showProperties()
     propertiesDlg_ = new CQSVGPropertiesDlg(this);
 
     addProperties();
+
+    loadCSS();
   }
 
   propertiesDlg_->show();
+
+  propertiesDlg_->raise();
 }
 
 void
@@ -1120,6 +1144,8 @@ showBuffers()
     bufferView_ = new CQSVGBufferView(svg_);
 
   bufferView_->show();
+
+  bufferView_->raise();
 }
 
 void

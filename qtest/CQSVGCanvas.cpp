@@ -92,7 +92,7 @@ void
 CQSVGCanvas::
 mousePressEvent(QMouseEvent *e)
 {
-  CQPropertyTree *tree = window_->tree();
+  CQPropertyTree *tree = window_->propertiesTree();
 
   if (tree) {
     tree->blockSignals(true);

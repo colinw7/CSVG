@@ -105,10 +105,11 @@ termParse()
   svg_.addFont(this);
 }
 
-void
+bool
 CSVGFont::
 draw()
 {
+  return false;
 }
 
 CSVGGlyph *

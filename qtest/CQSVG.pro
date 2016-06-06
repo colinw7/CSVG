@@ -67,6 +67,7 @@ CQSVGRadialGradient.cpp \
 CQSVGRect.cpp \
 CQSVGSet.cpp \
 CQSVGStop.cpp \
+CQSVGStyleTree.cpp \
 CQSVGSymbol.cpp \
 CQSVGText.cpp \
 CQSVGTextPath.cpp \
@@ -133,6 +134,7 @@ CQSVGRadialGradient.h \
 CQSVGRect.h \
 CQSVGSet.h \
 CQSVGStop.h \
+CQSVGStyleTree.h \
 CQSVGSymbol.h \
 CQSVGText.h \
 CQSVGTextPath.h \

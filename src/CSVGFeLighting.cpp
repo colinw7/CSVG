@@ -4,7 +4,6 @@
 #include <CSVGFeSpotLight.h>
 #include <CSVGBuffer.h>
 #include <CSVG.h>
-#include <CRGBName.h>
 
 CSVGFeLighting::
 CSVGFeLighting(CSVG &svg) :

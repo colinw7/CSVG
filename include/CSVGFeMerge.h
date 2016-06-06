@@ -22,7 +22,7 @@ class CSVGFeMerge : public CSVGFilterBase {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  void draw() override;
+  bool draw() override;
 
   void filterImage(CSVGBuffer *outBuffer);
 
@@ -31,8 +31,8 @@ class CSVGFeMerge : public CSVGFilterBase {
   friend std::ostream &operator<<(std::ostream &os, const CSVGFeMerge &filter);
 
  private:
-  COptValT<std::string> filterIn_;
-  COptValT<std::string> filterOut_;
+  COptString filterIn_;
+  COptString filterOut_;
 };
 
 #endif

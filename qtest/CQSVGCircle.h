@@ -16,6 +16,8 @@ class CQSVGCircle : public CQSVGObject, public CSVGCircle {
  public:
   CQSVGCircle(CQSVG *svg);
 
+  double getRadius() const;
+
   void drawTerm() override;
 };
 

@@ -75,3 +75,13 @@
  + Debug support for filter box and gradient control points
  + Add animation properties to dialog
  + Add path parts to properites dialog
+
+### 6/5/2016
+ + combine stroke, fill, clip into single struct and push/pop rather that update/reset
+ + put css style data into single struct and simplify code
+ + Add color-profile tag
+ + Update fill/stroke color handling so none and currentColor types are part of color class
+ + Add marker clipping
+ + Add css marker support
+ + Improve handling of global (per buffer) transparency
+ + Add CSS Tree to Qt viewer

@@ -18,8 +18,10 @@ class CSVGMarker : public CSVGObject {
   double getRefY() const { return refY_.getValue(0); }
   void setRefY(double r) { refY_ = r; }
 
-  CSVGCoordUnits getUnits() const { return markerUnits_.getValue(CSVGCoordUnits::USER_SPACE); }
-  void setUnits(CSVGCoordUnits units) { markerUnits_ = units; }
+  bool hasMarkerUnits() const { return markerUnits_.isValid(); }
+  CSVGCoordUnits getMarkerUnits() const {
+    return markerUnits_.getValue(CSVGCoordUnits::STROKE_WIDTH); }
+  void setMarkerUnits(CSVGCoordUnits units) { markerUnits_ = units; }
 
   CScreenUnits getMarkerWidth() const { return markerWidth_.getValue(CScreenUnits(3)); }
   void setMarkerWidth(const CScreenUnits &l) { markerWidth_ = l; }
@@ -45,12 +47,12 @@ class CSVGMarker : public CSVGObject {
   friend std::ostream &operator<<(std::ostream &os, const CSVGMarker &marker);
 
  private:
-  COptValT<double>             refX_;
-  COptValT<double>             refY_;
+  COptReal                     refX_;
+  COptReal                     refY_;
   COptValT<CSVGCoordUnits>     markerUnits_;
   COptValT<CScreenUnits>       markerWidth_;
   COptValT<CScreenUnits>       markerHeight_;
-  COptValT<std::string>        orient_;
+  COptString                   orient_;
   COptValT<CSVGPreserveAspect> preserveAspect_;
 };
 

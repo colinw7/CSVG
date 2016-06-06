@@ -66,19 +66,36 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   return true;
 }
 
-void
+bool
 CSVGLine::
 draw()
 {
   if (svg_.getDebug())
     CSVGLog() << *this;
 
-  CSVGBuffer *buffer = svg_.getBuffer();
+  //---
+
+  std::vector<CPoint2D> points;
+  std::vector<double>   angles;
+
+  points.push_back(CPoint2D(getX1(), getY1()));
+  points.push_back(CPoint2D(getX2(), getY2()));
+
+  double a = atan2(points[1].y - points[0].y, points[1].x - points[0].x);
+
+  angles.push_back(a);
+  angles.push_back(a);
+
+  //---
+
+  CSVGBuffer *buffer = svg_.getCurrentBuffer();
 
   buffer->pathInit();
 
-  buffer->pathMoveTo(getX1(), getY1());
-  buffer->pathLineTo(getX2(), getY2());
+  buffer->pathMoveTo(points[0].x, points[0].y);
+  buffer->pathLineTo(points[1].x, points[1].y);
+
+  //---
 
   if (svg_.isFilled() || svg_.isStroked()) {
     if (svg_.isFilled()) {
@@ -98,6 +115,12 @@ draw()
 
     buffer->pathFill();
   }
+
+  //---
+
+  svg_.drawMarkers(points, angles);
+
+  return true;
 }
 
 bool

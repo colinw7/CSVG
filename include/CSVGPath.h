@@ -20,9 +20,13 @@ class CSVGPath : public CSVGObject {
   const CSVGPathPartList &getPartList() const { return parts_; }
   void setPartList(const CSVGPathPartList &parts) { parts_ = parts; }
 
+  bool hasPathLength() const { return pathLength_.isValid(); }
+  double getPathLength() const { return pathLength_.getValue(0); }
+  void setPathLength(double r) { pathLength_ = r; }
+
   void moveBy(const CVector2D &d);
 
-  void draw() override;
+  bool draw() override;
 
   bool getBBox(CBBox2D &bbox) const override;
 
@@ -32,6 +36,7 @@ class CSVGPath : public CSVGObject {
 
  protected:
   CSVGPathPartList parts_;
+  COptReal         pathLength_;
 };
 
 #endif

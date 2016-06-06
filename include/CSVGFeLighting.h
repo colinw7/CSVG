@@ -42,13 +42,13 @@ class CSVGFeLighting : public CSVGFilterBase {
   void filterImage(CSVGBuffer *inBuffer, CSVGBuffer *outBuffer);
 
  protected:
-  COptValT<std::string> filterIn_;
-  COptValT<std::string> filterOut_;
-  COptValT<CRGBA>       lightingColor_;
-  COptValT<double>      diffuseConstant_;
-  COptValT<double>      specularConstant_;
-  COptValT<double>      specularExponent_;
-  COptValT<double>      surfaceScale_;
+  COptString      filterIn_;
+  COptString      filterOut_;
+  COptValT<CRGBA> lightingColor_;
+  COptReal        diffuseConstant_;
+  COptReal        specularConstant_;
+  COptReal        specularExponent_;
+  COptReal        surfaceScale_;
 };
 
 #endif

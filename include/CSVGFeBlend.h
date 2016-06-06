@@ -28,7 +28,7 @@ class CSVGFeBlend : public CSVGFilterBase {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  void draw() override;
+  bool draw() override;
 
   void filterImage(CSVGBuffer *inBuffer1, CSVGBuffer *inBuffer2, CSVGBuffer *outBuffer);
 
@@ -38,9 +38,9 @@ class CSVGFeBlend : public CSVGFilterBase {
 
  private:
   COptValT<CSVGBlendMode> mode_;
-  COptValT<std::string>   filterIn1_;
-  COptValT<std::string>   filterIn2_;
-  COptValT<std::string>   filterOut_;
+  COptString              filterIn1_;
+  COptString              filterIn2_;
+  COptString              filterOut_;
 };
 
 #endif

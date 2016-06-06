@@ -28,6 +28,7 @@ CSVGBuffer.cpp \
 CSVGCircle.cpp \
 CSVGClip.cpp \
 CSVGClipPath.cpp \
+CSVGColorProfile.cpp \
 CSVG.cpp \
 CSVGDefs.cpp \
 CSVGDesc.cpp \
@@ -85,12 +86,11 @@ CSVGScript.cpp \
 CSVGSet.cpp \
 CSVGStop.cpp \
 CSVGStroke.cpp \
+CSVGStrokeDash.cpp \
 CSVGStyle.cpp \
 CSVGStyleData.cpp \
 CSVGSwitch.cpp \
 CSVGSymbol.cpp \
-CSVGTempFont.cpp \
-CSVGTempStroke.cpp \
 CSVGText.cpp \
 CSVGTextPath.cpp \
 CSVGTitle.cpp \
