@@ -3,6 +3,7 @@
 #include <CSVGFePointLight.h>
 #include <CSVGFeSpotLight.h>
 #include <CSVGBuffer.h>
+#include <CSVGFilter.h>
 #include <CSVG.h>
 
 CSVGFeLighting::
@@ -24,6 +25,20 @@ CSVGFeLighting(const CSVGFeLighting &fe) :
 {
 }
 
+std::string
+CSVGFeLighting::
+getFilterIn() const
+{
+  return calcFilterIn(filterIn_);
+}
+
+std::string
+CSVGFeLighting::
+getFilterOut() const
+{
+  return calcFilterOut(filterOut_);
+}
+
 void
 CSVGFeLighting::
 filterImage(CSVGBuffer *inBuffer, CSVGBuffer *outBuffer)
@@ -42,7 +57,7 @@ filterImage(CSVGBuffer *inBuffer, CSVGBuffer *outBuffer)
 
   CSVGLightData lightData;
 
-  lightData.lcolor          = getLightingColor();
+  lightData.lcolor          = svg_.colorToRGBA(getLightingColor());
   lightData.surfaceScale    = getSurfaceScale();
   lightData.isDiffuse       = isDiffuse();
   lightData.diffuseConstant = getDiffuseConstant();

@@ -1,5 +1,6 @@
 #include <CSVGFeBlend.h>
 #include <CSVGBuffer.h>
+#include <CSVGFilter.h>
 #include <CSVG.h>
 
 CSVGFeBlend::
@@ -23,6 +24,27 @@ CSVGFeBlend::
 dup() const
 {
   return new CSVGFeBlend(*this);
+}
+
+std::string
+CSVGFeBlend::
+getFilterIn1() const
+{
+  return calcFilterIn(filterIn1_);
+}
+
+std::string
+CSVGFeBlend::
+getFilterIn2() const
+{
+  return calcFilterIn(filterIn2_);
+}
+
+std::string
+CSVGFeBlend::
+getFilterOut() const
+{
+  return calcFilterOut(filterOut_);
 }
 
 bool
@@ -68,7 +90,7 @@ draw()
     buffer2->setImageBuffer(inBuffer2);
   }
 
-  filterImage(inBuffer1, inBuffer2, outBuffer);
+  CSVGBuffer::blendBuffers(inBuffer1, inBuffer2, getMode(), outBuffer);
 
   if (svg_.getDebugFilter()) {
     std::string objectBufferName = "_" + getUniqueName();
@@ -79,13 +101,6 @@ draw()
   }
 
   return true;
-}
-
-void
-CSVGFeBlend::
-filterImage(CSVGBuffer *inBuffer1, CSVGBuffer *inBuffer2, CSVGBuffer *outBuffer)
-{
-  CSVGBuffer::blendBuffers(inBuffer1, inBuffer2, getMode(), outBuffer);
 }
 
 void

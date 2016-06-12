@@ -14,8 +14,8 @@ class CSVGFilter : public CSVGObject {
   CSVGFilter *dup() const override;
 
   CSVGCoordUnits getUnits() const {
-    return units_.getValue(CSVGCoordUnits::USER_SPACE); }
-  void setUnits(CSVGCoordUnits units) { units_ = units; }
+    return filterUnits_.getValue(CSVGCoordUnits::OBJECT_BBOX); }
+  void setUnits(CSVGCoordUnits units) { filterUnits_ = units; }
 
   CSVGCoordUnits getPrimitiveUnits() const {
     return primitiveUnits_.getValue(CSVGCoordUnits::USER_SPACE); }
@@ -46,12 +46,16 @@ class CSVGFilter : public CSVGObject {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  void setObject(CSVGObject *object) { object_ = object; }
   CSVGObject *getObject() const { return object_; }
+  void setObject(CSVGObject *object) { object_ = object; }
 
-  void setContentsBBox(const CBBox2D &bbox) { contentsBBox_ = bbox; }
   const CBBox2D &getContentsBBox() const { return contentsBBox_; }
+  void setContentsBBox(const CBBox2D &bbox) { contentsBBox_ = bbox; }
 
+  const std::string &getLastFilterName() const { return lastFilterName_; }
+  void setLastFilterName(const std::string &v) { lastFilterName_ = v; }
+
+  bool getRegion(CBBox2D &bbox) const;
   bool getRegion(CSVGObject *obj, CBBox2D &bbox) const;
 
   void initDraw(CSVGBuffer *buffer);
@@ -68,7 +72,7 @@ class CSVGFilter : public CSVGObject {
 
  private:
   CSVGObject*              object_ { 0 };
-  COptValT<CSVGCoordUnits> units_;
+  COptValT<CSVGCoordUnits> filterUnits_;
   COptValT<CSVGCoordUnits> primitiveUnits_;
   COptValT<CScreenUnits>   x_;
   COptValT<CScreenUnits>   y_;
@@ -78,6 +82,7 @@ class CSVGFilter : public CSVGObject {
   COptValT<CSVGXLink>      xlink_;
   CBBox2D                  contentsBBox_;
   bool                     oldDrawing_ { false };
+  std::string              lastFilterName_;
 };
 
 #endif

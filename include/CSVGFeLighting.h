@@ -18,14 +18,14 @@ class CSVGFeLighting : public CSVGFilterBase {
   virtual bool isDiffuse () const { return false; }
   virtual bool isSpecular() const { return false; }
 
-  std::string getFilterIn() const { return filterIn_.getValue("FilterGraphic"); }
+  std::string getFilterIn() const;
   void setFilterIn(const std::string &s) { filterIn_ = s; }
 
-  std::string getFilterOut() const { return filterOut_.getValue("FilterGraphic"); }
+  std::string getFilterOut() const;
   void setFilterOut(const std::string &s) { filterOut_ = s; }
 
-  CRGBA getLightingColor() const { return lightingColor_.getValue(CRGBA(1,1,1)); }
-  void setLightingColor(const CRGBA &c) { lightingColor_ = c; }
+  CSVGColor getLightingColor() const { return lightingColor_.getValue(CSVGColor()); }
+  void setLightingColor(const CSVGColor &c) { lightingColor_ = c; }
 
   double getDiffuseConstant() const { return diffuseConstant_.getValue(1); }
   void setDiffuseConstant(double r) { diffuseConstant_ = r; }
@@ -42,13 +42,13 @@ class CSVGFeLighting : public CSVGFilterBase {
   void filterImage(CSVGBuffer *inBuffer, CSVGBuffer *outBuffer);
 
  protected:
-  COptString      filterIn_;
-  COptString      filterOut_;
-  COptValT<CRGBA> lightingColor_;
-  COptReal        diffuseConstant_;
-  COptReal        specularConstant_;
-  COptReal        specularExponent_;
-  COptReal        surfaceScale_;
+  COptString          filterIn_;
+  COptString          filterOut_;
+  COptValT<CSVGColor> lightingColor_;
+  COptReal            diffuseConstant_;
+  COptReal            specularConstant_;
+  COptReal            specularExponent_;
+  COptReal            surfaceScale_;
 };
 
 #endif

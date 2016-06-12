@@ -3,6 +3,7 @@
 
 #include <CSVGObject.h>
 #include <CSVGTypes.h>
+#include <CSVGBlockData.h>
 
 class CSVGBlock : public CSVGObject {
  public:
@@ -13,6 +14,9 @@ class CSVGBlock : public CSVGObject {
 
   CSVGBlock *dup() const override;
 
+  //---
+
+  // pixel bbox
   double getX() const;
   void setX(double x) { x_ = x; }
 
@@ -25,31 +29,40 @@ class CSVGBlock : public CSVGObject {
   double getHeight() const;
   void setHeight(double h) { height_ = h; }
 
-  CSVGPreserveAspect preserveAspect() const {
-    return preserveAspect_.getValue(CSVGPreserveAspect()); }
+  // preserve aspect
+  bool hasPreserveAspect() const { return preserveAspect_.isValid(); }
+  CSVGPreserveAspect preserveAspect(const CSVGPreserveAspect &a=CSVGPreserveAspect()) const {
+    return preserveAspect_.getValue(a); }
   void setPreserveAspect(const CSVGPreserveAspect &a) { preserveAspect_ = a; }
 
   CHAlignType getHAlign() const { return preserveAspect().getHAlign(); }
-  CVAlignType getVAlign() const { return preserveAspect().getVAlign(); }
-  CSVGScale   getScale () const { return preserveAspect().getScale (); }
-
   void setHAlign(const CHAlignType &a) {
     CSVGPreserveAspect preserveAspect = this->preserveAspect();
     preserveAspect.setHAlign(a);
     preserveAspect_ = preserveAspect;
   }
 
+  CVAlignType getVAlign() const { return preserveAspect().getVAlign(); }
   void setVAlign(const CVAlignType &a) {
     CSVGPreserveAspect preserveAspect = this->preserveAspect();
     preserveAspect.setVAlign(a);
     preserveAspect_ = preserveAspect;
   }
 
+  CSVGScale getScale () const { return preserveAspect().getScale (); }
   void setScale(const CSVGScale &s) {
     CSVGPreserveAspect preserveAspect = this->preserveAspect();
     preserveAspect.setScale(s);
     preserveAspect_ = preserveAspect;
   }
+
+  // pixel and view box
+  CBBox2D calcPixelBox() const;
+  CBBox2D calcViewBox() const;
+
+  //---
+
+  bool getBBox(CBBox2D &bbox) const override;
 
   void setSize(const CSize2D &size);
 
@@ -60,8 +73,6 @@ class CSVGBlock : public CSVGObject {
   bool draw() override;
 
   void drawTerm() override;
-
-  bool getBBox(CBBox2D &bbox) const override;
 
   void print(std::ostream &os, bool hier) const override;
 
@@ -74,8 +85,7 @@ class CSVGBlock : public CSVGObject {
   COptValT<CScreenUnits>       height_;
   COptValT<CSVGPreserveAspect> preserveAspect_;
   mutable CSVGBuffer*          oldBuffer_ { 0 };
-  mutable double               xscale_ { 1 };
-  mutable double               yscale_ { 1 };
+  mutable CSVGBlockData        blockData_;
 };
 
 #endif

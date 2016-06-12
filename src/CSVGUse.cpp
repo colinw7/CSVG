@@ -164,7 +164,7 @@ bool
 CSVGUse::
 getBBox(CBBox2D &bbox) const
 {
-  if (! viewBox_.isValid()) {
+  if (! hasViewBox()) {
     CSVGObject *object = getLinkObject();
 
     if (! object)
@@ -272,7 +272,7 @@ draw()
 
       saveBuffer->clear();
 
-      svg_.beginDrawBuffer(saveBuffer, svg_.offset(), svg_.xscale()*xs, svg_.yscale()*ys);
+      svg_.beginDrawBuffer(saveBuffer, svg_.offset(), xs, ys);
 
       if (oldBuffer->hasClipPath())
         saveBuffer->addClipPath(oldBuffer);
@@ -330,13 +330,16 @@ draw()
 
           //saveBuffer->setOrigin(CPoint2D(x - dx, y - dy));
 
-          double px1 = (dx    )*svg_.xscale();
-          double py1 = (dy    )*svg_.yscale();
-          double px2 = (dx + w)*svg_.xscale();
-          double py2 = (dy + h)*svg_.yscale();
+          double xs = svg_.flatXScale();
+          double ys = svg_.flatYScale();
 
-          double x1 = x*svg_.xscale();
-          double y1 = y*svg_.yscale();
+          double px1 = (dx    )*xs;
+          double py1 = (dy    )*ys;
+          double px2 = (dx + w)*xs;
+          double py2 = (dy + h)*ys;
+
+          double x1 = x*xs;
+          double y1 = y*ys;
 
           bool oldDrawing = oldBuffer->isDrawing();
 

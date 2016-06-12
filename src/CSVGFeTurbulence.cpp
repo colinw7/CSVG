@@ -1,4 +1,5 @@
 #include <CSVGFeTurbulence.h>
+#include <CSVGFilter.h>
 #include <CSVGBuffer.h>
 #include <CSVG.h>
 
@@ -12,7 +13,8 @@ CSVGFeTurbulence::
 CSVGFeTurbulence(const CSVGFeTurbulence &turb) :
  CSVGFilterBase(turb),
  type_      (turb.type_),
- baseFreq_  (turb.baseFreq_),
+ baseFreqX_ (turb.baseFreqX_),
+ baseFreqY_ (turb.baseFreqY_),
  numOctaves_(turb.numOctaves_),
  seed_      (turb.seed_),
  filterIn_  (turb.filterIn_),
@@ -27,22 +29,43 @@ dup() const
   return new CSVGFeTurbulence(*this);
 }
 
+std::string
+CSVGFeTurbulence::
+getFilterIn() const
+{
+  return calcFilterIn(filterIn_);
+}
+
+std::string
+CSVGFeTurbulence::
+getFilterOut() const
+{
+  return calcFilterOut(filterOut_);
+}
+
 bool
 CSVGFeTurbulence::
 processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  std::string str;
-  double      real;
-  long        integer;
+  std::string         str;
+  double              real;
+  long                integer;
+  std::vector<double> reals;
 
-  if      (svg_.stringOption (opt_name, opt_value, "type", str))
+  if      (svg_.stringOption(opt_name, opt_value, "type", str))
     type_ = str;
-  else if (svg_.realOption   (opt_name, opt_value, "baseFrequency", &real))
-    baseFreq_ = real;
+  else if (svg_.realListOption(opt_name, opt_value, "baseFrequency", reals)) {
+    if      (reals.size() == 1)
+      baseFreqX_ = reals[0];
+    else if (reals.size() > 1) {
+      baseFreqX_ = reals[0];
+      baseFreqY_ = reals[1];
+    }
+  }
   else if (svg_.integerOption(opt_name, opt_value, "numOctaves", &integer))
     numOctaves_ = integer;
-  else if (svg_.integerOption(opt_name, opt_value, "seed", &integer))
-    seed_ = integer;
+  else if (svg_.realOption(opt_name, opt_value, "seed", &real))
+    seed_ = real;
   else if (svg_.stringOption (opt_name, opt_value, "stitchTiles", str))
     stitchTiles_ = str;
   else if (svg_.stringOption (opt_name, opt_value, "in", str))
@@ -70,7 +93,11 @@ draw()
     buffer->setImageBuffer(inBuffer);
   }
 
-  filterImage(inBuffer, outBuffer);
+  double baseFreqX = getBaseFreqX();
+  double baseFreqY = getBaseFreqY(baseFreqX);
+
+  CSVGBuffer::turbulenceBuffers(inBuffer, isFractalNoise(), baseFreqX, baseFreqY,
+                                getNumOctaves(), getSeed(), outBuffer);
 
   if (svg_.getDebugFilter()) {
     std::string objectBufferName = "_" + getUniqueName();
@@ -85,14 +112,6 @@ draw()
 
 void
 CSVGFeTurbulence::
-filterImage(CSVGBuffer *inBuffer, CSVGBuffer *outBuffer)
-{
-  CSVGBuffer::turbulenceBuffers(inBuffer, isFractalNoise(), getBaseFreq(),
-                                getNumOctaves(), getSeed(), outBuffer);
-}
-
-void
-CSVGFeTurbulence::
 print(std::ostream &os, bool hier) const
 {
   if (hier) {
@@ -102,8 +121,13 @@ print(std::ostream &os, bool hier) const
 
     CSVGFilterBase::printValues(os);
 
-    printNameValue(os, "type"         , type_);
-    printNameValue(os, "baseFrequency", baseFreq_);
+    printNameValue(os, "type", type_);
+
+    if      (baseFreqX_.isValid() && ! baseFreqY_.isValid())
+      printNameValue(os, "baseFrequency", baseFreqX_);
+    else if (baseFreqX_.isValid() && baseFreqY_.isValid())
+      os << " baseFrequency=\"" << baseFreqX_.getValue() << " " << baseFreqY_.getValue() << "\"";
+
     printNameValue(os, "numOctaves"   , numOctaves_);
     printNameValue(os, "seed"         , seed_);
     printNameValue(os, "stitchTiles"  , stitchTiles_);

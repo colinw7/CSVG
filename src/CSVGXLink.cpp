@@ -126,8 +126,8 @@ resolve() const
 
   CSVG &svg = parent_->getSVG();
 
-  double xscale = svg.xscale();
-  double yscale = svg.yscale();
+  double xscale = svg.flatXScale();
+  double yscale = svg.flatYScale();
 
   if (resolved_ && xscale_ == xscale && yscale_ == yscale)
     return;

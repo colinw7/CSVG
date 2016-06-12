@@ -1,4 +1,6 @@
 #include <CSVGFeMergeNode.h>
+#include <CSVGFeMerge.h>
+#include <CSVGFilter.h>
 #include <CSVG.h>
 
 CSVGFeMergeNode::
@@ -22,6 +24,35 @@ dup() const
   return new CSVGFeMergeNode(*this);
 }
 
+std::string
+CSVGFeMergeNode::
+getFilterIn() const
+{
+  if (filterIn_.isValid())
+    return filterIn_.getValue();
+
+  CSVGFilter *filter = getParentFilter();
+
+  return (filter ? filter->getLastFilterName() : "FilterGraphic");
+}
+
+std::string
+CSVGFeMergeNode::
+getFilterOut() const
+{
+  CSVGFilter *filter = getParentFilter();
+
+  std::string name = "FilterGraphic";
+
+  if (filterOut_.isValid())
+    name = filterOut_.getValue();
+
+  if (filter)
+    filter->setLastFilterName(name);
+
+  return name;
+}
+
 bool
 CSVGFeMergeNode::
 processOption(const std::string &opt_name, const std::string &opt_value)
@@ -36,6 +67,15 @@ processOption(const std::string &opt_name, const std::string &opt_value)
     return CSVGObject::processOption(opt_name, opt_value);
 
   return true;
+}
+
+CSVGFilter *
+CSVGFeMergeNode::
+getParentFilter() const
+{
+  CSVGFeMerge *merge = dynamic_cast<CSVGFeMerge *>(getParent());
+
+  return (merge ? merge->getParentFilter() : 0);
 }
 
 void

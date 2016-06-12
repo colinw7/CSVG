@@ -20,20 +20,20 @@ class CSVGFilterBase : public CSVGObject {
   void setPrimitiveUnits(CSVGCoordUnits units) { primitiveUnits_ = units; }
 
   bool hasX() const { return x_.isValid(); }
-  double getX() const { return x_.isValid() ? x_.getValue().px().value() : 0; }
-  void setX(double x) { x_ = x; }
+  CScreenUnits getX(double w=100) const { return x_.getValue(CScreenUnits(w)); }
+  void setX(const CScreenUnits &x) { x_ = x; }
 
   bool hasY() const { return y_.isValid(); }
-  double getY() const { return y_.isValid() ? y_.getValue().px().value() : 0; }
-  void setY(double y) { y_ = y; }
+  CScreenUnits getY(double h=100) const { return y_.getValue(CScreenUnits(h)); }
+  void setY(const CScreenUnits &y) { y_ = y; }
 
   bool hasWidth() const { return width_.isValid(); }
-  double getWidth() const { return width_.getValue(CScreenUnits(100)).px().value(); }
-  void setWidth(double w) { width_ = w; }
+  CScreenUnits getWidth(double w=100) const { return width_.getValue(CScreenUnits(w)); }
+  void setWidth(const CScreenUnits &w) { width_ = w; }
 
   bool hasHeight() const { return height_.isValid(); }
-  double getHeight() const { return height_.getValue(CScreenUnits(100)).px().value(); }
-  void setHeight(double h) { height_ = h; }
+  CScreenUnits getHeight(double h=100) const { return height_.getValue(CScreenUnits(h)); }
+  void setHeight(const CScreenUnits &h) { height_ = h; }
 
   bool hasLink() const { return xlink_.isValid(); }
   const CSVGXLink &xlink() const { return xlink_.getValue(); }
@@ -49,6 +49,9 @@ class CSVGFilterBase : public CSVGObject {
 
   void setObject(CSVGObject *object) { object_ = object; }
   CSVGObject *getObject() const { return object_; }
+
+  std::string calcFilterIn (const COptString &filterIn ) const;
+  std::string calcFilterOut(const COptString &filterOut) const;
 
   bool getParentBBox(CBBox2D &bbox) const;
 

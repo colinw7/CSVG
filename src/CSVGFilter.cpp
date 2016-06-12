@@ -39,7 +39,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   CScreenUnits   length;
 
   if      (svg_.coordUnitsOption(opt_name, opt_value, "filterUnits", units))
-    units_ = units;
+    filterUnits_ = units;
   else if (svg_.coordUnitsOption(opt_name, opt_value, "primitiveUnits", units))
     primitiveUnits_ = units;
   else if (svg_.coordOption(opt_name, opt_value, "x", length))
@@ -64,41 +64,75 @@ processOption(const std::string &opt_name, const std::string &opt_value)
 
 bool
 CSVGFilter::
+getRegion(CBBox2D &bbox) const
+{
+  return getRegion(getObject(), bbox);
+}
+
+bool
+CSVGFilter::
 getRegion(CSVGObject *obj, CBBox2D &bbox) const
 {
   CBBox2D bbox1;
 
-  if (! obj->getBBox(bbox1))
-  //if (! obj->getFlatTransformedBBox(bbox1))
-    return false;
+  if (! obj->getBBox(bbox1)) {
+    // TODO: viewBBox
+    //if (! obj->getFlatTransformedBBox(bbox1))
+    // return false;
+    bbox1 = CBBox2D(0,0,100,100);
+  }
 
   if (! bbox1.isSet())
     return false;
 
-  double w = bbox1.getWidth ();
-  double h = bbox1.getHeight();
+  double w1 = bbox1.getWidth ();
+  double h1 = bbox1.getHeight();
 
   double x1, y1, x2, y2;
 
-  if (hasX())
-    x1 = getX().pxValue(w);
-  else
-    x1 = bbox1.getXMin() - 0.1*w;
+  if (hasX()) {
+    double x = getX().pxValue(1);
 
-  if (hasY())
-    y1 = getY().pxValue(h);
+    if (getUnits() == CSVGCoordUnits::OBJECT_BBOX)
+      x1 = bbox1.getXMin() + x*w1;
+    else
+      x1 = x;
+  }
   else
-    y1 = bbox1.getYMin() - 0.1*h;
+    x1 = bbox1.getXMin() - 0.1*w1;
 
-  if (hasWidth())
-    x2 = x1 + getWidth().pxValue(w);
-  else
-    x2 = bbox1.getXMax() + 0.1*w;
+  if (hasY()) {
+    double y = getY().pxValue(1);
 
-  if (hasHeight())
-    y2 = y1 + getHeight().pxValue(h);
+    if (getUnits() == CSVGCoordUnits::OBJECT_BBOX)
+      y1 = bbox1.getYMin() + y*h1;
+    else
+      y1 = y;
+  }
   else
-    y2 = bbox1.getYMax() + 0.1*h;
+    y1 = bbox1.getYMin() - 0.1*h1;
+
+  if (hasWidth()) {
+    double w = getWidth().pxValue(1);
+
+    if (getUnits() == CSVGCoordUnits::OBJECT_BBOX)
+      x2 = bbox1.getXMin() + w*w1;
+    else
+      x2 = bbox1.getXMin() + w;
+  }
+  else
+    x2 = bbox1.getXMax() + 0.1*w1;
+
+  if (hasHeight()) {
+    double h = getHeight().pxValue(1);
+
+    if (getUnits() == CSVGCoordUnits::OBJECT_BBOX)
+      y2 = bbox1.getYMin() + h*h1;
+    else
+      y2 = bbox1.getYMin() + h;
+  }
+  else
+    y2 = bbox1.getYMax() + 0.1*h1;
 
   bbox = CBBox2D(x1, y1, x2, y2);
 
@@ -140,9 +174,27 @@ initDraw(CSVGBuffer *buffer)
 
   //---
 
-  // store current buffer image into SourceGraphic and FilterGraphic
+  // init last filter name
+  lastFilterName_ = "FilterGraphic";
+
+  // store current buffer image into SourceGraphic and in filter
   CSVGBuffer *srcBuffer = svg_.getBuffer("SourceGraphic");
-  CSVGBuffer *fltBuffer = svg_.getBuffer("FilterGraphic");
+  CSVGBuffer *fltBuffer = svg_.getBuffer(lastFilterName_);
+
+  //---
+
+  CBBox2D bbox;
+
+  getRegion(bbox);
+
+  svg_.setPaintBox(bbox);
+
+  if (object_) {
+    CSVGColor fillColor   = object_->getFlatFillColor();
+    CSVGColor strokeColor = object_->getFlatStrokeColor();
+
+    svg_.setPaintColors(fillColor, strokeColor);
+  }
 
   //---
 
@@ -189,10 +241,10 @@ termDraw(CSVGBuffer *buffer)
 
   //---
 
-  CSVGBuffer *fltBuffer = svg_.getBuffer("FilterGraphic");
+  CSVGBuffer *fltBuffer = svg_.getBuffer(lastFilterName_);
 
   if (svg_.getDebugFilter()) {
-    // save FilterGraphic (output of filter) into filter_out
+    // save last filter output name (output of filter) into filter_out
     CSVGBuffer *filterOutBuffer = svg_.getBuffer(buffer->getName() + "_filter_out");
 
     filterOutBuffer->setImageBuffer(fltBuffer);
@@ -225,7 +277,7 @@ print(std::ostream &os, bool hier) const
 
     CSVGObject::printValues(os);
 
-    printNameCoordUnits(os, "filterUnits"   , units_);
+    printNameCoordUnits(os, "filterUnits"   , filterUnits_);
     printNameCoordUnits(os, "primitiveUnits", primitiveUnits_);
 
     printNameLength(os, "x"     , x_);

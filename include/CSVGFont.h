@@ -39,12 +39,12 @@ class CSVGFont : public CSVGObject {
   CSVGFont &operator=(const CSVGFont &rhs);
 
  private:
-  COptInt           hxo_;
-  COptInt           hyo_;
-  COptInt           hdx_;
-  COptInt           vdy_;
-  COptInt           vxo_;
-  COptInt           vyo_;
+  COptReal          hxo_;
+  COptReal          hyo_;
+  COptReal          hdx_;
+  COptReal          vdy_;
+  COptReal          vxo_;
+  COptReal          vyo_;
   CSVGFontFace     *font_face_     { 0 };
   CSVGMissingGlyph *missing_glyph_ { 0 };
   CharGlyphMap      char_glyph_map_;

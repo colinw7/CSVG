@@ -86,11 +86,11 @@ CSVG(CSVGRenderer *renderer) :
  styleData_(*this),
  cssData_  (*this)
 {
-  viewMatrix_.reset();
-
   xml_ = new CXML();
 
   bufferMgr_ = new CSVGBufferMgr(*this);
+
+  styleData_.font = styleData_.fontDef.getFont();
 
   //---
 
@@ -120,8 +120,9 @@ CSVG::
 
 CSVGBlock *
 CSVG::
-getBlock() const
+getRoot() const
 {
+  // get root block
   if (! block_.isValid()) {
     CSVG *th = const_cast<CSVG *>(this);
 
@@ -146,6 +147,21 @@ createRenderer()
     return renderer_->dup();
 
   return 0;
+}
+
+void
+CSVG::
+setPaintBox(const CBBox2D &bbox)
+{
+  bufferMgr_->setPaintBBox(bbox);
+}
+
+void
+CSVG::
+setPaintColors(const CSVGColor &fillColor, const CSVGColor &strokeColor)
+{
+  bufferMgr_->setPaintFillColor  (fillColor);
+  bufferMgr_->setPaintStrokeColor(strokeColor);
 }
 
 void
@@ -248,11 +264,12 @@ clear()
   if (xml_.isValid())
     xml_->clear();
 
-  buffer_     = 0;
-  viewMatrix_ = CMatrixStack2D();
-  offset_     = CPoint2D(0, 0);
-  xscale_     = 1;
-  yscale_     = 1;
+  buffer_ = 0;
+
+  rootBlockData_.reset();
+
+  blockData_.reset();
+
   block_      = 0;
   xmlTag_     = 0;
   background_ = CRGBA(1,1,1);
@@ -273,7 +290,7 @@ read(const std::string &filename)
 {
   clear();
 
-  return read(filename, getBlock());
+  return read(filename, getRoot());
 }
 
 bool
@@ -1218,28 +1235,28 @@ double
 CSVG::
 getXMin() const
 {
-  return getBlock()->getXMin();
+  return getRoot()->getXMin();
 }
 
 double
 CSVG::
 getYMin() const
 {
-  return getBlock()->getYMin();
+  return getRoot()->getYMin();
 }
 
 double
 CSVG::
 getWidth() const
 {
-  return getBlock()->getWidth();
+  return getRoot()->getWidth();
 }
 
 double
 CSVG::
 getHeight() const
 {
-  return getBlock()->getHeight();
+  return getRoot()->getHeight();
 }
 
 void
@@ -1300,71 +1317,59 @@ drawToRenderer(CSVGRenderer *renderer, int w, int h, const CPoint2D &offset,
 
   setRenderer(renderer);
 
-  CMatrixStack2D matrix;
-
-  matrix.translate(offset.x, offset.y);
-  matrix.scale(xscale, yscale);
-
-  draw(matrix, offset, xscale, yscale);
+  draw(offset, xscale, yscale);
 }
 
 bool
 CSVG::
 hasAnimation() const
 {
-  return getBlock()->hasAnimation();
+  return getRoot()->hasAnimation();
 }
 
 void
 CSVG::
 draw()
 {
-  CMatrixStack2D matrix;
+  CPoint2D offset;
+  double   scale = 1;
 
-  draw(matrix, CPoint2D(0,0), 1);
+  draw(offset, scale, scale);
 }
 
 void
 CSVG::
-draw(const CMatrixStack2D &matrix, const CPoint2D &offset, double xscale, double yscale)
+draw(const CPoint2D &offset, double xscale, double yscale)
 {
-  drawBlock(getBlock(), matrix, offset, xscale, yscale);
+  CSVGPreserveAspect preserveAspect;
+
+  drawRoot(getRoot(), offset, xscale, yscale, preserveAspect);
 }
 
 void
 CSVG::
-drawBlock(CSVGBlock *block)
-{
-  CMatrixStack2D matrix;
-
-  drawBlock(block, matrix, CPoint2D(0, 0), 1, 1);
-}
-
-void
-CSVG::
-drawBlock(CSVGBlock *block, const CMatrixStack2D &matrix, const CPoint2D &offset,
-          double xscale, double yscale)
+drawRoot(CSVGBlock *block, const CPoint2D &offset, double xscale, double yscale,
+         const CSVGPreserveAspect &preserveAspect)
 {
   if (! renderer_)
     return;
 
-  setBlockXScale(xscale);
-  setBlockYScale(yscale);
+  // set root block scale and offset
+  CSVGBlockData blockData(block->calcPixelBox(), block->calcViewBox(), offset,
+                          xscale, yscale, preserveAspect);
 
-  setViewMatrix(matrix);
-
-  setOffset(offset);
-  setXScale(xscale);
-  setYScale(yscale);
+  rootBlockData_ = blockData;
 
   //------
+
+  const CMatrixStack2D &viewMatrix = rootBlockData_.viewMatrix();
 
   renderer_->beginDraw();
 
   CPoint2D bmin, bmax;
 
-  viewMatrix_.multiplyPoint(CPoint2D(block->getXMin(), block->getYMin()), bmin);
-  viewMatrix_.multiplyPoint(CPoint2D(block->getXMax(), block->getYMax()), bmax);
+  viewMatrix.multiplyPoint(CPoint2D(block->getXMin(), block->getYMin()), bmin);
+  viewMatrix.multiplyPoint(CPoint2D(block->getXMax(), block->getYMax()), bmax);
 
   renderer_->setDataRange(bmin.x, bmin.y, bmax.x, bmax.y);
 
@@ -1383,7 +1388,7 @@ drawBlock(CSVGBlock *block, const CMatrixStack2D &matrix, const CPoint2D &offset
 
   bgBuffer->clear();
 
-  beginDrawBuffer(bgBuffer, this->offset(), this->xscale(), this->yscale());
+  beginDrawBuffer(bgBuffer, blockOffset(), blockXScale(), blockYScale());
 
   //------
 
@@ -1398,8 +1403,6 @@ drawBlock(CSVGBlock *block, const CMatrixStack2D &matrix, const CPoint2D &offset
   renderer_->setImage(bgBuffer->getRenderer());
 
   //------
-
-  viewMatrix_.reset();
 
   renderer_->endDraw();
 }
@@ -1475,20 +1478,7 @@ CSVGBuffer *
 CSVG::
 getBuffer(const std::string &name)
 {
-  if      (name == "SourceAlpha") {
-    CSVGBuffer *buffer = bufferMgr_->lookupBuffer("SourceGraphic", /*create*/true);
-
-    return bufferMgr_->lookupAlphaBuffer(buffer, /*create*/true);
-  }
-  else if (name == "BackgroundAlpha") {
-    CSVGBuffer *buffer = bufferMgr_->lookupBuffer("BackgroundImage", /*create*/true);
-
-    return bufferMgr_->lookupAlphaBuffer(buffer, /*create*/true);
-  }
-
-  CSVGBuffer *buffer = bufferMgr_->lookupBuffer(name, /*create*/true);
-
-  return buffer;
+  return bufferMgr_->lookupBuffer(name, /*create*/true);
 }
 
 void
@@ -1498,68 +1488,93 @@ getBufferNames(std::vector<std::string> &names, bool includeAlpha) const
   bufferMgr_->getBufferNames(names, includeAlpha);
 }
 
-#if 0
-void
-CSVG::
-beginDrawBuffer(CSVGBuffer *buffer)
-{
-  beginDrawBuffer(buffer, offset(), blockXScale(), blockYScale());
-}
-#endif
-
 void
 CSVG::
 beginDrawBuffer(CSVGBuffer *buffer, const CPoint2D &offset, double xs, double ys)
 {
-  CSVGBlock *block = getBlock();
+  CSVGBlock *block = getRoot();
 
-  CBBox2D bbox;
+  CBBox2D pixelBox = block->calcPixelBox();
+  CBBox2D viewBox  = block->calcViewBox ();
 
-  block->getBBox(bbox);
-
-  beginDrawBuffer(buffer, bbox, offset, xs, ys);
+  beginDrawBuffer(buffer, pixelBox, viewBox, offset, xs, ys, blockPreserveAspect());
 }
 
 void
 CSVG::
-beginDrawBuffer(CSVGBuffer *buffer, const CBBox2D &bbox)
+beginDrawBuffer(CSVGBuffer *buffer, const CBBox2D &viewBox)
 {
-  beginDrawBuffer(buffer, bbox, offset(), blockXScale(), blockYScale());
+  CSVGBlock *block = getRoot();
+
+  CBBox2D pixelBox = block->calcPixelBox();
+
+  beginDrawBuffer(buffer, pixelBox, viewBox, blockOffset(), blockXScale(), blockYScale(),
+                  blockPreserveAspect());
 }
 
 void
 CSVG::
-beginDrawBuffer(CSVGBuffer *buffer, const CBBox2D &bbox,
-                const CPoint2D &offset, double xs, double ys)
+beginDrawBuffer(CSVGBuffer *buffer, const CBBox2D &pixelBox, const CBBox2D &viewBox,
+                const CPoint2D &offset, double xs, double ys,
+                const CSVGPreserveAspect &preserveAspect)
 {
-  double w = 100, h = 100;
+  // save current block
+  blockDataStack_.push_back(blockData_);
 
-  if (bbox.isSet()) {
-    w = bbox.getWidth ();
-    h = bbox.getHeight();
-  }
+  // start new block
+  CSVGBlockData blockData(pixelBox, viewBox, offset, xs, ys, preserveAspect);
 
-  CBBox2D bbox1 = bbox;
+  blockData_ = blockData;
 
-  bbox1.moveBy(offset);
+  if (getenv("CSVG_DEBUG_BLOCK_DATA"))
+    std::cerr << "beginDrawBuffer:" << std::endl << blockData_ << std::endl;
 
-  buffer->beginDraw(w*xs, h*ys, bbox1);
+  //---
 
-  buffer->setViewMatrix(viewMatrix_);
+  CBBox2D bbox1 = blockData_.viewBBox();
 
-  CSVGBlock *block = getBlock();
+  double w = bbox1.getWidth ();
+  double h = bbox1.getHeight();
 
-  buffer->setAlign(block->getHAlign(), block->getVAlign());
+  bbox1.moveBy(blockData_.offset());
 
-  buffer->setEqualScale(block->getScale() != CSVGScale::FREE);
-  buffer->setScaleMin  (block->getScale() == CSVGScale::FIXED_MEET);
+  buffer->beginDraw(w*blockData_.xscale(), h*blockData_.yscale(), bbox1);
+
+  updateDrawBuffer(buffer);
 }
 
 void
 CSVG::
 endDrawBuffer(CSVGBuffer *buffer)
 {
+  // restore current block
+  blockData_ = blockDataStack_.back();
+
+  blockDataStack_.pop_back();
+
+  if (getenv("CSVG_DEBUG_BLOCK_DATA"))
+    std::cerr << "endDrawBuffer:" << std::endl << blockData_ << std::endl;
+
+  //---
+
   buffer->endDraw();
+
+  updateDrawBuffer(buffer);
+}
+
+void
+CSVG::
+updateDrawBuffer(CSVGBuffer *buffer)
+{
+  const CMatrixStack2D &viewMatrix = blockData_.viewMatrix();
+
+  buffer->setViewMatrix(viewMatrix);
+
+  buffer->setAlign(blockData_.preserveAspect().getHAlign(),
+                   blockData_.preserveAspect().getVAlign());
+
+  buffer->setEqualScale(blockData_.preserveAspect().getScale() != CSVGScale::FREE);
+  buffer->setScaleMin  (blockData_.preserveAspect().getScale() == CSVGScale::FIXED_MEET);
 }
 
 //------
@@ -1597,6 +1612,9 @@ pushStyle(CSVGObject *object)
     updateFontDef(object->getFontDef());
   else
     resetFontDef();
+
+  CScreenUnitsMgrInst->setEmSize(styleData_.fontDef.getSize().pxValue(1));
+  CScreenUnitsMgrInst->setExSize(styleData_.font->getStringWidth("x"));
 }
 
 void
@@ -1608,6 +1626,9 @@ popStyle()
   styleData_ = styleDataStack_.back();
 
   styleDataStack_.pop_back();
+
+  CScreenUnitsMgrInst->setEmSize(styleData_.fontDef.getSize().pxValue(1));
+  CScreenUnitsMgrInst->setExSize(styleData_.font->getStringWidth("x"));
 }
 
 void
@@ -1682,12 +1703,7 @@ setStrokeBuffer(CSVGBuffer *buffer)
     if (styleData_.stroke.getColorValid()) {
       CSVGColor color = styleData_.stroke.getColor();
 
-      CRGBA rgba(0,0,0);
-
-      if      (drawObject)
-        rgba = drawObject->colorToRGBA(color);
-      else if (color.isRGBA())
-        rgba = color.rgba();
+      CRGBA rgba = colorToRGBA(color);
 
       if (styleData_.stroke.getOpacityValid())
         rgba.setAlpha(styleData_.stroke.getOpacity());
@@ -1793,12 +1809,7 @@ setFillBuffer(CSVGBuffer *buffer)
     if (styleData_.fill.getColorValid()) {
       CSVGColor color = styleData_.fill.getColor();
 
-      CRGBA rgba(0,0,0);
-
-      if      (drawObject)
-        rgba = drawObject->colorToRGBA(color);
-      else if (color.isRGBA())
-        rgba = color.rgba();
+      CRGBA rgba = colorToRGBA(color);
 
       if (styleData_.fill.getOpacityValid())
         rgba.setAlpha(styleData_.fill.getOpacity());
@@ -1815,6 +1826,21 @@ setFillBuffer(CSVGBuffer *buffer)
     buffer->setFillType(styleData_.fill.getRule());
   else
     buffer->setFillType(FILL_TYPE_WINDING);
+}
+
+CRGBA
+CSVG::
+colorToRGBA(const CSVGColor &color) const
+{
+  if (color.isRGBA())
+    return color.rgba();
+
+  CSVGObject *drawObject = currentDrawObject();
+
+  if (drawObject)
+    return drawObject->colorToRGBA(color);
+
+  return CRGBA(0,0,0,0);
 }
 
 void
@@ -1854,16 +1880,18 @@ resetFontDef()
 
 void
 CSVG::
-updateFontDef(const CSVGFontDef &)
+updateFontDef(const CSVGFontDef &fontDef)
 {
-  // TODO:
-}
+  if (fontDef.hasFamily())
+    styleData_.fontDef.setFamily(fontDef.getFamily());
 
-void
-CSVG::
-setFontDef()
-{
-  // TODO:
+  if (fontDef.hasSize())
+    styleData_.fontDef.setSize(fontDef.getSize());
+
+  if (fontDef.hasStyle())
+    styleData_.fontDef.setStyle(fontDef.getStyle());
+
+  styleData_.font = styleData_.fontDef.getFont();
 }
 
 void
@@ -3113,8 +3141,8 @@ coordOption(const std::string &opt_name, const std::string &opt_value,
       *value = 0;
       flag   = false;
     }
-
-    *value /= 100;
+    else
+      *value /= 100;
   }
   else {
     CScreenUnits lvalue;
@@ -3124,8 +3152,8 @@ coordOption(const std::string &opt_name, const std::string &opt_value,
       *value = 0;
       flag   = false;
     }
-
-    *value = lvalue.px().value();
+    else
+      *value = lvalue.pxValue();
   }
 
   return flag;
@@ -3299,7 +3327,7 @@ integerOption(const std::string &opt_name, const std::string &opt_value,
     return false;
 
   if (! CStrUtil::toInteger(opt_value, value)) {
-    CSVGLog() << "Illegal integer value for " << name;
+    CSVGLog() << "Illegal integer value '" << opt_value << "' for " << name;
     return false;
   }
 
@@ -3960,7 +3988,7 @@ decodePreserveAspectRatio(const std::string &str, CHAlignType *halign,
 {
   *halign = CHALIGN_TYPE_CENTER;
   *valign = CVALIGN_TYPE_CENTER;
-  *scale  = CSVGScale::FREE;
+  *scale  = CSVGScale::FIXED_MEET;
 
   std::vector<std::string> words;
 
@@ -4009,7 +4037,7 @@ decodeWidthString(const std::string &width_str)
 
     CScreenUnits units(width, CScreenUnits::Units::PT);
 
-    width = units.px().value();
+    width = units.pxValue();
     //mmToPixel(25.4*width/72.0, &width);
   }
   else if (CRegExpUtil::parse(width_str, "\\(.*\\)px", match_strs)) {
@@ -4113,7 +4141,7 @@ decodeColorString(const std::string &colorStr, CSVGColor &color)
   else if (colorStr == "currentColor")
     color = CSVGColor(CSVGColor::Type::CURRENT);
   else if (colorStr == "inherit")
-    color = CSVGColor(CSVGColor::Type::CURRENT);
+    color = CSVGColor(CSVGColor::Type::INHERIT);
   else {
     CRGBA rgba;
 
@@ -4121,6 +4149,8 @@ decodeColorString(const std::string &colorStr, CSVGColor &color)
       return false;
 
     color = CSVGColor(rgba);
+
+    colors_[colorStr] = rgba;
   }
 
   return true;
@@ -4169,7 +4199,7 @@ decodeRGBAString(const std::string &colorStr, CRGBA &rgba)
                   colorStr.substr(2, 1) + colorStr.substr(2, 1) +
                   colorStr.substr(3, 1) + colorStr.substr(3, 1);
 
-    rgba = nameToColor(color_str1);
+    rgba = nameToRGBA(color_str1);
   }
   else if (colorStr.size() == 7 &&
            CRegExpUtil::parse(colorStr, "#" RE_HEXDEC RE_HEXDEC RE_HEXDEC
@@ -4180,21 +4210,31 @@ decodeRGBAString(const std::string &colorStr, CRGBA &rgba)
                   colorStr.substr(3, 2) +
                   colorStr.substr(5, 2);
 
-    rgba = nameToColor(color_str1);
+    rgba = nameToRGBA(color_str1);
   }
   else {
     if (colorStr == "none")
       rgba = CRGBA(0,0,0,0);
     else
-      rgba = nameToColor(colorStr);
+      rgba = nameToRGBA(colorStr);
   }
 
   return true;
 }
 
-CRGBA
+CSVGColor
 CSVG::
 nameToColor(const std::string &name) const
+{
+  if (name == "currentColor")
+    return CSVGColor(CSVGColor::Type::CURRENT);
+
+  return CSVGColor(nameToRGBA(name));
+}
+
+CRGBA
+CSVG::
+nameToRGBA(const std::string &name) const
 {
   double r, g, b, a;
 
@@ -4368,7 +4408,7 @@ urlOption(const std::string &opt_name, const std::string &opt_value,
 
   if (! decodeUrlObject(opt_value, id, &obj1)) {
     CSVGLog() << "Illegal url value '" << id << "' for " << name;
-    return false;
+    return true; // don't propagate waring
   }
 
   *obj = obj1;
@@ -4422,7 +4462,7 @@ getTitle(std::string &str)
 {
   std::vector<CSVGObject *> objects;
 
-  getBlock()->getChildrenOfType(CSVGObjTypeId::TITLE, objects);
+  getRoot()->getChildrenOfType(CSVGObjTypeId::TITLE, objects);
 
   if (objects.empty())
     return false;
@@ -4485,8 +4525,8 @@ windowToPixel(double xi, double yi, double *xo, double *yo)
   *yo = po.y;
 #endif
 
-  *xo = blockXScale_*xi;
-  *yo = blockYScale_*yi;
+  *xo = blockXScale()*xi;
+  *yo = blockYScale()*yi;
 }
 
 void
@@ -4801,23 +4841,30 @@ getStyleMarkerEnd(const CSVGObject *obj, CSVGObject* &marker, CSVGCSSType &type)
 
 void
 CSVG::
+getAllChildren(ObjectList &objects) const
+{
+  getRoot()->getAllChildren(objects);
+}
+
+void
+CSVG::
 getObjectsAtPoint(const CPoint2D &p, ObjectList &objects) const
 {
-  getBlock()->getObjectsAtPoint(p, objects);
+  getRoot()->getObjectsAtPoint(p, objects);
 }
 
 void
 CSVG::
 sendEvent(CSVGEventType type, const std::string &id, const std::string &data)
 {
-  getBlock()->handleEvent(type, id, data);
+  getRoot()->handleEvent(type, id, data);
 }
 
 void
 CSVG::
 print(std::ostream &os, bool hier) const
 {
-  getBlock()->print(os, hier);
+  getRoot()->print(os, hier);
 
   css_.print(os);
 }

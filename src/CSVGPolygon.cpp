@@ -112,7 +112,7 @@ bool
 CSVGPolygon::
 getBBox(CBBox2D &bbox) const
 {
-  if (! viewBox_.isValid()) {
+  if (! hasViewBox()) {
     CBBox2D bbox1;
 
     uint num_points = points_.size();

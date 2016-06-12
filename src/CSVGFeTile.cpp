@@ -25,6 +25,20 @@ dup() const
   return new CSVGFeTile(*this);
 }
 
+std::string
+CSVGFeTile::
+getFilterIn() const
+{
+  return calcFilterIn(filterIn_);
+}
+
+std::string
+CSVGFeTile::
+getFilterOut() const
+{
+  return calcFilterOut(filterOut_);
+}
+
 bool
 CSVGFeTile::
 processOption(const std::string &opt_name, const std::string &opt_value)
@@ -58,7 +72,9 @@ draw()
     buffer->setBBox(inBuffer->bbox());
   }
 
-  filterImage(inBuffer, outBuffer);
+  CMatrixStack2D transform = svg_.getCurrentBuffer()->transform();
+
+  CSVGBuffer::tileBuffers(inBuffer, transform, outBuffer);
 
   if (svg_.getDebugFilter()) {
     std::string objectBufferName = "_" + getUniqueName();
@@ -71,15 +87,6 @@ draw()
   }
 
   return true;
-}
-
-void
-CSVGFeTile::
-filterImage(CSVGBuffer *inBuffer, CSVGBuffer *outBuffer)
-{
-  CMatrixStack2D transform = svg_.getCurrentBuffer()->transform();
-
-  CSVGBuffer::tileBuffers(inBuffer, this, transform, outBuffer);
 }
 
 void

@@ -77,7 +77,7 @@ setStyle(const std::string &style_def)
 
 void
 CSVGFontDef::
-setStyle(CFontStyle s)
+setStyle(CFontStyles s)
 {
   style_.setValue(s);
 }
@@ -115,6 +115,18 @@ CSVGFontDef::
 setSuperscript(bool b)
 {
   style_.setValue(getStyle().addRemove(CFONT_STYLE_SUPERSCRIPT, b));
+}
+
+CFontPtr
+CSVGFontDef::
+getFont()
+{
+  std::string family = getFamily();
+  CFontStyles styles = getStyle();
+  CFontStyle  style  = (styles | CFONT_STYLE_FULL_SIZE).value();
+  double      size   = getSize().px().value();
+
+  return CFontMgrInst->lookupFont(family, style, size);
 }
 
 void

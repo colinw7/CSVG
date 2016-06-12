@@ -26,8 +26,14 @@ class CSVGMask : public CSVGObject {
   void setHeight(double h) { height_ = h; }
 
   bool getUnitsValid() const { return units_.isValid(); }
-  CSVGCoordUnits getUnits() const { return units_.getValue(CSVGCoordUnits::USER_SPACE); }
+  CSVGCoordUnits getUnits() const {
+    return units_.getValue(CSVGCoordUnits::USER_SPACE); }
   void setUnits(CSVGCoordUnits units) { units_ = units; }
+
+  bool getContentUnitsValid() const { return contentUnits_.isValid(); }
+  CSVGCoordUnits getContentUnits() const {
+    return contentUnits_.getValue(CSVGCoordUnits::USER_SPACE); }
+  void setContentUnits(CSVGCoordUnits units) { contentUnits_ = units; }
 
   bool processOption(const std::string &name, const std::string &value) override;
 
@@ -49,6 +55,7 @@ class CSVGMask : public CSVGObject {
   COptValT<CScreenUnits>   width_;
   COptValT<CScreenUnits>   height_;
   COptValT<CSVGCoordUnits> units_;
+  COptValT<CSVGCoordUnits> contentUnits_;
 };
 
 #endif

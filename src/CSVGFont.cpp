@@ -38,20 +38,20 @@ bool
 CSVGFont::
 processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  long integer;
+  double real;
 
-  if      (svg_.integerOption(opt_name, opt_value, "horiz-origin-x", &integer))
-    hxo_ = integer;
-  else if (svg_.integerOption(opt_name, opt_value, "horiz-origin-y", &integer))
-    hyo_ = integer;
-  else if (svg_.integerOption(opt_name, opt_value, "horiz-adv-x", &integer))
-    hdx_ = integer;
-  else if (svg_.integerOption(opt_name, opt_value, "vert-adv-y", &integer))
-    vdy_ = integer;
-  else if (svg_.integerOption(opt_name, opt_value, "vert-origin-x", &integer))
-    vxo_ = integer;
-  else if (svg_.integerOption(opt_name, opt_value, "vert-origin-y", &integer))
-    vyo_ = integer;
+  if      (svg_.realOption(opt_name, opt_value, "horiz-origin-x", &real))
+    hxo_ = real;
+  else if (svg_.realOption(opt_name, opt_value, "horiz-origin-y", &real))
+    hyo_ = real;
+  else if (svg_.realOption(opt_name, opt_value, "horiz-adv-x", &real))
+    hdx_ = real;
+  else if (svg_.realOption(opt_name, opt_value, "vert-adv-y", &real))
+    vdy_ = real;
+  else if (svg_.realOption(opt_name, opt_value, "vert-origin-x", &real))
+    vxo_ = real;
+  else if (svg_.realOption(opt_name, opt_value, "vert-origin-y", &real))
+    vyo_ = real;
   else
     return CSVGObject::processOption(opt_name, opt_value);
 

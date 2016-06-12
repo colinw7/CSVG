@@ -12,7 +12,7 @@ class CSVGFontFace : public CSVGObject {
 
   CSVGFontFace *dup() const override;
 
-  int getUnits() const { return unitsPerEm_.getValue(0); }
+  int getUnits() const { return unitsPerEm_.getValue(1000); }
 
   bool processOption(const std::string &name, const std::string &value) override;
 

@@ -171,7 +171,7 @@ getBBox(CBBox2D &bbox) const
   bool rc = true;
 
   if (! bbox_.isValid()) {
-    if (viewBox_.isValid())
+    if (hasViewBox())
       bbox = getViewBox();
     else {
       CSVGBuffer *currentBuffer = svg_.getCurrentBuffer();

@@ -92,7 +92,7 @@ bool
 CSVGMPath::
 getBBox(CBBox2D &bbox) const
 {
-  if (! viewBox_.isValid()) {
+  if (! hasViewBox()) {
     CSVGBuffer *currentBuffer = svg_.getCurrentBuffer();
 
     return parts_.getBBox(currentBuffer, bbox);

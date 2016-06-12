@@ -24,7 +24,12 @@ namespace CSVGUtil {
                         double *cx, double *cy, double *xr, double *yr,
                         double *theta, double *delta);
 
-  inline int round(double r) { return int(r + 0.5); }
+  inline int round(double r) {
+    if (r < 0)
+      return int(r - 0.5);
+    else
+      return int(r + 0.5);
+  }
 
   inline int angleQuadrant(double a) {
     while (a <  0     ) a += 2*M_PI;

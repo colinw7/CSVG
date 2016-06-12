@@ -147,8 +147,8 @@ draw()
   svg_.windowToPixel(bbox.getXMin(), bbox.getYMin(), &x1, &y1);
   svg_.windowToPixel(bbox.getXMax(), bbox.getYMax(), &x2, &y2);
 
-  int pw = CSVGUtil::round(fabs(x2 - x1));
-  int ph = CSVGUtil::round(fabs(y2 - y1));
+  double pw = fabs(x2 - x1);
+  double ph = fabs(y2 - y1);
 
   oldBuffer->addReshapeImage(getImageBuffer(), x1, y1, pw, ph);
 
@@ -212,7 +212,7 @@ bool
 CSVGImage::
 getBBox(CBBox2D &bbox) const
 {
-  if (! viewBox_.isValid())
+  if (! hasViewBox())
     bbox = CBBox2D(getPosition(), getPosition() + getSizeInternal());
   else
     bbox = getViewBox();

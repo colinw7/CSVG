@@ -14,7 +14,7 @@ class CSVGFeMorphology : public CSVGFilterBase {
 
   CSVGFeMorphology *dup() const override;
 
-  std::string getFilterIn() const { return filterIn_.getValue("FilterGraphic"); }
+  std::string getFilterIn() const;
   void setFilterIn(const std::string &s) { filterIn_ = s; }
 
   CSVGMorphologyOperator getOperator() const {
@@ -24,8 +24,6 @@ class CSVGFeMorphology : public CSVGFilterBase {
   bool processOption(const std::string &name, const std::string &value) override;
 
   bool draw() override;
-
-  void filterImage(CSVGBuffer *inBuffer);
 
   void print(std::ostream &os, bool hier) const override;
 

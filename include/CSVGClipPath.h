@@ -38,6 +38,10 @@ class CSVGClipPath : public CSVGObject {
   CSVGPathPartList         parts_;
   COptValT<CSVGCoordUnits> clipPathUnits_;
   COptString               markerEnd_;
+  COptString               x_;
+  COptString               y_;
+  COptString               width_;
+  COptString               height_;
 };
 
 #endif

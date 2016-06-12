@@ -68,8 +68,9 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   if (processExternalOption       (opt_name, opt_value)) return true;
 
   // TODO: xmlns:<prefix>
-  if      (svg_.stringOption(opt_name, opt_value, "xmlns", str))
-    ;
+  if      (svg_.stringOption(opt_name, opt_value, "xmlns", str)) {
+    //notHandled(opt_name, opt_value);
+  }
   else if (svg_.coordOption (opt_name, opt_value, "x", &real))
     x_.setValue(real);
   else if (svg_.coordOption (opt_name, opt_value, "y", &real))
@@ -82,16 +83,22 @@ processOption(const std::string &opt_name, const std::string &opt_value)
     viewBox_ = bbox;
   else if (svg_.preserveAspectOption(opt_name, opt_value, "preserveAspectRatio", preserveAspect))
     preserveAspect_ = preserveAspect;
-  else if (svg_.stringOption(opt_name, opt_value, "zoomAndPan", str))
-    ;
-  else if (svg_.stringOption(opt_name, opt_value, "version", str))
-    ;
-  else if (svg_.stringOption(opt_name, opt_value, "baseProfile", str))
-    ;
+  else if (svg_.stringOption(opt_name, opt_value, "zoomAndPan", str)) {
+    // allow disabled zoom and pan - ignore
+    //notHandled(opt_name, opt_value);
+  }
+  else if (svg_.stringOption(opt_name, opt_value, "version", str)) {
+    // specify SVG version - ignore
+    //notHandled(opt_name, opt_value);
+  }
+  else if (svg_.stringOption(opt_name, opt_value, "baseProfile", str)) {
+    // specify minimum SVG language profile - ignore
+    //notHandled(opt_name, opt_value);
+  }
   else if (svg_.stringOption(opt_name, opt_value, "contentScriptType", str))
-    ;
+    notHandled(opt_name, opt_value);
   else if (svg_.stringOption(opt_name, opt_value, "contentStyleType", str))
-    ;
+    notHandled(opt_name, opt_value);
   else if (CRegExpUtil::parse(opt_name, "xmlns:.*")) {
     //notHandled(opt_name, opt_value);
   }
@@ -172,29 +179,36 @@ CSVGBlock::
 drawInit()
 {
   oldBuffer_ = svg_.getCurrentBuffer();
-  xscale_    = svg_.xscale();
-  yscale_    = svg_.yscale();
 
-  CPoint2D bmin(this->getXMin(), this->getYMin());
-  CPoint2D bmax(this->getXMax(), this->getYMax());
+  // save current block data values
+  blockData_ = svg_.blockData();
 
-  //svg_.viewMatrix().multiplyPoint(CPoint2D(this->getXMin(), this->getYMin()), bmin);
-  //svg_.viewMatrix().multiplyPoint(CPoint2D(this->getXMax(), this->getYMax()), bmax);
+  // pixel and view box
+  CBBox2D pbbox = calcPixelBox();
+  CBBox2D vbbox = calcViewBox ();
 
-  double bw = this->getWidth ();
-  double bh = this->getHeight();
+  //CPoint2D bmin = vbbox.getLL();
+  //CPoint2D bmax = vbbox.getUR();
 
-  double xscale = bw/(bmax.x - bmin.x);
-  double yscale = bh/(bmax.y - bmin.y);
+  //svg_.viewMatrix().multiplyPoint(vbbox.getLL(), bmin);
+  //svg_.viewMatrix().multiplyPoint(vbbox.getUR(), bmax);
 
-  if (preserveAspect_.isValid()) {
-    if      (preserveAspect_.getValue().getScale() == CSVGScale::FIXED_MEET) {
+  //double bw = pbbox.getWidth ();
+  //double bh = pbbox.getHeight();
+
+  double xscale = pbbox.getWidth ()/vbbox.getWidth ();
+  double yscale = pbbox.getHeight()/vbbox.getHeight();
+
+  if (hasPreserveAspect()) {
+    CSVGScale scale = getScale();
+
+    if      (scale == CSVGScale::FIXED_MEET) {
       double scale = std::min(xscale, yscale);
 
       xscale = scale;
       yscale = scale;
     }
-    else if (preserveAspect_.getValue().getScale() == CSVGScale::FIXED_SLICE) {
+    else if (scale == CSVGScale::FIXED_SLICE) {
       double scale = std::max(xscale, yscale);
 
       xscale = scale;
@@ -202,8 +216,15 @@ drawInit()
     }
   }
 
-  svg_.setXScale(xscale_*xscale);
-  svg_.setYScale(yscale_*yscale);
+  // TODO: adjust for scale
+  //svg_.setOffset(CPoint2D(pbbox.getXMin(), pbbox.getYMin()));
+
+  //svg_.setXScale(blockData_.xscale()*xscale);
+  //svg_.setYScale(blockData_.yscale()*yscale);
+  //svg_.setXScale(xscale);
+  //svg_.setYScale(yscale);
+
+  //svg_.setPreserveAspect(preserveAspect());
 
   //------
 
@@ -212,7 +233,8 @@ drawInit()
 
     drawBuffer->clear();
 
-    svg_.beginDrawBuffer(drawBuffer, svg_.offset(), svg_.xscale(), svg_.yscale());
+    svg_.beginDrawBuffer(drawBuffer, pbbox, vbbox, svg_.offset(), xscale, yscale,
+                         preserveAspect());
   }
 }
 
@@ -220,8 +242,10 @@ void
 CSVGBlock::
 drawTerm()
 {
-  svg_.setXScale(xscale_);
-  svg_.setYScale(yscale_);
+  //svg_.setOffset        (blockData_.offset());
+  //svg_.setXScale        (blockData_.xscale());
+  //svg_.setYScale        (blockData_.yscale());
+  //svg_.setPreserveAspect(blockData_.preserveAspect());
 
   //------
 
@@ -236,17 +260,21 @@ drawTerm()
 
     //---
 
-    //CPoint2D bmin(this->getXMin(), this->getYMin());
-    //CPoint2D bmax(this->getXMax(), this->getYMax());
+    // pixel and view box
+    CBBox2D pbbox = calcPixelBox();
+    //CBBox2D vbbox = calcViewBox ();
 
-    //svg_.viewMatrix().multiplyPoint(CPoint2D(this->getXMin(), this->getYMin()), bmin);
-    //svg_.viewMatrix().multiplyPoint(CPoint2D(this->getXMax(), this->getYMax()), bmax);
+    //CPoint2D bmin = vbbox.getLL();
+    //CPoint2D bmax = vbbox.getUR();
 
-    double bw = this->getWidth ();
-    double bh = this->getHeight();
+    //svg_.viewMatrix().multiplyPoint(vbbox.getLL(), bmin);
+    //svg_.viewMatrix().multiplyPoint(vbbox.getUR(), bmax);
 
-    //double xscale = bw/(bmax.x - bmin.x);
-    //double yscale = bh/(bmax.y - bmin.y);
+    double bw = pbbox.getWidth ();
+    double bh = pbbox.getHeight();
+
+    //double xscale = pbbox.getWidth ()/vbbox.getWidth ();
+    //double yscale = pbbox.getHeight()/vbbox.getHeight();
 
     //---
 
@@ -255,39 +283,43 @@ drawTerm()
     double iy      = 0;
     double s       = 0;
 
-    if (preserveAspect_.isValid()) {
-      if      (preserveAspect_.getValue().getScale() == CSVGScale::FIXED_MEET) {
+    if (hasPreserveAspect()) {
+      CSVGScale   scale  = getScale();
+      CHAlignType halign = getHAlign();
+      CVAlignType valign = getVAlign();
+
+      if      (scale == CSVGScale::FIXED_MEET) {
         s = std::min(bw, bh);
 
-        if      (preserveAspect_.getValue().getHAlign() == CHALIGN_TYPE_LEFT)
+        if      (halign == CHALIGN_TYPE_LEFT)
           ix = 0;
-        else if (preserveAspect_.getValue().getHAlign() == CHALIGN_TYPE_CENTER)
+        else if (halign == CHALIGN_TYPE_CENTER)
           ix = (bw - s)/2;
-        else if (preserveAspect_.getValue().getHAlign() == CHALIGN_TYPE_RIGHT)
+        else if (halign == CHALIGN_TYPE_RIGHT)
           ix = bw - s;
 
-        if      (preserveAspect_.getValue().getVAlign() == CVALIGN_TYPE_BOTTOM)
+        if      (valign == CVALIGN_TYPE_BOTTOM)
           iy = 0;
-        else if (preserveAspect_.getValue().getVAlign() == CVALIGN_TYPE_CENTER)
+        else if (valign == CVALIGN_TYPE_CENTER)
           iy = (bh - s)/2;
-        else if (preserveAspect_.getValue().getVAlign() == CVALIGN_TYPE_TOP)
+        else if (valign == CVALIGN_TYPE_TOP)
           iy = bh - s;
       }
-      else if (preserveAspect_.getValue().getScale() == CSVGScale::FIXED_SLICE) {
+      else if (scale == CSVGScale::FIXED_SLICE) {
         s = std::max(bw, bh);
 
-        if      (preserveAspect_.getValue().getHAlign() == CHALIGN_TYPE_LEFT)
+        if      (halign == CHALIGN_TYPE_LEFT)
           ix = 0;
-        else if (preserveAspect_.getValue().getHAlign() == CHALIGN_TYPE_CENTER)
+        else if (halign == CHALIGN_TYPE_CENTER)
           ix = (bw - s)/2;
-        else if (preserveAspect_.getValue().getHAlign() == CHALIGN_TYPE_RIGHT)
+        else if (halign == CHALIGN_TYPE_RIGHT)
           ix = bw - s;
 
-        if      (preserveAspect_.getValue().getVAlign() == CVALIGN_TYPE_BOTTOM)
+        if      (valign == CVALIGN_TYPE_BOTTOM)
           iy = 0;
-        else if (preserveAspect_.getValue().getVAlign() == CVALIGN_TYPE_CENTER)
+        else if (valign == CVALIGN_TYPE_CENTER)
           iy = (bh - s)/2;
-        else if (preserveAspect_.getValue().getVAlign() == CVALIGN_TYPE_TOP)
+        else if (valign == CVALIGN_TYPE_TOP)
           iy = bh - std::max(bw, bh);
 
         clipped = true;
@@ -307,12 +339,15 @@ drawTerm()
       //drawBuffer->windowToPixel(-ix     , -iy     , &px1, &py1);
       //drawBuffer->windowToPixel(-ix + bw, -iy + bh, &px2, &py2);
 
+      double xs = svg_.flatXScale();
+      double ys = svg_.flatYScale();
+
       CSVGBuffer *clipBuffer = svg_.getBuffer("_" + getUniqueName() + "_svg_clip");
 
-      double px1 = -ix*xscale_;
-      double py1 = -iy*xscale_;
-      double px2 = (-ix + bw)*xscale_;
-      double py2 = (-iy + bh)*yscale_;
+      double px1 = -ix*xs;
+      double py1 = -iy*ys;
+      double px2 = (-ix + bw)*xs;
+      double py2 = (-iy + bh)*ys;
 
       clipBuffer->setClippedBuffer(drawBuffer, px1, py1, px2, py2);
 
@@ -364,14 +399,32 @@ draw()
   return false;
 }
 
+CBBox2D
+CSVGBlock::
+calcPixelBox() const
+{
+  return CBBox2D(getX(), getY(), getX() + getWidth(), getY() + getHeight());
+}
+
+CBBox2D
+CSVGBlock::
+calcViewBox() const
+{
+  if (hasViewBox())
+    return getViewBox();
+
+  return calcPixelBox();
+}
+
 bool
 CSVGBlock::
 getBBox(CBBox2D &bbox) const
 {
-  if (! viewBox_.isValid())
-    bbox = CBBox2D(getX(), getY(), getWidth(), getHeight());
-  else
+  // default view box (if not specified) to pixel range
+  if (hasViewBox())
     bbox = getViewBox();
+  else
+    bbox = calcPixelBox();
 
   return true;
 }

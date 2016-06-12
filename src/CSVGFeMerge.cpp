@@ -1,5 +1,6 @@
 #include <CSVGFeMerge.h>
 #include <CSVGFeMergeNode.h>
+#include <CSVGFilter.h>
 #include <CSVG.h>
 #include <CSVGBuffer.h>
 #include <CSVGUtil.h>
@@ -23,6 +24,20 @@ CSVGFeMerge::
 dup() const
 {
   return new CSVGFeMerge(*this);
+}
+
+std::string
+CSVGFeMerge::
+getFilterIn() const
+{
+  return calcFilterIn(filterIn_);
+}
+
+std::string
+CSVGFeMerge::
+getFilterOut() const
+{
+  return calcFilterOut(filterOut_);
 }
 
 bool
@@ -93,7 +108,7 @@ filterImage(CSVGBuffer *outBuffer)
 
   //---
 
-  CSVGBuffer::mergeBuffers(this, nodes, w, h, outBuffer);
+  CSVGBuffer::mergeBuffers(nodes, w, h, outBuffer);
 }
 
 void

@@ -37,6 +37,14 @@ processOption(const std::string &opt_name, const std::string &opt_value)
     clipPathUnits_ = units;
   else if (svg_.stringOption(opt_name, opt_value, "marker-end", str))
     markerEnd_ = str;
+  else if (svg_.stringOption(opt_name, opt_value, "x", str))
+    x_ = str;
+  else if (svg_.stringOption(opt_name, opt_value, "y", str))
+    y_ = str;
+  else if (svg_.stringOption(opt_name, opt_value, "width", str))
+    width_ = str;
+  else if (svg_.stringOption(opt_name, opt_value, "height", str))
+    height_ = str;
   else
     return CSVGObject::processOption(opt_name, opt_value);
 

@@ -110,6 +110,17 @@ class CSVGRenderer {
   virtual void windowToPixel(const CPoint2D &w, CPoint2D &p) = 0;
   virtual void pixelToWindow(const CPoint2D &p, CPoint2D &w) = 0;
 
+  void lengthToPixel(const CPoint2D &w, CPoint2D &p) {
+    CPoint2D o(0, 0);
+
+    CPoint2D p1, p2;
+
+    windowToPixel(o, p1);
+    windowToPixel(w, p2);
+
+    p = CPoint2D(fabs(p2.x - p1.x), fabs(p2.y - p1.y));
+  }
+
   virtual void textBounds(const std::string &str, CBBox2D &bbox) = 0;
 
   virtual CISize2D getImageSize() const = 0;
@@ -121,7 +132,7 @@ class CSVGRenderer {
 
   //---
 
-  virtual void addResizedImage(CSVGRenderer *src, int x, int y, int w, int h);
+  virtual void addResizedImage(CSVGRenderer *src, double x, double y, double w, double h);
 
   virtual void addClippedImage(CSVGRenderer *src, int x, int y,
                                int px1, int py1, int px2, int py2);

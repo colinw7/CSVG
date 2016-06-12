@@ -2064,6 +2064,7 @@ compiler_moc_header_clean:
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		CQSVGBlock.h
 	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGBlock.h -o .moc/moc_CQSVGBlock.cpp
 
@@ -7820,6 +7821,7 @@ compiler_moc_header_clean:
 		../../CMath/include/CISize2D.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -12868,6 +12870,7 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CISize2D.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -13294,6 +13297,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -13515,6 +13519,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -13733,6 +13738,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -13955,6 +13961,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -14176,6 +14183,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -14397,6 +14405,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -14613,6 +14622,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGCSSData.h \
@@ -14789,6 +14799,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -15030,6 +15041,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -15315,6 +15327,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -15534,6 +15547,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -15753,6 +15767,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -15972,6 +15987,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -16191,6 +16207,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -16524,6 +16541,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -16742,6 +16760,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -16961,6 +16980,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -17181,6 +17201,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -17400,6 +17421,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -17619,6 +17641,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -17838,6 +17861,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -18057,6 +18081,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -18276,6 +18301,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -18495,6 +18521,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -18714,6 +18741,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -18933,6 +18961,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -19152,6 +19181,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -19373,6 +19403,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -19593,6 +19624,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -19814,6 +19846,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -20033,6 +20066,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -20252,6 +20286,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -20471,6 +20506,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -20690,6 +20726,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -20909,6 +20946,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -21129,6 +21167,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -21347,6 +21386,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -21566,6 +21606,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -21785,6 +21826,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -22004,6 +22046,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -22221,6 +22264,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -22462,6 +22506,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -22590,6 +22635,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGAnimation.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -22823,6 +22869,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -23042,6 +23089,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -23261,6 +23309,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -23656,6 +23705,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -23874,6 +23924,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -24094,6 +24145,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -24313,6 +24365,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -24507,6 +24560,7 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CSize2D.h \
 		../../CMath/include/CISize2D.h \
 		../include/CObjTypeOld.h \
+		../include/CSVGBlockData.h \
 		../include/CCSS.h \
 		../../CImageLib/include/CImageLib.h \
 		../../CFile/include/CFile.h \
@@ -24738,6 +24792,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -24957,6 +25012,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -25176,6 +25232,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -25395,6 +25452,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -25614,6 +25672,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -25833,6 +25892,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \
@@ -26008,6 +26068,7 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CISize2D.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
+		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../include/CCSS.h \

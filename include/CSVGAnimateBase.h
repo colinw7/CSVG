@@ -69,9 +69,14 @@ class CSVGAnimateBase : public CSVGObject {
   COptValT<CSVGTimeValue>  dur_;
   COptString               from_;
   COptString               to_;
+  COptString               by_;
+  COptString               values_;
   COptString               repeatCount_;
   COptValT<CSVGTimeValue>  repeatDur_;
   COptString               fill_;
+  COptString               calcMode_;
+  COptString               keyTimes_;
+  COptString               keySplines_;
   double                   currentTime_ { 0.0 };
   bool                     animating_   { false };
   COptReal                 startTime_;

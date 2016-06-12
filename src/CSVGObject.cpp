@@ -598,6 +598,7 @@ processOption(const std::string &optName, const std::string &optValue)
   if (processFontOption           (optName, optValue)) return true;
   if (processTextContentOption    (optName, optValue)) return true;
   if (processContainerOption      (optName, optValue)) return true;
+  if (processViewportOption       (optName, optValue)) return true;
 
   std::string    str;
   CBBox2D        bbox;
@@ -1253,6 +1254,8 @@ processTextContentOption(const std::string &optName, const std::string &optValue
     letterSpacing_ = length;
   else if (svg_.stringOption(optName, optValue, "text-decoration", str))
     setTextDecoration(str);
+  else if (svg_.stringOption(optName, optValue, "text-rendering", str))
+    nameValues_["text-rendering"] = str;
   else if (svg_.stringOption(optName, optValue, "unicode-bidi", str))
     nameValues_["unicode-bidi"] = str;
   else if (svg_.lengthOption(optName, optValue, "word-spacing", length))
@@ -1298,8 +1301,10 @@ interpValue(const std::string &name, const std::string &from, const std::string 
 
     CSVGColor toColor;
 
-    if (! svg_.decodeColorString(to, toColor))
+    if (! svg_.decodeColorString(to, toColor)) {
+      CSVGLog() << "Invalid color '" << to << "'";
       return false;
+    }
 
     CRGBA c = fromColor.rgba()*(1 - x) + toColor.rgba()*x;
 
@@ -1311,8 +1316,10 @@ interpValue(const std::string &name, const std::string &from, const std::string 
     double fromVal = 0;
     uint   fromPos = 0;
 
-    if (! CStrUtil::readReal(from, &fromPos, &fromVal))
+    if (! CStrUtil::readReal(from, &fromPos, &fromVal)) {
+      CSVGLog() << "Invalid real '" << from << "'";
       return false;
+    }
 
     double toVal = 0;
     uint   toPos = 0;
@@ -1602,7 +1609,7 @@ drawObject()
   if (getOpacityValid())
     saveImage = true;
 
-  bool isFiltered = (getFilter() && getFiltered());
+  bool isFiltered = (hasFilter() && getFiltered());
 
   if (svg_.getIgnoreFilter())
     isFiltered = false;
@@ -1630,7 +1637,7 @@ drawObject()
     if (block)
       svg_.beginDrawBuffer(saveBuffer, svg_.offset(), svg_.xscale(), svg_.yscale());
     else
-      svg_.beginDrawBuffer(saveBuffer, svg_.offset(), svg_.blockXScale(), svg_.blockYScale());
+      svg_.beginDrawBuffer(saveBuffer, svg_.blockOffset(), svg_.blockXScale(), svg_.blockYScale());
 
     currentBuffer = saveBuffer;
   }
@@ -1672,7 +1679,7 @@ drawObject()
 
     if (drawn) {
       if (isFiltered) {
-        // filtered image draw in local coords so neeed to place
+        // filtered image draw in local coords so need to place
         // image at expected position
 
 #if 1
@@ -1820,29 +1827,33 @@ drawSubObject(bool forceDraw)
   //------
 
   // apply filter
-  bool isFiltered = (getFilter() && getFiltered());
+  bool isFiltered = (hasFilter() && getFiltered());
 
   if (svg_.getIgnoreFilter())
     isFiltered = false;
 
   if (isFiltered) {
+    CSVGFilter *filter = getFilter();
+
     // init filter
-    filter_->initDraw(oldBuffer);
+    if (filter) {
+      filter->setObject(this);
 
-    filter_->setObject(this);
+      filter->initDraw(oldBuffer);
 
-    CBBox2D filterBBox;
+      CBBox2D filterBBox;
 
-    if (filter_->getRegion(this, filterBBox))
-      filter_->setContentsBBox(filterBBox);
+      if (filter->getRegion(this, filterBBox))
+        filter->setContentsBBox(filterBBox);
 
-    // draw filter
-    if (filter_->drawSubObject(true))
-      drawn = true;
+      // draw filter
+      if (filter->drawSubObject(true))
+        drawn = true;
 
-    //--
+      //--
 
-    filter_->termDraw(oldBuffer);
+      filter->termDraw(oldBuffer);
+    }
   }
 
   //---
@@ -1960,7 +1971,7 @@ toNamedBufferImage(const std::string &bufferName)
   if (! getBBox(bbox))
     return 0;
 
-  CSVGFilter *saveFilter { 0 };
+  COptValT<CSVGFilter*> saveFilter;
 
   std::swap(saveFilter, filter_);
 
@@ -2050,7 +2061,7 @@ bool
 CSVGObject::
 getBBox(CBBox2D &bbox) const
 {
-  if (! viewBox_.isValid()) {
+  if (! hasViewBox()) {
     bbox = CBBox2D();
 
     CBBox2D bbox1;
@@ -2062,6 +2073,21 @@ getBBox(CBBox2D &bbox) const
     bbox = getViewBox();
 
   return bbox.isSet();
+}
+
+bool
+CSVGObject::
+getParentViewBox(CBBox2D &bbox) const
+{
+  if (hasViewBox()) {
+    bbox = getViewBox();
+    return true;
+  }
+
+  if (! parent_)
+    return false;
+
+  return parent_->getParentViewBox(bbox);
 }
 
 bool
@@ -2246,25 +2272,53 @@ decodeXLink(const std::string &str, CSVGObject **object, CSVGBuffer **buffer)
 
     ++pos;
 
-    if (format == "image/png;base64" || format == "image/jpeg;base64") {
+    if      (format == "image/png;base64" || format == "image/jpeg;base64") {
       // image string to buffer
-      std::string filename(".svg.png");
+      std::string filename;
 
-      std::string str1 = CEncode64Inst->decode(str.substr(pos));
+      if (format == "image/png;base64")
+        filename = ".svg.png";
+      else
+        filename = ".svg.jpeg";
 
-      CFile file(filename);
-
-      file.write(str1);
-
-      file.flush();
-
-      file.close();
-
-      //---
+      decodeStringToFile(str.substr(pos), filename);
 
       CSVGBuffer *imgBuffer = getXLinkBuffer();
 
       imgBuffer->setImageFile(filename);
+
+      if (buffer)
+        *buffer = imgBuffer;
+
+      return true;
+    }
+    else if (format == "image/svg+xml;base64") {
+      // SVG string to buffer
+      std::string filename(".svg.svg");
+
+      decodeStringToFile(str.substr(pos), filename);
+
+      // draw SVG file to image at current scale
+      CSVG svg;
+
+      svg.setRenderer(svg_.getRenderer());
+
+      svg.init();
+
+      svg.read(filename);
+
+      CSize2D size;
+
+      getSize(size);
+
+      svg.getRoot()->setSize(size);
+
+      CSVGBuffer *imgBuffer = getXLinkBuffer();
+
+      int w = svg.getIWidth();
+      int h = svg.getIHeight();
+
+      svg.drawToBuffer(imgBuffer, w, h, svg_.offset(), svg_.xscale(), svg_.yscale());
 
       if (buffer)
         *buffer = imgBuffer;
@@ -2352,14 +2406,14 @@ decodeXLink(const std::string &str, CSVGObject **object, CSVGBuffer **buffer)
 
         getSize(size);
 
-        svg.getBlock()->setSize(size);
+        svg.getRoot()->setSize(size);
 
         CSVGBuffer *imgBuffer = getXLinkBuffer();
 
         int w = svg.getIWidth();
         int h = svg.getIHeight();
 
-        svg.drawToBuffer(imgBuffer, w, h, CPoint2D(0, 0), svg_.xscale(), svg_.yscale());
+        svg.drawToBuffer(imgBuffer, w, h, svg_.offset(), svg_.xscale(), svg_.yscale());
 
         if (buffer)
           *buffer = imgBuffer;
@@ -2389,6 +2443,23 @@ decodeXLink(const std::string &str, CSVGObject **object, CSVGBuffer **buffer)
       return true; // don't propagate warning
     }
   }
+
+  return true;
+}
+
+bool
+CSVGObject::
+decodeStringToFile(const std::string &str, const std::string &filename)
+{
+  std::string str1 = CEncode64Inst->decode(str);
+
+  CFile file(filename);
+
+  file.write(str1);
+
+  file.flush();
+
+  file.close();
 
   return true;
 }
@@ -2463,7 +2534,7 @@ printValues(std::ostream &os) const
   printNameValue (os, "id"   , id_     );
   printNameValues(os, "class", classes_);
 
-  if (viewBox_.isValid()) {
+  if (hasViewBox()) {
     CBBox2D viewBox = getViewBox();
 
     os << " viewBox=\"" << viewBox.getXMin() << " " << viewBox.getYMin() <<
@@ -2521,8 +2592,14 @@ void
 CSVGObject::
 printFilter(std::ostream &os) const
 {
-  if (filter_)
-    os << " filter=\"url(#" << filter_->getId() << ")\"";
+  if (hasFilter()) {
+    CSVGFilter *filter = getFilter();
+
+    if (filter)
+      os << " filter=\"url(#" << filter->getId() << ")\"";
+    else
+      os << " filter=\"url(none)\"";
+  }
 }
 
 void

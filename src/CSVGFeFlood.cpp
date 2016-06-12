@@ -15,7 +15,8 @@ CSVGFeFlood(const CSVGFeFlood &fe) :
  CSVGFilterBase(fe),
  filterIn_ (fe.filterIn_),
  filterOut_(fe.filterOut_),
- color_    (fe.color_)
+ color_    (fe.color_),
+ opacity_  (fe.opacity_)
 {
 }
 
@@ -24,6 +25,20 @@ CSVGFeFlood::
 dup() const
 {
   return new CSVGFeFlood(*this);
+}
+
+std::string
+CSVGFeFlood::
+getFilterIn() const
+{
+  return calcFilterIn(filterIn_);
+}
+
+std::string
+CSVGFeFlood::
+getFilterOut() const
+{
+  return calcFilterOut(filterOut_);
 }
 
 bool
@@ -39,15 +54,8 @@ processOption(const std::string &opt_name, const std::string &opt_value)
     filterOut_ = str;
   else if (svg_.stringOption(opt_name, opt_value, "flood-color", str))
     color_ = svg_.nameToColor(str);
-  else if (svg_.realOption(opt_name, opt_value, "flood-opacity", &real)) {
+  else if (svg_.realOption(opt_name, opt_value, "flood-opacity", &real))
     opacity_ = real;
-
-    CRGBA c = color_.getValue(CRGBA(0,0,0,0));
-
-    c.setAlpha(real);
-
-    color_ = c;
-  }
   else
     return CSVGFilterBase::processOption(opt_name, opt_value);
 
@@ -60,7 +68,46 @@ draw()
 {
   CSVGBuffer *outBuffer = svg_.getBuffer(getFilterOut());
 
-  filterImage(outBuffer);
+  //---
+
+  // get filtered object coords
+  double x1 = 0, y1 = 0, x2 = 100, y2 = 100;
+
+  CSVGFilter *filter = getParentFilter();
+
+  if (filter) {
+    CBBox2D bbox;
+
+    filter->getObject()->getBBox(bbox);
+
+    if (! bbox.isSet()) {
+      double x = getX     ().pxValue(0);
+      double y = getY     ().pxValue(0);
+      double w = getWidth ().pxValue(100);
+      double h = getHeight().pxValue(100);
+
+      bbox = CBBox2D(x, y, x + w, y + h);
+    }
+
+    svg_.windowToPixel(bbox.getXMin(), bbox.getYMin(), &x1, &y1);
+    svg_.windowToPixel(bbox.getXMax(), bbox.getYMax(), &x2, &y2);
+  }
+
+  //---
+
+  CRGBA c(0,0,0,0);
+
+  if (color_.isValid())
+    c = color_.getValue().rgba();
+
+  if (opacity_.isValid())
+    c.setAlpha(opacity_.getValue());
+
+  CSVGBuffer::floodBuffers(c, x1, y1, x2 - x1, y2 - y1, outBuffer);
+
+  outBuffer->setBBox(CBBox2D(x1, y1, x2, y2));
+
+  //---
 
   if (svg_.getDebugFilter()) {
     std::string objectBufferName = "_" + getUniqueName();
@@ -71,37 +118,6 @@ draw()
   }
 
   return true;
-}
-
-void
-CSVGFeFlood::
-filterImage(CSVGBuffer *outBuffer)
-{
-  // get filtered object size
-  double w = 100;
-  double h = 100;
-
-  CSVGFilter *filter = getParentFilter();
-
-  if (filter) {
-    CBBox2D bbox;
-
-    filter->getObject()->getBBox(bbox);
-
-    if (bbox.isSet()) {
-      double pw, ph;
-
-      svg_.lengthToPixel(bbox.getWidth(), bbox.getHeight(), &pw, &ph);
-
-      w = pw;
-      h = ph;
-    }
-  }
-
-  int pw = CSVGUtil::round(w);
-  int ph = CSVGUtil::round(h);
-
-  CSVGBuffer::floodBuffers(color_.getValue(CRGBA(0,0,0,0)), pw, ph, outBuffer);
 }
 
 void
@@ -119,7 +135,7 @@ print(std::ostream &os, bool hier) const
     printNameValue(os, "result", filterOut_);
 
     if (color_.isValid())
-      os << " flood-color=\"" << color_.getValue().getRGB().stringEncode() << "\"";
+      os << " flood-color=\"" << color_.getValue() << "\"";
 
     printNameValue(os, "opacity", opacity_);
 

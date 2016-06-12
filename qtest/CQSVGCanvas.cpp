@@ -31,14 +31,14 @@ redraw()
   renderer_->setSize(width(), height());
 
   if (autoScale_) {
-    double sx = (1.0*width ())/svg_->getBlock()->getWidth ();
-    double sy = (1.0*height())/svg_->getBlock()->getHeight();
+    double sx = (1.0*width ())/svg_->getWidth ();
+    double sy = (1.0*height())/svg_->getHeight();
 
     scale_ = std::min(sx, sy);
   }
 
-  double bw = svg_->getBlock()->getWidth ()*scale_;
-  double bh = svg_->getBlock()->getHeight()*scale_;
+  double bw = svg_->getWidth ()*scale_;
+  double bh = svg_->getHeight()*scale_;
 
   renderer_->setPixelRange(bw, bh);
 
@@ -51,12 +51,7 @@ redraw()
 
   opainter_->begin(&oimage_);
 
-  CMatrixStack2D matrix;
-
-  matrix.translate(offset_.x, offset_.y);
-  matrix.scale(scale_, scale_);
-
-  svg_->draw(matrix, offset_, scale_, scale_);
+  svg_->draw(offset_, scale_, scale_);
 
   opainter_->end();
 }
@@ -143,7 +138,7 @@ mouseMoveEvent(QMouseEvent *e)
 
   std::vector<CSVGObject *> objects;
 
-  svg_->getBlock()->getAllChildren(objects);
+  svg_->getAllChildren(objects);
 
   for (const auto &obj : objects) {
     CQSVGObject *qobj = dynamic_cast<CQSVGObject *>(obj);
@@ -228,9 +223,9 @@ drawSelected()
 
   std::vector<CSVGObject *> objects;
 
-  CSVGBlock *block = svg_->getBlock();
+  CSVGBlock *block = svg_->getRoot();
 
-  CQSVGObject *qblock = dynamic_cast<CQSVGObject *>(svg_->getBlock());
+  CQSVGObject *qblock = dynamic_cast<CQSVGObject *>(block);
 
   if (qblock)
     qblock->drawSelected();

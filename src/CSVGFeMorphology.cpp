@@ -1,4 +1,5 @@
 #include <CSVGFeMorphology.h>
+#include <CSVGFilter.h>
 #include <CSVGBuffer.h>
 #include <CSVG.h>
 
@@ -19,6 +20,13 @@ CSVGFeMorphology::
 dup() const
 {
   return new CSVGFeMorphology(*this);
+}
+
+std::string
+CSVGFeMorphology::
+getFilterIn() const
+{
+  return calcFilterIn(filterIn_);
 }
 
 bool
@@ -55,7 +63,12 @@ draw()
     buffer->setImageBuffer(inBuffer);
   }
 
-  filterImage(inBuffer);
+  int r = 1;
+
+  if (! radius_.isValid() || ! CStrUtil::toInteger(radius_.getValue(), &r))
+    r = 1;
+
+  CSVGBuffer::morphologyBuffers(inBuffer, getOperator(), r);
 
   if (svg_.getDebugFilter()) {
     std::string objectBufferName = "_" + getUniqueName();
@@ -66,18 +79,6 @@ draw()
   }
 
   return true;
-}
-
-void
-CSVGFeMorphology::
-filterImage(CSVGBuffer *inBuffer)
-{
-  int r = 1;
-
-  if (! radius_.isValid() || ! CStrUtil::toInteger(radius_.getValue(), &r))
-    r = 1;
-
-  CSVGBuffer::morphologyBuffers(inBuffer, getOperator(), r);
 }
 
 void

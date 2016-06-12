@@ -633,7 +633,7 @@ setTime(double t)
 {
   t_ = t;
 
-  getBlock()->setTime(t_);
+  getRoot()->setTime(t_);
 
   window_->setTime(t_);
 }
@@ -646,7 +646,7 @@ tickStep(int n)
 
   t_ += dt;
 
-  getBlock()->tick(dt);
+  getRoot()->tick(dt);
 
   window_->setTime(t_);
 }

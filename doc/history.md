@@ -85,3 +85,13 @@
  + Add css marker support
  + Improve handling of global (per buffer) transparency
  + Add CSS Tree to Qt viewer
+
+### 6/12/2016
+ + cleanup up handling of nested svg elements
+ + add font def style update
+ + add support for animation values
+ + Add StrokePaint and FillPaint buffers
+ + Add separate x/y turbulence frequency support
+ + Improve handling of filter buffer in/out sharing
+ + Add svg image file type
+ + Add used color output to test program

@@ -92,11 +92,14 @@ parse(const std::string &str)
     if (parse.isChar('{')) {
       std::string str1;
 
-      if (! readBracedString(parse, str1))
-        return false;
+      // still parse text with missing end brace, just exit loop
+      bool rc = readBracedString(parse, str1);
 
       if (! parseAttr(str1, styleData))
         return false;
+
+      if (! rc)
+        break;
     }
   }
 

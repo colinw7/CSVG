@@ -1,6 +1,7 @@
 #include <CSVGFeColorMatrix.h>
-#include <CSVG.h>
 #include <CSVGBuffer.h>
+#include <CSVGFilter.h>
+#include <CSVG.h>
 
 CSVGFeColorMatrix::
 CSVGFeColorMatrix(CSVG &svg) :
@@ -23,6 +24,20 @@ CSVGFeColorMatrix::
 dup() const
 {
   return new CSVGFeColorMatrix(*this);
+}
+
+std::string
+CSVGFeColorMatrix::
+getFilterIn() const
+{
+  return calcFilterIn(filterIn_);
+}
+
+std::string
+CSVGFeColorMatrix::
+getFilterOut() const
+{
+  return calcFilterOut(filterOut_);
 }
 
 bool
@@ -79,7 +94,7 @@ draw()
     buffer->setImageBuffer(inBuffer);
   }
 
-  filterImage(inBuffer, outBuffer);
+  CSVGBuffer::colorMatrixBuffers(inBuffer, getType(), getValues(), outBuffer);
 
   if (svg_.getDebugFilter()) {
     std::string objectBufferName = "_" + getUniqueName();
@@ -90,13 +105,6 @@ draw()
   }
 
   return true;
-}
-
-void
-CSVGFeColorMatrix::
-filterImage(CSVGBuffer *inBuffer, CSVGBuffer *outBuffer)
-{
-  CSVGBuffer::colorMatrixBuffers(inBuffer, getType(), getValues(), outBuffer);
 }
 
 void

@@ -21,6 +21,7 @@
 #include <CFillType.h>
 #include <CAutoPtr.h>
 #include <CGenGradient.h>
+#include <CFont.h>
 
 class CSVGPathPart;
 class CSVGPathPartList;
@@ -103,7 +104,8 @@ class CXMLToken;
 
 class CSVG {
  public:
-  typedef std::vector<CSVGObject *> ObjectList;
+  typedef std::vector<CSVGObject *>    ObjectList;
+  typedef std::map<std::string, CRGBA> Colors;
 
  public:
   CSVG(CSVGRenderer *renderer=0);
@@ -113,27 +115,50 @@ class CSVG {
   void          setRenderer(CSVGRenderer *renderer);
   CSVGRenderer *getRenderer() const { return renderer_; }
 
-  const CMatrixStack2D &viewMatrix() const { return viewMatrix_; }
-  void setViewMatrix(const CMatrixStack2D &v) { viewMatrix_ = v; }
+  //---
 
-  const CPoint2D &offset() const { return offset_; }
-  void setOffset(const CPoint2D &o) { offset_ = o; }
+  const CSVGBlockData &rootBlockData() { return rootBlockData_; }
 
-  double blockXScale() const { return blockXScale_; }
-  void setBlockXScale(double s) { blockXScale_ = s; }
+  const CPoint2D &blockOffset() const { return rootBlockData_.offset(); }
+  void setBlockOffset(const CPoint2D &o) { rootBlockData_.setOffset(o); }
 
-  double blockYScale() const { return blockYScale_; }
-  void setBlockYScale(double s) { blockYScale_ = s; }
+  double blockXScale() const { return rootBlockData_.xscale(); }
+  void setBlockXScale(double s) { rootBlockData_.setXScale(s); }
 
-  double xscale() const { return xscale_; }
-  void setXScale(double s) { xscale_ = s; }
+  double blockYScale() const { return rootBlockData_.yscale(); }
+  void setBlockYScale(double s) { rootBlockData_.setYScale(s); }
 
-  double yscale() const { return yscale_; }
-  void setYScale(double s) { yscale_ = s; }
+  const CSVGPreserveAspect &blockPreserveAspect() const { return rootBlockData_.preserveAspect(); }
+  void setBlockPreserveAspect(const CSVGPreserveAspect &a) { rootBlockData_.setPreserveAspect(a); }
+
+  //---
+
+  const CSVGBlockData &blockData() { return blockData_; }
+
+  const CPoint2D &offset() const { return blockData_.offset(); }
+  //void setOffset(const CPoint2D &o) { blockData_.setOffset(o); }
+
+  double xscale() const { return blockData_.xscale(); }
+  //void setXScale(double s) { blockData_.setXScale(s); }
+
+  double yscale() const { return blockData_.yscale(); }
+  //void setYScale(double s) { blockData_.setYScale(s); }
+
+  const CSVGPreserveAspect &preserveAspect() const { return blockData_.preserveAspect(); }
+  //void setPreserveAspect(const CSVGPreserveAspect &a) { blockData_.setPreserveAspect(a); }
+
+  //---
+
+  double flatXScale() const { return blockXScale()*xscale(); }
+  double flatYScale() const { return blockYScale()*yscale(); }
+
+  //---
 
   virtual CSVGRenderer *createRenderer();
 
-  CSVGBlock *getBlock() const;
+  CSVGBlock *getRoot() const;
+
+  //---
 
   CSVGBuffer *pushBuffer(const std::string &name);
   CSVGBuffer *popBuffer();
@@ -147,13 +172,23 @@ class CSVG {
 
   void getBufferNames(std::vector<std::string> &names, bool includeAlpha=true) const;
 
-  //void beginDrawBuffer(CSVGBuffer *buffer);
+  //---
 
-  void beginDrawBuffer(CSVGBuffer *buffer, const CPoint2D &offset, double xs, double ys);
-  void beginDrawBuffer(CSVGBuffer *buffer, const CBBox2D &bbox);
-  void beginDrawBuffer(CSVGBuffer *buffer, const CBBox2D &bbox,
-                       const CPoint2D &offset, double xs, double ys);
-  void endDrawBuffer  (CSVGBuffer *buffer);
+  void beginDrawBuffer (CSVGBuffer *buffer, const CPoint2D &offset, double xs, double ys);
+  void beginDrawBuffer (CSVGBuffer *buffer, const CBBox2D &bbox);
+  void beginDrawBuffer (CSVGBuffer *buffer, const CBBox2D &pixelBBox, const CBBox2D &viewBBox,
+                        const CPoint2D &offset, double xs, double ys,
+                        const CSVGPreserveAspect &preserveAspect);
+  void endDrawBuffer   (CSVGBuffer *buffer);
+  void updateDrawBuffer(CSVGBuffer *buffer);
+
+  //---
+
+  void setPaintBox(const CBBox2D &bbox);
+
+  void setPaintColors(const CSVGColor &fillColor, const CSVGColor &strokeColor);
+
+  //---
 
   void setAntiAlias(bool flag);
 
@@ -323,9 +358,17 @@ class CSVG {
   CSVGObject *styleObject() const { return styleData_.object; }
   void setStyleObject(CSVGObject *o) { styleData_.object = o; }
 
+  CRGBA colorToRGBA(const CSVGColor &color) const;
+
   //---
 
   const CSVGCSSData &getCSSData() const { return cssData_; }
+
+  //---
+
+  const Colors &getColors() const { return colors_; }
+
+  //---
 
   bool processOption(const std::string &opt_name, const std::string &opt_value);
 
@@ -346,12 +389,11 @@ class CSVG {
 
   void draw();
 
-  void draw(const CMatrixStack2D &matrix, const CPoint2D &offset=CPoint2D(0,0),
-            double xscale=1, double yscale=1);
+  void draw(const CPoint2D &offset, double xscale, double yscale);
 
-  void drawBlock(CSVGBlock *block);
-  void drawBlock(CSVGBlock *block, const CMatrixStack2D &matrix,
-                 const CPoint2D &offset=CPoint2D(0,0), double xscale=1, double yscale=1);
+  void drawRoot(CSVGBlock *block, const CPoint2D &offset=CPoint2D(0,0),
+                double xscale=1, double yscale=1,
+                const CSVGPreserveAspect &preserveAspect=CSVGPreserveAspect());
 
   //---
 
@@ -377,7 +419,6 @@ class CSVG {
 
   void resetFontDef();
   void updateFontDef(const CSVGFontDef &fontDef);
-  void setFontDef();
 
   //---
 
@@ -467,7 +508,8 @@ class CSVG {
                               std::vector<CScreenUnits> &lengths, bool &solid);
   bool       decodeColorString(const std::string &color_str, CSVGColor &color);
   bool       decodeRGBAString(const std::string &color_str, CRGBA &rgba);
-  CRGBA      nameToColor(const std::string &name) const;
+  CSVGColor  nameToColor(const std::string &name) const;
+  CRGBA      nameToRGBA(const std::string &name) const;
   CFontStyle decodeFontWeightString(const std::string &weight_str);
   CFontStyle decodeFontStyleString(const std::string &style_str);
   bool       decodePercentString(const std::string &str, CScreenUnits &length);
@@ -520,6 +562,8 @@ class CSVG {
   bool getStyleMarkerMid  (const CSVGObject *obj, CSVGObject* &marker, CSVGCSSType &type);
   bool getStyleMarkerEnd  (const CSVGObject *obj, CSVGObject* &marker, CSVGCSSType &type);
 
+  void getAllChildren(ObjectList &objects) const;
+
   void getObjectsAtPoint(const CPoint2D &p, ObjectList &objects) const;
 
   void sendEvent(CSVGEventType type, const std::string &id="", const std::string &data="");
@@ -554,6 +598,7 @@ class CSVG {
     CSVGFill    fill;
     CSVGClip    clip;
     CSVGFontDef fontDef;
+    CFontPtr    font;
     CSVGObject* object { 0 };
   };
 
@@ -561,17 +606,15 @@ class CSVG {
   typedef std::vector<CSVGFont *>             FontList;
   typedef std::map<std::string, CSVGObject *> NameObjectMap;
   typedef std::vector<StyleData>              StyleDataStack;
+  typedef std::vector<CSVGBlockData>          BlockDataStack;
 
   CSVGRenderer*           renderer_      { 0 };
   CAutoPtr<CSVGBufferMgr> bufferMgr_;
   CSVGBuffer*             buffer_        { 0 };
   BufferStack             bufferStack_;
-  CMatrixStack2D          viewMatrix_;
-  CPoint2D                offset_        { 0, 0 };
-  double                  blockXScale_   { 1 };
-  double                  blockYScale_   { 1 };
-  double                  xscale_        { 1 };
-  double                  yscale_        { 1 };
+  CSVGBlockData           rootBlockData_;
+  CSVGBlockData           blockData_;
+  BlockDataStack          blockDataStack_;
   CAutoPtr<CSVGBlock>     block_;
   CAutoPtr<CXML>          xml_;
   CXMLTag*                xmlTag_        { 0 };
@@ -583,6 +626,7 @@ class CSVG {
   CSVGCSSData             cssData_;
   CCSS                    css_;
   ObjectList              drawObjects_;
+  Colors                  colors_;
   bool                    uniquify_      { false };
   bool                    autoName_      { false };
   bool                    ignoreFilter_  { false };

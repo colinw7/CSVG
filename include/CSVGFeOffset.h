@@ -15,11 +15,11 @@ class CSVGFeOffset : public CSVGFilterBase {
   CSVGFeOffset *dup() const override;
 
   bool hasFilterIn() const { return filterIn_.isValid(); }
-  std::string getFilterIn() const { return filterIn_.getValue("FilterGraphic"); }
+  std::string getFilterIn() const;
   void setFilterIn(const std::string &s) { filterIn_ = s; }
 
   bool hasFilterOut() const { return filterOut_.isValid(); }
-  std::string getFilterOut() const { return filterOut_.getValue("FilterGraphic"); }
+  std::string getFilterOut() const;
   void setFilterOut(const std::string &s) { filterOut_ = s; }
 
   double getDX() const { return dx_.getValue(0); }

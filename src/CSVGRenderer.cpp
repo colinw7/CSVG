@@ -61,7 +61,7 @@ combine(int ix, int iy, CSVGRenderer *r)
 
 void
 CSVGRenderer::
-addResizedImage(CSVGRenderer *src, int x, int y, int w, int h)
+addResizedImage(CSVGRenderer *src, double x, double y, double w, double h)
 {
   CImagePtr image2 = src->getImage();
 

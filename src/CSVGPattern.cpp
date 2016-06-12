@@ -193,7 +193,7 @@ setFillImage(CSVGObject *parent, CSVGBuffer *buffer, double *w1, double *h1)
       svg_.setTransform(matrix);
     }
   }
-  else if (viewBox_.isValid()) {
+  else if (hasViewBox()) {
     CBBox2D viewBox = viewBox_.getValue();
 
     //matrix.translate(0, 0);
@@ -294,7 +294,7 @@ setStrokeImage(CSVGObject *parent, CSVGBuffer *buffer, double *w1, double *h1)
       svg_.setTransform(matrix);
     }
   }
-  else if (viewBox_.isValid()) {
+  else if (hasViewBox()) {
     CBBox2D viewBox = viewBox_.getValue();
 
     //matrix.translate(0, 0);

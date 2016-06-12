@@ -1,5 +1,6 @@
 #include <CSVGFeComponentTransfer.h>
 #include <CSVGFeFunc.h>
+#include <CSVGFilter.h>
 #include <CSVGBuffer.h>
 #include <CSVG.h>
 
@@ -22,6 +23,20 @@ CSVGFeComponentTransfer::
 dup() const
 {
   return new CSVGFeComponentTransfer(*this);
+}
+
+std::string
+CSVGFeComponentTransfer::
+getFilterIn() const
+{
+  return calcFilterIn(filterIn_);
+}
+
+std::string
+CSVGFeComponentTransfer::
+getFilterOut() const
+{
+  return calcFilterOut(filterOut_);
 }
 
 bool
@@ -55,23 +70,6 @@ draw()
     buffer->setImageBuffer(inBuffer);
   }
 
-  filterImage(inBuffer, outBuffer);
-
-  if (svg_.getDebugFilter()) {
-    std::string objectBufferName = "_" + getUniqueName();
-
-    CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_out");
-
-    buffer->setImageBuffer(outBuffer);
-  }
-
-  return true;
-}
-
-void
-CSVGFeComponentTransfer::
-filterImage(CSVGBuffer *inBuffer, CSVGBuffer *outBuffer)
-{
   std::vector<CSVGFeFunc *> funcs;
 
   for (const auto &c : children()) {
@@ -82,6 +80,16 @@ filterImage(CSVGBuffer *inBuffer, CSVGBuffer *outBuffer)
   }
 
   CSVGBuffer::componentTransferBuffers(inBuffer, funcs, outBuffer);
+
+  if (svg_.getDebugFilter()) {
+    std::string objectBufferName = "_" + getUniqueName();
+
+    CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_out");
+
+    buffer->setImageBuffer(outBuffer);
+  }
+
+  return true;
 }
 
 void

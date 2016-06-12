@@ -104,7 +104,7 @@ bool
 CSVGEllipse::
 getBBox(CBBox2D &bbox) const
 {
-  if (! viewBox_.isValid())
+  if (! hasViewBox())
     bbox = CBBox2D(getCenterX() - getRadiusX(), getCenterY() - getRadiusY(),
                    getCenterX() + getRadiusX(), getCenterY() + getRadiusY());
   else

@@ -17,13 +17,13 @@ class CSVGFeComposite : public CSVGFilterBase {
   CRGBACombineFunc getType() const { return type_.getValue(CRGBA_COMBINE_OVER); }
   void setType(CRGBACombineFunc t) { type_ = t; }
 
-  std::string getFilterIn1() const { return filterIn1_.getValue("FilterGraphic"); }
+  std::string getFilterIn1() const;
   void setFilterIn1(const std::string &s) { filterIn1_ = s; }
 
-  std::string getFilterIn2() const { return filterIn2_.getValue("FilterGraphic"); }
+  std::string getFilterIn2() const;
   void setFilterIn2(const std::string &s) { filterIn2_ = s; }
 
-  std::string getFilterOut() const { return filterOut_.getValue("FilterGraphic"); }
+  std::string getFilterOut() const;
   void setFilterOut(const std::string &s) { filterOut_ = s; }
 
   double getK1() const { return k1_.getValue(0); }
@@ -45,9 +45,6 @@ class CSVGFeComposite : public CSVGFilterBase {
   void print(std::ostream &os, bool hier) const override;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGFeComposite &fe);
-
- private:
-  void filterImage(CSVGBuffer *inBuffer1, CSVGBuffer *inBuffer2, CSVGBuffer *outBuffer);
 
  private:
   COptValT<CRGBACombineFunc> type_;

@@ -8,7 +8,7 @@ class CSVGPreserveAspect {
  public:
   CSVGPreserveAspect(const CHAlignType &halign=CHALIGN_TYPE_CENTER,
                      const CVAlignType &valign=CVALIGN_TYPE_CENTER,
-                     const CSVGScale &scale=CSVGScale::FREE) :
+                     const CSVGScale &scale=CSVGScale::FIXED_MEET) :
    halign_(halign), valign_(valign), scale_(scale) {
   }
 
@@ -44,9 +44,9 @@ class CSVGPreserveAspect {
   }
 
  public:
-  CHAlignType halign_;
-  CVAlignType valign_;
-  CSVGScale   scale_;
+  CHAlignType halign_ { CHALIGN_TYPE_CENTER };
+  CVAlignType valign_ { CVALIGN_TYPE_CENTER };
+  CSVGScale   scale_  { CSVGScale::FREE };
 };
 
 #endif

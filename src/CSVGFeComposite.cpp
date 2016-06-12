@@ -1,5 +1,6 @@
 #include <CSVGFeComposite.h>
 #include <CSVGBuffer.h>
+#include <CSVGFilter.h>
 #include <CSVG.h>
 
 CSVGFeComposite::
@@ -23,6 +24,27 @@ CSVGFeComposite::
 dup() const
 {
   return new CSVGFeComposite(*this);
+}
+
+std::string
+CSVGFeComposite::
+getFilterIn1() const
+{
+  return calcFilterIn(filterIn1_);
+}
+
+std::string
+CSVGFeComposite::
+getFilterIn2() const
+{
+  return calcFilterIn(filterIn2_);
+}
+
+std::string
+CSVGFeComposite::
+getFilterOut() const
+{
+  return calcFilterOut(filterOut_);
 }
 
 bool
@@ -81,7 +103,8 @@ draw()
 
   CSVGBuffer *outBuffer = svg_.getBuffer(getFilterOut());
 
-  filterImage(inBuffer1, inBuffer2, outBuffer);
+  CSVGBuffer::compositeBuffers(inBuffer1, inBuffer2, getType(),
+                               getK1(), getK2(), getK3(), getK4(), outBuffer);
 
   if (svg_.getDebugFilter()) {
     std::string objectBufferName = "_" + getUniqueName();
@@ -92,14 +115,6 @@ draw()
   }
 
   return true;
-}
-
-void
-CSVGFeComposite::
-filterImage(CSVGBuffer *inBuffer1, CSVGBuffer *inBuffer2, CSVGBuffer *outBuffer)
-{
-  CSVGBuffer::compositeBuffers(inBuffer1, inBuffer2, getType(),
-                               getK1(), getK2(), getK3(), getK4(), outBuffer);
 }
 
 void

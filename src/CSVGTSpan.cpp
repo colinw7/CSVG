@@ -75,7 +75,7 @@ bool
 CSVGTSpan::
 getBBox(CBBox2D &bbox) const
 {
-  if (! viewBox_.isValid()) {
+  if (! hasViewBox()) {
     double x = 0, y = 0;
 
     getDrawPos(x, y, 0);

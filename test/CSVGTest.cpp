@@ -5,9 +5,10 @@
 int
 main(int argc, char **argv)
 {
-  bool debug = false;
-  bool print = false;
-  bool log   = false;
+  bool debug  = false;
+  bool print  = false;
+  bool log    = false;
+  bool colors = false;
 
   std::vector<std::string> files;
 
@@ -19,6 +20,8 @@ main(int argc, char **argv)
         print = true;
       else if (strcmp(&argv[i][1], "log") == 0)
         log = true;
+      else if (strcmp(&argv[i][1], "colors") == 0)
+        colors = true;
       else
         std::cerr << "Invalid option: " << argv[i] << std::endl;
     }
@@ -44,7 +47,10 @@ main(int argc, char **argv)
 
     svg.init();
 
-    svg.read(files[i]);
+    if (! svg.read(files[i])) {
+      std::cerr << "Failed to read '" << files[i] << "'" << std::endl;
+      continue;
+    }
 
     if      (print) {
       svg.print(std::cout, true);
@@ -55,6 +61,13 @@ main(int argc, char **argv)
       svg.setRenderer(&lrenderer);
 
       svg.draw();
+    }
+    else if (colors) {
+      const CSVG::Colors &colors = svg.getColors();
+
+      for (const auto &c : colors) {
+        std::cerr << c.first << " : " << c.second << std::endl;
+      }
     }
     else {
       image->setDataSize(svg.getIWidth(), svg.getIHeight());

@@ -78,8 +78,16 @@ draw()
   std::vector<CPoint2D> points;
   std::vector<double>   angles;
 
-  points.push_back(CPoint2D(getX1(), getY1()));
-  points.push_back(CPoint2D(getX2(), getY2()));
+  double w = 1;
+  double h = 1;
+
+  double x1 = getX1().pxValue(w);
+  double y1 = getY1().pxValue(h);
+  double x2 = getX2().pxValue(w);
+  double y2 = getY2().pxValue(h);
+
+  points.push_back(CPoint2D(x1, y1));
+  points.push_back(CPoint2D(x2, y2));
 
   double a = atan2(points[1].y - points[0].y, points[1].x - points[0].x);
 
@@ -127,7 +135,7 @@ bool
 CSVGLine::
 getBBox(CBBox2D &bbox) const
 {
-  if (! viewBox_.isValid())
+  if (! hasViewBox())
     bbox = CBBox2D(getStart(), getEnd());
   else
     bbox = getViewBox();
@@ -166,8 +174,14 @@ void
 CSVGLine::
 resizeTo(const CSize2D &size)
 {
-  setX2(getX1() + size.width );
-  setY2(getY1() + size.height);
+  double w = 1;
+  double h = 1;
+
+  double x1 = getX1().pxValue(w);
+  double y1 = getY1().pxValue(h);
+
+  setX2(x1 + size.width );
+  setY2(y1 + size.height);
 }
 
 void

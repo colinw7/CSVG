@@ -1,4 +1,5 @@
 #include <CSVGFeGaussianBlur.h>
+#include <CSVGFilter.h>
 #include <CSVGBuffer.h>
 #include <CSVG.h>
 
@@ -23,6 +24,20 @@ CSVGFeGaussianBlur::
 dup() const
 {
   return new CSVGFeGaussianBlur(*this);
+}
+
+std::string
+CSVGFeGaussianBlur::
+getFilterIn() const
+{
+  return calcFilterIn(filterIn_);
+}
+
+std::string
+CSVGFeGaussianBlur::
+getFilterOut() const
+{
+  return calcFilterOut(filterOut_);
 }
 
 bool
@@ -70,7 +85,7 @@ draw()
     buffer->setImageBuffer(inBuffer);
   }
 
-  filterImage(inBuffer, outBuffer);
+  CSVGBuffer::gaussianBlurBuffers(inBuffer, getStdDevX(), getStdDevY(), outBuffer);
 
   if (svg_.getDebugFilter()) {
     std::string objectBufferName = "_" + getUniqueName();
@@ -84,13 +99,6 @@ draw()
     inBuffer->startDraw();
 
   return true;
-}
-
-void
-CSVGFeGaussianBlur::
-filterImage(CSVGBuffer *inBuffer, CSVGBuffer *outBuffer)
-{
-  CSVGBuffer::gaussianBlurBuffers(inBuffer, this, getStdDevX(), getStdDevY(), outBuffer);
 }
 
 void

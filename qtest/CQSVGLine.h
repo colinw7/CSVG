@@ -17,6 +17,11 @@ class CQSVGLine : public CQSVGObject, public CSVGLine {
  public:
   CQSVGLine(CQSVG *svg);
 
+  double getX1() const;
+  double getY1() const;
+  double getX2() const;
+  double getY2() const;
+
   void drawTerm() override;
 };
 

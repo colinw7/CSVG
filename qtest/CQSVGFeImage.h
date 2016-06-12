@@ -16,6 +16,12 @@ class CQSVGFeImage : public CQSVGObject, public CSVGFeImage {
 
  public:
   CQSVGFeImage(CQSVG *svg);
+
+  double getX() const;
+  double getY() const;
+
+  double getWidth () const;
+  double getHeight() const;
 };
 
 #endif

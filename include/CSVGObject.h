@@ -112,7 +112,8 @@ class CSVGObject {
 
   //---
 
-  CSVGFilter *getFilter() const { return filter_; }
+  bool hasFilter() const { return filter_.isValid(); }
+  CSVGFilter *getFilter() const { return filter_.getValue(0); }
   void setFilter(CSVGFilter *filter) { filter_ = filter; }
 
   bool getFiltered() const { return filtered_; }
@@ -245,6 +246,8 @@ class CSVGObject {
   void setVisible(bool b);
 
   virtual bool getBBox(CBBox2D &bbox) const;
+
+  bool getParentViewBox(CBBox2D &bbox) const;
 
   bool getTransformedBBox(CBBox2D &bbox) const;
 
@@ -492,6 +495,8 @@ class CSVGObject {
 
   bool decodeXLink(const std::string &str, CSVGObject **object=0, CSVGBuffer **buffer=0);
 
+  bool decodeStringToFile(const std::string &str, const std::string &filename);
+
   CSVGBuffer *getXLinkBuffer();
 
   static CSVGObject *lookupById(const std::string &id);
@@ -632,7 +637,7 @@ class CSVGObject {
   CBBox2D                      enableBackgroundRect_;
   ObjectList                   objects_;
   CSVGAnimation                animation_;
-  CSVGFilter*                  filter_   { 0 };
+  COptValT<CSVGFilter*>        filter_;
   bool                         filtered_ { true };
   CSVGMask*                    mask_     { 0 };
   bool                         masked_   { true };

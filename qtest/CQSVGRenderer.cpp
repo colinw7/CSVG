@@ -919,20 +919,28 @@ combineImage(QImage &image1, int x, int y, QImage &image2)
   int h = std::min(image1.height(), image2.height());
 
   for (int y1 = 0; y1 < h; ++y1) {
+    int y2 = y1 + y;
+
+    if (y2 < 0) continue;
+
     for (int x1 = 0; x1 < w; ++x1) {
+      int x2 = x1 + x;
+
+      if (x2 < 0) continue;
+
       CRGBA rgba1 = getPixel(image2, x1, y1);
 
       if (! rgba1.getAlphaI())
         continue;
 
-      CRGBA rgba2 = getPixel(image1, x1 + x, y1 + y);
+      CRGBA rgba2 = getPixel(image1, x2, y2);
 
       if (! rgba2.getAlphaI())
-        setPixel(image1, x1 + x, y1 + y, rgba1);
+        setPixel(image1, x2, y2, rgba1);
       else {
         CRGBA rgba = rgba2.combined(rgba1);
 
-        setPixel(image1, x1 + x, y1 + y, rgba);
+        setPixel(image1, x2, y2, rgba);
       }
     }
   }
@@ -940,16 +948,22 @@ combineImage(QImage &image1, int x, int y, QImage &image2)
 
 void
 CQSVGRenderer::
-addResizedImage(CSVGRenderer *src, int x, int y, int w, int h)
+addResizedImage(CSVGRenderer *src, double x, double y, double w, double h)
 {
   CQSVGRenderer *qsrc = dynamic_cast<CQSVGRenderer *>(src);
   assert(qsrc);
 
+  CPoint2D p;
+
+  lengthToPixel(CPoint2D(w, h), p);
+
   QImage qimage2 =
-    qsrc->qimage_.scaled(QSize(w, h), Qt::IgnoreAspectRatio, Qt::FastTransformation);
+    qsrc->qimage_.scaled(QSize(p.x, p.y), Qt::IgnoreAspectRatio, Qt::FastTransformation);
+
+  windowToPixel(CPoint2D(x, y), p);
 
   // TODO: handle out of bounds
-  combineImage(qimage_, x, y, qimage2);
+  combineImage(qimage_, p.x, p.y, qimage2);
 }
 
 void

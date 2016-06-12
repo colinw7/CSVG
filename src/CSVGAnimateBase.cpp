@@ -108,8 +108,18 @@ processOption(const std::string &opt_name, const std::string &opt_value)
     from_ = str;
   else if (svg_.stringOption(opt_name, opt_value, "to"  , str))
     to_ = str;
+  else if (svg_.stringOption(opt_name, opt_value, "by"  , str))
+    by_ = str;
   else if (svg_.stringOption(opt_name, opt_value, "fill", str))
     fill_ = str;
+  else if (svg_.stringOption(opt_name, opt_value, "values", str))
+    values_ = str;
+  else if (svg_.stringOption(opt_name, opt_value, "calcMode", str))
+    calcMode_ = str;
+  else if (svg_.stringOption(opt_name, opt_value, "keyTimes", str))
+    keyTimes_ = str;
+  else if (svg_.stringOption(opt_name, opt_value, "keySplines", str))
+    keySplines_ = str;
   else
     return false;
 
@@ -255,7 +265,12 @@ printValues(std::ostream &os) const
   printNameTime (os, "dur"          , dur_          );
   printNameValue(os, "from"         , from_         );
   printNameValue(os, "to"           , to_           );
+  printNameValue(os, "by"           , by_           );
   printNameValue(os, "repeatCount"  , repeatCount_  );
   printNameTime (os, "repeatDur"    , repeatDur_    );
   printNameValue(os, "fill"         , fill_         );
+  printNameValue(os, "values"       , values_       );
+  printNameValue(os, "calcMode"     , calcMode_     );
+  printNameValue(os, "keyTimes"     , keyTimes_     );
+  printNameValue(os, "keySplines"   , keySplines_   );
 }

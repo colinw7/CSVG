@@ -1,5 +1,6 @@
 #include <CSVGFeDisplacementMap.h>
 #include <CSVGBuffer.h>
+#include <CSVGFilter.h>
 #include <CSVG.h>
 
 CSVGFeDisplacementMap::
@@ -19,6 +20,27 @@ CSVGFeDisplacementMap::
 dup() const
 {
   return new CSVGFeDisplacementMap(*this);
+}
+
+std::string
+CSVGFeDisplacementMap::
+getFilterIn1() const
+{
+  return calcFilterIn(filterIn1_);
+}
+
+std::string
+CSVGFeDisplacementMap::
+getFilterIn2() const
+{
+  return calcFilterIn(filterIn2_);
+}
+
+std::string
+CSVGFeDisplacementMap::
+getFilterOut() const
+{
+  return calcFilterOut(filterOut_);
 }
 
 bool
@@ -64,7 +86,8 @@ draw()
     buffer2->setImageBuffer(inBuffer2);
   }
 
-  filterImage(inBuffer1, inBuffer2, outBuffer);
+  CSVGBuffer::displacementMapBuffers(inBuffer1, inBuffer2, getXChannel(), getYChannel(),
+                                     getScale(), outBuffer);
 
   if (svg_.getDebugFilter()) {
     std::string objectBufferName = "_" + getUniqueName();
@@ -75,14 +98,6 @@ draw()
   }
 
   return true;
-}
-
-void
-CSVGFeDisplacementMap::
-filterImage(CSVGBuffer *inBuffer1, CSVGBuffer *inBuffer2, CSVGBuffer *outBuffer)
-{
-  CSVGBuffer::displacementMapBuffers(inBuffer1, inBuffer2, getXChannel(), getYChannel(),
-                                     getScale(), outBuffer);
 }
 
 void

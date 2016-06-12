@@ -24,11 +24,12 @@ CSVGMask(CSVG &svg) :
 CSVGMask::
 CSVGMask(const CSVGMask &mask) :
  CSVGObject(mask),
- x_        (mask.x_),
- y_        (mask.y_),
- width_    (mask.width_),
- height_   (mask.height_),
- units_    (mask.units_)
+ x_           (mask.x_),
+ y_           (mask.y_),
+ width_       (mask.width_),
+ height_      (mask.height_),
+ units_       (mask.units_),
+ contentUnits_(mask.contentUnits_)
 {
 }
 
@@ -56,8 +57,10 @@ processOption(const std::string &opt_name, const std::string &opt_value)
     width_ = length;
   else if (svg_.lengthOption(opt_name, opt_value, "height", length))
     height_ = length;
-  else if (svg_.coordUnitsOption(opt_name, opt_value, "maskContentUnits", units))
+  else if (svg_.coordUnitsOption(opt_name, opt_value, "maskUnits", units))
     units_ = units;
+  else if (svg_.coordUnitsOption(opt_name, opt_value, "maskContentUnits", units))
+    contentUnits_ = units;
   else
     return CSVGObject::processOption(opt_name, opt_value);
 
@@ -96,7 +99,7 @@ drawMask(const CSVGObject *object)
   // set transform
   CMatrixStack2D transform1;
 
-  if (getUnits() == CSVGCoordUnits::OBJECT_BBOX) {
+  if (getContentUnits() == CSVGCoordUnits::OBJECT_BBOX) {
     CMatrixStack2D matrix;
 
     matrix.translate(x - getX()  , y - getY()   );
@@ -113,7 +116,7 @@ drawMask(const CSVGObject *object)
   (void) drawSubObject();
 
   // reset transform
-  if (getUnits() == CSVGCoordUnits::OBJECT_BBOX)
+  if (getContentUnits() == CSVGCoordUnits::OBJECT_BBOX)
     svg_.setTransform(transform);
 
   //---
@@ -127,7 +130,7 @@ drawMask(const CSVGObject *object)
   // get offset
   double x1 = 0, y1 = 0;
 
-  if (getUnits() == CSVGCoordUnits::OBJECT_BBOX)
+  if (getContentUnits() == CSVGCoordUnits::OBJECT_BBOX)
     transform1.multiplyPoint(0, 0, &x1, &y1);
   else
     transform1.multiplyPoint(x, y, &x1, &y1);
@@ -156,7 +159,10 @@ print(std::ostream &os, bool hier) const
     printNameLength(os, "height", height_);
 
     if (getUnitsValid())
-      os << " maskContentUnits=\"" << CSVG::encodeUnitsString(getUnits()) << "\"";
+      os << " maskUnits=\"" << CSVG::encodeUnitsString(getUnits()) << "\"";
+
+    if (getContentUnitsValid())
+      os << " maskContentUnits=\"" << CSVG::encodeUnitsString(getContentUnits()) << "\"";
 
     os << ">" << std::endl;
 

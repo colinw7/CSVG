@@ -14,10 +14,10 @@ class CSVGFeFlood : public CSVGFilterBase {
 
   CSVGFeFlood *dup() const override;
 
-  std::string getFilterIn() const { return filterIn_.getValue("FilterGraphic"); }
+  std::string getFilterIn() const;
   void setFilterIn(const std::string &s) { filterIn_ = s; }
 
-  std::string getFilterOut() const { return filterOut_.getValue("FilterGraphic"); }
+  std::string getFilterOut() const;
   void setFilterOut(const std::string &s) { filterOut_ = s; }
 
   double getOpacity() const { return opacity_.getValue(1); }
@@ -27,17 +27,15 @@ class CSVGFeFlood : public CSVGFilterBase {
 
   bool draw() override;
 
-  void filterImage(CSVGBuffer *outBuffer);
-
   void print(std::ostream &os, bool hier) const override;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGFeFlood &fe);
 
  private:
-  COptString      filterIn_;
-  COptString      filterOut_;
-  COptValT<CRGBA> color_;
-  COptReal        opacity_;
+  COptString          filterIn_;
+  COptString          filterOut_;
+  COptValT<CSVGColor> color_;
+  COptReal            opacity_;
 };
 
 #endif

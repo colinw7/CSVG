@@ -1,4 +1,5 @@
 #include <CSVGFeConvolveMatrix.h>
+#include <CSVGFilter.h>
 #include <CSVGBuffer.h>
 #include <CSVG.h>
 
@@ -21,6 +22,13 @@ dup() const
   return new CSVGFeConvolveMatrix(*this);
 }
 
+std::string
+CSVGFeConvolveMatrix::
+getFilterIn() const
+{
+  return calcFilterIn(filterIn_);
+}
+
 bool
 CSVGFeConvolveMatrix::
 processOption(const std::string &opt_name, const std::string &opt_value)
@@ -31,8 +39,8 @@ processOption(const std::string &opt_name, const std::string &opt_value)
 
   if      (svg_.stringOption(opt_name, opt_value, "in", str))
     filterIn_ = str;
-  else if (svg_.stringOption(opt_name, opt_value, "order", str))
-    order_ = str;
+  else if (svg_.realListOption(opt_name, opt_value, "order", reals))
+    order_ = reals;
   else if (svg_.realListOption(opt_name, opt_value, "kernelMatrix", reals))
     kernelMatrix_ = reals;
   else if (svg_.realOption(opt_name, opt_value, "divisor", &r))
@@ -69,7 +77,25 @@ draw()
     buffer->setImageBuffer(inBuffer);
   }
 
-  filterImage(inBuffer);
+  // TODO: handle divisor, bias, targetX, targetY, edgeMode, kernelUnitLength, preserveAlpha,
+
+  double xorder = 3;
+  double yorder = 3;
+
+  if (order_.isValid()) {
+    if      (order_.getValue().size() > 1) {
+      xorder = order_.getValue()[0];
+      yorder = order_.getValue()[1];
+    }
+    else if (order_.getValue().size() > 0) {
+      xorder = order_.getValue()[0];
+      yorder = xorder;
+    }
+  }
+
+  bool preserveAlpha = (this->preserveAlpha() == "true");
+
+  CSVGBuffer::convolveMatrixBuffers(inBuffer, xorder, yorder, getKernelMatrix(), preserveAlpha);
 
   if (svg_.getDebugFilter()) {
     std::string objectBufferName = "_" + getUniqueName();
@@ -84,13 +110,6 @@ draw()
 
 void
 CSVGFeConvolveMatrix::
-filterImage(CSVGBuffer *inBuffer)
-{
-  CSVGBuffer::convolveMatrixBuffers(inBuffer, kernelMatrix_.getValue());
-}
-
-void
-CSVGFeConvolveMatrix::
 print(std::ostream &os, bool hier) const
 {
   if (hier) {
@@ -101,7 +120,7 @@ print(std::ostream &os, bool hier) const
     CSVGFilterBase::printValues(os);
 
     printNameValue (os, "in"              , filterIn_);
-    printNameValue (os, "order"           , order_);
+    printNameValues(os, "order"           , order_);
     printNameValues(os, "kernelMatrix"    , kernelMatrix_);
     printNameValue (os, "divisor"         , divisor_);
     printNameValue (os, "bias"            , bias_);

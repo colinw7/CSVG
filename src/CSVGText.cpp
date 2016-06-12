@@ -107,7 +107,7 @@ bool
 CSVGText::
 getBBox(CBBox2D &bbox) const
 {
-  if (! viewBox_.isValid()) {
+  if (! hasViewBox()) {
     double x = getX();
     double y = getY();
     double w = 8;

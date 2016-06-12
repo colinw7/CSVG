@@ -497,7 +497,7 @@ addProperties()
   propTree_->addProperty("", svg_, "showFilterBox");
   propTree_->addProperty("", svg_, "ignoreFilter");
 
-  CSVGBlock *block = svg_->getBlock();
+  CSVGBlock *block = svg_->getRoot();
 
   std::string id = block->getId();
 
@@ -1085,7 +1085,7 @@ void
 CQSVGWindow::
 deselectAllObjects()
 {
-  CSVGBlock *block = svg_->getBlock();
+  CSVGBlock *block = svg_->getRoot();
 
   deselectObjects(block);
 }

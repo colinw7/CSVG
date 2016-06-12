@@ -12,18 +12,22 @@ class CSVGLine : public CSVGObject {
 
   CSVGLine *dup() const override;
 
-  double getX1() const { return (x1_.isValid() ? x1_.getValue().px().value() : 0); }
-  double getY1() const { return (y2_.isValid() ? y1_.getValue().px().value() : 0); }
-  double getX2() const { return (x2_.isValid() ? x2_.getValue().px().value() : 0); }
-  double getY2() const { return (y2_.isValid() ? y2_.getValue().px().value() : 0); }
+  CScreenUnits getX1(double x=0) const { return x1_.getValue(CScreenUnits(x)); }
+  void setX1(const CScreenUnits &x1) { x1_ = x1; }
 
-  void setX1(double x1) { x1_ = x1; }
-  void setY1(double y1) { y1_ = y1; }
-  void setX2(double x2) { x2_ = x2; }
-  void setY2(double y2) { y2_ = y2; }
+  CScreenUnits getY1(double y=0) const { return y1_.getValue(CScreenUnits(y)); }
+  void setY1(const CScreenUnits &y1) { y1_ = y1; }
 
-  CPoint2D getStart() const { return CPoint2D(getX1(), getY1()); }
-  CPoint2D getEnd  () const { return CPoint2D(getX2(), getY2()); }
+  CScreenUnits getX2(double x=0) const { return x2_.getValue(CScreenUnits(x)); }
+  void setX2(const CScreenUnits &x2) { x2_ = x2; }
+
+  CScreenUnits getY2(double y=0) const { return y2_.getValue(CScreenUnits(y)); }
+  void setY2(const CScreenUnits &y2) { y2_ = y2; }
+
+  CPoint2D getStart(const CSize2D &size=CSize2D(1, 1)) const {
+    return CPoint2D(getX1().pxValue(size.getWidth()), getY1().pxValue(size.getHeight())); }
+  CPoint2D getEnd  (const CSize2D &size=CSize2D(1, 1)) const {
+    return CPoint2D(getX2().pxValue(size.getWidth()), getY2().pxValue(size.getHeight())); }
 
   void setStart(const CPoint2D &start) { setX1(start.x); setY1(start.y); }
   void setEnd  (const CPoint2D &end  ) { setX2(end  .x); setY2(end  .y); }

@@ -90,7 +90,7 @@ draw()
 
   double w = 1;
 
-  if (viewBox_.isValid())
+  if (hasViewBox())
     w = getViewBox().getWidth();
 
   double r = getRadius().pxValue(w);
@@ -107,7 +107,7 @@ bool
 CSVGCircle::
 getBBox(CBBox2D &bbox) const
 {
-  if (! viewBox_.isValid()) {
+  if (! hasViewBox()) {
     double r = getRadius().pxValue(1);
 
     bbox = CBBox2D(getCenterX() - r, getCenterY() - r, getCenterX() + r, getCenterY() + r);

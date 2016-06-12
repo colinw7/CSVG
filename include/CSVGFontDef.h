@@ -30,7 +30,7 @@ class CSVGFontDef {
 
   bool hasStyle () const { return style_.isValid(); }
   CFontStyles getStyle() const { return style_.getValue(CFONT_STYLE_NORMAL); }
-  void setStyle(CFontStyle s);
+  void setStyle(CFontStyles s);
 
   void setStyle (const std::string &style_def );
   void setWeight(const std::string &weight_def);
@@ -41,6 +41,8 @@ class CSVGFontDef {
 
   void setSubscript  (bool b=true);
   void setSuperscript(bool b=true);
+
+  CFontPtr getFont();
 
   void print(std::ostream &os) const;
 

@@ -17,20 +17,18 @@ class CSVGFeBlend : public CSVGFilterBase {
   CSVGBlendMode getMode() const { return mode_.getValue(CSVGBlendMode::NORMAL); }
   void setMode(CSVGBlendMode m) { mode_ = m; }
 
-  std::string getFilterIn1() const { return filterIn1_.getValue("FilterGraphic"); }
+  std::string getFilterIn1() const;
   void setFilterIn1(const std::string &s) { filterIn1_ = s; }
 
-  std::string getFilterIn2() const { return filterIn2_.getValue("FilterGraphic"); }
+  std::string getFilterIn2() const;
   void setFilterIn2(const std::string &s) { filterIn2_ = s; }
 
-  std::string getFilterOut() const { return filterOut_.getValue("FilterGraphic"); }
+  std::string getFilterOut() const;
   void setFilterOut(const std::string &s) { filterOut_ = s; }
 
   bool processOption(const std::string &name, const std::string &value) override;
 
   bool draw() override;
-
-  void filterImage(CSVGBuffer *inBuffer1, CSVGBuffer *inBuffer2, CSVGBuffer *outBuffer);
 
   void print(std::ostream &os, bool hier) const override;
 

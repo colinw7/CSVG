@@ -102,8 +102,13 @@ void
 CSVGRect::
 updateBBox()
 {
-  double w = getWidth ().pxValue(1);
-  double h = getHeight().pxValue(1);
+  CBBox2D bbox;
+
+  if (! getParentViewBox(bbox))
+    bbox = CBBox2D(0, 0, 100, 100);
+
+  double w = getWidth ().pxValue(bbox.getWidth ());
+  double h = getHeight().pxValue(bbox.getHeight());
 
   CPoint2D p1(getX()    , getY());
   CPoint2D p2(getX() + w, getY() + h);
@@ -118,12 +123,19 @@ draw()
   if (svg_.getDebug())
     CSVGLog() << *this;
 
-  double w = getWidth ().pxValue(1);
-  double h = getHeight().pxValue(1);
+  CBBox2D bbox;
+
+  if (! getParentViewBox(bbox))
+    bbox = CBBox2D(0, 0, 100, 100);
+
+  double w = getWidth ().pxValue(bbox.getWidth ());
+  double h = getHeight().pxValue(bbox.getHeight());
 
   // skip zero width/height
   if (w <= 0 || h <= 0)
     return false;
+
+  //---
 
   CSVGBuffer *buffer = svg_.getCurrentBuffer();
 
@@ -175,7 +187,7 @@ bool
 CSVGRect::
 getBBox(CBBox2D &bbox) const
 {
-  if (! viewBox_.isValid())
+  if (! hasViewBox())
     bbox = bbox_;
   else
     bbox = getViewBox();

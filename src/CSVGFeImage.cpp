@@ -23,6 +23,13 @@ dup() const
   return new CSVGFeImage(*this);
 }
 
+std::string
+CSVGFeImage::
+getFilterOut() const
+{
+  return calcFilterOut(filterOut_);
+}
+
 bool
 CSVGFeImage::
 processOption(const std::string &opt_name, const std::string &opt_value)
@@ -69,7 +76,7 @@ draw()
   }
 
   // put image into output buffer (transformed)
-  CSVGBuffer::imageBuffers(inBuffer, this, transform, getPreserveAspect(), outBuffer);
+  CSVGBuffer::imageBuffers(inBuffer, transform, getPreserveAspect(), outBuffer);
 
   if (svg_.getDebugFilter()) {
     std::string objectBufferName = "_" + getUniqueName();

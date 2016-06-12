@@ -119,7 +119,7 @@ class CQSVGRenderer : public CSVGRenderer {
 
   void combine(int x, int y, CSVGRenderer *r) override;
 
-  void addResizedImage(CSVGRenderer *src, int x, int y, int w, int h) override;
+  void addResizedImage(CSVGRenderer *src, double x, double y, double w, double h) override;
 
   void addClippedImage(CSVGRenderer *src, int x, int y,
                        int px1, int py1, int px2, int py2) override;

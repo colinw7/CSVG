@@ -1,5 +1,6 @@
 #include <CSVGFeOffset.h>
 #include <CSVGBuffer.h>
+#include <CSVGFilter.h>
 #include <CSVG.h>
 
 CSVGFeOffset::
@@ -23,6 +24,20 @@ CSVGFeOffset::
 dup() const
 {
   return new CSVGFeOffset(*this);
+}
+
+std::string
+CSVGFeOffset::
+getFilterIn() const
+{
+  return calcFilterIn(filterIn_);
+}
+
+std::string
+CSVGFeOffset::
+getFilterOut() const
+{
+  return calcFilterOut(filterOut_);
 }
 
 bool
@@ -66,7 +81,44 @@ draw()
     buffer->setImageBuffer(inBuffer);
   }
 
-  CSVGBuffer::offsetBuffers(inBuffer, getDX(), getDY(), outBuffer);
+  //---
+
+  // get filtered object coords
+  CSVGFilter *filter = getParentFilter();
+
+  CBBox2D filterBBox;
+
+  if (filter)
+    filter->getRegion(filterBBox);
+
+  CBBox2D filterBaseBBox;
+
+  getTransformedParentBBox(filterBaseBBox);
+
+  if (! filterBBox.isSet())
+    filterBBox = filterBaseBBox;
+
+  if (! filterBaseBBox.isSet())
+    filterBaseBBox = filterBBox;
+
+  double x1 = 0, y1 = 0, x2 = -1, y2 = -1;
+
+  if (filterBaseBBox.isSet()) {
+    svg_.windowToPixel(filterBaseBBox.getXMin(), filterBaseBBox.getYMin(), &x1, &y1);
+    svg_.windowToPixel(filterBaseBBox.getXMax(), filterBaseBBox.getYMax(), &x2, &y2);
+  }
+
+  //---
+
+  double dx = getDX();
+  double dy = getDY();
+
+  CSVGBuffer::offsetBuffers(inBuffer, x1, y1, x2 - x1, y2 - y1, dx, dy, outBuffer);
+
+  if (filterBaseBBox.isSet())
+    outBuffer->setBBox(filterBaseBBox);
+
+  //---
 
   if (svg_.getDebugFilter()) {
     CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_out");

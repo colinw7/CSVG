@@ -17,11 +17,11 @@ class CSVGFeConvolveMatrix : public CSVGFilterBase {
 
   CSVGFeConvolveMatrix *dup() const override;
 
-  std::string getFilterIn() const { return filterIn_.getValue("FilterGraphic"); }
+  std::string getFilterIn() const;
   void setFilterIn(const std::string &s) { filterIn_ = s; }
 
-  std::string getOrder() const { return order_.getValue("3"); }
-  void setOrder(const std::string &s) { order_ = s; }
+  Reals getOrder() const { return order_.getValue(Reals()); }
+  void setOrder(const Reals &r) { order_ = r; }
 
   Reals getKernelMatrix() const { return kernelMatrix_.getValue(Reals()); }
   void setKernelMatrix(const Reals &r) { kernelMatrix_ = r; }
@@ -51,15 +51,13 @@ class CSVGFeConvolveMatrix : public CSVGFilterBase {
 
   bool draw() override;
 
-  void filterImage(CSVGBuffer *inBuffer);
-
   void print(std::ostream &os, bool hier) const override;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGFeConvolveMatrix &filter);
 
  private:
   COptString      filterIn_;
-  COptString      order_;
+  COptValT<Reals> order_;
   COptValT<Reals> kernelMatrix_;
   COptReal        divisor_;
   COptReal        bias_;

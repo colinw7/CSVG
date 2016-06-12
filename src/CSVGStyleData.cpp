@@ -57,6 +57,22 @@ setValue(const std::string &name, const std::string &value)
     else
       CSVGLog() << "Illegal url value '" << id << "' for " << name;
   }
+  else if (name == "font-family") {
+    // TODO
+    CSVGLog() << "Unhandled style font-family: " << value;
+  }
+  else if (name == "font-weight") {
+    // TODO
+    CSVGLog() << "Unhandled style font-weight: " << value;
+  }
+  else if (name == "font-style") {
+    // TODO
+    CSVGLog() << "Unhandled style font-style: " << value;
+  }
+  else if (name == "src") {
+    // TODO
+    CSVGLog() << "Unhandled style src: " << value;
+  }
   else
     CSVGLog() << "Unhandled style name: " << name << ":" << value;
 }

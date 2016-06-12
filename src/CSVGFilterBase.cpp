@@ -71,6 +71,35 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   return true;
 }
 
+std::string
+CSVGFilterBase::
+calcFilterIn(const COptString &filterIn) const
+{
+  if (filterIn.isValid())
+    return filterIn.getValue();
+
+  CSVGFilter *filter = getParentFilter();
+
+  return (filter ? filter->getLastFilterName() : "FilterGraphic");
+}
+
+std::string
+CSVGFilterBase::
+calcFilterOut(const COptString &filterOut) const
+{
+  CSVGFilter *filter = getParentFilter();
+
+  std::string name = "FilterGraphic";
+
+  if (filterOut.isValid())
+    name = filterOut.getValue();
+
+  if (filter)
+    filter->setLastFilterName(name);
+
+  return name;
+}
+
 bool
 CSVGFilterBase::
 getParentBBox(CBBox2D &bbox) const
@@ -92,30 +121,50 @@ bool
 CSVGFilterBase::
 getTransformedParentBBox(CBBox2D &bbox) const
 {
+  CBBox2D viewBBox;
+
+  if (! getParentViewBox(viewBBox))
+    viewBBox = CBBox2D(0, 0, 100, 100);
+
   if (! getParentBBox(bbox))
-    return false;
+    bbox = viewBBox;
+
+  //---
 
   CSVGCoordUnits punits = getParentFilter()->getPrimitiveUnits();
 
+  double pw = viewBBox.getWidth ();
+  double ph = viewBBox.getHeight();
+
   if (hasX()) {
+    double x = getX().pxValue(pw);
+
     if (punits == CSVGCoordUnits::USER_SPACE)
-      bbox.moveXTo(getX());
+      bbox.moveXTo(x);
     else
-      bbox.moveXTo(getXMin() + getX());
+      bbox.moveXTo(getXMin() + x);
   }
 
   if (hasY()) {
+    double y = getY().pxValue(ph);
+
     if (punits == CSVGCoordUnits::USER_SPACE)
-      bbox.moveYTo(getY());
+      bbox.moveYTo(y);
     else
-      bbox.moveYTo(getYMin() + getY());
+      bbox.moveYTo(getYMin() + y);
   }
 
-  if (hasWidth())
-    bbox.setWidth(getWidth());
+  if (hasWidth()) {
+    double w = getWidth().pxValue(pw);
 
-  if (hasHeight())
-    bbox.setHeight(getHeight());
+    bbox.setWidth(w);
+  }
+
+  if (hasHeight()) {
+    double h = getHeight().pxValue(ph);
+
+    bbox.setHeight(h);
+  }
 
   return true;
 }

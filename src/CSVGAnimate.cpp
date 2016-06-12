@@ -49,13 +49,31 @@ CSVGAnimate::
 animate(double t)
 {
   //std::cerr << "CSVGAnimate: " << currentTime_ << ":" << t << std::endl;
-  if (attributeName_.isValid() && from_.isValid() && to_.isValid()) {
+  if (! attributeName_.isValid())
+    return;
+
+  if      (from_.isValid() && to_.isValid()) {
     std::string ystr;
 
     if (getParent()->interpValue(getAttributeName(), getFrom(), getTo(), t, ystr)) {
       getParent()->processOption(getAttributeName(), ystr);
 
       svg_.redraw();
+    }
+  }
+  else if (values_.isValid()) {
+    std::vector<std::string> words;
+
+    CStrUtil::addFields(values_.getValue(), words, ";");
+
+    if (words.size() >= 2) {
+      std::string ystr;
+
+      if (getParent()->interpValue(getAttributeName(), words[0], words[1], t, ystr)) {
+        getParent()->processOption(getAttributeName(), ystr);
+
+        svg_.redraw();
+      }
     }
   }
 }
