@@ -79,6 +79,8 @@
 #include <CRegExp.h>
 #include <CStrParse.h>
 #include <CRGBName.h>
+#include <CFile.h>
+#include <CStrUtil.h>
 
 CSVG::
 CSVG(CSVGRenderer *renderer) :
@@ -132,6 +134,42 @@ getRoot() const
   return block_;
 }
 
+CPoint2D
+CSVG::
+flatOffset() const
+{
+  CPoint2D o = blockData_.offset();
+
+  for (const auto &b : blockDataStack_)
+    o += b.offset();
+
+  return o;
+}
+
+double
+CSVG::
+flatXScale() const
+{
+  double s = blockData_.xscale();
+
+  for (const auto &b : blockDataStack_)
+    s *= b.xscale();
+
+  return s;
+}
+
+double
+CSVG::
+flatYScale() const
+{
+  double s = blockData_.yscale();
+
+  for (const auto &b : blockDataStack_)
+    s *= b.yscale();
+
+  return s;
+}
+
 void
 CSVG::
 setRenderer(CSVGRenderer *renderer)
@@ -158,10 +196,10 @@ setPaintBox(const CBBox2D &bbox)
 
 void
 CSVG::
-setPaintColors(const CSVGColor &fillColor, const CSVGColor &strokeColor)
+setPaintStyle(const CSVGFill &fill, const CSVGStroke &stroke)
 {
-  bufferMgr_->setPaintFillColor  (fillColor);
-  bufferMgr_->setPaintStrokeColor(strokeColor);
+  bufferMgr_->setPaintFill  (fill);
+  bufferMgr_->setPaintStroke(stroke);
 }
 
 void
@@ -1229,6 +1267,13 @@ createPathClosePath(bool relative)
   return new CSVGPathClosePath(*this, relative);
 }
 
+CSVGImageData *
+CSVG::
+createImageData()
+{
+  return new CSVGImageData;
+}
+
 //------
 
 double
@@ -1388,7 +1433,7 @@ drawRoot(CSVGBlock *block, const CPoint2D &offset, double xscale, double yscale,
 
   bgBuffer->clear();
 
-  beginDrawBuffer(bgBuffer, blockOffset(), blockXScale(), blockYScale());
+  beginDrawBuffer(bgBuffer, rootBlockOffset(), rootBlockXScale(), rootBlockYScale());
 
   //------
 
@@ -1400,11 +1445,11 @@ drawRoot(CSVGBlock *block, const CPoint2D &offset, double xscale, double yscale,
 
   //------
 
-  renderer_->setImage(bgBuffer->getRenderer());
+  renderer_->endDraw();
 
   //------
 
-  renderer_->endDraw();
+  renderer_->setImage(bgBuffer->getRenderer());
 }
 
 CSVGBuffer *
@@ -1508,7 +1553,8 @@ beginDrawBuffer(CSVGBuffer *buffer, const CBBox2D &viewBox)
 
   CBBox2D pixelBox = block->calcPixelBox();
 
-  beginDrawBuffer(buffer, pixelBox, viewBox, blockOffset(), blockXScale(), blockYScale(),
+  beginDrawBuffer(buffer, pixelBox, viewBox,
+                  rootBlockOffset(), rootBlockXScale(), rootBlockYScale(),
                   blockPreserveAspect());
 }
 
@@ -1536,9 +1582,12 @@ beginDrawBuffer(CSVGBuffer *buffer, const CBBox2D &pixelBox, const CBBox2D &view
   double w = bbox1.getWidth ();
   double h = bbox1.getHeight();
 
-  bbox1.moveBy(blockData_.offset());
+  bbox1.moveBy(flatOffset());
 
-  buffer->beginDraw(w*blockData_.xscale(), h*blockData_.yscale(), bbox1);
+  double xscale = flatXScale();
+  double yscale = flatYScale();
+
+  buffer->beginDraw(w*xscale, h*yscale, bbox1);
 
   updateDrawBuffer(buffer);
 }
@@ -1666,87 +1715,7 @@ void
 CSVG::
 setStrokeBuffer(CSVGBuffer *buffer)
 {
-  buffer->resetStroke();
-
-  CSVGObject *drawObject = currentDrawObject();
-
-  CSVGObject *fillObject = styleData_.stroke.calcFillObject();
-
-  if (fillObject) {
-    buffer->setStrokeFilled(true);
-
-    CSVGLinearGradient *lg = dynamic_cast<CSVGLinearGradient *>(fillObject);
-    CSVGRadialGradient *rg = dynamic_cast<CSVGRadialGradient *>(fillObject);
-    CSVGPattern        *pt = dynamic_cast<CSVGPattern        *>(fillObject);
-
-    if      (lg) {
-      lg->setStrokeBuffer(buffer, drawObject);
-    }
-    else if (rg) {
-      CAutoPtr<CRadialGradient> rg1;
-
-      rg1 = rg->createGradient(drawObject);
-
-      buffer->setStrokeFillGradient(rg1);
-    }
-    else if (pt) {
-      double w1, h1;
-
-      pt->setStrokeImage(drawObject, buffer, &w1, &h1);
-    }
-    else
-      assert(false);
-  }
-  else {
-    buffer->setStrokeFilled(false);
-
-    if (styleData_.stroke.getColorValid()) {
-      CSVGColor color = styleData_.stroke.getColor();
-
-      CRGBA rgba = colorToRGBA(color);
-
-      if (styleData_.stroke.getOpacityValid())
-        rgba.setAlpha(styleData_.stroke.getOpacity());
-
-      buffer->setStrokeColor(rgba);
-    }
-    else
-      buffer->setStrokeColor(CRGBA(0,0,0));
-  }
-
-  //---
-
-  if (styleData_.stroke.getRuleValid())
-    buffer->setStrokeFillType(styleData_.stroke.getRule());
-  else
-    buffer->setStrokeFillType(FILL_TYPE_WINDING);
-
-  //---
-
-  if (styleData_.stroke.getWidthValid())
-    buffer->setLineWidth(styleData_.stroke.getWidth());
-  else
-    buffer->setLineWidth(1);
-
-  if (styleData_.stroke.getDashValid())
-    buffer->setLineDash(styleData_.stroke.getDash().getLineDash());
-  else
-    buffer->setLineDash(CLineDash());
-
-  if (styleData_.stroke.getLineCapValid())
-    buffer->setLineCap(styleData_.stroke.getLineCap());
-  else
-    buffer->setLineCap(LINE_CAP_TYPE_BUTT);
-
-  if (styleData_.stroke.getLineJoinValid())
-    buffer->setLineJoin(styleData_.stroke.getLineJoin());
-  else
-    buffer->setLineJoin(LINE_JOIN_TYPE_MITRE);
-
-  if (styleData_.stroke.getMitreLimitValid())
-    buffer->setLineMitreLimit(styleData_.stroke.getMitreLimitValid());
-  else
-    buffer->setLineMitreLimit(4.0);
+  buffer->setStroke(styleData_.stroke);
 }
 
 //------
@@ -1776,56 +1745,7 @@ void
 CSVG::
 setFillBuffer(CSVGBuffer *buffer)
 {
-  buffer->resetFill();
-
-  CSVGObject *drawObject = currentDrawObject();
-
-  CSVGObject *fillObject = styleData_.fill.calcFillObject();
-
-  if (fillObject) {
-    CSVGLinearGradient *lg = dynamic_cast<CSVGLinearGradient *>(fillObject);
-    CSVGRadialGradient *rg = dynamic_cast<CSVGRadialGradient *>(fillObject);
-    CSVGPattern        *pt = dynamic_cast<CSVGPattern        *>(fillObject);
-
-    if      (lg) {
-      lg->setFillBuffer(buffer, drawObject);
-    }
-    else if (rg) {
-      CAutoPtr<CRadialGradient> rg1;
-
-      rg1 = rg->createGradient(drawObject);
-
-      buffer->setFillGradient(rg1);
-    }
-    else if (pt) {
-      double w1, h1;
-
-      pt->setFillImage(drawObject, buffer, &w1, &h1);
-    }
-    else
-      assert(false);
-  }
-  else {
-    if (styleData_.fill.getColorValid()) {
-      CSVGColor color = styleData_.fill.getColor();
-
-      CRGBA rgba = colorToRGBA(color);
-
-      if (styleData_.fill.getOpacityValid())
-        rgba.setAlpha(styleData_.fill.getOpacity());
-
-      buffer->setFillColor(rgba);
-    }
-    else
-      buffer->setFillColor(CRGBA(0,0,0));
-  }
-
-  //---
-
-  if (styleData_.fill.getRuleValid())
-    buffer->setFillType(styleData_.fill.getRule());
-  else
-    buffer->setFillType(FILL_TYPE_WINDING);
+  buffer->setFill(styleData_.fill);
 }
 
 CRGBA
@@ -4071,7 +3991,7 @@ decodeOpacityString(const std::string &opacity_str)
 
 CFillType
 CSVG::
-decodeFillRuleString(const std::string &rule_str)
+decodeFillRuleString(const std::string &rule_str) const
 {
   if      (rule_str == "nonzero")
     return FILL_TYPE_WINDING;
@@ -4081,6 +4001,20 @@ decodeFillRuleString(const std::string &rule_str)
     return FILL_TYPE_NONE;
   else
     return FILL_TYPE_NONE;
+}
+
+std::string
+CSVG::
+encodeFillRuleString(CFillType rule) const
+{
+  if      (rule == FILL_TYPE_WINDING)
+    return "nonzero";
+  else if (rule == FILL_TYPE_EVEN_ODD)
+    return "evenodd";
+  else if (rule == FILL_TYPE_NONE)
+    return "inherit";
+  else
+    return "inherit";
 }
 
 bool
@@ -4243,39 +4177,39 @@ nameToRGBA(const std::string &name) const
 
   // style like colors
   if      (CStrUtil::casecmp(name, "background") == 0)
-    return CRGBA(0.00, 0.36, 0.36);
+    return CRGBName::toRGBA("#005c5c");
   else if (CStrUtil::casecmp(name, "appworkspace") == 0)
-    return CRGBA(0.00, 0.36, 0.36);
+    return CRGBName::toRGBA("#005c5c");
   else if (CStrUtil::casecmp(name, "window") == 0)
-    return CRGBA(0.86, 0.86, 0.86);
+    return CRGBName::toRGBA("#dfdfdf");
   else if (CStrUtil::casecmp(name, "windowtext") == 0)
     return CRGBA(0.00, 0.00, 0.00);
   else if (CStrUtil::casecmp(name, "windowframe") == 0)
-    return CRGBA(0.86, 0.86, 0.86);
+    return CRGBName::toRGBA("#c4c4c4");
   else if (CStrUtil::casecmp(name, "highlighttext") == 0)
-    return CRGBA(1.00, 0.00, 0.00);
-  else if (CStrUtil::casecmp(name, "captiontext") == 0)
+    return CRGBName::toRGBA("#c4c4c4");
+  else if (CStrUtil::casecmp(name, "captiontext") == 0) // title bar text
     return CRGBA(0.00, 0.00, 0.00);
   else if (CStrUtil::casecmp(name, "menu") == 0)
-    return CRGBA(0.86, 0.86, 0.86);
+    return CRGBName::toRGBA("#c4c4c4");
   else if (CStrUtil::casecmp(name, "menutext") == 0)
     return CRGBA(0.00, 0.00, 0.00);
   else if (CStrUtil::casecmp(name, "buttonface") == 0)
-    return CRGBA(0.86, 0.86, 0.86);
+    return CRGBName::toRGBA("#dfdfdf");
   else if (CStrUtil::casecmp(name, "buttonhighlight") == 0)
-    return CRGBA(0.00, 0.10, 0.00);
+    return CRGBName::toRGBA("#ffffff");
   else if (CStrUtil::casecmp(name, "buttonshadow") == 0)
-    return CRGBA(0.16, 0.16, 0.16);
+    return CRGBName::toRGBA("#4a4a4a");
   else if (CStrUtil::casecmp(name, "activecaption") == 0)
-    return CRGBA(0.00, 0.00, 1.00);
+    return CRGBName::toRGBA("#000080");
   else if (CStrUtil::casecmp(name, "activeborder") == 0)
-    return CRGBA(0.00, 0.00, 1.00);
+    return CRGBName::toRGBA("#c4c4c4");
   else if (CStrUtil::casecmp(name, "threedface") == 0)
-    return CRGBA(0.86, 0.86, 0.86);
+    return CRGBName::toRGBA("#dfdfdf");
   else if (CStrUtil::casecmp(name, "threedlightshadow") == 0)
-    return CRGBA(0.92, 0.92, 0.92);
+    return CRGBName::toRGBA("#ebebeb");
   else if (CStrUtil::casecmp(name, "threeddarkshadow") == 0)
-    return CRGBA(0.20, 0.20, 0.20);
+    return CRGBName::toRGBA("#4a4a4a");
 
   CSVGLog() << "Illegal color name '" << name << "'";
 
@@ -4525,8 +4459,10 @@ windowToPixel(double xi, double yi, double *xo, double *yo)
   *yo = po.y;
 #endif
 
-  *xo = blockXScale()*xi;
-  *yo = blockYScale()*yi;
+  //*xo = rootBlockXScale()*xi;
+  //*yo = rootBlockYScale()*yi;
+  *xo = flatXScale()*xi;
+  *yo = flatYScale()*yi;
 }
 
 void
@@ -4572,12 +4508,14 @@ bool
 CSVG::
 processCSSIds()
 {
-  std::vector<std::string> ids;
+  std::vector<CCSS::Selector> selectors;
 
-  css_.getIds(ids);
+  css_.getSelectors(selectors);
 
-  for (const auto &id : ids) {
-    const CCSS::StyleData &cssStyleData = css_.getStyleData(id);
+  for (const auto &selector : selectors) {
+    std::string id = selector.id();
+
+    const CCSS::StyleData &cssStyleData = css_.getStyleData(selector);
 
     std::string objName, objType, objClass;
 
@@ -4697,10 +4635,8 @@ getStyleStrokeColor(const CSVGObject *obj, CSVGColor &color, CSVGCSSType &type)
 
 bool
 CSVG::
-getStyleStrokeOpacity(const CSVGObject *obj, double &opacity)
+getStyleStrokeOpacity(const CSVGObject *obj, double &opacity, CSVGCSSType &type)
 {
-  CSVGCSSType type;
-
   auto visitor = [&](CSVGCSSType styleType, CSVGStyleData &styleData) -> bool {
     if (styleData.getStrokeOpacityValid()) {
       opacity = styleData.getStrokeOpacity();
@@ -4716,10 +4652,59 @@ getStyleStrokeOpacity(const CSVGObject *obj, double &opacity)
 
 bool
 CSVG::
-getStyleStrokeWidth(const CSVGObject *obj, double &width)
+getStyleStrokeRule(const CSVGObject *obj, CFillType &rule, CSVGCSSType &type)
 {
-  CSVGCSSType type;
+  auto visitor = [&](CSVGCSSType styleType, CSVGStyleData &styleData) -> bool {
+    if (styleData.getStrokeRuleValid()) {
+      rule = styleData.getStrokeRule();
+      type = styleType;
+      return true;
+    }
 
+    return false;
+  };
+
+  return visitStyleData(cssData_, obj, visitor);
+}
+
+bool
+CSVG::
+getStyleStrokeUrl(const CSVGObject *obj, std::string &url, CSVGCSSType &type)
+{
+  auto visitor = [&](CSVGCSSType styleType, CSVGStyleData &styleData) -> bool {
+    if (styleData.getStrokeUrlValid()) {
+      url  = styleData.getStrokeUrl();
+      type = styleType;
+      return true;
+    }
+
+    return false;
+  };
+
+  return visitStyleData(cssData_, obj, visitor);
+}
+
+bool
+CSVG::
+getStyleStrokeFillObject(const CSVGObject *obj, CSVGObject* &fillObject, CSVGCSSType &type)
+{
+  auto visitor = [&](CSVGCSSType styleType, CSVGStyleData &styleData) -> bool {
+    if (styleData.getStrokeFillObjectValid()) {
+      fillObject = styleData.getStrokeFillObject();
+      type       = styleType;
+      return true;
+    }
+
+    return false;
+  };
+
+  return visitStyleData(cssData_, obj, visitor);
+}
+
+bool
+CSVG::
+getStyleStrokeWidth(const CSVGObject *obj, double &width, CSVGCSSType &type)
+{
   auto visitor = [&](CSVGCSSType styleType, CSVGStyleData &styleData) -> bool {
     if (styleData.getStrokeWidthValid()) {
       width = styleData.getStrokeWidth();
@@ -4735,10 +4720,8 @@ getStyleStrokeWidth(const CSVGObject *obj, double &width)
 
 bool
 CSVG::
-getStyleStrokeDash(const CSVGObject *obj, CSVGStrokeDash &dash)
+getStyleStrokeDash(const CSVGObject *obj, CSVGStrokeDash &dash, CSVGCSSType &type)
 {
-  CSVGCSSType type;
-
   auto visitor = [&](CSVGCSSType styleType, CSVGStyleData &styleData) -> bool {
     if (styleData.getStrokeDashValid()) {
       dash = styleData.getStrokeDash();
@@ -4751,6 +4734,59 @@ getStyleStrokeDash(const CSVGObject *obj, CSVGStrokeDash &dash)
 
   return visitStyleData(cssData_, obj, visitor);
 }
+
+bool
+CSVG::
+getStyleStrokeCap(const CSVGObject *obj, CLineCapType &cap, CSVGCSSType &type)
+{
+  auto visitor = [&](CSVGCSSType styleType, CSVGStyleData &styleData) -> bool {
+    if (styleData.getStrokeLineCapValid()) {
+      cap  = styleData.getStrokeLineCap();
+      type = styleType;
+      return true;
+    }
+
+    return false;
+  };
+
+  return visitStyleData(cssData_, obj, visitor);
+}
+
+bool
+CSVG::
+getStyleStrokeJoin(const CSVGObject *obj, CLineJoinType &join, CSVGCSSType &type)
+{
+  auto visitor = [&](CSVGCSSType styleType, CSVGStyleData &styleData) -> bool {
+    if (styleData.getStrokeLineJoinValid()) {
+      join = styleData.getStrokeLineJoin();
+      type = styleType;
+      return true;
+    }
+
+    return false;
+  };
+
+  return visitStyleData(cssData_, obj, visitor);
+}
+
+bool
+CSVG::
+getStyleStrokeMitreLimit(const CSVGObject *obj, double &limit, CSVGCSSType &type)
+{
+  auto visitor = [&](CSVGCSSType styleType, CSVGStyleData &styleData) -> bool {
+    if (styleData.getStrokeMitreLimitValid()) {
+      limit = styleData.getStrokeMitreLimit();
+      type  = styleType;
+      return true;
+    }
+
+    return false;
+  };
+
+  return visitStyleData(cssData_, obj, visitor);
+}
+
+//------
 
 bool
 CSVG::
@@ -4771,14 +4807,63 @@ getStyleFillColor(const CSVGObject *obj, CSVGColor &color, CSVGCSSType &type)
 
 bool
 CSVG::
-getStyleFillOpacity(const CSVGObject *obj, double &opacity)
+getStyleFillOpacity(const CSVGObject *obj, double &opacity, CSVGCSSType &type)
 {
-  CSVGCSSType type;
-
   auto visitor = [&](CSVGCSSType styleType, CSVGStyleData &styleData) -> bool {
     if (styleData.getFillOpacityValid()) {
       opacity = styleData.getFillOpacity();
       type    = styleType;
+      return true;
+    }
+
+    return false;
+  };
+
+  return visitStyleData(cssData_, obj, visitor);
+}
+
+bool
+CSVG::
+getStyleFillRule(const CSVGObject *obj, CFillType &rule, CSVGCSSType &type)
+{
+  auto visitor = [&](CSVGCSSType styleType, CSVGStyleData &styleData) -> bool {
+    if (styleData.getFillRuleValid()) {
+      rule = styleData.getFillRule();
+      type = styleType;
+      return true;
+    }
+
+    return false;
+  };
+
+  return visitStyleData(cssData_, obj, visitor);
+}
+
+bool
+CSVG::
+getStyleFillUrl(const CSVGObject *obj, std::string &url, CSVGCSSType &type)
+{
+  auto visitor = [&](CSVGCSSType styleType, CSVGStyleData &styleData) -> bool {
+    if (styleData.getFillUrlValid()) {
+      url  = styleData.getFillUrl();
+      type = styleType;
+      return true;
+    }
+
+    return false;
+  };
+
+  return visitStyleData(cssData_, obj, visitor);
+}
+
+bool
+CSVG::
+getStyleFillFillObject(const CSVGObject *obj, CSVGObject* &fillObject, CSVGCSSType &type)
+{
+  auto visitor = [&](CSVGCSSType styleType, CSVGStyleData &styleData) -> bool {
+    if (styleData.getFillFillObjectValid()) {
+      fillObject = styleData.getFillFillObject();
+      type       = styleType;
       return true;
     }
 
@@ -4867,4 +4952,13 @@ print(std::ostream &os, bool hier) const
   getRoot()->print(os, hier);
 
   css_.print(os);
+}
+
+void
+CSVG::
+printFlat(std::ostream &os) const
+{
+  getRoot()->printFlat(os);
+
+  //css_.print(os);
 }

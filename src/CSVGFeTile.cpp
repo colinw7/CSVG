@@ -57,7 +57,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
 
 bool
 CSVGFeTile::
-draw()
+drawElement()
 {
   CSVGBuffer *inBuffer  = svg_.getBuffer(getFilterIn ());
   CSVGBuffer *outBuffer = svg_.getBuffer(getFilterOut());
@@ -72,9 +72,26 @@ draw()
     buffer->setBBox(inBuffer->bbox());
   }
 
-  CMatrixStack2D transform = svg_.getCurrentBuffer()->transform();
+  //---
 
-  CSVGBuffer::tileBuffers(inBuffer, transform, outBuffer);
+  // get filtered object coords for input
+  CBBox2D inBBox;
+
+  getBufferSubRegion(inBuffer, inBBox);
+
+  // get tile subregion for output
+  CBBox2D outBBox;
+
+  getSubRegion(outBBox);
+
+  //---
+
+  // tile
+  CSVGBuffer::tileBuffers(inBuffer, inBBox, outBBox, outBuffer);
+
+  outBuffer->setBBox(outBBox);
+
+  //---
 
   if (svg_.getDebugFilter()) {
     std::string objectBufferName = "_" + getUniqueName();
@@ -83,7 +100,7 @@ draw()
 
     buffer->setImageBuffer(outBuffer);
 
-    buffer->setBBox(outBuffer->bbox());
+    buffer->setBBox(outBBox);
   }
 
   return true;

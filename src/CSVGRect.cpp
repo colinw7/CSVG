@@ -72,14 +72,13 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   if (processExternalOption       (opt_name, opt_value)) return true;
 
   std::string    str;
-  double         real;
   CScreenUnits   length;
   CMatrixStack2D transform;
 
-  if      (svg_.coordOption (opt_name, opt_value, "x", &real))
-    x_ = real;
-  else if (svg_.coordOption (opt_name, opt_value, "y", &real))
-    y_ = real;
+  if      (svg_.coordOption (opt_name, opt_value, "x", length))
+    x_ = length;
+  else if (svg_.coordOption (opt_name, opt_value, "y", length))
+    y_ = length;
   else if (svg_.lengthOption(opt_name, opt_value, "width", length))
     width_ = length;
   else if (svg_.lengthOption(opt_name, opt_value, "height", length))
@@ -107,11 +106,16 @@ updateBBox()
   if (! getParentViewBox(bbox))
     bbox = CBBox2D(0, 0, 100, 100);
 
-  double w = getWidth ().pxValue(bbox.getWidth ());
-  double h = getHeight().pxValue(bbox.getHeight());
+  double bw = bbox.getWidth ();
+  double bh = bbox.getHeight();
 
-  CPoint2D p1(getX()    , getY());
-  CPoint2D p2(getX() + w, getY() + h);
+  double x = getX     ().pxValue(bw);
+  double y = getY     ().pxValue(bh);
+  double w = getWidth ().pxValue(bw);
+  double h = getHeight().pxValue(bh);
+
+  CPoint2D p1(x    , y);
+  CPoint2D p2(x + w, y + h);
 
   bbox_ = CBBox2D(p1, p2);
 }
@@ -128,8 +132,13 @@ draw()
   if (! getParentViewBox(bbox))
     bbox = CBBox2D(0, 0, 100, 100);
 
-  double w = getWidth ().pxValue(bbox.getWidth ());
-  double h = getHeight().pxValue(bbox.getHeight());
+  double bw = bbox.getWidth ();
+  double bh = bbox.getHeight();
+
+//double x = getX     ().pxValue(bw);
+//double y = getY     ().pxValue(bh);
+  double w = getWidth ().pxValue(bw);
+  double h = getHeight().pxValue(bh);
 
   // skip zero width/height
   if (w <= 0 || h <= 0)
@@ -229,8 +238,19 @@ void
 CSVGRect::
 moveBy(const CVector2D &delta)
 {
-  x_ = getX() + delta.x();
-  y_ = getY() + delta.y();
+  CBBox2D bbox;
+
+  if (! getParentViewBox(bbox))
+    bbox = CBBox2D(0, 0, 100, 100);
+
+  double bw = bbox.getWidth ();
+  double bh = bbox.getHeight();
+
+  double x = getX().pxValue(bw);
+  double y = getY().pxValue(bh);
+
+  x_ = x + delta.x();
+  y_ = y + delta.y();
 
   updateBBox();
 }
@@ -252,16 +272,7 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<rect";
 
-    printNameValue(os, "x", x_);
-    printNameValue(os, "y", y_);
-
-    printNameValue(os, "width" , width_ );
-    printNameValue(os, "height", height_);
-
-    printNameValue(os, "rx", rx_);
-    printNameValue(os, "ry", ry_);
-
-    CSVGObject::printValues(os);
+    printValues(os);
 
     if (hasChildren()) {
       os << ">" << std::endl;
@@ -275,6 +286,22 @@ print(std::ostream &os, bool hier) const
   }
   else
     os << "rect " << bbox_;
+}
+
+void
+CSVGRect::
+printValues(std::ostream &os, bool flat) const
+{
+  printNameValue(os, "x", x_);
+  printNameValue(os, "y", y_);
+
+  printNameValue(os, "width" , width_ );
+  printNameValue(os, "height", height_);
+
+  printNameValue(os, "rx", rx_);
+  printNameValue(os, "ry", ry_);
+
+  CSVGObject::printValues(os, flat);
 }
 
 std::ostream &

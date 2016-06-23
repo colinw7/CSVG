@@ -183,18 +183,7 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<polygon";
 
-    CSVGObject::printValues(os);
-
-    os << " points=\"";
-
-    for (uint i = 0; i < points_.size(); ++i) {
-      if (i > 0)
-        os << " ";
-
-      os << points_[i].x << "," << points_[i].y;
-    }
-
-    os << "\"";
+    printValues(os);
 
     os << "/>" << std::endl;
   }
@@ -208,6 +197,24 @@ print(std::ostream &os, bool hier) const
       os << points_[i];
     }
   }
+}
+
+void
+CSVGPolygon::
+printValues(std::ostream &os, bool flat) const
+{
+  CSVGObject::printValues(os, flat);
+
+  os << " points=\"";
+
+  for (uint i = 0; i < points_.size(); ++i) {
+    if (i > 0)
+      os << " ";
+
+    os << points_[i].x << "," << points_[i].y;
+  }
+
+  os << "\"";
 }
 
 std::ostream &

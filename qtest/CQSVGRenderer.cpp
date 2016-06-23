@@ -1,7 +1,6 @@
 #include <CQSVGRenderer.h>
-#include <CQImageGaussianBlur.h>
+#include <CQSVGImageData.h>
 #include <CQUtil.h>
-#include <CQImage.h>
 #include <CLinearGradient.h>
 #include <CRadialGradient.h>
 
@@ -86,6 +85,8 @@ namespace {
 CQSVGRenderer::
 CQSVGRenderer()
 {
+  imageData_ = new CQSVGImageData;
+
   painter_ = new QPainter;
 
   viewMatrix_.setIdentity();
@@ -106,6 +107,8 @@ CQSVGRenderer()
 CQSVGRenderer::
 ~CQSVGRenderer()
 {
+  delete imageData_;
+
   delete path_;
   delete savePath_;
 }
@@ -121,25 +124,19 @@ void
 CQSVGRenderer::
 setSize(int width, int height)
 {
-  if (width  < 1) width  = 1;
-  if (height < 1) height = 1;
+  assert(! drawing_);
 
-  if (width != qimage_.width() || height != qimage_.height())
-    qimage_ = createImage(width, height);
-  else
-    qimage_.fill(0);
+  imageData_->setSize(width, height);
 
-  //setPixelRange(width, height);
-
-  //range_.setWindowRange(0, 0, width, height);
+  imageData_->clear();
 }
 
 void
 CQSVGRenderer::
 getSize(int *width, int *height) const
 {
-  *width  = qimage_.width ();
-  *height = qimage_.height();
+  *width  = imageData_->getWidth ();
+  *height = imageData_->getHeight();
 }
 
 void
@@ -202,7 +199,9 @@ beginDraw()
 
   painter_->setWorldMatrixEnabled(false);
 
-  painter_->fillRect(qimage_.rect(), QBrush(QColor(0,0,0,0)));
+  QRect irect(0, 0, imageData_->getWidth(), imageData_->getHeight());
+
+  painter_->fillRect(irect, QBrush(QColor(0,0,0,0)));
 
   painter_->setWorldMatrixEnabled(true);
 
@@ -223,7 +222,9 @@ startDraw()
 {
   assert(! drawing_);
 
-  painter_->begin(&qimage_);
+  QImage *qimage = imageData_->lockImage();
+
+  painter_->begin(qimage);
 
   drawing_ = true;
 
@@ -240,6 +241,8 @@ stopDraw()
   assert(drawing_);
 
   painter_->end();
+
+  imageData_->unlockImage();
 
   drawing_ = false;
 }
@@ -263,16 +266,18 @@ CQSVGRenderer::
 clear(const CRGBA &bg)
 {
   if (drawing_) {
+    QRect irect(0, 0, imageData_->getWidth(), imageData_->getHeight());
+
     if (bg.getAlphaI() > 0)
-      painter_->fillRect(qimage_.rect(), QBrush(CQUtil::rgbaToColor(bg)));
+      painter_->fillRect(irect, QBrush(CQUtil::rgbaToColor(bg)));
     else
-      painter_->fillRect(qimage_.rect(), Qt::transparent);
+      painter_->fillRect(irect, Qt::transparent);
   }
   else {
     if (bg.getAlphaI() > 0)
-      qimage_.fill(CQUtil::rgbaToColor(bg).rgb());
+      imageData_->set(bg);
     else
-      qimage_.fill(0);
+      imageData_->clear();
   }
 }
 
@@ -523,7 +528,7 @@ pathBBox(CBBox2D &bbox)
 
 void
 CQSVGRenderer::
-drawImage(const CPoint2D &p, CImagePtr image)
+drawImage(const CPoint2D &p, CSVGImageData *image)
 {
   assert(drawing_);
 
@@ -533,9 +538,7 @@ drawImage(const CPoint2D &p, CImagePtr image)
 
   painter_->setWorldMatrixEnabled(false);
 
-  CQImage *cqimage = image.cast<CQImage>();
-
-  painter_->drawImage(p1, cqimage->getQImage());
+  painter_->drawImage(p1, static_cast<CQSVGImageData *>(image)->qimage());
 
   painter_->setWorldMatrixEnabled(true);
 }
@@ -710,18 +713,14 @@ setFillGradient(CGenGradient *g)
 
 void
 CQSVGRenderer::
-setFillImage(CImagePtr image)
+setFillImage(CSVGImageData *image)
 {
   assert(drawing_);
 
-  if (! image.isValid())
+  if (! image)
     return;
 
-  CQImage *cqimage = image.cast<CQImage>();
-
-  QImage qimage = cqimage->getQImage();
-
-  fillBrush_.setTextureImage(qimage);
+  fillBrush_.setTextureImage(static_cast<CQSVGImageData *>(image)->qimage());
 
   painter_->setBrush(fillBrush_);
 }
@@ -772,18 +771,14 @@ setStrokeFillGradient(CGenGradient *g)
 
 void
 CQSVGRenderer::
-setStrokeFillImage(CImagePtr image)
+setStrokeFillImage(CSVGImageData *image)
 {
   assert(drawing_);
 
-  if (! image.isValid())
+  if (! image)
     return;
 
-  CQImage *cqimage = image.cast<CQImage>();
-
-  QImage qimage = cqimage->getQImage();
-
-  strokeBrush_.setTextureImage(qimage);
+  strokeBrush_.setTextureImage(static_cast<CQSVGImageData *>(image)->qimage());
 
   painter_->setBrush(strokeBrush_);
 }
@@ -827,20 +822,14 @@ CISize2D
 CQSVGRenderer::
 getImageSize() const
 {
-  return CISize2D(qimage_.width(), qimage_.height());
+  return CISize2D(imageData_->getWidth(), imageData_->getHeight());
 }
 
-CImagePtr
+CSVGImageData *
 CQSVGRenderer::
 getImage() const
 {
-  CImagePtr image = CImageMgrInst->createImage();
-
-  CQImage *cqimage = image.cast<CQImage>();
-
-  cqimage->setImage(qimage_);
-
-  return image;
+  return imageData_->dup();
 }
 
 void
@@ -848,29 +837,35 @@ CQSVGRenderer::
 setImage(CSVGRenderer *renderer)
 {
   CQSVGRenderer *qrenderer = dynamic_cast<CQSVGRenderer *>(renderer);
+  assert(qrenderer);
 
-  if (qrenderer)
-    setQImage(qrenderer->qimage_);
-  else
-    setImage(renderer->getImage());
+  imageData_->setQImage(qrenderer->imageData_->qimage());
 }
 
 void
 CQSVGRenderer::
-setImage(CImagePtr image)
+setImage(CSVGImageData *image)
 {
-  CQImage *cqimage = image.cast<CQImage>();
+  CQSVGImageData *imageData = dynamic_cast<CQSVGImageData *>(image);
+  assert(imageData);
 
-  setQImage(cqimage);
+  setQImage(imageData->qimage());
 }
 
 void
 CQSVGRenderer::
-addImage(int x, int y, CImagePtr image)
+addImage(int x, int y, CSVGImageData *image)
 {
-  CQImage *cqimage = image.cast<CQImage>();
+  CQSVGImageData *imageData = dynamic_cast<CQSVGImageData *>(image);
+  assert(imageData);
 
-  combineImage(qimage_, x, y, cqimage->getQImage());
+  QImage *qimage = imageData_->lockImage();
+
+  QImage qimage1 = imageData->qimage();
+
+  combineImage(*qimage, x, y, qimage1);
+
+  imageData_->unlockImage();
 }
 
 void
@@ -888,13 +883,13 @@ combine(int ix, int iy, CSVGRenderer *r)
   int w = std::max(iwidth1 , ix + iwidth2 );
   int h = std::max(iheight1, iy + iheight2);
 
-  QImage image2 = qr->getQImage();
+  QImage image2 = qr->qimage();
 
   if (qr->opacity() < 1)
     image2 = opacityImage(image2, qr->opacity());
 
   if (w > iwidth1 || h > iheight1) {
-    QImage image1 = getQImage();
+    QImage image1 = imageData_->qimage();
     QImage image3 = createImage(w, h);
 
     image3.fill(0);
@@ -905,28 +900,40 @@ combine(int ix, int iy, CSVGRenderer *r)
     setQImage(image3);
   }
   else {
-    combineImage(qimage_, ix, iy, image2);
+    QImage *qimage = imageData_->lockImage();
+
+    combineImage(*qimage, ix, iy, image2);
+
+    imageData_->unlockImage();
   }
 }
 
 void
 CQSVGRenderer::
-combineImage(QImage &image1, int x, int y, QImage &image2)
+combineImage(QImage &image1, int x, int y, const QImage &image2)
 {
+  // combine image2 into image1 at (x, y)
+
   CRGBA rgba1, rgba2;
 
-  int w = std::min(image1.width (), image2.width ());
-  int h = std::min(image1.height(), image2.height());
+  int w1 = image1.width ();
+  int h1 = image1.height();
+
+  int w2 = image2.width ();
+  int h2 = image2.height();
+
+  int w = std::min(w1, w2);
+  int h = std::min(h1, h2);
 
   for (int y1 = 0; y1 < h; ++y1) {
     int y2 = y1 + y;
 
-    if (y2 < 0) continue;
+    if (y2 < 0 || y2 >= h1) continue;
 
     for (int x1 = 0; x1 < w; ++x1) {
       int x2 = x1 + x;
 
-      if (x2 < 0) continue;
+      if (x2 < 0 || x2 >= w1) continue;
 
       CRGBA rgba1 = getPixel(image2, x1, y1);
 
@@ -957,13 +964,18 @@ addResizedImage(CSVGRenderer *src, double x, double y, double w, double h)
 
   lengthToPixel(CPoint2D(w, h), p);
 
-  QImage qimage2 =
-    qsrc->qimage_.scaled(QSize(p.x, p.y), Qt::IgnoreAspectRatio, Qt::FastTransformation);
+  QImage qimage1 = qsrc->imageData_->qimage();
+
+  QImage qimage2 = qimage1.scaled(QSize(p.x, p.y), Qt::IgnoreAspectRatio, Qt::FastTransformation);
 
   windowToPixel(CPoint2D(x, y), p);
 
   // TODO: handle out of bounds
-  combineImage(qimage_, p.x, p.y, qimage2);
+  QImage *qimage = imageData_->lockImage();
+
+  combineImage(*qimage, p.x, p.y, qimage2);
+
+  imageData_->unlockImage();
 }
 
 void
@@ -973,11 +985,15 @@ addClippedImage(CSVGRenderer *src, int x, int y, int px1, int py1, int px2, int 
   CQSVGRenderer *qsrc = dynamic_cast<CQSVGRenderer *>(src);
   assert(qsrc);
 
-  QImage qimage = qsrc->getQImage();
+  QImage qimage1 = qsrc->qimage();
 
-  clipOutside(qimage, px1, py1, px2, py2);
+  clipOutside(qimage1, px1, py1, px2, py2);
 
-  combineImage(qimage_, x - px1, y - py1, qimage);
+  QImage *qimage = imageData_->lockImage();
+
+  combineImage(*qimage, x - px1, y - py1, qimage1);
+
+  imageData_->unlockImage();
 }
 
 void
@@ -987,11 +1003,11 @@ setClippedImage(CSVGRenderer *src, int px1, int py1, int px2, int py2)
   CQSVGRenderer *qsrc = dynamic_cast<CQSVGRenderer *>(src);
   assert(qsrc);
 
-  QImage qimage = qsrc->getQImage();
+  QImage qimage1 = qsrc->qimage();
 
-  clipOutside(qimage, px1, py1, px2, py2);
+  clipOutside(qimage1, px1, py1, px2, py2);
 
-  qimage_ = qimage;
+  imageData_->setQImage(qimage1);
 }
 
 void
@@ -1001,7 +1017,7 @@ setOffsetImage(CSVGRenderer *src, int dx, int dy)
   CQSVGRenderer *qsrc = dynamic_cast<CQSVGRenderer *>(src);
   assert(qsrc);
 
-  QImage src_image = qsrc->getQImage();
+  QImage src_image = qsrc->qimage();
 
   int w = src_image.width () + dx;
   int h = src_image.height() + dy;
@@ -1012,38 +1028,7 @@ setOffsetImage(CSVGRenderer *src, int dx, int dy)
 
   painter.drawImage(QPoint(dx, dy), src_image);
 
-  qimage_ = dst_image;
-}
-
-void
-CQSVGRenderer::
-gaussianBlur(CSVGRenderer *dst, CBBox2D &bbox, double stdDevX, double stdDevY)
-{
-  CQSVGRenderer *qdst = dynamic_cast<CQSVGRenderer *>(dst);
-  assert(qdst);
-
-  QImage src_image = qimage_;
-
-  if (isAlpha())
-    src_image = alphaImage(src_image, 0);
-
-  CQImageGaussianBlur blur(src_image);
-
-  if (bbox.isSet())
-    blur.setWindow(bbox.getXMin(), bbox.getYMin(), bbox.getXMax(), bbox.getYMax());
-
-  QImage dst_image;
-
-  blur.blur(dst_image, stdDevX, stdDevY);
-
-  qdst->setQImage(dst_image);
-}
-
-void
-CQSVGRenderer::
-setQImage(CQImage *cqimage)
-{
-  setQImage(cqimage->getQImage());
+  imageData_->setQImage(dst_image);
 }
 
 void
@@ -1054,13 +1039,15 @@ setQImage(const QImage &qimage)
   if (! drawing_) {
     setSize(qimage.width(), qimage.height());
 
-    qimage_ = qimage;
+    imageData_->setQImage(qimage);
   }
   else {
     if (painter_->worldMatrixEnabled()) {
       painter_->setWorldMatrixEnabled(false);
 
-      painter_->fillRect(qimage_.rect(), Qt::transparent);
+      QRect irect(0, 0, imageData_->getWidth(), imageData_->getHeight());
+
+      painter_->fillRect(irect, Qt::transparent);
 
       painter_->drawImage(QPointF(0,0), qimage);
 
@@ -1071,11 +1058,11 @@ setQImage(const QImage &qimage)
   }
 }
 
-QImage
+const QImage &
 CQSVGRenderer::
-getQImage() const
+qimage() const
 {
-  return qimage_;
+  return imageData_->qimage();
 }
 
 void
@@ -1084,7 +1071,9 @@ paint(QPainter *painter)
 {
   painter->setWorldMatrixEnabled(false);
 
-  painter->drawImage(QPointF(0,0), qimage_);
+  QImage qimage = imageData_->qimage();
+
+  painter->drawImage(QPointF(0,0), qimage);
 
   painter->setWorldMatrixEnabled(true);
 }

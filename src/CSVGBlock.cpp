@@ -436,14 +436,7 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<svg";
 
-    CSVGObject::printValues(os);
-
-    printNameValue (os, "x"     , x_     );
-    printNameValue (os, "y"     , y_     );
-    printNameLength(os, "width" , width_ );
-    printNameLength(os, "height", height_);
-
-    printNamePreserveAspect(os, "preserveAspectRatio", preserveAspect_);
+    printValues(os);
 
     os << ">" << std::endl;
 
@@ -453,6 +446,20 @@ print(std::ostream &os, bool hier) const
   }
   else
     os << "svg " << getWidth() << " " << getHeight();
+}
+
+void
+CSVGBlock::
+printValues(std::ostream &os, bool /*flat*/) const
+{
+  CSVGObject::printValues(os);
+
+  printNameValue (os, "x"     , x_     );
+  printNameValue (os, "y"     , y_     );
+  printNameLength(os, "width" , width_ );
+  printNameLength(os, "height", height_);
+
+  printNamePreserveAspect(os, "preserveAspectRatio", preserveAspect_);
 }
 
 std::ostream &

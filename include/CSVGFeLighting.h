@@ -39,7 +39,7 @@ class CSVGFeLighting : public CSVGFilterBase {
   double getSurfaceScale() const { return surfaceScale_.getValue(1); }
   void setSurfaceScale(double r) { surfaceScale_ = r; }
 
-  void filterImage(CSVGBuffer *inBuffer, CSVGBuffer *outBuffer);
+  void filterImage(CSVGBuffer *inBuffer, const CBBox2D &bbox, CSVGBuffer *outBuffer);
 
  protected:
   COptString          filterIn_;

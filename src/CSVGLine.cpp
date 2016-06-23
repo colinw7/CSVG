@@ -191,17 +191,24 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<line";
 
-    CSVGObject::printValues(os);
-
-    printNameLength(os, "x1", x1_);
-    printNameLength(os, "y1", y1_);
-    printNameLength(os, "x2", x2_);
-    printNameLength(os, "y2", y2_);
+    printValues(os);
 
     os << "/>" << std::endl;
   }
   else
     os << "line " << getStart() << " " << getEnd();
+}
+
+void
+CSVGLine::
+printValues(std::ostream &os, bool flat) const
+{
+  CSVGObject::printValues(os, flat);
+
+  printNameLength(os, "x1", x1_);
+  printNameLength(os, "y1", y1_);
+  printNameLength(os, "x2", x2_);
+  printNameLength(os, "y2", y2_);
 }
 
 std::ostream &

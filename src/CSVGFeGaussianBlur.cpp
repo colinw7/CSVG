@@ -67,15 +67,23 @@ processOption(const std::string &opt_name, const std::string &opt_value)
 
 bool
 CSVGFeGaussianBlur::
-draw()
+drawElement()
 {
   CSVGBuffer *inBuffer  = svg_.getBuffer(getFilterIn ());
   CSVGBuffer *outBuffer = svg_.getBuffer(getFilterOut());
 
   bool inDrawing = inBuffer->isDrawing();
 
-  if (inDrawing)
-    inBuffer->stopDraw();
+  if (inDrawing) inBuffer->stopDraw();
+
+  //---
+
+  // get filtered object coords
+  CBBox2D inBBox;
+
+  getBufferSubRegion(inBuffer, inBBox);
+
+  //---
 
   if (svg_.getDebugFilter()) {
     std::string objectBufferName = "_" + getUniqueName();
@@ -83,9 +91,16 @@ draw()
     CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_in");
 
     buffer->setImageBuffer(inBuffer);
+    buffer->setBBox       (inBBox);
   }
 
-  CSVGBuffer::gaussianBlurBuffers(inBuffer, getStdDevX(), getStdDevY(), outBuffer);
+  //---
+
+  CSVGBuffer::gaussianBlurBuffers(inBuffer, inBBox, getStdDevX(), getStdDevY(), outBuffer);
+
+  outBuffer->setBBox(inBBox);
+
+  //---
 
   if (svg_.getDebugFilter()) {
     std::string objectBufferName = "_" + getUniqueName();
@@ -93,10 +108,12 @@ draw()
     CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_out");
 
     buffer->setImageBuffer(outBuffer);
+    buffer->setBBox       (inBBox);
   }
 
-  if (inDrawing)
-    inBuffer->startDraw();
+  //---
+
+  if (inDrawing) inBuffer->startDraw();
 
   return true;
 }

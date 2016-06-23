@@ -93,15 +93,22 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<animateColor";
 
-    CSVGAnimateBase::printValues(os);
-
-    printNameValue(os, "type"    , type_    );
-    printNameValue(os, "additive", additive_);
+    printValues(os);
 
     os << "/>" << std::endl;
   }
   else
     os << "animateColor ";
+}
+
+void
+CSVGAnimateColor::
+printValues(std::ostream &os, bool flat) const
+{
+  CSVGAnimateBase::printValues(os, flat);
+
+  printNameValue(os, "type"    , type_    );
+  printNameValue(os, "additive", additive_);
 }
 
 std::ostream &

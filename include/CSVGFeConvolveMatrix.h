@@ -38,18 +38,18 @@ class CSVGFeConvolveMatrix : public CSVGFilterBase {
   double getTargetY() const { return targetY_.getValue(0); }
   void setTargetY(double r) { targetY_ = r; }
 
-  std::string edgeMode() const { return edgeMode_.getValue("duplicate"); }
+  std::string getEdgeMode() const { return edgeMode_.getValue("duplicate"); }
   void setEdgeMode(const std::string &s) { edgeMode_ = s; }
 
-  std::string kernelUnitLength() const { return kernelUnitLength_.getValue("1"); }
+  std::string getKernelUnitLength() const { return kernelUnitLength_.getValue("1"); }
   void setKernelUnitLength(const std::string &s) { kernelUnitLength_ = s; }
 
-  std::string preserveAlpha() const { return preserveAlpha_.getValue("false"); }
+  std::string getPreserveAlpha() const { return preserveAlpha_.getValue("false"); }
   void setPreserveAlpha(const std::string &s) { preserveAlpha_ = s; }
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  bool draw() override;
+  bool drawElement() override;
 
   void print(std::ostream &os, bool hier) const override;
 

@@ -13,7 +13,6 @@
 #include <CSVGColor.h>
 
 #include <CCSS.h>
-#include <CImageLib.h>
 #include <CFont.h>
 #include <CScreenUnits.h>
 #include <CMatrixStack2D.h>
@@ -22,6 +21,8 @@
 #include <CAutoPtr.h>
 #include <CGenGradient.h>
 #include <CFont.h>
+#include <CFile.h>
+#include <CStrUtil.h>
 
 class CSVGPathPart;
 class CSVGPathPartList;
@@ -95,6 +96,7 @@ class CSVGUse;
 class CSVGGlyph;
 class CSVGObjectMarker;
 class CSVGBufferMgr;
+class CSVGImageData;
 
 class CStrParse;
 class CConfig;
@@ -119,14 +121,14 @@ class CSVG {
 
   const CSVGBlockData &rootBlockData() { return rootBlockData_; }
 
-  const CPoint2D &blockOffset() const { return rootBlockData_.offset(); }
-  void setBlockOffset(const CPoint2D &o) { rootBlockData_.setOffset(o); }
+  const CPoint2D &rootBlockOffset() const { return rootBlockData_.offset(); }
+  void setRootBlockOffset(const CPoint2D &o) { rootBlockData_.setOffset(o); }
 
-  double blockXScale() const { return rootBlockData_.xscale(); }
-  void setBlockXScale(double s) { rootBlockData_.setXScale(s); }
+  double rootBlockXScale() const { return rootBlockData_.xscale(); }
+  void setRootBlockXScale(double s) { rootBlockData_.setXScale(s); }
 
-  double blockYScale() const { return rootBlockData_.yscale(); }
-  void setBlockYScale(double s) { rootBlockData_.setYScale(s); }
+  double rootBlockYScale() const { return rootBlockData_.yscale(); }
+  void setRootBlockYScale(double s) { rootBlockData_.setYScale(s); }
 
   const CSVGPreserveAspect &blockPreserveAspect() const { return rootBlockData_.preserveAspect(); }
   void setBlockPreserveAspect(const CSVGPreserveAspect &a) { rootBlockData_.setPreserveAspect(a); }
@@ -149,14 +151,20 @@ class CSVG {
 
   //---
 
-  double flatXScale() const { return blockXScale()*xscale(); }
-  double flatYScale() const { return blockYScale()*yscale(); }
+  CPoint2D flatOffset() const;
+
+  double flatXScale() const;
+  double flatYScale() const;
 
   //---
 
   virtual CSVGRenderer *createRenderer();
 
   CSVGBlock *getRoot() const;
+
+  //---
+
+  virtual void updateBusy() { }
 
   //---
 
@@ -186,7 +194,7 @@ class CSVG {
 
   void setPaintBox(const CBBox2D &bbox);
 
-  void setPaintColors(const CSVGColor &fillColor, const CSVGColor &strokeColor);
+  void setPaintStyle(const CSVGFill &fill, const CSVGStroke &stroke);
 
   //---
 
@@ -299,6 +307,8 @@ class CSVG {
   virtual CSVGUse                 *createUse();
 
   virtual CSVGBuffer *createBuffer(const std::string &name);
+
+  virtual CSVGImageData *createImageData();
 
   virtual CSVGPathMoveTo   *createPathMoveTo  (double x, double y);
   virtual CSVGPathRMoveTo  *createPathRMoveTo (double x, double y);
@@ -501,9 +511,12 @@ class CSVG {
   bool decodePreserveAspectRatio(const std::string &str, CHAlignType *halign,
                                  CVAlignType *valign, CSVGScale *scale);
 
-  double     decodeWidthString(const std::string &width_str);
-  double     decodeOpacityString(const std::string &opacity_str);
-  CFillType  decodeFillRuleString(const std::string &rule_str);
+  double decodeWidthString(const std::string &width_str);
+  double decodeOpacityString(const std::string &opacity_str);
+
+  CFillType   decodeFillRuleString(const std::string &rule_str) const;
+  std::string encodeFillRuleString(CFillType rule) const;
+
   bool       decodeDashString(const std::string &dash_str,
                               std::vector<CScreenUnits> &lengths, bool &solid);
   bool       decodeColorString(const std::string &color_str, CSVGColor &color);
@@ -550,13 +563,22 @@ class CSVG {
   CSVGStyleData &getClassStyleData    (const std::string &objClass);
   CSVGStyleData &getTypeClassStyleData(const std::string &objType, const std::string &objClass);
 
-  bool getStyleStrokeColor  (const CSVGObject *obj, CSVGColor &color, CSVGCSSType &type);
-  bool getStyleStrokeOpacity(const CSVGObject *obj, double &opacity);
-  bool getStyleStrokeWidth  (const CSVGObject *obj, double &width);
-  bool getStyleStrokeDash   (const CSVGObject *obj, CSVGStrokeDash &dash);
+  bool getStyleStrokeColor     (const CSVGObject *obj, CSVGColor &color, CSVGCSSType &type);
+  bool getStyleStrokeOpacity   (const CSVGObject *obj, double &opacity, CSVGCSSType &type);
+  bool getStyleStrokeRule      (const CSVGObject *obj, CFillType &rule, CSVGCSSType &type);
+  bool getStyleStrokeUrl       (const CSVGObject *obj, std::string &url, CSVGCSSType &type);
+  bool getStyleStrokeFillObject(const CSVGObject *obj, CSVGObject* &object, CSVGCSSType &type);
+  bool getStyleStrokeWidth     (const CSVGObject *obj, double &width, CSVGCSSType &type);
+  bool getStyleStrokeDash      (const CSVGObject *obj, CSVGStrokeDash &dash, CSVGCSSType &type);
+  bool getStyleStrokeCap       (const CSVGObject *obj, CLineCapType &cap, CSVGCSSType &type);
+  bool getStyleStrokeJoin      (const CSVGObject *obj, CLineJoinType &join, CSVGCSSType &type);
+  bool getStyleStrokeMitreLimit(const CSVGObject *obj, double &limit, CSVGCSSType &type);
 
-  bool getStyleFillColor  (const CSVGObject *obj, CSVGColor &color, CSVGCSSType &type);
-  bool getStyleFillOpacity(const CSVGObject *obj, double &opacity);
+  bool getStyleFillColor     (const CSVGObject *obj, CSVGColor &color, CSVGCSSType &type);
+  bool getStyleFillOpacity   (const CSVGObject *obj, double &opacity, CSVGCSSType &type);
+  bool getStyleFillRule      (const CSVGObject *obj, CFillType &rule, CSVGCSSType &type);
+  bool getStyleFillUrl       (const CSVGObject *obj, std::string &url, CSVGCSSType &type);
+  bool getStyleFillFillObject(const CSVGObject *obj, CSVGObject* &object, CSVGCSSType &type);
 
   bool getStyleMarkerStart(const CSVGObject *obj, CSVGObject* &marker, CSVGCSSType &type);
   bool getStyleMarkerMid  (const CSVGObject *obj, CSVGObject* &marker, CSVGCSSType &type);
@@ -569,6 +591,8 @@ class CSVG {
   void sendEvent(CSVGEventType type, const std::string &id="", const std::string &data="");
 
   void print(std::ostream &os, bool hier=false) const;
+
+  void printFlat(std::ostream &os) const;
 
  private:
   CConfig *getConfig();

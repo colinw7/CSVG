@@ -11,13 +11,13 @@ class CSVGFilterBase : public CSVGObject {
 
   std::string getUniqueName() const;
 
-  CSVGCoordUnits getUnits() const {
-    return units_.getValue(CSVGCoordUnits::USER_SPACE); }
-  void setUnits(CSVGCoordUnits units) { units_ = units; }
+  CSVGCoordUnits getFilterUnits() const {
+    return filterUnits_.getValue(CSVGCoordUnits::USER_SPACE); }
+  void setFilterUnits(const CSVGCoordUnits &units) { filterUnits_ = units; }
 
   CSVGCoordUnits getPrimitiveUnits() const {
     return primitiveUnits_.getValue(CSVGCoordUnits::USER_SPACE); }
-  void setPrimitiveUnits(CSVGCoordUnits units) { primitiveUnits_ = units; }
+  void setPrimitiveUnits(const CSVGCoordUnits &units) { primitiveUnits_ = units; }
 
   bool hasX() const { return x_.isValid(); }
   CScreenUnits getX(double w=100) const { return x_.getValue(CScreenUnits(w)); }
@@ -53,19 +53,31 @@ class CSVGFilterBase : public CSVGObject {
   std::string calcFilterIn (const COptString &filterIn ) const;
   std::string calcFilterOut(const COptString &filterOut) const;
 
-  bool getParentBBox(CBBox2D &bbox) const;
+  bool getFilterObjectBBox(CBBox2D &bbox) const;
 
-  bool getTransformedParentBBox(CBBox2D &bbox) const;
+  bool getFilterRegion(CBBox2D &bbox) const;
+
+  bool getBufferSubRegion(CSVGBuffer *inBuffer, CBBox2D &bbox) const;
+
+  virtual bool getSubRegion(CBBox2D &bbox) const;
+
+  bool getBBoxSubRegion(const CBBox2D &inBBox, const CBBox2D &objectBBox, CBBox2D &bbox) const;
 
   CSVGObject *getParentFilterObject() const;
 
   CSVGFilter *getParentFilter() const;
 
-  void printValues(std::ostream &os) const;
+  bool draw() override;
+
+  bool getBBox(CBBox2D &bbox) const override;
+
+  virtual bool drawElement() = 0;
+
+  void printValues(std::ostream &os, bool flat=false) const override;
 
  protected:
   CSVGObject*              object_ { 0 };
-  COptValT<CSVGCoordUnits> units_;
+  COptValT<CSVGCoordUnits> filterUnits_;
   COptValT<CSVGCoordUnits> primitiveUnits_;
   COptValT<CScreenUnits>   x_;
   COptValT<CScreenUnits>   y_;

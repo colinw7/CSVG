@@ -31,6 +31,7 @@
 #include <CQSVGFilter.h>
 #include <CQSVGGroup.h>
 #include <CQSVGImage.h>
+#include <CQSVGImageData.h>
 #include <CQSVGLine.h>
 #include <CQSVGLinearGradient.h>
 #include <CQSVGMarker.h>
@@ -88,6 +89,13 @@ CQSVG::
 setCheckerboard(bool b)
 {
   checkerboard_ = b;
+}
+
+void
+CQSVG::
+updateBusy()
+{
+  window_->updateBusy();
 }
 
 CSVGBlock *
@@ -445,6 +453,15 @@ CQSVG::
 createUse()
 {
   return new CQSVGUse(this);
+}
+
+//------
+
+CSVGImageData *
+CQSVG::
+createImageData()
+{
+  return new CQSVGImageData;
 }
 
 //------

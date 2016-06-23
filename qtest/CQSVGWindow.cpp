@@ -52,6 +52,7 @@
 #include <CQSVGTitle.h>
 #include <CQSVGTSpan.h>
 #include <CQSVGUse.h>
+#include <CSVGImageData.h>
 
 #include <CQSVGPathPart.h>
 #include <CQSVGRenderer.h>
@@ -71,6 +72,8 @@
 #include <QMenuBar>
 #include <QMenu>
 #include <QToolBar>
+#include <QToolButton>
+#include <QTimer>
 
 #include <svg/next_svg.h>
 #include <svg/prev_svg.h>
@@ -80,6 +83,8 @@
 #include <svg/pause_svg.h>
 #include <svg/play_one_svg.h>
 #include <svg/rewind_one_svg.h>
+#include <svg/busy_svg.h>
+#include <svg/ready_svg.h>
 
 int
 main(int argc, char **argv)
@@ -141,12 +146,16 @@ main(int argc, char **argv)
   for (const auto &file : files)
     window->addFile(file);
 
-  window->loadFile();
+  if (image || print) {
+    window->loadFile();
 
-  if (image || print)
     exit(0);
+  }
+  else {
+    window->show();
 
-  window->show();
+    QTimer::singleShot(100, window, SLOT(loadFile()));
+  }
 
   app.exec();
 
@@ -299,6 +308,12 @@ CQSVGWindow() :
 
   statusBar()->addPermanentWidget(zoomLabel_);
 
+  busyButton_ = new QToolButton;
+
+  busyButton_->setIcon(CQPixmapCacheInst->getIcon("READY"));
+
+  statusBar()->addPermanentWidget(busyButton_);
+
   showPos(QPoint(0, 0), QPointF(0, 0));
 
   //---
@@ -381,6 +396,11 @@ void
 CQSVGWindow::
 loadFile()
 {
+  if (! isInitialized())
+    setInitialized(true);
+
+  //---
+
   if (ind_ < 0)
     ind_ = 0;
 
@@ -406,7 +426,11 @@ loadFile()
 
     svg_->setRenderer(renderer);
 
+    //---
+
     svg_->draw();
+
+    //---
 
     CFile file(filename);
 
@@ -1197,6 +1221,41 @@ CQSVGWindow::
 setTime(double t)
 {
   timeEdit_->setText(QString("%1").arg(t));
+}
+
+void
+CQSVGWindow::
+startBusy()
+{
+  startTime_ = CHRTimerMgr::getHRTime();
+
+  busyButton_->setIcon(CQPixmapCacheInst->getIcon("BUSY"));
+}
+
+void
+CQSVGWindow::
+endBusy()
+{
+  endTime_ = CHRTimerMgr::getHRTime();
+
+  busyButton_->setIcon(CQPixmapCacheInst->getIcon("READY"));
+
+  CHRTime dtime = CHRTimerMgr::diffHRTime(startTime_, endTime_);
+
+  std::stringstream sstr;
+
+  sstr << dtime;
+
+  busyButton_->setToolTip(QString("Draw Time: %1").arg(sstr.str().c_str()));
+}
+
+void
+CQSVGWindow::
+updateBusy()
+{
+  busyButton_->update();
+
+  qApp->processEvents();
 }
 
 QSize

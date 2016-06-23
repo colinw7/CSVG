@@ -1,12 +1,14 @@
 #include <CSVGLib.h>
 #include <CSVGImageRenderer.h>
 #include <CSVGLogRenderer.h>
+#include <CImageLib.h>
 
 int
 main(int argc, char **argv)
 {
   bool debug  = false;
   bool print  = false;
+  bool flat   = false;
   bool log    = false;
   bool colors = false;
 
@@ -18,6 +20,8 @@ main(int argc, char **argv)
         debug = true;
       else if (strcmp(&argv[i][1], "print") == 0)
         print = true;
+      else if (strcmp(&argv[i][1], "flat") == 0)
+        flat = true;
       else if (strcmp(&argv[i][1], "log") == 0)
         log = true;
       else if (strcmp(&argv[i][1], "colors") == 0)
@@ -54,6 +58,9 @@ main(int argc, char **argv)
 
     if      (print) {
       svg.print(std::cout, true);
+    }
+    else if (flat) {
+      svg.printFlat(std::cout);
     }
     else if (log) {
       CSVGLogRenderer lrenderer;

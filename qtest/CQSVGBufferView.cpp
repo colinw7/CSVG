@@ -149,7 +149,7 @@ bufferImage() const
   CQSVGRenderer *renderer = dynamic_cast<CQSVGRenderer *>(buffer->getRenderer());
   if (! renderer) return QImage();
 
-  return renderer->getQImage();
+  return renderer->qimage();
 }
 
 CBBox2D
@@ -204,12 +204,9 @@ paintEvent(QPaintEvent *)
   else
     painter.fillRect(rect(), Qt::white);
 
-//CImagePtr image  = view_->bufferImage ();
   QImage    image  = view_->bufferImage ();
   CPoint2D  origin = view_->bufferOrigin();
 
-//if (image.isValid())
-//  painter.drawImage(QPointF(origin.x, origin.y), image.cast<CQImage>()->getQImage());
   if (! image.isNull())
     painter.drawImage(QPointF(origin.x, origin.y), image);
 

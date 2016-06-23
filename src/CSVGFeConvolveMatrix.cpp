@@ -65,9 +65,22 @@ processOption(const std::string &opt_name, const std::string &opt_value)
 
 bool
 CSVGFeConvolveMatrix::
-draw()
+drawElement()
 {
   CSVGBuffer *inBuffer = svg_.getBuffer(getFilterIn());
+
+  bool inDrawing = inBuffer->isDrawing();
+
+  if (inDrawing) inBuffer->stopDraw();
+
+  //---
+
+  // get filtered object coords
+  CBBox2D bbox;
+
+  getBufferSubRegion(inBuffer, bbox);
+
+  //---
 
   if (svg_.getDebugFilter()) {
     std::string objectBufferName = "_" + getUniqueName();
@@ -75,27 +88,36 @@ draw()
     CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_in1");
 
     buffer->setImageBuffer(inBuffer);
+    buffer->setBBox       (bbox);
   }
 
-  // TODO: handle divisor, bias, targetX, targetY, edgeMode, kernelUnitLength, preserveAlpha,
+  //---
 
-  double xorder = 3;
-  double yorder = 3;
+  CSVGConvolveData convolveData;
 
   if (order_.isValid()) {
     if      (order_.getValue().size() > 1) {
-      xorder = order_.getValue()[0];
-      yorder = order_.getValue()[1];
+      convolveData.xorder = order_.getValue()[0];
+      convolveData.yorder = order_.getValue()[1];
     }
     else if (order_.getValue().size() > 0) {
-      xorder = order_.getValue()[0];
-      yorder = xorder;
+      convolveData.xorder = order_.getValue()[0];
+      convolveData.yorder = convolveData.xorder;
     }
   }
 
-  bool preserveAlpha = (this->preserveAlpha() == "true");
+  convolveData.kernelMatrix     = getKernelMatrix();
+  convolveData.divisor          = getDivisor();
+  convolveData.bias             = getBias();
+  convolveData.targetX          = getTargetX();
+  convolveData.targetY          = getTargetY();
+  convolveData.edgeMode         = getEdgeMode();
+  convolveData.kernelUnitLength = getKernelUnitLength();
+  convolveData.preserveAlpha    = (getPreserveAlpha() == "true");
 
-  CSVGBuffer::convolveMatrixBuffers(inBuffer, xorder, yorder, getKernelMatrix(), preserveAlpha);
+  CSVGBuffer::convolveMatrixBuffers(inBuffer, bbox, convolveData);
+
+  //---
 
   if (svg_.getDebugFilter()) {
     std::string objectBufferName = "_" + getUniqueName();
@@ -103,7 +125,12 @@ draw()
     CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_out");
 
     buffer->setImageBuffer(inBuffer);
+    buffer->setBBox       (bbox);
   }
+
+  //---
+
+  if (inDrawing) inBuffer->startDraw();
 
   return true;
 }

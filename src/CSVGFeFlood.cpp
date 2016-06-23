@@ -64,33 +64,23 @@ processOption(const std::string &opt_name, const std::string &opt_value)
 
 bool
 CSVGFeFlood::
-draw()
+drawElement()
 {
   CSVGBuffer *outBuffer = svg_.getBuffer(getFilterOut());
 
   //---
 
-  // get filtered object coords
-  double x1 = 0, y1 = 0, x2 = 100, y2 = 100;
+  CBBox2D bbox;
 
   CSVGFilter *filter = getParentFilter();
 
-  if (filter) {
-    CBBox2D bbox;
-
-    filter->getObject()->getBBox(bbox);
-
-    if (! bbox.isSet()) {
-      double x = getX     ().pxValue(0);
-      double y = getY     ().pxValue(0);
-      double w = getWidth ().pxValue(100);
-      double h = getHeight().pxValue(100);
-
-      bbox = CBBox2D(x, y, x + w, y + h);
-    }
-
-    svg_.windowToPixel(bbox.getXMin(), bbox.getYMin(), &x1, &y1);
-    svg_.windowToPixel(bbox.getXMax(), bbox.getYMax(), &x2, &y2);
+  if (filter && filter->lastElement()) {
+    filter->lastElement()->getSubRegion(bbox);
+    //std::cerr << "flood last sub region: " << bbox << std::endl;
+  }
+  else {
+    getSubRegion(bbox);
+    //std::cerr << "flood element sub region: " << bbox << std::endl;
   }
 
   //---
@@ -103,9 +93,9 @@ draw()
   if (opacity_.isValid())
     c.setAlpha(opacity_.getValue());
 
-  CSVGBuffer::floodBuffers(c, x1, y1, x2 - x1, y2 - y1, outBuffer);
+  CSVGBuffer::floodBuffers(c, bbox, outBuffer);
 
-  outBuffer->setBBox(CBBox2D(x1, y1, x2, y2));
+  outBuffer->setBBox(bbox);
 
   //---
 
@@ -115,6 +105,7 @@ draw()
     CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_out");
 
     buffer->setImageBuffer(outBuffer);
+    buffer->setBBox       (bbox);
   }
 
   return true;

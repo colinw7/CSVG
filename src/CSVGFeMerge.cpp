@@ -58,27 +58,13 @@ processOption(const std::string &opt_name, const std::string &opt_value)
 
 bool
 CSVGFeMerge::
-draw()
+drawElement()
 {
   CSVGBuffer *outBuffer = svg_.getBuffer(getFilterOut());
 
-  filterImage(outBuffer);
+  //---
 
-  if (svg_.getDebugFilter()) {
-    std::string objectBufferName = "_" + getUniqueName();
-
-    CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_out");
-
-    buffer->setImageBuffer(outBuffer);
-  }
-
-  return true;
-}
-
-void
-CSVGFeMerge::
-filterImage(CSVGBuffer *outBuffer)
-{
+  // get merge nodes
   std::vector<CSVGObject *> objects;
 
   getChildrenOfType(CSVGObjTypeId::FE_MERGE_NODE, objects);
@@ -108,7 +94,20 @@ filterImage(CSVGBuffer *outBuffer)
 
   //---
 
+  // merge buffers
   CSVGBuffer::mergeBuffers(nodes, w, h, outBuffer);
+
+  //---
+
+  if (svg_.getDebugFilter()) {
+    std::string objectBufferName = "_" + getUniqueName();
+
+    CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_out");
+
+    buffer->setImageBuffer(outBuffer);
+  }
+
+  return true;
 }
 
 void

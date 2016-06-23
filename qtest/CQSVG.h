@@ -42,6 +42,8 @@ class CQSVG : public QObject, public CSVG {
   bool isShowFilterBox() const { return showFilterBox_; }
   void setShowFilterBox(bool b) { showFilterBox_ = b; }
 
+  void updateBusy();
+
   //---
 
   CSVGBlock              *createBlock() override;
@@ -95,6 +97,8 @@ class CQSVG : public QObject, public CSVG {
   CSVGTitle              *createTitle() override;
   CSVGTSpan              *createTSpan() override;
   CSVGUse                *createUse() override;
+
+  CSVGImageData *createImageData() override;
 
   CSVGPathMoveTo   *createPathMoveTo  (double x, double y) override;
   CSVGPathRMoveTo  *createPathRMoveTo (double x, double y) override;

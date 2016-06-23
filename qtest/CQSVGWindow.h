@@ -2,6 +2,7 @@
 #define CQSVGMain_H
 
 #include <QMainWindow>
+#include <CHRTimer.h>
 
 class CQSVG;
 class CQSVGCanvas;
@@ -10,6 +11,7 @@ class CQSVGBufferView;
 class CQPropertyTree;
 class CSVGObject;
 class QLabel;
+class QToolButton;
 class QLineEdit;
 
 class CQSVGWindow : public QMainWindow {
@@ -35,13 +37,19 @@ class CQSVGWindow : public QMainWindow {
 
   void addFile(const std::string &filename);
 
-  void loadFile();
-
   void showPos(const QPoint &ppos, const QPointF &wpos);
 
   void setTime(double t);
 
   void deselectAllObjects();
+
+  bool isInitialized() const { return initialized_; }
+  void setInitialized(bool b) { initialized_ = b; }
+
+  void startBusy();
+  void endBusy();
+
+  void updateBusy();
 
   QSize sizeHint() const;
 
@@ -58,6 +66,8 @@ class CQSVGWindow : public QMainWindow {
 
  public slots:
   void redraw();
+
+  void loadFile();
 
  private slots:
   void itemSelectedSlot(QObject *obj, const QString &path);
@@ -84,6 +94,7 @@ class CQSVGWindow : public QMainWindow {
   CQPropertyTree*     propTree_       { 0 };
   QLabel*             posLabel_       { 0 };
   QLabel*             zoomLabel_      { 0 };
+  QToolButton*        busyButton_      { 0 };
   CQSVGPropertiesDlg* propertiesDlg_  { 0 };
   CQSVGBufferView*    bufferView_     { 0 };
   QAction*            nextAction_     { 0 };
@@ -100,6 +111,9 @@ class CQSVGWindow : public QMainWindow {
   bool                print_          { false };
   Files               files_;
   int                 ind_            { -1 };
+  bool                initialized_    { false };
+  CHRTime             startTime_;
+  CHRTime             endTime_;
 };
 
 #endif

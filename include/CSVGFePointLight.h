@@ -26,6 +26,8 @@ class CSVGFePointLight : public CSVGFilterBase {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
+  bool drawElement() override;
+
   void print(std::ostream &os, bool hier) const override;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGFePointLight &fe);

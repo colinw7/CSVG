@@ -287,17 +287,7 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<text";
 
-    CSVGObject::printValues(os);
-
-    printNameValue (os, "x" , x_ );
-    printNameValue (os, "y" , y_ );
-    printNameLength(os, "dx", dx_);
-    printNameLength(os, "dy", dy_);
-
-    printNameValues(os, "rotate", rotate_);
-
-    printNameValue(os, "textLength"  , textLength_  );
-    printNameValue(os, "lengthAdjust", lengthAdjust_);
+    printValues(os);
 
     os << ">";
 
@@ -317,6 +307,23 @@ print(std::ostream &os, bool hier) const
   }
   else
     os << "text " << getPosition()  << " " << CStrUtil::single_quote(getText());
+}
+
+void
+CSVGText::
+printValues(std::ostream &os, bool flat) const
+{
+  CSVGObject::printValues(os, flat);
+
+  printNameValue (os, "x" , x_ );
+  printNameValue (os, "y" , y_ );
+  printNameLength(os, "dx", dx_);
+  printNameLength(os, "dy", dy_);
+
+  printNameValues(os, "rotate", rotate_);
+
+  printNameValue(os, "textLength"  , textLength_  );
+  printNameValue(os, "lengthAdjust", lengthAdjust_);
 }
 
 std::ostream &

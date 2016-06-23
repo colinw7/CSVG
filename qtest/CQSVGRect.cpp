@@ -9,6 +9,20 @@ CQSVGRect(CQSVG *svg) :
 
 double
 CQSVGRect::
+getX() const
+{
+  return CSVGRect::getX().pxValue(CScreenUnits(1));
+}
+
+double
+CQSVGRect::
+getY() const
+{
+  return CSVGRect::getY().pxValue(CScreenUnits(1));
+}
+
+double
+CQSVGRect::
 getWidth() const
 {
   return CSVGRect::getWidth().pxValue(CScreenUnits(1));

@@ -4,6 +4,7 @@
 #include <CSVG.h>
 #include <CSVGLog.h>
 #include <CSVGUtil.h>
+#include <CStrUtil.h>
 
 /* Attributes:
     <Core>

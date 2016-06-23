@@ -51,6 +51,7 @@ CQSVGFeTurbulence.cpp \
 CQSVGFilter.cpp \
 CQSVGGroup.cpp \
 CQSVGImage.cpp \
+CQSVGImageData.cpp \
 CQSVGLinearGradient.cpp \
 CQSVGLine.cpp \
 CQSVGMarker.cpp \
@@ -118,6 +119,7 @@ CQSVGFilter.h \
 CQSVGGroup.h \
 CQSVG.h \
 CQSVGImage.h \
+CQSVGImageData.h \
 CQSVGLinearGradient.h \
 CQSVGLine.h \
 CQSVGMarker.h \
@@ -161,30 +163,34 @@ INCLUDEPATH += \
 ../../CFont/include \
 ../../CImageLib/include \
 ../../CReadLine/include \
+../../CFileUtil/include \
 ../../CFile/include \
 ../../COS/include \
 ../../CUtil/include \
 ../../CMath/include \
 ../../CStrUtil/include \
 ../../CRGBName/include \
+../../CCSS/include \
 ../../CXML/include \
 
 unix:LIBS += \
 -L$$LIB_DIR \
 -L../../CQUtil/lib \
 -L../../CQPropertyTree/lib \
+-L../../CCSS/lib \
 -L../../CXML/lib \
 -L../../CReadLine/lib \
 -L../../CFont/lib \
 -L../../CUtil/lib \
 -L../../CImageLib/lib \
 -L../../CConfig/lib \
+-L../../CFileUtil/lib \
 -L../../CFile/lib \
 -L../../COS/lib \
 -L../../CStrUtil/lib \
 -L../../CRegExp/lib \
 -L../../CRGBName/lib \
 -lCSVG -lCQPropertyTree -lCQUtil \
--lCXML -lCReadLine -lCConfig -lCUtil -lCFont -lCImageLib \
--lCRGBName -lCFile -lCOS -lCStrUtil -lCRegExp \
+-lCCSS -lCXML -lCReadLine -lCConfig -lCUtil -lCFont -lCImageLib \
+-lCRGBName -lCFileUtil -lCFile -lCOS -lCStrUtil -lCRegExp \
 -lpng -ljpeg -ltre -lreadline

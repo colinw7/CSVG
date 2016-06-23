@@ -2,6 +2,7 @@
 #define CSVGImageRenderer_H
 
 #include <CSVGRenderer.h>
+#include <CSVGImageData.h>
 #include <CImageRenderer2D.h>
 
 class CSVGImageRenderer : public CSVGRenderer {
@@ -85,7 +86,9 @@ class CSVGImageRenderer : public CSVGRenderer {
 
   void pathBBox(CBBox2D &bbox) override { renderer_->pathBBox(bbox); }
 
-  void drawImage(const CPoint2D &p, CImagePtr image) override { renderer_->drawImage(p, image); }
+  void drawImage(const CPoint2D &p, CSVGImageData *data) override {
+    renderer_->drawImage(p, data->image());
+  }
 
   void setFont(CFontPtr f) override { renderer_->setFont(f); }
 
@@ -101,13 +104,13 @@ class CSVGImageRenderer : public CSVGRenderer {
   void setFillType(CFillType t) override { renderer_->setFillType(t); }
   void setFillColor(const CRGBA &c) override { renderer_->setForeground(c); }
   void setFillGradient(CGenGradient *) override { }
-  void setFillImage(CImagePtr) override { }
+  void setFillImage(CSVGImageData *) override { }
   void setFillMatrix(const CMatrix2D &) { std::cerr << "setFillMatrix" << std::endl; }
 
   void setStrokeFilled(bool) override { }
   void setStrokeFillType(CFillType) override { }
   void setStrokeFillGradient(CGenGradient *) override { }
-  void setStrokeFillImage(CImagePtr) override { }
+  void setStrokeFillImage(CSVGImageData *) override { }
 
   void setAlign(CHAlignType halign, CVAlignType valign) override {
     renderer_->setAlign(halign, valign); }
@@ -122,9 +125,9 @@ class CSVGImageRenderer : public CSVGRenderer {
     return CISize2D(renderer_->getPixelWidth(), renderer_->getPixelHeight());
   }
 
-  CImagePtr getImage() const override { return renderer_->getImage(); }
+  CSVGImageData *getImage() const override { return 0; }
 
-  void setImage(CImagePtr image) override { return renderer_->setImage(image); }
+  void setImage(CSVGImageData *data) override { return renderer_->setImage(data->image()); }
 
   void setImage(CSVGRenderer *renderer) override {
     CSVGImageRenderer *srenderer = dynamic_cast<CSVGImageRenderer *>(renderer);
@@ -132,7 +135,7 @@ class CSVGImageRenderer : public CSVGRenderer {
     if (srenderer)
       renderer_->setImage(srenderer->renderer_);
     else
-      renderer_->setImage(renderer->getImage());
+      renderer_->setImage(renderer->getImage()->image());
   }
 
  private:

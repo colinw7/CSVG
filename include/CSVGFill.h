@@ -41,6 +41,8 @@ class CSVGFill {
            fillObject_.isValid();
   }
 
+  CSVG& svg() const { return svg_; }
+
   // color
   bool getColorValid() const { return color_.isValid(); }
   CSVGColor getColor() const { return color_.getValue(CSVGColor()); }
@@ -66,9 +68,12 @@ class CSVGFill {
   void setRule(const std::string &rule_str);
   void setRule(CFillType rule) { rule_ = rule; }
 
+  void resetRule() { rule_.setInvalid(); }
+
   // url
   bool getUrlValid() const { return url_.isValid(); }
   std::string getUrl() const { return url_.getValue(""); }
+
   void setUrl(const std::string &url) { url_ = url; }
 
   void resetUrl() { url_.setInvalid(); }
@@ -76,6 +81,7 @@ class CSVGFill {
   // fill object
   bool getFillObjectValid() const { return fillObject_.isValid(); }
   CSVGObject *getFillObject() const { return fillObject_.getValue(0); }
+
   void setFillObject(CSVGObject *fillObject) { fillObject_ = fillObject; }
 
   void resetFillObject() { fillObject_.setInvalid(); }

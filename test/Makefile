@@ -33,9 +33,11 @@ $(CDEBUG) \
 -std=c++11 \
 -I. \
 -I$(INC_DIR) \
+-I../../CCSS/include \
 -I../../CConfig/include \
 -I../../CImageLib/include \
 -I../../CFont/include \
+-I../../CFileUtil/include \
 -I../../CFile/include \
 -I../../CStrUtil/include \
 -I../../CUtil/include \
@@ -46,11 +48,13 @@ LFLAGS = \
 $(LDEBUG) \
 -L$(LIB_DIR) \
 -L../../CSVG/lib \
+-L../../CCSS/lib \
 -L../../CXML/lib \
 -L../../CImageLib/lib \
 -L../../CRGBName/lib \
 -L../../CFont/lib \
 -L../../CConfig/lib \
+-L../../CFileUtil/lib \
 -L../../CFile/lib \
 -L../../COS/lib \
 -L../../CRegExp/lib \
@@ -58,7 +62,7 @@ $(LDEBUG) \
 -L../../CUtil/lib \
 
 LIBS = \
--lCSVG -lCXML -lCImageLib -lCFont -lCConfig -lCFile \
+-lCSVG -lCCSS -lCXML -lCImageLib -lCFont -lCConfig -lCFileUtil -lCFile \
 -lCUtil -lCOS -lCRGBName -lCRegExp -lCStrUtil \
 -ltre -lpng -ljpeg -lfreetype
 

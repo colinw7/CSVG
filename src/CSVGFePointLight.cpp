@@ -38,6 +38,13 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   return true;
 }
 
+bool
+CSVGFePointLight::
+drawElement()
+{
+  return false;
+}
+
 void
 CSVGFePointLight::
 print(std::ostream &os, bool hier) const

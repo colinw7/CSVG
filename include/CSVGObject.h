@@ -325,10 +325,17 @@ class CSVGObject {
 
   //---
 
-  CSVGColor      getFlatStrokeColor   () const;
-  double         getFlatStrokeOpacity () const;
-  double         getFlatStrokeWidth   () const;
-  CSVGStrokeDash getFlatStrokeLineDash() const;
+  CSVGStroke               getFlatStroke          () const;
+  COptValT<CSVGColor>      getFlatStrokeColor     () const;
+  COptReal                 getFlatStrokeOpacity   () const;
+  COptValT<CFillType>      getFlatStrokeRule      () const;
+  COptString               getFlatStrokeUrl       () const;
+  COptValT<CSVGObject*>    getFlatStrokeFillObject() const;
+  COptReal                 getFlatStrokeWidth     () const;
+  COptValT<CSVGStrokeDash> getFlatStrokeLineDash  () const;
+  COptValT<CLineCapType>   getFlatStrokeLineCap   () const;
+  COptValT<CLineJoinType>  getFlatStrokeLineJoin  () const;
+  COptReal                 getFlatStrokeMitreLimit() const;
 
   //------
 
@@ -349,8 +356,13 @@ class CSVGObject {
 
   //---
 
-  CSVGColor getFlatFillColor  () const;
-  double    getFlatFillOpacity() const;
+  CSVGFill getFlatFill() const;
+
+  COptValT<CSVGColor>    getFlatFillColor     () const;
+  COptReal               getFlatFillOpacity   () const;
+  COptValT<CFillType>    getFlatFillRule      () const;
+  COptString             getFlatFillUrl       () const;
+  COptValT<CSVGObject *> getFlatFillFillObject() const;
 
   //------
 
@@ -517,21 +529,25 @@ class CSVGObject {
   // print
   virtual void print(std::ostream &os, bool hier=false) const;
 
+  virtual void printFlat(std::ostream &os) const;
+
   friend std::ostream &operator<<(std::ostream &os, const CSVGObject &object) {
     object.print(os);
 
     return os;
   }
 
-  void printValues(std::ostream &os) const;
+  virtual void printValues(std::ostream &os, bool flat=false) const;
 
   void printChildren(std::ostream &os, bool hier) const;
 
   void printFilter     (std::ostream &os) const;
-  void printStyle      (std::ostream &os) const;
+  void printStyle      (std::ostream &os, bool flat=false) const;
+  void printStroke     (std::ostream &os, bool flat=false) const;
+  void printFill       (std::ostream &os, bool flat=false) const;
   void printTextContent(std::ostream &os) const;
   void printFontDef    (std::ostream &os) const;
-  void printTransform  (std::ostream &os) const;
+  void printTransform  (std::ostream &os, bool flat) const;
 
   void printTransform(std::ostream &os, const CMatrixStack2D &m) const;
 

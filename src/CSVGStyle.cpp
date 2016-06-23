@@ -107,7 +107,7 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<style";
 
-    CSVGObject::printValues(os);
+    printValues(os);
 
     os << ">" << std::endl;
 
@@ -119,6 +119,16 @@ print(std::ostream &os, bool hier) const
   }
   else
     os << "style";
+}
+
+void
+CSVGStyle::
+printValues(std::ostream &os, bool flat) const
+{
+  CSVGObject::printValues(os, flat);
+
+  if (type_ == CSVGStyleType::TEXT_CSS)
+    os << " type=\"text/css\"";
 }
 
 std::ostream &

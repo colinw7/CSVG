@@ -15,20 +15,20 @@ class CSVGRect : public CSVGObject {
   const CBBox2D &getBBox() { return bbox_; }
 
   bool hasX() const { return x_.isValid(); }
-  double getX() { return x_.getValue(0); }
-  void setX(double x) { x_ = x; }
+  CScreenUnits getX() const { return x_.getValue(CScreenUnits(0)); }
+  void setX(const CScreenUnits &x) { x_ = x; }
 
   bool hasY() const { return y_.isValid(); }
-  double getY() { return y_.getValue(0); }
-  void setY(double y) { y_ = y; }
+  CScreenUnits getY() const { return y_.getValue(CScreenUnits(0)); }
+  void setY(const CScreenUnits &y) { y_ = y; }
 
   bool hasWidth() const { return width_.isValid(); }
   CScreenUnits getWidth() const { return width_.getValue(CScreenUnits(0)); }
-  void setWidth(double w) { width_ = w; }
+  void setWidth(const CScreenUnits &w) { width_ = w; }
 
   bool hasHeight() const { return height_.isValid(); }
   CScreenUnits getHeight() const { return height_ .getValue(CScreenUnits(0)); }
-  void setHeight(double h) { height_ = h; }
+  void setHeight(const CScreenUnits &h) { height_ = h; }
 
   bool hasRX() const { return rx_.isValid(); }
   double getRX() { return rx_.getValue(0); }
@@ -54,14 +54,16 @@ class CSVGRect : public CSVGObject {
 
   void print(std::ostream &os, bool hier) const override;
 
+  void printValues(std::ostream &os, bool flat=false) const override;
+
   friend std::ostream &operator<<(std::ostream &os, const CSVGRect &rect);
 
  private:
   void updateBBox();
 
  private:
-  COptReal               x_;
-  COptReal               y_;
+  COptValT<CScreenUnits> x_;
+  COptValT<CScreenUnits> y_;
   COptValT<CScreenUnits> width_;
   COptValT<CScreenUnits> height_;
   COptReal               rx_;

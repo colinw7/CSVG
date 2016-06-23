@@ -73,7 +73,10 @@ class CSVGRadialGradient : public CSVGObject {
 
   void print(std::ostream &os, bool hier) const override;
 
-  CRadialGradient *createGradient(CSVGObject *);
+  void setFillBuffer  (CSVGBuffer *buffer, CSVGObject *obj, const COptReal &opacity);
+  void setStrokeBuffer(CSVGBuffer *buffer, CSVGObject *obj, const COptReal &opacity);
+
+  CRadialGradient *createGradient(CSVGObject *obj, const COptReal &opacity);
 
   void getControlPoints(CSVGObject *obj, double *xc, double *yc, double *r,
                         double *xf, double *yf);

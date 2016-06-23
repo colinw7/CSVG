@@ -30,7 +30,11 @@ class CSVGFeOffset : public CSVGFilterBase {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  bool draw() override;
+  bool drawElement() override;
+
+  bool getSubRegion(CBBox2D &bbox) const override;
+
+  void calcDelta(double &dx, double &dy) const;
 
   void print(std::ostream &os, bool hier) const override;
 
@@ -41,6 +45,7 @@ class CSVGFeOffset : public CSVGFilterBase {
   COptString filterOut_;
   COptReal   dx_;
   COptReal   dy_;
+  bool       drawing_ { false };
 };
 
 #endif

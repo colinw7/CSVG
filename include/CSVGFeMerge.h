@@ -22,9 +22,7 @@ class CSVGFeMerge : public CSVGFilterBase {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  bool draw() override;
-
-  void filterImage(CSVGBuffer *outBuffer);
+  bool drawElement() override;
 
   void print(std::ostream &os, bool hier) const override;
 

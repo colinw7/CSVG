@@ -150,8 +150,12 @@ drawMarker(double x, double y, double autoAngle)
     else if (getMarkerUnits() == CSVGCoordUnits::STROKE_WIDTH) {
       double lw = 1;
 
-      if (svg_.currentDrawObject())
-        lw = svg_.currentDrawObject()->getFlatStrokeWidth();
+      if (svg_.currentDrawObject()) {
+        COptReal lw1 = svg_.currentDrawObject()->getFlatStrokeWidth();
+
+        if (lw1.isValid())
+          lw = lw1.getValue();
+      }
 
       xs = markerWidth*lw/w1;
       ys = markerWidth*lw/h1;

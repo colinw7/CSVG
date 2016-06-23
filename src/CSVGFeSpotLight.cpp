@@ -50,7 +50,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
 
 bool
 CSVGFeSpotLight::
-draw()
+drawElement()
 {
   return true;
 }

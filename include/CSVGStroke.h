@@ -59,6 +59,8 @@ class CSVGStroke {
            mlimit_    .isValid();
   }
 
+  CSVG& svg() const { return svg_; }
+
   // color
   bool getColorValid() const { return color_.isValid(); }
   CSVGColor getColor() const { return color_.getValue(CSVGColor()); }
@@ -84,9 +86,12 @@ class CSVGStroke {
   void setRule(const std::string &rule_str);
   void setRule(CFillType rule) { rule_ = rule; }
 
+  void resetRule() { rule_.setInvalid(); }
+
   // url
   bool getUrlValid() const { return url_.isValid(); }
   std::string getUrl() const { return url_.getValue(""); }
+
   void setUrl(const std::string &url) { url_ = url; }
 
   void resetUrl() { url_.setInvalid(); }
@@ -94,6 +99,7 @@ class CSVGStroke {
   // fill object
   bool getFillObjectValid() const { return fillObject_.isValid(); }
   CSVGObject *getFillObject() const { return fillObject_.getValue(0); }
+
   void setFillObject(CSVGObject *fillObject) { fillObject_ = fillObject; }
 
   void resetFillObject() { fillObject_.setInvalid(); }
@@ -105,10 +111,15 @@ class CSVGStroke {
   void setWidth(const std::string &width_str);
   void setWidth(double width) { width_ = width; }
 
+  void resetWidth() { width_.setInvalid(); }
+
   // dash
   bool getDashValid() const { return dash_.isValid(); }
   CSVGStrokeDash getDash() const { return dash_.getValue(CSVGStrokeDash()); }
+
   void setDash(const CSVGStrokeDash &dash) { dash_ = dash; }
+
+  void resetDash() { dash_.setInvalid(); }
 
   void setDashArray(const std::string &dash_str);
   void setDashArray(const std::vector<CScreenUnits> &array);
@@ -123,6 +134,8 @@ class CSVGStroke {
   void setLineCap(const std::string &cap_str);
   void setLineCap(const CLineCapType &cap) { cap_ = cap; }
 
+  void resetLineCap() { cap_.setInvalid(); }
+
   // line join
   bool getLineJoinValid() const { return join_.isValid(); }
   CLineJoinType getLineJoin() const { return join_.getValue(LINE_JOIN_TYPE_MITRE); }
@@ -130,12 +143,16 @@ class CSVGStroke {
   void setLineJoin(const std::string &join_str);
   void setLineJoin(const CLineJoinType &join) { join_ = join; }
 
+  void resetLineJoin() { join_.setInvalid(); }
+
   // mitre limit
   bool getMitreLimitValid() const { return mlimit_.isValid(); }
   double getMitreLimit() const { return mlimit_.getValue(0.0); }
 
   void setMitreLimit(const std::string &limit_str);
   void setMitreLimit(double mlimit) { mlimit_ = mlimit; }
+
+  void resetMitreLimit() { mlimit_.setInvalid(); }
 
   //---
 

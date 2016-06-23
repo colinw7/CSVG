@@ -204,10 +204,7 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<textPath";
 
-    printNameLength(os, "startOffset", startOffset_);
-    printNameXLink (os, "xlink:href" , xlink_);
-
-    CSVGObject::printValues(os);
+    printValues(os);
 
     os << ">";
 
@@ -227,6 +224,16 @@ print(std::ostream &os, bool hier) const
   }
   else
     os << "textPath ";
+}
+
+void
+CSVGTextPath::
+printValues(std::ostream &os, bool flat) const
+{
+  printNameLength(os, "startOffset", startOffset_);
+  printNameXLink (os, "xlink:href" , xlink_);
+
+  CSVGObject::printValues(os, flat);
 }
 
 std::ostream &

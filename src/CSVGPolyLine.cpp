@@ -208,29 +208,17 @@ void
 CSVGPolyLine::
 print(std::ostream &os, bool hier) const
 {
-  int i = 0;
-
   if (hier) {
     os << "<polyline";
 
-    CSVGObject::printValues(os);
-
-    os << " points=\"";
-
-    for (const auto &p : points_) {
-      if (i > 0) os << ", ";
-
-      os << p.x << " " << p.y;
-
-      ++i;
-    }
-
-    os << "\"";
+    printValues(os);
 
     os << "/>" << std::endl;
   }
   else {
     os << "polyline ";
+
+    int i = 0;
 
     for (const auto &p : points_) {
       if (i > 0) os << " ";
@@ -240,6 +228,27 @@ print(std::ostream &os, bool hier) const
       ++i;
     }
   }
+}
+
+void
+CSVGPolyLine::
+printValues(std::ostream &os, bool flat) const
+{
+  CSVGObject::printValues(os, flat);
+
+  os << " points=\"";
+
+  int i = 0;
+
+  for (const auto &p : points_) {
+    if (i > 0) os << ", ";
+
+    os << p.x << " " << p.y;
+
+    ++i;
+  }
+
+  os << "\"";
 }
 
 std::ostream &

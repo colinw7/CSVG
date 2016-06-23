@@ -57,10 +57,23 @@ processOption(const std::string &opt_name, const std::string &opt_value)
 
 bool
 CSVGFeComponentTransfer::
-draw()
+drawElement()
 {
   CSVGBuffer *inBuffer  = svg_.getBuffer(getFilterIn ());
   CSVGBuffer *outBuffer = svg_.getBuffer(getFilterOut());
+
+  bool inDrawing = inBuffer->isDrawing();
+
+  if (inDrawing) inBuffer->stopDraw();
+
+  //---
+
+  // get filtered object coords
+  CBBox2D inBBox;
+
+  getBufferSubRegion(inBuffer, inBBox);
+
+  //---
 
   if (svg_.getDebugFilter()) {
     std::string objectBufferName = "_" + getUniqueName();
@@ -68,7 +81,10 @@ draw()
     CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_in");
 
     buffer->setImageBuffer(inBuffer);
+    buffer->setBBox       (inBBox);
   }
+
+  //---
 
   std::vector<CSVGFeFunc *> funcs;
 
@@ -79,7 +95,9 @@ draw()
     funcs.push_back(func);
   }
 
-  CSVGBuffer::componentTransferBuffers(inBuffer, funcs, outBuffer);
+  CSVGBuffer::componentTransferBuffers(inBuffer, inBBox, funcs, outBuffer);
+
+  //---
 
   if (svg_.getDebugFilter()) {
     std::string objectBufferName = "_" + getUniqueName();
@@ -87,7 +105,12 @@ draw()
     CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_out");
 
     buffer->setImageBuffer(outBuffer);
+    buffer->setBBox       (inBBox);
   }
+
+  //---
+
+  if (inDrawing) inBuffer->startDraw();
 
   return true;
 }

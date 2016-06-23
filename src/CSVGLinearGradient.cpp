@@ -178,32 +178,29 @@ print(std::ostream &os, bool hier) const
 
 void
 CSVGLinearGradient::
-setFillBuffer(CSVGBuffer *buffer, CSVGObject *obj)
+setFillBuffer(CSVGBuffer *buffer, CSVGObject *obj, const COptReal &opacity)
 {
   CAutoPtr<CLinearGradient> lg;
 
-  lg = createGradient(obj);
+  lg = createGradient(obj, opacity);
 
   buffer->setFillGradient(lg);
-
-//if (gtransform_.isValid())
-//  buffer->setFillMatrix(gtransform_.getValue().getMatrix());
 }
 
 void
 CSVGLinearGradient::
-setStrokeBuffer(CSVGBuffer *buffer, CSVGObject *obj)
+setStrokeBuffer(CSVGBuffer *buffer, CSVGObject *obj, const COptReal &opacity)
 {
   CAutoPtr<CLinearGradient> lg;
 
-  lg = createGradient(obj);
+  lg = createGradient(obj, opacity);
 
   buffer->setStrokeFillGradient(lg);
 }
 
 CLinearGradient *
 CSVGLinearGradient::
-createGradient(CSVGObject *obj)
+createGradient(CSVGObject *obj, const COptReal &opacity)
 {
   double x1, y1, x2, y2;
 
@@ -226,7 +223,12 @@ createGradient(CSVGObject *obj)
     else
       rgba = obj->colorToRGBA(s->getColor());
 
-    double alpha = s->getOpacity();
+    double alpha = 1.0;
+
+    if (s->hasOpacity())
+      alpha = s->getOpacity();
+    else
+      alpha = opacity.getValue(1.0);
 
     rgba.setAlpha(alpha);
 
@@ -258,12 +260,14 @@ getEndPoints(CSVGObject *obj, double *x1, double *y1, double *x2, double *y2) co
 
     CBBox2D bbox;
 
-    obj->getBBox(bbox);
+    if (obj) {
+      obj->getBBox(bbox);
 
-    *x1 = CSVGUtil::map(p1.x, 0, 1, bbox.getXMin(), bbox.getXMax());
-    *y1 = CSVGUtil::map(p1.y, 0, 1, bbox.getYMin(), bbox.getYMax());
-    *x2 = CSVGUtil::map(p2.x, 0, 1, bbox.getXMin(), bbox.getXMax());
-    *y2 = CSVGUtil::map(p2.y, 0, 1, bbox.getYMin(), bbox.getYMax());
+      *x1 = CSVGUtil::map(p1.x, 0, 1, bbox.getXMin(), bbox.getXMax());
+      *y1 = CSVGUtil::map(p1.y, 0, 1, bbox.getYMin(), bbox.getYMax());
+      *x2 = CSVGUtil::map(p2.x, 0, 1, bbox.getXMin(), bbox.getXMax());
+      *y2 = CSVGUtil::map(p2.y, 0, 1, bbox.getYMin(), bbox.getYMax());
+    }
   }
 
   //---

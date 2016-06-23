@@ -49,12 +49,10 @@ processOption(const std::string &opt_name, const std::string &opt_value)
 
 bool
 CSVGFeImage::
-draw()
+drawElement()
 {
   // get object or file image into buffer (untransformed)
   CSVGBuffer *inBuffer = svg_.getBuffer(getUniqueName() + "_xlink");
-
-  CMatrixStack2D transform = svg_.getCurrentBuffer()->transform();
 
   if (hasLink()) {
     if (! xlink().getImage(inBuffer))
@@ -62,6 +60,12 @@ draw()
   }
   else
     return false;
+
+  //---
+
+  CBBox2D bbox;
+
+  getSubRegion(bbox);
 
   //---
 
@@ -75,8 +79,12 @@ draw()
     buffer->setImageBuffer(inBuffer);
   }
 
-  // put image into output buffer (transformed)
-  CSVGBuffer::imageBuffers(inBuffer, transform, getPreserveAspect(), outBuffer);
+  //---
+
+  // put image into output buffer
+  CSVGBuffer::imageBuffers(inBuffer, bbox, getPreserveAspect(), outBuffer);
+
+  //---
 
   if (svg_.getDebugFilter()) {
     std::string objectBufferName = "_" + getUniqueName();
@@ -84,8 +92,7 @@ draw()
     CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_out");
 
     buffer->setImageBuffer(outBuffer);
-
-    buffer->setBBox(outBuffer->bbox());
+    buffer->setBBox       (outBuffer->bbox());
   }
 
   return true;

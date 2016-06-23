@@ -51,10 +51,23 @@ processOption(const std::string &opt_name, const std::string &opt_value)
 
 bool
 CSVGFeSpecularLighting::
-draw()
+drawElement()
 {
   CSVGBuffer *inBuffer  = svg_.getBuffer(getFilterIn ());
   CSVGBuffer *outBuffer = svg_.getBuffer(getFilterOut());
+
+  bool inDrawing = inBuffer->isDrawing();
+
+  if (inDrawing) inBuffer->stopDraw();
+
+  //---
+
+  // get filtered object coords
+  CBBox2D inBBox;
+
+  getBufferSubRegion(inBuffer, inBBox);
+
+  //---
 
   if (svg_.getDebugFilter()) {
     std::string objectBufferName = "_" + getUniqueName();
@@ -62,9 +75,16 @@ draw()
     CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_in");
 
     buffer->setImageBuffer(inBuffer);
+    buffer->setBBox       (inBBox);
   }
 
-  filterImage(inBuffer, outBuffer);
+  //---
+
+  filterImage(inBuffer, inBBox, outBuffer);
+
+  outBuffer->setBBox(inBBox);
+
+  //---
 
   if (svg_.getDebugFilter()) {
     std::string objectBufferName = "_" + getUniqueName();
@@ -72,7 +92,12 @@ draw()
     CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_out");
 
     buffer->setImageBuffer(outBuffer);
+    buffer->setBBox       (inBBox);
   }
+
+  //---
+
+  if (inDrawing) inBuffer->startDraw();
 
   return true;
 }

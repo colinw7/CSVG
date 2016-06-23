@@ -95,3 +95,13 @@
  + Improve handling of filter buffer in/out sharing
  + Add svg image file type
  + Add used color output to test program
+
+### 6/18/2016
+ + Improve FillPaint and FillStroke handling
+ + Improve filter and filter element region handling
+
+### 6/23/2016
+ + add busy indicator
+ + add print to flat svg
+ + add abstract image data class
+ + implement abstract image data using QImage for Qt app

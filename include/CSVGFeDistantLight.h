@@ -20,7 +20,7 @@ class CSVGFeDistantLight : public CSVGFilterBase {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  bool draw() override;
+  bool drawElement() override;
 
   void print(std::ostream &os, bool hier) const override;
 

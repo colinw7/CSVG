@@ -80,10 +80,23 @@ processOption(const std::string &opt_name, const std::string &opt_value)
 
 bool
 CSVGFeTurbulence::
-draw()
+drawElement()
 {
   CSVGBuffer *inBuffer  = svg_.getBuffer(getFilterIn ());
   CSVGBuffer *outBuffer = svg_.getBuffer(getFilterOut());
+
+  bool inDrawing = inBuffer->isDrawing();
+
+  if (inDrawing) inBuffer->stopDraw();
+
+  //---
+
+  // get filtered object coords
+  CBBox2D inBBox;
+
+  getBufferSubRegion(inBuffer, inBBox);
+
+  //---
 
   if (svg_.getDebugFilter()) {
     std::string objectBufferName = "_" + getUniqueName();
@@ -91,21 +104,31 @@ draw()
     CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_in");
 
     buffer->setImageBuffer(inBuffer);
+    buffer->setBBox       (inBBox);
   }
+
+  //---
 
   double baseFreqX = getBaseFreqX();
   double baseFreqY = getBaseFreqY(baseFreqX);
 
-  CSVGBuffer::turbulenceBuffers(inBuffer, isFractalNoise(), baseFreqX, baseFreqY,
+  CSVGBuffer::turbulenceBuffers(inBuffer, inBBox, isFractalNoise(), baseFreqX, baseFreqY,
                                 getNumOctaves(), getSeed(), outBuffer);
+
+  //---
 
   if (svg_.getDebugFilter()) {
     std::string objectBufferName = "_" + getUniqueName();
 
     CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_out");
 
-    buffer->setImageBuffer(outBuffer);
+    buffer->setImageBuffer(inBuffer);
+    buffer->setBBox       (inBBox);
   }
+
+  //---
+
+  if (inDrawing) inBuffer->startDraw();
 
   return true;
 }

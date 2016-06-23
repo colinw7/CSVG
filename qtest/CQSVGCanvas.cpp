@@ -49,11 +49,27 @@ redraw()
 
   oimage_.fill(0);
 
-  opainter_->begin(&oimage_);
+  //---
 
-  svg_->draw(offset_, scale_, scale_);
+  //CSVG::ObjectList objs;
 
-  opainter_->end();
+  //svg_->getAllChildren(objs);
+
+  //int n = objs.size();
+
+  //---
+
+  if (window_->isInitialized()) {
+    window_->startBusy();
+
+    opainter_->begin(&oimage_);
+
+    svg_->draw(offset_, scale_, scale_);
+
+    opainter_->end();
+
+    window_->endBusy();
+  }
 }
 
 void

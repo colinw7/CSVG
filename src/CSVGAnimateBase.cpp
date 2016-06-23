@@ -2,6 +2,7 @@
 #include <CSVG.h>
 #include <CSVGLog.h>
 #include <CSVGUtil.h>
+#include <CStrUtil.h>
 
 /* Attributes:
     <Core>
@@ -254,7 +255,7 @@ setAnimating(bool b)
 
 void
 CSVGAnimateBase::
-printValues(std::ostream &os) const
+printValues(std::ostream &os, bool /*flat*/) const
 {
   printNameValue(os, "id", id_);
 

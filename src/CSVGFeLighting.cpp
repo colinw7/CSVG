@@ -41,7 +41,7 @@ getFilterOut() const
 
 void
 CSVGFeLighting::
-filterImage(CSVGBuffer *inBuffer, CSVGBuffer *outBuffer)
+filterImage(CSVGBuffer *inBuffer, const CBBox2D &bbox, CSVGBuffer *outBuffer)
 {
   std::vector<CSVGFilterBase *> lights;
 
@@ -65,5 +65,5 @@ filterImage(CSVGBuffer *inBuffer, CSVGBuffer *outBuffer)
   lightData.specConstant    = getSpecularConstant();
   lightData.specExponent    = getSpecularExponent();
 
-  CSVGBuffer::lightBuffers(inBuffer, lights, lightData, outBuffer);
+  CSVGBuffer::lightBuffers(inBuffer, bbox, lights, lightData, outBuffer);
 }

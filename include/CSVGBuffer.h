@@ -4,8 +4,11 @@
 #include <CSVGTypes.h>
 #include <CSVGLightData.h>
 #include <CSVGPreserveAspect.h>
-#include <CSVGColor.h>
-#include <CImage.h>
+#include <CSVGConvolveData.h>
+#include <CSVGFill.h>
+#include <CSVGStroke.h>
+#include <CSVGImageData.h>
+
 #include <CFont.h>
 #include <CBBox2D.h>
 #include <CMatrixStack2D.h>
@@ -40,11 +43,11 @@ class CSVGBufferMgr {
   const CBBox2D &paintBBox() const { return paintBBox_; }
   void setPaintBBox(const CBBox2D &v) { paintBBox_ = v; }
 
-  const CSVGColor &paintFillColor() const { return paintFillColor_; }
-  void setPaintFillColor(const CSVGColor &v) { paintFillColor_ = v; }
+  const CSVGFill &paintFill() const { return paintFill_; }
+  void setPaintFill(const CSVGFill &f) { paintFill_ = f; }
 
-  const CSVGColor &paintStrokeColor() const { return paintStrokeColor_; }
-  void setPaintStrokeColor(const CSVGColor &v) { paintStrokeColor_ = v; }
+  const CSVGStroke &paintStroke() const { return paintStroke_; }
+  void setPaintStroke(const CSVGStroke &s) { paintStroke_ = s; }
 
   void clear();
 
@@ -63,13 +66,13 @@ class CSVGBufferMgr {
  private:
   typedef std::map<std::string,CSVGBuffer*> BufferMap;
 
-  CSVG&     svg_;
-  bool      antiAlias_ { true };
-  BufferMap bufferMap_;
-  BufferMap alphaBufferMap_;
-  CBBox2D   paintBBox_;
-  CSVGColor paintFillColor_;
-  CSVGColor paintStrokeColor_;
+  CSVG&      svg_;
+  bool       antiAlias_ { true };
+  BufferMap  bufferMap_;
+  BufferMap  alphaBufferMap_;
+  CBBox2D    paintBBox_;
+  CSVGFill   paintFill_;
+  CSVGStroke paintStroke_;
 };
 
 //------
@@ -102,40 +105,63 @@ class CSVGBuffer {
   double opacity() const { return opacity_.getValue(1); }
   void setOpacity(double r);
 
-  static void blendBuffers(CSVGBuffer *inBuffer1, CSVGBuffer *inBuffer2,
+  //------
+
+  // filter processing
+  static void blendBuffers(CSVGBuffer *inBuffer1, CSVGBuffer *inBuffer2, const CBBox2D &bbox,
                            CSVGBlendMode mode, CSVGBuffer *outBuffer);
-  static void colorMatrixBuffers(CSVGBuffer *inBuffer, CSVGColorMatrixType type,
-                                 const std::vector<double> &values, CSVGBuffer *outBuffer);
-  static void componentTransferBuffers(CSVGBuffer *inBuffer, const FeFuncs &funcs,
-                                       CSVGBuffer *outBuffer);
-  static void compositeBuffers(CSVGBuffer *inBuffer1, CSVGBuffer *inBuffer2, CRGBACombineFunc func,
-                               double k1, double k2, double k3, double k4, CSVGBuffer *outBuffer);
-  static void convolveMatrixBuffers(CSVGBuffer *inBuffer, double xorder, double yorder,
-                                    const std::vector<double> &kernelMatrix,
-                                    bool preserveAlpha);
+
+  static void colorMatrixBuffers(CSVGBuffer *inBuffer, const CBBox2D &bbox,
+                                 CSVGColorMatrixType type, const std::vector<double> &values,
+                                 CSVGBuffer *outBuffer);
+
+  static void componentTransferBuffers(CSVGBuffer *inBuffer, const CBBox2D &bbox,
+                                       const FeFuncs &funcs, CSVGBuffer *outBuffer);
+
+  static void compositeBuffers(CSVGBuffer *inBuffer1, CSVGBuffer *inBuffer2, const CBBox2D &bbox,
+                               CRGBACombineFunc func, double k1, double k2, double k3, double k4,
+                               CSVGBuffer *outBuffer);
+
+  static void convolveMatrixBuffers(CSVGBuffer *inBuffer, const CBBox2D &bbox,
+                                    const CSVGConvolveData &data);
+
   static void displacementMapBuffers(CSVGBuffer *inBuffer1, CSVGBuffer *inBuffer2,
-                                     const std::string &xchannel, const std::string &ychannel,
-                                     double scale, CSVGBuffer *outBuffer);
-  static void floodBuffers(const CRGBA &c, double x, double y, double w, double h,
-                           CSVGBuffer *outBuffer);
-  static void gaussianBlurBuffers(CSVGBuffer *inBuffer, double stdDevX, double stdDevY,
-                                  CSVGBuffer *outBuffer);
-  static void imageBuffers(CSVGBuffer *inBuffer, const CMatrixStack2D &transform,
+                                     const CBBox2D &bbox, const std::string &xchannel,
+                                     const std::string &ychannel, double scale,
+                                     CSVGBuffer *outBuffer);
+
+  static void floodBuffers(const CRGBA &c, const CBBox2D &bbox, CSVGBuffer *outBuffer);
+
+  static void gaussianBlurBuffers(CSVGBuffer *inBuffer, const CBBox2D &inBBox,
+                                  double stdDevX, double stdDevY, CSVGBuffer *outBuffer);
+
+  static void imageBuffers(CSVGBuffer *inBuffer, const CBBox2D &inBBox,
                            CSVGPreserveAspect preserveAspect, CSVGBuffer *outBuffer);
+
   static void maskBuffers(CSVGBuffer *oldBuffer, CSVGBuffer *buffer,
                           const CSVGObject *object, double x, double y);
+
   static void mergeBuffers(const std::vector<CSVGFeMergeNode *> &nodes, int w, int h,
                            CSVGBuffer *outBuffer);
-  static void morphologyBuffers(CSVGBuffer *inBuffer, CSVGMorphologyOperator op, int r);
-  static void offsetBuffers(CSVGBuffer *inBuffer, double x, double y, double w, double h,
-                            double dx, double dy, CSVGBuffer *outBuffer);
-  static void tileBuffers(CSVGBuffer *inBuffer, const CMatrixStack2D &transform,
-                          CSVGBuffer *outBuffer);
-  static void turbulenceBuffers(CSVGBuffer *inBuffer, bool fractalNoise, double baseFreqX,
-                                double baseFreqY, int numOctaves, int seed, CSVGBuffer *outBuffer);
 
-  static void lightBuffers(CSVGBuffer *inBuffer, const std::vector<CSVGFilterBase *> &lights,
+  static void morphologyBuffers(CSVGBuffer *inBuffer, const CBBox2D &inBBox,
+                                CSVGMorphologyOperator op, int r);
+
+  static void offsetBuffers(CSVGBuffer *inBuffer, const CBBox2D &bbox, double dx, double dy,
+                            CSVGBuffer *outBuffer);
+
+  static void tileBuffers(CSVGBuffer *inBuffer, const CBBox2D &inBBox,
+                          const CBBox2D &outBBox, CSVGBuffer *outBuffer);
+
+  static void turbulenceBuffers(CSVGBuffer *inBuffer, const CBBox2D &inBBox, bool fractalNoise,
+                                double baseFreqX, double baseFreqY, int numOctaves, int seed,
+                                CSVGBuffer *outBuffer);
+
+  static void lightBuffers(CSVGBuffer *inBuffer, const CBBox2D &bbox,
+                           const std::vector<CSVGFilterBase *> &lights,
                            const CSVGLightData &lightData, CSVGBuffer *outBuffer);
+
+  //------
 
   const CMatrixStack2D &transform() const { return transform_; }
   void setTransform(const CMatrixStack2D &v);
@@ -165,7 +191,7 @@ class CSVGBuffer {
 
   CISize2D getImageSize() const;
 
-  CImagePtr getImage() const;
+  CSVGImageDataP getImage() const;
 
   void setImageFile(const std::string &filename);
   void setImageFile(CFile &file);
@@ -180,7 +206,7 @@ class CSVGBuffer {
   void addImageBuffer(double x, double y, CSVGBuffer *buffer);
   void addImageBuffer(CSVGBuffer *buffer);
 
-  void addImage(double x, double y, const CImagePtr &image);
+  void addImage(double x, double y, CSVGImageDataP &image);
 
   void reset();
 
@@ -196,6 +222,8 @@ class CSVGBuffer {
   void startDraw();
   void stopDraw ();
 
+  void updateBBoxSize(const CBBox2D &bbox);
+
   void setAlign(CHAlignType halign, CVAlignType valign);
   void setEqualScale(bool equalScale);
   void setScaleMin(bool scale);
@@ -203,6 +231,8 @@ class CSVGBuffer {
   void setViewMatrix(const CMatrixStack2D &matrix);
 
   void fill(const CRGBA &bg);
+
+  void setStroke(const CSVGStroke &stroke);
 
   void resetStroke();
   void setStrokeColor(const CRGBA &color);
@@ -216,6 +246,8 @@ class CSVGBuffer {
   void setLineCap(CLineCapType line_cap);
   void setLineJoin(CLineJoinType line_join);
   void setLineMitreLimit(double limit);
+
+  void setFill(const CSVGFill &fill);
 
   void resetFill();
   void setFillColor(const CRGBA &color);
@@ -272,11 +304,21 @@ class CSVGBuffer {
   CPoint2D pathMirrorPoint(const CPoint2D &p) const;
 
  private:
-  static void distantLight(CImagePtr image, CSVGFeDistantLight *pl, CSVGLightData &lightData);
-  static void pointLight  (CImagePtr image, CSVGFePointLight *pl, CSVGLightData &lightData);
-  static void spotLight   (CImagePtr image, CSVGFeSpotLight *pl, CSVGLightData &lightData);
+  static void distantLight(CSVGImageDataP &image, CSVGFeDistantLight *pl,
+                           CSVGLightData &lightData);
 
-  static CRGBA lightPoint(CImagePtr image, int x, int y, const CSVGLightData &lightData);
+  static void pointLight(CSVGImageDataP &image, CSVGFePointLight *pl,
+                         CSVGLightData &lightData);
+
+  static void spotLight(CSVGImageDataP &image, CSVGFeSpotLight *pl,
+                        CSVGLightData &lightData);
+
+  static CRGBA lightPoint(CSVGImageDataP &image, int x, int y,
+                          const CSVGLightData &lightData);
+
+  CSVGImageDataP subImage(const CBBox2D &bbox) const;
+
+  void putImage(const CBBox2D &bbox, const CSVGImageDataP &image);
 
  private:
   CSVGBuffer(const CSVGBuffer &rhs);

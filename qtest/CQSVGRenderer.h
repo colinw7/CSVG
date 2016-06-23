@@ -9,7 +9,7 @@
 #include <QBrush>
 #include <QPen>
 
-class CQImage;
+class CQSVGImageData;
 
 class CQSVGRenderer : public CSVGRenderer {
  public:
@@ -77,7 +77,7 @@ class CQSVGRenderer : public CSVGRenderer {
 
   void pathBBox(CBBox2D &bbox) override;
 
-  void drawImage(const CPoint2D &p, CImagePtr image) override;
+  void drawImage(const CPoint2D &p, CSVGImageData *image) override;
 
   void setFont(CFontPtr bg) override;
 
@@ -93,13 +93,13 @@ class CQSVGRenderer : public CSVGRenderer {
   void setFillType    (CFillType fillType) override;
   void setFillColor   (const CRGBA &bg) override;
   void setFillGradient(CGenGradient *g) override;
-  void setFillImage   (CImagePtr image) override;
+  void setFillImage   (CSVGImageData *image) override;
   void setFillMatrix  (const CMatrix2D &m) override;
 
   void setStrokeFilled      (bool b) override;
   void setStrokeFillType    (CFillType fillType) override;
   void setStrokeFillGradient(CGenGradient *g) override;
-  void setStrokeFillImage   (CImagePtr image) override;
+  void setStrokeFillImage   (CSVGImageData *image) override;
 
   void setAlign(CHAlignType halign, CVAlignType valign) override;
 
@@ -110,12 +110,12 @@ class CQSVGRenderer : public CSVGRenderer {
 
   CISize2D getImageSize() const override;
 
-  CImagePtr getImage() const override;
+  CSVGImageData *getImage() const override;
 
   void setImage(CSVGRenderer *renderer) override;
-  void setImage(CImagePtr image) override;
+  void setImage(CSVGImageData *image) override;
 
-  void addImage(int x, int y, CImagePtr image) override;
+  void addImage(int x, int y, CSVGImageData *image) override;
 
   void combine(int x, int y, CSVGRenderer *r) override;
 
@@ -128,14 +128,10 @@ class CQSVGRenderer : public CSVGRenderer {
 
   void setOffsetImage(CSVGRenderer *src, int dx, int dy) override;
 
-  void gaussianBlur(CSVGRenderer *dst, CBBox2D &bbox, double stdDevX, double stdDevY) override;
-
   //---
 
-  void setQImage(CQImage *cqimage);
+  const QImage &qimage() const;
   void setQImage(const QImage &image);
-
-  QImage getQImage() const;
 
   CDisplayRange2D &getRange() { return range_; }
 
@@ -145,10 +141,10 @@ class CQSVGRenderer : public CSVGRenderer {
   void paint(QPainter *painter);
 
  private:
-  static void combineImage(QImage &image1, int x, int y, QImage &image2);
+  static void combineImage(QImage &image1, int x, int y, const QImage &image2);
 
  private:
-  QImage          qimage_;
+  CQSVGImageData* imageData_;
   QPainter*       painter_ { 0 };
   QPainterPath*   path_ { 0 };
   bool            pathEmpty_ { true };

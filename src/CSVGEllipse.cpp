@@ -138,17 +138,24 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<ellipse";
 
-    CSVGObject::printValues(os);
-
-    printNameValue(os, "cx", cx_);
-    printNameValue(os, "cy", cy_);
-    printNameValue(os, "rx", rx_);
-    printNameValue(os, "ry", ry_);
+    printValues(os, /*flat*/false);
 
     os << "/>" << std::endl;
   }
   else
     os << "ellipse " << getCenter() << " radius " << getRadiusX() << " " << getRadiusY();
+}
+
+void
+CSVGEllipse::
+printValues(std::ostream &os, bool flat) const
+{
+  CSVGObject::printValues(os, flat);
+
+  printNameValue(os, "cx", cx_);
+  printNameValue(os, "cy", cy_);
+  printNameValue(os, "rx", rx_);
+  printNameValue(os, "ry", ry_);
 }
 
 std::ostream &

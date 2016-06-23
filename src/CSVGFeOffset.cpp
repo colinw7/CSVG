@@ -1,6 +1,7 @@
 #include <CSVGFeOffset.h>
 #include <CSVGBuffer.h>
 #include <CSVGFilter.h>
+#include <CSVGUtil.h>
 #include <CSVG.h>
 
 CSVGFeOffset::
@@ -63,7 +64,24 @@ processOption(const std::string &opt_name, const std::string &opt_value)
 
 bool
 CSVGFeOffset::
-draw()
+getSubRegion(CBBox2D &bbox) const
+{
+  bool rc = CSVGFilterBase::getSubRegion(bbox);
+
+  if (! drawing_) {
+    double dx, dy;
+
+    calcDelta(dx, dy);
+
+    bbox.moveBy(CPoint2D(dx, dy));
+  }
+
+  return rc;
+}
+
+bool
+CSVGFeOffset::
+drawElement()
 {
   std::string objectBufferName = "_" + getUniqueName();
 
@@ -72,51 +90,46 @@ draw()
 
   bool inDrawing = inBuffer->isDrawing();
 
-  if (inDrawing)
-    inBuffer->stopDraw();
+  if (inDrawing) inBuffer->stopDraw();
+
+  //---
+
+  // get filtered object coords
+  drawing_ = true;
+
+  CBBox2D inBBox;
+
+  getBufferSubRegion(inBuffer, inBBox);
+
+  drawing_ = false;
+
+  //---
+
+  double dx, dy;
+
+  calcDelta(dx, dy);
+
+  //CBBox2D outBBox = inBBox.movedBy(CPoint2D(dx, dy));
+
+  //---
 
   if (svg_.getDebugFilter()) {
     CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_in");
 
     buffer->setImageBuffer(inBuffer);
+    buffer->setBBox       (inBBox);
   }
 
   //---
 
-  // get filtered object coords
   CSVGFilter *filter = getParentFilter();
 
-  CBBox2D filterBBox;
-
   if (filter)
-    filter->getRegion(filterBBox);
+    filter->setOffset(CPoint2D(dx, dy));
 
-  CBBox2D filterBaseBBox;
+  CSVGBuffer::offsetBuffers(inBuffer, inBBox, dx, dy, outBuffer);
 
-  getTransformedParentBBox(filterBaseBBox);
-
-  if (! filterBBox.isSet())
-    filterBBox = filterBaseBBox;
-
-  if (! filterBaseBBox.isSet())
-    filterBaseBBox = filterBBox;
-
-  double x1 = 0, y1 = 0, x2 = -1, y2 = -1;
-
-  if (filterBaseBBox.isSet()) {
-    svg_.windowToPixel(filterBaseBBox.getXMin(), filterBaseBBox.getYMin(), &x1, &y1);
-    svg_.windowToPixel(filterBaseBBox.getXMax(), filterBaseBBox.getYMax(), &x2, &y2);
-  }
-
-  //---
-
-  double dx = getDX();
-  double dy = getDY();
-
-  CSVGBuffer::offsetBuffers(inBuffer, x1, y1, x2 - x1, y2 - y1, dx, dy, outBuffer);
-
-  if (filterBaseBBox.isSet())
-    outBuffer->setBBox(filterBaseBBox);
+  outBuffer->setBBox(inBBox);
 
   //---
 
@@ -124,12 +137,33 @@ draw()
     CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_out");
 
     buffer->setImageBuffer(outBuffer);
+    buffer->setBBox       (inBBox);
   }
 
-  if (inDrawing)
-    inBuffer->startDraw();
+  //---
+
+  if (inDrawing) inBuffer->startDraw();
 
   return true;
+}
+
+void
+CSVGFeOffset::
+calcDelta(double &dx, double &dy) const
+{
+  dx = this->getDX();
+  dy = this->getDY();
+
+  CSVGFilter *filter = getParentFilter();
+
+  CSVGCoordUnits primitiveUnits = filter->getPrimitiveUnits();
+
+  if (primitiveUnits == CSVGCoordUnits::OBJECT_BBOX) {
+    CBBox2D filterBBox = filter->getObjectBBox();
+
+    dx *= filterBBox.getWidth ();
+    dy *= filterBBox.getHeight();
+  }
 }
 
 void

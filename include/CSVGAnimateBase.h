@@ -59,7 +59,7 @@ class CSVGAnimateBase : public CSVGObject {
 
   void handleEvent(CSVGEventType type, const std::string &id, const std::string &data) override;
 
-  void printValues(std::ostream &os) const;
+  void printValues(std::ostream &os, bool flat=false) const override;
 
  protected:
   COptString               attributeName_;

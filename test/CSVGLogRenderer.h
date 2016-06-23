@@ -88,7 +88,7 @@ class CSVGLogRenderer : public CSVGRenderer {
 
   void pathBBox(CBBox2D &) override { logNL("pathBBox"); }
 
-  void drawImage(const CPoint2D &, CImagePtr) override { logNL("drawImage"); }
+  void drawImage(const CPoint2D &, CSVGImageData *) override { logNL("drawImage"); }
 
   void setFont(CFontPtr) override { logNL("setFont"); }
 
@@ -104,13 +104,13 @@ class CSVGLogRenderer : public CSVGRenderer {
   void setFillType(CFillType) override { logNL("setFillType"); }
   void setFillColor(const CRGBA &) override { logNL("setFillColor"); }
   void setFillGradient(CGenGradient *) override { logNL("setFillGradient"); }
-  void setFillImage(CImagePtr) override { logNL("setFillImage"); }
+  void setFillImage(CSVGImageData *) override { logNL("setFillImage"); }
   void setFillMatrix(const CMatrix2D &) override { logNL("setFillMatrix"); }
 
   void setStrokeFilled(bool) override { logNL("setStrokeFilled"); }
   void setStrokeFillType(CFillType) override { logNL("setStrokeFillType"); }
   void setStrokeFillGradient(CGenGradient *) override { logNL("setStrokeFillGradient"); }
-  void setStrokeFillImage(CImagePtr) override { logNL("setStrokeFillImage"); }
+  void setStrokeFillImage(CSVGImageData *) override { logNL("setStrokeFillImage"); }
 
   void setAlign(CHAlignType, CVAlignType) override { logNL("setAlign"); }
 
@@ -121,10 +121,10 @@ class CSVGLogRenderer : public CSVGRenderer {
 
   CISize2D getImageSize() const override { logNL("getImageSize"); return CISize2D(); }
 
-  CImagePtr getImage() const override { logNL("getImage"); return CImagePtr(); }
+  CSVGImageData *getImage() const override { logNL("getImage"); return 0; }
 
   void setImage(CSVGRenderer *) override { logNL("setImage"); }
-  void setImage(CImagePtr) override { logNL("setImage"); }
+  void setImage(CSVGImageData *) override { logNL("setImage"); }
 
   template<typename T>
   void logT(const T &t) {

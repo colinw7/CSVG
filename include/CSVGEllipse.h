@@ -41,6 +41,8 @@ class CSVGEllipse : public CSVGObject {
 
   void print(std::ostream &os, bool hier) const override;
 
+  void printValues(std::ostream &os, bool flat) const override;
+
   friend std::ostream &operator<<(std::ostream &os, const CSVGEllipse &ellipse);
 
  private:

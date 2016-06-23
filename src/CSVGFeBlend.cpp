@@ -74,11 +74,29 @@ processOption(const std::string &opt_name, const std::string &opt_value)
 
 bool
 CSVGFeBlend::
-draw()
+drawElement()
 {
   CSVGBuffer *inBuffer1 = svg_.getBuffer(getFilterIn1());
   CSVGBuffer *inBuffer2 = svg_.getBuffer(getFilterIn2());
   CSVGBuffer *outBuffer = svg_.getBuffer(getFilterOut());
+
+  bool inDrawing1 = inBuffer1->isDrawing();
+  bool inDrawing2 = inBuffer2->isDrawing();
+
+  if (inDrawing1) inBuffer1->stopDraw();
+  if (inDrawing2) inBuffer2->stopDraw();
+
+  //---
+
+  // get filtered object coords
+  CBBox2D inBBox1, inBBox2;
+
+  getBufferSubRegion(inBuffer1, inBBox1);
+  getBufferSubRegion(inBuffer2, inBBox2);
+
+  CBBox2D inBBox = inBBox1 + inBBox2;
+
+  //---
 
   if (svg_.getDebugFilter()) {
     std::string objectBufferName = "_" + getUniqueName();
@@ -87,10 +105,19 @@ draw()
     CSVGBuffer *buffer2 = svg_.getBuffer(objectBufferName + "_in2");
 
     buffer1->setImageBuffer(inBuffer1);
+    buffer1->setBBox       (inBBox1);
+
     buffer2->setImageBuffer(inBuffer2);
+    buffer2->setBBox       (inBBox2);
   }
 
-  CSVGBuffer::blendBuffers(inBuffer1, inBuffer2, getMode(), outBuffer);
+  //---
+
+  CSVGBuffer::blendBuffers(inBuffer1, inBuffer2, inBBox, getMode(), outBuffer);
+
+  outBuffer->setBBox(inBBox);
+
+  //---
 
   if (svg_.getDebugFilter()) {
     std::string objectBufferName = "_" + getUniqueName();
@@ -98,7 +125,13 @@ draw()
     CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_out");
 
     buffer->setImageBuffer(outBuffer);
+    buffer->setBBox       (inBBox);
   }
+
+  //---
+
+  if (inDrawing1) inBuffer1->startDraw();
+  if (inDrawing2) inBuffer2->startDraw();
 
   return true;
 }

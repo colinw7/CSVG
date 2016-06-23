@@ -139,8 +139,8 @@ setDashArray(const std::string &dash_str)
   if (! getDashValid())
     dash_ = CSVGStrokeDash();
 
-  // TODO: if dashes empty either solid or none
   dash_.getValue().setDashes(dashes);
+  dash_.getValue().setSolid (solid);
 }
 
 void
@@ -248,7 +248,7 @@ CSVGStroke::
 update(const CSVGStroke &stroke)
 {
   // color
-  if (stroke.getColorValid())
+  if      (stroke.getColorValid())
     setColor(stroke.getColor());
   else if (svg_.styleObject()) {
     CSVGColor   color;
@@ -262,55 +262,100 @@ update(const CSVGStroke &stroke)
   if      (stroke.getOpacityValid())
     setOpacity(stroke.getOpacity());
   else if (svg_.styleObject()) {
-    double a;
+    double      opacity;
+    CSVGCSSType opacityType;
 
-    if (svg_.getStyleStrokeOpacity(svg_.styleObject(), a))
-      opacity_ = a;
+    if (svg_.getStyleStrokeOpacity(svg_.styleObject(), opacity, opacityType))
+      opacity_ = opacity;
   }
 
   // rule
-  if (stroke.getRuleValid())
+  if      (stroke.getRuleValid())
     setRule(stroke.getRule());
+  else if (svg_.styleObject()) {
+    CFillType   rule;
+    CSVGCSSType ruleType;
+
+    if (svg_.getStyleStrokeRule(svg_.styleObject(), rule, ruleType))
+      rule_ = rule;
+  }
 
   // url
-  if (stroke.getUrlValid())
+  if      (stroke.getUrlValid())
     setUrl(stroke.getUrl());
+  else if (svg_.styleObject()) {
+    std::string url;
+    CSVGCSSType urlType;
+
+    if (svg_.getStyleStrokeUrl(svg_.styleObject(), url, urlType))
+      url_ = url;
+  }
 
   // fill object
-  if (stroke.getFillObjectValid())
+  if      (stroke.getFillObjectValid())
     setFillObject(stroke.getFillObject());
+  else if (svg_.styleObject()) {
+    CSVGObject* fillObject;
+    CSVGCSSType fillObjectType;
+
+    if (svg_.getStyleStrokeFillObject(svg_.styleObject(), fillObject, fillObjectType))
+      fillObject_ = fillObject;
+  }
 
   // width
-  if (stroke.getWidthValid())
+  if      (stroke.getWidthValid())
     setWidth(stroke.getWidth());
   else if (svg_.styleObject()) {
-    double w;
+    double      width;
+    CSVGCSSType widthType;
 
-    if (svg_.getStyleStrokeWidth(svg_.styleObject(), w))
-      setWidth(w);
+    if (svg_.getStyleStrokeWidth(svg_.styleObject(), width, widthType))
+      setWidth(width);
   }
 
   // dash
-  if (stroke.getDashValid())
+  if      (stroke.getDashValid())
     setDash(stroke.getDash());
   else if (svg_.styleObject()) {
     CSVGStrokeDash dash;
+    CSVGCSSType    dashType;
 
-    if (svg_.getStyleStrokeDash(svg_.styleObject(), dash))
+    if (svg_.getStyleStrokeDash(svg_.styleObject(), dash, dashType))
       setDash(dash);
   }
 
   // line cap
-  if (stroke.getLineCapValid())
+  if      (stroke.getLineCapValid())
     setLineCap(stroke.getLineCap());
+  else if (svg_.styleObject()) {
+    CLineCapType lineCap;
+    CSVGCSSType  lineCapType;
+
+    if (svg_.getStyleStrokeCap(svg_.styleObject(), lineCap, lineCapType))
+      setLineCap(lineCap);
+  }
 
   // line join
-  if (stroke.getLineJoinValid())
+  if      (stroke.getLineJoinValid())
     setLineJoin(stroke.getLineJoin());
+  else if (svg_.styleObject()) {
+    CLineJoinType lineJoin;
+    CSVGCSSType   lineJoinType;
+
+    if (svg_.getStyleStrokeJoin(svg_.styleObject(), lineJoin, lineJoinType))
+      setLineJoin(lineJoin);
+  }
 
   // mitre limit
-  if (stroke.getMitreLimitValid())
+  if      (stroke.getMitreLimitValid())
     setMitreLimit(stroke.getMitreLimit());
+  else if (svg_.styleObject()) {
+    double      mitreLimit;
+    CSVGCSSType mitreLimitType;
+
+    if (svg_.getStyleStrokeMitreLimit(svg_.styleObject(), mitreLimit, mitreLimitType))
+      setMitreLimit(mitreLimit);
+  }
 
   //---
 
@@ -348,9 +393,14 @@ print(std::ostream &os) const
   if (getDashValid()) {
     ss << " stroke-dasharray: ";
 
-    getDash().printDashes(ss);
+    if      (getDash().isSolid())
+      ss << "solid";
+    else if (getDash().isNone())
+      ss << "none";
+    else
+      getDash().printDashes(ss);
 
-    ss  << ";";
+    ss << ";";
 
     if (getDash().hasOffset()) {
       ss << " stroke-dashoffset: " << getDash().offset() << ";";

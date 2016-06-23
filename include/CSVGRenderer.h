@@ -1,16 +1,19 @@
 #ifndef CSVG_RENDERER_H
 #define CSVG_RENDERER_H
 
+#include <CSVGTypes.h>
 #include <CMatrix2D.h>
 #include <CBBox2D.h>
 #include <CGenGradient.h>
 #include <CFont.h>
-#include <CImageLib.h>
 #include <CRGBA.h>
 #include <CLineDash.h>
 #include <CLineCapType.h>
 #include <CLineJoinType.h>
 #include <CFillType.h>
+#include <CAlignType.h>
+
+class CSVGImageData;
 
 class CSVGRenderer {
  public:
@@ -81,7 +84,7 @@ class CSVGRenderer {
 
   virtual void pathBBox(CBBox2D &bbox) = 0;
 
-  virtual void drawImage(const CPoint2D &p, CImagePtr image) = 0;
+  virtual void drawImage(const CPoint2D &p, CSVGImageData *image) = 0;
 
   virtual void setFont(CFontPtr bg) = 0;
 
@@ -97,13 +100,13 @@ class CSVGRenderer {
   virtual void setFillType(CFillType fillType) = 0;
   virtual void setFillColor(const CRGBA &bg) = 0;
   virtual void setFillGradient(CGenGradient *g) = 0;
-  virtual void setFillImage(CImagePtr image) = 0;
+  virtual void setFillImage(CSVGImageData *image) = 0;
   virtual void setFillMatrix(const CMatrix2D &m) = 0;
 
   virtual void setStrokeFilled(bool b) = 0;
   virtual void setStrokeFillType(CFillType fillType) = 0;
   virtual void setStrokeFillGradient(CGenGradient *g) = 0;
-  virtual void setStrokeFillImage(CImagePtr image) = 0;
+  virtual void setStrokeFillImage(CSVGImageData *image) = 0;
 
   virtual void setAlign(CHAlignType halign, CVAlignType valign) = 0;
 
@@ -125,10 +128,10 @@ class CSVGRenderer {
 
   virtual CISize2D getImageSize() const = 0;
 
-  virtual CImagePtr getImage() const = 0;
+  virtual CSVGImageData *getImage() const = 0;
 
   virtual void setImage(CSVGRenderer *renderer) = 0;
-  virtual void setImage(CImagePtr image) = 0;
+  virtual void setImage(CSVGImageData *image) = 0;
 
   //---
 
@@ -140,11 +143,13 @@ class CSVGRenderer {
 
   virtual void setOffsetImage(CSVGRenderer *src, int dx, int dy);
 
-  virtual void addImage(int x, int y, CImagePtr image);
+  virtual void addImage(int x, int y, CSVGImageData *image);
 
   virtual void combine(int x, int y, CSVGRenderer *r);
 
   virtual void gaussianBlur(CSVGRenderer *dst, CBBox2D &bbox, double stdDevX, double stdDevY);
+
+  virtual void blend(CSVGRenderer *in2, CSVGBlendMode mode, CSVGRenderer *dst);
 
  protected:
   bool   alpha_   { false };

@@ -70,8 +70,8 @@ draw()
     if (drawCap && ! stroke_.getLineCapValid())
       drawCap = false;
 
-    CSVGColor c = getFlatStrokeColor();
-    double    r = getFlatStrokeWidth()/2;
+    COptValT<CSVGColor> c = getFlatStrokeColor();
+    double              r = getFlatStrokeWidth().getValue(1)/2;
 
     CSVGBuffer *buffer = svg_.getCurrentBuffer();
 
@@ -94,7 +94,8 @@ draw()
     if (drawCap) {
       buffer->resetFill();
 
-      buffer->setFillColor(c.rgba());
+      if (c.isValid())
+        buffer->setFillColor(c.getValue().rgba());
 
       if      (stroke_.getLineCap() == LINE_CAP_TYPE_SQUARE) {
         buffer->pathInit();
@@ -144,10 +145,7 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<path";
 
-    CSVGObject::printValues(os);
-
-    printNameParts(os, "d"         , parts_);
-    printNameValue(os, "pathLength", pathLength_);
+    printValues(os, /*flat*/false);
 
     if (hasChildren()) {
       os << ">" << std::endl;
@@ -162,6 +160,16 @@ print(std::ostream &os, bool hier) const
   else {
     os << "path (" << parts_ << ")";
   }
+}
+
+void
+CSVGPath::
+printValues(std::ostream &os, bool flat) const
+{
+  CSVGObject::printValues(os, flat);
+
+  printNameParts(os, "d"         , parts_);
+  printNameValue(os, "pathLength", pathLength_);
 }
 
 bool

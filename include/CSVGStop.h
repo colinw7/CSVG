@@ -13,12 +13,15 @@ class CSVGStop : public CSVGObject {
 
   CSVGStop *dup() const override;
 
-  CScreenUnits getOffset () const { return offset_.getValue(CScreenUnits(0)); }
+  bool hasOffset() const { return offset_.isValid(); }
+  CScreenUnits getOffset() const { return offset_.getValue(CScreenUnits(0)); }
   void setOffset(double offset) { offset_ = offset ; }
 
-  CSVGColor getColor  () const { return color_.getValue(CSVGColor()); }
+  bool hasColor() const { return color_.isValid(); }
+  CSVGColor getColor() const { return color_.getValue(CSVGColor()); }
   void setColor(const CSVGColor &color) { color_ = color  ; }
 
+  bool hasOpacity() const { return opacity_.isValid(); }
   double getOpacity() const { return opacity_.getValue(1); }
   void setOpacity(double opacity) { opacity_ = opacity; }
 

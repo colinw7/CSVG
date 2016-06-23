@@ -1,14 +1,13 @@
 #include <CSVGRenderer.h>
+#include <CSVGImageData.h>
 
 namespace {
-  CImagePtr createImage(int w, int h) {
-    CImageNoSrc src;
+  CSVGImageData *createImage(int w, int h) {
+    CSVGImageData *dst_image = new CSVGImageData();
 
-    CImagePtr dst_image = CImageMgrInst->createImage(src);
+    dst_image->setSize(w, h);
 
-    dst_image->setDataSize(w, h);
-
-    dst_image->setRGBAData(CRGBA(0,0,0,0));
+    dst_image->clear();
 
     return dst_image;
   }
@@ -38,16 +37,16 @@ combine(int ix, int iy, CSVGRenderer *r)
   int w = std::max(iwidth1 , ix + iwidth2 );
   int h = std::max(iheight1, iy + iheight2);
 
-  CImagePtr image1 = getImage();
-  CImagePtr image2 = r->getImage();
+  CSVGImageData *image1 = getImage();
+  CSVGImageData *image2 = r->getImage();
 
   if (r->opacity() < 1)
     image2->scaleAlpha(r->opacity());
 
   if (w > iwidth1 || h > iheight1) {
-    CImagePtr image3 = createImage(w, h);
+    CSVGImageData *image3 = createImage(w, h);
 
-    image3->combine(image1);
+    image3->combine( 0,  0, image1);
     image3->combine(ix, iy, image2);
 
     setImage(image3);
@@ -63,11 +62,11 @@ void
 CSVGRenderer::
 addResizedImage(CSVGRenderer *src, double x, double y, double w, double h)
 {
-  CImagePtr image2 = src->getImage();
+  CSVGImageData *image2 = src->getImage();
 
   image2->reshape(w, h);
 
-  CImagePtr image1 = getImage();
+  CSVGImageData *image1 = getImage();
 
   // TODO: handle out of bounds
   image1->combine(x, y, image2);
@@ -79,7 +78,7 @@ void
 CSVGRenderer::
 addClippedImage(CSVGRenderer *src, int x, int y, int px1, int py1, int px2, int py2)
 {
-  CImagePtr image = src->getImage();
+  CSVGImageData *image = src->getImage();
 
   image->clipOutside(px1, py1, px2, py2);
 
@@ -90,7 +89,7 @@ void
 CSVGRenderer::
 setClippedImage(CSVGRenderer *src, int px1, int py1, int px2, int py2)
 {
-  CImagePtr image = src->getImage();
+  CSVGImageData *image = src->getImage();
 
   image->clipOutside(px1, py1, px2, py2);
 
@@ -99,9 +98,9 @@ setClippedImage(CSVGRenderer *src, int px1, int py1, int px2, int py2)
 
 void
 CSVGRenderer::
-addImage(int x, int y, CImagePtr image2)
+addImage(int x, int y, CSVGImageData *image2)
 {
-  CImagePtr image1 = getImage();
+  CSVGImageData *image1 = getImage();
 
   image1->combine(x, y, image2);
 
@@ -112,14 +111,14 @@ void
 CSVGRenderer::
 setOffsetImage(CSVGRenderer *src, int dx, int dy)
 {
-  CImagePtr src_image = src->getImage();
+  CSVGImageData *src_image = src->getImage();
 
   int w = src_image->getWidth () + dx;
   int h = src_image->getHeight() + dy;
 
-  CImagePtr dst_image = createImage(w, h);
+  CSVGImageData *dst_image = createImage(w, h);
 
-  dst_image->subCopyFrom(src_image, 0, 0, -1, -1, dx, dy);
+  src_image->subCopyTo(dst_image, 0, 0, -1, -1, dx, dy);
 
   setImage(dst_image);
 }
@@ -128,18 +127,55 @@ void
 CSVGRenderer::
 gaussianBlur(CSVGRenderer *dst, CBBox2D &bbox, double stdDevX, double stdDevY)
 {
-  CImagePtr src_image = getImage();
+  CSVGImageData *src_image = getImage();
 
   // set alpha
   if (isAlpha())
     src_image->setAlphaGray(0);
 
-  CImagePtr dst_image = src_image->dup();
+  CSVGImageData *dst_image = src_image->dup();
 
-  if (bbox.isSet())
-    src_image->setWindow(bbox.getXMin(), bbox.getYMin(), bbox.getXMax(), bbox.getYMax());
+  if (bbox.isSet()) {
+    CPoint2D p1, p2;
+
+    windowToPixel(bbox.getLL(), p1);
+    windowToPixel(bbox.getUR(), p2);
+
+    src_image->setWindow(p1.x, p1.y, p2.x, p2.y);
+  }
 
   src_image->gaussianBlur(dst_image, stdDevX, stdDevY);
+
+  dst->setImage(dst_image);
+}
+
+void
+CSVGRenderer::
+blend(CSVGRenderer *in2, CSVGBlendMode mode, CSVGRenderer *dst)
+{
+  CSVGImageData *src_image1 =      getImage();
+  CSVGImageData *src_image2 = in2->getImage();
+
+  // set alpha
+  if (     isAlpha()) src_image1->setAlphaGray(0);
+  if (dst->isAlpha()) src_image2->setAlphaGray(0);
+
+  CSVGImageData *dst_image = src_image1->dup();
+
+  CRGBABlendMode mode1 = CRGBA_BLEND_NORMAL;
+
+  if      (mode == CSVGBlendMode::NORMAL)
+    mode1 = CRGBA_BLEND_NORMAL;
+  else if (mode == CSVGBlendMode::MULTIPLY)
+    mode1 = CRGBA_BLEND_MULTIPLY;
+  else if (mode == CSVGBlendMode::SCREEN)
+    mode1 = CRGBA_BLEND_SCREEN;
+  else if (mode == CSVGBlendMode::DARKEN)
+    mode1 = CRGBA_BLEND_DARKEN;
+  else if (mode == CSVGBlendMode::LIGHTEN)
+    mode1 = CRGBA_BLEND_LIGHTEN;
+
+  dst_image->combine(src_image2, mode1);
 
   dst->setImage(dst_image);
 }

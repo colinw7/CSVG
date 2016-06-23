@@ -182,9 +182,31 @@ print(std::ostream &os, bool hier) const
     os << "radialGradient ";
 }
 
+void
+CSVGRadialGradient::
+setFillBuffer(CSVGBuffer *buffer, CSVGObject *obj, const COptReal &opacity)
+{
+  CAutoPtr<CRadialGradient> rg;
+
+  rg = createGradient(obj, opacity);
+
+  buffer->setFillGradient(rg);
+}
+
+void
+CSVGRadialGradient::
+setStrokeBuffer(CSVGBuffer *buffer, CSVGObject *obj, const COptReal &opacity)
+{
+  CAutoPtr<CRadialGradient> rg;
+
+  rg = createGradient(obj, opacity);
+
+  buffer->setStrokeFillGradient(rg);
+}
+
 CRadialGradient *
 CSVGRadialGradient::
-createGradient(CSVGObject *obj)
+createGradient(CSVGObject *obj, const COptReal &opacity)
 {
   double xc, yc, r, xf, yf;
 
@@ -207,7 +229,12 @@ createGradient(CSVGObject *obj)
     else
       rgba = obj->colorToRGBA(s->getColor());
 
-    double alpha = s->getOpacity();
+    double alpha = 1.0;
+
+    if (s->hasOpacity())
+      alpha = s->getOpacity();
+    else
+      alpha = opacity.getValue(1.0);
 
     rgba.setAlpha(alpha);
 

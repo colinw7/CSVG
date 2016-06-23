@@ -77,10 +77,10 @@ class CSVGLinearGradient : public CSVGObject {
 
   void print(std::ostream &os, bool hier) const override;
 
-  void setFillBuffer(CSVGBuffer *buffer, CSVGObject *obj);
-  void setStrokeBuffer(CSVGBuffer *buffer, CSVGObject *obj);
+  void setFillBuffer  (CSVGBuffer *buffer, CSVGObject *obj, const COptReal &opacity);
+  void setStrokeBuffer(CSVGBuffer *buffer, CSVGObject *obj, const COptReal &opacity);
 
-  CLinearGradient *createGradient(CSVGObject *);
+  CLinearGradient *createGradient(CSVGObject *obj, const COptReal &opacity);
 
   void getEndPoints(CSVGObject *obj, double *x1, double *y1, double *x2, double *y2) const;
 

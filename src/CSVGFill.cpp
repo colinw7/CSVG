@@ -147,23 +147,45 @@ update(const CSVGFill &fill)
   if      (fill.getOpacityValid())
     setOpacity(fill.getOpacity());
   else if (svg_.styleObject()) {
-    double a;
+    double      opacity;
+    CSVGCSSType opacityType;
 
-    if (svg_.getStyleFillOpacity(svg_.styleObject(), a))
-      setOpacity(a);
+    if (svg_.getStyleFillOpacity(svg_.styleObject(), opacity, opacityType))
+      setOpacity(opacity);
   }
 
   // rule
-  if (fill.getRuleValid())
+  if      (fill.getRuleValid())
     setRule(fill.getRule());
+  else if (svg_.styleObject()) {
+    CFillType   rule;
+    CSVGCSSType ruleType;
+
+    if (svg_.getStyleFillRule(svg_.styleObject(), rule, ruleType))
+      setRule(rule);
+  }
 
   // url
-  if (fill.getUrlValid())
+  if      (fill.getUrlValid())
     setUrl(fill.getUrl());
+  else if (svg_.styleObject()) {
+    std::string url;
+    CSVGCSSType urlType;
+
+    if (svg_.getStyleFillUrl(svg_.styleObject(), url, urlType))
+      setUrl(url);
+  }
 
   // fill object
-  if (fill.getFillObjectValid())
+  if      (fill.getFillObjectValid())
     setFillObject(fill.getFillObject());
+  else if (svg_.styleObject()) {
+    CSVGObject* fillObject;
+    CSVGCSSType fillObjectType;
+
+    if (svg_.getStyleFillFillObject(svg_.styleObject(), fillObject, fillObjectType))
+      setFillObject(fillObject);
+  }
 
   //---
 
@@ -192,8 +214,17 @@ print(std::ostream &os) const
     ss << "fill-opacity: " << getOpacity() << ";";
   }
 
-  if (getUrlValid())
+  if (getRuleValid()) {
+    if (ss.str() != "") ss << " ";
+
+    ss << "fill-rule: " << svg_.encodeFillRuleString(getRule()) << ";";
+  }
+
+  if (getUrlValid()) {
+    if (ss.str() != "") ss << " ";
+
     ss << "fill: url(#" << getUrl() << ");";
+  }
 
   os << ss.str();
 }

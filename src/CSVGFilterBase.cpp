@@ -1,5 +1,7 @@
 #include <CSVGFilterBase.h>
 #include <CSVGFilter.h>
+#include <CSVGBuffer.h>
+#include <CSVGUtil.h>
 #include <CSVG.h>
 
 CSVGFilterBase::
@@ -48,9 +50,9 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   CScreenUnits   length;
 
   if      (svg_.coordUnitsOption(opt_name, opt_value, "filterUnits", units))
-    units_ = units;
+    filterUnits_ = units;
   else if (svg_.coordUnitsOption(opt_name, opt_value, "primitiveUnits", units))
-    primitiveUnits_ = units;
+    primitiveUnits_ = units; // TODO: needed ?
   else if (svg_.coordOption(opt_name, opt_value, "x", length))
     x_ = length;
   else if (svg_.coordOption(opt_name, opt_value, "y", length))
@@ -102,7 +104,23 @@ calcFilterOut(const COptString &filterOut) const
 
 bool
 CSVGFilterBase::
-getParentBBox(CBBox2D &bbox) const
+getFilterObjectBBox(CBBox2D &bbox) const
+{
+  CSVGFilter *filter = getParentFilter();
+
+  if (! filter)
+    return false;
+
+  CSVGObject *obj = filter->getObject();
+
+  bbox = filter->getObjectBBox(obj);
+
+  return true;
+}
+
+bool
+CSVGFilterBase::
+getFilterRegion(CBBox2D &bbox) const
 {
   CSVGFilter *filter = getParentFilter();
 
@@ -119,52 +137,109 @@ getParentBBox(CBBox2D &bbox) const
 
 bool
 CSVGFilterBase::
-getTransformedParentBBox(CBBox2D &bbox) const
+getBufferSubRegion(CSVGBuffer *inBuffer, CBBox2D &bbox) const
 {
-  CBBox2D viewBBox;
+  // get input buffer region
+  CBBox2D bufferBBox = inBuffer->bbox();
 
-  if (! getParentViewBox(viewBBox))
-    viewBBox = CBBox2D(0, 0, 100, 100);
+  if (! bufferBBox.isSet())
+    return getSubRegion(bbox);
 
-  if (! getParentBBox(bbox))
-    bbox = viewBBox;
+  // get parent object region
+  CBBox2D objectBBox;
+
+  if (! getFilterObjectBBox(objectBBox)) {
+    objectBBox = bufferBBox;
+  }
+
+  return getBBoxSubRegion(bufferBBox, objectBBox, bbox);
+}
+
+bool
+CSVGFilterBase::
+getSubRegion(CBBox2D &bbox) const
+{
+  // TODO: use inbuffer and/or last element for reference bbox
+
+  // get parent filter region
+  CBBox2D filterBBox;
+
+  if (! getFilterRegion(filterBBox)) {
+    CBBox2D viewBBox;
+
+    if (! getParentViewBox(viewBBox))
+      viewBBox = CBBox2D(0, 0, 1, 1);
+
+    filterBBox = viewBBox;
+  }
+
+  // get parent object region
+  CBBox2D objectBBox;
+
+  if (! getFilterObjectBBox(objectBBox)) {
+    objectBBox = filterBBox;
+  }
+
+  return getBBoxSubRegion(filterBBox, objectBBox, bbox);
+}
+
+bool
+CSVGFilterBase::
+getBBoxSubRegion(const CBBox2D &inBBox, const CBBox2D &objectBBox, CBBox2D &bbox) const
+{
+  // calc filter primitive subregion
+  // x, y, width, height are in primitive units of parent filter
+  // TODO: default is tightest fitting bounding box of filter primitives
+  double x = inBBox.getXMin  ();
+  double y = inBBox.getYMin  ();
+  double w = inBBox.getWidth ();
+  double h = inBBox.getHeight();
+
+  CSVGCoordUnits primitiveUnits = getParentFilter()->getPrimitiveUnits();
 
   //---
 
-  CSVGCoordUnits punits = getParentFilter()->getPrimitiveUnits();
-
-  double pw = viewBBox.getWidth ();
-  double ph = viewBBox.getHeight();
-
   if (hasX()) {
-    double x = getX().pxValue(pw);
+    double x1 = getX().pxValue(1);
 
-    if (punits == CSVGCoordUnits::USER_SPACE)
-      bbox.moveXTo(x);
-    else
-      bbox.moveXTo(getXMin() + x);
+    if (primitiveUnits == CSVGCoordUnits::OBJECT_BBOX)
+      x1 = CSVGUtil::map(x1, 0, 1, objectBBox.getXMin(), objectBBox.getXMax());
+
+    x = x1;
   }
 
   if (hasY()) {
-    double y = getY().pxValue(ph);
+    double y1 = getY().pxValue(1);
 
-    if (punits == CSVGCoordUnits::USER_SPACE)
-      bbox.moveYTo(y);
-    else
-      bbox.moveYTo(getYMin() + y);
+    if (primitiveUnits == CSVGCoordUnits::OBJECT_BBOX)
+      y1 = CSVGUtil::map(y1, 0, 1, objectBBox.getYMin(), objectBBox.getYMax());
+
+    y = y1;
   }
 
-  if (hasWidth()) {
-    double w = getWidth().pxValue(pw);
+  //---
 
-    bbox.setWidth(w);
+  if (hasWidth()) {
+    double w1 = getWidth().pxValue(1);
+
+    if (primitiveUnits == CSVGCoordUnits::OBJECT_BBOX)
+      w1 *= objectBBox.getWidth();
+
+    w = w1;
   }
 
   if (hasHeight()) {
-    double h = getHeight().pxValue(ph);
+    double h1 = getHeight().pxValue(1);
 
-    bbox.setHeight(h);
+    if (primitiveUnits == CSVGCoordUnits::OBJECT_BBOX)
+      h1 *= objectBBox.getHeight();
+
+    h = h1;
   }
+
+  //---
+
+  bbox = CBBox2D(x, y, x + w, y + h);
 
   return true;
 }
@@ -201,11 +276,31 @@ getParentFilter() const
   return 0;
 }
 
+bool
+CSVGFilterBase::
+draw()
+{
+  bool rc = drawElement();
+
+  CSVGFilter *filter = getParentFilter();
+
+  filter->setLastElement(this);
+
+  return rc;
+}
+
+bool
+CSVGFilterBase::
+getBBox(CBBox2D &bbox) const
+{
+  return getFilterRegion(bbox);
+}
+
 void
 CSVGFilterBase::
-printValues(std::ostream &os) const
+printValues(std::ostream &os, bool /*flat*/) const
 {
-  printNameCoordUnits(os, "filterUnits"   , units_);
+  printNameCoordUnits(os, "filterUnits"   , filterUnits_);
   printNameCoordUnits(os, "primitiveUnits", primitiveUnits_);
   printNameLength    (os, "x"             , x_);
   printNameLength    (os, "y"             , y_);

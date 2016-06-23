@@ -1,5 +1,6 @@
 #include <CSVGFilter.h>
 #include <CSVGBuffer.h>
+#include <CSVGUtil.h>
 #include <CSVG.h>
 
 CSVGFilter::
@@ -69,72 +70,95 @@ getRegion(CBBox2D &bbox) const
   return getRegion(getObject(), bbox);
 }
 
+CBBox2D
+CSVGFilter::
+getObjectBBox() const
+{
+  return getObjectBBox(getObject());
+}
+
+CBBox2D
+CSVGFilter::
+getObjectBBox(CSVGObject *obj) const
+{
+  // get reference parent bbox
+  CBBox2D bbox;
+
+  //if (! obj->getBBox(bbox1)) {
+  if (! obj->getFlatTransformedBBox(bbox)) {
+    if (! obj->getParentViewBox(bbox))
+      bbox = CBBox2D(0, 0, 100, 100);
+  }
+
+  assert(bbox.isSet());
+
+  return bbox;
+}
+
 bool
 CSVGFilter::
 getRegion(CSVGObject *obj, CBBox2D &bbox) const
 {
-  CBBox2D bbox1;
+  CBBox2D bbox1 = getObjectBBox(obj);
 
-  if (! obj->getBBox(bbox1)) {
-    // TODO: viewBBox
-    //if (! obj->getFlatTransformedBBox(bbox1))
-    // return false;
-    bbox1 = CBBox2D(0,0,100,100);
-  }
+  //---
 
-  if (! bbox1.isSet())
-    return false;
+  // get filter specified x, y, width, height in filterUnits units
+  // default is (x=-0.1, y=-0.1, w=1.2, h=1.2)
+  CSVGCoordUnits filterUnits = getFilterUnits();
 
-  double w1 = bbox1.getWidth ();
-  double h1 = bbox1.getHeight();
-
-  double x1, y1, x2, y2;
+  double x = 0, y = 0;
 
   if (hasX()) {
-    double x = getX().pxValue(1);
+    double x1 = getX().pxValue(1);
 
-    if (getUnits() == CSVGCoordUnits::OBJECT_BBOX)
-      x1 = bbox1.getXMin() + x*w1;
+    if (filterUnits == CSVGCoordUnits::OBJECT_BBOX)
+      x = CSVGUtil::map(x1, 0, 1, bbox1.getXMin(), bbox1.getXMax());
     else
-      x1 = x;
+      x = x1;
   }
   else
-    x1 = bbox1.getXMin() - 0.1*w1;
+    x = CSVGUtil::map(-0.1, 0, 1, bbox1.getXMin(), bbox1.getXMax());
 
   if (hasY()) {
-    double y = getY().pxValue(1);
+    double y1 = getY().pxValue(1);
 
-    if (getUnits() == CSVGCoordUnits::OBJECT_BBOX)
-      y1 = bbox1.getYMin() + y*h1;
+    if (filterUnits == CSVGCoordUnits::OBJECT_BBOX)
+      y = CSVGUtil::map(y1, 0, 1, bbox1.getYMin(), bbox1.getYMax());
     else
-      y1 = y;
+      y = y1;
   }
   else
-    y1 = bbox1.getYMin() - 0.1*h1;
+    y = CSVGUtil::map(-0.1, 0, 1, bbox1.getYMin(), bbox1.getYMax());
+
+  //---
+
+  double w, h;
 
   if (hasWidth()) {
-    double w = getWidth().pxValue(1);
+    w = getWidth().pxValue(1);
 
-    if (getUnits() == CSVGCoordUnits::OBJECT_BBOX)
-      x2 = bbox1.getXMin() + w*w1;
-    else
-      x2 = bbox1.getXMin() + w;
+    if (filterUnits == CSVGCoordUnits::OBJECT_BBOX)
+      w *= bbox1.getWidth();
   }
   else
-    x2 = bbox1.getXMax() + 0.1*w1;
+    w = 1.2*bbox1.getWidth();
 
   if (hasHeight()) {
-    double h = getHeight().pxValue(1);
+    h = getHeight().pxValue(1);
 
-    if (getUnits() == CSVGCoordUnits::OBJECT_BBOX)
-      y2 = bbox1.getYMin() + h*h1;
-    else
-      y2 = bbox1.getYMin() + h;
+    if (filterUnits == CSVGCoordUnits::OBJECT_BBOX)
+      h *= bbox1.getHeight();
   }
   else
-    y2 = bbox1.getYMax() + 0.1*h1;
+    h = 1.2*bbox1.getHeight();
 
-  bbox = CBBox2D(x1, y1, x2, y2);
+  // TODO: negtive width or height is an error
+  // TODO: zero width or height then rendering of parent object is disabled
+
+  //---
+
+  bbox = CBBox2D(x, y, x + w, y + h);
 
   return true;
 }
@@ -143,6 +167,10 @@ void
 CSVGFilter::
 initDraw(CSVGBuffer *buffer)
 {
+  lastElement_ = 0;
+
+  offset_ = CPoint2D();
+
   // use update background image
   if (buffer->parentBuffer()) {
     CSVGBuffer *bgBuffer  = svg_.getBuffer("BackgroundImage");
@@ -181,6 +209,10 @@ initDraw(CSVGBuffer *buffer)
   CSVGBuffer *srcBuffer = svg_.getBuffer("SourceGraphic");
   CSVGBuffer *fltBuffer = svg_.getBuffer(lastFilterName_);
 
+  // reset input bboxes
+  srcBuffer->setBBox(CBBox2D());
+  fltBuffer->setBBox(CBBox2D());
+
   //---
 
   CBBox2D bbox;
@@ -190,10 +222,10 @@ initDraw(CSVGBuffer *buffer)
   svg_.setPaintBox(bbox);
 
   if (object_) {
-    CSVGColor fillColor   = object_->getFlatFillColor();
-    CSVGColor strokeColor = object_->getFlatStrokeColor();
+    CSVGFill   fill   = object_->getFlatFill  ();
+    CSVGStroke stroke = object_->getFlatStroke();
 
-    svg_.setPaintColors(fillColor, strokeColor);
+    svg_.setPaintStyle(fill, stroke);
   }
 
   //---
@@ -216,6 +248,7 @@ initDraw(CSVGBuffer *buffer)
     CSVGBuffer *filterInBuffer = svg_.getBuffer(buffer->getName() + "_filter_in");
 
     filterInBuffer->setImageBuffer(srcBuffer);
+    filterInBuffer->setBBox       (bbox);
   }
 }
 
@@ -248,6 +281,7 @@ termDraw(CSVGBuffer *buffer)
     CSVGBuffer *filterOutBuffer = svg_.getBuffer(buffer->getName() + "_filter_out");
 
     filterOutBuffer->setImageBuffer(fltBuffer);
+    filterOutBuffer->setBBox       (buffer->bbox());
   }
 
   // store filter image back into current buffer

@@ -4,6 +4,8 @@
 #include <CSVGObject.h>
 #include <CSVGXLink.h>
 
+class CSVGFilterBase;
+
 class CSVGFilter : public CSVGObject {
  public:
   CSVG_OBJECT_DEF("filter", CSVGObjTypeId::FILTER)
@@ -13,9 +15,9 @@ class CSVGFilter : public CSVGObject {
 
   CSVGFilter *dup() const override;
 
-  CSVGCoordUnits getUnits() const {
+  CSVGCoordUnits getFilterUnits() const {
     return filterUnits_.getValue(CSVGCoordUnits::OBJECT_BBOX); }
-  void setUnits(CSVGCoordUnits units) { filterUnits_ = units; }
+  void setFilterUnits(CSVGCoordUnits units) { filterUnits_ = units; }
 
   CSVGCoordUnits getPrimitiveUnits() const {
     return primitiveUnits_.getValue(CSVGCoordUnits::USER_SPACE); }
@@ -55,6 +57,15 @@ class CSVGFilter : public CSVGObject {
   const std::string &getLastFilterName() const { return lastFilterName_; }
   void setLastFilterName(const std::string &v) { lastFilterName_ = v; }
 
+  CSVGFilterBase *lastElement() const { return lastElement_; }
+  void setLastElement(CSVGFilterBase *p) { lastElement_ = p; }
+
+  const CPoint2D &getOffset() const { return offset_; }
+  void setOffset(const CPoint2D &p) { offset_ = p; }
+
+  CBBox2D getObjectBBox() const;
+  CBBox2D getObjectBBox(CSVGObject *obj) const;
+
   bool getRegion(CBBox2D &bbox) const;
   bool getRegion(CSVGObject *obj, CBBox2D &bbox) const;
 
@@ -83,6 +94,8 @@ class CSVGFilter : public CSVGObject {
   CBBox2D                  contentsBBox_;
   bool                     oldDrawing_ { false };
   std::string              lastFilterName_;
+  CSVGFilterBase*          lastElement_ { 0 };
+  CPoint2D                 offset_;
 };
 
 #endif

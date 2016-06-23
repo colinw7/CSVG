@@ -167,7 +167,7 @@ double
 CQSVGObject::
 strokeOpacity() const
 {
-  return obj_->getFlatStrokeOpacity();
+  return obj_->getFlatStrokeOpacity().getValue(1);
 }
 
 void
@@ -181,7 +181,7 @@ double
 CQSVGObject::
 strokeWidth() const
 {
-  return obj_->getFlatStrokeWidth();
+  return obj_->getFlatStrokeWidth().getValue(1);
 }
 
 void
@@ -195,7 +195,7 @@ CLineDash
 CQSVGObject::
 strokeDash() const
 {
-  return obj_->getFlatStrokeLineDash().getLineDash();
+  return obj_->getFlatStrokeLineDash().getValue(CSVGStrokeDash()).getLineDash();
 }
 
 void
@@ -218,7 +218,7 @@ double
 CQSVGObject::
 strokeOffset() const
 {
-  return obj_->getFlatStrokeLineDash().offset().pxValue(0);
+  return obj_->getFlatStrokeLineDash().getValue(CSVGStrokeDash()).offset().pxValue(0);
 }
 
 void
@@ -323,7 +323,7 @@ double
 CQSVGObject::
 fillOpacity() const
 {
-  return obj_->getFlatFillOpacity();
+  return obj_->getFlatFillOpacity().getValue(1);
 }
 
 void

@@ -66,6 +66,7 @@ CSVGGlyph.cpp \
 CSVGGroup.cpp \
 CSVGHKern.cpp \
 CSVGImage.cpp \
+CSVGImageData.cpp \
 CSVGFeLighting.cpp \
 CSVGLinearGradient.cpp \
 CSVGLine.cpp \
@@ -99,7 +100,6 @@ CSVGUse.cpp \
 CSVGUtil.cpp \
 CSVGXLink.cpp \
 \
-CCSS.cpp \
 CLog.cpp \
 CEncode64.cpp \
 CMathGeom2D.cpp \
@@ -113,8 +113,10 @@ $(CDEBUG) \
 -I. \
 -I$(INC_DIR) \
 -I../../CXML/include \
+-I../../CCSS/include \
 -I../../CConfig/include \
 -I../../CImageLib/include \
+-I../../CFileUtil/include \
 -I../../CFile/include \
 -I../../CFont/include \
 -I../../CRegExp/include \

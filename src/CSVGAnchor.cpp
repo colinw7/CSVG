@@ -75,9 +75,7 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<a";
 
-    CSVGObject::printValues(os);
-
-    printNameXLink(os, "xlink:href", xlink_);
+    printValues(os, /*flat*/false);
 
     if (hasChildren()) {
       os << ">" << std::endl;
@@ -91,6 +89,15 @@ print(std::ostream &os, bool hier) const
   }
   else
     os << "a";
+}
+
+void
+CSVGAnchor::
+printValues(std::ostream &os, bool flat) const
+{
+  CSVGObject::printValues(os, flat);
+
+  printNameXLink(os, "xlink:href", xlink_);
 }
 
 std::ostream &

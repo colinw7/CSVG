@@ -1,7 +1,6 @@
 #ifndef CQSVGBufferCanvas_H
 #define CQSVGBufferCanvas_H
 
-#include <CImagePtr.h>
 #include <CBBox2D.h>
 #include <QFrame>
 
@@ -21,7 +20,6 @@ class CQSVGBufferView : public QFrame {
 
   QString bufferName() const;
 
-  //CImagePtr bufferImage() const;
   QImage bufferImage() const;
 
   CPoint2D bufferOrigin() const;

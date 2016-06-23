@@ -246,23 +246,30 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<image";
 
-    CSVGObject::printValues(os);
-
-    printNameValue (os, "x"     , x_);
-    printNameValue (os, "y"     , y_);
-    printNameLength(os, "width" , w_);
-    printNameLength(os, "height", h_);
-
-    printNamePreserveAspect(os, "preserveAspectRatio", preserveAspect_);
-
-    printNameXLink(os, "xlink:href", xlink_);
-
-    printNameValue(os, "color-profile", colorProfile_);
+    printValues(os);
 
     os << "/>" << std::endl;
   }
   else
     os << "image " << getPosition() << " " << getSizeInternal();
+}
+
+void
+CSVGImage::
+printValues(std::ostream &os, bool flat) const
+{
+  CSVGObject::printValues(os, flat);
+
+  printNameValue (os, "x"     , x_);
+  printNameValue (os, "y"     , y_);
+  printNameLength(os, "width" , w_);
+  printNameLength(os, "height", h_);
+
+  printNamePreserveAspect(os, "preserveAspectRatio", preserveAspect_);
+
+  printNameXLink(os, "xlink:href", xlink_);
+
+  printNameValue(os, "color-profile", colorProfile_);
 }
 
 std::ostream &

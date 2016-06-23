@@ -398,14 +398,25 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<use";
 
-    printNameXLink(os, "xlink:href", xlink_);
-
-    CSVGObject::printValues(os);
+    printValues(os);
 
     os << "/>" << std::endl;
   }
   else
     os << "use";
+}
+
+void
+CSVGUse::
+printValues(std::ostream &os, bool flat) const
+{
+  printNameValue(os, "x"         , x_);
+  printNameValue(os, "y"         , y_);
+  printNameValue(os, "width"     , width_);
+  printNameValue(os, "height"    , height_);
+  printNameXLink(os, "xlink:href", xlink_);
+
+  CSVGObject::printValues(os, flat);
 }
 
 std::ostream &

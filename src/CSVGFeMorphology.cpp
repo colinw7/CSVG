@@ -51,9 +51,22 @@ processOption(const std::string &opt_name, const std::string &opt_value)
 
 bool
 CSVGFeMorphology::
-draw()
+drawElement()
 {
   CSVGBuffer *inBuffer = svg_.getBuffer(getFilterIn());
+
+  bool inDrawing = inBuffer->isDrawing();
+
+  if (inDrawing) inBuffer->stopDraw();
+
+  //---
+
+  // get filtered object coords
+  CBBox2D inBBox;
+
+  getBufferSubRegion(inBuffer, inBBox);
+
+  //---
 
   if (svg_.getDebugFilter()) {
     std::string objectBufferName = "_" + getUniqueName();
@@ -61,14 +74,19 @@ draw()
     CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_in");
 
     buffer->setImageBuffer(inBuffer);
+    buffer->setBBox       (inBBox);
   }
+
+  //---
 
   int r = 1;
 
   if (! radius_.isValid() || ! CStrUtil::toInteger(radius_.getValue(), &r))
     r = 1;
 
-  CSVGBuffer::morphologyBuffers(inBuffer, getOperator(), r);
+  CSVGBuffer::morphologyBuffers(inBuffer, inBBox, getOperator(), r);
+
+  //---
 
   if (svg_.getDebugFilter()) {
     std::string objectBufferName = "_" + getUniqueName();
@@ -76,7 +94,12 @@ draw()
     CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_out");
 
     buffer->setImageBuffer(inBuffer);
+    buffer->setBBox       (inBBox);
   }
+
+  //---
+
+  if (inDrawing) inBuffer->startDraw();
 
   return true;
 }

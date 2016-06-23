@@ -174,170 +174,539 @@ updateFill(const CSVGFill &fill, bool recurse)
   }
 }
 
-CSVGColor
+//------
+
+CSVGStroke
+CSVGObject::
+getFlatStroke() const
+{
+  CSVGStroke stroke(svg_);
+
+  COptValT<CSVGColor> color = getFlatStrokeColor();
+
+  if (color.isValid())
+    stroke.setColor(color.getValue());
+  else
+    stroke.resetColor();
+
+  //---
+
+  COptReal opacity = getFlatStrokeOpacity();
+
+  if (opacity.isValid())
+    stroke.setOpacity(opacity.getValue());
+  else
+    stroke.resetOpacity();
+
+  //---
+
+  COptValT<CFillType> rule = getFlatStrokeRule();
+
+  if (rule.isValid())
+    stroke.setRule(rule.getValue());
+  else
+    stroke.resetRule();
+
+  //---
+
+  COptString url = getFlatStrokeUrl();
+
+  if (url.isValid())
+    stroke.setUrl(url.getValue());
+  else
+    stroke.resetUrl();
+
+  //---
+
+  COptValT<CSVGObject*> obj = getFlatStrokeFillObject();
+
+  if (obj.isValid())
+    stroke.setFillObject(obj.getValue());
+  else
+    stroke.resetFillObject();
+
+  //---
+
+  COptReal width = getFlatStrokeWidth();
+
+  if (width.isValid())
+    stroke.setWidth(width.getValue());
+  else
+    stroke.resetWidth();
+
+  //---
+
+  COptValT<CSVGStrokeDash> dash = getFlatStrokeLineDash();
+
+  if (dash.isValid())
+    stroke.setDash(dash.getValue());
+  else
+    stroke.resetDash();
+
+  //---
+
+  COptValT<CLineCapType> lineCap = getFlatStrokeLineCap();
+
+  if (lineCap.isValid())
+    stroke.setLineCap(lineCap.getValue());
+  else
+    stroke.resetLineCap();
+
+  //---
+
+  COptValT<CLineJoinType> lineJoin = getFlatStrokeLineJoin();
+
+  if (lineJoin.isValid())
+    stroke.setLineJoin(lineJoin.getValue());
+  else
+    stroke.resetLineJoin();
+
+  //---
+
+  COptReal mlimit = getFlatStrokeMitreLimit();
+
+  if (mlimit.isValid())
+    stroke.setMitreLimit(mlimit.getValue());
+  else
+    stroke.resetMitreLimit();
+
+  return stroke;
+}
+
+COptValT<CSVGColor>
 CSVGObject::
 getFlatStrokeColor() const
 {
   // if color set use it
   if (stroke_.getColorValid())
-    return stroke_.getColor();
+    return COptValT<CSVGColor>(stroke_.getColor());
 
   CSVGObject *parent = getParent();
 
   while (parent) {
     if (parent->stroke_.getColorValid())
-      return parent->stroke_.getColor();
+      return COptValT<CSVGColor>(parent->stroke_.getColor());
 
     parent = parent->getParent();
   }
-
-  //if (stroke_.getDefColorValid())
-  //  return stroke_.getDefColor();
 
   CSVGColor   color;
   CSVGCSSType colorType;
 
   if (svg_.getStyleStrokeColor(this, color, colorType))
-    return color;
+    return COptValT<CSVGColor>(color);
 
-  return CSVGColor();
+  return COptValT<CSVGColor>();
 }
 
-double
+COptReal
 CSVGObject::
 getFlatStrokeOpacity() const
 {
-  COptValT<double> opacity;
-
+  // if opacity set use it
   if (stroke_.getOpacityValid())
-    opacity.setValue(stroke_.getOpacity());
-  else {
-    CSVGObject *parent = getParent();
+    return COptReal(stroke_.getOpacity());
 
-    while (parent) {
-      if (parent->stroke_.getOpacityValid()) {
-        opacity.setValue(parent->stroke_.getOpacity());
-        break;
-      }
+  CSVGObject *parent = getParent();
 
-      parent = parent->getParent();
-    }
+  while (parent) {
+    if (parent->stroke_.getOpacityValid())
+      return COptReal(parent->stroke_.getOpacity());
+
+    parent = parent->getParent();
   }
 
-  if (! opacity.isValid()) {
-    double opacity1 = 1.0;
+  double      opacity = 1.0;
+  CSVGCSSType opacityType;
 
-    if (svg_.getStyleStrokeOpacity(this, opacity1))
-      opacity.setValue(opacity1);
-    else
-      opacity.setValue(1.0);
-  }
+  if (svg_.getStyleStrokeOpacity(this, opacity, opacityType))
+    return COptReal(opacity);
 
-  return opacity.getValue();
+  return COptReal();
 }
 
-double
+COptValT<CFillType>
+CSVGObject::
+getFlatStrokeRule() const
+{
+  if (stroke_.getRuleValid())
+    return COptValT<CFillType>(stroke_.getRule());
+
+  CSVGObject *parent = getParent();
+
+  while (parent) {
+    if (parent->stroke_.getRuleValid())
+      return COptValT<CFillType>(parent->getFlatStrokeRule());
+
+    parent = parent->getParent();
+  }
+
+  CFillType   rule = FILL_TYPE_EVEN_ODD;
+  CSVGCSSType ruleType;
+
+  if (svg_.getStyleStrokeRule(this, rule, ruleType))
+    return COptValT<CFillType>(rule);
+
+  return COptValT<CFillType>();
+}
+
+COptString
+CSVGObject::
+getFlatStrokeUrl() const
+{
+  if (stroke_.getUrlValid())
+    return COptString(stroke_.getUrl());
+
+  CSVGObject *parent = getParent();
+
+  while (parent) {
+    if (parent->stroke_.getUrlValid())
+      return parent->getFlatStrokeUrl();
+
+    parent = parent->getParent();
+  }
+
+  std::string url;
+  CSVGCSSType urlType;
+
+  if (svg_.getStyleStrokeUrl(this, url, urlType))
+    return COptString(url);
+
+  return COptString();
+}
+
+COptValT<CSVGObject*>
+CSVGObject::
+getFlatStrokeFillObject() const
+{
+  if (stroke_.getFillObjectValid())
+    return COptValT<CSVGObject*>(stroke_.getFillObject());
+
+  CSVGObject *parent = getParent();
+
+  while (parent) {
+    if (parent->stroke_.getFillObjectValid())
+      return COptValT<CSVGObject*>(parent->getFlatStrokeFillObject());
+
+    parent = parent->getParent();
+  }
+
+  CSVGObject* fillObject = 0;
+  CSVGCSSType fillObjectType;
+
+  if (svg_.getStyleStrokeFillObject(this, fillObject, fillObjectType))
+    return COptValT<CSVGObject*>(fillObject);
+
+  return COptValT<CSVGObject*>();
+}
+
+COptReal
 CSVGObject::
 getFlatStrokeWidth() const
 {
   if (stroke_.getWidthValid())
-    return stroke_.getWidth();
+    return COptReal(stroke_.getWidth());
 
   CSVGObject *parent = getParent();
 
   while (parent) {
     if (parent->stroke_.getWidthValid())
-      return parent->getFlatStrokeWidth();
+      return COptReal(parent->getFlatStrokeWidth());
 
     parent = parent->getParent();
   }
 
-  double width = 1.0;
+  double      width = 1.0;
+  CSVGCSSType widthType;
 
-  if (svg_.getStyleStrokeWidth(this, width))
-    return width;
+  if (svg_.getStyleStrokeWidth(this, width, widthType))
+    return COptReal(width);
 
-  return 1.0;
+  return COptReal();
 }
 
-CSVGStrokeDash
+COptValT<CSVGStrokeDash>
 CSVGObject::
 getFlatStrokeLineDash() const
 {
   if (stroke_.getDashValid())
-    return stroke_.getDash();
+    return COptValT<CSVGStrokeDash>(stroke_.getDash());
 
   CSVGObject *parent = getParent();
 
   while (parent) {
     if (parent->stroke_.getDashValid())
-      return parent->getFlatStrokeLineDash();
+      return COptValT<CSVGStrokeDash>(parent->getFlatStrokeLineDash());
 
     parent = parent->getParent();
   }
 
   CSVGStrokeDash dash;
+  CSVGCSSType    dashType;
 
-  if (svg_.getStyleStrokeDash(this, dash))
-    return dash;
+  if (svg_.getStyleStrokeDash(this, dash, dashType))
+    return COptValT<CSVGStrokeDash>(dash);
 
-  return dash;
+  return COptValT<CSVGStrokeDash>();
 }
 
-CSVGColor
+COptValT<CLineCapType>
+CSVGObject::
+getFlatStrokeLineCap() const
+{
+  if (stroke_.getLineCapValid())
+    return COptValT<CLineCapType>(stroke_.getLineCap());
+
+  CSVGObject *parent = getParent();
+
+  while (parent) {
+    if (parent->stroke_.getLineCapValid())
+      return COptValT<CLineCapType>(parent->getFlatStrokeLineCap());
+
+    parent = parent->getParent();
+  }
+
+  CLineCapType lineCap = LINE_CAP_TYPE_BUTT;
+  CSVGCSSType  lineCapType;
+
+  if (svg_.getStyleStrokeCap(this, lineCap, lineCapType))
+    return COptValT<CLineCapType>(lineCap);
+
+  return COptValT<CLineCapType>();
+}
+
+COptValT<CLineJoinType>
+CSVGObject::
+getFlatStrokeLineJoin() const
+{
+  if (stroke_.getLineJoinValid())
+    return COptValT<CLineJoinType>(stroke_.getLineJoin());
+
+  CSVGObject *parent = getParent();
+
+  while (parent) {
+    if (parent->stroke_.getLineJoinValid())
+      return COptValT<CLineJoinType>(parent->getFlatStrokeLineJoin());
+
+    parent = parent->getParent();
+  }
+
+  CLineJoinType lineJoin = LINE_JOIN_TYPE_MITRE;
+  CSVGCSSType   lineJoinType;
+
+  if (svg_.getStyleStrokeJoin(this, lineJoin, lineJoinType))
+    return COptValT<CLineJoinType>(lineJoin);
+
+  return COptValT<CLineJoinType>();
+}
+
+COptReal
+CSVGObject::
+getFlatStrokeMitreLimit() const
+{
+  if (stroke_.getMitreLimitValid())
+    return COptReal(stroke_.getMitreLimit());
+
+  CSVGObject *parent = getParent();
+
+  while (parent) {
+    if (parent->stroke_.getMitreLimitValid())
+      return COptReal(parent->getFlatStrokeMitreLimit());
+
+    parent = parent->getParent();
+  }
+
+  double      mitreLimit = 0.0;
+  CSVGCSSType mitreLimitType;
+
+  if (svg_.getStyleStrokeMitreLimit(this, mitreLimit, mitreLimitType))
+    return COptReal(mitreLimit);
+
+  return COptReal();
+}
+
+//------
+
+CSVGFill
+CSVGObject::
+getFlatFill() const
+{
+  CSVGFill fill(svg_);
+
+  COptValT<CSVGColor> color = getFlatFillColor();
+
+  if (color.isValid())
+    fill.setColor(color.getValue());
+  else
+    fill.resetColor();
+
+  //---
+
+  COptReal opacity = getFlatFillOpacity();
+
+  if (opacity.isValid())
+    fill.setOpacity(opacity.getValue());
+  else
+    fill.resetOpacity();
+
+  //---
+
+  COptValT<CFillType> rule = getFlatFillRule();
+
+  if (rule.isValid())
+    fill.setRule(rule.getValue());
+  else
+    fill.resetRule();
+
+  //---
+
+  COptString url = getFlatFillUrl();
+
+  if (url.isValid())
+    fill.setUrl(url.getValue());
+  else
+    fill.resetUrl();
+
+  //---
+
+  COptValT<CSVGObject *> obj = getFlatFillFillObject();
+
+  if (obj.isValid())
+    fill.setFillObject(obj.getValue());
+  else
+    fill.resetFillObject();
+
+  return fill;
+}
+
+COptValT<CSVGColor>
 CSVGObject::
 getFlatFillColor() const
 {
   // if color set use it
   if (fill_.getColorValid())
-    return fill_.getColor();
+    return COptValT<CSVGColor>(fill_.getColor());
 
   CSVGObject *parent = getParent();
 
   while (parent) {
     if (parent->fill_.getColorValid())
-      return parent->fill_.getColor();
+      return COptValT<CSVGColor>(parent->fill_.getColor());
 
     parent = parent->getParent();
   }
-
-  //if (fill_.getDefColorValid())
-  //  return fill_.getDefColor();
 
   CSVGColor   color;
   CSVGCSSType colorType;
 
   if (svg_.getStyleFillColor(this, color, colorType))
-    return color;
+    return COptValT<CSVGColor>(color);
 
-  return CSVGColor();
+  return COptValT<CSVGColor>();
 }
 
-double
+COptReal
 CSVGObject::
 getFlatFillOpacity() const
 {
-  COptValT<double> opacity;
-
+  // if opacity set use it
   if (fill_.getOpacityValid())
-    opacity.setValue(fill_.getOpacity());
-  else {
-    CSVGObject *parent = getParent();
+    return COptReal(fill_.getOpacity());
 
-    while (parent) {
-      if (parent->fill_.getOpacityValid()) {
-        opacity.setValue(parent->fill_.getOpacity());
-        break;
-      }
+  CSVGObject *parent = getParent();
 
-      parent = parent->getParent();
-    }
+  while (parent) {
+    if (parent->fill_.getOpacityValid())
+      return COptReal(parent->fill_.getOpacity());
+
+    parent = parent->getParent();
   }
 
-  if (! opacity.isValid())
-    opacity.setValue(1.0);
+  double      opacity = 1.0;
+  CSVGCSSType opacityType;
 
-  return opacity.getValue();
+  if (svg_.getStyleFillOpacity(this, opacity, opacityType))
+    return COptReal(opacity);
+
+  return COptReal();
+}
+
+COptValT<CFillType>
+CSVGObject::
+getFlatFillRule() const
+{
+  // if opacity set use it
+  if (fill_.getRuleValid())
+    return COptValT<CFillType>(fill_.getRule());
+
+  CSVGObject *parent = getParent();
+
+  while (parent) {
+    if (parent->fill_.getRuleValid())
+      return COptValT<CFillType>(parent->fill_.getRule());
+
+    parent = parent->getParent();
+  }
+
+  CFillType   rule = FILL_TYPE_EVEN_ODD;
+  CSVGCSSType ruleType;
+
+  if (svg_.getStyleFillRule(this, rule, ruleType))
+    return COptValT<CFillType>(rule);
+
+  return COptValT<CFillType>();
+}
+
+COptString
+CSVGObject::
+getFlatFillUrl() const
+{
+  // if opacity set use it
+  if (fill_.getUrlValid())
+    return COptString(fill_.getUrl());
+
+  CSVGObject *parent = getParent();
+
+  while (parent) {
+    if (parent->fill_.getUrlValid())
+      return COptString(parent->fill_.getUrl());
+
+    parent = parent->getParent();
+  }
+
+  std::string url;
+  CSVGCSSType urlType;
+
+  if (svg_.getStyleFillUrl(this, url, urlType))
+    return COptString(url);
+
+  return COptString();
+}
+
+COptValT<CSVGObject *>
+CSVGObject::
+getFlatFillFillObject() const
+{
+  // if opacity set use it
+  if (fill_.getFillObjectValid())
+    return COptValT<CSVGObject *>(fill_.getFillObject());
+
+  CSVGObject *parent = getParent();
+
+  while (parent) {
+    if (parent->fill_.getFillObjectValid())
+      return COptValT<CSVGObject *>(parent->fill_.getFillObject());
+
+    parent = parent->getParent();
+  }
+
+  CSVGObject* fillObject = 0;
+  CSVGCSSType fillObjectType;
+
+  if (svg_.getStyleFillFillObject(this, fillObject, fillObjectType))
+    return COptValT<CSVGObject *>(fillObject);
+
+  return COptValT<CSVGObject *>();
 }
 
 std::string
@@ -1557,6 +1926,10 @@ bool
 CSVGObject::
 drawObject()
 {
+  svg_.updateBusy();
+
+  //------
+
   if (! isHierDrawable())
     return false;
 
@@ -1628,16 +2001,44 @@ drawObject()
 
   // set buffer to temporary buffer
   if (saveImage) {
+    CBBox2D bbox;
+
     saveBuffer = svg_.pushBuffer("_" + getUniqueName());
+
+    if (isFiltered) {
+      CSVGFilter *filter = getFilter();
+
+      filter->getRegion(this, bbox);
+
+      saveBuffer->updateBBoxSize(bbox);
+    }
 
     saveBuffer->clear();
 
     CSVGBlock *block = dynamic_cast<CSVGBlock *>(this);
 
-    if (block)
+    if (bbox.isSet())
+      saveBuffer->setBBox(bbox);
+
+    if      (block)
       svg_.beginDrawBuffer(saveBuffer, svg_.offset(), svg_.xscale(), svg_.yscale());
+    else if (bbox.isSet()) {
+      CSVGBlock *block = svg_.getRoot();
+
+      CBBox2D            pixelBox       = block->calcPixelBox();
+      CBBox2D            viewBox        = block->calcViewBox();
+      CPoint2D           offset         = CPoint2D(0, 0);
+      double             xs             = 1;
+      double             ys             = 1;
+      CSVGPreserveAspect preserveAspect = svg_.blockPreserveAspect();
+
+      viewBox.setXMax(std::max(viewBox.getXMax(), bbox.getXMax()));
+      viewBox.setYMax(std::max(viewBox.getYMax(), bbox.getYMax()));
+
+      svg_.beginDrawBuffer(saveBuffer, pixelBox, viewBox, offset, xs, ys, preserveAspect);
+    }
     else
-      svg_.beginDrawBuffer(saveBuffer, svg_.blockOffset(), svg_.blockXScale(), svg_.blockYScale());
+      svg_.beginDrawBuffer(saveBuffer, CPoint2D(0, 0), 1, 1);
 
     currentBuffer = saveBuffer;
   }
@@ -2298,6 +2699,18 @@ decodeXLink(const std::string &str, CSVGObject **object, CSVGBuffer **buffer)
 
       decodeStringToFile(str.substr(pos), filename);
 
+      CFileType type = CFileUtil::getTextType(filename);
+
+      if (type == CFILE_TYPE_TEXT_GZIP) {
+        std::string gzfilename = filename + ".gz";
+
+        rename(filename.c_str(), gzfilename.c_str());
+
+        std::string cmd = "/bin/gzip -d " + gzfilename;
+
+        system(cmd.c_str());
+      }
+
       // draw SVG file to image at current scale
       CSVG svg;
 
@@ -2422,7 +2835,7 @@ decodeXLink(const std::string &str, CSVGObject **object, CSVGBuffer **buffer)
       else {
         CSVGBuffer *imgBuffer = getXLinkBuffer();
 
-        imgBuffer->setImageFile(file);
+        imgBuffer->setImageFile(str);
 
         if (buffer)
           *buffer = imgBuffer;
@@ -2529,7 +2942,64 @@ print(std::ostream &os, bool hier) const
 
 void
 CSVGObject::
-printValues(std::ostream &os) const
+printFlat(std::ostream &os) const
+{
+  CSVGObjTypeId id = getObjTypeId();
+
+  if (id == CSVGObjTypeId::BLOCK) {
+    os << "<svg";
+
+    printValues(os);
+
+    os << ">" << std::endl;
+  }
+
+  if (hasChildren()) {
+    if (id == CSVGObjTypeId::GROUP && ! getId().empty()) {
+      os << "<g id=\"" << getId() << "\">" << std::endl;
+    }
+
+    if (id == CSVGObjTypeId::DEFS)
+      os << "<defs>" << std::endl;
+
+    for (const auto &c : children())
+      c->printFlat(os);
+
+    if (id == CSVGObjTypeId::GROUP && ! getId().empty()) {
+      os << "</g>" << std::endl;
+    }
+
+    if (id == CSVGObjTypeId::DEFS)
+      os << "</defs>" << std::endl;
+  }
+  else {
+    if (id == CSVGObjTypeId::GROUP ||
+        id == CSVGObjTypeId::DEFS)
+      return;
+
+    std::string s = getText();
+
+    os << "<" << getObjName();
+
+    printValues(os, /*flat*/true);
+
+    if (s != "") {
+      os << ">" << s;
+
+      os << "</" << getObjName() << ">" << std::endl;
+    }
+    else
+      os << "/>" << std::endl;
+  }
+
+  if (id == CSVGObjTypeId::BLOCK) {
+    os << "</svg>" << std::endl;
+  }
+}
+
+void
+CSVGObject::
+printValues(std::ostream &os, bool flat) const
 {
   printNameValue (os, "id"   , id_     );
   printNameValues(os, "class", classes_);
@@ -2541,11 +3011,11 @@ printValues(std::ostream &os) const
                     " " << viewBox.getXMax() << " " << viewBox.getYMax() << "\"";
   }
 
-  printTransform(os);
+  printTransform(os, flat);
 
   printFilter(os);
 
-  printStyle(os);
+  printStyle(os, flat);
 
   printTextContent(os);
 
@@ -2604,9 +3074,10 @@ printFilter(std::ostream &os) const
 
 void
 CSVGObject::
-printStyle(std::ostream &os) const
+printStyle(std::ostream &os, bool flat) const
 {
-  if (! hasFontDef() &&
+  if (! flat &&
+      ! hasFontDef() &&
       ! getOpacityValid() &&
       ! hasStroke() &&
       ! hasFill() &&
@@ -2614,57 +3085,103 @@ printStyle(std::ostream &os) const
       ! hasWordSpacing())
     return;
 
-  os << " style=\"";
+  std::stringstream ss;
 
   bool output = false;
 
   if (hasFontDef()) {
-    printFontDef(os);
+    printFontDef(ss);
 
     output = true;
   }
 
   if (getOpacityValid()) {
-    if (output) os << " ";
+    if (output) ss << " ";
 
-    os << "opacity: " << getOpacity() << ";";
-
-    output = true;
-  }
-
-  if (hasStroke()) {
-    if (output) os << " ";
-
-    getStroke().print(os);
+    ss << "opacity: " << getOpacity() << ";";
 
     output = true;
   }
 
-  if (hasFill()) {
-    if (output) os << " ";
+  if (flat || hasStroke()) {
+    std::stringstream ss1;
 
-    getFill().print(os);
+    printStroke(ss1, flat);
 
-    output = true;
+    if (ss1.str().size()) {
+      if (output) ss << " ";
+
+      ss << ss1.str();
+
+      output = true;
+    }
+  }
+
+  if (flat || hasFill()) {
+    std::stringstream ss1;
+
+    printFill(ss1, flat);
+
+    if (ss1.str().size()) {
+      if (output) ss << " ";
+
+      ss << ss1.str();
+
+      output = true;
+    }
   }
 
   if (hasLetterSpacing()) {
-    if (output) os << " ";
+    if (output) ss << " ";
 
-    os << "letter-spacing: " << getLetterSpacing() << ";";
+    ss << "letter-spacing: " << getLetterSpacing() << ";";
 
     output = true;
   }
 
   if (hasWordSpacing()) {
-    if (output) os << " ";
+    if (output) ss << " ";
 
-    os << "word-spacing: " << getWordSpacing() << ";";
+    ss << "word-spacing: " << getWordSpacing() << ";";
 
     output = true;
   }
 
-  os << "\"";
+  if (output) {
+    os << " style=\"" << ss.str() << "\"";
+  }
+}
+
+void
+CSVGObject::
+printStroke(std::ostream &os, bool flat) const
+{
+  if (flat) {
+    CSVGStroke stroke = getFlatStroke();
+
+    stroke.print(os);
+  }
+  else {
+    const CSVGStroke &stroke = getStroke();
+
+    stroke.print(os);
+  }
+}
+
+void
+CSVGObject::
+printFill(std::ostream &os, bool flat) const
+{
+  if (flat) {
+    CSVGFill fill = getFlatFill();
+
+    fill.print(os);
+  }
+  else {
+    const CSVGFill &fill = getFill();
+
+    fill.print(os);
+  }
 }
 
 void
@@ -2691,14 +3208,27 @@ printFontDef(std::ostream &os) const
 
 void
 CSVGObject::
-printTransform(std::ostream &os) const
+printTransform(std::ostream &os, bool flat) const
 {
-  if (! transform_.isEmpty()) {
-    os << " transform=\"";
+  if (! flat) {
+    if (! transform_.isEmpty()) {
+      os << " transform=\"";
 
-    printTransform(os, transform_);
+      printTransform(os, transform_);
 
-    os << "\"";
+      os << "\"";
+    }
+  }
+  else {
+    CMatrixStack2D transform = getFlatTransform();
+
+    if (! transform.isEmpty()) {
+      os << " transform=\"";
+
+      printTransform(os, transform);
+
+      os << "\"";
+    }
   }
 }
 

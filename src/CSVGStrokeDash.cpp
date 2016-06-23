@@ -2,7 +2,7 @@
 
 CLineDash
 CSVGStrokeDash::
-getLineDash(double l)
+getLineDash(double l) const
 {
   if (! dashes_.empty()) {
     std::vector<double> lengths;
