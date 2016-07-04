@@ -48,6 +48,8 @@ class CSVGFeSpotLight : public CSVGFilterBase {
 
   void print(std::ostream &os, bool hier) const override;
 
+  void printValues(std::ostream &os, bool flat=false) const override;
+
   friend std::ostream &operator<<(std::ostream &os, const CSVGFeSpotLight &fe);
 
  private:

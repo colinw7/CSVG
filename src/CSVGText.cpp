@@ -114,7 +114,7 @@ getBBox(CBBox2D &bbox) const
     double a = 10;
     double d = 2;
 
-    svg_.textSize(getText(), getFont(), &w, &a, &d);
+    getFlatFontDef().textSize(getText(), &w, &a, &d);
 
     bbox = CBBox2D(x, y + d, x + w, y - a);
 
@@ -152,23 +152,32 @@ draw()
   if (svg_.getDebug())
     CSVGLog() << *this;
 
-  std::string text   = getText();
-  CHAlignType anchor = getFlatTextAnchor();
-  CFontPtr    font   = getFont();
+  std::string text    = getText();
+  CHAlignType anchor  = getFlatTextAnchor();
+  CSVGFontDef fontDef = getFlatFontDef();
 
   bool topBottom = (getWritingMode() == "tb");
 
   double x = getX();
   double y = getY();
 
+  bool renderChars = false;
+
+  if (hasWordSpacing() || hasLetterSpacing())
+    renderChars = true;
+
+  //---
+
   if      (textLength_.isValid()) {
     double w, a, d;
 
-    svg_.textSize(text, font, &w, &a, &d);
+    fontDef.textSize(text, &w, &a, &d);
 
     //---
 
     bool scaleFont = (getLengthAdjust() == "spacingAndGlyphs");
+
+    //---
 
     COptReal tl;
     double   r;
@@ -178,7 +187,7 @@ draw()
 
     //---
 
-    CFontPtr font1 = font;
+    CSVGFontDef fontDef1 = fontDef;
 
     double dx = 0;
     double fs = 1;
@@ -187,11 +196,13 @@ draw()
       if (scaleFont) {
         fs = tl.getValue()/w;
 
-        font1 = font->dup(font->getFamily(), font->getStyle(), font->getSize()*fs,
-                          font->getAngle(), font->getCharAngle(),
-                          font->getXRes(), font->getYRes());
+        fontDef1.setFamily   (fontDef.getFamily());
+        fontDef1.setStyle    (fontDef.getStyle ());
+        fontDef1.setSize     (fontDef.getSize  ()*fs),
+        fontDef1.setAngle    (fontDef.getAngle ()),
+      //fontDef1.setCharAngle(fontDef.getCharAngle());
 
-        svg_.textSize(text, font1, &w, &a, &d);
+        fontDef1.textSize(text, &w, &a, &d);
       }
 
       if (text.size() > 1)
@@ -207,7 +218,7 @@ draw()
 
       double w1, a1, d1;
 
-      svg_.textSize(text1, font1, &w1, &a1, &d1);
+      fontDef1.textSize(text1, &w1, &a1, &d1);
 
       //---
 
@@ -216,11 +227,73 @@ draw()
 
       //---
 
-      svg_.fillDrawText(x, y, text1, font1, anchor, svg_.isFilled(), svg_.isStroked());
+      svg_.fillDrawText(x, y, text1, fontDef1, anchor, svg_.isFilled(), svg_.isStroked());
+
+      //---
+
+      if (i < text.size() - 1) {
+        std::string text1 = text.substr(i + 1, 1);
+
+        x += w1;
+      }
+
+      setLastPos(CPoint2D(x, y));
+    }
+  }
+  else if (! topBottom && renderChars) {
+    double ws = 0;
+
+    if (hasWordSpacing()) {
+      ws = getWordSpacing().pxValue(1);
+    }
+
+    double ls = 0;
+
+    if (hasLetterSpacing()) {
+      ls = getLetterSpacing().pxValue(1);
+    }
+
+    //---
+
+    for (uint i = 0; i < text.size(); ++i) {
+      std::string text1 = text.substr(i, 1);
+
+      //---
+
+      double w1, a1, d1;
+
+      fontDef.textSize(text1, &w1, &a1, &d1);
+
+      //---
+
+      svg_.fillDrawText(x, y, text1, fontDef, anchor, svg_.isFilled(), svg_.isStroked());
 
       //---
 
       x += w1;
+
+      if (i < text.size() - 1) {
+        std::string text3 = text.substr(i + 1, 1);
+
+#if 0
+        std::string text2 = text.substr(i, 2);
+
+        double w2, a2, d2;
+        double w3, a3, d3;
+
+        fontDef.textSize(text2, &w2, &a2, &d2);
+        fontDef.textSize(text3, &w3, &a3, &d3);
+
+        double dl = w2 - w1 - w3;
+
+        x += dl;
+#endif
+
+        if (isspace(text3[0]))
+          x += ws;
+        else
+          x += ls;
+      }
 
       setLastPos(CPoint2D(x, y));
     }
@@ -234,12 +307,15 @@ draw()
     else if (CStrUtil::toReal(getVGlyphOrient(), &r))
       fa = r;
 
-    CFontPtr font1 = font;
+    CSVGFontDef fontDef1 = fontDef;
 
-    if (fa.isValid())
-      font1 = font->dup(font->getFamily(), font->getStyle(), font->getSize(),
-                        fa.getValue(), font->getCharAngle(),
-                        font->getXRes(), font->getYRes());
+    if (fa.isValid()) {
+      fontDef1.setFamily   (fontDef.getFamily());
+      fontDef1.setStyle    (fontDef.getStyle ());
+      fontDef1.setSize     (fontDef.getSize  ()),
+      fontDef1.setAngle    (fa.getValue());
+    //fontDef1.setCharAngle(fontDef.getCharAngle());
+    }
 
     for (uint i = 0; i < text.size(); ++i) {
       std::string text1 = text.substr(i, 1);
@@ -248,11 +324,11 @@ draw()
 
       double w1, a1, d1;
 
-      svg_.textSize(text1, font1, &w1, &a1, &d1);
+      fontDef1.textSize(text1, &w1, &a1, &d1);
 
       //---
 
-      svg_.fillDrawText(x, y, text1, font1, anchor, svg_.isFilled(), svg_.isStroked());
+      svg_.fillDrawText(x, y, text1, fontDef1, anchor, svg_.isFilled(), svg_.isStroked());
 
       //---
 
@@ -266,11 +342,11 @@ draw()
   else {
     double w, a, d;
 
-    svg_.textSize(text, font, &w, &a, &d);
+    fontDef.textSize(text, &w, &a, &d);
 
     //---
 
-    svg_.fillDrawText(x, y, text, font, anchor, svg_.isFilled(), svg_.isStroked());
+    svg_.fillDrawText(x, y, text, fontDef, anchor, svg_.isFilled(), svg_.isStroked());
 
     //---
 

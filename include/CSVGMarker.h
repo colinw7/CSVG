@@ -38,11 +38,17 @@ class CSVGMarker : public CSVGObject {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
+  bool canFlatten() const override { return false; }
+
+  bool propagateFlat() const override { return false; }
+
   bool isDrawable() const override { return false; }
 
   void drawMarker(double x, double y, double angle);
 
   void print(std::ostream &os, bool hier) const override;
+
+  void printValues(std::ostream &os, bool flat=false) const override;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGMarker &marker);
 

@@ -15,10 +15,10 @@ CXX           = g++
 DEFINES       = -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
 CFLAGS        = -m64 -pipe -g -Wall -W -D_REENTRANT -fPIE $(DEFINES)
 CXXFLAGS      = -m64 -pipe -std=c++11 -g -Wall -W -D_REENTRANT -fPIE $(DEFINES)
-INCPATH       = -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I. -I. -I../include -I../../CSVG/include -I../../CQApp/include -I../../CQUtil/include -I../../CQPropertyTree/include -I../../CFont/include -I../../CImageLib/include -I../../CReadLine/include -I../../CFileUtil/include -I../../CFile/include -I../../COS/include -I../../CUtil/include -I../../CMath/include -I../../CStrUtil/include -I../../CRGBName/include -I../../CCSS/include -I../../CXML/include -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I.moc
+INCPATH       = -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I. -I. -I../include -I../../CSVG/include -I../../CQApp/include -I../../CQUtil/include -I../../CQPropertyTree/include -I../../CFont/include -I../../CImageLib/include -I../../CReadLine/include -I../../CFileUtil/include -I../../CFile/include -I../../COS/include -I../../CUtil/include -I../../CMath/include -I../../CStrUtil/include -I../../CRGBName/include -I../../CCSS/include -I../../CXML/include -I../../CJavaScript/include -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I.moc
 LINK          = g++
 LFLAGS        = -m64
-LIBS          = $(SUBLIBS) -L/usr/X11R6/lib64 -L../lib -L../../CQUtil/lib -L../../CQPropertyTree/lib -L../../CCSS/lib -L../../CXML/lib -L../../CReadLine/lib -L../../CFont/lib -L../../CUtil/lib -L../../CImageLib/lib -L../../CConfig/lib -L../../CFileUtil/lib -L../../CFile/lib -L../../COS/lib -L../../CStrUtil/lib -L../../CRegExp/lib -L../../CRGBName/lib -lCSVG -lCQPropertyTree -lCQUtil -lCCSS -lCXML -lCReadLine -lCConfig -lCUtil -lCFont -lCImageLib -lCRGBName -lCFileUtil -lCFile -lCOS -lCStrUtil -lCRegExp -lpng -ljpeg -ltre -lreadline -lQt5Widgets -L/usr/lib/x86_64-linux-gnu -lQt5Gui -lQt5Core -lGL -lpthread 
+LIBS          = $(SUBLIBS) -L/usr/X11R6/lib64 -L../lib -L../../CQUtil/lib -L../../CQPropertyTree/lib -L../../CCSS/lib -L../../CXML/lib -L../../CJavaScript/lib -L../../CReadLine/lib -L../../CFont/lib -L../../CUtil/lib -L../../CImageLib/lib -L../../CConfig/lib -L../../CFileUtil/lib -L../../CFile/lib -L../../COS/lib -L../../CStrUtil/lib -L../../CRegExp/lib -L../../CRGBName/lib -lCSVG -lCQPropertyTree -lCQUtil -lCCSS -lCXML -lCJavaScript -lCReadLine -lCConfig -lCUtil -lCFont -lCImageLib -lCRGBName -lCFileUtil -lCFile -lCOS -lCStrUtil -lCRegExp -lpng -ljpeg -ltre -lreadline -lQt5Widgets -L/usr/lib/x86_64-linux-gnu -lQt5Gui -lQt5Core -lGL -lpthread 
 AR            = ar cqs
 RANLIB        = 
 QMAKE         = /usr/lib/x86_64-linux-gnu/qt5/bin/qmake
@@ -82,7 +82,6 @@ SOURCES       = CQSVG.cpp \
 		CQSVGFilter.cpp \
 		CQSVGGroup.cpp \
 		CQSVGImage.cpp \
-		CQSVGImageData.cpp \
 		CQSVGLinearGradient.cpp \
 		CQSVGLine.cpp \
 		CQSVGMarker.cpp \
@@ -108,6 +107,8 @@ SOURCES       = CQSVG.cpp \
 		CQSVGUse.cpp \
 		CQSVGWindow.cpp \
 		CQSVGRenderer.cpp \
+		CQSVGImageData.cpp \
+		CQSVGFontObj.cpp \
 		CQSVGUtil.cpp .moc/moc_CQSVGAnchor.cpp \
 		.moc/moc_CQSVGAnimate.cpp \
 		.moc/moc_CQSVGAnimateBase.cpp \
@@ -206,7 +207,6 @@ OBJECTS       = ../obj/CQSVG.o \
 		../obj/CQSVGFilter.o \
 		../obj/CQSVGGroup.o \
 		../obj/CQSVGImage.o \
-		../obj/CQSVGImageData.o \
 		../obj/CQSVGLinearGradient.o \
 		../obj/CQSVGLine.o \
 		../obj/CQSVGMarker.o \
@@ -232,6 +232,8 @@ OBJECTS       = ../obj/CQSVG.o \
 		../obj/CQSVGUse.o \
 		../obj/CQSVGWindow.o \
 		../obj/CQSVGRenderer.o \
+		../obj/CQSVGImageData.o \
+		../obj/CQSVGFontObj.o \
 		../obj/CQSVGUtil.o \
 		../obj/moc_CQSVGAnchor.o \
 		../obj/moc_CQSVGAnimate.o \
@@ -559,7 +561,7 @@ qmake_all: FORCE
 
 dist: 
 	@test -d ../obj/CQSVG1.0.0 || mkdir -p ../obj/CQSVG1.0.0
-	$(COPY_FILE) --parents $(SOURCES) $(DIST) ../obj/CQSVG1.0.0/ && $(COPY_FILE) --parents CEnumConv.h CQSVGAnchor.h CQSVGAnimate.h CQSVGAnimateBase.h CQSVGAnimateColor.h CQSVGAnimateMotion.h CQSVGAnimateTransform.h CQSVGBlock.h CQSVGBufferView.h CQSVGCanvas.h CQSVGCircle.h CQSVGClipPath.h CQSVGDefs.h CQSVGDesc.h CQSVGEllipse.h CQSVGEnum.h CQSVGFeBlend.h CQSVGFeColorMatrix.h CQSVGFeComposite.h CQSVGFeDiffuseLighting.h CQSVGFeDisplacementMap.h CQSVGFeDistantLight.h CQSVGFeFlood.h CQSVGFeGaussianBlur.h CQSVGFeImage.h CQSVGFeMerge.h CQSVGFeMergeNode.h CQSVGFeMorphology.h CQSVGFeOffset.h CQSVGFePointLight.h CQSVGFeSpecularLighting.h CQSVGFeSpotLight.h CQSVGFeTile.h CQSVGFeTurbulence.h CQSVGFilter.h CQSVGGroup.h CQSVG.h CQSVGImage.h CQSVGImageData.h CQSVGLinearGradient.h CQSVGLine.h CQSVGMarker.h CQSVGMask.h CQSVGMPath.h CQSVGObject.h CQSVGPath.h CQSVGPathPart.h CQSVGPattern.h CQSVGPolygon.h CQSVGPolyLine.h CQSVGPropertiesDlg.h CQSVGRadialGradient.h CQSVGRect.h CQSVGSet.h CQSVGStop.h CQSVGStyleTree.h CQSVGSymbol.h CQSVGText.h CQSVGTextPath.h CQSVGTitle.h CQSVGTSpan.h CQSVGUse.h CQSVGWindow.h CQSVGRenderer.h CQSVGUtil.h ../obj/CQSVG1.0.0/ && $(COPY_FILE) --parents CQSVG.cpp CQSVGAnchor.cpp CQSVGAnimate.cpp CQSVGAnimateBase.cpp CQSVGAnimateColor.cpp CQSVGAnimateMotion.cpp CQSVGAnimateTransform.cpp CQSVGBlock.cpp CQSVGBufferView.cpp CQSVGCanvas.cpp CQSVGCircle.cpp CQSVGClipPath.cpp CQSVGDefs.cpp CQSVGDesc.cpp CQSVGEllipse.cpp CQSVGEnum.cpp CQSVGFeBlend.cpp CQSVGFeColorMatrix.cpp CQSVGFeComposite.cpp CQSVGFeDiffuseLighting.cpp CQSVGFeDisplacementMap.cpp CQSVGFeDistantLight.cpp CQSVGFeFlood.cpp CQSVGFeGaussianBlur.cpp CQSVGFeImage.cpp CQSVGFeMerge.cpp CQSVGFeMergeNode.cpp CQSVGFeMorphology.cpp CQSVGFeOffset.cpp CQSVGFePointLight.cpp CQSVGFeSpecularLighting.cpp CQSVGFeSpotLight.cpp CQSVGFeTile.cpp CQSVGFeTurbulence.cpp CQSVGFilter.cpp CQSVGGroup.cpp CQSVGImage.cpp CQSVGImageData.cpp CQSVGLinearGradient.cpp CQSVGLine.cpp CQSVGMarker.cpp CQSVGMask.cpp CQSVGMPath.cpp CQSVGObject.cpp CQSVGPath.cpp CQSVGPathPart.cpp CQSVGPattern.cpp CQSVGPolygon.cpp CQSVGPolyLine.cpp CQSVGPropertiesDlg.cpp CQSVGRadialGradient.cpp CQSVGRect.cpp CQSVGSet.cpp CQSVGStop.cpp CQSVGStyleTree.cpp CQSVGSymbol.cpp CQSVGText.cpp CQSVGTextPath.cpp CQSVGTitle.cpp CQSVGTSpan.cpp CQSVGUse.cpp CQSVGWindow.cpp CQSVGRenderer.cpp CQSVGUtil.cpp ../obj/CQSVG1.0.0/ && (cd `dirname ../obj/CQSVG1.0.0` && $(TAR) CQSVG1.0.0.tar CQSVG1.0.0 && $(COMPRESS) CQSVG1.0.0.tar) && $(MOVE) `dirname ../obj/CQSVG1.0.0`/CQSVG1.0.0.tar.gz . && $(DEL_FILE) -r ../obj/CQSVG1.0.0
+	$(COPY_FILE) --parents $(SOURCES) $(DIST) ../obj/CQSVG1.0.0/ && $(COPY_FILE) --parents CEnumConv.h CQSVGAnchor.h CQSVGAnimate.h CQSVGAnimateBase.h CQSVGAnimateColor.h CQSVGAnimateMotion.h CQSVGAnimateTransform.h CQSVGBlock.h CQSVGBufferView.h CQSVGCanvas.h CQSVGCircle.h CQSVGClipPath.h CQSVGDefs.h CQSVGDesc.h CQSVGEllipse.h CQSVGEnum.h CQSVGFeBlend.h CQSVGFeColorMatrix.h CQSVGFeComposite.h CQSVGFeDiffuseLighting.h CQSVGFeDisplacementMap.h CQSVGFeDistantLight.h CQSVGFeFlood.h CQSVGFeGaussianBlur.h CQSVGFeImage.h CQSVGFeMerge.h CQSVGFeMergeNode.h CQSVGFeMorphology.h CQSVGFeOffset.h CQSVGFePointLight.h CQSVGFeSpecularLighting.h CQSVGFeSpotLight.h CQSVGFeTile.h CQSVGFeTurbulence.h CQSVGFilter.h CQSVGGroup.h CQSVG.h CQSVGImage.h CQSVGLinearGradient.h CQSVGLine.h CQSVGMarker.h CQSVGMask.h CQSVGMPath.h CQSVGObject.h CQSVGPath.h CQSVGPathPart.h CQSVGPattern.h CQSVGPolygon.h CQSVGPolyLine.h CQSVGPropertiesDlg.h CQSVGRadialGradient.h CQSVGRect.h CQSVGSet.h CQSVGStop.h CQSVGStyleTree.h CQSVGSymbol.h CQSVGText.h CQSVGTextPath.h CQSVGTitle.h CQSVGTSpan.h CQSVGUse.h CQSVGWindow.h CQSVGRenderer.h CQSVGImageData.h CQSVGFontObj.h CQSVGUtil.h ../obj/CQSVG1.0.0/ && $(COPY_FILE) --parents CQSVG.cpp CQSVGAnchor.cpp CQSVGAnimate.cpp CQSVGAnimateBase.cpp CQSVGAnimateColor.cpp CQSVGAnimateMotion.cpp CQSVGAnimateTransform.cpp CQSVGBlock.cpp CQSVGBufferView.cpp CQSVGCanvas.cpp CQSVGCircle.cpp CQSVGClipPath.cpp CQSVGDefs.cpp CQSVGDesc.cpp CQSVGEllipse.cpp CQSVGEnum.cpp CQSVGFeBlend.cpp CQSVGFeColorMatrix.cpp CQSVGFeComposite.cpp CQSVGFeDiffuseLighting.cpp CQSVGFeDisplacementMap.cpp CQSVGFeDistantLight.cpp CQSVGFeFlood.cpp CQSVGFeGaussianBlur.cpp CQSVGFeImage.cpp CQSVGFeMerge.cpp CQSVGFeMergeNode.cpp CQSVGFeMorphology.cpp CQSVGFeOffset.cpp CQSVGFePointLight.cpp CQSVGFeSpecularLighting.cpp CQSVGFeSpotLight.cpp CQSVGFeTile.cpp CQSVGFeTurbulence.cpp CQSVGFilter.cpp CQSVGGroup.cpp CQSVGImage.cpp CQSVGLinearGradient.cpp CQSVGLine.cpp CQSVGMarker.cpp CQSVGMask.cpp CQSVGMPath.cpp CQSVGObject.cpp CQSVGPath.cpp CQSVGPathPart.cpp CQSVGPattern.cpp CQSVGPolygon.cpp CQSVGPolyLine.cpp CQSVGPropertiesDlg.cpp CQSVGRadialGradient.cpp CQSVGRect.cpp CQSVGSet.cpp CQSVGStop.cpp CQSVGStyleTree.cpp CQSVGSymbol.cpp CQSVGText.cpp CQSVGTextPath.cpp CQSVGTitle.cpp CQSVGTSpan.cpp CQSVGUse.cpp CQSVGWindow.cpp CQSVGRenderer.cpp CQSVGImageData.cpp CQSVGFontObj.cpp CQSVGUtil.cpp ../obj/CQSVG1.0.0/ && (cd `dirname ../obj/CQSVG1.0.0` && $(TAR) CQSVG1.0.0.tar CQSVG1.0.0 && $(COMPRESS) CQSVG1.0.0.tar) && $(MOVE) `dirname ../obj/CQSVG1.0.0`/CQSVG1.0.0.tar.gz . && $(DEL_FILE) -r ../obj/CQSVG1.0.0
 
 
 clean:compiler_clean 
@@ -776,12 +778,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -988,12 +990,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -1200,12 +1202,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -1411,12 +1413,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -1624,12 +1626,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -1837,12 +1839,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -2049,12 +2051,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -2500,12 +2502,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -2711,12 +2713,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -2922,12 +2924,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -3133,12 +3135,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -3344,12 +3346,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -3372,6 +3374,8 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../../CUtil/include/COptVal.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -3387,10 +3391,8 @@ compiler_moc_header_clean:
 		../../COS/include/NaN.h \
 		../../CRGBName/include/CRGBName.h \
 		../../CUtil/include/CColorComponent.h \
-		../../CUtil/include/COptVal.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../../CUtil/include/CLineDash.h \
 		../../CUtil/include/CILineDash.h \
 		../include/CSVGTimeValue.h \
@@ -3668,12 +3670,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -3879,12 +3881,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -4089,12 +4091,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -4300,12 +4302,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -4512,12 +4514,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -4723,12 +4725,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -4934,12 +4936,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -5145,12 +5147,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -5356,12 +5358,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -5567,12 +5569,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -5778,12 +5780,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -5989,12 +5991,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -6200,12 +6202,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -6411,12 +6413,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -6624,12 +6626,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -6836,12 +6838,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -7049,12 +7051,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -7260,12 +7262,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -7471,12 +7473,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -7682,12 +7684,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -7825,6 +7827,7 @@ compiler_moc_header_clean:
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h \
 		../../CFile/include/CFile.h \
@@ -8025,12 +8028,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -8236,12 +8239,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -8448,12 +8451,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -8659,12 +8662,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -8870,12 +8873,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -9081,12 +9084,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -9291,12 +9294,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -9501,12 +9504,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -9523,6 +9526,8 @@ compiler_moc_header_clean:
 
 .moc/moc_CQSVGPathPart.cpp: ../include/CSVGPathPart.h \
 		../include/CSVGTypes.h \
+		../../CUtil/include/COptVal.h \
+		../include/CScreenUnits.h \
 		../../CMath/include/CBBox2D.h \
 		../../CMath/include/CMathGen.h \
 		../../COS/include/NaN.h \
@@ -9531,7 +9536,6 @@ compiler_moc_header_clean:
 		../../CMath/include/CVector2D.h \
 		../../CMath/include/CSize2D.h \
 		../../CMath/include/CISize2D.h \
-		../../CUtil/include/COptVal.h \
 		/usr/include/qt5/QtCore/QObject \
 		/usr/include/qt5/QtCore/qobject.h \
 		/usr/include/qt5/QtCore/qobjectdefs.h \
@@ -9783,12 +9787,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -9994,12 +9998,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -10205,12 +10209,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -10528,12 +10532,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -10745,12 +10749,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -10956,12 +10960,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -11168,12 +11172,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -11537,12 +11541,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -11748,12 +11752,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -11959,12 +11963,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -12170,12 +12174,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -12381,12 +12385,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -12592,12 +12596,12 @@ compiler_moc_header_clean:
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -12866,6 +12870,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h \
 		../../CFile/include/CFile.h \
@@ -13077,6 +13082,9 @@ compiler_clean: compiler_moc_header_clean
 		CHRTimer.h \
 		../../COS/include/CHRTime.h \
 		CQSVGPathPart.h \
+		CQSVGFontObj.h \
+		../include/CSVGFontObj.h \
+		/usr/include/qt5/QtGui/QFont \
 		/usr/include/qt5/QtCore/QTimer \
 		/usr/include/qt5/QtCore/qtimer.h \
 		/usr/include/qt5/QtCore/qbasictimer.h
@@ -13274,12 +13282,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -13298,6 +13306,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGAnchor.o CQSVGAnchor.cpp
@@ -13495,12 +13504,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -13520,6 +13529,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGAnimate.o CQSVGAnimate.cpp
@@ -13716,12 +13726,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -13739,6 +13749,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h \
 		../include/CSVGAnimateBase.h
@@ -13937,12 +13948,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -13962,6 +13973,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGAnimateColor.o CQSVGAnimateColor.cpp
@@ -14159,12 +14171,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -14184,6 +14196,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGAnimateMotion.o CQSVGAnimateMotion.cpp
@@ -14381,12 +14394,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -14406,6 +14419,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGAnimateTransform.o CQSVGAnimateTransform.cpp
@@ -14602,12 +14616,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -14625,6 +14639,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGBlock.o CQSVGBlock.cpp
@@ -14799,6 +14814,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h \
 		../../CFile/include/CFile.h \
@@ -15044,6 +15060,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h \
 		../../CFile/include/CFile.h \
@@ -15308,12 +15325,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -15332,6 +15349,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGCircle.o CQSVGCircle.cpp
@@ -15528,12 +15546,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -15552,6 +15570,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGClipPath.o CQSVGClipPath.cpp
@@ -15748,12 +15767,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -15772,6 +15791,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGDefs.o CQSVGDefs.cpp
@@ -15968,12 +15988,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -15992,6 +16012,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGDesc.o CQSVGDesc.cpp
@@ -16188,12 +16209,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -16212,6 +16233,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGEllipse.o CQSVGEllipse.cpp
@@ -16225,6 +16247,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../../CUtil/include/COptVal.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -16240,10 +16264,8 @@ compiler_clean: compiler_moc_header_clean
 		../../COS/include/NaN.h \
 		../../CRGBName/include/CRGBName.h \
 		../../CUtil/include/CColorComponent.h \
-		../../CUtil/include/COptVal.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../../CUtil/include/CLineDash.h \
 		../../CUtil/include/CILineDash.h \
 		../include/CSVGTimeValue.h \
@@ -16522,12 +16544,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -16546,6 +16568,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeBlend.o CQSVGFeBlend.cpp
@@ -16742,12 +16765,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -16765,6 +16788,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeColorMatrix.o CQSVGFeColorMatrix.cpp
@@ -16961,12 +16985,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -16985,6 +17009,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeComposite.o CQSVGFeComposite.cpp
@@ -17181,12 +17206,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -17206,6 +17231,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeDiffuseLighting.o CQSVGFeDiffuseLighting.cpp
@@ -17402,12 +17428,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -17426,6 +17452,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeDisplacementMap.o CQSVGFeDisplacementMap.cpp
@@ -17622,12 +17649,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -17646,6 +17673,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeDistantLight.o CQSVGFeDistantLight.cpp
@@ -17842,12 +17870,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -17866,6 +17894,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeFlood.o CQSVGFeFlood.cpp
@@ -18062,12 +18091,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -18086,6 +18115,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeGaussianBlur.o CQSVGFeGaussianBlur.cpp
@@ -18282,12 +18312,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -18306,6 +18336,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeImage.o CQSVGFeImage.cpp
@@ -18502,12 +18533,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -18526,6 +18557,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeMerge.o CQSVGFeMerge.cpp
@@ -18722,12 +18754,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -18746,6 +18778,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeMergeNode.o CQSVGFeMergeNode.cpp
@@ -18942,12 +18975,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -18966,6 +18999,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeMorphology.o CQSVGFeMorphology.cpp
@@ -19162,12 +19196,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -19186,6 +19220,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeOffset.o CQSVGFeOffset.cpp
@@ -19382,12 +19417,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -19408,6 +19443,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFePointLight.o CQSVGFePointLight.cpp
@@ -19604,12 +19640,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -19629,6 +19665,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeSpecularLighting.o CQSVGFeSpecularLighting.cpp
@@ -19825,12 +19862,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -19851,6 +19888,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeSpotLight.o CQSVGFeSpotLight.cpp
@@ -20047,12 +20085,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -20071,6 +20109,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeTile.o CQSVGFeTile.cpp
@@ -20267,12 +20306,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -20291,6 +20330,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeTurbulence.o CQSVGFeTurbulence.cpp
@@ -20487,12 +20527,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -20511,6 +20551,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFilter.o CQSVGFilter.cpp
@@ -20707,12 +20748,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -20731,6 +20772,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGGroup.o CQSVGGroup.cpp
@@ -20927,12 +20969,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -20951,119 +20993,10 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGImage.o CQSVGImage.cpp
-
-../obj/CQSVGImageData.o: CQSVGImageData.cpp CQSVGImageData.h \
-		../include/CSVGImageData.h \
-		../include/CSVGTypes.h \
-		../../CImageLib/include/CImage.h \
-		../../CUtil/include/CRGBA.h \
-		../../CUtil/include/CRGB.h \
-		../../CUtil/include/CHSV.h \
-		../../CUtil/include/CRGBUtil.h \
-		../../CUtil/include/CCMYK.h \
-		../../CUtil/include/CHSL.h \
-		../../CUtil/include/CHSB.h \
-		../../CUtil/include/CHSI.h \
-		../../CMath/include/CMathGen.h \
-		../../COS/include/NaN.h \
-		../../CRGBName/include/CRGBName.h \
-		../../CUtil/include/CColorComponent.h \
-		../../CUtil/include/CRGBACombineDef.h \
-		../../CUtil/include/CAlignType.h \
-		../../CMath/include/CISize2D.h \
-		../../CMath/include/CIBBox2D.h \
-		../../CMath/include/CIPoint2D.h \
-		../../CMath/include/CIVector2D.h \
-		../../CFile/include/CFileType.h \
-		../../CUtil/include/COptVal.h \
-		../../CImageLib/include/CImagePtr.h \
-		../../CUtil/include/CRefPtr.h \
-		/usr/include/qt5/QtGui/QImage \
-		/usr/include/qt5/QtGui/qimage.h \
-		/usr/include/qt5/QtGui/qtransform.h \
-		/usr/include/qt5/QtGui/qmatrix.h \
-		/usr/include/qt5/QtGui/qpolygon.h \
-		/usr/include/qt5/QtCore/qvector.h \
-		/usr/include/qt5/QtCore/qalgorithms.h \
-		/usr/include/qt5/QtCore/qglobal.h \
-		/usr/include/qt5/QtCore/qconfig.h \
-		/usr/include/qt5/QtCore/qfeatures.h \
-		/usr/include/qt5/QtCore/qsystemdetection.h \
-		/usr/include/qt5/QtCore/qprocessordetection.h \
-		/usr/include/qt5/QtCore/qcompilerdetection.h \
-		/usr/include/qt5/QtCore/qglobalstatic.h \
-		/usr/include/qt5/QtCore/qatomic.h \
-		/usr/include/qt5/QtCore/qbasicatomic.h \
-		/usr/include/qt5/QtCore/qatomic_bootstrap.h \
-		/usr/include/qt5/QtCore/qgenericatomic.h \
-		/usr/include/qt5/QtCore/qatomic_msvc.h \
-		/usr/include/qt5/QtCore/qatomic_integrity.h \
-		/usr/include/qt5/QtCore/qoldbasicatomic.h \
-		/usr/include/qt5/QtCore/qatomic_vxworks.h \
-		/usr/include/qt5/QtCore/qatomic_power.h \
-		/usr/include/qt5/QtCore/qatomic_alpha.h \
-		/usr/include/qt5/QtCore/qatomic_armv7.h \
-		/usr/include/qt5/QtCore/qatomic_armv6.h \
-		/usr/include/qt5/QtCore/qatomic_armv5.h \
-		/usr/include/qt5/QtCore/qatomic_bfin.h \
-		/usr/include/qt5/QtCore/qatomic_ia64.h \
-		/usr/include/qt5/QtCore/qatomic_mips.h \
-		/usr/include/qt5/QtCore/qatomic_s390.h \
-		/usr/include/qt5/QtCore/qatomic_sh4a.h \
-		/usr/include/qt5/QtCore/qatomic_sparc.h \
-		/usr/include/qt5/QtCore/qatomic_gcc.h \
-		/usr/include/qt5/QtCore/qatomic_x86.h \
-		/usr/include/qt5/QtCore/qatomic_cxx11.h \
-		/usr/include/qt5/QtCore/qatomic_unix.h \
-		/usr/include/qt5/QtCore/qmutex.h \
-		/usr/include/qt5/QtCore/qlogging.h \
-		/usr/include/qt5/QtCore/qflags.h \
-		/usr/include/qt5/QtCore/qtypeinfo.h \
-		/usr/include/qt5/QtCore/qtypetraits.h \
-		/usr/include/qt5/QtCore/qsysinfo.h \
-		/usr/include/qt5/QtCore/qiterator.h \
-		/usr/include/qt5/QtCore/qlist.h \
-		/usr/include/qt5/QtCore/qrefcount.h \
-		/usr/include/qt5/QtCore/qarraydata.h \
-		/usr/include/qt5/QtCore/qpoint.h \
-		/usr/include/qt5/QtCore/qnamespace.h \
-		/usr/include/qt5/QtCore/qrect.h \
-		/usr/include/qt5/QtCore/qsize.h \
-		/usr/include/qt5/QtGui/qregion.h \
-		/usr/include/qt5/QtGui/qwindowdefs.h \
-		/usr/include/qt5/QtCore/qobjectdefs.h \
-		/usr/include/qt5/QtCore/qobjectdefs_impl.h \
-		/usr/include/qt5/QtGui/qwindowdefs_win.h \
-		/usr/include/qt5/QtCore/qdatastream.h \
-		/usr/include/qt5/QtCore/qscopedpointer.h \
-		/usr/include/qt5/QtCore/qiodevice.h \
-		/usr/include/qt5/QtCore/qobject.h \
-		/usr/include/qt5/QtCore/qstring.h \
-		/usr/include/qt5/QtCore/qchar.h \
-		/usr/include/qt5/QtCore/qbytearray.h \
-		/usr/include/qt5/QtCore/qstringbuilder.h \
-		/usr/include/qt5/QtCore/qcoreevent.h \
-		/usr/include/qt5/QtCore/qmetatype.h \
-		/usr/include/qt5/QtCore/qvarlengtharray.h \
-		/usr/include/qt5/QtCore/qcontainerfwd.h \
-		/usr/include/qt5/QtCore/qisenum.h \
-		/usr/include/qt5/QtCore/qobject_impl.h \
-		/usr/include/qt5/QtCore/qpair.h \
-		/usr/include/qt5/QtCore/qline.h \
-		/usr/include/qt5/QtGui/qpainterpath.h \
-		/usr/include/qt5/QtGui/qpaintdevice.h \
-		/usr/include/qt5/QtGui/qrgb.h \
-		/usr/include/qt5/QtCore/qstringlist.h \
-		/usr/include/qt5/QtCore/qregexp.h \
-		/usr/include/qt5/QtCore/qstringmatcher.h \
-		../../CMath/include/CTurbulenceUtil.h \
-		../../CMath/include/CGaussianBlur.h \
-		/usr/include/qt5/QtGui/QColor \
-		/usr/include/qt5/QtGui/qcolor.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGImageData.o CQSVGImageData.cpp
 
 ../obj/CQSVGLinearGradient.o: CQSVGLinearGradient.cpp CQSVGLinearGradient.h \
 		CQSVGObject.h \
@@ -21257,12 +21190,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -21282,6 +21215,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGLinearGradient.o CQSVGLinearGradient.cpp
 
@@ -21477,12 +21411,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -21501,6 +21435,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGLine.o CQSVGLine.cpp
@@ -21697,12 +21632,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -21721,6 +21656,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGMarker.o CQSVGMarker.cpp
@@ -21917,12 +21853,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -21941,6 +21877,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGMask.o CQSVGMask.cpp
@@ -22137,12 +22074,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -22161,6 +22098,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGMPath.o CQSVGMPath.cpp
@@ -22356,12 +22294,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -22379,6 +22317,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h \
 		CQSVGWindow.h \
@@ -22388,6 +22327,9 @@ compiler_clean: compiler_moc_header_clean
 		../../COS/include/CHRTime.h \
 		CQSVGCanvas.h \
 		/usr/include/qt5/QtWidgets/QWidget \
+		CQSVGFontObj.h \
+		../include/CSVGFontObj.h \
+		/usr/include/qt5/QtGui/QFont \
 		CQSVGRenderer.h \
 		../include/CSVGRenderer.h \
 		CDisplayTransform2D.h \
@@ -22599,12 +22541,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -22623,6 +22565,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGPath.o CQSVGPath.cpp
@@ -22630,6 +22573,8 @@ compiler_clean: compiler_moc_header_clean
 ../obj/CQSVGPathPart.o: CQSVGPathPart.cpp CQSVGPathPart.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGTypes.h \
+		../../CUtil/include/COptVal.h \
+		../include/CScreenUnits.h \
 		../../CMath/include/CBBox2D.h \
 		../../CMath/include/CMathGen.h \
 		../../COS/include/NaN.h \
@@ -22638,7 +22583,6 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CVector2D.h \
 		../../CMath/include/CSize2D.h \
 		../../CMath/include/CISize2D.h \
-		../../CUtil/include/COptVal.h \
 		/usr/include/qt5/QtCore/QObject \
 		/usr/include/qt5/QtCore/qobject.h \
 		/usr/include/qt5/QtCore/qobjectdefs.h \
@@ -22723,7 +22667,6 @@ compiler_clean: compiler_moc_header_clean
 		../../CUtil/include/CFillType.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../../CUtil/include/CLineDash.h \
 		../../CUtil/include/CILineDash.h \
 		../../CUtil/include/CLineCapType.h \
@@ -22752,6 +22695,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h \
 		../../CFile/include/CFile.h \
@@ -22952,12 +22896,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -22976,6 +22920,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGPattern.o CQSVGPattern.cpp
@@ -23172,12 +23117,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -23196,6 +23141,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGPolygon.o CQSVGPolygon.cpp
@@ -23392,12 +23338,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -23416,6 +23362,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGPolyLine.o CQSVGPolyLine.cpp
@@ -23784,12 +23731,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -23814,6 +23761,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGRadialGradient.o CQSVGRadialGradient.cpp
 
@@ -24009,12 +23957,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -24033,6 +23981,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGRect.o CQSVGRect.cpp
@@ -24229,12 +24178,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -24254,6 +24203,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGSet.o CQSVGSet.cpp
@@ -24450,12 +24400,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -24474,6 +24424,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGStop.o CQSVGStop.cpp
@@ -24667,6 +24618,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CObjTypeOld.h \
 		../include/CSVGBlockData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h \
 		../../CFile/include/CFile.h \
@@ -24867,12 +24819,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -24891,6 +24843,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGSymbol.o CQSVGSymbol.cpp
@@ -25087,12 +25040,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -25111,6 +25064,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGText.o CQSVGText.cpp
@@ -25307,12 +25261,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -25331,6 +25285,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGTextPath.o CQSVGTextPath.cpp
@@ -25527,12 +25482,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -25551,6 +25506,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGTitle.o CQSVGTitle.cpp
@@ -25747,12 +25703,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -25771,6 +25727,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGTSpan.o CQSVGTSpan.cpp
@@ -25967,12 +25924,12 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
+		../include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
 		../include/CSVGTimeValue.h \
 		../include/CSVGEventValue.h \
 		../include/CSVGXLink.h \
@@ -25991,6 +25948,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGUse.o CQSVGUse.cpp
@@ -26169,6 +26127,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h \
+		../../CJavaScript/include/CJavaScript.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h \
 		../../CFile/include/CFile.h \
@@ -26407,6 +26366,8 @@ compiler_clean: compiler_moc_header_clean
 ../obj/CQSVGRenderer.o: CQSVGRenderer.cpp CQSVGRenderer.h \
 		../include/CSVGRenderer.h \
 		../include/CSVGTypes.h \
+		../../CUtil/include/COptVal.h \
+		../include/CScreenUnits.h \
 		../../CMath/include/CMatrix2D.h \
 		../../CMath/include/CMathGen.h \
 		../../COS/include/NaN.h \
@@ -26543,8 +26504,11 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CIBBox2D.h \
 		../../CMath/include/CIVector2D.h \
 		../../CFile/include/CFileType.h \
-		../../CUtil/include/COptVal.h \
 		../../CImageLib/include/CImagePtr.h \
+		CQSVGFontObj.h \
+		../include/CSVGFontObj.h \
+		/usr/include/qt5/QtGui/QFont \
+		../include/CSVGFontDef.h \
 		../../CQUtil/include/CQUtil.h \
 		/usr/include/qt5/QtCore/Qt \
 		/usr/include/qt5/QtGui/QColor \
@@ -26608,6 +26572,198 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CLine2D.h \
 		../../CMath/include/CShape2D.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGRenderer.o CQSVGRenderer.cpp
+
+../obj/CQSVGImageData.o: CQSVGImageData.cpp CQSVGImageData.h \
+		../include/CSVGImageData.h \
+		../include/CSVGTypes.h \
+		../../CUtil/include/COptVal.h \
+		../include/CScreenUnits.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CUtil/include/CAlignType.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CFile/include/CFileType.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		/usr/include/qt5/QtGui/QImage \
+		/usr/include/qt5/QtGui/qimage.h \
+		/usr/include/qt5/QtGui/qtransform.h \
+		/usr/include/qt5/QtGui/qmatrix.h \
+		/usr/include/qt5/QtGui/qpolygon.h \
+		/usr/include/qt5/QtCore/qvector.h \
+		/usr/include/qt5/QtCore/qalgorithms.h \
+		/usr/include/qt5/QtCore/qglobal.h \
+		/usr/include/qt5/QtCore/qconfig.h \
+		/usr/include/qt5/QtCore/qfeatures.h \
+		/usr/include/qt5/QtCore/qsystemdetection.h \
+		/usr/include/qt5/QtCore/qprocessordetection.h \
+		/usr/include/qt5/QtCore/qcompilerdetection.h \
+		/usr/include/qt5/QtCore/qglobalstatic.h \
+		/usr/include/qt5/QtCore/qatomic.h \
+		/usr/include/qt5/QtCore/qbasicatomic.h \
+		/usr/include/qt5/QtCore/qatomic_bootstrap.h \
+		/usr/include/qt5/QtCore/qgenericatomic.h \
+		/usr/include/qt5/QtCore/qatomic_msvc.h \
+		/usr/include/qt5/QtCore/qatomic_integrity.h \
+		/usr/include/qt5/QtCore/qoldbasicatomic.h \
+		/usr/include/qt5/QtCore/qatomic_vxworks.h \
+		/usr/include/qt5/QtCore/qatomic_power.h \
+		/usr/include/qt5/QtCore/qatomic_alpha.h \
+		/usr/include/qt5/QtCore/qatomic_armv7.h \
+		/usr/include/qt5/QtCore/qatomic_armv6.h \
+		/usr/include/qt5/QtCore/qatomic_armv5.h \
+		/usr/include/qt5/QtCore/qatomic_bfin.h \
+		/usr/include/qt5/QtCore/qatomic_ia64.h \
+		/usr/include/qt5/QtCore/qatomic_mips.h \
+		/usr/include/qt5/QtCore/qatomic_s390.h \
+		/usr/include/qt5/QtCore/qatomic_sh4a.h \
+		/usr/include/qt5/QtCore/qatomic_sparc.h \
+		/usr/include/qt5/QtCore/qatomic_gcc.h \
+		/usr/include/qt5/QtCore/qatomic_x86.h \
+		/usr/include/qt5/QtCore/qatomic_cxx11.h \
+		/usr/include/qt5/QtCore/qatomic_unix.h \
+		/usr/include/qt5/QtCore/qmutex.h \
+		/usr/include/qt5/QtCore/qlogging.h \
+		/usr/include/qt5/QtCore/qflags.h \
+		/usr/include/qt5/QtCore/qtypeinfo.h \
+		/usr/include/qt5/QtCore/qtypetraits.h \
+		/usr/include/qt5/QtCore/qsysinfo.h \
+		/usr/include/qt5/QtCore/qiterator.h \
+		/usr/include/qt5/QtCore/qlist.h \
+		/usr/include/qt5/QtCore/qrefcount.h \
+		/usr/include/qt5/QtCore/qarraydata.h \
+		/usr/include/qt5/QtCore/qpoint.h \
+		/usr/include/qt5/QtCore/qnamespace.h \
+		/usr/include/qt5/QtCore/qrect.h \
+		/usr/include/qt5/QtCore/qsize.h \
+		/usr/include/qt5/QtGui/qregion.h \
+		/usr/include/qt5/QtGui/qwindowdefs.h \
+		/usr/include/qt5/QtCore/qobjectdefs.h \
+		/usr/include/qt5/QtCore/qobjectdefs_impl.h \
+		/usr/include/qt5/QtGui/qwindowdefs_win.h \
+		/usr/include/qt5/QtCore/qdatastream.h \
+		/usr/include/qt5/QtCore/qscopedpointer.h \
+		/usr/include/qt5/QtCore/qiodevice.h \
+		/usr/include/qt5/QtCore/qobject.h \
+		/usr/include/qt5/QtCore/qstring.h \
+		/usr/include/qt5/QtCore/qchar.h \
+		/usr/include/qt5/QtCore/qbytearray.h \
+		/usr/include/qt5/QtCore/qstringbuilder.h \
+		/usr/include/qt5/QtCore/qcoreevent.h \
+		/usr/include/qt5/QtCore/qmetatype.h \
+		/usr/include/qt5/QtCore/qvarlengtharray.h \
+		/usr/include/qt5/QtCore/qcontainerfwd.h \
+		/usr/include/qt5/QtCore/qisenum.h \
+		/usr/include/qt5/QtCore/qobject_impl.h \
+		/usr/include/qt5/QtCore/qpair.h \
+		/usr/include/qt5/QtCore/qline.h \
+		/usr/include/qt5/QtGui/qpainterpath.h \
+		/usr/include/qt5/QtGui/qpaintdevice.h \
+		/usr/include/qt5/QtGui/qrgb.h \
+		/usr/include/qt5/QtCore/qstringlist.h \
+		/usr/include/qt5/QtCore/qregexp.h \
+		/usr/include/qt5/QtCore/qstringmatcher.h \
+		../../CMath/include/CTurbulenceUtil.h \
+		../../CMath/include/CGaussianBlur.h \
+		/usr/include/qt5/QtGui/QColor \
+		/usr/include/qt5/QtGui/qcolor.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGImageData.o CQSVGImageData.cpp
+
+../obj/CQSVGFontObj.o: CQSVGFontObj.cpp CQSVGFontObj.h \
+		../include/CSVGFontObj.h \
+		../../CFont/include/CFont.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		/usr/include/qt5/QtGui/QFont \
+		/usr/include/qt5/QtGui/qfont.h \
+		/usr/include/qt5/QtGui/qwindowdefs.h \
+		/usr/include/qt5/QtCore/qglobal.h \
+		/usr/include/qt5/QtCore/qconfig.h \
+		/usr/include/qt5/QtCore/qfeatures.h \
+		/usr/include/qt5/QtCore/qsystemdetection.h \
+		/usr/include/qt5/QtCore/qprocessordetection.h \
+		/usr/include/qt5/QtCore/qcompilerdetection.h \
+		/usr/include/qt5/QtCore/qglobalstatic.h \
+		/usr/include/qt5/QtCore/qatomic.h \
+		/usr/include/qt5/QtCore/qbasicatomic.h \
+		/usr/include/qt5/QtCore/qatomic_bootstrap.h \
+		/usr/include/qt5/QtCore/qgenericatomic.h \
+		/usr/include/qt5/QtCore/qatomic_msvc.h \
+		/usr/include/qt5/QtCore/qatomic_integrity.h \
+		/usr/include/qt5/QtCore/qoldbasicatomic.h \
+		/usr/include/qt5/QtCore/qatomic_vxworks.h \
+		/usr/include/qt5/QtCore/qatomic_power.h \
+		/usr/include/qt5/QtCore/qatomic_alpha.h \
+		/usr/include/qt5/QtCore/qatomic_armv7.h \
+		/usr/include/qt5/QtCore/qatomic_armv6.h \
+		/usr/include/qt5/QtCore/qatomic_armv5.h \
+		/usr/include/qt5/QtCore/qatomic_bfin.h \
+		/usr/include/qt5/QtCore/qatomic_ia64.h \
+		/usr/include/qt5/QtCore/qatomic_mips.h \
+		/usr/include/qt5/QtCore/qatomic_s390.h \
+		/usr/include/qt5/QtCore/qatomic_sh4a.h \
+		/usr/include/qt5/QtCore/qatomic_sparc.h \
+		/usr/include/qt5/QtCore/qatomic_gcc.h \
+		/usr/include/qt5/QtCore/qatomic_x86.h \
+		/usr/include/qt5/QtCore/qatomic_cxx11.h \
+		/usr/include/qt5/QtCore/qatomic_unix.h \
+		/usr/include/qt5/QtCore/qmutex.h \
+		/usr/include/qt5/QtCore/qlogging.h \
+		/usr/include/qt5/QtCore/qflags.h \
+		/usr/include/qt5/QtCore/qtypeinfo.h \
+		/usr/include/qt5/QtCore/qtypetraits.h \
+		/usr/include/qt5/QtCore/qsysinfo.h \
+		/usr/include/qt5/QtCore/qobjectdefs.h \
+		/usr/include/qt5/QtCore/qnamespace.h \
+		/usr/include/qt5/QtCore/qobjectdefs_impl.h \
+		/usr/include/qt5/QtGui/qwindowdefs_win.h \
+		/usr/include/qt5/QtCore/qstring.h \
+		/usr/include/qt5/QtCore/qchar.h \
+		/usr/include/qt5/QtCore/qbytearray.h \
+		/usr/include/qt5/QtCore/qrefcount.h \
+		/usr/include/qt5/QtCore/qarraydata.h \
+		/usr/include/qt5/QtCore/qstringbuilder.h \
+		/usr/include/qt5/QtCore/qsharedpointer.h \
+		/usr/include/qt5/QtCore/qshareddata.h \
+		/usr/include/qt5/QtCore/qsharedpointer_impl.h \
+		/usr/include/qt5/QtCore/qobject.h \
+		/usr/include/qt5/QtCore/qlist.h \
+		/usr/include/qt5/QtCore/qalgorithms.h \
+		/usr/include/qt5/QtCore/qiterator.h \
+		/usr/include/qt5/QtCore/qcoreevent.h \
+		/usr/include/qt5/QtCore/qscopedpointer.h \
+		/usr/include/qt5/QtCore/qmetatype.h \
+		/usr/include/qt5/QtCore/qvarlengtharray.h \
+		/usr/include/qt5/QtCore/qcontainerfwd.h \
+		/usr/include/qt5/QtCore/qisenum.h \
+		/usr/include/qt5/QtCore/qobject_impl.h \
+		/usr/include/qt5/QtCore/qhash.h \
+		/usr/include/qt5/QtCore/qpair.h \
+		../include/CSVGFontDef.h \
+		../include/CScreenUnits.h \
+		../../CUtil/include/COptVal.h \
+		/usr/include/qt5/QtGui/QFontMetricsF \
+		/usr/include/qt5/QtGui/qfontmetrics.h \
+		/usr/include/qt5/QtCore/qrect.h \
+		/usr/include/qt5/QtCore/qsize.h \
+		/usr/include/qt5/QtCore/qpoint.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFontObj.o CQSVGFontObj.cpp
 
 ../obj/CQSVGUtil.o: CQSVGUtil.cpp CQSVGUtil.h \
 		/usr/include/qt5/QtGui/QPainter \

@@ -129,6 +129,9 @@ getFilterRegion(CBBox2D &bbox) const
 
   CSVGObject *obj = filter->getObject();
 
+  if (! obj)
+    return false;
+
   if (! filter->getRegion(obj, bbox))
     return false;
 
@@ -307,5 +310,7 @@ printValues(std::ostream &os, bool /*flat*/) const
   printNameLength    (os, "width"         , width_);
   printNameLength    (os, "height"        , height_);
   printNameValue     (os, "filterRes"     , filterRes_);
-  printNameXLink     (os, "xlink:href"    , xlink_);
+
+  if (! xlink_.getValue().isNull())
+    printNameXLink(os, "xlink:href", xlink_);
 }

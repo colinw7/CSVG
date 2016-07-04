@@ -113,17 +113,24 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<feTile";
 
-    CSVGObject::printValues(os);
-
-    CSVGFilterBase::printValues(os);
-
-    printNameValue(os, "in"    , filterIn_ );
-    printNameValue(os, "result", filterOut_);
+    printValues(os);
 
     os << "/>" << std::endl;
   }
   else
     os << "feTile ";
+}
+
+void
+CSVGFeTile::
+printValues(std::ostream &os, bool flat) const
+{
+  CSVGObject::printValues(os, flat);
+
+  CSVGFilterBase::printValues(os, flat);
+
+  printNameValue(os, "in"    , filterIn_ );
+  printNameValue(os, "result", filterOut_);
 }
 
 std::ostream &

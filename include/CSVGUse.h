@@ -38,6 +38,9 @@ class CSVGUse : public CSVGObject {
 
   bool getBBox(CBBox2D &bbox) const override;
 
+  CMatrixStack2D adjustedTransform() const;
+  CMatrixStack2D adjustedTransform(const CMatrixStack2D &transform) const;
+
   void moveBy(const CVector2D &delta) override;
 
   bool draw() override;

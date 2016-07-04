@@ -45,15 +45,20 @@ class CSVGPattern : public CSVGObject {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
+  bool canFlatten() const override { return false; }
+
   bool isDrawable() const override { return false; }
 
   void print(std::ostream &os, bool hier) const override;
+
+  void printValues(std::ostream &os, bool flat=false) const override;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGPattern &pattern);
 
   CSVGObject *getObject();
 
-  void setFillImage  (CSVGObject *parent, CSVGBuffer *buffer, double *w1, double *h1);
+  void setFillImage  (CSVGObject *parent, CSVGBuffer *buffer,
+                      double *x1, double *y1, double *w1, double *h1);
   void setStrokeImage(CSVGObject *parent, CSVGBuffer *buffer, double *w1, double *h1);
 
  private:

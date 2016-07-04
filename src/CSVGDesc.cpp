@@ -45,7 +45,7 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<desc";
 
-    CSVGObject::printValues(os);
+    printValues(os);
 
     os << ">";
 
@@ -57,6 +57,13 @@ print(std::ostream &os, bool hier) const
   }
   else
     os << "desc";
+}
+
+void
+CSVGDesc::
+printValues(std::ostream &os, bool flat) const
+{
+  CSVGObject::printValues(os, flat);
 }
 
 std::ostream &

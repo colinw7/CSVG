@@ -201,6 +201,10 @@ class CScreenUnits {
     return px(rvalue).value_;
   }
 
+  double ptValue(const CScreenUnits &rvalue=CScreenUnits()) const {
+    return pt(rvalue).value_;
+  }
+
   double percentValue(const CScreenUnits &rvalue=CScreenUnits()) const {
     return percent(rvalue).value_;
   }

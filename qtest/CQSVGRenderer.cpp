@@ -1,5 +1,7 @@
 #include <CQSVGRenderer.h>
 #include <CQSVGImageData.h>
+#include <CQSVGFontObj.h>
+#include <CSVGFontDef.h>
 #include <CQUtil.h>
 #include <CLinearGradient.h>
 #include <CRadialGradient.h>
@@ -229,7 +231,9 @@ startDraw()
   drawing_ = true;
 
   if (antiAlias_)
-    painter_->setRenderHints(QPainter::Antialiasing);
+    painter_->setRenderHints(QPainter::Antialiasing |
+                             QPainter::TextAntialiasing |
+                             QPainter::SmoothPixmapTransform);
 
   painter_->setWorldMatrix(CQUtil::toQMatrix(range_.getMatrix()*viewMatrix_));
 }
@@ -545,11 +549,23 @@ drawImage(const CPoint2D &p, CSVGImageData *image)
 
 void
 CQSVGRenderer::
-setFont(CFontPtr font)
+setFont(const CSVGFontDef &fontDef)
 {
   assert(drawing_);
 
-  qfont_ = CQUtil::toQFont(font);
+  //std::string family = fontDef.getFamily();
+  //CFontStyles styles = fontDef.getStyle();
+  //CFontStyle  style  = (styles | CFONT_STYLE_FULL_SIZE).value();
+  //double      size   = fontDef.getSize().px().value();
+  //double      angle  = fontDef.getAngle();
+
+  //CFontPtr font = CFontMgrInst->lookupFont(family, style, size, angle);
+
+  //qfont_ = CQUtil::toQFont(font);
+
+  CQSVGFontObj *fontObj = dynamic_cast<CQSVGFontObj *>(fontDef.getObj());
+
+  qfont_ = fontObj->font();
 
   painter_->setFont(qfont_);
 }
@@ -713,7 +729,7 @@ setFillGradient(CGenGradient *g)
 
 void
 CQSVGRenderer::
-setFillImage(CSVGImageData *image)
+setFillImage(double xo, double yo, CSVGImageData *image)
 {
   assert(drawing_);
 
@@ -723,6 +739,8 @@ setFillImage(CSVGImageData *image)
   fillBrush_.setTextureImage(static_cast<CQSVGImageData *>(image)->qimage());
 
   painter_->setBrush(fillBrush_);
+
+  painter_->setBrushOrigin(QPointF(xo, yo));
 }
 
 void

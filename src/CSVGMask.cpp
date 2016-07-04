@@ -151,18 +151,7 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<mask";
 
-    CSVGObject::printValues(os);
-
-    printNameValue (os, "x"     , x_     );
-    printNameValue (os, "y"     , y_     );
-    printNameLength(os, "width" , width_ );
-    printNameLength(os, "height", height_);
-
-    if (getUnitsValid())
-      os << " maskUnits=\"" << CSVG::encodeUnitsString(getUnits()) << "\"";
-
-    if (getContentUnitsValid())
-      os << " maskContentUnits=\"" << CSVG::encodeUnitsString(getContentUnits()) << "\"";
+    printValues(os);
 
     os << ">" << std::endl;
 
@@ -172,6 +161,24 @@ print(std::ostream &os, bool hier) const
   }
   else
     os << "mask ";
+}
+
+void
+CSVGMask::
+printValues(std::ostream &os, bool flat) const
+{
+  CSVGObject::printValues(os, flat);
+
+  printNameValue (os, "x"     , x_     );
+  printNameValue (os, "y"     , y_     );
+  printNameLength(os, "width" , width_ );
+  printNameLength(os, "height", height_);
+
+  if (getUnitsValid())
+    os << " maskUnits=\"" << CSVG::encodeUnitsString(getUnits()) << "\"";
+
+  if (getContentUnitsValid())
+    os << " maskContentUnits=\"" << CSVG::encodeUnitsString(getContentUnits()) << "\"";
 }
 
 std::ostream &

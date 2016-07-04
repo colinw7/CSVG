@@ -27,6 +27,7 @@ class CSVGFeDistantLight;
 class CSVGFePointLight;
 class CSVGFeSpotLight;
 class CSVGFeMergeNode;
+class CSVGFontDef;
 class CSVGObject;
 class CGenGradient;
 
@@ -253,7 +254,7 @@ class CSVGBuffer {
   void setFillColor(const CRGBA &color);
   void setFillType(CFillType type);
   void setFillGradient(CGenGradient *g);
-  void setFillBuffer(CSVGBuffer *buffer);
+  void setFillBuffer(double x, double y, CSVGBuffer *buffer);
   void setFillMatrix(const CMatrix2D &m);
 
   void drawImage(double x, double y, CSVGBuffer *buffer);
@@ -277,7 +278,7 @@ class CSVGBuffer {
   void pathRBezier2To(double x1, double y1, double x2, double y2);
   void pathBezier3To(double x1, double y1, double x2, double y2, double x3, double y3);
   void pathRBezier3To(double x1, double y1, double x2, double y2, double x3, double y3);
-  void pathText(const std::string &text, CFontPtr font, CHAlignType align);
+  void pathText(const std::string &text, const CSVGFontDef &fontDef, CHAlignType align);
   void pathClose();
 
   bool pathGetCurrentPoint(double *x, double *y) const;

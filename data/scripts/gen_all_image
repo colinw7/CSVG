@@ -1,0 +1,13 @@
+#!/bin/csh -f
+
+set cdir = `pwd`
+
+foreach dir (ch*)
+  cd $dir
+
+  ./gen_image
+
+  cd $cdir
+end
+
+exit 0

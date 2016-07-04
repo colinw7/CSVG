@@ -57,7 +57,8 @@ class CSVGAnimateBase : public CSVGObject {
 
   void updateAnimation();
 
-  void handleEvent(CSVGEventType type, const std::string &id, const std::string &data) override;
+  void handleEvent(CSVGEventType type, const std::string &id, const std::string &data,
+                   bool propagate) override;
 
   void printValues(std::ostream &os, bool flat=false) const override;
 

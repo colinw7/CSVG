@@ -24,7 +24,8 @@
 */
 CSVGLinearGradient::
 CSVGLinearGradient(CSVG &svg) :
- CSVGObject(svg)
+ CSVGObject(svg),
+ xlink_    (this)
 {
 }
 
@@ -38,7 +39,8 @@ CSVGLinearGradient(const CSVGLinearGradient &lg) :
  stops_     (lg.stops_),
  gtransform_(lg.gtransform_),
  units_     (lg.units_),
- spread_    (lg.spread_)
+ spread_    (lg.spread_),
+ xlink_     (lg.xlink_)
 {
 }
 
@@ -79,48 +81,9 @@ processOption(const std::string &opt_name, const std::string &opt_value)
     setSpread(spread);
   }
   else if (svg_.stringOption(opt_name, opt_value, "xlink:href", str)) {
-    CSVGObject *object;
+    xlink_ = CSVGXLink(this, str);
 
-    if (! decodeXLink(opt_value, &object))
-      return false;
-
-    if (object) {
-      CSVGRadialGradient *rg = dynamic_cast<CSVGRadialGradient *>(object);
-      CSVGLinearGradient *lg = dynamic_cast<CSVGLinearGradient *>(object);
-
-      if      (lg) {
-        if (lg->x1_.isValid()) x1_ = lg->x1_;
-        if (lg->y1_.isValid()) y1_ = lg->y1_;
-        if (lg->x2_.isValid()) x2_ = lg->x2_;
-        if (lg->y2_.isValid()) y2_ = lg->y2_;
-
-        if (lg->getGTransformValid()) gtransform_ = lg->getGTransform();
-        if (lg->getUnitsValid     ()) units_      = lg->getUnits();
-        if (lg->getSpreadValid    ()) spread_     = lg->getSpread();
-
-        if (lg->anyStops()) {
-          stops_.clear();
-
-          for (const auto &s : lg->stops())
-            addStop(s);
-        }
-      }
-      else if (rg) {
-        if (rg->getGTransformValid()) gtransform_ = rg->getGTransform();
-        if (rg->getUnitsValid     ()) units_      = rg->getUnits();
-        if (rg->getSpreadValid    ()) spread_     = rg->getSpread();
-
-        if (rg->anyStops()) {
-          stops_.clear();
-
-          for (const auto &s : rg->stops())
-            addStop(s);
-        }
-      }
-      else {
-        CSVGLog() << "Unhandled linear gradient link";
-      }
-    }
+    addLinkStops();
   }
   else
     return CSVGObject::processOption(opt_name, opt_value);
@@ -146,25 +109,60 @@ termParse()
 
 void
 CSVGLinearGradient::
+addLinkStops()
+{
+  CSVGObject *object = xlink_.getValue().getObject();
+
+  if (! object) {
+    //CSVGLog() << "No object for linear gradient link";
+    return;
+  }
+
+  CSVGRadialGradient *rg = dynamic_cast<CSVGRadialGradient *>(object);
+  CSVGLinearGradient *lg = dynamic_cast<CSVGLinearGradient *>(object);
+
+  if      (lg) {
+    if (lg->x1_.isValid()) x1_ = lg->x1_;
+    if (lg->y1_.isValid()) y1_ = lg->y1_;
+    if (lg->x2_.isValid()) x2_ = lg->x2_;
+    if (lg->y2_.isValid()) y2_ = lg->y2_;
+
+    if (lg->getGTransformValid()) gtransform_ = lg->getGTransform();
+    if (lg->getUnitsValid     ()) units_      = lg->getUnits();
+    if (lg->getSpreadValid    ()) spread_     = lg->getSpread();
+
+    if (lg->anyStops()) {
+      stops_.clear();
+
+      for (const auto &s : lg->stops())
+        addStop(s);
+    }
+  }
+  else if (rg) {
+    if (rg->getGTransformValid()) gtransform_ = rg->getGTransform();
+    if (rg->getUnitsValid     ()) units_      = rg->getUnits();
+    if (rg->getSpreadValid    ()) spread_     = rg->getSpread();
+
+    if (rg->anyStops()) {
+      stops_.clear();
+
+      for (const auto &s : rg->stops())
+        addStop(s);
+    }
+  }
+  else {
+    CSVGLog() << "Unexpected object type for linear gradient link";
+  }
+}
+
+void
+CSVGLinearGradient::
 print(std::ostream &os, bool hier) const
 {
   if (hier) {
     os << "<linearGradient";
 
-    printNameLength(os, "x1", x1_);
-    printNameLength(os, "y1", y1_);
-    printNameLength(os, "x2", x2_);
-    printNameLength(os, "y2", y2_);
-
-    printNameTransform(os, "gradientTransform", gtransform_);
-
-    if (getUnitsValid())
-      os << " gradientUnits=\"" << CSVG::encodeUnitsString(getUnits()) << "\"";
-
-    if (getSpreadValid())
-      os << " spreadMethod=\"" << CSVG::encodeGradientSpread(getSpread()) << "\"";
-
-    CSVGObject::printValues(os);
+    printValues(os);
 
     os << ">" << std::endl;
 
@@ -174,6 +172,29 @@ print(std::ostream &os, bool hier) const
   }
   else
     os << "linearGradient ";
+}
+
+void
+CSVGLinearGradient::
+printValues(std::ostream &os, bool flat) const
+{
+  printNamePercent(os, "x1", x1_);
+  printNamePercent(os, "y1", y1_);
+  printNamePercent(os, "x2", x2_);
+  printNamePercent(os, "y2", y2_);
+
+  printNameTransform(os, "gradientTransform", gtransform_);
+
+  if (getUnitsValid())
+    os << " gradientUnits=\"" << CSVG::encodeUnitsString(getUnits()) << "\"";
+
+  if (getSpreadValid())
+    os << " spreadMethod=\"" << CSVG::encodeGradientSpread(getSpread()) << "\"";
+
+  if (! xlink_.getValue().isNull())
+    printNameXLink(os, "xlink:href", xlink_);
+
+  CSVGObject::printValues(os, flat);
 }
 
 void

@@ -122,12 +122,7 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<feComponentTransfer";
 
-    CSVGObject::printValues(os);
-
-    CSVGFilterBase::printValues(os);
-
-    printNameValue(os, "in"    , filterIn_ );
-    printNameValue(os, "result", filterOut_);
+    printValues(os);
 
     os << ">" << std::endl;
 
@@ -137,6 +132,18 @@ print(std::ostream &os, bool hier) const
   }
   else
     os << "feComponentTransfer ";
+}
+
+void
+CSVGFeComponentTransfer::
+printValues(std::ostream &os, bool flat) const
+{
+  CSVGObject::printValues(os, flat);
+
+  CSVGFilterBase::printValues(os, flat);
+
+  printNameValue(os, "in"    , filterIn_ );
+  printNameValue(os, "result", filterOut_);
 }
 
 std::ostream &

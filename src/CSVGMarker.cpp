@@ -247,19 +247,7 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<marker";
 
-    CSVGObject::printValues(os);
-
-    printNameValue(os, "refX", refX_);
-    printNameValue(os, "refY", refY_);
-
-    printNameCoordUnits(os, "markerUnits", markerUnits_);
-
-    printNameLength(os, "markerWidth" , markerWidth_ );
-    printNameLength(os, "markerHeight", markerHeight_);
-
-    printNameValue(os, "orient", orient_);
-
-    printNamePreserveAspect(os, "preserveAspectRatio", preserveAspect_);
+    printValues(os);
 
     os << ">" << std::endl;
 
@@ -269,6 +257,25 @@ print(std::ostream &os, bool hier) const
   }
   else
     os << "marker";
+}
+
+void
+CSVGMarker::
+printValues(std::ostream &os, bool flat) const
+{
+  CSVGObject::printValues(os, flat);
+
+  printNameValue(os, "refX", refX_);
+  printNameValue(os, "refY", refY_);
+
+  printNameCoordUnits(os, "markerUnits", markerUnits_);
+
+  printNameLength(os, "markerWidth" , markerWidth_ );
+  printNameLength(os, "markerHeight", markerHeight_);
+
+  printNameValue(os, "orient", orient_);
+
+  printNamePreserveAspect(os, "preserveAspectRatio", preserveAspect_);
 }
 
 std::ostream &

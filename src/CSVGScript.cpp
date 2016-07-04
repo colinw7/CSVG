@@ -1,6 +1,7 @@
 #include <CSVGScript.h>
 #include <CSVG.h>
 #include <CSVGLog.h>
+#include <CStrParse.h>
 
 CSVGScript::
 CSVGScript(CSVG &svg) :
@@ -55,6 +56,48 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   return true;
 }
 
+void
+CSVGScript::
+setText(const std::string &text)
+{
+  CStrParse parse(text);
+
+  parse.skipSpace();
+
+  if (parse.isString("<![CDATA[")) {
+    parse.skipChars(9);
+
+    parse.skipSpace();
+
+    std::string str;
+    bool        space = false;
+
+    while (! parse.eof() && ! parse.isString("]]>")) {
+      char c;
+
+      parse.readChar(&c);
+
+      if (! isspace(c) || c == '\n') {
+        str += c;
+
+        space = false;
+      }
+      else {
+        if (! space) {
+          str += " ";
+
+          space = true;
+        }
+      }
+    }
+
+    svg_.setScript(str);
+  }
+  else {
+    CSVGObject::setText(text);
+  }
+}
+
 bool
 CSVGScript::
 draw()
@@ -72,9 +115,7 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<script";
 
-    CSVGObject::printValues(os);
-
-    printNameValue(os, "type", type_);
+    printValues(os);
 
     if (hasText() || hasChildren()) {
       os << ">" << std::endl;
@@ -91,6 +132,15 @@ print(std::ostream &os, bool hier) const
   }
   else
     os << "script";
+}
+
+void
+CSVGScript::
+printValues(std::ostream &os, bool flat) const
+{
+  CSVGObject::printValues(os, flat);
+
+  printNameValue(os, "type", type_);
 }
 
 std::ostream &

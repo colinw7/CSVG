@@ -68,19 +68,26 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<stop";
 
-    CSVGObject::printValues(os);
-
-    printNameValue(os, "offset", offset_);
-
-    if (color_.isValid())
-      os << " stop-color=\"" << color_.getValue() << "\"";
-
-    printNameValue(os, "stop-opacity=", opacity_);
+    printValues(os);
 
     os << "/>" << std::endl;
   }
   else
     os << "stop " << getOffset();
+}
+
+void
+CSVGStop::
+printValues(std::ostream &os, bool flat) const
+{
+  CSVGObject::printValues(os, flat);
+
+  printNamePercent(os, "offset", offset_);
+
+  if (color_.isValid())
+    os << " stop-color=\"" << color_.getValue() << "\"";
+
+  printNameValue(os, "stop-opacity", opacity_);
 }
 
 std::ostream &

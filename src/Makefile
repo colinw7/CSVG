@@ -62,6 +62,7 @@ CSVGFontDef.cpp \
 CSVGFontFace.cpp \
 CSVGFontFaceSrc.cpp \
 CSVGFontFaceUri.cpp \
+CSVGFontObj.cpp \
 CSVGGlyph.cpp \
 CSVGGroup.cpp \
 CSVGHKern.cpp \
@@ -113,6 +114,7 @@ $(CDEBUG) \
 -I. \
 -I$(INC_DIR) \
 -I../../CXML/include \
+-I../../CJavaScript/include \
 -I../../CCSS/include \
 -I../../CConfig/include \
 -I../../CImageLib/include \
@@ -125,7 +127,6 @@ $(CDEBUG) \
 -I../../CMath/include \
 -I../../CUtil/include \
 -I../../CRGBName/include \
--I. \
 
 clean:
 	$(RM) -f $(OBJ_DIR)/*.o

@@ -92,6 +92,7 @@ void
 CSVGUse::
 termParse()
 {
+#if 0
   if (svg_.getUniquify()) {
     CSVGObject *object = getLinkObject();
 
@@ -130,34 +131,29 @@ termParse()
       if (xlink_.isValid())
         xlink_.getValue().setObject(0);
     }
+
+    return;
   }
-  else {
-    if (x_.isValid() || y_.isValid()) {
-      CPoint2D delta(0, 0);
+#endif
 
-      if (x_.isValid()) delta.setX(x_.getValue());
-      if (y_.isValid()) delta.setY(y_.getValue());
+#if 0
+  if (x_.isValid() || y_.isValid()) {
+    CMatrixStack2D transform = adjustedTransform() const
 
-      CMatrixStack2D transform;
-
-      transform.append(getTransform());
-
-      transform.translate(delta.x, delta.y);
-
-      setTransform(transform);
-    }
-
-    if (width_.isValid() || height_.isValid()) {
-      //CSize2D size = box.getSize();
-
-      //if (width_ .isValid())
-      //  size.width  = getWidth();
-      //if (height_.isValid())
-      //  size.height = getHeight();
-
-      // TODO
-    }
+    setTransform(transform);
   }
+
+  if (width_.isValid() || height_.isValid()) {
+    //CSize2D size = box.getSize();
+
+    //if (width_ .isValid())
+    //  size.width  = getWidth();
+    //if (height_.isValid())
+    //  size.height = getHeight();
+
+    // TODO
+  }
+#endif
 }
 
 bool
@@ -185,6 +181,39 @@ getBBox(CBBox2D &bbox) const
     bbox = getViewBox();
 
   return true;
+}
+
+CMatrixStack2D
+CSVGUse::
+adjustedTransform() const
+{
+  return adjustedTransform(getTransform());
+}
+
+CMatrixStack2D
+CSVGUse::
+adjustedTransform(const CMatrixStack2D &transform) const
+{
+  if (x_.isValid() && ! y_.isValid())
+    return transform;
+
+  //---
+
+  CPoint2D delta(0, 0);
+
+  if (x_.isValid())
+    delta.setX(x_.getValue());
+
+  if (y_.isValid())
+    delta.setY(y_.getValue());
+
+  CMatrixStack2D transform1;
+
+  transform1.append(transform);
+
+  transform1.translate(delta.x, delta.y);
+
+  return transform1;
 }
 
 void
@@ -285,7 +314,7 @@ draw()
     // set current transform
     CMatrixStack2D transform = oldBuffer->transform();
 
-    CMatrixStack2D transform1(transform);
+    CMatrixStack2D transform1 = adjustedTransform(transform);
 
     transform1.append(object->getTransform());
 
@@ -410,11 +439,13 @@ void
 CSVGUse::
 printValues(std::ostream &os, bool flat) const
 {
-  printNameValue(os, "x"         , x_);
-  printNameValue(os, "y"         , y_);
-  printNameValue(os, "width"     , width_);
-  printNameValue(os, "height"    , height_);
-  printNameXLink(os, "xlink:href", xlink_);
+  printNameValue(os, "x"     , x_);
+  printNameValue(os, "y"     , y_);
+  printNameValue(os, "width" , width_);
+  printNameValue(os, "height", height_);
+
+  if (! xlink_.getValue().isNull())
+    printNameXLink(os, "xlink:href", xlink_);
 
   CSVGObject::printValues(os, flat);
 }

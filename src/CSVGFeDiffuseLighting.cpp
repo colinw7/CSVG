@@ -107,13 +107,7 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<feDiffuseLighting";
 
-    CSVGObject::printValues(os);
-
-    printNameValue(os, "in"             , filterIn_ );
-    printNameValue(os, "result"         , filterOut_);
-    printNameValue(os, "lighting-color" , lightingColor_);
-    printNameValue(os, "diffuseConstant", diffuseConstant_);
-    printNameValue(os, "surfaceScale"   , surfaceScale_);
+    printValues(os);
 
     if (hasChildren()) {
       os << ">" << std::endl;
@@ -127,6 +121,19 @@ print(std::ostream &os, bool hier) const
   }
   else
     os << "feDiffuseLighting ";
+}
+
+void
+CSVGFeDiffuseLighting::
+printValues(std::ostream &os, bool flat) const
+{
+  CSVGObject::printValues(os, flat);
+
+  printNameValue(os, "in"             , filterIn_ );
+  printNameValue(os, "result"         , filterOut_);
+  printNameValue(os, "lighting-color" , lightingColor_);
+  printNameValue(os, "diffuseConstant", diffuseConstant_);
+  printNameValue(os, "surfaceScale"   , surfaceScale_);
 }
 
 std::ostream &

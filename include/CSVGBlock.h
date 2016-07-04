@@ -5,6 +5,8 @@
 #include <CSVGTypes.h>
 #include <CSVGBlockData.h>
 
+class CCSS;
+
 class CSVGBlock : public CSVGObject {
  public:
   CSVG_OBJECT_DEF("block", CSVGObjTypeId::BLOCK)
@@ -13,6 +15,8 @@ class CSVGBlock : public CSVGObject {
   CSVGBlock(const CSVGBlock &block);
 
   CSVGBlock *dup() const override;
+
+  std::string getTagName() const override { return "svg"; }
 
   //---
 
@@ -68,11 +72,15 @@ class CSVGBlock : public CSVGObject {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
+  bool propagateFlat() const override { return false; }
+
   void drawInit() override;
 
   bool draw() override;
 
   void drawTerm() override;
+
+  void printRoot(std::ostream &os, const CCSS &css, bool hier) const;
 
   void print(std::ostream &os, bool hier) const override;
 

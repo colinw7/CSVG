@@ -1,7 +1,6 @@
 #include <CSVGLib.h>
 #include <CSVGImageRenderer.h>
 #include <CSVGLogRenderer.h>
-#include <CImageLib.h>
 
 int
 main(int argc, char **argv)
@@ -57,9 +56,21 @@ main(int argc, char **argv)
     }
 
     if      (print) {
+      CSVGLogRenderer lrenderer;
+
+      lrenderer.setSilent(true);
+
+      svg.setRenderer(&lrenderer);
+
       svg.print(std::cout, true);
     }
     else if (flat) {
+      CSVGLogRenderer lrenderer;
+
+      lrenderer.setSilent(true);
+
+      svg.setRenderer(&lrenderer);
+
       svg.printFlat(std::cout);
     }
     else if (log) {

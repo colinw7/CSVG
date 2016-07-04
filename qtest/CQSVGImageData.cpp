@@ -61,6 +61,8 @@ setSize(int w, int h)
     assert(! locked_);
 
     qimage_ = QImage(QSize(w, h), QImage::Format_ARGB32);
+
+    qimage_.fill(0);
   }
 }
 

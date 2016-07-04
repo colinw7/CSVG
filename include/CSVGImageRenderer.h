@@ -3,7 +3,9 @@
 
 #include <CSVGRenderer.h>
 #include <CSVGImageData.h>
+#include <CSVGFontObj.h>
 #include <CImageRenderer2D.h>
+#include <CSVGFontDef.h>
 
 class CSVGImageRenderer : public CSVGRenderer {
  public:
@@ -90,7 +92,13 @@ class CSVGImageRenderer : public CSVGRenderer {
     renderer_->drawImage(p, data->image());
   }
 
-  void setFont(CFontPtr f) override { renderer_->setFont(f); }
+  void setFont(const CSVGFontDef &fontDef) override {
+    CSVGFontObj *fontObj = fontDef.getObj();
+
+    CFontPtr font = fontObj->font();
+
+    renderer_->setFont(font);
+  }
 
   void setStrokeColor(const CRGBA &c) override { renderer_->setForeground(c); }
 
@@ -104,7 +112,7 @@ class CSVGImageRenderer : public CSVGRenderer {
   void setFillType(CFillType t) override { renderer_->setFillType(t); }
   void setFillColor(const CRGBA &c) override { renderer_->setForeground(c); }
   void setFillGradient(CGenGradient *) override { }
-  void setFillImage(CSVGImageData *) override { }
+  void setFillImage(double, double, CSVGImageData *) override { }
   void setFillMatrix(const CMatrix2D &) { std::cerr << "setFillMatrix" << std::endl; }
 
   void setStrokeFilled(bool) override { }

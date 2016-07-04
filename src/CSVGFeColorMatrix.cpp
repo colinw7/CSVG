@@ -139,46 +139,53 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<feColorMatrix";
 
-    CSVGObject::printValues(os);
-
-    CSVGFilterBase::printValues(os);
-
-    printNameValue(os, "in"    , filterIn_ );
-    printNameValue(os, "result", filterOut_);
-
-    if (type_.isValid()) {
-      CSVGColorMatrixType type = getType();
-
-      os << " type=\"";
-
-      if      (type == CSVGColorMatrixType::MATRIX            ) os << "matrix";
-      else if (type == CSVGColorMatrixType::SATURATE          ) os << "saturate";
-      else if (type == CSVGColorMatrixType::HUE_ROTATE        ) os << "hueRotate";
-      else if (type == CSVGColorMatrixType::LUMINANCE_TO_ALPHA) os << "luminanceToAlpha";
-
-      os << "\"";
-    }
-
-    if (! values_.empty()) {
-      os << " values=\"";
-
-      int i = 0;
-
-      for (const auto &r : getValues()) {
-        if (i > 0) os << " ";
-
-        os << r;
-
-        ++i;
-      }
-
-      os << "\"";
-    }
+    printValues(os);
 
     os << "/>" << std::endl;
   }
   else
     os << "feColorMatrix ";
+}
+
+void
+CSVGFeColorMatrix::
+printValues(std::ostream &os, bool flat) const
+{
+  CSVGObject::printValues(os, flat);
+
+  CSVGFilterBase::printValues(os, flat);
+
+  printNameValue(os, "in"    , filterIn_ );
+  printNameValue(os, "result", filterOut_);
+
+  if (type_.isValid()) {
+    CSVGColorMatrixType type = getType();
+
+    os << " type=\"";
+
+    if      (type == CSVGColorMatrixType::MATRIX            ) os << "matrix";
+    else if (type == CSVGColorMatrixType::SATURATE          ) os << "saturate";
+    else if (type == CSVGColorMatrixType::HUE_ROTATE        ) os << "hueRotate";
+    else if (type == CSVGColorMatrixType::LUMINANCE_TO_ALPHA) os << "luminanceToAlpha";
+
+    os << "\"";
+  }
+
+  if (! values_.empty()) {
+    os << " values=\"";
+
+    int i = 0;
+
+    for (const auto &r : getValues()) {
+      if (i > 0) os << " ";
+
+      os << r;
+
+      ++i;
+    }
+
+    os << "\"";
+  }
 }
 
 std::ostream &

@@ -26,22 +26,24 @@
 */
 CSVGRadialGradient::
 CSVGRadialGradient(CSVG &svg) :
- CSVGObject(svg)
+ CSVGObject(svg),
+ xlink_    (this)
 {
 }
 
 CSVGRadialGradient::
 CSVGRadialGradient(const CSVGRadialGradient &rg) :
  CSVGObject (rg),
- cx_        (rg.cx_        ),
- cy_        (rg.cy_        ),
- radius_    (rg.radius_    ),
- focusX_    (rg.focusX_    ),
- focusY_    (rg.focusY_    ),
- stops_     (rg.stops_     ),
+ cx_        (rg.cx_),
+ cy_        (rg.cy_),
+ radius_    (rg.radius_),
+ focusX_    (rg.focusX_),
+ focusY_    (rg.focusY_),
+ stops_     (rg.stops_),
  gtransform_(rg.gtransform_),
- units_     (rg.units_     ),
- spread_    (rg.spread_    )
+ units_     (rg.units_),
+ spread_    (rg.spread_),
+ xlink_     (rg.xlink_)
 {
 }
 
@@ -86,49 +88,9 @@ processOption(const std::string &opt_name, const std::string &opt_value)
     setSpread(spread);
   }
   else if (svg_.stringOption(opt_name, opt_value, "xlink:href", str)) {
-    CSVGObject *object;
+    xlink_ = CSVGXLink(this, str);
 
-    if (! decodeXLink(opt_value, &object))
-      return false;
-
-    if (object) {
-      CSVGRadialGradient *rg = dynamic_cast<CSVGRadialGradient *>(object);
-      CSVGLinearGradient *lg = dynamic_cast<CSVGLinearGradient *>(object);
-
-      if      (rg) {
-        if (rg->cx_    .isValid()) cx_     = rg->cx_;
-        if (rg->cy_    .isValid()) cy_     = rg->cy_;
-        if (rg->radius_.isValid()) radius_ = rg->radius_;
-        if (rg->focusX_.isValid()) focusX_ = rg->focusX_;
-        if (rg->focusY_.isValid()) focusY_ = rg->focusY_;
-
-        if (rg->getGTransformValid()) gtransform_ = rg->getGTransform();
-        if (rg->getUnitsValid     ()) units_      = rg->getUnits();
-        if (rg->getSpreadValid    ()) spread_     = rg->getSpread();
-
-        if (rg->anyStops()) {
-          stops_.clear();
-
-          for (const auto &s : rg->stops())
-            addStop(s);
-        }
-      }
-      else if (lg) {
-        if (lg->getGTransformValid()) gtransform_ = lg->getGTransform();
-        if (lg->getUnitsValid     ()) units_      = lg->getUnits();
-        if (lg->getSpreadValid    ()) spread_     = lg->getSpread();
-
-        if (lg->anyStops()) {
-          stops_.clear();
-
-          for (const auto &s : lg->stops())
-            addStop(s);
-        }
-      }
-      else {
-        CSVGLog() << "Unhandled radial gradient link";
-      }
-    }
+    addLinkStops();
   }
   else
     return CSVGObject::processOption(opt_name, opt_value);
@@ -153,24 +115,61 @@ termParse()
 
 void
 CSVGRadialGradient::
+addLinkStops()
+{
+  CSVGObject *object = xlink_.getValue().getObject();
+
+  if (! object) {
+    //CSVGLog() << "No object for radial gradient link";
+    return;
+  }
+
+  CSVGRadialGradient *rg = dynamic_cast<CSVGRadialGradient *>(object);
+  CSVGLinearGradient *lg = dynamic_cast<CSVGLinearGradient *>(object);
+
+  if      (rg) {
+    if (rg->cx_    .isValid()) cx_     = rg->cx_;
+    if (rg->cy_    .isValid()) cy_     = rg->cy_;
+    if (rg->radius_.isValid()) radius_ = rg->radius_;
+    if (rg->focusX_.isValid()) focusX_ = rg->focusX_;
+    if (rg->focusY_.isValid()) focusY_ = rg->focusY_;
+
+    if (rg->getGTransformValid()) gtransform_ = rg->getGTransform();
+    if (rg->getUnitsValid     ()) units_      = rg->getUnits();
+    if (rg->getSpreadValid    ()) spread_     = rg->getSpread();
+
+    if (rg->anyStops()) {
+      stops_.clear();
+
+      for (const auto &s : rg->stops())
+        addStop(s);
+    }
+  }
+  else if (lg) {
+    if (lg->getGTransformValid()) gtransform_ = lg->getGTransform();
+    if (lg->getUnitsValid     ()) units_      = lg->getUnits();
+    if (lg->getSpreadValid    ()) spread_     = lg->getSpread();
+
+    if (lg->anyStops()) {
+      stops_.clear();
+
+      for (const auto &s : lg->stops())
+        addStop(s);
+    }
+  }
+  else {
+    CSVGLog() << "Unexpected object type for radial gradient link";
+  }
+}
+
+void
+CSVGRadialGradient::
 print(std::ostream &os, bool hier) const
 {
   if (hier) {
     os << "<radialGradient";
 
-    CSVGObject::printValues(os);
-
-    printNameLength(os, "cx", cx_    );
-    printNameLength(os, "cy", cy_    );
-    printNameLength(os, "r" , radius_);
-
-    printNameTransform(os, "gradientTransform", gtransform_);
-
-    if (getUnitsValid())
-      os << " gradientUnits=\"" << CSVG::encodeUnitsString(getUnits()) << "\"";
-
-    if (getSpreadValid())
-      os << " spreadMethod=\"" << CSVG::encodeGradientSpread(getSpread()) << "\"";
+    printValues(os);
 
     os << ">" << std::endl;
 
@@ -180,6 +179,31 @@ print(std::ostream &os, bool hier) const
   }
   else
     os << "radialGradient ";
+}
+
+void
+CSVGRadialGradient::
+printValues(std::ostream &os, bool flat) const
+{
+  CSVGObject::printValues(os, flat);
+
+  printNameLength(os, "cx", cx_    );
+  printNameLength(os, "cy", cy_    );
+  printNameLength(os, "r" , radius_);
+
+  printNameValue(os, "fx", focusX_);
+  printNameValue(os, "fy", focusY_);
+
+  printNameTransform(os, "gradientTransform", gtransform_);
+
+  if (getUnitsValid())
+    os << " gradientUnits=\"" << CSVG::encodeUnitsString(getUnits()) << "\"";
+
+  if (getSpreadValid())
+    os << " spreadMethod=\"" << CSVG::encodeGradientSpread(getSpread()) << "\"";
+
+  if (! xlink_.getValue().isNull())
+    printNameXLink(os, "xlink:href", xlink_);
 }
 
 void

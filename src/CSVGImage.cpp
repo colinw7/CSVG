@@ -267,7 +267,8 @@ printValues(std::ostream &os, bool flat) const
 
   printNamePreserveAspect(os, "preserveAspectRatio", preserveAspect_);
 
-  printNameXLink(os, "xlink:href", xlink_);
+  if (! xlink_.getValue().isNull())
+    printNameXLink(os, "xlink:href", xlink_);
 
   printNameValue(os, "color-profile", colorProfile_);
 }

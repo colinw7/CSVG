@@ -1,6 +1,6 @@
 #include <CSVGFontDef.h>
+#include <CSVGFontObj.h>
 #include <CSVG.h>
-#include <CFontMgr.h>
 
 CSVGFontDef::
 CSVGFontDef(CSVG &svg) :
@@ -13,7 +13,8 @@ CSVGFontDef(const CSVGFontDef &font_def) :
  svg_   (font_def.svg_),
  family_(font_def.family_),
  size_  (font_def.size_),
- style_ (font_def.style_)
+ style_ (font_def.style_),
+ angle_ (font_def.angle_)
 {
 }
 
@@ -24,6 +25,9 @@ operator=(const CSVGFontDef &font_def)
   family_ = font_def.family_;
   size_   = font_def.size_  ;
   style_  = font_def.style_;
+  angle_  = font_def.angle_;
+
+  resetObj();
 
   return *this;
 }
@@ -35,6 +39,9 @@ reset()
   family_.setInvalid();
   size_  .setInvalid();
   style_ .setInvalid();
+  angle_ .setInvalid();
+
+  resetObj();
 }
 
 void
@@ -42,6 +49,8 @@ CSVGFontDef::
 setFamily(const std::string &family)
 {
   family_ = family;
+
+  resetObj();
 }
 
 void
@@ -49,6 +58,8 @@ CSVGFontDef::
 setSize(const CScreenUnits &size)
 {
   size_ = size;
+
+  resetObj();
 }
 
 void
@@ -61,6 +72,8 @@ setWeight(const std::string &weight_def)
     style_.setValue(getStyle() | weight);
   else
     style_.setValue(weight);
+
+  resetObj();
 }
 
 void
@@ -73,6 +86,8 @@ setStyle(const std::string &style_def)
     style_.setValue(getStyle() | style);
   else
     style_.setValue(style);
+
+  resetObj();
 }
 
 void
@@ -80,6 +95,15 @@ CSVGFontDef::
 setStyle(CFontStyles s)
 {
   style_.setValue(s);
+
+  resetObj();
+}
+
+bool
+CSVGFontDef::
+isUnderline() const
+{
+  return (hasStyle() && (getStyle() & CFONT_STYLE_UNDERLINE));
 }
 
 void
@@ -89,11 +113,25 @@ setUnderline(bool b)
   style_.setValue(getStyle().addRemove(CFONT_STYLE_UNDERLINE, b));
 }
 
+bool
+CSVGFontDef::
+isOverline() const
+{
+  return (hasStyle() && (getStyle() & CFONT_STYLE_OVERLINE));
+}
+
 void
 CSVGFontDef::
 setOverline(bool b)
 {
   style_.setValue(getStyle().addRemove(CFONT_STYLE_OVERLINE, b));
+}
+
+bool
+CSVGFontDef::
+isLineThrough() const
+{
+  return (hasStyle() && (getStyle() & CFONT_STYLE_STRIKEOUT));
 }
 
 void
@@ -103,11 +141,25 @@ setLineThrough(bool b)
   style_.setValue(getStyle().addRemove(CFONT_STYLE_STRIKEOUT, b));
 }
 
+bool
+CSVGFontDef::
+isSubscript() const
+{
+  return (hasStyle() && (getStyle() & CFONT_STYLE_SUBSCRIPT));
+}
+
 void
 CSVGFontDef::
 setSubscript(bool b)
 {
   style_.setValue(getStyle().addRemove(CFONT_STYLE_SUBSCRIPT, b));
+}
+
+bool
+CSVGFontDef::
+isSuperscript() const
+{
+  return (hasStyle() && (getStyle() & CFONT_STYLE_SUPERSCRIPT));
 }
 
 void
@@ -117,16 +169,39 @@ setSuperscript(bool b)
   style_.setValue(getStyle().addRemove(CFONT_STYLE_SUPERSCRIPT, b));
 }
 
-CFontPtr
+void
 CSVGFontDef::
-getFont()
+setAngle(double a)
 {
-  std::string family = getFamily();
-  CFontStyles styles = getStyle();
-  CFontStyle  style  = (styles | CFONT_STYLE_FULL_SIZE).value();
-  double      size   = getSize().px().value();
+  angle_ = a;
+}
 
-  return CFontMgrInst->lookupFont(family, style, size);
+CSVGFontObj *
+CSVGFontDef::
+getObj() const
+{
+  if (! obj_)
+    obj_ = svg_.createFontObj(*this);
+
+  return obj_;
+}
+
+void
+CSVGFontDef::
+resetObj()
+{
+  delete obj_;
+
+  obj_ = 0;
+}
+
+void
+CSVGFontDef::
+textSize(const std::string &text, double *w, double *a, double *d) const
+{
+  CSVGFontObj *obj = getObj();
+
+  obj->textSize(text, w, a, d);
 }
 
 void
@@ -150,8 +225,37 @@ print(std::ostream &os) const
   }
 
   if (style_.isValid()) {
-    // TODO:
+    CFontStyles styles = style_.getValue();
 
-    output = true;
+    if (styles & CFONT_STYLE_BOLD) {
+      if (output) os << " ";
+
+      os << "font-weight: bold;";
+
+      output = true;
+    }
+
+    if (styles & CFONT_STYLE_ITALIC) {
+      if (output) os << " ";
+
+      os << "font-style: italic;";
+
+      output = true;
+    }
+
+    if (isUnderline() || isOverline() || isLineThrough()) {
+      if (output) os << " ";
+
+      if      (isUnderline())
+        os << "text-decoration:underline;";
+      else if (isOverline())
+        os << "text-decoration:overline;";
+      else if (isLineThrough())
+        os << "text-decoration:line-through;";
+
+      output = true;
+    }
   }
+
+  // TODO: angle
 }

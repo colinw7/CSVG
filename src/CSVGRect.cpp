@@ -101,18 +101,15 @@ void
 CSVGRect::
 updateBBox()
 {
-  CBBox2D bbox;
+  CBBox2D drawBBox = getDrawBBox();
 
-  if (! getParentViewBox(bbox))
-    bbox = CBBox2D(0, 0, 100, 100);
+  double dw = drawBBox.getWidth ();
+  double dh = drawBBox.getHeight();
 
-  double bw = bbox.getWidth ();
-  double bh = bbox.getHeight();
-
-  double x = getX     ().pxValue(bw);
-  double y = getY     ().pxValue(bh);
-  double w = getWidth ().pxValue(bw);
-  double h = getHeight().pxValue(bh);
+  double x = getX     ().pxValue(dw);
+  double y = getY     ().pxValue(dh);
+  double w = getWidth ().pxValue(dw);
+  double h = getHeight().pxValue(dh);
 
   CPoint2D p1(x    , y);
   CPoint2D p2(x + w, y + h);
@@ -127,22 +124,21 @@ draw()
   if (svg_.getDebug())
     CSVGLog() << *this;
 
-  CBBox2D bbox;
+  CBBox2D drawBBox = getDrawBBox();
 
-  if (! getParentViewBox(bbox))
-    bbox = CBBox2D(0, 0, 100, 100);
+  double dw = drawBBox.getWidth ();
+  double dh = drawBBox.getHeight();
 
-  double bw = bbox.getWidth ();
-  double bh = bbox.getHeight();
-
-//double x = getX     ().pxValue(bw);
-//double y = getY     ().pxValue(bh);
-  double w = getWidth ().pxValue(bw);
-  double h = getHeight().pxValue(bh);
+  double x = getX     ().pxValue(dw);
+  double y = getY     ().pxValue(dh);
+  double w = getWidth ().pxValue(dw);
+  double h = getHeight().pxValue(dh);
 
   // skip zero width/height
   if (w <= 0 || h <= 0)
     return false;
+
+  CBBox2D bbox(x, y, x + w, y + h);
 
   //---
 
@@ -158,34 +154,34 @@ draw()
     if (! hasRY()) ry = rx;
 
     // clamp to valid range
-    rx = std::min(std::max(rx, 0.0), bbox_.getWidth ()/2);
-    ry = std::min(std::max(ry, 0.0), bbox_.getHeight()/2);
+    rx = std::min(std::max(rx, 0.0), w/2.0);
+    ry = std::min(std::max(ry, 0.0), h/2.0);
 
     // fill and stroke
     if (svg_.isFilled() || svg_.isStroked()) {
       if (svg_.isFilled())
-        buffer->fillRoundedRectangle(bbox_, rx, ry);
+        buffer->fillRoundedRectangle(bbox, rx, ry);
 
       if (svg_.isStroked())
-        buffer->drawRoundedRectangle(bbox_, rx, ry);
+        buffer->drawRoundedRectangle(bbox, rx, ry);
     }
     else {
       //std::cerr << "rectangle not filled or stroked" << std::endl;
-      //buffer->fillRoundedRectangle(bbox_, rx, ry);
+      //buffer->fillRoundedRectangle(bbox, rx, ry);
     }
   }
   else {
     // fill and stroke
     if (svg_.isFilled() || svg_.isStroked()) {
       if (svg_.isFilled())
-        buffer->fillRectangle(bbox_);
+        buffer->fillRectangle(bbox);
 
       if (svg_.isStroked())
-        buffer->drawRectangle(bbox_);
+        buffer->drawRectangle(bbox);
     }
     else {
       //std::cerr << "rectangle not filled or stroked" << std::endl;
-      //buffer->fillRectangle(bbox_);
+      //buffer->fillRectangle(bbox);
     }
   }
 
@@ -238,16 +234,13 @@ void
 CSVGRect::
 moveBy(const CVector2D &delta)
 {
-  CBBox2D bbox;
+  CBBox2D drawBBox = getDrawBBox();
 
-  if (! getParentViewBox(bbox))
-    bbox = CBBox2D(0, 0, 100, 100);
+  double dw = drawBBox.getWidth ();
+  double dh = drawBBox.getHeight();
 
-  double bw = bbox.getWidth ();
-  double bh = bbox.getHeight();
-
-  double x = getX().pxValue(bw);
-  double y = getY().pxValue(bh);
+  double x = getX().pxValue(dw);
+  double y = getY().pxValue(dh);
 
   x_ = x + delta.x();
   y_ = y + delta.y();

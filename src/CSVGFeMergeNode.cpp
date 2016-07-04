@@ -85,18 +85,25 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<feMergeNode";
 
-    CSVGObject::printValues(os);
-
-    if (filterIn_.isValid())
-      os << " in=\"" << filterIn_.getValue() << "\"";
-
-    if (filterOut_.isValid())
-      os << " result=\"" << filterOut_.getValue() << "\"";
+    printValues(os);
 
     os << "/>" << std::endl;
   }
   else
     os << "feMergeNode";
+}
+
+void
+CSVGFeMergeNode::
+printValues(std::ostream &os, bool flat) const
+{
+  CSVGObject::printValues(os, flat);
+
+  if (filterIn_.isValid())
+    os << " in=\"" << filterIn_.getValue() << "\"";
+
+  if (filterOut_.isValid())
+    os << " result=\"" << filterOut_.getValue() << "\"";
 }
 
 std::ostream &

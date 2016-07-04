@@ -14,6 +14,7 @@
 #include <CAlignType.h>
 
 class CSVGImageData;
+class CSVGFontDef;
 
 class CSVGRenderer {
  public:
@@ -86,7 +87,7 @@ class CSVGRenderer {
 
   virtual void drawImage(const CPoint2D &p, CSVGImageData *image) = 0;
 
-  virtual void setFont(CFontPtr bg) = 0;
+  virtual void setFont(const CSVGFontDef &fontDef) = 0;
 
   virtual void setStrokeColor(const CRGBA &fg) = 0;
 
@@ -100,7 +101,7 @@ class CSVGRenderer {
   virtual void setFillType(CFillType fillType) = 0;
   virtual void setFillColor(const CRGBA &bg) = 0;
   virtual void setFillGradient(CGenGradient *g) = 0;
-  virtual void setFillImage(CSVGImageData *image) = 0;
+  virtual void setFillImage(double xo, double yo, CSVGImageData *image) = 0;
   virtual void setFillMatrix(const CMatrix2D &m) = 0;
 
   virtual void setStrokeFilled(bool b) = 0;

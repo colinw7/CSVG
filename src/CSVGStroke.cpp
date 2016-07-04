@@ -224,7 +224,7 @@ setMitreLimit(const std::string &limit_str)
   if (! svg_.decodeLengthValue(limit_str, lvalue))
     return;
 
-  setMitreLimit(lvalue.pxValue(0));
+  setMitreLimit(lvalue.pxValue(1));
 }
 
 void
@@ -374,24 +374,42 @@ CSVGStroke::
 print(std::ostream &os) const
 {
   std::stringstream ss;
+  bool              output = false;
 
-  if (getColorValid())
+  if (getColorValid()) {
     ss << "stroke: " << getColor() << ";";
 
-  if (getOpacityValid()) {
-    if (ss.str() != "") ss << " ";
-
-    ss << "stroke-opacity: " << getOpacity() << ";";
+    output = true;
   }
 
-  if (getUrlValid())
+  if (getOpacityValid()) {
+    if (output) ss << " ";
+
+    ss << "stroke-opacity: " << getOpacity() << ";";
+
+    output = true;
+  }
+
+  if (getUrlValid()) {
+    if (output) ss << " ";
+
     ss << "stroke: url(#" << getUrl() << ");";
 
-  if (getWidthValid())
-    ss << " stroke-width: " << getWidth() << ";";
+    output = true;
+  }
+
+  if (getWidthValid()) {
+    if (output) ss << " ";
+
+    ss << "stroke-width: " << getWidth() << ";";
+
+    output = true;
+  }
 
   if (getDashValid()) {
-    ss << " stroke-dasharray: ";
+    if (output) ss << " ";
+
+    ss << "stroke-dasharray: ";
 
     if      (getDash().isSolid())
       ss << "solid";
@@ -405,10 +423,14 @@ print(std::ostream &os) const
     if (getDash().hasOffset()) {
       ss << " stroke-dashoffset: " << getDash().offset() << ";";
     }
+
+    output = true;
   }
 
   if (getLineCapValid()) {
-    ss << " stroke-linecap: ";
+    if (output) ss << " ";
+
+    ss << "stroke-linecap: ";
 
     if      (getLineCap() == LINE_CAP_TYPE_BUTT  ) ss << "butt";
     else if (getLineCap() == LINE_CAP_TYPE_ROUND ) ss << "round";
@@ -416,10 +438,14 @@ print(std::ostream &os) const
     else                                           ss << CSVGUtil::round(getLineCap());
 
     ss << ";";
+
+    output = true;
   }
 
   if (getLineJoinValid()) {
-    ss << " stroke-linejoin: ";
+    if (output) ss << " ";
+
+    ss << "stroke-linejoin: ";
 
     if      (getLineJoin() == LINE_JOIN_TYPE_MITRE) ss << "miter";
     else if (getLineJoin() == LINE_JOIN_TYPE_ROUND) ss << "round";
@@ -427,10 +453,17 @@ print(std::ostream &os) const
     else                                            ss << CSVGUtil::round(getLineJoin());
 
     ss << ";";
+
+    output = true;
   }
 
-  if (getMitreLimitValid())
-    ss << " stroke-miterlimit: " << getMitreLimit() << ";";
+  if (getMitreLimitValid()) {
+    if (output) ss << " ";
+
+    ss << "stroke-miterlimit: " << getMitreLimit() << ";";
+
+    output = true;
+  }
 
   os << ss.str();
 }

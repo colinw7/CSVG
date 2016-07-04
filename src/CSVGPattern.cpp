@@ -94,18 +94,7 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<pattern";
 
-    CSVGObject::printValues(os);
-
-    printNameValue(os, "x", x_);
-    printNameValue(os, "y", y_);
-
-    printNameLength(os, "width" , width_ );
-    printNameLength(os, "height", height_);
-
-    printNameCoordUnits(os, "patternUnits"       , units_);
-    printNameCoordUnits(os, "patternContentUnits", contentUnits_);
-
-    printNameTransform(os, "patternTransform", patternTransform_);
+    printValues(os);
 
     os << ">" << std::endl;
 
@@ -119,7 +108,29 @@ print(std::ostream &os, bool hier) const
 
 void
 CSVGPattern::
-setFillImage(CSVGObject *parent, CSVGBuffer *buffer, double *w1, double *h1)
+printValues(std::ostream &os, bool flat) const
+{
+  CSVGObject::printValues(os, flat);
+
+  printNameValue(os, "x", x_);
+  printNameValue(os, "y", y_);
+
+  printNamePercent(os, "width" , width_ );
+  printNamePercent(os, "height", height_);
+
+  if (! xlink_.getValue().isNull())
+    printNameXLink(os, "xlink:href", xlink_);
+
+  printNameCoordUnits(os, "patternUnits"       , units_);
+  printNameCoordUnits(os, "patternContentUnits", contentUnits_);
+
+  printNameTransform(os, "patternTransform", patternTransform_);
+}
+
+void
+CSVGPattern::
+setFillImage(CSVGObject *parent, CSVGBuffer *buffer,
+             double *x1, double *y1, double *w1, double *h1)
 {
   CSVGPattern *linkPattern = dynamic_cast< CSVGPattern *>(getObject());
 
@@ -127,7 +138,7 @@ setFillImage(CSVGObject *parent, CSVGBuffer *buffer, double *w1, double *h1)
     if (patternTransform_.isValid())
       buffer->setFillMatrix(patternTransform_.getValue().getMatrix());
 
-    return linkPattern->setFillImage(parent, buffer, w1, h1);
+    return linkPattern->setFillImage(parent, buffer, x1, y1, w1, h1);
   }
 
   //---
@@ -142,14 +153,20 @@ setFillImage(CSVGObject *parent, CSVGBuffer *buffer, double *w1, double *h1)
     ph = parentBBox.getHeight();
   }
 
+  double x = getX     ().pxValue(1);
+  double y = getY     ().pxValue(1);
   double w = getWidth ().pxValue(1);
   double h = getHeight().pxValue(1);
 
   if (getUnits() == CSVGCoordUnits::OBJECT_BBOX) {
+    *x1 = x*pw;
+    *y1 = y*ph;
     *w1 = w*pw;
     *h1 = h*ph;
   }
   else {
+    *x1 = x;
+    *y1 = y;
     *w1 = w;
     *h1 = h;
   }
@@ -175,31 +192,29 @@ setFillImage(CSVGObject *parent, CSVGBuffer *buffer, double *w1, double *h1)
   patternBuffer->clear();
 
   // draw pattern to buffer
-  double x = getX().pxValue(pw);
-  double y = getY().pxValue(ph);
+  CBBox2D patternBBox(0, 0, pw, ph);
 
-  svg_.beginDrawBuffer(patternBuffer, CBBox2D(x, y, *w1, *h1));
-  //svg_.beginDrawBuffer(patternBuffer);
+  svg_.beginDrawBuffer(patternBuffer, patternBBox);
 
   //---
 
   CMatrixStack2D matrix;
 
-  if      (getContentUnits() == CSVGCoordUnits::OBJECT_BBOX) {
-    if (parent) {
-      //matrix.translate(0, 0);
-      matrix.scale(*w1/w, *h1/h);
-
-      svg_.setTransform(matrix);
-    }
-  }
-  else if (hasViewBox()) {
+  if      (hasViewBox()) {
     CBBox2D viewBox = viewBox_.getValue();
 
     //matrix.translate(0, 0);
     matrix.scale(*w1/viewBox.getWidth(), *h1/viewBox.getHeight());
 
     svg_.setTransform(matrix);
+  }
+  else if (getContentUnits() == CSVGCoordUnits::OBJECT_BBOX) {
+    if (parent) {
+      //matrix.translate(0, 0);
+      matrix.scale(pw, ph);
+
+      svg_.setTransform(matrix);
+    }
   }
 
   //--
@@ -223,7 +238,13 @@ setFillImage(CSVGObject *parent, CSVGBuffer *buffer, double *w1, double *h1)
   //---
 
   // set fill image from buffer
-  buffer->setFillBuffer(patternBuffer);
+
+  // TODO *x1, *y1 for brush origin
+  CBBox2D patternBBox1(0, 0, *w1, *h1);
+
+  patternBuffer->setBBox(patternBBox1);
+
+  buffer->setFillBuffer(*x1, *y1, patternBuffer);
 
   if (patternTransform_.isValid())
     buffer->setFillMatrix(patternTransform_.getValue().getMatrix());

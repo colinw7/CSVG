@@ -46,7 +46,7 @@ print(std::ostream &os, bool hier) const
     if (! objects_.empty()) {
       os << "<defs";
 
-      CSVGObject::printValues(os);
+      printValues(os);
 
       os << ">" << std::endl;
 
@@ -57,6 +57,13 @@ print(std::ostream &os, bool hier) const
   }
   else
     os << "defs";
+}
+
+void
+CSVGDefs::
+printValues(std::ostream &os, bool flat) const
+{
+  CSVGObject::printValues(os, flat);
 }
 
 std::ostream &

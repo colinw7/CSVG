@@ -105,3 +105,13 @@
  + add print to flat svg
  + add abstract image data class
  + implement abstract image data using QImage for Qt app
+
+### 6/25/2016
+ + fix issues with print and print flat losing information
+ + update use so doesn't need to overwrite transform
+
+### 7/4/2016
+ + Add JavaScript library integratation
+ + Abstact font to CFontObj virtual class
+ + Base em size calc on current font
+ + Use QFont for CFontObj in CQSVG

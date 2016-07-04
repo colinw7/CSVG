@@ -1,0 +1,33 @@
+#!/bin/csh -f
+
+if (! -e .png) then
+  mkdir .png
+endif
+
+if (! -e .png_ref) then
+  mkdir .png_ref
+endif
+
+foreach file (fig*.svg)
+  echo -n "Processing $file : "
+
+  CQSVG -image -image_dir ".png" $file
+
+  set png_file = svg_${file:r}.png
+
+  if (! -e .png_ref/$png_file) then
+    cp .png/$png_file .png_ref
+
+    echo "Installed File"
+  else
+    set d = `CImageDiff .png/$png_file .png_ref/$png_file`
+
+    if ($status != 0 || $d != 0) then
+      echo "Different (Diff: $d, Status: $status)"
+    else
+      echo "Identical"
+    endif
+  endif
+end
+
+exit 0

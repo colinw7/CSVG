@@ -118,22 +118,29 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<feFlood";
 
-    CSVGObject::printValues(os);
-
-    CSVGFilterBase::printValues(os);
-
-    printNameValue(os, "in"    , filterIn_ );
-    printNameValue(os, "result", filterOut_);
-
-    if (color_.isValid())
-      os << " flood-color=\"" << color_.getValue() << "\"";
-
-    printNameValue(os, "opacity", opacity_);
+    printValues(os);
 
     os << "/>" << std::endl;
   }
   else
     os << "feFlood ";
+}
+
+void
+CSVGFeFlood::
+printValues(std::ostream &os, bool flat) const
+{
+  CSVGObject::printValues(os, flat);
+
+  CSVGFilterBase::printValues(os, flat);
+
+  printNameValue(os, "in"    , filterIn_ );
+  printNameValue(os, "result", filterOut_);
+
+  if (color_.isValid())
+    os << " flood-color=\"" << color_.getValue() << "\"";
+
+  printNameValue(os, "flood-opacity", opacity_);
 }
 
 std::ostream &

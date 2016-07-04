@@ -46,7 +46,7 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<switch";
 
-    CSVGObject::printValues(os);
+    printValues(os);
 
     os << ">" << std::endl;
 
@@ -56,6 +56,13 @@ print(std::ostream &os, bool hier) const
   }
   else
     os << "switch";
+}
+
+void
+CSVGSwitch::
+printValues(std::ostream &os, bool flat) const
+{
+  CSVGObject::printValues(os, flat);
 }
 
 std::ostream &

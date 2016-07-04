@@ -164,7 +164,7 @@ updateAnimation()
       }
     }
     else {
-      if (endTime_.isValid()) {
+      if (! begin_.isValid() && endTime_.isValid()) {
         if (currentTime_ <= getEndTime())
           setAnimating(true);
       }
@@ -217,7 +217,8 @@ updateAnimation()
 
 void
 CSVGAnimateBase::
-handleEvent(CSVGEventType type, const std::string &id, const std::string &data)
+handleEvent(CSVGEventType type, const std::string &id, const std::string &data,
+            bool /*propagate*/)
 {
   if (begin_.isValid() && begin_.getValue().isMatch(type, id, data)) {
     startTime_ = currentTime_ + begin_.getValue().time().getSeconds();
@@ -239,17 +240,24 @@ void
 CSVGAnimateBase::
 setAnimating(bool b)
 {
+  if (b == animating_)
+    return;
+
   if (b) {
     animating_ = true;
 
     if (id_.isValid())
       getParent()->getSVG().sendEvent(CSVGEventType::ANIMATE_BEGIN, id_.getValue());
+
+    execEvent(CSVGEventType::BEGIN);
   }
   else {
     animating_ = false;
 
     if (id_.isValid())
       getParent()->getSVG().sendEvent(CSVGEventType::ANIMATE_END, id_.getValue());
+
+    execEvent(CSVGEventType::END);
   }
 }
 

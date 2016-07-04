@@ -84,7 +84,7 @@ getBBox(CBBox2D &bbox) const
     double a = 10;
     double d = 2;
 
-    svg_.textSize(getText(), getFont(), &w, &a, &d);
+    getFlatFontDef().textSize(getText(), &w, &a, &d);
 
     bbox = CBBox2D(x, y + d, x + w, y - a);
   }
@@ -119,9 +119,9 @@ draw()
 
   CSVGText *parentText = getParentText();
 
-  std::string text   = getText();
-  CHAlignType anchor = getFlatTextAnchor();
-  CFontPtr    font   = getFont();
+  std::string text    = getText();
+  CHAlignType anchor  = getFlatTextAnchor();
+  CSVGFontDef fontDef = getFlatFontDef();
 
   double x = 0, y = 0;
 
@@ -133,7 +133,7 @@ draw()
 
       double w, a, d;
 
-      svg_.textSize(text1, font, &w, &a, &d);
+      fontDef.textSize(text1, &w, &a, &d);
 
       //---
 
@@ -141,12 +141,12 @@ draw()
 
       double y1 = y;
 
-      if      (font->isSubscript())
+      if      (fontDef.isSubscript())
         y1 += a/2;
-      else if (font->isSuperscript())
+      else if (fontDef.isSuperscript())
         y1 -= a/2;
 
-      svg_.fillDrawText(x, y1, text1, font, anchor, svg_.isFilled(), svg_.isStroked());
+      svg_.fillDrawText(x, y1, text1, fontDef, anchor, svg_.isFilled(), svg_.isStroked());
 
       //---
 
@@ -157,7 +157,7 @@ draw()
   else {
     double w, a, d;
 
-    svg_.textSize(text, font, &w, &a, &d);
+    fontDef.textSize(text, &w, &a, &d);
 
     //---
 
@@ -165,12 +165,12 @@ draw()
 
     double y1 = y;
 
-    if      (font->isSubscript())
+    if      (fontDef.isSubscript())
       y1 += a/2;
-    else if (font->isSuperscript())
+    else if (fontDef.isSuperscript())
       y1 -= a/2;
 
-    svg_.fillDrawText(x, y1, text, font, anchor, svg_.isFilled(), svg_.isStroked());
+    svg_.fillDrawText(x, y1, text, fontDef, anchor, svg_.isFilled(), svg_.isStroked());
 
     //---
 
@@ -235,12 +235,7 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<tspan";
 
-    CSVGObject::printValues(os);
-
-    printNameValue (os, "x" , x_ );
-    printNameValue (os, "y" , y_ );
-    printNameValues(os, "dx", dx_);
-    printNameValues(os, "dy", dy_);
+    printValues(os);
 
     os << ">";
 
@@ -260,6 +255,18 @@ print(std::ostream &os, bool hier) const
   }
   else
     os << "tspan " << getX() << getY() << " " << CStrUtil::single_quote(getText());
+}
+
+void
+CSVGTSpan::
+printValues(std::ostream &os, bool flat) const
+{
+  CSVGObject::printValues(os, flat);
+
+  printNameValue (os, "x" , x_ );
+  printNameValue (os, "y" , y_ );
+  printNameValues(os, "dx", dx_);
+  printNameValues(os, "dy", dy_);
 }
 
 std::ostream &

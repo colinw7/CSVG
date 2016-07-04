@@ -105,17 +105,24 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<feImage";
 
-    CSVGObject::printValues(os);
-
-    CSVGFilterBase::printValues(os);
-
-    printNameValue         (os, "filter_out"         , filterOut_);
-    printNamePreserveAspect(os, "preserveAspectRatio", preserveAspect_);
+    printValues(os);
 
     os << "/>" << std::endl;
   }
   else
     os << "feImage ";
+}
+
+void
+CSVGFeImage::
+printValues(std::ostream &os, bool flat) const
+{
+  CSVGObject::printValues(os, flat);
+
+  CSVGFilterBase::printValues(os, flat);
+
+  printNameValue         (os, "result"             , filterOut_);
+  printNamePreserveAspect(os, "preserveAspectRatio", preserveAspect_);
 }
 
 std::ostream &

@@ -12,6 +12,8 @@ class CSVGGroup : public CSVGObject {
 
   CSVGGroup *dup() const override;
 
+  std::string getTagName() const override { return "g"; }
+
   bool processOption(const std::string &name, const std::string &value) override;
 
   bool draw() override;
@@ -23,6 +25,8 @@ class CSVGGroup : public CSVGObject {
   //bool isDrawable() const override { return false; }
 
   void print(std::ostream &os, bool hier) const override;
+
+  void printValues(std::ostream &os, bool flat=false) const override;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGGroup &group);
 };

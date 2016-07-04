@@ -125,22 +125,29 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<feGaussianBlur";
 
-    CSVGObject::printValues(os);
-
-    CSVGFilterBase::printValues(os);
-
-    printNameValue(os, "in"          , filterIn_ );
-    printNameValue(os, "result"      , filterOut_);
-
-    if      (stdDevX_.isValid() && ! stdDevY_.isValid())
-      printNameValue(os, "stdDeviation", stdDevX_);
-    else if (stdDevX_.isValid() && stdDevY_.isValid())
-      os << " stdDeviation=\"" << stdDevX_.getValue() << " " << stdDevY_.getValue() << "\"";
+    printValues(os);
 
     os << "/>" << std::endl;
   }
   else
     os << "feGaussianBlur ";
+}
+
+void
+CSVGFeGaussianBlur::
+printValues(std::ostream &os, bool flat) const
+{
+  CSVGObject::printValues(os, flat);
+
+  CSVGFilterBase::printValues(os, flat);
+
+  printNameValue(os, "in"          , filterIn_ );
+  printNameValue(os, "result"      , filterOut_);
+
+  if      (stdDevX_.isValid() && ! stdDevY_.isValid())
+    printNameValue(os, "stdDeviation", stdDevX_);
+  else if (stdDevX_.isValid() && stdDevY_.isValid())
+    os << " stdDeviation=\"" << stdDevX_.getValue() << " " << stdDevY_.getValue() << "\"";
 }
 
 std::ostream &

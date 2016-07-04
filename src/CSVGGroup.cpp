@@ -81,7 +81,7 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<g";
 
-    CSVGObject::printValues(os);
+    printValues(os);
 
     os << ">" << std::endl;
 
@@ -91,6 +91,13 @@ print(std::ostream &os, bool hier) const
   }
   else
     os << "group";
+}
+
+void
+CSVGGroup::
+printValues(std::ostream &os, bool flat) const
+{
+  CSVGObject::printValues(os, flat);
 }
 
 std::ostream &

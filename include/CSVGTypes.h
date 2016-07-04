@@ -83,7 +83,10 @@ enum class CSVGCoordUnits {
 };
 
 enum class CSVGEventType {
+  LOAD,
   CLICK,
+  BEGIN,
+  END,
   MOUSE_DOWN,
   MOUSE_UP,
   MOUSE_OVER,
@@ -198,5 +201,12 @@ enum class CSVGOverflowType {
   AUTO,
   INHERIT
 };
+
+//------
+
+#include <COptVal.h>
+#include <CScreenUnits.h>
+
+typedef COptValT<CScreenUnits> COptScreenUnits;
 
 #endif

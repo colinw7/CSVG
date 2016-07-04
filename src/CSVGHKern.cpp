@@ -65,16 +65,23 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<hkern";
 
-    CSVGObject::printValues(os);
-
-    printNameValue(os, "g1", glyph1_);
-    printNameValue(os, "g2", glyph2_);
-    printNameValue(os, "k" , k_);
+    printValues(os);
 
     os << "/>" << std::endl;
   }
   else
     os << "hkern";
+}
+
+void
+CSVGHKern::
+printValues(std::ostream &os, bool flat) const
+{
+  CSVGObject::printValues(os, flat);
+
+  printNameValue(os, "g1", glyph1_);
+  printNameValue(os, "g2", glyph2_);
+  printNameValue(os, "k" , k_);
 }
 
 std::ostream &

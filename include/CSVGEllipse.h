@@ -12,20 +12,24 @@ class CSVGEllipse : public CSVGObject {
 
   CSVGEllipse *dup() const override;
 
-  double getCenterX() const { return cx_.getValue(0); }
-  void setCenterX(double x) { cx_ = x; }
+  bool hasCenterX() const { return cx_.isValid(); }
+  CScreenUnits getCenterX() const { return cx_.getValue(CScreenUnits(0)); }
+  void setCenterX(const CScreenUnits &x) { cx_ = x; }
 
-  double getCenterY() const { return cy_.getValue(0); }
-  void setCenterY(double y) { cy_ = y; }
+  bool hasCenterY() const { return cy_.isValid(); }
+  CScreenUnits getCenterY() const { return cy_.getValue(CScreenUnits(0)); }
+  void setCenterY(const CScreenUnits &y) { cy_ = y; }
 
-  double getRadiusX() const { return rx_.getValue(1); }
-  void setRadiusX(double r) { rx_ = r; }
+  bool hasRadiusX() const { return rx_.isValid(); }
+  CScreenUnits getRadiusX() const { return rx_.getValue(CScreenUnits(1)); }
+  void setRadiusX(const CScreenUnits &r) { rx_ = r; }
 
-  double getRadiusY() const { return ry_.getValue(1); }
-  void setRadiusY(double r) { ry_ = r; }
+  bool hasRadiusY() const { return ry_.isValid(); }
+  CScreenUnits getRadiusY() const { return ry_.getValue(CScreenUnits(1)); }
+  void setRadiusY(const CScreenUnits &r) { ry_ = r; }
 
-  void setCenter(const CPoint2D &center) { setCenterX(center.x); setCenterY(center.y); }
-  CPoint2D getCenter() const { return CPoint2D(getCenterX(), getCenterY()); }
+  CPoint2D getCenter() const;
+  void setCenter(const CPoint2D &center);
 
   void setRadius(double rx, double ry) { rx_ = rx; ry_ = ry; }
 
@@ -41,15 +45,15 @@ class CSVGEllipse : public CSVGObject {
 
   void print(std::ostream &os, bool hier) const override;
 
-  void printValues(std::ostream &os, bool flat) const override;
+  void printValues(std::ostream &os, bool flat=false) const override;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGEllipse &ellipse);
 
  private:
-  COptReal cx_;
-  COptReal cy_;
-  COptReal rx_;
-  COptReal ry_;
+  COptScreenUnits cx_;
+  COptScreenUnits cy_;
+  COptScreenUnits rx_;
+  COptScreenUnits ry_;
 };
 
 #endif

@@ -13,6 +13,8 @@
 #include <CSVGColor.h>
 
 #include <CCSS.h>
+#include <CJavaScript.h>
+
 #include <CFont.h>
 #include <CScreenUnits.h>
 #include <CMatrixStack2D.h>
@@ -104,6 +106,11 @@ class CXML;
 class CXMLTag;
 class CXMLToken;
 
+struct CSVGXmlStyleSheet {
+  COptString ref;
+  COptBool   is_css;
+};
+
 class CSVG {
  public:
   typedef std::vector<CSVGObject *>    ObjectList;
@@ -113,6 +120,8 @@ class CSVG {
   CSVG(CSVGRenderer *renderer=0);
 
   virtual ~CSVG();
+
+  virtual CSVG *dup() const;
 
   void          setRenderer(CSVGRenderer *renderer);
   CSVGRenderer *getRenderer() const { return renderer_; }
@@ -310,6 +319,8 @@ class CSVG {
 
   virtual CSVGImageData *createImageData();
 
+  virtual CSVGFontObj *createFontObj(const CSVGFontDef &def);
+
   virtual CSVGPathMoveTo   *createPathMoveTo  (double x, double y);
   virtual CSVGPathRMoveTo  *createPathRMoveTo (double x, double y);
   virtual CSVGPathLineTo   *createPathLineTo  (double x, double y);
@@ -380,7 +391,20 @@ class CSVG {
 
   //---
 
-  bool processOption(const std::string &opt_name, const std::string &opt_value);
+  CJavaScript &js() { return js_; }
+
+  CJValueP jsObject() { return jsObject_; }
+
+  CJValueP jsEventObject() { return jsEventObject_; }
+
+  CSVGObject *eventObject() { return eventObject_; }
+  void setEventObject(CSVGObject *p) { eventObject_ = p; }
+
+  void execJsEvent(CSVGObject *obj, const std::string &str);
+
+  //---
+
+  //bool processOption(const std::string &opt_name, const std::string &opt_value);
 
   void addFont(CSVGFont *font);
 
@@ -445,13 +469,13 @@ class CSVG {
   void drawPolygon(const std::vector<CPoint2D> &points);
   void fillPolygon(const std::vector<CPoint2D> &points);
 
-  void fillDrawText(double x, double y, const std::string &text, CFontPtr font, CHAlignType align,
-                    bool isFilled, bool isStroked);
+  void fillDrawText(double x, double y, const std::string &text, const CSVGFontDef &fontDef,
+                    CHAlignType align, bool isFilled, bool isStroked);
 
-  void drawText(double x, double y, const std::string &text, CFontPtr font, CHAlignType align);
-  void fillText(double x, double y, const std::string &text, CFontPtr font, CHAlignType align);
-
-  void textSize(const std::string &text, CFontPtr font, double *w, double *a, double *d) const;
+  void drawText(double x, double y, const std::string &text, const CSVGFontDef &fontDef,
+                CHAlignType align);
+  void fillText(double x, double y, const std::string &text, const CSVGFontDef &fontDef,
+                CHAlignType align);
 
   bool pathOption(const std::string &opt_name, const std::string &opt_value,
                   const std::string &name, CSVGPathPartList &parts);
@@ -557,6 +581,8 @@ class CSVG {
 
   void addStyleValues(CSVGStyleData &svgStyleData, const CCSS::StyleData &cssStyleData);
 
+  void setScript(const std::string &str);
+
   CSVGStyleData &getGlobalStyleData   ();
   CSVGStyleData &getNameStyleData     (const std::string &objName);
   CSVGStyleData &getTypeStyleData     (const std::string &objType);
@@ -622,7 +648,6 @@ class CSVG {
     CSVGFill    fill;
     CSVGClip    clip;
     CSVGFontDef fontDef;
-    CFontPtr    font;
     CSVGObject* object { 0 };
   };
 
@@ -631,6 +656,7 @@ class CSVG {
   typedef std::map<std::string, CSVGObject *> NameObjectMap;
   typedef std::vector<StyleData>              StyleDataStack;
   typedef std::vector<CSVGBlockData>          BlockDataStack;
+  typedef COptValT<CSVGXmlStyleSheet>         OptXmlStyleSheet;
 
   CSVGRenderer*           renderer_      { 0 };
   CAutoPtr<CSVGBufferMgr> bufferMgr_;
@@ -649,8 +675,13 @@ class CSVG {
   NameObjectMap           idObjectMap_;
   CSVGCSSData             cssData_;
   CCSS                    css_;
+  CJavaScript             js_;
+  CJValueP                jsObject_;
+  CJValueP                jsEventObject_;
+  CSVGObject*             eventObject_ { 0 };
   ObjectList              drawObjects_;
   Colors                  colors_;
+  OptXmlStyleSheet        xmlStyleSheet_;
   bool                    uniquify_      { false };
   bool                    autoName_      { false };
   bool                    ignoreFilter_  { false };

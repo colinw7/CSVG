@@ -68,6 +68,7 @@
 #include <CSVGTSpan.h>
 #include <CSVGUse.h>
 #include <CSVGUtil.h>
+#include <CSVGFontObj.h>
 
 #include <CRadialGradient.h>
 #include <CLinearGradient.h>
@@ -79,8 +80,130 @@
 #include <CRegExp.h>
 #include <CStrParse.h>
 #include <CRGBName.h>
-#include <CFile.h>
-#include <CStrUtil.h>
+
+class CSVGJObject : public CJObject {
+ public:
+  CSVGJObject(CSVG *svg) :
+   CJObject("SVG"), svg_(svg) {
+  }
+
+  CJValue *dup() const override { return new CSVGJObject(svg_); }
+
+  std::string toString() const override { return "SVG"; }
+
+  double toReal() const override { return 0; }
+
+  bool toBoolean() const override { return 0; }
+
+  CJValueP execNameFn(CJavaScript *js, const std::string &name, const Values &values);
+
+  void print(std::ostream &os) const { os << "SVG"; }
+
+ private:
+  CSVG *svg_;
+};
+
+class CSVGObjectJObject : public CJObject {
+ public:
+  CSVGObjectJObject(CSVGObject *obj) :
+   CJObject("SVGObject"), obj_(obj) {
+  }
+
+  CJValue *dup() const override { return new CSVGObjectJObject(obj_); }
+
+  std::string toString() const override { return "SVGObject"; }
+
+  double toReal() const override { return 0; }
+
+  bool toBoolean() const override { return 0; }
+
+  CJValueP execNameFn(CJavaScript *js, const std::string &name, const Values &values);
+
+  void print(std::ostream &os) const { os << "SVGObject"; }
+
+ private:
+  CSVGObject *obj_;
+};
+
+class CSVGEventJObject : public CJObject {
+ public:
+  CSVGEventJObject(CSVG *svg) :
+   CJObject("SVGEvent"), svg_(svg) {
+  }
+
+  CJValue *dup() const override { return new CSVGEventJObject(svg_); }
+
+  std::string toString() const override { return "SVGEvent"; }
+
+  double toReal() const override { return 0; }
+
+  bool toBoolean() const override { return 0; }
+
+  CJValueP execNameFn(CJavaScript *js, const std::string &name, const Values &values);
+
+  void print(std::ostream &os) const { os << "SVGEvent"; }
+
+ private:
+  CSVG *svg_;
+};
+
+CJValueP
+CSVGJObject::
+execNameFn(CJavaScript *, const std::string &name, const Values &values)
+{
+  if (name == "getElementById") {
+    if (values.size() == 2) {
+      std::string id = values[1]->toString();
+
+      CSVGObject *obj = svg_->lookupObjectById(id);
+
+      CSVGObjectJObject *jobj = new CSVGObjectJObject(obj);
+
+      return CJValueP(jobj);
+    }
+
+    return CJValueP();
+  }
+  else
+    return CJValueP();
+}
+
+CJValueP
+CSVGObjectJObject::
+execNameFn(CJavaScript *, const std::string &name, const Values &values)
+{
+  if (name == "setAttribute") {
+    if (values.size() == 3) {
+      std::string name  = values[1]->toString();
+      std::string value = values[2]->toString();
+
+      obj_->processOption(name, value);
+
+      obj_->getSVG().redraw();
+    }
+
+    return CJValueP();
+  }
+  else
+    return CJValueP();
+}
+
+CJValueP
+CSVGEventJObject::
+execNameFn(CJavaScript *, const std::string &name, const Values &)
+{
+  if (name == "getTarget") {
+    CSVGObject *obj = svg_->eventObject();
+
+    CSVGObjectJObject *jobj = new CSVGObjectJObject(obj);
+
+    return CJValueP(jobj);
+  }
+  else
+    return CJValueP();
+}
+
+//------
 
 CSVG::
 CSVG(CSVGRenderer *renderer) :
@@ -91,8 +214,6 @@ CSVG(CSVGRenderer *renderer) :
   xml_ = new CXML();
 
   bufferMgr_ = new CSVGBufferMgr(*this);
-
-  styleData_.font = styleData_.fontDef.getFont();
 
   //---
 
@@ -113,11 +234,23 @@ CSVG(CSVGRenderer *renderer) :
 
   if (getenv("CSVG_DEBUG_USE"))
     setDebugUse(true);
+
+  //---
+
+  jsObject_      = CJValueP(new CSVGJObject(this));
+  jsEventObject_ = CJValueP(new CSVGEventJObject(this));
 }
 
 CSVG::
 ~CSVG()
 {
+}
+
+CSVG *
+CSVG::
+dup() const
+{
+  return new CSVG;
 }
 
 CSVGBlock *
@@ -354,8 +487,7 @@ read(const std::string &filename, CSVGObject *object)
       const std::string &id = exec->getId();
 
       if (id == "xml-stylesheet") {
-        std::string ref;
-        bool        is_css = false;
+        CSVGXmlStyleSheet xmlStyleSheet;
 
         uint numOptions = exec->getNumOptions();
 
@@ -363,13 +495,16 @@ read(const std::string &filename, CSVGObject *object)
           const CXMLExecute::Option &opt = exec->getOption(j);
 
           if      (opt.getName() == "href")
-            ref = opt.getValue();
+            xmlStyleSheet.ref = opt.getValue();
           else if (opt.getName() == "type")
-            is_css = (opt.getValue() == "text/css");
+            xmlStyleSheet.is_css = (opt.getValue() == "text/css");
         }
 
-        if (is_css && ! ref.empty())
-          readCSSFile(ref);
+        if (xmlStyleSheet.is_css.getValue(false) &&
+            ! xmlStyleSheet.ref.getValue("").empty())
+          readCSSFile(xmlStyleSheet.ref.getValue());
+
+        xmlStyleSheet_ = xmlStyleSheet;
       }
     }
   }
@@ -383,7 +518,7 @@ read(const std::string &filename, CSVGObject *object)
 
     if (! object->processOption(opt_name, opt_value))
       CSVGLog() << "Invalid option '" << opt_name << "=" << opt_value <<
-                   " for " << object->getObjName();
+                   " for " << object->getTagName();
   }
 
   //------
@@ -397,6 +532,10 @@ read(const std::string &filename, CSVGObject *object)
     if (object1)
       object->addChildObject(object1);
   }
+
+  //------
+
+  getRoot()->execEvent(CSVGEventType::LOAD);
 
   return true;
 }
@@ -412,9 +551,14 @@ tokenToObject(CSVGObject *parent, const CXMLToken *token)
 
   //-----
 
-  // Create object from tag name
   const std::string &tag_name = tag->getName();
 
+  if (tag_name == "d:SVGTestCase")
+    return 0;
+
+  //-----
+
+  // Create object from tag name
   CSVGObject *object = createObjectByName(tag_name);
 
   if (! object) {
@@ -483,7 +627,7 @@ tokenToObject(CSVGObject *parent, const CXMLToken *token)
 
     if (! object->processOption(opt_name, opt_value))
       CSVGLog() << "Unhandled tag option " << opt_name << "=" << opt_value <<
-                   " for " << object->getObjName();
+                   " for " << object->getTagName();
   }
 
   object->setXMLTag(tag);
@@ -1274,6 +1418,13 @@ createImageData()
   return new CSVGImageData;
 }
 
+CSVGFontObj *
+CSVG::
+createFontObj(const CSVGFontDef &def)
+{
+  return new CSVGFontObj(def);
+}
+
 //------
 
 double
@@ -1370,6 +1521,25 @@ CSVG::
 hasAnimation() const
 {
   return getRoot()->hasAnimation();
+}
+
+void
+CSVG::
+execJsEvent(CSVGObject *obj, const std::string &str)
+{
+  setEventObject(obj);
+
+  CJVariableP var1(new CJVariable("svgDocument", jsObject()));
+
+  js().addVariable(var1);
+
+  CJVariableP var2(new CJVariable("evt", jsEventObject()));
+
+  js().addVariable(var2);
+
+  js().loadString(str);
+
+  js().exec();
 }
 
 void
@@ -1663,7 +1833,12 @@ pushStyle(CSVGObject *object)
     resetFontDef();
 
   CScreenUnitsMgrInst->setEmSize(styleData_.fontDef.getSize().pxValue(1));
-  CScreenUnitsMgrInst->setExSize(styleData_.font->getStringWidth("x"));
+
+  double xSize;
+
+  styleData_.fontDef.textSize("x", &xSize, 0, 0);
+
+  CScreenUnitsMgrInst->setExSize(xSize);
 }
 
 void
@@ -1677,7 +1852,12 @@ popStyle()
   styleDataStack_.pop_back();
 
   CScreenUnitsMgrInst->setEmSize(styleData_.fontDef.getSize().pxValue(1));
-  CScreenUnitsMgrInst->setExSize(styleData_.font->getStringWidth("x"));
+
+  double xSize;
+
+  styleData_.fontDef.textSize("x", &xSize, 0, 0);
+
+  CScreenUnitsMgrInst->setExSize(xSize);
 }
 
 void
@@ -1811,7 +1991,12 @@ updateFontDef(const CSVGFontDef &fontDef)
   if (fontDef.hasStyle())
     styleData_.fontDef.setStyle(fontDef.getStyle());
 
-  styleData_.font = styleData_.fontDef.getFont();
+  double w, a, d;
+
+  styleData_.fontDef.textSize("x", &w, &a, &d);
+
+  CScreenUnitsMgrInst->setEmSize(a + d);
+  CScreenUnitsMgrInst->setExSize(w);
 }
 
 void
@@ -1985,23 +2170,24 @@ fillPolygon(const std::vector<CPoint2D> &points)
 
 void
 CSVG::
-fillDrawText(double x, double y, const std::string &text, CFontPtr font, CHAlignType align,
-             bool isFilled, bool isStroked)
+fillDrawText(double x, double y, const std::string &text, const CSVGFontDef &fontDef,
+             CHAlignType align, bool isFilled, bool isStroked)
 {
   if (isFilled || isStroked) {
     if (isFilled)
-      fillText(x, y, text, font, align);
+      fillText(x, y, text, fontDef, align);
 
     if (isStroked)
-      drawText(x, y, text, font, align);
+      drawText(x, y, text, fontDef, align);
   }
   else
-    fillText(x, y, text, font, align);
+    fillText(x, y, text, fontDef, align);
 }
 
 void
 CSVG::
-drawText(double x, double y, const std::string &text, CFontPtr font, CHAlignType align)
+drawText(double x, double y, const std::string &text, const CSVGFontDef &fontDef,
+         CHAlignType align)
 {
   setStrokeBuffer(buffer_);
 
@@ -2048,8 +2234,8 @@ drawText(double x, double y, const std::string &text, CFontPtr font, CHAlignType
 
     CMatrixStack2D transform1 = transform;
 
-    if (font->getAngle()) {
-      transform1.rotate(font->getAngle(), CPoint2D(x, y));
+    if (fontDef.getAngle()) {
+      transform1.rotate(fontDef.getAngle(), CPoint2D(x, y));
 
       setTransform(transform1);
     }
@@ -2060,7 +2246,7 @@ drawText(double x, double y, const std::string &text, CFontPtr font, CHAlignType
 
     buffer_->pathMoveTo(x, y);
 
-    buffer_->pathText(text, font, align);
+    buffer_->pathText(text, fontDef, align);
 
     buffer_->pathClose();
 
@@ -2074,7 +2260,8 @@ drawText(double x, double y, const std::string &text, CFontPtr font, CHAlignType
 
 void
 CSVG::
-fillText(double x, double y, const std::string &text, CFontPtr font, CHAlignType align)
+fillText(double x, double y, const std::string &text, const CSVGFontDef &fontDef,
+         CHAlignType align)
 {
   setFillBuffer(buffer_);
 
@@ -2121,8 +2308,8 @@ fillText(double x, double y, const std::string &text, CFontPtr font, CHAlignType
 
     CMatrixStack2D transform1 = transform;
 
-    if (font->getAngle()) {
-      transform1.rotate(font->getAngle(), CPoint2D(x, y));
+    if (fontDef.getAngle()) {
+      transform1.rotate(fontDef.getAngle(), CPoint2D(x, y));
 
       setTransform(transform1);
     }
@@ -2133,7 +2320,7 @@ fillText(double x, double y, const std::string &text, CFontPtr font, CHAlignType
 
     buffer_->pathMoveTo(x, y);
 
-    buffer_->pathText(text, font, align);
+    buffer_->pathText(text, fontDef, align);
 
     buffer_->pathClose();
 
@@ -2143,15 +2330,6 @@ fillText(double x, double y, const std::string &text, CFontPtr font, CHAlignType
 
     setTransform(transform);
   }
-}
-
-void
-CSVG::
-textSize(const std::string &text, CFontPtr font, double *w, double *a, double *d) const
-{
-  *w = font->getStringWidth(text);
-  *a = font->getCharAscent();
-  *d = font->getCharDescent();
 }
 
 //--------------
@@ -4564,6 +4742,17 @@ addStyleValues(CSVGStyleData &svgStyleData, const CCSS::StyleData &cssStyleData)
 
 //------
 
+void
+CSVG::
+setScript(const std::string &str)
+{
+  js_.loadString(str);
+
+  js_.exec();
+}
+
+//------
+
 namespace {
 
 template<typename VISITOR>
@@ -4578,16 +4767,16 @@ visitStyleData(CSVGCSSData &cssData, const CSVGObject *obj, VISITOR &visitor)
   }
 
   for (const auto &c : obj->getClasses()) {
-    if (cssData.hasTypeClassStyleData(obj->getObjName(), c)) {
-      CSVGStyleData &typeClassStyleData = cssData.getTypeClassStyleData(obj->getObjName(), c);
+    if (cssData.hasTypeClassStyleData(obj->getTagName(), c)) {
+      CSVGStyleData &typeClassStyleData = cssData.getTypeClassStyleData(obj->getTagName(), c);
 
       if (visitor(CSVGCSSType::TYPE_CLASS, typeClassStyleData))
         return true;
     }
   }
 
-  if (cssData.hasTypeStyleData(obj->getObjName())) {
-    CSVGStyleData &typeStyleData = cssData.getTypeStyleData(obj->getObjName());
+  if (cssData.hasTypeStyleData(obj->getTagName())) {
+    CSVGStyleData &typeStyleData = cssData.getTypeStyleData(obj->getTagName());
 
     if (visitor(CSVGCSSType::TYPE, typeStyleData))
       return true;
@@ -4949,16 +5138,26 @@ void
 CSVG::
 print(std::ostream &os, bool hier) const
 {
-  getRoot()->print(os, hier);
-
-  css_.print(os);
+  getRoot()->printRoot(os, css_, hier);
 }
 
 void
 CSVG::
 printFlat(std::ostream &os) const
 {
-  getRoot()->printFlat(os);
+  if (xmlStyleSheet_.isValid()) {
+    os << "<?xml-stylesheet";
+
+    if (xmlStyleSheet_.getValue().ref.isValid())
+      os << " href=\"" << xmlStyleSheet_.getValue().ref.getValue() << "\"";
+
+    if (xmlStyleSheet_.getValue().is_css.isValid())
+      os << " type=\"text/css\"";
+
+    os << "?>" << std::endl;
+  }
+
+  getRoot()->printFlat(os, -1);
 
   //css_.print(os);
 }

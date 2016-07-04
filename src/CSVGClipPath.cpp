@@ -133,13 +133,7 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<clipPath";
 
-    CSVGObject::printValues(os);
-
-    printNameParts(os, "d", parts_);
-
-    printNameCoordUnits(os, "clipPathUnits", clipPathUnits_);
-
-    printNameValue(os, "marker-end", markerEnd_);
+    printValues(os);
 
     if (hasChildren()) {
       os << ">" << std::endl;
@@ -156,6 +150,19 @@ print(std::ostream &os, bool hier) const
 
     os << ")";
   }
+}
+
+void
+CSVGClipPath::
+printValues(std::ostream &os, bool flat) const
+{
+  CSVGObject::printValues(os, flat);
+
+  printNameParts(os, "d", parts_);
+
+  printNameCoordUnits(os, "clipPathUnits", clipPathUnits_);
+
+  printNameValue(os, "marker-end", markerEnd_);
 }
 
 std::ostream &

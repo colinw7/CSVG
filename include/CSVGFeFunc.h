@@ -15,6 +15,8 @@ class CSVGFeFunc : public CSVGObject {
 
   CSVGFeFunc *dup() const override;
 
+  std::string getTagName() const override;
+
   CColorComponent getComponent() const { return component_; }
   void setComponent(CColorComponent c) { component_ = c; }
 
@@ -43,6 +45,8 @@ class CSVGFeFunc : public CSVGObject {
   bool isDrawable() const override { return false; }
 
   void print(std::ostream &os, bool hier) const override;
+
+  void printValues(std::ostream &os, bool flat=false) const override;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGFeFunc &filter);
 

@@ -143,28 +143,35 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<feBlend";
 
-    CSVGObject::printValues(os);
-
-    CSVGFilterBase::printValues(os);
-
-    if (mode_.isValid()) {
-      CSVGBlendMode mode = getMode();
-
-      if      (mode == CSVGBlendMode::NORMAL  ) os << " mode=\"normal\"";
-      else if (mode == CSVGBlendMode::MULTIPLY) os << " mode=\"multiply\"";
-      else if (mode == CSVGBlendMode::SCREEN  ) os << " mode=\"screen\"";
-      else if (mode == CSVGBlendMode::DARKEN  ) os << " mode=\"darken\"";
-      else if (mode == CSVGBlendMode::LIGHTEN ) os << " mode=\"lighten\"";
-    }
-
-    printNameValue(os, "in"    , filterIn1_);
-    printNameValue(os, "in2"   , filterIn2_);
-    printNameValue(os, "result", filterOut_);
+    printValues(os);
 
     os << "/>" << std::endl;
   }
   else
     os << "feBlend ";
+}
+
+void
+CSVGFeBlend::
+printValues(std::ostream &os, bool flat) const
+{
+  CSVGObject::printValues(os, flat);
+
+  CSVGFilterBase::printValues(os, flat);
+
+  if (mode_.isValid()) {
+    CSVGBlendMode mode = getMode();
+
+    if      (mode == CSVGBlendMode::NORMAL  ) os << " mode=\"normal\"";
+    else if (mode == CSVGBlendMode::MULTIPLY) os << " mode=\"multiply\"";
+    else if (mode == CSVGBlendMode::SCREEN  ) os << " mode=\"screen\"";
+    else if (mode == CSVGBlendMode::DARKEN  ) os << " mode=\"darken\"";
+    else if (mode == CSVGBlendMode::LIGHTEN ) os << " mode=\"lighten\"";
+  }
+
+  printNameValue(os, "in"    , filterIn1_);
+  printNameValue(os, "in2"   , filterIn2_);
+  printNameValue(os, "result", filterOut_);
 }
 
 std::ostream &

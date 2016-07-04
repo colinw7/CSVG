@@ -50,17 +50,24 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<feDistantLight";
 
-    CSVGObject::printValues(os);
-
-    CSVGFilterBase::printValues(os);
-
-    printNameValue(os, "elevation", elevation_);
-    printNameValue(os, "azimuth"  , azimuth_  );
+    printValues(os);
 
     os << "/>" << std::endl;
   }
   else
     os << "feDistantLight ";
+}
+
+void
+CSVGFeDistantLight::
+printValues(std::ostream &os, bool flat) const
+{
+  CSVGObject::printValues(os, flat);
+
+  CSVGFilterBase::printValues(os, flat);
+
+  printNameValue(os, "elevation", elevation_);
+  printNameValue(os, "azimuth"  , azimuth_  );
 }
 
 std::ostream &

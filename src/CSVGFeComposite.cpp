@@ -154,36 +154,43 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<feComposite";
 
-    CSVGObject::printValues(os);
-
-    CSVGFilterBase::printValues(os);
-
-    printNameValue(os, "in"    , filterIn1_);
-    printNameValue(os, "in2"   , filterIn2_);
-    printNameValue(os, "result", filterOut_);
-
-    if (type_.isValid()) {
-      os << " operator=\"";
-
-      if      (type_.getValue() == CRGBA_COMBINE_OVER      ) os << "over";
-      else if (type_.getValue() == CRGBA_COMBINE_IN        ) os << "in";
-      else if (type_.getValue() == CRGBA_COMBINE_OUT       ) os << "out";
-      else if (type_.getValue() == CRGBA_COMBINE_ATOP      ) os << "atop";
-      else if (type_.getValue() == CRGBA_COMBINE_XOR       ) os << "xor";
-      else if (type_.getValue() == CRGBA_COMBINE_ARITHMETIC) os << "arithmetic";
-
-      os << "\"";
-    }
-
-    printNameValue(os, "k1", k1_);
-    printNameValue(os, "k2", k2_);
-    printNameValue(os, "k3", k3_);
-    printNameValue(os, "k4", k4_);
+    printValues(os);
 
     os << "/>" << std::endl;
   }
   else
     os << "feComposite ";
+}
+
+void
+CSVGFeComposite::
+printValues(std::ostream &os, bool flat) const
+{
+  CSVGObject::printValues(os, flat);
+
+  CSVGFilterBase::printValues(os, flat);
+
+  printNameValue(os, "in"    , filterIn1_);
+  printNameValue(os, "in2"   , filterIn2_);
+  printNameValue(os, "result", filterOut_);
+
+  if (type_.isValid()) {
+    os << " operator=\"";
+
+    if      (type_.getValue() == CRGBA_COMBINE_OVER      ) os << "over";
+    else if (type_.getValue() == CRGBA_COMBINE_IN        ) os << "in";
+    else if (type_.getValue() == CRGBA_COMBINE_OUT       ) os << "out";
+    else if (type_.getValue() == CRGBA_COMBINE_ATOP      ) os << "atop";
+    else if (type_.getValue() == CRGBA_COMBINE_XOR       ) os << "xor";
+    else if (type_.getValue() == CRGBA_COMBINE_ARITHMETIC) os << "arithmetic";
+
+    os << "\"";
+  }
+
+  printNameValue(os, "k1", k1_);
+  printNameValue(os, "k2", k2_);
+  printNameValue(os, "k3", k3_);
+  printNameValue(os, "k4", k4_);
 }
 
 std::ostream &

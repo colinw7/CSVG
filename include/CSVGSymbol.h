@@ -22,9 +22,13 @@ class CSVGSymbol : public CSVGObject {
   void resizeTo(const CSize2D &size) override;
   void rotateBy(double da, const CPoint2D &c) override;
 
+  bool canFlatten() const override { return false; }
+
   bool isDrawable() const override { return false; }
 
   void print(std::ostream &os, bool hier) const override;
+
+  void printValues(std::ostream &os, bool flat=false) const override;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGSymbol &group);
 

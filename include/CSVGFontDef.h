@@ -6,6 +6,7 @@
 #include <COptVal.h>
 
 class CSVG;
+class CSVGFontObj;
 
 class CSVGFontDef {
  public:
@@ -28,29 +29,48 @@ class CSVGFontDef {
   CScreenUnits getSize() const { return size_.getValue(CScreenUnits(12)); }
   void setSize(const CScreenUnits &lvalue);
 
-  bool hasStyle () const { return style_.isValid(); }
+  bool hasStyle() const { return style_.isValid(); }
   CFontStyles getStyle() const { return style_.getValue(CFONT_STYLE_NORMAL); }
   void setStyle(CFontStyles s);
+
+  bool hasAngle() const { return angle_.isValid(); }
+  double getAngle() const { return angle_.getValue(0); }
+  void setAngle(double a);
 
   void setStyle (const std::string &style_def );
   void setWeight(const std::string &weight_def);
 
-  void setUnderline  (bool b=true);
-  void setOverline   (bool b=true);
+  bool isUnderline() const;
+  void setUnderline(bool b=true);
+
+  bool isOverline() const;
+  void setOverline(bool b=true);
+
+  bool isLineThrough() const;
   void setLineThrough(bool b=true);
 
-  void setSubscript  (bool b=true);
+  bool isSubscript() const;
+  void setSubscript(bool b=true);
+
+  bool isSuperscript() const;
   void setSuperscript(bool b=true);
 
-  CFontPtr getFont();
+  void textSize(const std::string &text, double *w, double *a, double *d) const;
+
+  CSVGFontObj *getObj() const;
 
   void print(std::ostream &os) const;
+
+ private:
+  void resetObj();
 
  private:
   CSVG&                  svg_;
   COptString             family_;
   COptValT<CScreenUnits> size_;
   COptValT<CFontStyles>  style_;
+  COptReal               angle_;
+  mutable CSVGFontObj*   obj_ { 0 };
 };
 
 #endif

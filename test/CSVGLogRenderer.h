@@ -7,11 +7,18 @@ class CSVGLogRenderer : public CSVGRenderer {
  public:
   CSVGLogRenderer() : os_(&std::cout) { }
 
+  CSVGLogRenderer(const CSVGLogRenderer &r) :
+   os_(r.os_), silent_(r.silent_) {
+  }
+
   CSVGLogRenderer *dup() const override {
-    return new CSVGLogRenderer();
+    return new CSVGLogRenderer(*this);
   }
 
   std::ostream &os() const { return *os_; }
+
+  bool isSilent() const { return silent_; }
+  void setSilent(bool b) { silent_ = b; }
 
   void setSize(int width, int height) override {
     width_  = width;
@@ -90,7 +97,7 @@ class CSVGLogRenderer : public CSVGRenderer {
 
   void drawImage(const CPoint2D &, CSVGImageData *) override { logNL("drawImage"); }
 
-  void setFont(CFontPtr) override { logNL("setFont"); }
+  void setFont(const CSVGFontDef &) override { logNL("setFont"); }
 
   void setStrokeColor(const CRGBA &) override { logNL("setStrokeColor"); }
 
@@ -104,7 +111,7 @@ class CSVGLogRenderer : public CSVGRenderer {
   void setFillType(CFillType) override { logNL("setFillType"); }
   void setFillColor(const CRGBA &) override { logNL("setFillColor"); }
   void setFillGradient(CGenGradient *) override { logNL("setFillGradient"); }
-  void setFillImage(CSVGImageData *) override { logNL("setFillImage"); }
+  void setFillImage(double, double, CSVGImageData *) override { logNL("setFillImage"); }
   void setFillMatrix(const CMatrix2D &) override { logNL("setFillMatrix"); }
 
   void setStrokeFilled(bool) override { logNL("setStrokeFilled"); }
@@ -136,16 +143,19 @@ class CSVGLogRenderer : public CSVGRenderer {
   }
 
   void logNL(const std::string &str) const {
-    os() << str << std::endl;
+    if (! isSilent())
+      os() << str << std::endl;
   }
 
   void log(const std::string &str) const {
-    os() << str;
+    if (! isSilent())
+      os() << str;
   }
 
  private:
   std::ostream *os_;
 
+  bool   silent_ { false };
   int    width_  { 0 };
   int    height_ { 0 };
   double pxmin_  { 0 };

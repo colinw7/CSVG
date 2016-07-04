@@ -69,12 +69,16 @@ class CSVGFilter : public CSVGObject {
   bool getRegion(CBBox2D &bbox) const;
   bool getRegion(CSVGObject *obj, CBBox2D &bbox) const;
 
+  bool canFlatten() const override { return false; }
+
   void initDraw(CSVGBuffer *buffer);
   void termDraw(CSVGBuffer *buffer);
 
   bool draw() override;
 
   void print(std::ostream &os, bool hier) const override;
+
+  void printValues(std::ostream &os, bool flat=false) const;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGFilter &filter);
 

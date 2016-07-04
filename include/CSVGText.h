@@ -42,6 +42,8 @@ class CSVGText : public CSVGObject {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
+  bool canFlatten() const override { return false; }
+
   bool draw() override;
 
   bool getBBox(CBBox2D &bbox) const override;

@@ -20,6 +20,8 @@ class CSVGFontFace : public CSVGObject {
 
   void print(std::ostream &os, bool hier) const override;
 
+  void printValues(std::ostream &os, bool flat=false) const override;
+
   friend std::ostream &operator<<(std::ostream &os, const CSVGFontFace &face);
 
  private:
@@ -40,6 +42,7 @@ class CSVGFontFace : public CSVGObject {
   COptString accentHeight_;
   COptInt    ascent_;
   COptInt    descent_;
+  COptInt    baseline_;
   COptString widths_;
   COptString bbox_;
   COptString ideographic_;

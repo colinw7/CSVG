@@ -62,9 +62,9 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   return true;
 }
 
-void
+std::string
 CSVGFeFunc::
-print(std::ostream &os, bool hier) const
+getTagName() const
 {
   std::string name = "feFunc";
 
@@ -73,49 +73,63 @@ print(std::ostream &os, bool hier) const
   else if (component_ == CCOLOR_COMPONENT_BLUE ) name = "feFuncB";
   else if (component_ == CCOLOR_COMPONENT_ALPHA) name = "feFuncA";
 
+  return name;
+}
+
+void
+CSVGFeFunc::
+print(std::ostream &os, bool hier) const
+{
   if (hier) {
-    os << "<" << name;
+    os << "<" << getTagName();
 
-    CSVGObject::printValues(os);
-
-    if (type_.isValid()) {
-      os << " type=\"";
-
-      if      (getType() == CSVGFilterFuncType::IDENTITY) os << "identity";
-      else if (getType() == CSVGFilterFuncType::LINEAR  ) os << "linear";
-      else if (getType() == CSVGFilterFuncType::GAMMA   ) os << "gamma";
-      else if (getType() == CSVGFilterFuncType::TABLE   ) os << "table";
-      else if (getType() == CSVGFilterFuncType::DISCRETE) os << "discrete";
-
-      os << "\"";
-    }
-
-    printNameValue(os, "slope"    , slope_);
-    printNameValue(os, "intercept", intercept_);
-    printNameValue(os, "amplitude", amplitude_);
-    printNameValue(os, "exponent" , exponent_);
-    printNameValue(os, "offset"   , offset_);
-
-    if (! table_.empty()) {
-      os << " tableValues=\"";
-
-      int i = 0;
-
-      for (const auto &r : table_) {
-        if (i > 0) os << " ";
-
-        os << r;
-
-        ++i;
-      }
-
-      os << "\"";
-    }
+    printValues(os);
 
     os << "/>" << std::endl;
   }
   else
-    os << name << " ";
+    os << getTagName() << " ";
+}
+
+void
+CSVGFeFunc::
+printValues(std::ostream &os, bool flat) const
+{
+  CSVGObject::printValues(os, flat);
+
+  if (type_.isValid()) {
+    os << " type=\"";
+
+    if      (getType() == CSVGFilterFuncType::IDENTITY) os << "identity";
+    else if (getType() == CSVGFilterFuncType::LINEAR  ) os << "linear";
+    else if (getType() == CSVGFilterFuncType::GAMMA   ) os << "gamma";
+    else if (getType() == CSVGFilterFuncType::TABLE   ) os << "table";
+    else if (getType() == CSVGFilterFuncType::DISCRETE) os << "discrete";
+
+    os << "\"";
+  }
+
+  printNameValue(os, "slope"    , slope_);
+  printNameValue(os, "intercept", intercept_);
+  printNameValue(os, "amplitude", amplitude_);
+  printNameValue(os, "exponent" , exponent_);
+  printNameValue(os, "offset"   , offset_);
+
+  if (! table_.empty()) {
+    os << " tableValues=\"";
+
+    int i = 0;
+
+    for (const auto &r : table_) {
+      if (i > 0) os << " ";
+
+      os << r;
+
+      ++i;
+    }
+
+    os << "\"";
+  }
 }
 
 std::ostream &

@@ -68,6 +68,8 @@ processOption(const std::string &opt_name, const std::string &opt_value)
     ascent_ = integer;
   else if (svg_.integerOption(opt_name, opt_value, "descent", &integer))
     descent_ = integer;
+  else if (svg_.integerOption(opt_name, opt_value, "baseline", &integer))
+    baseline_ = integer;
   else if (svg_.stringOption (opt_name, opt_value, "widths", str))
     widths_ = str;
   else if (svg_.stringOption (opt_name, opt_value, "bbox", str))
@@ -120,15 +122,7 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<font-face";
 
-    printNameValue(os, "font-family" , fontFamily_);
-    printNameValue(os, "font-style"  , fontStyle_);
-    printNameValue(os, "units-per-em", unitsPerEm_);
-    printNameValue(os, "panose-1"    , panose_);
-    printNameValue(os, "ascent"      , ascent_);
-    printNameValue(os, "descent"     , descent_);
-    printNameValue(os, "alphabetic"  , alphabetic_);
-
-    CSVGObject::printValues(os);
+    printValues(os);
 
     os << ">" << std::endl;
 
@@ -142,6 +136,21 @@ print(std::ostream &os, bool hier) const
   }
   else
     os << "font-face";
+}
+
+void
+CSVGFontFace::
+printValues(std::ostream &os, bool flat) const
+{
+  printNameValue(os, "font-family" , fontFamily_);
+  printNameValue(os, "font-style"  , fontStyle_);
+  printNameValue(os, "units-per-em", unitsPerEm_);
+  printNameValue(os, "panose-1"    , panose_);
+  printNameValue(os, "ascent"      , ascent_);
+  printNameValue(os, "descent"     , descent_);
+  printNameValue(os, "alphabetic"  , alphabetic_);
+
+  CSVGObject::printValues(os, flat);
 }
 
 std::ostream &

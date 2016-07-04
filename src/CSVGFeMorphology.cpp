@@ -111,25 +111,32 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<feMorphology";
 
-    CSVGObject::printValues(os);
-
-    CSVGFilterBase::printValues(os);
-
-    printNameValue(os, "in", filterIn_);
-
-    if (operator_.isValid()) {
-      CSVGMorphologyOperator op = getOperator();
-
-      if      (op == CSVGMorphologyOperator::ERODE ) os << " operator=\"erode\"";
-      else if (op == CSVGMorphologyOperator::DILATE) os << " operator=\"dilate\"";
-    }
-
-    printNameValue(os, "radius_", radius_);
+    printValues(os);
 
     os << "/>" << std::endl;
   }
   else
     os << "feMorphology ";
+}
+
+void
+CSVGFeMorphology::
+printValues(std::ostream &os, bool flat) const
+{
+  CSVGObject::printValues(os, flat);
+
+  CSVGFilterBase::printValues(os, flat);
+
+  printNameValue(os, "in", filterIn_);
+
+  if (operator_.isValid()) {
+    CSVGMorphologyOperator op = getOperator();
+
+    if      (op == CSVGMorphologyOperator::ERODE ) os << " operator=\"erode\"";
+    else if (op == CSVGMorphologyOperator::DILATE) os << " operator=\"dilate\"";
+  }
+
+  printNameValue(os, "radius", radius_);
 }
 
 std::ostream &

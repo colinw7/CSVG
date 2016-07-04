@@ -143,14 +143,7 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<font";
 
-    CSVGObject::printValues(os);
-
-    printNameValue(os, "horiz-origin-x", hxo_);
-    printNameValue(os, "horiz-origin-y", hyo_);
-    printNameValue(os, "horiz-adv-x"   , hdx_);
-    printNameValue(os, "vert-adv-y"    , vdy_);
-    printNameValue(os, "vert-origin-x" , vxo_);
-    printNameValue(os, "vert-origin-y" , vyo_);
+    printValues(os);
 
     os << ">" << std::endl;
 
@@ -160,6 +153,20 @@ print(std::ostream &os, bool hier) const
   }
   else
     os << "font";
+}
+
+void
+CSVGFont::
+printValues(std::ostream &os, bool flat) const
+{
+  CSVGObject::printValues(os, flat);
+
+  printNameValue(os, "horiz-origin-x", hxo_);
+  printNameValue(os, "horiz-origin-y", hyo_);
+  printNameValue(os, "horiz-adv-x"   , hdx_);
+  printNameValue(os, "vert-adv-y"    , vdy_);
+  printNameValue(os, "vert-origin-x" , vxo_);
+  printNameValue(os, "vert-origin-y" , vyo_);
 }
 
 std::ostream &

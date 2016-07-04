@@ -87,9 +87,9 @@ draw()
 
   //---
 
-  std::string text   = getText();
-  CHAlignType anchor = getFlatTextAnchor();
-  CFontPtr    font   = getFont();
+  std::string text    = getText();
+  CHAlignType anchor  = getFlatTextAnchor();
+  CSVGFontDef fontDef = getFlatFontDef();
 
   const CSVGPathPartList &parts = path->getPartList();
 
@@ -114,7 +114,7 @@ draw()
 
   double w, a, d;
 
-  svg_.textSize(text, font, &w, &a, &d);
+  fontDef.textSize(text, &w, &a, &d);
 
   CHAlignType textAnchor = this->getFlatTextAnchor();
 
@@ -137,7 +137,7 @@ draw()
 
     double w1, a1, d1;
 
-    svg_.textSize(text1, font, &w1, &a1, &d1);
+    fontDef.textSize(text1, &w1, &a1, &d1);
 
     s2 = s1 + w1/l;
 
@@ -167,15 +167,19 @@ std::cerr << "New angles " << ai1 << " " << ai2 << std::endl;
 
     //---
 
-    CFontPtr font1 = font;
+    CSVGFontDef fontDef1 = fontDef;
 
-    if (ai)
-      font1 = font->dup(font->getFamily(), font->getStyle(), font->getSize(),
-                        ai, font->getCharAngle(), font->getXRes(), font->getYRes());
+    if (ai) {
+      fontDef1.setFamily   (fontDef.getFamily());
+      fontDef1.setStyle    (fontDef.getStyle ());
+      fontDef1.setSize     (fontDef.getSize  ()),
+      fontDef1.setAngle    (ai);
+    //fontDef1.setCharAngle(fontDef.getCharAngle());
+    }
 
     //---
 
-    svg_.fillDrawText(xi1, yi1, text1, font1, anchor, svg_.isFilled(), svg_.isStroked());
+    svg_.fillDrawText(xi1, yi1, text1, fontDef1, anchor, svg_.isFilled(), svg_.isStroked());
   }
 
   //---
@@ -230,8 +234,10 @@ void
 CSVGTextPath::
 printValues(std::ostream &os, bool flat) const
 {
-  printNameLength(os, "startOffset", startOffset_);
-  printNameXLink (os, "xlink:href" , xlink_);
+  printNamePercent(os, "startOffset", startOffset_);
+
+  if (! xlink_.getValue().isNull())
+    printNameXLink (os, "xlink:href", xlink_);
 
   CSVGObject::printValues(os, flat);
 }

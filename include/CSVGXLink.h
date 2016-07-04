@@ -21,23 +21,34 @@ class CSVGXLink {
 
   CSVGXLink &operator=(const CSVGXLink &xlink);
 
+  //---
+
   bool isResolved() const { return resolved_; }
+
+  //---
 
   std::string str() const { return str_; }
 
+  //---
+
   bool isObject() const;
-
   CSVGObject *getObject() const;
-
   void setObject(CSVGObject *object);
+
+  //---
 
   bool isImage() const;
 
   CSVGBuffer *getImageBuffer() const;
 
   void setImage(CSVGBuffer *buffer);
-
   bool getImage(CSVGBuffer *buffer) const;
+
+  //---
+
+  bool isNull() const;
+
+  //---
 
  private:
   void resolve() const;

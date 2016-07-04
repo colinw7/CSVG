@@ -2017,9 +2017,9 @@ setFill(const CSVGFill &fill)
     }
     else if (pt) {
       // TODO: pattern opacity
-      double w1, h1;
+      double x1, y1, w1, h1;
 
-      pt->setFillImage(drawObject, this, &w1, &h1);
+      pt->setFillImage(drawObject, this, &x1, &y1, &w1, &h1);
     }
     else
       assert(false);
@@ -2103,16 +2103,17 @@ setFillGradient(CGenGradient *g)
 
 void
 CSVGBuffer::
-setFillBuffer(CSVGBuffer *buffer)
+setFillBuffer(double x, double y, CSVGBuffer *buffer)
 {
   if (refBuffer_)
-    return refBuffer_->setFillBuffer(buffer);
+    return refBuffer_->setFillBuffer(x, y, buffer);
 
   //---
 
-  CSVGImageDataP image = buffer->getImage();
+  CSVGImageDataP image = buffer->subImage(buffer->bbox());
+//CSVGImageDataP image = buffer->getImage();
 
-  renderer_->setFillImage(image.getPtr());
+  renderer_->setFillImage(x, y, image.getPtr());
 }
 
 void
@@ -2154,14 +2155,14 @@ getImage() const
 
 void
 CSVGBuffer::
-pathText(const std::string &text, CFontPtr font, CHAlignType align)
+pathText(const std::string &text, const CSVGFontDef &fontDef, CHAlignType align)
 {
   if (refBuffer_)
-    return refBuffer_->pathText(text, font, align);
+    return refBuffer_->pathText(text, fontDef, align);
 
   //---
 
-  renderer_->setFont(font);
+  renderer_->setFont(fontDef);
 
   CBBox2D box;
 

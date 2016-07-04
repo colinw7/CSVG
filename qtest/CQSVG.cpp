@@ -53,6 +53,7 @@
 #include <CQSVGUse.h>
 #include <CQSVGWindow.h>
 #include <CQSVGPathPart.h>
+#include <CQSVGFontObj.h>
 #include <QTimer>
 
 CQSVG::
@@ -68,6 +69,13 @@ CQSVG::
 ~CQSVG()
 {
   delete timer_;
+}
+
+CSVG *
+CQSVG::
+dup() const
+{
+  return new CQSVG(window_);
 }
 
 QColor
@@ -462,6 +470,13 @@ CQSVG::
 createImageData()
 {
   return new CQSVGImageData;
+}
+
+CSVGFontObj *
+CQSVG::
+createFontObj(const CSVGFontDef &def)
+{
+  return new CQSVGFontObj(def);
 }
 
 //------

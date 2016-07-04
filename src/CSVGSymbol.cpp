@@ -75,9 +75,7 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<symbol";
 
-    CSVGObject::printValues(os);
-
-    printNamePreserveAspect(os, "preserveAspectRatio", preserveAspect_);
+    printValues(os);
 
     if (hasChildren()) {
       os << ">" << std::endl;
@@ -91,6 +89,15 @@ print(std::ostream &os, bool hier) const
   }
   else
     os << "symbol";
+}
+
+void
+CSVGSymbol::
+printValues(std::ostream &os, bool flat) const
+{
+  CSVGObject::printValues(os, flat);
+
+  printNamePreserveAspect(os, "preserveAspectRatio", preserveAspect_);
 }
 
 std::ostream &

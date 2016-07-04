@@ -37,11 +37,15 @@ class CSVGMask : public CSVGObject {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
+  bool canFlatten() const override { return false; }
+
   bool isDrawable() const override { return false; }
 
   void drawMask(const CSVGObject *object);
 
   void print(std::ostream &os, bool hier) const override;
+
+  void printValues(std::ostream &os, bool flat=false) const;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGMask &mask);
 

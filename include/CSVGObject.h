@@ -85,6 +85,7 @@ class CSVGObject {
 
   bool hasFontDef() const { return fontDef_.isSet(); }
   const CSVGFontDef &getFontDef() const { return fontDef_; }
+  void setFontDef(const CSVGFontDef &f) { fontDef_ = f; }
 
   void updateStroke(const CSVGStroke &stroke, bool recurse=false);
   void updateFill  (const CSVGFill   &fill  , bool recurse=false);
@@ -94,6 +95,8 @@ class CSVGObject {
   CSVGObjTypeId getObjTypeId() const { return (CSVGObjTypeId) getObjType().getId(); }
 
   std::string getObjName() const { return getObjType().getName(); }
+
+  virtual std::string getTagName() const { return getObjName(); }
 
   virtual std::string getUniqueName() const {
     if (id_.isValid() && id_.getValue().size())
@@ -105,6 +108,10 @@ class CSVGObject {
   bool isObjType(CSVGObjTypeId id) const { return (getObjType().getId() == uint(id)); }
 
   bool isObjType(const std::string &name) const { return (getObjName() == name); }
+
+  virtual bool canFlatten() const { return true; }
+
+  virtual bool propagateFlat() const { return true; }
 
   //---
 
@@ -253,6 +260,8 @@ class CSVGObject {
 
   bool getFlatTransformedBBox(CBBox2D &bbox) const;
 
+  CBBox2D getDrawBBox() const;
+
   virtual bool inside(const CPoint2D &pos) const;
 
   virtual bool getSize(CSize2D &size) const;
@@ -367,15 +376,14 @@ class CSVGObject {
   //------
 
   // font
-  CFontPtr getFont() const;
-  void setFont(CFontPtr f);
-
   void setFontFamily(const std::string &family);
   void setFontSize  (double size);
   void setFontSize  (const CScreenUnits &lvalue);
   void setFontWeight(const std::string &weight);
   void setFontStyle (const std::string &style );
   void setFontStyle (CFontStyle s);
+
+  CSVGFontDef getFlatFontDef() const;
 
   std::string  getFlatFontFamily() const;
   CFontStyles  getFlatFontStyle() const;
@@ -391,6 +399,7 @@ class CSVGObject {
   void setOverflow(CSVGOverflowType o) { overflow_ = o; }
 
   // visible
+  bool hasVisibility() const { return visibility_.isValid(); }
   std::string getVisibility() const { return visibility_.getValue(""); }
   void setVisibility(const std::string &str) { visibility_ = str; }
 
@@ -522,14 +531,16 @@ class CSVGObject {
   virtual void setTime(double t);
 
   virtual void handleEvent(CSVGEventType type, const std::string &id="",
-                           const std::string &data="");
+                           const std::string &data="", bool propagate=true);
+
+  void execEvent(CSVGEventType type);
 
   //---
 
   // print
   virtual void print(std::ostream &os, bool hier=false) const;
 
-  virtual void printFlat(std::ostream &os) const;
+  virtual void printFlat(std::ostream &os, int depth=0) const;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGObject &object) {
     object.print(os);
@@ -620,6 +631,9 @@ class CSVGObject {
 
   void printNameCoordUnits(std::ostream &os, const std::string &name,
                            const COptValT<CSVGCoordUnits> &units) const;
+
+  void printNamePercent(std::ostream &os, const std::string &name,
+                        const COptValT<CScreenUnits> &units) const;
 
  private:
   CSVGObject &operator=(const CSVGObject &rhs);

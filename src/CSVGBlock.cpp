@@ -431,6 +431,33 @@ getBBox(CBBox2D &bbox) const
 
 void
 CSVGBlock::
+printRoot(std::ostream &os, const CCSS &css, bool hier) const
+{
+  if (hier) {
+    os << "<svg";
+
+    printValues(os);
+
+    os << ">" << std::endl;
+
+    if (css.hasStyleData()) {
+      os << "<style type=\"text/css\"><![CDATA[" << std::endl;
+
+      css.print(os);
+
+      os << "]]></style>" << std::endl;
+    }
+
+    printChildren(os, hier);
+
+    os << "</svg>" << std::endl;
+  }
+  else
+    os << "svg " << getWidth() << " " << getHeight();
+}
+
+void
+CSVGBlock::
 print(std::ostream &os, bool hier) const
 {
   if (hier) {
@@ -450,9 +477,9 @@ print(std::ostream &os, bool hier) const
 
 void
 CSVGBlock::
-printValues(std::ostream &os, bool /*flat*/) const
+printValues(std::ostream &os, bool flat) const
 {
-  CSVGObject::printValues(os);
+  CSVGObject::printValues(os, flat);
 
   printNameValue (os, "x"     , x_     );
   printNameValue (os, "y"     , y_     );

@@ -44,6 +44,24 @@ dup() const
   return new CSVGCircle(*this);
 }
 
+CPoint2D
+CSVGCircle::
+getCenter() const
+{
+  double xc = getCenterX().pxValue(1);
+  double yc = getCenterY().pxValue(1);
+
+  return CPoint2D(xc, yc);
+}
+
+void
+CSVGCircle::
+setCenter(const CPoint2D &center)
+{
+  setCenterX(center.x);
+  setCenterY(center.y);
+}
+
 bool
 CSVGCircle::
 processOption(const std::string &opt_name, const std::string &opt_value)
@@ -62,15 +80,14 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   if (processCursorOption         (opt_name, opt_value)) return true;
   if (processExternalOption       (opt_name, opt_value)) return true;
 
-  double         real;
   std::string    str;
   CScreenUnits   length;
   CMatrixStack2D transform;
 
-  if      (svg_.coordOption    (opt_name, opt_value, "cx"       , &real))
-    cx_ = real;
-  else if (svg_.coordOption    (opt_name, opt_value, "cy"       , &real))
-    cy_ = real;
+  if      (svg_.coordOption    (opt_name, opt_value, "cx"       , length))
+    cx_ = length;
+  else if (svg_.coordOption    (opt_name, opt_value, "cy"       , length))
+    cy_ = length;
   else if (svg_.lengthOption   (opt_name, opt_value, "r"        , length))
     radius_ = length;
   else if (svg_.transformOption(opt_name, opt_value, "transform", transform))
@@ -88,17 +105,19 @@ draw()
   if (svg_.getDebug())
     CSVGLog() << *this;
 
-  double w = 1;
+  CBBox2D bbox = getDrawBBox();
 
-  if (hasViewBox())
-    w = getViewBox().getWidth();
+  double w = bbox.getWidth ();
+  double h = bbox.getHeight();
 
-  double r = getRadius().pxValue(w);
+  double xc = getCenterX().pxValue(w);
+  double yc = getCenterY().pxValue(h);
+  double r  = getRadius ().pxValue(w);
 
   if (r <= 0)
     return false;
 
-  svg_.drawCircle(getCenterX(), getCenterY(), r);
+  svg_.drawCircle(xc, yc, r);
 
   return true;
 }
@@ -108,9 +127,11 @@ CSVGCircle::
 getBBox(CBBox2D &bbox) const
 {
   if (! hasViewBox()) {
-    double r = getRadius().pxValue(1);
+    double xc = getCenterX().pxValue(1);
+    double yc = getCenterY().pxValue(1);
+    double r  = getRadius ().pxValue(1);
 
-    bbox = CBBox2D(getCenterX() - r, getCenterY() - r, getCenterX() + r, getCenterY() + r);
+    bbox = CBBox2D(xc - r, yc - r, xc + r, yc + r);
   }
   else
     bbox = getViewBox();
@@ -141,19 +162,7 @@ CSVGCircle::
 print(std::ostream &os, bool hier) const
 {
   if (hier) {
-    os << "<circle";
-
-    printValues(os);
-
-    if (hasChildren()) {
-      os << ">" << std::endl;
-
-      printChildren(os, hier);
-
-      os << "</circle>" << std::endl;
-    }
-    else
-      os << "/>" << std::endl;
+    CSVGObject::print(os, hier);
   }
   else
     os << "circle " << getCenter() << " radius " << getRadius();

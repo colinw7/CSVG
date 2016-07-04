@@ -142,25 +142,32 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<feConvolveMatrix";
 
-    CSVGObject::printValues(os);
-
-    CSVGFilterBase::printValues(os);
-
-    printNameValue (os, "in"              , filterIn_);
-    printNameValues(os, "order"           , order_);
-    printNameValues(os, "kernelMatrix"    , kernelMatrix_);
-    printNameValue (os, "divisor"         , divisor_);
-    printNameValue (os, "bias"            , bias_);
-    printNameValue (os, "targetX"         , targetX_);
-    printNameValue (os, "targetY"         , targetY_);
-    printNameValue (os, "edgeMode"        , edgeMode_);
-    printNameValue (os, "kernelUnitLength", kernelUnitLength_);
-    printNameValue (os, "preserveAlpha"   , preserveAlpha_);
+    printValues(os);
 
     os << "/>" << std::endl;
   }
   else
     os << "feConvolveMatrix ";
+}
+
+void
+CSVGFeConvolveMatrix::
+printValues(std::ostream &os, bool flat) const
+{
+  CSVGObject::printValues(os, flat);
+
+  CSVGFilterBase::printValues(os, flat);
+
+  printNameValue (os, "in"              , filterIn_);
+  printNameValues(os, "order"           , order_);
+  printNameValues(os, "kernelMatrix"    , kernelMatrix_);
+  printNameValue (os, "divisor"         , divisor_);
+  printNameValue (os, "bias"            , bias_);
+  printNameValue (os, "targetX"         , targetX_);
+  printNameValue (os, "targetY"         , targetY_);
+  printNameValue (os, "edgeMode"        , edgeMode_);
+  printNameValue (os, "kernelUnitLength", kernelUnitLength_);
+  printNameValue (os, "preserveAlpha"   , preserveAlpha_);
 }
 
 std::ostream &

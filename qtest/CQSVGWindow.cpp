@@ -94,6 +94,7 @@ main(int argc, char **argv)
   bool        image    = false;
   std::string imageDir = "";
   bool        print    = false;
+  int         dpi      = -1;
 
   std::vector<std::string> files;
 
@@ -113,6 +114,12 @@ main(int argc, char **argv)
         print = true;
       else if (strcmp(&argv[i][1], "nofilter") == 0)
         nofilter = true;
+      else if (strcmp(&argv[i][1], "dpi") == 0) {
+        ++i;
+
+        if (i < argc)
+          dpi = atoi(argv[i]);
+      }
       else
         std::cerr << "Invalid option: " << argv[i] << std::endl;
     }
@@ -125,6 +132,9 @@ main(int argc, char **argv)
   CQApp app(argc, argv);
 
   app.setStyle(new CQStyle);
+
+  if (dpi > 0)
+    CScreenUnitsMgrInst->setDpi(dpi);
 
   CQSVGWindow *window = new CQSVGWindow;
 
@@ -1228,6 +1238,7 @@ CQSVGWindow::
 startBusy()
 {
   startTime_ = CHRTimerMgr::getHRTime();
+  busyTime_  = startTime_;
 
   busyButton_->setIcon(CQPixmapCacheInst->getIcon("BUSY"));
 }
@@ -1255,7 +1266,15 @@ updateBusy()
 {
   busyButton_->update();
 
-  qApp->processEvents();
+  CHRTime currentTime = CHRTimerMgr::getHRTime();
+
+  CHRTime dtime = CHRTimerMgr::diffHRTime(busyTime_, currentTime);
+
+  if (dtime.getMSecs() > 100) {
+    busyTime_ = currentTime;
+
+    qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
+  }
 }
 
 QSize

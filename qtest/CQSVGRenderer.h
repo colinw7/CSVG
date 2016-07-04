@@ -24,6 +24,9 @@ class CQSVGRenderer : public CSVGRenderer {
   const CRGBA &background() const { return background_; }
   void setBackground(const CRGBA &v) { background_ = v; }
 
+  bool isDrawing() const { return drawing_; }
+  void setDrawing(bool b) { drawing_ = b; }
+
   void setSize(int width, int height) override;
   void getSize(int *width, int *height) const override;
 
@@ -79,7 +82,7 @@ class CQSVGRenderer : public CSVGRenderer {
 
   void drawImage(const CPoint2D &p, CSVGImageData *image) override;
 
-  void setFont(CFontPtr bg) override;
+  void setFont(const CSVGFontDef &fontDef) override;
 
   void setStrokeColor(const CRGBA &fg) override;
 
@@ -93,7 +96,7 @@ class CQSVGRenderer : public CSVGRenderer {
   void setFillType    (CFillType fillType) override;
   void setFillColor   (const CRGBA &bg) override;
   void setFillGradient(CGenGradient *g) override;
-  void setFillImage   (CSVGImageData *image) override;
+  void setFillImage   (double xo, double yo, CSVGImageData *image) override;
   void setFillMatrix  (const CMatrix2D &m) override;
 
   void setStrokeFilled      (bool b) override;

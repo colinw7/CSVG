@@ -140,27 +140,34 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<feTurbulence";
 
-    CSVGObject::printValues(os);
-
-    CSVGFilterBase::printValues(os);
-
-    printNameValue(os, "type", type_);
-
-    if      (baseFreqX_.isValid() && ! baseFreqY_.isValid())
-      printNameValue(os, "baseFrequency", baseFreqX_);
-    else if (baseFreqX_.isValid() && baseFreqY_.isValid())
-      os << " baseFrequency=\"" << baseFreqX_.getValue() << " " << baseFreqY_.getValue() << "\"";
-
-    printNameValue(os, "numOctaves"   , numOctaves_);
-    printNameValue(os, "seed"         , seed_);
-    printNameValue(os, "stitchTiles"  , stitchTiles_);
-    printNameValue(os, "in"           , filterIn_);
-    printNameValue(os, "result"       , filterOut_);
+    printValues(os);
 
     os << "/>" << std::endl;
   }
   else
     os << "feTurbulence ";
+}
+
+void
+CSVGFeTurbulence::
+printValues(std::ostream &os, bool flat) const
+{
+  CSVGObject::printValues(os, flat);
+
+  CSVGFilterBase::printValues(os, flat);
+
+  printNameValue(os, "type", type_);
+
+  if      (baseFreqX_.isValid() && ! baseFreqY_.isValid())
+    printNameValue(os, "baseFrequency", baseFreqX_);
+  else if (baseFreqX_.isValid() && baseFreqY_.isValid())
+    os << " baseFrequency=\"" << baseFreqX_.getValue() << " " << baseFreqY_.getValue() << "\"";
+
+  printNameValue(os, "numOctaves"   , numOctaves_);
+  printNameValue(os, "seed"         , seed_);
+  printNameValue(os, "stitchTiles"  , stitchTiles_);
+  printNameValue(os, "in"           , filterIn_);
+  printNameValue(os, "result"       , filterOut_);
 }
 
 std::ostream &

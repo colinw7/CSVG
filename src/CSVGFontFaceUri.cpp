@@ -57,14 +57,22 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<font-face-uri";
 
-    printNameXLink(os, "xlink:href", xlink_);
-
-    CSVGObject::printValues(os);
+    printValues(os);
 
     os << "/>" << std::endl;
   }
   else
     os << "font-face-uri";
+}
+
+void
+CSVGFontFaceUri::
+printValues(std::ostream &os, bool flat) const
+{
+  if (! xlink_.getValue().isNull())
+    printNameXLink(os, "xlink:href", xlink_);
+
+  CSVGObject::printValues(os, flat);
 }
 
 std::ostream &

@@ -17,6 +17,11 @@ class CQSVGEllipse : public CQSVGObject, public CSVGEllipse {
  public:
   CQSVGEllipse(CQSVG *svg);
 
+  double getCenterX() const;
+  double getCenterY() const;
+  double getRadiusX() const;
+  double getRadiusY() const;
+
   void drawTerm() override;
 };
 

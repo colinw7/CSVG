@@ -62,25 +62,32 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<feSpotLight";
 
-    CSVGObject::printValues(os);
-
-    CSVGFilterBase::printValues(os);
-
-    printNameValue(os, "x", x_);
-    printNameValue(os, "y", y_);
-    printNameValue(os, "z", z_);
-
-    printNameValue(os, "pointsAtX", pointsAtX_);
-    printNameValue(os, "pointsAtY", pointsAtY_);
-    printNameValue(os, "pointsAtZ", pointsAtZ_);
-
-    printNameValue(os, "specularExponent" , specularExponent_);
-    printNameValue(os, "limitingConeAngle", limitingConeAngle_);
+    printValues(os);
 
     os << "/>" << std::endl;
   }
   else
     os << "feSpotLight ";
+}
+
+void
+CSVGFeSpotLight::
+printValues(std::ostream &os, bool flat) const
+{
+  CSVGObject::printValues(os, flat);
+
+  CSVGFilterBase::printValues(os, flat);
+
+  printNameValue(os, "x", x_);
+  printNameValue(os, "y", y_);
+  printNameValue(os, "z", z_);
+
+  printNameValue(os, "pointsAtX", pointsAtX_);
+  printNameValue(os, "pointsAtY", pointsAtY_);
+  printNameValue(os, "pointsAtZ", pointsAtZ_);
+
+  printNameValue(os, "specularExponent" , specularExponent_);
+  printNameValue(os, "limitingConeAngle", limitingConeAngle_);
 }
 
 std::ostream &

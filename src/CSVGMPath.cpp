@@ -67,11 +67,7 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<mpath";
 
-    CSVGObject::printValues(os);
-
-    printNameXLink(os, "xlink:href", xlink_);
-
-    printNameParts(os, "d", parts_);
+    printValues(os);
 
     if (hasChildren()) {
       os << ">" << std::endl;
@@ -86,6 +82,18 @@ print(std::ostream &os, bool hier) const
   else {
     os << "mpath (" << parts_ << ")";
   }
+}
+
+void
+CSVGMPath::
+printValues(std::ostream &os, bool flat) const
+{
+  CSVGObject::printValues(os, flat);
+
+  if (! xlink_.getValue().isNull())
+    printNameXLink(os, "xlink:href", xlink_);
+
+  printNameParts(os, "d", parts_);
 }
 
 bool

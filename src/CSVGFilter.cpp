@@ -309,18 +309,7 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<filter";
 
-    CSVGObject::printValues(os);
-
-    printNameCoordUnits(os, "filterUnits"   , filterUnits_);
-    printNameCoordUnits(os, "primitiveUnits", primitiveUnits_);
-
-    printNameLength(os, "x"     , x_);
-    printNameLength(os, "y"     , y_);
-    printNameLength(os, "width" , width_);
-    printNameLength(os, "height", height_);
-
-    printNameValue(os, "filterRes" , filterRes_);
-    printNameXLink(os, "xlink:href", xlink_);
+    printValues(os);
 
     os << ">" << std::endl;
 
@@ -330,6 +319,26 @@ print(std::ostream &os, bool hier) const
   }
   else
     os << "filter ";
+}
+
+void
+CSVGFilter::
+printValues(std::ostream &os, bool flat) const
+{
+  CSVGObject::printValues(os, flat);
+
+  printNameCoordUnits(os, "filterUnits"   , filterUnits_);
+  printNameCoordUnits(os, "primitiveUnits", primitiveUnits_);
+
+  printNameLength(os, "x"     , x_);
+  printNameLength(os, "y"     , y_);
+  printNameLength(os, "width" , width_);
+  printNameLength(os, "height", height_);
+
+  printNameValue(os, "filterRes" , filterRes_);
+
+  if (! xlink_.getValue().isNull())
+    printNameXLink(os, "xlink:href", xlink_);
 }
 
 std::ostream &

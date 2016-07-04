@@ -12,18 +12,20 @@ class CSVGCircle : public CSVGObject {
 
   CSVGCircle *dup() const override;
 
-  double getCenterX() const { return cx_.getValue(0); }
-  void setCenterX(double x) { cx_ = x; }
+  bool hasCenterX() const { return cx_.isValid(); }
+  CScreenUnits getCenterX() const { return cx_.getValue(CScreenUnits(0)); }
+  void setCenterX(const CScreenUnits &x) { cx_ = x; }
 
-  double getCenterY() const { return cy_.getValue(0); }
-  void setCenterY(double y) { cy_ = y; }
+  bool hasCenterY() const { return cy_.isValid(); }
+  CScreenUnits getCenterY() const { return cy_.getValue(CScreenUnits(0)); }
+  void setCenterY(const CScreenUnits &y) { cy_ = y; }
 
   bool hasRadius() const { return radius_.isValid(); }
   CScreenUnits getRadius() const { return radius_.getValue(CScreenUnits(1)); }
   void setRadius(const CScreenUnits &r) { radius_ = r; }
 
-  void setCenter(const CPoint2D &center) { setCenterX(center.x); setCenterY(center.y); }
-  CPoint2D getCenter() const { return CPoint2D(getCenterX(), getCenterY()); }
+  CPoint2D getCenter() const;
+  void setCenter(const CPoint2D &center);
 
   bool processOption(const std::string &name, const std::string &value) override;
 
@@ -42,9 +44,9 @@ class CSVGCircle : public CSVGObject {
   friend std::ostream &operator<<(std::ostream &os, const CSVGCircle &circle);
 
  private:
-  COptReal               cx_;
-  COptReal               cy_;
-  COptValT<CScreenUnits> radius_;
+  COptScreenUnits cx_;
+  COptScreenUnits cy_;
+  COptScreenUnits radius_;
 };
 
 #endif

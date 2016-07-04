@@ -28,6 +28,9 @@ void
 CQSVGCanvas::
 redraw()
 {
+  if (renderer_->isDrawing())
+    return;
+
   renderer_->setSize(width(), height());
 
   if (autoScale_) {
@@ -195,7 +198,10 @@ mouseReleaseEvent(QMouseEvent *e)
     CQSVGObject *qobj = dynamic_cast<CQSVGObject *>(obj);
     if (! qobj) continue;
 
-    qobj->object()->handleEvent(CSVGEventType::CLICK);
+    qobj->object()->handleEvent(CSVGEventType::CLICK, "", "", /*propagate*/false);
+
+    if (qobj->object()->getId() != "")
+      svg_->sendEvent(CSVGEventType::CLICK, qobj->object()->getId(), "");
   }
 }
 

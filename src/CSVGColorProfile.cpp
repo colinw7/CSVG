@@ -59,13 +59,7 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<color-profile";
 
-    printNameValue(os, "local"           , local_);
-    printNameValue(os, "name"            , name_);
-    printNameValue(os, "rendering-intent", intent_);
-
-    printNameXLink(os, "xlink:href", xlink_);
-
-    CSVGObject::printValues(os);
+    printValues(os);
 
     os << ">" << std::endl;
 
@@ -79,6 +73,20 @@ print(std::ostream &os, bool hier) const
   }
   else
     os << "color-profile";
+}
+
+void
+CSVGColorProfile::
+printValues(std::ostream &os, bool flat) const
+{
+  printNameValue(os, "local"           , local_);
+  printNameValue(os, "name"            , name_);
+  printNameValue(os, "rendering-intent", intent_);
+
+  if (! xlink_.getValue().isNull())
+    printNameXLink(os, "xlink:href", xlink_);
+
+  CSVGObject::printValues(os, flat);
 }
 
 std::ostream &

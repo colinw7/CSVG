@@ -2,6 +2,7 @@
 #include <CQSVG.h>
 #include <CQSVGWindow.h>
 #include <CQSVGCanvas.h>
+#include <CQSVGFontObj.h>
 #include <CQSVGRenderer.h>
 #include <CSVGLinearGradient.h>
 #include <CSVGRadialGradient.h>
@@ -218,7 +219,7 @@ double
 CQSVGObject::
 strokeOffset() const
 {
-  return obj_->getFlatStrokeLineDash().getValue(CSVGStrokeDash()).offset().pxValue(0);
+  return obj_->getFlatStrokeLineDash().getValue(CSVGStrokeDash()).offset().pxValue(1);
 }
 
 void
@@ -404,14 +405,26 @@ QFont
 CQSVGObject::
 getFont() const
 {
-  return CQUtil::toQFont(obj_->getFont());
+  CSVGFontDef fontDef = obj_->getFlatFontDef();
+
+  CQSVGFontObj *fontObj = dynamic_cast<CQSVGFontObj *>(fontDef.getObj());
+
+  return fontObj->font();
 }
 
 void
 CQSVGObject::
 setFont(QFont f)
 {
-  obj_->setFont(CQUtil::fromQFont(f));
+  CFontPtr font = CQUtil::fromQFont(f);
+
+  CSVGFontDef fontDef = obj_->getFontDef();
+
+  //CQSVGFontObj *fontObj = dynamic_cast<CQSVGFontObj *>(fontDef.getObj());
+
+  //fontDef.setFont(font);
+
+  obj_->setFontDef(fontDef);
 }
 
 void

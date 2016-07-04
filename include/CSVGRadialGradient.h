@@ -12,7 +12,7 @@ class CSVGRadialGradient : public CSVGObject {
   typedef std::vector<CSVGStop *> StopList;
 
  public:
-  CSVG_OBJECT_DEF("radial_gradient", CSVGObjTypeId::RADIAL_GRADIENT)
+  CSVG_OBJECT_DEF("radialGradient", CSVGObjTypeId::RADIAL_GRADIENT)
 
   CSVGRadialGradient(CSVG &svg);
   CSVGRadialGradient(const CSVGRadialGradient &rg);
@@ -69,9 +69,15 @@ class CSVGRadialGradient : public CSVGObject {
 
   void termParse();
 
+  bool canFlatten() const override { return false; }
+
   bool isDrawable() const override { return false; }
 
+  void addLinkStops();
+
   void print(std::ostream &os, bool hier) const override;
+
+  void printValues(std::ostream &os, bool flat=false) const override;
 
   void setFillBuffer  (CSVGBuffer *buffer, CSVGObject *obj, const COptReal &opacity);
   void setStrokeBuffer(CSVGBuffer *buffer, CSVGObject *obj, const COptReal &opacity);
@@ -93,6 +99,7 @@ class CSVGRadialGradient : public CSVGObject {
   COptValT<CMatrixStack2D>      gtransform_;
   COptValT<CSVGCoordUnits>      units_;
   COptValT<CGradientSpreadType> spread_;
+  COptValT<CSVGXLink>           xlink_;
 };
 
 #endif

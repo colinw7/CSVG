@@ -1,0 +1,113 @@
+#!/bin/csh -f
+
+set files = ()
+set gui  = 0
+set diff = 0
+@   tol  = 0
+
+while ($#argv > 0)
+  if      ("$1" == "-gui") then
+    set gui = 1
+    shift
+  else if ("$1" == "-diff") then
+    set diff = 1
+    shift
+  else if ("$1" == "-tol") then
+    shift
+    if ($#argv > 0) then
+      @ tol = $1
+      shift
+    endif
+  else
+    set files = ($files $1)
+    shift
+  endif
+end
+
+if ($#files) then
+  foreach file ($files)
+    set png = $file:r.png
+
+    if ($gui == 1) then
+      if ($diff == 1) then
+        set rc = 0
+
+        set d = `CImageDiff .png/$png .png_ref/$png`
+
+        if ($status == 0) then
+          set rc = `echo "$d > $tol" | bc`
+        else
+          set rc = 1
+        endif
+
+        if ($rc) then
+          CQImageDiff .png/$png .png_ref/$png -bg "#ffffff"
+        endif
+      else
+        CQImageDiff .png/$png .png_ref/$png -bg "#ffffff"
+      endif
+    else
+      set rc = 0
+
+      set d = `CImageDiff .png/$png .png_ref/$png`
+
+      if ($status == 0) then
+        set rc = `echo "$d > $tol" | bc`
+      else
+        set rc = 1
+      endif
+
+      if ($rc) then
+        echo "Different $file (Diff: $d, Status: $status)"
+      else
+        if ($diff == 0) then
+          echo "Identical $file"
+        endif
+      endif
+    endif
+  end
+else
+  cd .png
+
+  foreach file (*.png)
+    if ($gui == 1) then
+      if ($diff == 1) then
+        set rc = 0
+
+        set d = `CImageDiff $file ../.png_ref/$file`
+
+        if ($status == 0) then
+          set rc = `echo "$d > $tol" | bc`
+        else
+          set rc = 1
+        endif
+
+        if ($rc) then
+          CQImageDiff $file ../.png_ref/$file -bg "#ffffff"
+        endif
+      else
+        CQImageDiff $file ../.png_ref/$file -bg "#ffffff"
+      endif
+    else
+      set rc = 0
+
+      set d = `CImageDiff $file ../.png_ref/$file`
+
+      if ($status == 0) then
+        set rc = `echo "$d > $tol" | bc`
+      else
+        set rc = 1
+      endif
+
+      if ($rc) then
+        echo "Different $file (Diff: $d, Status: $status)"
+      else
+        if ($diff == 0) then
+          echo "Identical $file"
+        endif
+      endif
+    endif
+  end
+endif
+
+exit 0

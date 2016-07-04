@@ -117,12 +117,7 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<feMerge";
 
-    CSVGObject::printValues(os);
-
-    CSVGFilterBase::printValues(os);
-
-    printNameValue(os, "in"    , filterIn_ );
-    printNameValue(os, "result", filterOut_);
+    printValues(os);
 
     os << ">" << std::endl;
 
@@ -132,6 +127,18 @@ print(std::ostream &os, bool hier) const
   }
   else
     os << "feMerge";
+}
+
+void
+CSVGFeMerge::
+printValues(std::ostream &os, bool flat) const
+{
+  CSVGObject::printValues(os, flat);
+
+  CSVGFilterBase::printValues(os, flat);
+
+  printNameValue(os, "in"    , filterIn_ );
+  printNameValue(os, "result", filterOut_);
 }
 
 std::ostream &

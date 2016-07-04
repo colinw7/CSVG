@@ -118,6 +118,15 @@ getImage(CSVGBuffer *buffer) const
   return true;
 }
 
+bool
+CSVGXLink::
+isNull() const
+{
+  resolve();
+
+  return (str_.empty() && ! object_);
+}
+
 void
 CSVGXLink::
 resolve() const

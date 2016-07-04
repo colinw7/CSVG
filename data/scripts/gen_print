@@ -1,0 +1,30 @@
+#!/bin/csh -f
+
+if (! -e .png) then
+  mkdir .png
+endif
+
+if (! -e .png_print) then
+  mkdir .png_print
+endif
+
+foreach file (fig*.svg)
+  echo -n "Processing $file : "
+
+  CSVGTest -print $file >! .png_print/$file
+
+  set png_file = svg_${file:r}.png
+
+  CQSVG -image -image_dir ".png" $file
+  CQSVG -image -image_dir ".png_print" .png_print/$file
+  
+  set d = `CImageDiff .png/$png_file .png_print/$png_file`
+
+  if ($status != 0 || $d != 0) then
+    echo "Different (Diff: $d, Status: $status)"
+  else
+    echo "Identical"
+  endif
+end
+
+exit 0

@@ -109,14 +109,7 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<feSpecularLighting";
 
-    CSVGObject::printValues(os);
-
-    printNameValue(os, "in"              , filterIn_ );
-    printNameValue(os, "result"          , filterOut_);
-    printNameValue(os, "lighting-color"  , lightingColor_);
-    printNameValue(os, "specularConstant", specularConstant_);
-    printNameValue(os, "specularExponent", specularExponent_);
-    printNameValue(os, "surfaceScale"    , surfaceScale_);
+    printValues(os);
 
     if (hasChildren()) {
       os << ">" << std::endl;
@@ -130,6 +123,20 @@ print(std::ostream &os, bool hier) const
   }
   else
     os << "feSpecularLighting ";
+}
+
+void
+CSVGFeSpecularLighting::
+printValues(std::ostream &os, bool flat) const
+{
+  CSVGObject::printValues(os, flat);
+
+  printNameValue(os, "in"              , filterIn_ );
+  printNameValue(os, "result"          , filterOut_);
+  printNameValue(os, "lighting-color"  , lightingColor_);
+  printNameValue(os, "specularConstant", specularConstant_);
+  printNameValue(os, "specularExponent", specularExponent_);
+  printNameValue(os, "surfaceScale"    , surfaceScale_);
 }
 
 std::ostream &

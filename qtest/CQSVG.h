@@ -23,6 +23,8 @@ class CQSVG : public QObject, public CSVG {
 
  ~CQSVG();
 
+  CSVG *dup() const override;
+
   //---
 
   CQSVGWindow *window() const { return window_; }
@@ -99,6 +101,7 @@ class CQSVG : public QObject, public CSVG {
   CSVGUse                *createUse() override;
 
   CSVGImageData *createImageData() override;
+  CSVGFontObj*   createFontObj(const CSVGFontDef &def) override;
 
   CSVGPathMoveTo   *createPathMoveTo  (double x, double y) override;
   CSVGPathRMoveTo  *createPathRMoveTo (double x, double y) override;

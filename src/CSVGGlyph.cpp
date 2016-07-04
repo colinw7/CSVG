@@ -84,24 +84,31 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<glyph";
 
-    CSVGObject::printValues(os);
-
-    printNameValue(os, "unicode"      , unicode_    );
-    printNameValue(os, "glyph-name"   , glyphName_  );
-    printNameParts(os, "d"            , parts_      );
-    printNameValue(os, "orientation"  , orientation_);
-    printNameValue(os, "arabic-form"  , arabicForm_ );
-    printNameValue(os, "lang"         , lang_       );
-    printNameValue(os, "horiz-adv-x"  , horizAdvX_  );
-    printNameValue(os, "vert-adv-y"   , vertAdvY_   );
-    printNameValue(os, "vert-origin-x", vertOriginX_);
-    printNameValue(os, "vert-origin-y", vertOriginY_);
+    printValues(os);
 
     os << "/>" << std::endl;
   }
   else {
     os << "glyph " << unicode_ << " " << glyphName_ << "(" << parts_ << ")";
   }
+}
+
+void
+CSVGGlyph::
+printValues(std::ostream &os, bool flat) const
+{
+  CSVGObject::printValues(os, flat);
+
+  printNameValue(os, "unicode"      , unicode_    );
+  printNameValue(os, "glyph-name"   , glyphName_  );
+  printNameParts(os, "d"            , parts_      );
+  printNameValue(os, "orientation"  , orientation_);
+  printNameValue(os, "arabic-form"  , arabicForm_ );
+  printNameValue(os, "lang"         , lang_       );
+  printNameValue(os, "horiz-adv-x"  , horizAdvX_  );
+  printNameValue(os, "vert-adv-y"   , vertAdvY_   );
+  printNameValue(os, "vert-origin-x", vertOriginX_);
+  printNameValue(os, "vert-origin-y", vertOriginY_);
 }
 
 std::ostream &

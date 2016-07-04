@@ -113,6 +113,7 @@ class CQSVGWindow : public QMainWindow {
   int                 ind_            { -1 };
   bool                initialized_    { false };
   CHRTime             startTime_;
+  CHRTime             busyTime_;
   CHRTime             endTime_;
 };
 

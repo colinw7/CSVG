@@ -173,19 +173,26 @@ print(std::ostream &os, bool hier) const
   if (hier) {
     os << "<feOffset";
 
-    CSVGObject::printValues(os);
-
-    CSVGFilterBase::printValues(os);
-
-    printNameValue(os, "in"    , filterIn_ );
-    printNameValue(os, "result", filterOut_);
-    printNameValue(os, "dx"    , dx_       );
-    printNameValue(os, "dy"    , dy_       );
+    printValues(os);
 
     os << "/>" << std::endl;
   }
   else
     os << "feOffset ";
+}
+
+void
+CSVGFeOffset::
+printValues(std::ostream &os, bool flat) const
+{
+  CSVGObject::printValues(os, flat);
+
+  CSVGFilterBase::printValues(os, flat);
+
+  printNameValue(os, "in"    , filterIn_ );
+  printNameValue(os, "result", filterOut_);
+  printNameValue(os, "dx"    , dx_       );
+  printNameValue(os, "dy"    , dy_       );
 }
 
 std::ostream &
