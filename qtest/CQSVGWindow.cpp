@@ -3,6 +3,7 @@
 #include <CQSVGCanvas.h>
 #include <CQSVGPropertiesDlg.h>
 #include <CQSVGBufferView.h>
+#include <CQSVGJSDialog.h>
 
 #include <CQSVGAnchor.h>
 #include <CQSVGAnimate.h>
@@ -79,6 +80,7 @@
 #include <svg/prev_svg.h>
 #include <svg/properties_svg.h>
 #include <svg/buffers_svg.h>
+#include <svg/javascript_svg.h>
 #include <svg/play_svg.h>
 #include <svg/pause_svg.h>
 #include <svg/play_one_svg.h>
@@ -274,6 +276,13 @@ CQSVGWindow() :
 
   viewMenu->addAction(buffersAction);
 
+  QAction *jsAction = new QAction("&JavaScript", this);
+  jsAction->setIcon(CQPixmapCacheInst->getIcon("JAVASCRIPT"));
+
+  connect(jsAction, SIGNAL(triggered()), this, SLOT(showJSDialog()));
+
+  viewMenu->addAction(jsAction);
+
   //---
 
   animateMenu_ = menuBar()->addMenu("&Animate");
@@ -334,6 +343,7 @@ CQSVGWindow() :
   viewToolBar->addAction(nextAction_);
   viewToolBar->addAction(propertiesAction);
   viewToolBar->addAction(buffersAction);
+  viewToolBar->addAction(jsAction);
 
   addToolBar(viewToolBar);
 
@@ -1180,6 +1190,19 @@ showBuffers()
   bufferView_->show();
 
   bufferView_->raise();
+}
+
+void
+CQSVGWindow::
+showJSDialog()
+{
+  if (! jsDlg_) {
+    jsDlg_ = new CQSVGJSDialog(this);
+  }
+
+  jsDlg_->show();
+
+  jsDlg_->raise();
 }
 
 void

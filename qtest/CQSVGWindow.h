@@ -8,6 +8,7 @@ class CQSVG;
 class CQSVGCanvas;
 class CQSVGPropertiesDlg;
 class CQSVGBufferView;
+class CQSVGJSDialog;
 class CQPropertyTree;
 class CSVGObject;
 class QLabel;
@@ -79,6 +80,7 @@ class CQSVGWindow : public QMainWindow {
 
   void showProperties();
   void showBuffers();
+  void showJSDialog();
 
   void playSlot();
   void pauseSlot();
@@ -94,9 +96,10 @@ class CQSVGWindow : public QMainWindow {
   CQPropertyTree*     propTree_       { 0 };
   QLabel*             posLabel_       { 0 };
   QLabel*             zoomLabel_      { 0 };
-  QToolButton*        busyButton_      { 0 };
+  QToolButton*        busyButton_     { 0 };
   CQSVGPropertiesDlg* propertiesDlg_  { 0 };
   CQSVGBufferView*    bufferView_     { 0 };
+  CQSVGJSDialog*      jsDlg_          { 0 };
   QAction*            nextAction_     { 0 };
   QAction*            prevAction_     { 0 };
   QMenu*              animateMenu_    { 0 };

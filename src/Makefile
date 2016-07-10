@@ -101,6 +101,11 @@ CSVGUse.cpp \
 CSVGUtil.cpp \
 CSVGXLink.cpp \
 \
+CSVGJDocument.cpp \
+CSVGJEvent.cpp \
+CSVGJObject.cpp \
+CSVGJTransform.cpp \
+\
 CLog.cpp \
 CEncode64.cpp \
 CMathGeom2D.cpp \

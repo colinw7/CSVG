@@ -70,6 +70,12 @@
 #include <CSVGUtil.h>
 #include <CSVGFontObj.h>
 
+#include <CSVGJavaScript.h>
+#include <CSVGJDocument.h>
+#include <CSVGJObject.h>
+#include <CSVGJEvent.h>
+#include <CSVGJTransform.h>
+
 #include <CRadialGradient.h>
 #include <CLinearGradient.h>
 #include <CConfig.h>
@@ -80,130 +86,6 @@
 #include <CRegExp.h>
 #include <CStrParse.h>
 #include <CRGBName.h>
-
-class CSVGJObject : public CJObject {
- public:
-  CSVGJObject(CSVG *svg) :
-   CJObject("SVG"), svg_(svg) {
-  }
-
-  CJValue *dup() const override { return new CSVGJObject(svg_); }
-
-  std::string toString() const override { return "SVG"; }
-
-  double toReal() const override { return 0; }
-
-  bool toBoolean() const override { return 0; }
-
-  CJValueP execNameFn(CJavaScript *js, const std::string &name, const Values &values);
-
-  void print(std::ostream &os) const { os << "SVG"; }
-
- private:
-  CSVG *svg_;
-};
-
-class CSVGObjectJObject : public CJObject {
- public:
-  CSVGObjectJObject(CSVGObject *obj) :
-   CJObject("SVGObject"), obj_(obj) {
-  }
-
-  CJValue *dup() const override { return new CSVGObjectJObject(obj_); }
-
-  std::string toString() const override { return "SVGObject"; }
-
-  double toReal() const override { return 0; }
-
-  bool toBoolean() const override { return 0; }
-
-  CJValueP execNameFn(CJavaScript *js, const std::string &name, const Values &values);
-
-  void print(std::ostream &os) const { os << "SVGObject"; }
-
- private:
-  CSVGObject *obj_;
-};
-
-class CSVGEventJObject : public CJObject {
- public:
-  CSVGEventJObject(CSVG *svg) :
-   CJObject("SVGEvent"), svg_(svg) {
-  }
-
-  CJValue *dup() const override { return new CSVGEventJObject(svg_); }
-
-  std::string toString() const override { return "SVGEvent"; }
-
-  double toReal() const override { return 0; }
-
-  bool toBoolean() const override { return 0; }
-
-  CJValueP execNameFn(CJavaScript *js, const std::string &name, const Values &values);
-
-  void print(std::ostream &os) const { os << "SVGEvent"; }
-
- private:
-  CSVG *svg_;
-};
-
-CJValueP
-CSVGJObject::
-execNameFn(CJavaScript *, const std::string &name, const Values &values)
-{
-  if (name == "getElementById") {
-    if (values.size() == 2) {
-      std::string id = values[1]->toString();
-
-      CSVGObject *obj = svg_->lookupObjectById(id);
-
-      CSVGObjectJObject *jobj = new CSVGObjectJObject(obj);
-
-      return CJValueP(jobj);
-    }
-
-    return CJValueP();
-  }
-  else
-    return CJValueP();
-}
-
-CJValueP
-CSVGObjectJObject::
-execNameFn(CJavaScript *, const std::string &name, const Values &values)
-{
-  if (name == "setAttribute") {
-    if (values.size() == 3) {
-      std::string name  = values[1]->toString();
-      std::string value = values[2]->toString();
-
-      obj_->processOption(name, value);
-
-      obj_->getSVG().redraw();
-    }
-
-    return CJValueP();
-  }
-  else
-    return CJValueP();
-}
-
-CJValueP
-CSVGEventJObject::
-execNameFn(CJavaScript *, const std::string &name, const Values &)
-{
-  if (name == "getTarget") {
-    CSVGObject *obj = svg_->eventObject();
-
-    CSVGObjectJObject *jobj = new CSVGObjectJObject(obj);
-
-    return CJValueP(jobj);
-  }
-  else
-    return CJValueP();
-}
-
-//------
 
 CSVG::
 CSVG(CSVGRenderer *renderer) :
@@ -237,8 +119,31 @@ CSVG(CSVGRenderer *renderer) :
 
   //---
 
-  jsObject_      = CJValueP(new CSVGJObject(this));
-  jsEventObject_ = CJValueP(new CSVGEventJObject(this));
+  js_ = createJavaScript();
+
+  jsDocumentType_       = CJObjectTypeP(new CSVGJDocumentType());
+  jsObjectType_         = CJObjectTypeP(new CSVGJObjectType());
+  jsEventType_          = CJObjectTypeP(new CSVGJEventType());
+  jsTransformStackType_ = CJObjectTypeP(new CSVGJTransformStackType());
+  jsTransformType_      = CJObjectTypeP(new CSVGJTransformType());
+  jsMatrixType_         = CJObjectTypeP(new CSVGJMatrixType());
+
+  jsDocument_  = CJValueP(new CSVGJDocument(this));
+  jsEvent_     = CJValueP(new CSVGJEvent(this));
+
+  CJVariableP var1(js()->createVariable("document"   , jsDocument()));
+  CJVariableP var2(js()->createVariable("svgDocument", jsDocument()));
+
+  js()->addVariable(var1);
+  js()->addVariable(var2);
+
+  CJDictionary *transformDict = new CJDictionary(js());
+
+  js()->addVariable(CJVariableP(js()->createVariable("SVGTransform", CJValueP(transformDict))));
+
+  transformDict->addProperty(js(), "SVG_TRANSFORM_TRANSLATE", int(CMatrixTransformType::TRANSLATE));
+  transformDict->addProperty(js(), "SVG_TRANSFORM_SCALE"    , int(CMatrixTransformType::SCALE1));
+  transformDict->addProperty(js(), "SVG_TRANSFORM_ROTATE"   , int(CMatrixTransformType::ROTATE));
 }
 
 CSVG::
@@ -812,6 +717,13 @@ createObjectByName(const std::string &name)
     object->autoName();
 
   return object;
+}
+
+CSVGJavaScript *
+CSVG::
+createJavaScript()
+{
+  return new CSVGJavaScript(this);
 }
 
 CSVGBlock *
@@ -1529,17 +1441,13 @@ execJsEvent(CSVGObject *obj, const std::string &str)
 {
   setEventObject(obj);
 
-  CJVariableP var1(new CJVariable("svgDocument", jsObject()));
+  CJVariableP var3(js()->createVariable("evt", jsEvent()));
 
-  js().addVariable(var1);
+  js()->addVariable(var3);
 
-  CJVariableP var2(new CJVariable("evt", jsEventObject()));
+  js()->loadString(str);
 
-  js().addVariable(var2);
-
-  js().loadString(str);
-
-  js().exec();
+  js()->exec();
 }
 
 void
@@ -4746,9 +4654,9 @@ void
 CSVG::
 setScript(const std::string &str)
 {
-  js_.loadString(str);
+  js()->loadString(str);
 
-  js_.exec();
+  js()->exec();
 }
 
 //------

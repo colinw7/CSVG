@@ -115,3 +115,7 @@
  + Abstact font to CFontObj virtual class
  + Base em size calc on current font
  + Use QFont for CFontObj in CQSVG
+
+### 7/10/2016
+ + Add JavaScript Console Dialog
+ + Add JavaScript Object Transform Objects

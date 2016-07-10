@@ -11,6 +11,7 @@ QMAKE_CXXFLAGS += -std=c++11
 MOC_DIR = .moc
 
 CONFIG += debug
+CONFIG += silent
 
 # Input
 SOURCES += \
@@ -51,6 +52,7 @@ CQSVGFeTurbulence.cpp \
 CQSVGFilter.cpp \
 CQSVGGroup.cpp \
 CQSVGImage.cpp \
+CQSVGJSDialog.cpp \
 CQSVGLinearGradient.cpp \
 CQSVGLine.cpp \
 CQSVGMarker.cpp \
@@ -80,6 +82,8 @@ CQSVGRenderer.cpp \
 CQSVGImageData.cpp \
 CQSVGFontObj.cpp \
 CQSVGUtil.cpp \
+\
+CQHistoryLineEdit.cpp \
 
 HEADERS += \
 CEnumConv.h \
@@ -120,6 +124,7 @@ CQSVGFilter.h \
 CQSVGGroup.h \
 CQSVG.h \
 CQSVGImage.h \
+CQSVGJSDialog.h \
 CQSVGLinearGradient.h \
 CQSVGLine.h \
 CQSVGMarker.h \
@@ -150,6 +155,7 @@ CQSVGImageData.h \
 CQSVGFontObj.h \
 CQSVGUtil.h \
 \
+CQHistoryLineEdit.h \
 
 DESTDIR     = ../bin
 OBJECTS_DIR = ../obj

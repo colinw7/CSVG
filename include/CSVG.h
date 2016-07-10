@@ -100,6 +100,8 @@ class CSVGObjectMarker;
 class CSVGBufferMgr;
 class CSVGImageData;
 
+class CSVGJavaScript;
+
 class CStrParse;
 class CConfig;
 class CXML;
@@ -249,6 +251,7 @@ class CSVG {
 
   virtual CSVGObject *createObjectByName(const std::string &name);
 
+  virtual CSVGJavaScript          *createJavaScript();
   virtual CSVGBlock               *createBlock();
   virtual CSVGAnchor              *createAnchor();
   virtual CSVGAnimate             *createAnimate();
@@ -391,11 +394,17 @@ class CSVG {
 
   //---
 
-  CJavaScript &js() { return js_; }
+  CSVGJavaScript *js() { return js_; }
 
-  CJValueP jsObject() { return jsObject_; }
+  CJObjectTypeP jsDocumentType      () const { return jsDocumentType_; }
+  CJObjectTypeP jsObjectType        () const { return jsObjectType_; }
+  CJObjectTypeP jsEventType         () const { return jsEventType_; }
+  CJObjectTypeP jsTransformStackType() const { return jsTransformStackType_; }
+  CJObjectTypeP jsTransformType     () const { return jsTransformType_; }
+  CJObjectTypeP jsMatrixType        () const { return jsMatrixType_; }
 
-  CJValueP jsEventObject() { return jsEventObject_; }
+  CJValueP jsDocument() const { return jsDocument_; }
+  CJValueP jsEvent   () const { return jsEvent_; }
 
   CSVGObject *eventObject() { return eventObject_; }
   void setEventObject(CSVGObject *p) { eventObject_ = p; }
@@ -675,9 +684,15 @@ class CSVG {
   NameObjectMap           idObjectMap_;
   CSVGCSSData             cssData_;
   CCSS                    css_;
-  CJavaScript             js_;
-  CJValueP                jsObject_;
-  CJValueP                jsEventObject_;
+  CSVGJavaScript*         js_;
+  CJObjectTypeP           jsDocumentType_;
+  CJObjectTypeP           jsObjectType_;
+  CJObjectTypeP           jsEventType_;
+  CJObjectTypeP           jsTransformStackType_;
+  CJObjectTypeP           jsTransformType_;
+  CJObjectTypeP           jsMatrixType_;
+  CJValueP                jsDocument_;
+  CJValueP                jsEvent_;
   CSVGObject*             eventObject_ { 0 };
   ObjectList              drawObjects_;
   Colors                  colors_;

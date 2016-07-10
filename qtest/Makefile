@@ -10,13 +10,13 @@ MAKEFILE      = Makefile
 
 ####### Compiler, tools and options
 
-CC            = gcc
-CXX           = g++
+CC            = @echo compiling $< && gcc
+CXX           = @echo compiling $< && g++
 DEFINES       = -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
 CFLAGS        = -m64 -pipe -g -Wall -W -D_REENTRANT -fPIE $(DEFINES)
 CXXFLAGS      = -m64 -pipe -std=c++11 -g -Wall -W -D_REENTRANT -fPIE $(DEFINES)
 INCPATH       = -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I. -I. -I../include -I../../CSVG/include -I../../CQApp/include -I../../CQUtil/include -I../../CQPropertyTree/include -I../../CFont/include -I../../CImageLib/include -I../../CReadLine/include -I../../CFileUtil/include -I../../CFile/include -I../../COS/include -I../../CUtil/include -I../../CMath/include -I../../CStrUtil/include -I../../CRGBName/include -I../../CCSS/include -I../../CXML/include -I../../CJavaScript/include -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I.moc
-LINK          = g++
+LINK          = @echo linking $@ && g++
 LFLAGS        = -m64
 LIBS          = $(SUBLIBS) -L/usr/X11R6/lib64 -L../lib -L../../CQUtil/lib -L../../CQPropertyTree/lib -L../../CCSS/lib -L../../CXML/lib -L../../CJavaScript/lib -L../../CReadLine/lib -L../../CFont/lib -L../../CUtil/lib -L../../CImageLib/lib -L../../CConfig/lib -L../../CFileUtil/lib -L../../CFile/lib -L../../COS/lib -L../../CStrUtil/lib -L../../CRegExp/lib -L../../CRGBName/lib -lCSVG -lCQPropertyTree -lCQUtil -lCCSS -lCXML -lCJavaScript -lCReadLine -lCConfig -lCUtil -lCFont -lCImageLib -lCRGBName -lCFileUtil -lCFile -lCOS -lCStrUtil -lCRegExp -lpng -ljpeg -ltre -lreadline -lQt5Widgets -L/usr/lib/x86_64-linux-gnu -lQt5Gui -lQt5Core -lGL -lpthread 
 AR            = ar cqs
@@ -82,6 +82,7 @@ SOURCES       = CQSVG.cpp \
 		CQSVGFilter.cpp \
 		CQSVGGroup.cpp \
 		CQSVGImage.cpp \
+		CQSVGJSDialog.cpp \
 		CQSVGLinearGradient.cpp \
 		CQSVGLine.cpp \
 		CQSVGMarker.cpp \
@@ -109,7 +110,8 @@ SOURCES       = CQSVG.cpp \
 		CQSVGRenderer.cpp \
 		CQSVGImageData.cpp \
 		CQSVGFontObj.cpp \
-		CQSVGUtil.cpp .moc/moc_CQSVGAnchor.cpp \
+		CQSVGUtil.cpp \
+		CQHistoryLineEdit.cpp .moc/moc_CQSVGAnchor.cpp \
 		.moc/moc_CQSVGAnimate.cpp \
 		.moc/moc_CQSVGAnimateBase.cpp \
 		.moc/moc_CQSVGAnimateColor.cpp \
@@ -146,6 +148,7 @@ SOURCES       = CQSVG.cpp \
 		.moc/moc_CQSVGGroup.cpp \
 		.moc/moc_CQSVG.cpp \
 		.moc/moc_CQSVGImage.cpp \
+		.moc/moc_CQSVGJSDialog.cpp \
 		.moc/moc_CQSVGLinearGradient.cpp \
 		.moc/moc_CQSVGLine.cpp \
 		.moc/moc_CQSVGMarker.cpp \
@@ -169,7 +172,8 @@ SOURCES       = CQSVG.cpp \
 		.moc/moc_CQSVGTitle.cpp \
 		.moc/moc_CQSVGTSpan.cpp \
 		.moc/moc_CQSVGUse.cpp \
-		.moc/moc_CQSVGWindow.cpp
+		.moc/moc_CQSVGWindow.cpp \
+		.moc/moc_CQHistoryLineEdit.cpp
 OBJECTS       = ../obj/CQSVG.o \
 		../obj/CQSVGAnchor.o \
 		../obj/CQSVGAnimate.o \
@@ -207,6 +211,7 @@ OBJECTS       = ../obj/CQSVG.o \
 		../obj/CQSVGFilter.o \
 		../obj/CQSVGGroup.o \
 		../obj/CQSVGImage.o \
+		../obj/CQSVGJSDialog.o \
 		../obj/CQSVGLinearGradient.o \
 		../obj/CQSVGLine.o \
 		../obj/CQSVGMarker.o \
@@ -235,6 +240,7 @@ OBJECTS       = ../obj/CQSVG.o \
 		../obj/CQSVGImageData.o \
 		../obj/CQSVGFontObj.o \
 		../obj/CQSVGUtil.o \
+		../obj/CQHistoryLineEdit.o \
 		../obj/moc_CQSVGAnchor.o \
 		../obj/moc_CQSVGAnimate.o \
 		../obj/moc_CQSVGAnimateBase.o \
@@ -272,6 +278,7 @@ OBJECTS       = ../obj/CQSVG.o \
 		../obj/moc_CQSVGGroup.o \
 		../obj/moc_CQSVG.o \
 		../obj/moc_CQSVGImage.o \
+		../obj/moc_CQSVGJSDialog.o \
 		../obj/moc_CQSVGLinearGradient.o \
 		../obj/moc_CQSVGLine.o \
 		../obj/moc_CQSVGMarker.o \
@@ -295,7 +302,8 @@ OBJECTS       = ../obj/CQSVG.o \
 		../obj/moc_CQSVGTitle.o \
 		../obj/moc_CQSVGTSpan.o \
 		../obj/moc_CQSVGUse.o \
-		../obj/moc_CQSVGWindow.o
+		../obj/moc_CQSVGWindow.o \
+		../obj/moc_CQHistoryLineEdit.o
 DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/shell-unix.conf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/unix.conf \
@@ -367,6 +375,7 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exceptions.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/yacc.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/lex.prf \
+		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/silent.prf \
 		CQSVG.pro \
 		CQSVG.pro
 QMAKE_TARGET  = CQSVG
@@ -401,7 +410,7 @@ all: Makefile $(TARGET)
 $(TARGET):  $(OBJECTS)  
 	@test -d ../bin/ || mkdir -p ../bin/
 	$(LINK) $(LFLAGS) -o $(TARGET) $(OBJECTS) $(OBJCOMP) $(LIBS)
-	{ test -n "$(DESTDIR)" && DESTDIR="$(DESTDIR)" || DESTDIR=.; } && test $$(gdb --version | sed -e 's,[^0-9][^0-9]*\([0-9]\)\.\([0-9]\).*,\1\2,;q') -gt 72 && gdb --nx --batch --quiet -ex 'set confirm off' -ex "save gdb-index $$DESTDIR" -ex quit '$(TARGET)' && test -f $(TARGET).gdb-index && objcopy --add-section '.gdb_index=$(TARGET).gdb-index' --set-section-flags '.gdb_index=readonly' '$(TARGET)' '$(TARGET)' && rm -f $(TARGET).gdb-index || true
+	@echo indexing $@ for gdb && { test -n "$(DESTDIR)" && DESTDIR="$(DESTDIR)" || DESTDIR=.; } && test $$(gdb --version | sed -e 's,[^0-9][^0-9]*\([0-9]\)\.\([0-9]\).*,\1\2,;q') -gt 72 && gdb --nx --batch --quiet -ex 'set confirm off' -ex "save gdb-index $$DESTDIR" -ex quit '$(TARGET)' && test -f $(TARGET).gdb-index && objcopy --add-section '.gdb_index=$(TARGET).gdb-index' --set-section-flags '.gdb_index=readonly' '$(TARGET)' '$(TARGET)' && rm -f $(TARGET).gdb-index || true
 
 Makefile: CQSVG.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64/qmake.conf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/shell-unix.conf \
@@ -474,6 +483,7 @@ Makefile: CQSVG.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64/qmake.con
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exceptions.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/yacc.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/lex.prf \
+		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/silent.prf \
 		CQSVG.pro \
 		/usr/lib/x86_64-linux-gnu/libQt5Widgets.prl \
 		/usr/lib/x86_64-linux-gnu/libQt5Gui.prl \
@@ -550,6 +560,7 @@ Makefile: CQSVG.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64/qmake.con
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exceptions.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/yacc.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/lex.prf:
+/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/silent.prf:
 CQSVG.pro:
 /usr/lib/x86_64-linux-gnu/libQt5Widgets.prl:
 /usr/lib/x86_64-linux-gnu/libQt5Gui.prl:
@@ -561,7 +572,7 @@ qmake_all: FORCE
 
 dist: 
 	@test -d ../obj/CQSVG1.0.0 || mkdir -p ../obj/CQSVG1.0.0
-	$(COPY_FILE) --parents $(SOURCES) $(DIST) ../obj/CQSVG1.0.0/ && $(COPY_FILE) --parents CEnumConv.h CQSVGAnchor.h CQSVGAnimate.h CQSVGAnimateBase.h CQSVGAnimateColor.h CQSVGAnimateMotion.h CQSVGAnimateTransform.h CQSVGBlock.h CQSVGBufferView.h CQSVGCanvas.h CQSVGCircle.h CQSVGClipPath.h CQSVGDefs.h CQSVGDesc.h CQSVGEllipse.h CQSVGEnum.h CQSVGFeBlend.h CQSVGFeColorMatrix.h CQSVGFeComposite.h CQSVGFeDiffuseLighting.h CQSVGFeDisplacementMap.h CQSVGFeDistantLight.h CQSVGFeFlood.h CQSVGFeGaussianBlur.h CQSVGFeImage.h CQSVGFeMerge.h CQSVGFeMergeNode.h CQSVGFeMorphology.h CQSVGFeOffset.h CQSVGFePointLight.h CQSVGFeSpecularLighting.h CQSVGFeSpotLight.h CQSVGFeTile.h CQSVGFeTurbulence.h CQSVGFilter.h CQSVGGroup.h CQSVG.h CQSVGImage.h CQSVGLinearGradient.h CQSVGLine.h CQSVGMarker.h CQSVGMask.h CQSVGMPath.h CQSVGObject.h CQSVGPath.h CQSVGPathPart.h CQSVGPattern.h CQSVGPolygon.h CQSVGPolyLine.h CQSVGPropertiesDlg.h CQSVGRadialGradient.h CQSVGRect.h CQSVGSet.h CQSVGStop.h CQSVGStyleTree.h CQSVGSymbol.h CQSVGText.h CQSVGTextPath.h CQSVGTitle.h CQSVGTSpan.h CQSVGUse.h CQSVGWindow.h CQSVGRenderer.h CQSVGImageData.h CQSVGFontObj.h CQSVGUtil.h ../obj/CQSVG1.0.0/ && $(COPY_FILE) --parents CQSVG.cpp CQSVGAnchor.cpp CQSVGAnimate.cpp CQSVGAnimateBase.cpp CQSVGAnimateColor.cpp CQSVGAnimateMotion.cpp CQSVGAnimateTransform.cpp CQSVGBlock.cpp CQSVGBufferView.cpp CQSVGCanvas.cpp CQSVGCircle.cpp CQSVGClipPath.cpp CQSVGDefs.cpp CQSVGDesc.cpp CQSVGEllipse.cpp CQSVGEnum.cpp CQSVGFeBlend.cpp CQSVGFeColorMatrix.cpp CQSVGFeComposite.cpp CQSVGFeDiffuseLighting.cpp CQSVGFeDisplacementMap.cpp CQSVGFeDistantLight.cpp CQSVGFeFlood.cpp CQSVGFeGaussianBlur.cpp CQSVGFeImage.cpp CQSVGFeMerge.cpp CQSVGFeMergeNode.cpp CQSVGFeMorphology.cpp CQSVGFeOffset.cpp CQSVGFePointLight.cpp CQSVGFeSpecularLighting.cpp CQSVGFeSpotLight.cpp CQSVGFeTile.cpp CQSVGFeTurbulence.cpp CQSVGFilter.cpp CQSVGGroup.cpp CQSVGImage.cpp CQSVGLinearGradient.cpp CQSVGLine.cpp CQSVGMarker.cpp CQSVGMask.cpp CQSVGMPath.cpp CQSVGObject.cpp CQSVGPath.cpp CQSVGPathPart.cpp CQSVGPattern.cpp CQSVGPolygon.cpp CQSVGPolyLine.cpp CQSVGPropertiesDlg.cpp CQSVGRadialGradient.cpp CQSVGRect.cpp CQSVGSet.cpp CQSVGStop.cpp CQSVGStyleTree.cpp CQSVGSymbol.cpp CQSVGText.cpp CQSVGTextPath.cpp CQSVGTitle.cpp CQSVGTSpan.cpp CQSVGUse.cpp CQSVGWindow.cpp CQSVGRenderer.cpp CQSVGImageData.cpp CQSVGFontObj.cpp CQSVGUtil.cpp ../obj/CQSVG1.0.0/ && (cd `dirname ../obj/CQSVG1.0.0` && $(TAR) CQSVG1.0.0.tar CQSVG1.0.0 && $(COMPRESS) CQSVG1.0.0.tar) && $(MOVE) `dirname ../obj/CQSVG1.0.0`/CQSVG1.0.0.tar.gz . && $(DEL_FILE) -r ../obj/CQSVG1.0.0
+	$(COPY_FILE) --parents $(SOURCES) $(DIST) ../obj/CQSVG1.0.0/ && $(COPY_FILE) --parents CEnumConv.h CQSVGAnchor.h CQSVGAnimate.h CQSVGAnimateBase.h CQSVGAnimateColor.h CQSVGAnimateMotion.h CQSVGAnimateTransform.h CQSVGBlock.h CQSVGBufferView.h CQSVGCanvas.h CQSVGCircle.h CQSVGClipPath.h CQSVGDefs.h CQSVGDesc.h CQSVGEllipse.h CQSVGEnum.h CQSVGFeBlend.h CQSVGFeColorMatrix.h CQSVGFeComposite.h CQSVGFeDiffuseLighting.h CQSVGFeDisplacementMap.h CQSVGFeDistantLight.h CQSVGFeFlood.h CQSVGFeGaussianBlur.h CQSVGFeImage.h CQSVGFeMerge.h CQSVGFeMergeNode.h CQSVGFeMorphology.h CQSVGFeOffset.h CQSVGFePointLight.h CQSVGFeSpecularLighting.h CQSVGFeSpotLight.h CQSVGFeTile.h CQSVGFeTurbulence.h CQSVGFilter.h CQSVGGroup.h CQSVG.h CQSVGImage.h CQSVGJSDialog.h CQSVGLinearGradient.h CQSVGLine.h CQSVGMarker.h CQSVGMask.h CQSVGMPath.h CQSVGObject.h CQSVGPath.h CQSVGPathPart.h CQSVGPattern.h CQSVGPolygon.h CQSVGPolyLine.h CQSVGPropertiesDlg.h CQSVGRadialGradient.h CQSVGRect.h CQSVGSet.h CQSVGStop.h CQSVGStyleTree.h CQSVGSymbol.h CQSVGText.h CQSVGTextPath.h CQSVGTitle.h CQSVGTSpan.h CQSVGUse.h CQSVGWindow.h CQSVGRenderer.h CQSVGImageData.h CQSVGFontObj.h CQSVGUtil.h CQHistoryLineEdit.h ../obj/CQSVG1.0.0/ && $(COPY_FILE) --parents CQSVG.cpp CQSVGAnchor.cpp CQSVGAnimate.cpp CQSVGAnimateBase.cpp CQSVGAnimateColor.cpp CQSVGAnimateMotion.cpp CQSVGAnimateTransform.cpp CQSVGBlock.cpp CQSVGBufferView.cpp CQSVGCanvas.cpp CQSVGCircle.cpp CQSVGClipPath.cpp CQSVGDefs.cpp CQSVGDesc.cpp CQSVGEllipse.cpp CQSVGEnum.cpp CQSVGFeBlend.cpp CQSVGFeColorMatrix.cpp CQSVGFeComposite.cpp CQSVGFeDiffuseLighting.cpp CQSVGFeDisplacementMap.cpp CQSVGFeDistantLight.cpp CQSVGFeFlood.cpp CQSVGFeGaussianBlur.cpp CQSVGFeImage.cpp CQSVGFeMerge.cpp CQSVGFeMergeNode.cpp CQSVGFeMorphology.cpp CQSVGFeOffset.cpp CQSVGFePointLight.cpp CQSVGFeSpecularLighting.cpp CQSVGFeSpotLight.cpp CQSVGFeTile.cpp CQSVGFeTurbulence.cpp CQSVGFilter.cpp CQSVGGroup.cpp CQSVGImage.cpp CQSVGJSDialog.cpp CQSVGLinearGradient.cpp CQSVGLine.cpp CQSVGMarker.cpp CQSVGMask.cpp CQSVGMPath.cpp CQSVGObject.cpp CQSVGPath.cpp CQSVGPathPart.cpp CQSVGPattern.cpp CQSVGPolygon.cpp CQSVGPolyLine.cpp CQSVGPropertiesDlg.cpp CQSVGRadialGradient.cpp CQSVGRect.cpp CQSVGSet.cpp CQSVGStop.cpp CQSVGStyleTree.cpp CQSVGSymbol.cpp CQSVGText.cpp CQSVGTextPath.cpp CQSVGTitle.cpp CQSVGTSpan.cpp CQSVGUse.cpp CQSVGWindow.cpp CQSVGRenderer.cpp CQSVGImageData.cpp CQSVGFontObj.cpp CQSVGUtil.cpp CQHistoryLineEdit.cpp ../obj/CQSVG1.0.0/ && (cd `dirname ../obj/CQSVG1.0.0` && $(TAR) CQSVG1.0.0.tar CQSVG1.0.0 && $(COMPRESS) CQSVG1.0.0.tar) && $(MOVE) `dirname ../obj/CQSVG1.0.0`/CQSVG1.0.0.tar.gz . && $(DEL_FILE) -r ../obj/CQSVG1.0.0
 
 
 clean:compiler_clean 
@@ -584,9 +595,9 @@ check: first
 
 compiler_rcc_make_all:
 compiler_rcc_clean:
-compiler_moc_header_make_all: .moc/moc_CQSVGAnchor.cpp .moc/moc_CQSVGAnimate.cpp .moc/moc_CQSVGAnimateBase.cpp .moc/moc_CQSVGAnimateColor.cpp .moc/moc_CQSVGAnimateMotion.cpp .moc/moc_CQSVGAnimateTransform.cpp .moc/moc_CQSVGBlock.cpp .moc/moc_CQSVGBufferView.cpp .moc/moc_CQSVGCanvas.cpp .moc/moc_CQSVGCircle.cpp .moc/moc_CQSVGClipPath.cpp .moc/moc_CQSVGDefs.cpp .moc/moc_CQSVGDesc.cpp .moc/moc_CQSVGEllipse.cpp .moc/moc_CQSVGEnum.cpp .moc/moc_CQSVGFeBlend.cpp .moc/moc_CQSVGFeColorMatrix.cpp .moc/moc_CQSVGFeComposite.cpp .moc/moc_CQSVGFeDiffuseLighting.cpp .moc/moc_CQSVGFeDisplacementMap.cpp .moc/moc_CQSVGFeDistantLight.cpp .moc/moc_CQSVGFeFlood.cpp .moc/moc_CQSVGFeGaussianBlur.cpp .moc/moc_CQSVGFeImage.cpp .moc/moc_CQSVGFeMerge.cpp .moc/moc_CQSVGFeMergeNode.cpp .moc/moc_CQSVGFeMorphology.cpp .moc/moc_CQSVGFeOffset.cpp .moc/moc_CQSVGFePointLight.cpp .moc/moc_CQSVGFeSpecularLighting.cpp .moc/moc_CQSVGFeSpotLight.cpp .moc/moc_CQSVGFeTile.cpp .moc/moc_CQSVGFeTurbulence.cpp .moc/moc_CQSVGFilter.cpp .moc/moc_CQSVGGroup.cpp .moc/moc_CQSVG.cpp .moc/moc_CQSVGImage.cpp .moc/moc_CQSVGLinearGradient.cpp .moc/moc_CQSVGLine.cpp .moc/moc_CQSVGMarker.cpp .moc/moc_CQSVGMask.cpp .moc/moc_CQSVGMPath.cpp .moc/moc_CQSVGObject.cpp .moc/moc_CQSVGPath.cpp .moc/moc_CQSVGPathPart.cpp .moc/moc_CQSVGPattern.cpp .moc/moc_CQSVGPolygon.cpp .moc/moc_CQSVGPolyLine.cpp .moc/moc_CQSVGPropertiesDlg.cpp .moc/moc_CQSVGRadialGradient.cpp .moc/moc_CQSVGRect.cpp .moc/moc_CQSVGSet.cpp .moc/moc_CQSVGStop.cpp .moc/moc_CQSVGStyleTree.cpp .moc/moc_CQSVGSymbol.cpp .moc/moc_CQSVGText.cpp .moc/moc_CQSVGTextPath.cpp .moc/moc_CQSVGTitle.cpp .moc/moc_CQSVGTSpan.cpp .moc/moc_CQSVGUse.cpp .moc/moc_CQSVGWindow.cpp
+compiler_moc_header_make_all: .moc/moc_CQSVGAnchor.cpp .moc/moc_CQSVGAnimate.cpp .moc/moc_CQSVGAnimateBase.cpp .moc/moc_CQSVGAnimateColor.cpp .moc/moc_CQSVGAnimateMotion.cpp .moc/moc_CQSVGAnimateTransform.cpp .moc/moc_CQSVGBlock.cpp .moc/moc_CQSVGBufferView.cpp .moc/moc_CQSVGCanvas.cpp .moc/moc_CQSVGCircle.cpp .moc/moc_CQSVGClipPath.cpp .moc/moc_CQSVGDefs.cpp .moc/moc_CQSVGDesc.cpp .moc/moc_CQSVGEllipse.cpp .moc/moc_CQSVGEnum.cpp .moc/moc_CQSVGFeBlend.cpp .moc/moc_CQSVGFeColorMatrix.cpp .moc/moc_CQSVGFeComposite.cpp .moc/moc_CQSVGFeDiffuseLighting.cpp .moc/moc_CQSVGFeDisplacementMap.cpp .moc/moc_CQSVGFeDistantLight.cpp .moc/moc_CQSVGFeFlood.cpp .moc/moc_CQSVGFeGaussianBlur.cpp .moc/moc_CQSVGFeImage.cpp .moc/moc_CQSVGFeMerge.cpp .moc/moc_CQSVGFeMergeNode.cpp .moc/moc_CQSVGFeMorphology.cpp .moc/moc_CQSVGFeOffset.cpp .moc/moc_CQSVGFePointLight.cpp .moc/moc_CQSVGFeSpecularLighting.cpp .moc/moc_CQSVGFeSpotLight.cpp .moc/moc_CQSVGFeTile.cpp .moc/moc_CQSVGFeTurbulence.cpp .moc/moc_CQSVGFilter.cpp .moc/moc_CQSVGGroup.cpp .moc/moc_CQSVG.cpp .moc/moc_CQSVGImage.cpp .moc/moc_CQSVGJSDialog.cpp .moc/moc_CQSVGLinearGradient.cpp .moc/moc_CQSVGLine.cpp .moc/moc_CQSVGMarker.cpp .moc/moc_CQSVGMask.cpp .moc/moc_CQSVGMPath.cpp .moc/moc_CQSVGObject.cpp .moc/moc_CQSVGPath.cpp .moc/moc_CQSVGPathPart.cpp .moc/moc_CQSVGPattern.cpp .moc/moc_CQSVGPolygon.cpp .moc/moc_CQSVGPolyLine.cpp .moc/moc_CQSVGPropertiesDlg.cpp .moc/moc_CQSVGRadialGradient.cpp .moc/moc_CQSVGRect.cpp .moc/moc_CQSVGSet.cpp .moc/moc_CQSVGStop.cpp .moc/moc_CQSVGStyleTree.cpp .moc/moc_CQSVGSymbol.cpp .moc/moc_CQSVGText.cpp .moc/moc_CQSVGTextPath.cpp .moc/moc_CQSVGTitle.cpp .moc/moc_CQSVGTSpan.cpp .moc/moc_CQSVGUse.cpp .moc/moc_CQSVGWindow.cpp .moc/moc_CQHistoryLineEdit.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) .moc/moc_CQSVGAnchor.cpp .moc/moc_CQSVGAnimate.cpp .moc/moc_CQSVGAnimateBase.cpp .moc/moc_CQSVGAnimateColor.cpp .moc/moc_CQSVGAnimateMotion.cpp .moc/moc_CQSVGAnimateTransform.cpp .moc/moc_CQSVGBlock.cpp .moc/moc_CQSVGBufferView.cpp .moc/moc_CQSVGCanvas.cpp .moc/moc_CQSVGCircle.cpp .moc/moc_CQSVGClipPath.cpp .moc/moc_CQSVGDefs.cpp .moc/moc_CQSVGDesc.cpp .moc/moc_CQSVGEllipse.cpp .moc/moc_CQSVGEnum.cpp .moc/moc_CQSVGFeBlend.cpp .moc/moc_CQSVGFeColorMatrix.cpp .moc/moc_CQSVGFeComposite.cpp .moc/moc_CQSVGFeDiffuseLighting.cpp .moc/moc_CQSVGFeDisplacementMap.cpp .moc/moc_CQSVGFeDistantLight.cpp .moc/moc_CQSVGFeFlood.cpp .moc/moc_CQSVGFeGaussianBlur.cpp .moc/moc_CQSVGFeImage.cpp .moc/moc_CQSVGFeMerge.cpp .moc/moc_CQSVGFeMergeNode.cpp .moc/moc_CQSVGFeMorphology.cpp .moc/moc_CQSVGFeOffset.cpp .moc/moc_CQSVGFePointLight.cpp .moc/moc_CQSVGFeSpecularLighting.cpp .moc/moc_CQSVGFeSpotLight.cpp .moc/moc_CQSVGFeTile.cpp .moc/moc_CQSVGFeTurbulence.cpp .moc/moc_CQSVGFilter.cpp .moc/moc_CQSVGGroup.cpp .moc/moc_CQSVG.cpp .moc/moc_CQSVGImage.cpp .moc/moc_CQSVGLinearGradient.cpp .moc/moc_CQSVGLine.cpp .moc/moc_CQSVGMarker.cpp .moc/moc_CQSVGMask.cpp .moc/moc_CQSVGMPath.cpp .moc/moc_CQSVGObject.cpp .moc/moc_CQSVGPath.cpp .moc/moc_CQSVGPathPart.cpp .moc/moc_CQSVGPattern.cpp .moc/moc_CQSVGPolygon.cpp .moc/moc_CQSVGPolyLine.cpp .moc/moc_CQSVGPropertiesDlg.cpp .moc/moc_CQSVGRadialGradient.cpp .moc/moc_CQSVGRect.cpp .moc/moc_CQSVGSet.cpp .moc/moc_CQSVGStop.cpp .moc/moc_CQSVGStyleTree.cpp .moc/moc_CQSVGSymbol.cpp .moc/moc_CQSVGText.cpp .moc/moc_CQSVGTextPath.cpp .moc/moc_CQSVGTitle.cpp .moc/moc_CQSVGTSpan.cpp .moc/moc_CQSVGUse.cpp .moc/moc_CQSVGWindow.cpp
+	-$(DEL_FILE) .moc/moc_CQSVGAnchor.cpp .moc/moc_CQSVGAnimate.cpp .moc/moc_CQSVGAnimateBase.cpp .moc/moc_CQSVGAnimateColor.cpp .moc/moc_CQSVGAnimateMotion.cpp .moc/moc_CQSVGAnimateTransform.cpp .moc/moc_CQSVGBlock.cpp .moc/moc_CQSVGBufferView.cpp .moc/moc_CQSVGCanvas.cpp .moc/moc_CQSVGCircle.cpp .moc/moc_CQSVGClipPath.cpp .moc/moc_CQSVGDefs.cpp .moc/moc_CQSVGDesc.cpp .moc/moc_CQSVGEllipse.cpp .moc/moc_CQSVGEnum.cpp .moc/moc_CQSVGFeBlend.cpp .moc/moc_CQSVGFeColorMatrix.cpp .moc/moc_CQSVGFeComposite.cpp .moc/moc_CQSVGFeDiffuseLighting.cpp .moc/moc_CQSVGFeDisplacementMap.cpp .moc/moc_CQSVGFeDistantLight.cpp .moc/moc_CQSVGFeFlood.cpp .moc/moc_CQSVGFeGaussianBlur.cpp .moc/moc_CQSVGFeImage.cpp .moc/moc_CQSVGFeMerge.cpp .moc/moc_CQSVGFeMergeNode.cpp .moc/moc_CQSVGFeMorphology.cpp .moc/moc_CQSVGFeOffset.cpp .moc/moc_CQSVGFePointLight.cpp .moc/moc_CQSVGFeSpecularLighting.cpp .moc/moc_CQSVGFeSpotLight.cpp .moc/moc_CQSVGFeTile.cpp .moc/moc_CQSVGFeTurbulence.cpp .moc/moc_CQSVGFilter.cpp .moc/moc_CQSVGGroup.cpp .moc/moc_CQSVG.cpp .moc/moc_CQSVGImage.cpp .moc/moc_CQSVGJSDialog.cpp .moc/moc_CQSVGLinearGradient.cpp .moc/moc_CQSVGLine.cpp .moc/moc_CQSVGMarker.cpp .moc/moc_CQSVGMask.cpp .moc/moc_CQSVGMPath.cpp .moc/moc_CQSVGObject.cpp .moc/moc_CQSVGPath.cpp .moc/moc_CQSVGPathPart.cpp .moc/moc_CQSVGPattern.cpp .moc/moc_CQSVGPolygon.cpp .moc/moc_CQSVGPolyLine.cpp .moc/moc_CQSVGPropertiesDlg.cpp .moc/moc_CQSVGRadialGradient.cpp .moc/moc_CQSVGRect.cpp .moc/moc_CQSVGSet.cpp .moc/moc_CQSVGStop.cpp .moc/moc_CQSVGStyleTree.cpp .moc/moc_CQSVGSymbol.cpp .moc/moc_CQSVGText.cpp .moc/moc_CQSVGTextPath.cpp .moc/moc_CQSVGTitle.cpp .moc/moc_CQSVGTSpan.cpp .moc/moc_CQSVGUse.cpp .moc/moc_CQSVGWindow.cpp .moc/moc_CQHistoryLineEdit.cpp
 .moc/moc_CQSVGAnchor.cpp: CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
 		/usr/include/qt5/QtCore/qobject.h \
@@ -796,7 +807,7 @@ compiler_moc_header_clean:
 		../include/CObjTypeOld.h \
 		../include/CSVGAnchor.h \
 		CQSVGAnchor.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGAnchor.h -o .moc/moc_CQSVGAnchor.cpp
+	@echo moc CQSVGAnchor.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGAnchor.h -o .moc/moc_CQSVGAnchor.cpp
 
 .moc/moc_CQSVGAnimate.cpp: CQSVGAnimateBase.h \
 		CQSVGObject.h \
@@ -1009,7 +1020,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimate.h \
 		../include/CSVGAnimateBase.h \
 		CQSVGAnimate.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGAnimate.h -o .moc/moc_CQSVGAnimate.cpp
+	@echo moc CQSVGAnimate.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGAnimate.h -o .moc/moc_CQSVGAnimate.cpp
 
 .moc/moc_CQSVGAnimateBase.cpp: CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
@@ -1219,7 +1230,7 @@ compiler_moc_header_clean:
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
 		CQSVGAnimateBase.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGAnimateBase.h -o .moc/moc_CQSVGAnimateBase.cpp
+	@echo moc CQSVGAnimateBase.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGAnimateBase.h -o .moc/moc_CQSVGAnimateBase.cpp
 
 .moc/moc_CQSVGAnimateColor.cpp: CQSVGAnimateBase.h \
 		CQSVGObject.h \
@@ -1432,7 +1443,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimateColor.h \
 		../include/CSVGAnimateBase.h \
 		CQSVGAnimateColor.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGAnimateColor.h -o .moc/moc_CQSVGAnimateColor.cpp
+	@echo moc CQSVGAnimateColor.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGAnimateColor.h -o .moc/moc_CQSVGAnimateColor.cpp
 
 .moc/moc_CQSVGAnimateMotion.cpp: CQSVGAnimateBase.h \
 		CQSVGObject.h \
@@ -1645,7 +1656,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimateMotion.h \
 		../include/CSVGAnimateBase.h \
 		CQSVGAnimateMotion.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGAnimateMotion.h -o .moc/moc_CQSVGAnimateMotion.cpp
+	@echo moc CQSVGAnimateMotion.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGAnimateMotion.h -o .moc/moc_CQSVGAnimateMotion.cpp
 
 .moc/moc_CQSVGAnimateTransform.cpp: CQSVGAnimateBase.h \
 		CQSVGObject.h \
@@ -1858,7 +1869,7 @@ compiler_moc_header_clean:
 		../include/CSVGAnimateTransform.h \
 		../include/CSVGAnimateBase.h \
 		CQSVGAnimateTransform.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGAnimateTransform.h -o .moc/moc_CQSVGAnimateTransform.cpp
+	@echo moc CQSVGAnimateTransform.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGAnimateTransform.h -o .moc/moc_CQSVGAnimateTransform.cpp
 
 .moc/moc_CQSVGBlock.cpp: CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
@@ -2070,7 +2081,7 @@ compiler_moc_header_clean:
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
 		CQSVGBlock.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGBlock.h -o .moc/moc_CQSVGBlock.cpp
+	@echo moc CQSVGBlock.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGBlock.h -o .moc/moc_CQSVGBlock.cpp
 
 .moc/moc_CQSVGBufferView.cpp: ../../CMath/include/CBBox2D.h \
 		../../CMath/include/CMathGen.h \
@@ -2190,7 +2201,7 @@ compiler_moc_header_clean:
 		/usr/include/qt5/QtGui/qvector2d.h \
 		/usr/include/qt5/QtGui/qtouchdevice.h \
 		CQSVGBufferView.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGBufferView.h -o .moc/moc_CQSVGBufferView.cpp
+	@echo moc CQSVGBufferView.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGBufferView.h -o .moc/moc_CQSVGBufferView.cpp
 
 .moc/moc_CQSVGCanvas.cpp: ../../CMath/include/CBBox2D.h \
 		../../CMath/include/CMathGen.h \
@@ -2309,7 +2320,7 @@ compiler_moc_header_clean:
 		/usr/include/qt5/QtGui/qvector2d.h \
 		/usr/include/qt5/QtGui/qtouchdevice.h \
 		CQSVGCanvas.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGCanvas.h -o .moc/moc_CQSVGCanvas.cpp
+	@echo moc CQSVGCanvas.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGCanvas.h -o .moc/moc_CQSVGCanvas.cpp
 
 .moc/moc_CQSVGCircle.cpp: CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
@@ -2520,7 +2531,7 @@ compiler_moc_header_clean:
 		../include/CObjTypeOld.h \
 		../include/CSVGCircle.h \
 		CQSVGCircle.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGCircle.h -o .moc/moc_CQSVGCircle.cpp
+	@echo moc CQSVGCircle.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGCircle.h -o .moc/moc_CQSVGCircle.cpp
 
 .moc/moc_CQSVGClipPath.cpp: CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
@@ -2731,7 +2742,7 @@ compiler_moc_header_clean:
 		../include/CObjTypeOld.h \
 		../include/CSVGClipPath.h \
 		CQSVGClipPath.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGClipPath.h -o .moc/moc_CQSVGClipPath.cpp
+	@echo moc CQSVGClipPath.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGClipPath.h -o .moc/moc_CQSVGClipPath.cpp
 
 .moc/moc_CQSVGDefs.cpp: CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
@@ -2942,7 +2953,7 @@ compiler_moc_header_clean:
 		../include/CObjTypeOld.h \
 		../include/CSVGDefs.h \
 		CQSVGDefs.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGDefs.h -o .moc/moc_CQSVGDefs.cpp
+	@echo moc CQSVGDefs.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGDefs.h -o .moc/moc_CQSVGDefs.cpp
 
 .moc/moc_CQSVGDesc.cpp: CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
@@ -3153,7 +3164,7 @@ compiler_moc_header_clean:
 		../include/CObjTypeOld.h \
 		../include/CSVGDesc.h \
 		CQSVGDesc.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGDesc.h -o .moc/moc_CQSVGDesc.cpp
+	@echo moc CQSVGDesc.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGDesc.h -o .moc/moc_CQSVGDesc.cpp
 
 .moc/moc_CQSVGEllipse.cpp: CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
@@ -3364,7 +3375,7 @@ compiler_moc_header_clean:
 		../include/CObjTypeOld.h \
 		../include/CSVGEllipse.h \
 		CQSVGEllipse.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGEllipse.h -o .moc/moc_CQSVGEllipse.cpp
+	@echo moc CQSVGEllipse.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGEllipse.h -o .moc/moc_CQSVGEllipse.cpp
 
 .moc/moc_CQSVGEnum.cpp: ../../CUtil/include/CAlignType.h \
 		../../CUtil/include/CLineCapType.h \
@@ -3477,7 +3488,7 @@ compiler_moc_header_clean:
 		/usr/include/qt5/QtCore/qisenum.h \
 		/usr/include/qt5/QtCore/qobject_impl.h \
 		CQSVGEnum.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGEnum.h -o .moc/moc_CQSVGEnum.cpp
+	@echo moc CQSVGEnum.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGEnum.h -o .moc/moc_CQSVGEnum.cpp
 
 .moc/moc_CQSVGFeBlend.cpp: CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
@@ -3688,7 +3699,7 @@ compiler_moc_header_clean:
 		../include/CObjTypeOld.h \
 		../include/CSVGFeBlend.h \
 		CQSVGFeBlend.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGFeBlend.h -o .moc/moc_CQSVGFeBlend.cpp
+	@echo moc CQSVGFeBlend.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGFeBlend.h -o .moc/moc_CQSVGFeBlend.cpp
 
 .moc/moc_CQSVGFeColorMatrix.cpp: CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
@@ -3898,7 +3909,7 @@ compiler_moc_header_clean:
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
 		CQSVGFeColorMatrix.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGFeColorMatrix.h -o .moc/moc_CQSVGFeColorMatrix.cpp
+	@echo moc CQSVGFeColorMatrix.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGFeColorMatrix.h -o .moc/moc_CQSVGFeColorMatrix.cpp
 
 .moc/moc_CQSVGFeComposite.cpp: CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
@@ -4109,7 +4120,7 @@ compiler_moc_header_clean:
 		../include/CObjTypeOld.h \
 		../include/CSVGFeComposite.h \
 		CQSVGFeComposite.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGFeComposite.h -o .moc/moc_CQSVGFeComposite.cpp
+	@echo moc CQSVGFeComposite.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGFeComposite.h -o .moc/moc_CQSVGFeComposite.cpp
 
 .moc/moc_CQSVGFeDiffuseLighting.cpp: CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
@@ -4321,7 +4332,7 @@ compiler_moc_header_clean:
 		../include/CSVGFeDiffuseLighting.h \
 		../include/CSVGFeLighting.h \
 		CQSVGFeDiffuseLighting.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGFeDiffuseLighting.h -o .moc/moc_CQSVGFeDiffuseLighting.cpp
+	@echo moc CQSVGFeDiffuseLighting.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGFeDiffuseLighting.h -o .moc/moc_CQSVGFeDiffuseLighting.cpp
 
 .moc/moc_CQSVGFeDisplacementMap.cpp: CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
@@ -4532,7 +4543,7 @@ compiler_moc_header_clean:
 		../include/CObjTypeOld.h \
 		../include/CSVGFeDisplacementMap.h \
 		CQSVGFeDisplacementMap.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGFeDisplacementMap.h -o .moc/moc_CQSVGFeDisplacementMap.cpp
+	@echo moc CQSVGFeDisplacementMap.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGFeDisplacementMap.h -o .moc/moc_CQSVGFeDisplacementMap.cpp
 
 .moc/moc_CQSVGFeDistantLight.cpp: CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
@@ -4743,7 +4754,7 @@ compiler_moc_header_clean:
 		../include/CObjTypeOld.h \
 		../include/CSVGFeDistantLight.h \
 		CQSVGFeDistantLight.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGFeDistantLight.h -o .moc/moc_CQSVGFeDistantLight.cpp
+	@echo moc CQSVGFeDistantLight.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGFeDistantLight.h -o .moc/moc_CQSVGFeDistantLight.cpp
 
 .moc/moc_CQSVGFeFlood.cpp: CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
@@ -4954,7 +4965,7 @@ compiler_moc_header_clean:
 		../include/CObjTypeOld.h \
 		../include/CSVGFeFlood.h \
 		CQSVGFeFlood.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGFeFlood.h -o .moc/moc_CQSVGFeFlood.cpp
+	@echo moc CQSVGFeFlood.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGFeFlood.h -o .moc/moc_CQSVGFeFlood.cpp
 
 .moc/moc_CQSVGFeGaussianBlur.cpp: CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
@@ -5165,7 +5176,7 @@ compiler_moc_header_clean:
 		../include/CObjTypeOld.h \
 		../include/CSVGFeGaussianBlur.h \
 		CQSVGFeGaussianBlur.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGFeGaussianBlur.h -o .moc/moc_CQSVGFeGaussianBlur.cpp
+	@echo moc CQSVGFeGaussianBlur.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGFeGaussianBlur.h -o .moc/moc_CQSVGFeGaussianBlur.cpp
 
 .moc/moc_CQSVGFeImage.cpp: CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
@@ -5376,7 +5387,7 @@ compiler_moc_header_clean:
 		../include/CObjTypeOld.h \
 		../include/CSVGFeImage.h \
 		CQSVGFeImage.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGFeImage.h -o .moc/moc_CQSVGFeImage.cpp
+	@echo moc CQSVGFeImage.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGFeImage.h -o .moc/moc_CQSVGFeImage.cpp
 
 .moc/moc_CQSVGFeMerge.cpp: CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
@@ -5587,7 +5598,7 @@ compiler_moc_header_clean:
 		../include/CObjTypeOld.h \
 		../include/CSVGFeMerge.h \
 		CQSVGFeMerge.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGFeMerge.h -o .moc/moc_CQSVGFeMerge.cpp
+	@echo moc CQSVGFeMerge.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGFeMerge.h -o .moc/moc_CQSVGFeMerge.cpp
 
 .moc/moc_CQSVGFeMergeNode.cpp: CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
@@ -5798,7 +5809,7 @@ compiler_moc_header_clean:
 		../include/CObjTypeOld.h \
 		../include/CSVGFeMergeNode.h \
 		CQSVGFeMergeNode.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGFeMergeNode.h -o .moc/moc_CQSVGFeMergeNode.cpp
+	@echo moc CQSVGFeMergeNode.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGFeMergeNode.h -o .moc/moc_CQSVGFeMergeNode.cpp
 
 .moc/moc_CQSVGFeMorphology.cpp: CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
@@ -6009,7 +6020,7 @@ compiler_moc_header_clean:
 		../include/CObjTypeOld.h \
 		../include/CSVGFeMorphology.h \
 		CQSVGFeMorphology.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGFeMorphology.h -o .moc/moc_CQSVGFeMorphology.cpp
+	@echo moc CQSVGFeMorphology.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGFeMorphology.h -o .moc/moc_CQSVGFeMorphology.cpp
 
 .moc/moc_CQSVGFeOffset.cpp: CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
@@ -6220,7 +6231,7 @@ compiler_moc_header_clean:
 		../include/CObjTypeOld.h \
 		../include/CSVGFeOffset.h \
 		CQSVGFeOffset.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGFeOffset.h -o .moc/moc_CQSVGFeOffset.cpp
+	@echo moc CQSVGFeOffset.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGFeOffset.h -o .moc/moc_CQSVGFeOffset.cpp
 
 .moc/moc_CQSVGFePointLight.cpp: CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
@@ -6433,7 +6444,7 @@ compiler_moc_header_clean:
 		../../CMath/include/CPoint3D.h \
 		../../CMath/include/CIPoint3D.h \
 		CQSVGFePointLight.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGFePointLight.h -o .moc/moc_CQSVGFePointLight.cpp
+	@echo moc CQSVGFePointLight.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGFePointLight.h -o .moc/moc_CQSVGFePointLight.cpp
 
 .moc/moc_CQSVGFeSpecularLighting.cpp: CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
@@ -6645,7 +6656,7 @@ compiler_moc_header_clean:
 		../include/CSVGFeSpecularLighting.h \
 		../include/CSVGFeLighting.h \
 		CQSVGFeSpecularLighting.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGFeSpecularLighting.h -o .moc/moc_CQSVGFeSpecularLighting.cpp
+	@echo moc CQSVGFeSpecularLighting.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGFeSpecularLighting.h -o .moc/moc_CQSVGFeSpecularLighting.cpp
 
 .moc/moc_CQSVGFeSpotLight.cpp: CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
@@ -6858,7 +6869,7 @@ compiler_moc_header_clean:
 		../../CMath/include/CPoint3D.h \
 		../../CMath/include/CIPoint3D.h \
 		CQSVGFeSpotLight.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGFeSpotLight.h -o .moc/moc_CQSVGFeSpotLight.cpp
+	@echo moc CQSVGFeSpotLight.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGFeSpotLight.h -o .moc/moc_CQSVGFeSpotLight.cpp
 
 .moc/moc_CQSVGFeTile.cpp: CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
@@ -7069,7 +7080,7 @@ compiler_moc_header_clean:
 		../include/CObjTypeOld.h \
 		../include/CSVGFeTile.h \
 		CQSVGFeTile.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGFeTile.h -o .moc/moc_CQSVGFeTile.cpp
+	@echo moc CQSVGFeTile.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGFeTile.h -o .moc/moc_CQSVGFeTile.cpp
 
 .moc/moc_CQSVGFeTurbulence.cpp: CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
@@ -7280,7 +7291,7 @@ compiler_moc_header_clean:
 		../include/CObjTypeOld.h \
 		../include/CSVGFeTurbulence.h \
 		CQSVGFeTurbulence.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGFeTurbulence.h -o .moc/moc_CQSVGFeTurbulence.cpp
+	@echo moc CQSVGFeTurbulence.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGFeTurbulence.h -o .moc/moc_CQSVGFeTurbulence.cpp
 
 .moc/moc_CQSVGFilter.cpp: CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
@@ -7491,7 +7502,7 @@ compiler_moc_header_clean:
 		../include/CObjTypeOld.h \
 		../include/CSVGFilter.h \
 		CQSVGFilter.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGFilter.h -o .moc/moc_CQSVGFilter.cpp
+	@echo moc CQSVGFilter.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGFilter.h -o .moc/moc_CQSVGFilter.cpp
 
 .moc/moc_CQSVGGroup.cpp: CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
@@ -7702,7 +7713,7 @@ compiler_moc_header_clean:
 		../include/CObjTypeOld.h \
 		../include/CSVGGroup.h \
 		CQSVGGroup.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGGroup.h -o .moc/moc_CQSVGGroup.cpp
+	@echo moc CQSVGGroup.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGGroup.h -o .moc/moc_CQSVGGroup.cpp
 
 .moc/moc_CQSVG.cpp: /usr/include/qt5/QtCore/QObject \
 		/usr/include/qt5/QtCore/qobject.h \
@@ -7835,7 +7846,7 @@ compiler_moc_header_clean:
 		../../CFile/include/CFileType.h \
 		../../CStrUtil/include/CStrUtil.h \
 		CQSVG.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVG.h -o .moc/moc_CQSVG.cpp
+	@echo moc CQSVG.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVG.h -o .moc/moc_CQSVG.cpp
 
 .moc/moc_CQSVGImage.cpp: CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
@@ -8046,7 +8057,119 @@ compiler_moc_header_clean:
 		../include/CObjTypeOld.h \
 		../include/CSVGImage.h \
 		CQSVGImage.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGImage.h -o .moc/moc_CQSVGImage.cpp
+	@echo moc CQSVGImage.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGImage.h -o .moc/moc_CQSVGImage.cpp
+
+.moc/moc_CQSVGJSDialog.cpp: /usr/include/qt5/QtWidgets/QFrame \
+		/usr/include/qt5/QtWidgets/qframe.h \
+		/usr/include/qt5/QtWidgets/qwidget.h \
+		/usr/include/qt5/QtGui/qwindowdefs.h \
+		/usr/include/qt5/QtCore/qglobal.h \
+		/usr/include/qt5/QtCore/qconfig.h \
+		/usr/include/qt5/QtCore/qfeatures.h \
+		/usr/include/qt5/QtCore/qsystemdetection.h \
+		/usr/include/qt5/QtCore/qprocessordetection.h \
+		/usr/include/qt5/QtCore/qcompilerdetection.h \
+		/usr/include/qt5/QtCore/qglobalstatic.h \
+		/usr/include/qt5/QtCore/qatomic.h \
+		/usr/include/qt5/QtCore/qbasicatomic.h \
+		/usr/include/qt5/QtCore/qatomic_bootstrap.h \
+		/usr/include/qt5/QtCore/qgenericatomic.h \
+		/usr/include/qt5/QtCore/qatomic_msvc.h \
+		/usr/include/qt5/QtCore/qatomic_integrity.h \
+		/usr/include/qt5/QtCore/qoldbasicatomic.h \
+		/usr/include/qt5/QtCore/qatomic_vxworks.h \
+		/usr/include/qt5/QtCore/qatomic_power.h \
+		/usr/include/qt5/QtCore/qatomic_alpha.h \
+		/usr/include/qt5/QtCore/qatomic_armv7.h \
+		/usr/include/qt5/QtCore/qatomic_armv6.h \
+		/usr/include/qt5/QtCore/qatomic_armv5.h \
+		/usr/include/qt5/QtCore/qatomic_bfin.h \
+		/usr/include/qt5/QtCore/qatomic_ia64.h \
+		/usr/include/qt5/QtCore/qatomic_mips.h \
+		/usr/include/qt5/QtCore/qatomic_s390.h \
+		/usr/include/qt5/QtCore/qatomic_sh4a.h \
+		/usr/include/qt5/QtCore/qatomic_sparc.h \
+		/usr/include/qt5/QtCore/qatomic_gcc.h \
+		/usr/include/qt5/QtCore/qatomic_x86.h \
+		/usr/include/qt5/QtCore/qatomic_cxx11.h \
+		/usr/include/qt5/QtCore/qatomic_unix.h \
+		/usr/include/qt5/QtCore/qmutex.h \
+		/usr/include/qt5/QtCore/qlogging.h \
+		/usr/include/qt5/QtCore/qflags.h \
+		/usr/include/qt5/QtCore/qtypeinfo.h \
+		/usr/include/qt5/QtCore/qtypetraits.h \
+		/usr/include/qt5/QtCore/qsysinfo.h \
+		/usr/include/qt5/QtCore/qobjectdefs.h \
+		/usr/include/qt5/QtCore/qnamespace.h \
+		/usr/include/qt5/QtCore/qobjectdefs_impl.h \
+		/usr/include/qt5/QtGui/qwindowdefs_win.h \
+		/usr/include/qt5/QtCore/qobject.h \
+		/usr/include/qt5/QtCore/qstring.h \
+		/usr/include/qt5/QtCore/qchar.h \
+		/usr/include/qt5/QtCore/qbytearray.h \
+		/usr/include/qt5/QtCore/qrefcount.h \
+		/usr/include/qt5/QtCore/qarraydata.h \
+		/usr/include/qt5/QtCore/qstringbuilder.h \
+		/usr/include/qt5/QtCore/qlist.h \
+		/usr/include/qt5/QtCore/qalgorithms.h \
+		/usr/include/qt5/QtCore/qiterator.h \
+		/usr/include/qt5/QtCore/qcoreevent.h \
+		/usr/include/qt5/QtCore/qscopedpointer.h \
+		/usr/include/qt5/QtCore/qmetatype.h \
+		/usr/include/qt5/QtCore/qvarlengtharray.h \
+		/usr/include/qt5/QtCore/qcontainerfwd.h \
+		/usr/include/qt5/QtCore/qisenum.h \
+		/usr/include/qt5/QtCore/qobject_impl.h \
+		/usr/include/qt5/QtCore/qmargins.h \
+		/usr/include/qt5/QtCore/qrect.h \
+		/usr/include/qt5/QtCore/qsize.h \
+		/usr/include/qt5/QtCore/qpoint.h \
+		/usr/include/qt5/QtGui/qpaintdevice.h \
+		/usr/include/qt5/QtGui/qpalette.h \
+		/usr/include/qt5/QtGui/qcolor.h \
+		/usr/include/qt5/QtGui/qrgb.h \
+		/usr/include/qt5/QtCore/qstringlist.h \
+		/usr/include/qt5/QtCore/qdatastream.h \
+		/usr/include/qt5/QtCore/qiodevice.h \
+		/usr/include/qt5/QtCore/qpair.h \
+		/usr/include/qt5/QtCore/qregexp.h \
+		/usr/include/qt5/QtCore/qstringmatcher.h \
+		/usr/include/qt5/QtGui/qbrush.h \
+		/usr/include/qt5/QtCore/qvector.h \
+		/usr/include/qt5/QtGui/qmatrix.h \
+		/usr/include/qt5/QtGui/qpolygon.h \
+		/usr/include/qt5/QtGui/qregion.h \
+		/usr/include/qt5/QtCore/qline.h \
+		/usr/include/qt5/QtGui/qtransform.h \
+		/usr/include/qt5/QtGui/qpainterpath.h \
+		/usr/include/qt5/QtGui/qimage.h \
+		/usr/include/qt5/QtGui/qpixmap.h \
+		/usr/include/qt5/QtCore/qsharedpointer.h \
+		/usr/include/qt5/QtCore/qshareddata.h \
+		/usr/include/qt5/QtCore/qsharedpointer_impl.h \
+		/usr/include/qt5/QtCore/qhash.h \
+		/usr/include/qt5/QtGui/qfont.h \
+		/usr/include/qt5/QtGui/qfontmetrics.h \
+		/usr/include/qt5/QtGui/qfontinfo.h \
+		/usr/include/qt5/QtWidgets/qsizepolicy.h \
+		/usr/include/qt5/QtGui/qcursor.h \
+		/usr/include/qt5/QtGui/qkeysequence.h \
+		/usr/include/qt5/QtGui/qevent.h \
+		/usr/include/qt5/QtCore/qvariant.h \
+		/usr/include/qt5/QtCore/qmap.h \
+		/usr/include/qt5/QtCore/qdebug.h \
+		/usr/include/qt5/QtCore/qtextstream.h \
+		/usr/include/qt5/QtCore/qlocale.h \
+		/usr/include/qt5/QtCore/qset.h \
+		/usr/include/qt5/QtCore/qcontiguouscache.h \
+		/usr/include/qt5/QtCore/qurl.h \
+		/usr/include/qt5/QtCore/qurlquery.h \
+		/usr/include/qt5/QtCore/qfile.h \
+		/usr/include/qt5/QtCore/qfiledevice.h \
+		/usr/include/qt5/QtGui/qvector2d.h \
+		/usr/include/qt5/QtGui/qtouchdevice.h \
+		CQSVGJSDialog.h
+	@echo moc CQSVGJSDialog.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGJSDialog.h -o .moc/moc_CQSVGJSDialog.cpp
 
 .moc/moc_CQSVGLinearGradient.cpp: CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
@@ -8258,7 +8381,7 @@ compiler_moc_header_clean:
 		../include/CSVGLinearGradient.h \
 		../../CMath/include/CGenGradient.h \
 		CQSVGLinearGradient.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGLinearGradient.h -o .moc/moc_CQSVGLinearGradient.cpp
+	@echo moc CQSVGLinearGradient.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGLinearGradient.h -o .moc/moc_CQSVGLinearGradient.cpp
 
 .moc/moc_CQSVGLine.cpp: CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
@@ -8469,7 +8592,7 @@ compiler_moc_header_clean:
 		../include/CObjTypeOld.h \
 		../include/CSVGLine.h \
 		CQSVGLine.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGLine.h -o .moc/moc_CQSVGLine.cpp
+	@echo moc CQSVGLine.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGLine.h -o .moc/moc_CQSVGLine.cpp
 
 .moc/moc_CQSVGMarker.cpp: CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
@@ -8680,7 +8803,7 @@ compiler_moc_header_clean:
 		../include/CObjTypeOld.h \
 		../include/CSVGMarker.h \
 		CQSVGMarker.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGMarker.h -o .moc/moc_CQSVGMarker.cpp
+	@echo moc CQSVGMarker.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGMarker.h -o .moc/moc_CQSVGMarker.cpp
 
 .moc/moc_CQSVGMask.cpp: CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
@@ -8891,7 +9014,7 @@ compiler_moc_header_clean:
 		../include/CObjTypeOld.h \
 		../include/CSVGMask.h \
 		CQSVGMask.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGMask.h -o .moc/moc_CQSVGMask.cpp
+	@echo moc CQSVGMask.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGMask.h -o .moc/moc_CQSVGMask.cpp
 
 .moc/moc_CQSVGMPath.cpp: CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
@@ -9102,7 +9225,7 @@ compiler_moc_header_clean:
 		../include/CObjTypeOld.h \
 		../include/CSVGMPath.h \
 		CQSVGMPath.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGMPath.h -o .moc/moc_CQSVGMPath.cpp
+	@echo moc CQSVGMPath.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGMPath.h -o .moc/moc_CQSVGMPath.cpp
 
 .moc/moc_CQSVGObject.cpp: /usr/include/qt5/QtCore/QObject \
 		/usr/include/qt5/QtCore/qobject.h \
@@ -9311,7 +9434,7 @@ compiler_moc_header_clean:
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
 		CQSVGObject.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGObject.h -o .moc/moc_CQSVGObject.cpp
+	@echo moc CQSVGObject.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGObject.h -o .moc/moc_CQSVGObject.cpp
 
 .moc/moc_CQSVGPath.cpp: CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
@@ -9522,7 +9645,7 @@ compiler_moc_header_clean:
 		../include/CObjTypeOld.h \
 		../include/CSVGPath.h \
 		CQSVGPath.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGPath.h -o .moc/moc_CQSVGPath.cpp
+	@echo moc CQSVGPath.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGPath.h -o .moc/moc_CQSVGPath.cpp
 
 .moc/moc_CQSVGPathPart.cpp: ../include/CSVGPathPart.h \
 		../include/CSVGTypes.h \
@@ -9594,7 +9717,7 @@ compiler_moc_header_clean:
 		/usr/include/qt5/QtCore/qisenum.h \
 		/usr/include/qt5/QtCore/qobject_impl.h \
 		CQSVGPathPart.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGPathPart.h -o .moc/moc_CQSVGPathPart.cpp
+	@echo moc CQSVGPathPart.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGPathPart.h -o .moc/moc_CQSVGPathPart.cpp
 
 .moc/moc_CQSVGPattern.cpp: CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
@@ -9805,7 +9928,7 @@ compiler_moc_header_clean:
 		../include/CObjTypeOld.h \
 		../include/CSVGPattern.h \
 		CQSVGPattern.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGPattern.h -o .moc/moc_CQSVGPattern.cpp
+	@echo moc CQSVGPattern.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGPattern.h -o .moc/moc_CQSVGPattern.cpp
 
 .moc/moc_CQSVGPolygon.cpp: CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
@@ -10016,7 +10139,7 @@ compiler_moc_header_clean:
 		../include/CObjTypeOld.h \
 		../include/CSVGPolygon.h \
 		CQSVGPolygon.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGPolygon.h -o .moc/moc_CQSVGPolygon.cpp
+	@echo moc CQSVGPolygon.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGPolygon.h -o .moc/moc_CQSVGPolygon.cpp
 
 .moc/moc_CQSVGPolyLine.cpp: CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
@@ -10227,7 +10350,7 @@ compiler_moc_header_clean:
 		../include/CObjTypeOld.h \
 		../include/CSVGPolyLine.h \
 		CQSVGPolyLine.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGPolyLine.h -o .moc/moc_CQSVGPolyLine.cpp
+	@echo moc CQSVGPolyLine.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGPolyLine.h -o .moc/moc_CQSVGPolyLine.cpp
 
 .moc/moc_CQSVGPropertiesDlg.cpp: /usr/include/qt5/QtWidgets/QFrame \
 		/usr/include/qt5/QtWidgets/qframe.h \
@@ -10339,7 +10462,7 @@ compiler_moc_header_clean:
 		/usr/include/qt5/QtGui/qvector2d.h \
 		/usr/include/qt5/QtGui/qtouchdevice.h \
 		CQSVGPropertiesDlg.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGPropertiesDlg.h -o .moc/moc_CQSVGPropertiesDlg.cpp
+	@echo moc CQSVGPropertiesDlg.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGPropertiesDlg.h -o .moc/moc_CQSVGPropertiesDlg.cpp
 
 .moc/moc_CQSVGRadialGradient.cpp: CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
@@ -10556,7 +10679,7 @@ compiler_moc_header_clean:
 		../../CMath/include/CLine2D.h \
 		../../CMath/include/CShape2D.h \
 		CQSVGRadialGradient.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGRadialGradient.h -o .moc/moc_CQSVGRadialGradient.cpp
+	@echo moc CQSVGRadialGradient.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGRadialGradient.h -o .moc/moc_CQSVGRadialGradient.cpp
 
 .moc/moc_CQSVGRect.cpp: CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
@@ -10767,7 +10890,7 @@ compiler_moc_header_clean:
 		../include/CObjTypeOld.h \
 		../include/CSVGRect.h \
 		CQSVGRect.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGRect.h -o .moc/moc_CQSVGRect.cpp
+	@echo moc CQSVGRect.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGRect.h -o .moc/moc_CQSVGRect.cpp
 
 .moc/moc_CQSVGSet.cpp: CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
@@ -10979,7 +11102,7 @@ compiler_moc_header_clean:
 		../include/CSVGSet.h \
 		../include/CSVGAnimateBase.h \
 		CQSVGSet.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGSet.h -o .moc/moc_CQSVGSet.cpp
+	@echo moc CQSVGSet.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGSet.h -o .moc/moc_CQSVGSet.cpp
 
 .moc/moc_CQSVGStop.cpp: CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
@@ -11190,7 +11313,7 @@ compiler_moc_header_clean:
 		../include/CObjTypeOld.h \
 		../include/CSVGStop.h \
 		CQSVGStop.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGStop.h -o .moc/moc_CQSVGStop.cpp
+	@echo moc CQSVGStop.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGStop.h -o .moc/moc_CQSVGStop.cpp
 
 .moc/moc_CQSVGStyleTree.cpp: ../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
@@ -11348,7 +11471,7 @@ compiler_moc_header_clean:
 		/usr/include/qt5/QtWidgets/qrubberband.h \
 		/usr/include/qt5/QtWidgets/qtreewidgetitemiterator.h \
 		CQSVGStyleTree.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGStyleTree.h -o .moc/moc_CQSVGStyleTree.cpp
+	@echo moc CQSVGStyleTree.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGStyleTree.h -o .moc/moc_CQSVGStyleTree.cpp
 
 .moc/moc_CQSVGSymbol.cpp: CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
@@ -11559,7 +11682,7 @@ compiler_moc_header_clean:
 		../include/CObjTypeOld.h \
 		../include/CSVGSymbol.h \
 		CQSVGSymbol.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGSymbol.h -o .moc/moc_CQSVGSymbol.cpp
+	@echo moc CQSVGSymbol.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGSymbol.h -o .moc/moc_CQSVGSymbol.cpp
 
 .moc/moc_CQSVGText.cpp: CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
@@ -11770,7 +11893,7 @@ compiler_moc_header_clean:
 		../include/CObjTypeOld.h \
 		../include/CSVGText.h \
 		CQSVGText.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGText.h -o .moc/moc_CQSVGText.cpp
+	@echo moc CQSVGText.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGText.h -o .moc/moc_CQSVGText.cpp
 
 .moc/moc_CQSVGTextPath.cpp: CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
@@ -11981,7 +12104,7 @@ compiler_moc_header_clean:
 		../include/CObjTypeOld.h \
 		../include/CSVGTextPath.h \
 		CQSVGTextPath.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGTextPath.h -o .moc/moc_CQSVGTextPath.cpp
+	@echo moc CQSVGTextPath.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGTextPath.h -o .moc/moc_CQSVGTextPath.cpp
 
 .moc/moc_CQSVGTitle.cpp: CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
@@ -12192,7 +12315,7 @@ compiler_moc_header_clean:
 		../include/CObjTypeOld.h \
 		../include/CSVGTitle.h \
 		CQSVGTitle.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGTitle.h -o .moc/moc_CQSVGTitle.cpp
+	@echo moc CQSVGTitle.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGTitle.h -o .moc/moc_CQSVGTitle.cpp
 
 .moc/moc_CQSVGTSpan.cpp: CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
@@ -12403,7 +12526,7 @@ compiler_moc_header_clean:
 		../include/CObjTypeOld.h \
 		../include/CSVGTSpan.h \
 		CQSVGTSpan.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGTSpan.h -o .moc/moc_CQSVGTSpan.cpp
+	@echo moc CQSVGTSpan.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGTSpan.h -o .moc/moc_CQSVGTSpan.cpp
 
 .moc/moc_CQSVGUse.cpp: CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
@@ -12614,7 +12737,7 @@ compiler_moc_header_clean:
 		../include/CObjTypeOld.h \
 		../include/CSVGUse.h \
 		CQSVGUse.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGUse.h -o .moc/moc_CQSVGUse.cpp
+	@echo moc CQSVGUse.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGUse.h -o .moc/moc_CQSVGUse.cpp
 
 .moc/moc_CQSVGWindow.cpp: /usr/include/qt5/QtWidgets/QMainWindow \
 		/usr/include/qt5/QtWidgets/qmainwindow.h \
@@ -12730,7 +12853,125 @@ compiler_moc_header_clean:
 		CHRTimer.h \
 		../../COS/include/CHRTime.h \
 		CQSVGWindow.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGWindow.h -o .moc/moc_CQSVGWindow.cpp
+	@echo moc CQSVGWindow.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGWindow.h -o .moc/moc_CQSVGWindow.cpp
+
+.moc/moc_CQHistoryLineEdit.cpp: /usr/include/qt5/QtWidgets/QLineEdit \
+		/usr/include/qt5/QtWidgets/qlineedit.h \
+		/usr/include/qt5/QtWidgets/qframe.h \
+		/usr/include/qt5/QtWidgets/qwidget.h \
+		/usr/include/qt5/QtGui/qwindowdefs.h \
+		/usr/include/qt5/QtCore/qglobal.h \
+		/usr/include/qt5/QtCore/qconfig.h \
+		/usr/include/qt5/QtCore/qfeatures.h \
+		/usr/include/qt5/QtCore/qsystemdetection.h \
+		/usr/include/qt5/QtCore/qprocessordetection.h \
+		/usr/include/qt5/QtCore/qcompilerdetection.h \
+		/usr/include/qt5/QtCore/qglobalstatic.h \
+		/usr/include/qt5/QtCore/qatomic.h \
+		/usr/include/qt5/QtCore/qbasicatomic.h \
+		/usr/include/qt5/QtCore/qatomic_bootstrap.h \
+		/usr/include/qt5/QtCore/qgenericatomic.h \
+		/usr/include/qt5/QtCore/qatomic_msvc.h \
+		/usr/include/qt5/QtCore/qatomic_integrity.h \
+		/usr/include/qt5/QtCore/qoldbasicatomic.h \
+		/usr/include/qt5/QtCore/qatomic_vxworks.h \
+		/usr/include/qt5/QtCore/qatomic_power.h \
+		/usr/include/qt5/QtCore/qatomic_alpha.h \
+		/usr/include/qt5/QtCore/qatomic_armv7.h \
+		/usr/include/qt5/QtCore/qatomic_armv6.h \
+		/usr/include/qt5/QtCore/qatomic_armv5.h \
+		/usr/include/qt5/QtCore/qatomic_bfin.h \
+		/usr/include/qt5/QtCore/qatomic_ia64.h \
+		/usr/include/qt5/QtCore/qatomic_mips.h \
+		/usr/include/qt5/QtCore/qatomic_s390.h \
+		/usr/include/qt5/QtCore/qatomic_sh4a.h \
+		/usr/include/qt5/QtCore/qatomic_sparc.h \
+		/usr/include/qt5/QtCore/qatomic_gcc.h \
+		/usr/include/qt5/QtCore/qatomic_x86.h \
+		/usr/include/qt5/QtCore/qatomic_cxx11.h \
+		/usr/include/qt5/QtCore/qatomic_unix.h \
+		/usr/include/qt5/QtCore/qmutex.h \
+		/usr/include/qt5/QtCore/qlogging.h \
+		/usr/include/qt5/QtCore/qflags.h \
+		/usr/include/qt5/QtCore/qtypeinfo.h \
+		/usr/include/qt5/QtCore/qtypetraits.h \
+		/usr/include/qt5/QtCore/qsysinfo.h \
+		/usr/include/qt5/QtCore/qobjectdefs.h \
+		/usr/include/qt5/QtCore/qnamespace.h \
+		/usr/include/qt5/QtCore/qobjectdefs_impl.h \
+		/usr/include/qt5/QtGui/qwindowdefs_win.h \
+		/usr/include/qt5/QtCore/qobject.h \
+		/usr/include/qt5/QtCore/qstring.h \
+		/usr/include/qt5/QtCore/qchar.h \
+		/usr/include/qt5/QtCore/qbytearray.h \
+		/usr/include/qt5/QtCore/qrefcount.h \
+		/usr/include/qt5/QtCore/qarraydata.h \
+		/usr/include/qt5/QtCore/qstringbuilder.h \
+		/usr/include/qt5/QtCore/qlist.h \
+		/usr/include/qt5/QtCore/qalgorithms.h \
+		/usr/include/qt5/QtCore/qiterator.h \
+		/usr/include/qt5/QtCore/qcoreevent.h \
+		/usr/include/qt5/QtCore/qscopedpointer.h \
+		/usr/include/qt5/QtCore/qmetatype.h \
+		/usr/include/qt5/QtCore/qvarlengtharray.h \
+		/usr/include/qt5/QtCore/qcontainerfwd.h \
+		/usr/include/qt5/QtCore/qisenum.h \
+		/usr/include/qt5/QtCore/qobject_impl.h \
+		/usr/include/qt5/QtCore/qmargins.h \
+		/usr/include/qt5/QtCore/qrect.h \
+		/usr/include/qt5/QtCore/qsize.h \
+		/usr/include/qt5/QtCore/qpoint.h \
+		/usr/include/qt5/QtGui/qpaintdevice.h \
+		/usr/include/qt5/QtGui/qpalette.h \
+		/usr/include/qt5/QtGui/qcolor.h \
+		/usr/include/qt5/QtGui/qrgb.h \
+		/usr/include/qt5/QtCore/qstringlist.h \
+		/usr/include/qt5/QtCore/qdatastream.h \
+		/usr/include/qt5/QtCore/qiodevice.h \
+		/usr/include/qt5/QtCore/qpair.h \
+		/usr/include/qt5/QtCore/qregexp.h \
+		/usr/include/qt5/QtCore/qstringmatcher.h \
+		/usr/include/qt5/QtGui/qbrush.h \
+		/usr/include/qt5/QtCore/qvector.h \
+		/usr/include/qt5/QtGui/qmatrix.h \
+		/usr/include/qt5/QtGui/qpolygon.h \
+		/usr/include/qt5/QtGui/qregion.h \
+		/usr/include/qt5/QtCore/qline.h \
+		/usr/include/qt5/QtGui/qtransform.h \
+		/usr/include/qt5/QtGui/qpainterpath.h \
+		/usr/include/qt5/QtGui/qimage.h \
+		/usr/include/qt5/QtGui/qpixmap.h \
+		/usr/include/qt5/QtCore/qsharedpointer.h \
+		/usr/include/qt5/QtCore/qshareddata.h \
+		/usr/include/qt5/QtCore/qsharedpointer_impl.h \
+		/usr/include/qt5/QtCore/qhash.h \
+		/usr/include/qt5/QtGui/qfont.h \
+		/usr/include/qt5/QtGui/qfontmetrics.h \
+		/usr/include/qt5/QtGui/qfontinfo.h \
+		/usr/include/qt5/QtWidgets/qsizepolicy.h \
+		/usr/include/qt5/QtGui/qcursor.h \
+		/usr/include/qt5/QtGui/qkeysequence.h \
+		/usr/include/qt5/QtGui/qevent.h \
+		/usr/include/qt5/QtCore/qvariant.h \
+		/usr/include/qt5/QtCore/qmap.h \
+		/usr/include/qt5/QtCore/qdebug.h \
+		/usr/include/qt5/QtCore/qtextstream.h \
+		/usr/include/qt5/QtCore/qlocale.h \
+		/usr/include/qt5/QtCore/qset.h \
+		/usr/include/qt5/QtCore/qcontiguouscache.h \
+		/usr/include/qt5/QtCore/qurl.h \
+		/usr/include/qt5/QtCore/qurlquery.h \
+		/usr/include/qt5/QtCore/qfile.h \
+		/usr/include/qt5/QtCore/qfiledevice.h \
+		/usr/include/qt5/QtGui/qvector2d.h \
+		/usr/include/qt5/QtGui/qtouchdevice.h \
+		/usr/include/qt5/QtGui/qtextcursor.h \
+		/usr/include/qt5/QtGui/qtextformat.h \
+		/usr/include/qt5/QtGui/qpen.h \
+		/usr/include/qt5/QtGui/qtextoption.h \
+		../../CUtil/include/CAutoPtr.h \
+		CQHistoryLineEdit.h
+	@echo moc CQHistoryLineEdit.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQHistoryLineEdit.h -o .moc/moc_CQHistoryLineEdit.cpp
 
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
@@ -20998,6 +21239,235 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGImage.o CQSVGImage.cpp
 
+../obj/CQSVGJSDialog.o: CQSVGJSDialog.cpp CQSVGJSDialog.h \
+		/usr/include/qt5/QtWidgets/QFrame \
+		/usr/include/qt5/QtWidgets/qframe.h \
+		/usr/include/qt5/QtWidgets/qwidget.h \
+		/usr/include/qt5/QtGui/qwindowdefs.h \
+		/usr/include/qt5/QtCore/qglobal.h \
+		/usr/include/qt5/QtCore/qconfig.h \
+		/usr/include/qt5/QtCore/qfeatures.h \
+		/usr/include/qt5/QtCore/qsystemdetection.h \
+		/usr/include/qt5/QtCore/qprocessordetection.h \
+		/usr/include/qt5/QtCore/qcompilerdetection.h \
+		/usr/include/qt5/QtCore/qglobalstatic.h \
+		/usr/include/qt5/QtCore/qatomic.h \
+		/usr/include/qt5/QtCore/qbasicatomic.h \
+		/usr/include/qt5/QtCore/qatomic_bootstrap.h \
+		/usr/include/qt5/QtCore/qgenericatomic.h \
+		/usr/include/qt5/QtCore/qatomic_msvc.h \
+		/usr/include/qt5/QtCore/qatomic_integrity.h \
+		/usr/include/qt5/QtCore/qoldbasicatomic.h \
+		/usr/include/qt5/QtCore/qatomic_vxworks.h \
+		/usr/include/qt5/QtCore/qatomic_power.h \
+		/usr/include/qt5/QtCore/qatomic_alpha.h \
+		/usr/include/qt5/QtCore/qatomic_armv7.h \
+		/usr/include/qt5/QtCore/qatomic_armv6.h \
+		/usr/include/qt5/QtCore/qatomic_armv5.h \
+		/usr/include/qt5/QtCore/qatomic_bfin.h \
+		/usr/include/qt5/QtCore/qatomic_ia64.h \
+		/usr/include/qt5/QtCore/qatomic_mips.h \
+		/usr/include/qt5/QtCore/qatomic_s390.h \
+		/usr/include/qt5/QtCore/qatomic_sh4a.h \
+		/usr/include/qt5/QtCore/qatomic_sparc.h \
+		/usr/include/qt5/QtCore/qatomic_gcc.h \
+		/usr/include/qt5/QtCore/qatomic_x86.h \
+		/usr/include/qt5/QtCore/qatomic_cxx11.h \
+		/usr/include/qt5/QtCore/qatomic_unix.h \
+		/usr/include/qt5/QtCore/qmutex.h \
+		/usr/include/qt5/QtCore/qlogging.h \
+		/usr/include/qt5/QtCore/qflags.h \
+		/usr/include/qt5/QtCore/qtypeinfo.h \
+		/usr/include/qt5/QtCore/qtypetraits.h \
+		/usr/include/qt5/QtCore/qsysinfo.h \
+		/usr/include/qt5/QtCore/qobjectdefs.h \
+		/usr/include/qt5/QtCore/qnamespace.h \
+		/usr/include/qt5/QtCore/qobjectdefs_impl.h \
+		/usr/include/qt5/QtGui/qwindowdefs_win.h \
+		/usr/include/qt5/QtCore/qobject.h \
+		/usr/include/qt5/QtCore/qstring.h \
+		/usr/include/qt5/QtCore/qchar.h \
+		/usr/include/qt5/QtCore/qbytearray.h \
+		/usr/include/qt5/QtCore/qrefcount.h \
+		/usr/include/qt5/QtCore/qarraydata.h \
+		/usr/include/qt5/QtCore/qstringbuilder.h \
+		/usr/include/qt5/QtCore/qlist.h \
+		/usr/include/qt5/QtCore/qalgorithms.h \
+		/usr/include/qt5/QtCore/qiterator.h \
+		/usr/include/qt5/QtCore/qcoreevent.h \
+		/usr/include/qt5/QtCore/qscopedpointer.h \
+		/usr/include/qt5/QtCore/qmetatype.h \
+		/usr/include/qt5/QtCore/qvarlengtharray.h \
+		/usr/include/qt5/QtCore/qcontainerfwd.h \
+		/usr/include/qt5/QtCore/qisenum.h \
+		/usr/include/qt5/QtCore/qobject_impl.h \
+		/usr/include/qt5/QtCore/qmargins.h \
+		/usr/include/qt5/QtCore/qrect.h \
+		/usr/include/qt5/QtCore/qsize.h \
+		/usr/include/qt5/QtCore/qpoint.h \
+		/usr/include/qt5/QtGui/qpaintdevice.h \
+		/usr/include/qt5/QtGui/qpalette.h \
+		/usr/include/qt5/QtGui/qcolor.h \
+		/usr/include/qt5/QtGui/qrgb.h \
+		/usr/include/qt5/QtCore/qstringlist.h \
+		/usr/include/qt5/QtCore/qdatastream.h \
+		/usr/include/qt5/QtCore/qiodevice.h \
+		/usr/include/qt5/QtCore/qpair.h \
+		/usr/include/qt5/QtCore/qregexp.h \
+		/usr/include/qt5/QtCore/qstringmatcher.h \
+		/usr/include/qt5/QtGui/qbrush.h \
+		/usr/include/qt5/QtCore/qvector.h \
+		/usr/include/qt5/QtGui/qmatrix.h \
+		/usr/include/qt5/QtGui/qpolygon.h \
+		/usr/include/qt5/QtGui/qregion.h \
+		/usr/include/qt5/QtCore/qline.h \
+		/usr/include/qt5/QtGui/qtransform.h \
+		/usr/include/qt5/QtGui/qpainterpath.h \
+		/usr/include/qt5/QtGui/qimage.h \
+		/usr/include/qt5/QtGui/qpixmap.h \
+		/usr/include/qt5/QtCore/qsharedpointer.h \
+		/usr/include/qt5/QtCore/qshareddata.h \
+		/usr/include/qt5/QtCore/qsharedpointer_impl.h \
+		/usr/include/qt5/QtCore/qhash.h \
+		/usr/include/qt5/QtGui/qfont.h \
+		/usr/include/qt5/QtGui/qfontmetrics.h \
+		/usr/include/qt5/QtGui/qfontinfo.h \
+		/usr/include/qt5/QtWidgets/qsizepolicy.h \
+		/usr/include/qt5/QtGui/qcursor.h \
+		/usr/include/qt5/QtGui/qkeysequence.h \
+		/usr/include/qt5/QtGui/qevent.h \
+		/usr/include/qt5/QtCore/qvariant.h \
+		/usr/include/qt5/QtCore/qmap.h \
+		/usr/include/qt5/QtCore/qdebug.h \
+		/usr/include/qt5/QtCore/qtextstream.h \
+		/usr/include/qt5/QtCore/qlocale.h \
+		/usr/include/qt5/QtCore/qset.h \
+		/usr/include/qt5/QtCore/qcontiguouscache.h \
+		/usr/include/qt5/QtCore/qurl.h \
+		/usr/include/qt5/QtCore/qurlquery.h \
+		/usr/include/qt5/QtCore/qfile.h \
+		/usr/include/qt5/QtCore/qfiledevice.h \
+		/usr/include/qt5/QtGui/qvector2d.h \
+		/usr/include/qt5/QtGui/qtouchdevice.h \
+		../include/CSVGJavaScript.h \
+		../../CJavaScript/include/CJavaScript.h \
+		CQSVGWindow.h \
+		/usr/include/qt5/QtWidgets/QMainWindow \
+		/usr/include/qt5/QtWidgets/qmainwindow.h \
+		/usr/include/qt5/QtWidgets/qtabwidget.h \
+		/usr/include/qt5/QtGui/qicon.h \
+		CHRTimer.h \
+		../../COS/include/CHRTime.h \
+		CQSVG.h \
+		/usr/include/qt5/QtCore/QObject \
+		/usr/include/qt5/QtGui/QColor \
+		../include/CSVG.h \
+		../include/CSVGStroke.h \
+		../include/CSVGFill.h \
+		../include/CSVGColor.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/COptVal.h \
+		../include/CSVGClip.h \
+		../include/CSVGStrokeDash.h \
+		../include/CScreenUnits.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CUtil/include/CLineCapType.h \
+		../../CUtil/include/CLineJoinType.h \
+		../include/CSVGFontDef.h \
+		../../CFont/include/CFont.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../include/CSVGBlock.h \
+		../include/CSVGObject.h \
+		../include/CSVGTypes.h \
+		../include/CSVGTimeValue.h \
+		../include/CSVGEventValue.h \
+		../include/CSVGXLink.h \
+		../../CMath/include/CMatrixStack2D.h \
+		../../CMath/include/CMatrix2D.h \
+		../../CMath/include/CMathMacros.h \
+		../../CMath/include/CPoint2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CVector2D.h \
+		../../CMath/include/CMatrixType.h \
+		../../CUtil/include/CThrow.h \
+		../include/CSVGPreserveAspect.h \
+		../../CUtil/include/CAlignType.h \
+		../include/CSVGAnimation.h \
+		../include/CSVGPathPart.h \
+		../../CMath/include/CBBox2D.h \
+		../../CMath/include/CSize2D.h \
+		../../CMath/include/CISize2D.h \
+		../include/CSVGObjectMarker.h \
+		../include/CObjTypeOld.h \
+		../include/CSVGBlockData.h \
+		../include/CSVGCSSData.h \
+		../include/CSVGStyleData.h \
+		../../CCSS/include/CCSS.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CFile/include/CFileType.h \
+		../../CStrUtil/include/CStrUtil.h \
+		CQHistoryLineEdit.h \
+		/usr/include/qt5/QtWidgets/QLineEdit \
+		/usr/include/qt5/QtWidgets/qlineedit.h \
+		/usr/include/qt5/QtGui/qtextcursor.h \
+		/usr/include/qt5/QtGui/qtextformat.h \
+		/usr/include/qt5/QtGui/qpen.h \
+		/usr/include/qt5/QtGui/qtextoption.h \
+		/usr/include/qt5/QtWidgets/QVBoxLayout \
+		/usr/include/qt5/QtWidgets/qboxlayout.h \
+		/usr/include/qt5/QtWidgets/qlayout.h \
+		/usr/include/qt5/QtWidgets/qlayoutitem.h \
+		/usr/include/qt5/QtWidgets/qgridlayout.h \
+		/usr/include/qt5/QtWidgets/QTabWidget \
+		/usr/include/qt5/QtWidgets/QTextEdit \
+		/usr/include/qt5/QtWidgets/qtextedit.h \
+		/usr/include/qt5/QtWidgets/qabstractscrollarea.h \
+		/usr/include/qt5/QtGui/qtextdocument.h \
+		/usr/include/qt5/QtWidgets/QListWidget \
+		/usr/include/qt5/QtWidgets/qlistwidget.h \
+		/usr/include/qt5/QtWidgets/qlistview.h \
+		/usr/include/qt5/QtWidgets/qabstractitemview.h \
+		/usr/include/qt5/QtCore/qabstractitemmodel.h \
+		/usr/include/qt5/QtCore/qitemselectionmodel.h \
+		/usr/include/qt5/QtWidgets/qabstractitemdelegate.h \
+		/usr/include/qt5/QtWidgets/qstyleoption.h \
+		/usr/include/qt5/QtWidgets/qabstractspinbox.h \
+		/usr/include/qt5/QtGui/qvalidator.h \
+		/usr/include/qt5/QtCore/qregularexpression.h \
+		/usr/include/qt5/QtWidgets/qslider.h \
+		/usr/include/qt5/QtWidgets/qabstractslider.h \
+		/usr/include/qt5/QtWidgets/qstyle.h \
+		/usr/include/qt5/QtWidgets/qtabbar.h \
+		/usr/include/qt5/QtWidgets/qrubberband.h \
+		/usr/include/qt5/QtWidgets/QPushButton \
+		/usr/include/qt5/QtWidgets/qpushbutton.h \
+		/usr/include/qt5/QtWidgets/qabstractbutton.h \
+		/usr/include/qt5/QtWidgets/QFileDialog \
+		/usr/include/qt5/QtWidgets/qfiledialog.h \
+		/usr/include/qt5/QtCore/qdir.h \
+		/usr/include/qt5/QtCore/qfileinfo.h \
+		/usr/include/qt5/QtWidgets/qdialog.h \
+		/usr/include/qt5/QtCore/QDir
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGJSDialog.o CQSVGJSDialog.cpp
+
 ../obj/CQSVGLinearGradient.o: CQSVGLinearGradient.cpp CQSVGLinearGradient.h \
 		CQSVGObject.h \
 		/usr/include/qt5/QtCore/QObject \
@@ -26140,6 +26610,7 @@ compiler_clean: compiler_moc_header_clean
 		/usr/include/qt5/QtWidgets/QFrame \
 		/usr/include/qt5/QtWidgets/qframe.h \
 		CQSVGBufferView.h \
+		CQSVGJSDialog.h \
 		CQSVGAnchor.h \
 		CQSVGObject.h \
 		../../CQUtil/include/CQUtil.h \
@@ -26355,6 +26826,7 @@ compiler_clean: compiler_moc_header_clean
 		svg/prev_svg.h \
 		svg/properties_svg.h \
 		svg/buffers_svg.h \
+		svg/javascript_svg.h \
 		svg/play_svg.h \
 		svg/pause_svg.h \
 		svg/play_one_svg.h \
@@ -26859,6 +27331,126 @@ compiler_clean: compiler_moc_header_clean
 		/usr/include/qt5/QtGui/qfontmetrics.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGUtil.o CQSVGUtil.cpp
 
+../obj/CQHistoryLineEdit.o: CQHistoryLineEdit.cpp CQHistoryLineEdit.h \
+		/usr/include/qt5/QtWidgets/QLineEdit \
+		/usr/include/qt5/QtWidgets/qlineedit.h \
+		/usr/include/qt5/QtWidgets/qframe.h \
+		/usr/include/qt5/QtWidgets/qwidget.h \
+		/usr/include/qt5/QtGui/qwindowdefs.h \
+		/usr/include/qt5/QtCore/qglobal.h \
+		/usr/include/qt5/QtCore/qconfig.h \
+		/usr/include/qt5/QtCore/qfeatures.h \
+		/usr/include/qt5/QtCore/qsystemdetection.h \
+		/usr/include/qt5/QtCore/qprocessordetection.h \
+		/usr/include/qt5/QtCore/qcompilerdetection.h \
+		/usr/include/qt5/QtCore/qglobalstatic.h \
+		/usr/include/qt5/QtCore/qatomic.h \
+		/usr/include/qt5/QtCore/qbasicatomic.h \
+		/usr/include/qt5/QtCore/qatomic_bootstrap.h \
+		/usr/include/qt5/QtCore/qgenericatomic.h \
+		/usr/include/qt5/QtCore/qatomic_msvc.h \
+		/usr/include/qt5/QtCore/qatomic_integrity.h \
+		/usr/include/qt5/QtCore/qoldbasicatomic.h \
+		/usr/include/qt5/QtCore/qatomic_vxworks.h \
+		/usr/include/qt5/QtCore/qatomic_power.h \
+		/usr/include/qt5/QtCore/qatomic_alpha.h \
+		/usr/include/qt5/QtCore/qatomic_armv7.h \
+		/usr/include/qt5/QtCore/qatomic_armv6.h \
+		/usr/include/qt5/QtCore/qatomic_armv5.h \
+		/usr/include/qt5/QtCore/qatomic_bfin.h \
+		/usr/include/qt5/QtCore/qatomic_ia64.h \
+		/usr/include/qt5/QtCore/qatomic_mips.h \
+		/usr/include/qt5/QtCore/qatomic_s390.h \
+		/usr/include/qt5/QtCore/qatomic_sh4a.h \
+		/usr/include/qt5/QtCore/qatomic_sparc.h \
+		/usr/include/qt5/QtCore/qatomic_gcc.h \
+		/usr/include/qt5/QtCore/qatomic_x86.h \
+		/usr/include/qt5/QtCore/qatomic_cxx11.h \
+		/usr/include/qt5/QtCore/qatomic_unix.h \
+		/usr/include/qt5/QtCore/qmutex.h \
+		/usr/include/qt5/QtCore/qlogging.h \
+		/usr/include/qt5/QtCore/qflags.h \
+		/usr/include/qt5/QtCore/qtypeinfo.h \
+		/usr/include/qt5/QtCore/qtypetraits.h \
+		/usr/include/qt5/QtCore/qsysinfo.h \
+		/usr/include/qt5/QtCore/qobjectdefs.h \
+		/usr/include/qt5/QtCore/qnamespace.h \
+		/usr/include/qt5/QtCore/qobjectdefs_impl.h \
+		/usr/include/qt5/QtGui/qwindowdefs_win.h \
+		/usr/include/qt5/QtCore/qobject.h \
+		/usr/include/qt5/QtCore/qstring.h \
+		/usr/include/qt5/QtCore/qchar.h \
+		/usr/include/qt5/QtCore/qbytearray.h \
+		/usr/include/qt5/QtCore/qrefcount.h \
+		/usr/include/qt5/QtCore/qarraydata.h \
+		/usr/include/qt5/QtCore/qstringbuilder.h \
+		/usr/include/qt5/QtCore/qlist.h \
+		/usr/include/qt5/QtCore/qalgorithms.h \
+		/usr/include/qt5/QtCore/qiterator.h \
+		/usr/include/qt5/QtCore/qcoreevent.h \
+		/usr/include/qt5/QtCore/qscopedpointer.h \
+		/usr/include/qt5/QtCore/qmetatype.h \
+		/usr/include/qt5/QtCore/qvarlengtharray.h \
+		/usr/include/qt5/QtCore/qcontainerfwd.h \
+		/usr/include/qt5/QtCore/qisenum.h \
+		/usr/include/qt5/QtCore/qobject_impl.h \
+		/usr/include/qt5/QtCore/qmargins.h \
+		/usr/include/qt5/QtCore/qrect.h \
+		/usr/include/qt5/QtCore/qsize.h \
+		/usr/include/qt5/QtCore/qpoint.h \
+		/usr/include/qt5/QtGui/qpaintdevice.h \
+		/usr/include/qt5/QtGui/qpalette.h \
+		/usr/include/qt5/QtGui/qcolor.h \
+		/usr/include/qt5/QtGui/qrgb.h \
+		/usr/include/qt5/QtCore/qstringlist.h \
+		/usr/include/qt5/QtCore/qdatastream.h \
+		/usr/include/qt5/QtCore/qiodevice.h \
+		/usr/include/qt5/QtCore/qpair.h \
+		/usr/include/qt5/QtCore/qregexp.h \
+		/usr/include/qt5/QtCore/qstringmatcher.h \
+		/usr/include/qt5/QtGui/qbrush.h \
+		/usr/include/qt5/QtCore/qvector.h \
+		/usr/include/qt5/QtGui/qmatrix.h \
+		/usr/include/qt5/QtGui/qpolygon.h \
+		/usr/include/qt5/QtGui/qregion.h \
+		/usr/include/qt5/QtCore/qline.h \
+		/usr/include/qt5/QtGui/qtransform.h \
+		/usr/include/qt5/QtGui/qpainterpath.h \
+		/usr/include/qt5/QtGui/qimage.h \
+		/usr/include/qt5/QtGui/qpixmap.h \
+		/usr/include/qt5/QtCore/qsharedpointer.h \
+		/usr/include/qt5/QtCore/qshareddata.h \
+		/usr/include/qt5/QtCore/qsharedpointer_impl.h \
+		/usr/include/qt5/QtCore/qhash.h \
+		/usr/include/qt5/QtGui/qfont.h \
+		/usr/include/qt5/QtGui/qfontmetrics.h \
+		/usr/include/qt5/QtGui/qfontinfo.h \
+		/usr/include/qt5/QtWidgets/qsizepolicy.h \
+		/usr/include/qt5/QtGui/qcursor.h \
+		/usr/include/qt5/QtGui/qkeysequence.h \
+		/usr/include/qt5/QtGui/qevent.h \
+		/usr/include/qt5/QtCore/qvariant.h \
+		/usr/include/qt5/QtCore/qmap.h \
+		/usr/include/qt5/QtCore/qdebug.h \
+		/usr/include/qt5/QtCore/qtextstream.h \
+		/usr/include/qt5/QtCore/qlocale.h \
+		/usr/include/qt5/QtCore/qset.h \
+		/usr/include/qt5/QtCore/qcontiguouscache.h \
+		/usr/include/qt5/QtCore/qurl.h \
+		/usr/include/qt5/QtCore/qurlquery.h \
+		/usr/include/qt5/QtCore/qfile.h \
+		/usr/include/qt5/QtCore/qfiledevice.h \
+		/usr/include/qt5/QtGui/qvector2d.h \
+		/usr/include/qt5/QtGui/qtouchdevice.h \
+		/usr/include/qt5/QtGui/qtextcursor.h \
+		/usr/include/qt5/QtGui/qtextformat.h \
+		/usr/include/qt5/QtGui/qpen.h \
+		/usr/include/qt5/QtGui/qtextoption.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CReadLine/include/CHistory.h \
+		/usr/include/qt5/QtGui/QKeyEvent
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQHistoryLineEdit.o CQHistoryLineEdit.cpp
+
 ../obj/moc_CQSVGAnchor.o: .moc/moc_CQSVGAnchor.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQSVGAnchor.o .moc/moc_CQSVGAnchor.cpp
 
@@ -26970,6 +27562,9 @@ compiler_clean: compiler_moc_header_clean
 ../obj/moc_CQSVGImage.o: .moc/moc_CQSVGImage.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQSVGImage.o .moc/moc_CQSVGImage.cpp
 
+../obj/moc_CQSVGJSDialog.o: .moc/moc_CQSVGJSDialog.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQSVGJSDialog.o .moc/moc_CQSVGJSDialog.cpp
+
 ../obj/moc_CQSVGLinearGradient.o: .moc/moc_CQSVGLinearGradient.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQSVGLinearGradient.o .moc/moc_CQSVGLinearGradient.cpp
 
@@ -27041,6 +27636,9 @@ compiler_clean: compiler_moc_header_clean
 
 ../obj/moc_CQSVGWindow.o: .moc/moc_CQSVGWindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQSVGWindow.o .moc/moc_CQSVGWindow.cpp
+
+../obj/moc_CQHistoryLineEdit.o: .moc/moc_CQHistoryLineEdit.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQHistoryLineEdit.o .moc/moc_CQHistoryLineEdit.cpp
 
 ####### Install
 
