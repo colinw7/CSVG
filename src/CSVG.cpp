@@ -71,10 +71,6 @@
 #include <CSVGFontObj.h>
 
 #include <CSVGJavaScript.h>
-#include <CSVGJDocument.h>
-#include <CSVGJObject.h>
-#include <CSVGJEvent.h>
-#include <CSVGJTransform.h>
 
 #include <CRadialGradient.h>
 #include <CLinearGradient.h>
@@ -121,29 +117,7 @@ CSVG(CSVGRenderer *renderer) :
 
   js_ = createJavaScript();
 
-  jsDocumentType_       = CJObjectTypeP(new CSVGJDocumentType());
-  jsObjectType_         = CJObjectTypeP(new CSVGJObjectType());
-  jsEventType_          = CJObjectTypeP(new CSVGJEventType());
-  jsTransformStackType_ = CJObjectTypeP(new CSVGJTransformStackType());
-  jsTransformType_      = CJObjectTypeP(new CSVGJTransformType());
-  jsMatrixType_         = CJObjectTypeP(new CSVGJMatrixType());
-
-  jsDocument_  = CJValueP(new CSVGJDocument(this));
-  jsEvent_     = CJValueP(new CSVGJEvent(this));
-
-  CJVariableP var1(js()->createVariable("document"   , jsDocument()));
-  CJVariableP var2(js()->createVariable("svgDocument", jsDocument()));
-
-  js()->addVariable(var1);
-  js()->addVariable(var2);
-
-  CJDictionary *transformDict = new CJDictionary(js());
-
-  js()->addVariable(CJVariableP(js()->createVariable("SVGTransform", CJValueP(transformDict))));
-
-  transformDict->addProperty(js(), "SVG_TRANSFORM_TRANSLATE", int(CMatrixTransformType::TRANSLATE));
-  transformDict->addProperty(js(), "SVG_TRANSFORM_SCALE"    , int(CMatrixTransformType::SCALE1));
-  transformDict->addProperty(js(), "SVG_TRANSFORM_ROTATE"   , int(CMatrixTransformType::ROTATE));
+  js_->init();
 }
 
 CSVG::
@@ -1441,9 +1415,7 @@ execJsEvent(CSVGObject *obj, const std::string &str)
 {
   setEventObject(obj);
 
-  CJVariableP var3(js()->createVariable("evt", jsEvent()));
-
-  js()->addVariable(var3);
+  js()->setProperty("evt", js()->event());
 
   js()->loadString(str);
 
@@ -4655,6 +4627,15 @@ CSVG::
 setScript(const std::string &str)
 {
   js()->loadString(str);
+
+  js()->exec();
+}
+
+void
+CSVG::
+setScriptFile(const std::string &filename)
+{
+  js()->loadFile(filename);
 
   js()->exec();
 }

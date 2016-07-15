@@ -2,15 +2,22 @@
 #include <CSVGJTransform.h>
 #include <CSVG.h>
 #include <CSVGObject.h>
+#include <CSVGJavaScript.h>
+
+CSVGJObjectType::
+CSVGJObjectType() :
+ CJObjectType(CJToken::Type::Object, "SVGObject")
+{
+  addFunction("className");
+  addFunction("id");
+  addFunction("setAttribute");
+  addFunction("transform");
+}
 
 CSVGJObject::
 CSVGJObject(CSVGObject *obj) :
- CJObject(obj->getSVG().jsObjectType()), obj_(obj)
+ CJObject(obj->getSVG().js()->objectType()), obj_(obj)
 {
-  type_->addFunction("className");
-  type_->addFunction("id");
-  type_->addFunction("setAttribute");
-  type_->addFunction("transform");
 }
 
 CJValueP
@@ -36,8 +43,23 @@ execNameFn(CJavaScript *js, const std::string &name, const Values &values)
     return CJValueP();
   }
   else if (name == "transform") {
-    return CJValueP(new CSVGJTransformStack(&obj_->getSVG(), obj_->getTransform()));
+    return CJValueP(new CSVGJTransformStack(&obj_->getSVG(), obj_));
   }
   else
     return CJValueP();
+}
+
+std::string
+CSVGJObject::
+toString() const
+{
+  std::ostringstream ss; ss << *this;
+  return ss.str();
+}
+
+void
+CSVGJObject::
+print(std::ostream &os) const
+{
+  os << "SVGObject: " << *obj_;
 }

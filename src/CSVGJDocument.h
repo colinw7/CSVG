@@ -1,14 +1,12 @@
 #ifndef CSVGJDocument_H
 #define CSVGJDocument_H
 
-#include <CJavaScript.h>
 #include <CSVG.h>
+#include <CJavaScript.h>
 
 class CSVGJDocumentType : public CJObjectType {
  public:
-  CSVGJDocumentType() :
-   CJObjectType(CJToken::Type::Object, "SVGDocument") {
-  }
+  CSVGJDocumentType();
 
   CJValueP exec(CJavaScript *, const std::string &, const Values &) override {
     return CJValueP();
@@ -21,7 +19,10 @@ class CSVGJDocument : public CJObject {
 
   CJValue *dup(CJavaScript *) const override { return new CSVGJDocument(svg_); }
 
-  std::string toString() const override { return "SVG"; }
+  std::string toString() const override {
+    std::ostringstream ss; ss << *this;
+    return ss.str();
+  }
 
   double toReal() const override { return 0; }
 
@@ -29,7 +30,7 @@ class CSVGJDocument : public CJObject {
 
   CJValueP execNameFn(CJavaScript *js, const std::string &name, const Values &values);
 
-  void print(std::ostream &os) const { os << "SVG"; }
+  void print(std::ostream &os) const override { os << "SVG"; }
 
  private:
   CSVG *svg_;

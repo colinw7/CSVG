@@ -2,12 +2,19 @@
 #include <CSVGJObject.h>
 #include <CSVG.h>
 #include <CSVGObject.h>
+#include <CSVGJavaScript.h>
+
+CSVGJDocumentType::
+CSVGJDocumentType() :
+ CJObjectType(CJToken::Type::Object, "SVGDocument")
+{
+  addFunction("getElementById");
+}
 
 CSVGJDocument::
 CSVGJDocument(CSVG *svg) :
- CJObject(svg->jsDocumentType()), svg_(svg)
+ CJObject(svg->js()->documentType()), svg_(svg)
 {
-  type_->addFunction("getElementById");
 }
 
 CJValueP

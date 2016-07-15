@@ -1,17 +1,16 @@
 #ifndef CSVGJTransform_H
 #define CSVGJTransform_H
 
-#include <CJavaScript.h>
 #include <CMatrixStack2D.h>
+#include <CJavaScript.h>
 
 class CSVG;
+class CSVGObject;
 class CSVGTransform;
 
 class CSVGJTransformStackType : public CJObjectType {
  public:
-  CSVGJTransformStackType() :
-   CJObjectType(CJToken::Type::Object, "SVGTransformStack") {
-  }
+  CSVGJTransformStackType();
 
   CJValueP exec(CJavaScript *, const std::string &, const Values &) override {
     return CJValueP();
@@ -20,13 +19,16 @@ class CSVGJTransformStackType : public CJObjectType {
 
 class CSVGJTransformStack : public CJObject {
  public:
-  CSVGJTransformStack(CSVG *svg, const CMatrixStack2D &matrix);
+  CSVGJTransformStack(CSVG *svg, CSVGObject *obj, bool baseVal=false);
 
   CJValue *dup(CJavaScript *) const override {
-    return new CSVGJTransformStack(svg_, transformStack_);
+    return new CSVGJTransformStack(svg_, obj_, baseVal_);
   }
 
-  std::string toString() const override { return "SVGTransformStack"; }
+  std::string toString() const override {
+    std::ostringstream ss; ss << *this;
+    return ss.str();
+  }
 
   double toReal() const override { return 0; }
 
@@ -38,22 +40,23 @@ class CSVGJTransformStack : public CJObject {
 
   CJValueP indexValue(int i) const override;
 
+  CMatrixStack2D matrixStack() const;
+
   CJValueP execNameFn(CJavaScript *js, const std::string &name, const Values &values);
 
-  void print(std::ostream &os) const { os << "SVGTransformStack"; }
+  void print(std::ostream &os) const override { os << "SVGTransformStack: " << matrixStack(); }
 
  private:
-  CSVG*          svg_;
-  CMatrixStack2D transformStack_;
+  CSVG*       svg_ { 0 };
+  CSVGObject* obj_ { 0 };
+  bool        baseVal_ { false };
 };
 
 //------
 
 class CSVGJTransformType : public CJObjectType {
  public:
-  CSVGJTransformType() :
-   CJObjectType(CJToken::Type::Object, "SVGTransform") {
-  }
+  CSVGJTransformType();
 
   CJValueP exec(CJavaScript *, const std::string &, const Values &) override {
     return CJValueP();
@@ -62,32 +65,40 @@ class CSVGJTransformType : public CJObjectType {
 
 class CSVGJTransform : public CJObject {
  public:
-  CSVGJTransform(CSVG *svg, const CMatrixStack2D::Transform &transform);
+  CSVGJTransform(CSVG *svg, CSVGObject *obj, bool baseVal, int ind);
 
-  CJValue *dup(CJavaScript *) const override { return new CSVGJTransform(svg_, transform_); }
+  CJValue *dup(CJavaScript *) const override {
+    return new CSVGJTransform(svg_, obj_, baseVal_, ind_);
+  }
 
-  std::string toString() const override { return "SVGTransform"; }
+  std::string toString() const override {
+    std::ostringstream ss; ss << *this;
+    return ss.str();
+  }
 
   double toReal() const override { return 0; }
 
   bool toBoolean() const override { return 0; }
 
+  CMatrixStack2D::Transform transform() const;
+  void setTransform(const CMatrixStack2D::Transform &transform);
+
   CJValueP execNameFn(CJavaScript *js, const std::string &name, const Values &values);
 
-  void print(std::ostream &os) const { os << "SVGTransform"; }
+  void print(std::ostream &os) const override { os << "SVGTransform: " << transform(); }
 
  private:
-  CSVG*                     svg_;
-  CMatrixStack2D::Transform transform_;
+  CSVG*       svg_ { 0 };
+  CSVGObject* obj_ { 0 };
+  bool        baseVal_ { false };
+  int         ind_ { 0 };
 };
 
 //------
 
 class CSVGJMatrixType : public CJObjectType {
  public:
-  CSVGJMatrixType() :
-   CJObjectType(CJToken::Type::Object, "SVGMatrix") {
-  }
+  CSVGJMatrixType();
 
   CJValueP exec(CJavaScript *, const std::string &, const Values &) override {
     return CJValueP();
@@ -96,23 +107,32 @@ class CSVGJMatrixType : public CJObjectType {
 
 class CSVGJMatrix : public CJObject {
  public:
-  CSVGJMatrix(CSVG *svg, const CMatrix2D &matrix);
+  CSVGJMatrix(CSVG *svg, CSVGObject *obj, bool baseVal, int ind);
 
-  CJValue *dup(CJavaScript *) const override { return new CSVGJMatrix(svg_, matrix_); }
+  CJValue *dup(CJavaScript *) const override {
+    return new CSVGJMatrix(svg_, obj_, baseVal_, ind_);
+  }
 
-  std::string toString() const override { return "SVGMatrix"; }
+  std::string toString() const override {
+    std::ostringstream ss; ss << *this;
+    return ss.str();
+  }
 
   double toReal() const override { return 0; }
 
   bool toBoolean() const override { return 0; }
 
+  CMatrix2D matrix() const;
+
   CJValueP execNameFn(CJavaScript *js, const std::string &name, const Values &values);
 
-  void print(std::ostream &os) const { os << "SVGMatrix"; }
+  void print(std::ostream &os) const override { os << "SVGMatrix: " << matrix(); }
 
  private:
-  CSVG*     svg_;
-  CMatrix2D matrix_;
+  CSVG*       svg_ { 0 };
+  CSVGObject* obj_ { 0 };
+  bool        baseVal_ { false };
+  int         ind_ { 0 };
 };
 
 #endif

@@ -1,16 +1,12 @@
 #ifndef CSVGJEvent_H
 #define CSVGJEvent_H
 
-#include <CJavaScript.h>
 #include <CSVG.h>
-
-class CSVG;
+#include <CJavaScript.h>
 
 class CSVGJEventType : public CJObjectType {
  public:
-  CSVGJEventType() :
-   CJObjectType(CJToken::Type::Object, "SVGEvent") {
-  }
+  CSVGJEventType();
 
   CJValueP exec(CJavaScript *, const std::string &, const Values &) override {
     return CJValueP();
@@ -23,7 +19,10 @@ class CSVGJEvent : public CJObject {
 
   CJValue *dup(CJavaScript *) const override { return new CSVGJEvent(svg_); }
 
-  std::string toString() const override { return "SVGEvent"; }
+  std::string toString() const override {
+    std::ostringstream ss; ss << *this;
+    return ss.str();
+  }
 
   double toReal() const override { return 0; }
 
@@ -31,7 +30,7 @@ class CSVGJEvent : public CJObject {
 
   CJValueP execNameFn(CJavaScript *js, const std::string &name, const Values &values);
 
-  void print(std::ostream &os) const { os << "SVGEvent"; }
+  void print(std::ostream &os) const override { os << "SVGEvent"; }
 
  private:
   CSVG *svg_;

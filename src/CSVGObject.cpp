@@ -2749,6 +2749,29 @@ decodeXLink(const std::string &str, CSVGObject **object, CSVGBuffer **buffer)
 
       return true;
     }
+    else if (format == "text/javascript;base64") {
+      // Javascript string to buffer
+      std::string filename(".svg.js");
+
+      decodeStringToFile(str.substr(pos), filename);
+
+      CFileType type = CFileUtil::getTextType(filename);
+
+      if (type == CFILE_TYPE_TEXT_GZIP) {
+        std::string gzfilename = filename + ".gz";
+
+        rename(filename.c_str(), gzfilename.c_str());
+
+        std::string cmd = "/bin/gzip -d " + gzfilename;
+
+        system(cmd.c_str());
+      }
+
+      // load javascript
+      svg_.setScriptFile(".svg.js");
+
+      return true;
+    }
     else {
       CSVGLog() << "Unhandled images format '" + format + "'";
       return true; // don't propagate warning

@@ -38,6 +38,46 @@ CQSVGJSDialog(CQSVGWindow *window) :
 
   tab->addTab(history_, "History");
 
+  //----
+
+  QFrame *variables = new QFrame;
+
+  QVBoxLayout *variablesLayout = new QVBoxLayout(variables);
+  variablesLayout->setMargin(0); variablesLayout->setSpacing(2);
+
+  variablesList_ = new QListWidget;
+
+  variablesLayout->addWidget(variablesList_);
+
+  QPushButton *variablesLoad = new QPushButton("Load");
+
+  connect(variablesLoad, SIGNAL(clicked()), this, SLOT(loadVariables()));
+
+  variablesLayout->addWidget(variablesLoad);
+
+  tab->addTab(variables, "Variables");
+
+  //----
+
+  QFrame *functions = new QFrame;
+
+  QVBoxLayout *functionsLayout = new QVBoxLayout(functions);
+  functionsLayout->setMargin(0); functionsLayout->setSpacing(2);
+
+  functionsList_ = new QListWidget;
+
+  functionsLayout->addWidget(functionsList_);
+
+  QPushButton *functionsLoad = new QPushButton("Load");
+
+  connect(functionsLoad, SIGNAL(clicked()), this, SLOT(loadFunctions()));
+
+  functionsLayout->addWidget(functionsLoad);
+
+  tab->addTab(functions, "Functions");
+
+  //---
+
   layout->addWidget(tab);
 
   //---
@@ -114,6 +154,34 @@ loadFile()
   js->loadFile(filename.toStdString());
 
   js->exec();
+}
+
+void
+CQSVGJSDialog::
+loadVariables()
+{
+  CSVGJavaScript *js = window_->svg()->js();
+
+  variablesList_->clear();
+
+  std::vector<std::string> names = js->getVariableNames();
+
+  for (const auto &n : names)
+    variablesList_->addItem(n.c_str());
+}
+
+void
+CQSVGJSDialog::
+loadFunctions()
+{
+  CSVGJavaScript *js = window_->svg()->js();
+
+  functionsList_->clear();
+
+  std::vector<std::string> names = js->getFunctionNames();
+
+  for (const auto &n : names)
+    functionsList_->addItem(n.c_str());
 }
 
 QSize

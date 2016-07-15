@@ -26,11 +26,16 @@ class CQSVGJSDialog : public QFrame {
 
   void loadFile();
 
+  void loadVariables();
+  void loadFunctions();
+
  private:
-  CQSVGWindow       *window_  { 0 };
-  QTextEdit         *log_     { 0 };
-  CQHistoryLineEdit *input_   { 0 };
-  QListWidget       *history_ { 0 };
+  CQSVGWindow       *window_        { 0 };
+  QTextEdit         *log_           { 0 };
+  CQHistoryLineEdit *input_         { 0 };
+  QListWidget       *history_       { 0 };
+  QListWidget       *variablesList_ { 0 };
+  QListWidget       *functionsList_ { 0 };
 };
 
 #endif

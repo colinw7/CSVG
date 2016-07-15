@@ -13,7 +13,6 @@
 #include <CSVGColor.h>
 
 #include <CCSS.h>
-#include <CJavaScript.h>
 
 #include <CFont.h>
 #include <CScreenUnits.h>
@@ -396,16 +395,6 @@ class CSVG {
 
   CSVGJavaScript *js() { return js_; }
 
-  CJObjectTypeP jsDocumentType      () const { return jsDocumentType_; }
-  CJObjectTypeP jsObjectType        () const { return jsObjectType_; }
-  CJObjectTypeP jsEventType         () const { return jsEventType_; }
-  CJObjectTypeP jsTransformStackType() const { return jsTransformStackType_; }
-  CJObjectTypeP jsTransformType     () const { return jsTransformType_; }
-  CJObjectTypeP jsMatrixType        () const { return jsMatrixType_; }
-
-  CJValueP jsDocument() const { return jsDocument_; }
-  CJValueP jsEvent   () const { return jsEvent_; }
-
   CSVGObject *eventObject() { return eventObject_; }
   void setEventObject(CSVGObject *p) { eventObject_ = p; }
 
@@ -591,6 +580,7 @@ class CSVG {
   void addStyleValues(CSVGStyleData &svgStyleData, const CCSS::StyleData &cssStyleData);
 
   void setScript(const std::string &str);
+  void setScriptFile(const std::string &filename);
 
   CSVGStyleData &getGlobalStyleData   ();
   CSVGStyleData &getNameStyleData     (const std::string &objName);
@@ -667,32 +657,24 @@ class CSVG {
   typedef std::vector<CSVGBlockData>          BlockDataStack;
   typedef COptValT<CSVGXmlStyleSheet>         OptXmlStyleSheet;
 
-  CSVGRenderer*           renderer_      { 0 };
+  CSVGRenderer*           renderer_ { 0 };
   CAutoPtr<CSVGBufferMgr> bufferMgr_;
-  CSVGBuffer*             buffer_        { 0 };
+  CSVGBuffer*             buffer_ { 0 };
   BufferStack             bufferStack_;
   CSVGBlockData           rootBlockData_;
   CSVGBlockData           blockData_;
   BlockDataStack          blockDataStack_;
   CAutoPtr<CSVGBlock>     block_;
   CAutoPtr<CXML>          xml_;
-  CXMLTag*                xmlTag_        { 0 };
-  CRGBA                   background_    { 1, 1, 1};
+  CXMLTag*                xmlTag_ { 0 };
+  CRGBA                   background_ { 1, 1, 1};
   StyleData               styleData_;
   StyleDataStack          styleDataStack_;
   FontList                fontList_;
   NameObjectMap           idObjectMap_;
   CSVGCSSData             cssData_;
   CCSS                    css_;
-  CSVGJavaScript*         js_;
-  CJObjectTypeP           jsDocumentType_;
-  CJObjectTypeP           jsObjectType_;
-  CJObjectTypeP           jsEventType_;
-  CJObjectTypeP           jsTransformStackType_;
-  CJObjectTypeP           jsTransformType_;
-  CJObjectTypeP           jsMatrixType_;
-  CJValueP                jsDocument_;
-  CJValueP                jsEvent_;
+  CSVGJavaScript*         js_ { 0 };
   CSVGObject*             eventObject_ { 0 };
   ObjectList              drawObjects_;
   Colors                  colors_;

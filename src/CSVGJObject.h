@@ -7,9 +7,7 @@ class CSVGObject;
 
 class CSVGJObjectType : public CJObjectType {
  public:
-  CSVGJObjectType() :
-   CJObjectType(CJToken::Type::Object, "SVGObject") {
-  }
+  CSVGJObjectType();
 
   CJValueP exec(CJavaScript *, const std::string &, const Values &) override {
     return CJValueP();
@@ -22,7 +20,7 @@ class CSVGJObject : public CJObject {
 
   CJValue *dup(CJavaScript *) const override { return new CSVGJObject(obj_); }
 
-  std::string toString() const override { return "SVGObject"; }
+  std::string toString() const override;
 
   double toReal() const override { return 0; }
 
@@ -30,7 +28,7 @@ class CSVGJObject : public CJObject {
 
   CJValueP execNameFn(CJavaScript *js, const std::string &name, const Values &values);
 
-  void print(std::ostream &os) const { os << "SVGObject"; }
+  void print(std::ostream &os) const override;
 
  private:
   CSVGObject *obj_;
