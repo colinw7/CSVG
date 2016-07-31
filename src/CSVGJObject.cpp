@@ -8,29 +8,30 @@ CSVGJObjectType::
 CSVGJObjectType() :
  CJObjectType(CJToken::Type::Object, "SVGObject")
 {
-  addFunction("className");
-  addFunction("id");
-  addFunction("setAttribute");
-  addFunction("transform");
+  //addFunction("className");
+  //addFunction("id");
+  //addFunction("setAttribute");
+  //addFunction("transform");
 }
 
 CSVGJObject::
 CSVGJObject(CSVGObject *obj) :
  CJObject(obj->getSVG().js()->objectType()), obj_(obj)
 {
+  CJavaScript *js = obj->getSVG().js();
+
+  type_->addFunction(js, "setAttribute");
+  type_->addFunction(js, "transform");
+
+  setStringProperty(js, "className", obj_->getObjName());
+  setStringProperty(js, "id"       , obj_->getId());
 }
 
 CJValueP
 CSVGJObject::
-execNameFn(CJavaScript *js, const std::string &name, const Values &values)
+execNameFn(CJavaScript *, const std::string &name, const Values &values)
 {
-  if     (name == "className") {
-    return js->createStringValue(obj_->getObjName());
-  }
-  else if (name == "id") {
-    return js->createStringValue(obj_->getId());
-  }
-  else if (name == "setAttribute") {
+  if (name == "setAttribute") {
     if (values.size() == 3) {
       std::string name  = values[1]->toString();
       std::string value = values[2]->toString();

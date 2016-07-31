@@ -8,8 +8,8 @@ CSVGJTransformStackType::
 CSVGJTransformStackType() :
  CJObjectType(CJToken::Type::Object, "SVGTransformStack")
 {
-  addFunction("baseVal");
-  addFunction("getItem");
+  //addFunction("baseVal");
+  //addFunction("getItem");
 }
 
 //---
@@ -18,6 +18,10 @@ CSVGJTransformStack::
 CSVGJTransformStack(CSVG *svg, CSVGObject *obj, bool baseVal) :
  CJObject(svg->js()->transformStackType()), svg_(svg), obj_(obj), baseVal_(baseVal)
 {
+  CJavaScript *js = svg->js();
+
+  type_->addFunction(js, "baseVal");
+  type_->addFunction(js, "getItem");
 }
 
 int
@@ -80,11 +84,11 @@ CSVGJTransformType::
 CSVGJTransformType() :
  CJObjectType(CJToken::Type::Object, "SVGTransform")
 {
-  addFunction("type");
-  addFunction("matrix");
-  addFunction("setRotate");
-  addFunction("setScale");
-  addFunction("setTranslate");
+  //addFunction("type");
+  //addFunction("matrix");
+  //addFunction("setRotate");
+  //addFunction("setScale");
+  //addFunction("setTranslate");
 }
 
 //---
@@ -93,6 +97,13 @@ CSVGJTransform::
 CSVGJTransform(CSVG *svg, CSVGObject *obj, bool baseVal, int ind) :
  CJObject(svg->js()->transformType()), svg_(svg), obj_(obj), baseVal_(baseVal), ind_(ind)
 {
+  CJavaScript *js = svg->js();
+
+  type_->addFunction(js, "type");
+  type_->addFunction(js, "matrix");
+  type_->addFunction(js, "setRotate");
+  type_->addFunction(js, "setScale");
+  type_->addFunction(js, "setTranslate");
 }
 
 CMatrixStack2D::Transform
@@ -187,12 +198,12 @@ CSVGJMatrixType::
 CSVGJMatrixType() :
  CJObjectType(CJToken::Type::Object, "SVGMatrix")
 {
-  addFunction("a");
-  addFunction("b");
-  addFunction("c");
-  addFunction("d");
-  addFunction("e");
-  addFunction("f");
+  //addFunction("a");
+  //addFunction("b");
+  //addFunction("c");
+  //addFunction("d");
+  //addFunction("e");
+  //addFunction("f");
 }
 
 //---
@@ -201,6 +212,14 @@ CSVGJMatrix::
 CSVGJMatrix(CSVG *svg, CSVGObject *obj, bool baseVal, int ind) :
  CJObject(svg->js()->transformType()), svg_(svg), obj_(obj), baseVal_(baseVal), ind_(ind)
 {
+  CJavaScript *js = svg->js();
+
+  type_->setProperty("a", CJValueP(new CJTypeValue(js, type_, "a")));
+  type_->setProperty("b", CJValueP(new CJTypeValue(js, type_, "b")));
+  type_->setProperty("c", CJValueP(new CJTypeValue(js, type_, "c")));
+  type_->setProperty("d", CJValueP(new CJTypeValue(js, type_, "d")));
+  type_->setProperty("e", CJValueP(new CJTypeValue(js, type_, "e")));
+  type_->setProperty("f", CJValueP(new CJTypeValue(js, type_, "f")));
 }
 
 CMatrix2D

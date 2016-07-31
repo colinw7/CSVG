@@ -119,3 +119,6 @@
 ### 7/10/2016
  + Add JavaScript Console Dialog
  + Add JavaScript Object Transform Objects
+
+### 7/31/2016
+ + Update JavaScript interface

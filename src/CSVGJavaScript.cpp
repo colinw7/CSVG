@@ -31,10 +31,10 @@ init()
 
   setProperty("SVGTransform", CJValueP(transformDict));
 
-  transformDict->setProperty(this, "SVG_TRANSFORM_TRANSLATE",
-                             long(CMatrixTransformType::TRANSLATE));
-  transformDict->setProperty(this, "SVG_TRANSFORM_SCALE"    ,
-                             long(CMatrixTransformType::SCALE1));
-  transformDict->setProperty(this, "SVG_TRANSFORM_ROTATE"   ,
-                             long(CMatrixTransformType::ROTATE));
+  transformDict->setIntegerProperty(this, "SVG_TRANSFORM_TRANSLATE",
+                                    long(CMatrixTransformType::TRANSLATE));
+  transformDict->setIntegerProperty(this, "SVG_TRANSFORM_SCALE"    ,
+                                    long(CMatrixTransformType::SCALE1));
+  transformDict->setIntegerProperty(this, "SVG_TRANSFORM_ROTATE"   ,
+                                    long(CMatrixTransformType::ROTATE));
 }

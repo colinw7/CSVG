@@ -8,13 +8,16 @@ CSVGJEventType::
 CSVGJEventType() :
  CJObjectType(CJToken::Type::Object, "SVGEvent")
 {
-  addFunction("getTarget");
+  //addFunction("getTarget");
 }
 
 CSVGJEvent::
 CSVGJEvent(CSVG *svg) :
  CJObject(svg->js()->eventType()), svg_(svg)
 {
+  CJavaScript *js = svg->js();
+
+  type_->addFunction(js, "getTarget");
 }
 
 CJValueP

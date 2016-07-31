@@ -8,13 +8,14 @@ CSVGJDocumentType::
 CSVGJDocumentType() :
  CJObjectType(CJToken::Type::Object, "SVGDocument")
 {
-  addFunction("getElementById");
+  //addFunction("getElementById");
 }
 
 CSVGJDocument::
 CSVGJDocument(CSVG *svg) :
  CJObject(svg->js()->documentType()), svg_(svg)
 {
+  type_->addFunction(svg->js(), "getElementById");
 }
 
 CJValueP
