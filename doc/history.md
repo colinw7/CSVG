@@ -122,3 +122,7 @@
 
 ### 7/31/2016
  + Update JavaScript interface
+
+### 8/7/2016
+ + Add move javascript interface functions
+ + Move javascript classes to separate files

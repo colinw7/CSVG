@@ -8,7 +8,6 @@ CSVGJEventType::
 CSVGJEventType() :
  CJObjectType(CJToken::Type::Object, "SVGEvent")
 {
-  //addFunction("getTarget");
 }
 
 CSVGJEvent::

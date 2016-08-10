@@ -10,7 +10,7 @@ class CQSVGFeGaussianBlur : public CQSVGObject, public CSVGFeGaussianBlur {
   Q_OBJECT
 
   Q_PROPERTY(double stdDevX READ getStdDevX WRITE setStdDevX)
-  Q_PROPERTY(double stdDevX READ getStdDevX WRITE setStdDevX)
+  Q_PROPERTY(double stdDevY READ getStdDevY WRITE setStdDevY)
 
  public:
   CQSVGFeGaussianBlur(CQSVG *svg);

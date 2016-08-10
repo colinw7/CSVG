@@ -18,6 +18,8 @@ class CSVGJObject : public CJObject {
  public:
   CSVGJObject(CSVGObject *obj);
 
+  CSVGObject *obj() const { return obj_; }
+
   CJValue *dup(CJavaScript *) const override { return new CSVGJObject(obj_); }
 
   std::string toString() const override;
@@ -26,6 +28,9 @@ class CSVGJObject : public CJObject {
 
   bool toBoolean() const override { return 0; }
 
+  CJValueP getProperty(const std::string &key) const;
+  void setProperty(const std::string &key, CJValueP value);
+
   CJValueP execNameFn(CJavaScript *js, const std::string &name, const Values &values);
 
   void print(std::ostream &os) const override;
@@ -33,5 +38,7 @@ class CSVGJObject : public CJObject {
  private:
   CSVGObject *obj_;
 };
+
+typedef std::shared_ptr<CSVGJObject> CSVGJObjectP;
 
 #endif

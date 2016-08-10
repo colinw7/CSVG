@@ -45,6 +45,7 @@ namespace {
     return image;
   }
 
+#if 0
   QImage alphaImage(const QImage &image, int gray=0) {
     QImage image1 = createImage(image.width(), image.height());
 
@@ -60,6 +61,7 @@ namespace {
 
     return image1;
   }
+#endif
 
   QImage opacityImage(const QImage &image, double opacity) {
     QImage image1 = createImage(image.width(), image.height());

@@ -14,15 +14,11 @@ void
 CSVGJavaScript::
 init()
 {
-  documentType_       = CJObjectTypeP(new CSVGJDocumentType());
-  objectType_         = CJObjectTypeP(new CSVGJObjectType());
-  eventType_          = CJObjectTypeP(new CSVGJEventType());
-  transformStackType_ = CJObjectTypeP(new CSVGJTransformStackType());
-  transformType_      = CJObjectTypeP(new CSVGJTransformType());
-  matrixType_         = CJObjectTypeP(new CSVGJMatrixType());
+  objectType_ = addObjectType("SVGObject", CJObjectTypeP(new CSVGJObjectType()));
+  eventType_  = addObjectType("SVGEvent" , CJObjectTypeP(new CSVGJEventType()));
 
-  document_  = CJValueP(new CSVGJDocument(svg_));
-  event_     = CJValueP(new CSVGJEvent(svg_));
+  document_ = CJValueP(new CSVGJDocument(svg_));
+  event_    = CJValueP(new CSVGJEvent(svg_));
 
   setProperty("document"   , document());
   setProperty("svgDocument", document());
@@ -37,4 +33,6 @@ init()
                                     long(CMatrixTransformType::SCALE1));
   transformDict->setIntegerProperty(this, "SVG_TRANSFORM_ROTATE"   ,
                                     long(CMatrixTransformType::ROTATE));
+  transformDict->setIntegerProperty(this, "SVG_TRANSFORM_MATRIX"   ,
+                                    long(CMatrixTransformType::MATRIX));
 }
