@@ -3,15 +3,16 @@
 #include <CSVG.h>
 #include <CSVGObject.h>
 #include <CSVGJavaScript.h>
+#include <CJUtil.h>
 
-CJObjectTypeP CSVGJTransformStackType::type_;
+CJObjTypeP CSVGJTransformStackType::type_;
 
-CJObjectTypeP
+CJObjTypeP
 CSVGJTransformStackType::
 instance(CJavaScript *js)
 {
   if (! type_) {
-    type_ = CJObjectTypeP(new CSVGJTransformStackType(js));
+    type_ = CJObjTypeP(new CSVGJTransformStackType(js));
 
     js->addObjectType("SVGTransformStack", type_);
   }
@@ -21,28 +22,28 @@ instance(CJavaScript *js)
 
 CSVGJTransformStackType::
 CSVGJTransformStackType(CJavaScript *js) :
- CJObjectType(CJToken::Type::Object, "SVGTransformStack")
+ CJObjType(js, CJToken::Type::Object, "SVGTransformStack")
 {
-  addFunction(js, "getItem");
-  addFunction(js, "consolidate");
-  addFunction(js, "createSVGTransformFromMatrix");
+  addObjectFunction(js, "getItem");
+  addObjectFunction(js, "consolidate");
+  addObjectFunction(js, "createSVGTransformFromMatrix");
 }
 
 //---
 
 CSVGJTransformStack::
 CSVGJTransformStack(CSVG *svg, CSVGObject *obj, bool baseVal) :
- CJObject(CSVGJTransformStackType::instance(svg->js())), svg_(svg), obj_(obj), baseVal_(baseVal)
+ CJObj(CSVGJTransformStackType::instance(svg->js())), svg_(svg), obj_(obj), baseVal_(baseVal)
 {
 }
 
 CSVGJTransformStack::
 CSVGJTransformStack(CSVG *svg, const CMatrixStack2D &stack) :
- CJObject(CSVGJTransformStackType::instance(svg->js())), svg_(svg), stack_(stack)
+ CJObj(CSVGJTransformStackType::instance(svg->js())), svg_(svg), stack_(stack)
 {
 }
 
-int
+long
 CSVGJTransformStack::
 length() const
 {
@@ -87,6 +88,25 @@ matrixStack() const
     return stack_;
 }
 
+CMatrix2D
+CSVGJTransformStack::
+matrix() const
+{
+  return matrixStack().getMatrix();
+}
+
+void
+CSVGJTransformStack::
+setMatrix(const CMatrix2D &m)
+{
+  CMatrixStack2D stack(m);
+
+  if (obj_)
+    obj_->setTransform(stack);
+  else
+    stack_ = stack;
+}
+
 CJValueP
 CSVGJTransformStack::
 getProperty(const std::string &key) const
@@ -98,19 +118,14 @@ getProperty(const std::string &key) const
       return CJValueP(new CSVGJTransformStack(svg_, stack_));
   }
   else if (key == "matrix") {
-    CMatrixStack2D stack;
+    CSVGJTransformStack *th = const_cast<CSVGJTransformStack *>(this);
 
-    if (obj_)
-      stack = obj_->getTransform();
-    else
-      stack = stack_;
+    CSVGJTransformStackP p = std::static_pointer_cast<CSVGJTransformStack>(th->shared_from_this());
 
-    CMatrix2D m = stack.getMatrix();
-
-    return CJValueP(new CSVGJMatrix(svg_, m));
+    return CJValueP(new CSVGJMatrix(svg_, p));
   }
   else
-    return CJObject::getProperty(key);
+    return CJObj::getProperty(key);
 }
 
 CJValueP
@@ -149,7 +164,7 @@ execNameFn(CJavaScript *, const std::string &name, const Values &values)
       CSVGJMatrixP matrix1;
 
       if (matrixVal && matrixVal->type() == CJValue::Type::Object) {
-        CJObjectP matrixObj = std::static_pointer_cast<CJObject>(matrixVal);
+        CJObjP matrixObj = std::static_pointer_cast<CJObj>(matrixVal);
 
         if (matrixObj->type()->name() == "SVGMatrix") {
           matrix1 = std::static_pointer_cast<CSVGJMatrix>(matrixObj);
@@ -170,14 +185,14 @@ execNameFn(CJavaScript *, const std::string &name, const Values &values)
 
 //------
 
-CJObjectTypeP CSVGJTransformType::type_;
+CJObjTypeP CSVGJTransformType::type_;
 
-CJObjectTypeP
+CJObjTypeP
 CSVGJTransformType::
 instance(CJavaScript *js)
 {
   if (! type_) {
-    type_ = CJObjectTypeP(new CSVGJTransformType(js));
+    type_ = CJObjTypeP(new CSVGJTransformType(js));
 
     js->addObjectType("SVGTransform", type_);
   }
@@ -187,26 +202,26 @@ instance(CJavaScript *js)
 
 CSVGJTransformType::
 CSVGJTransformType(CJavaScript *js) :
- CJObjectType(CJToken::Type::Object, "SVGTransform")
+ CJObjType(js, CJToken::Type::Object, "SVGTransform")
 {
-  addFunction(js, "setRotate");
-  addFunction(js, "setScale");
-  addFunction(js, "setTranslate");
-  addFunction(js, "setMatrix");
+  addObjectFunction(js, "setRotate");
+  addObjectFunction(js, "setScale");
+  addObjectFunction(js, "setTranslate");
+  addObjectFunction(js, "setMatrix");
 }
 
 //---
 
 CSVGJTransform::
 CSVGJTransform(CSVG *svg, CSVGObject *obj, bool baseVal, int ind) :
- CJObject(CSVGJTransformType::instance(svg->js())), svg_(svg), obj_(obj),
+ CJObj(CSVGJTransformType::instance(svg->js())), svg_(svg), obj_(obj),
  baseVal_(baseVal), ind_(ind)
 {
 }
 
 CSVGJTransform::
 CSVGJTransform(CSVG *svg, CSVGJMatrixP matrix) :
- CJObject(CSVGJTransformType::instance(svg->js())), svg_(svg), matrix_(matrix)
+ CJObj(CSVGJTransformType::instance(svg->js())), svg_(svg), matrix_(matrix)
 {
 }
 
@@ -238,7 +253,7 @@ getProperty(const std::string &key) const
     return std::static_pointer_cast<CJValue>(matrix_);
   }
   else {
-    return CJObject::getProperty(key);
+    return CJObj::getProperty(key);
   }
 }
 
@@ -328,7 +343,7 @@ execNameFn(CJavaScript *, const std::string &name, const Values &values)
     CSVGJMatrixP matrix;
 
     if (matrixVal && matrixVal->type() == CJValue::Type::Object) {
-      CJObjectP matrixObj = std::static_pointer_cast<CJObject>(matrixVal);
+      CJObjP matrixObj = std::static_pointer_cast<CJObj>(matrixVal);
 
       if (matrixObj->type()->name() == "SVGMatrix") {
         matrix = std::static_pointer_cast<CSVGJMatrix>(matrixObj);
@@ -344,14 +359,14 @@ execNameFn(CJavaScript *, const std::string &name, const Values &values)
 
 //------
 
-CJObjectTypeP CSVGJMatrixType::type_;
+CJObjTypeP CSVGJMatrixType::type_;
 
-CJObjectTypeP
+CJObjTypeP
 CSVGJMatrixType::
 instance(CJavaScript *js)
 {
   if (! type_) {
-    type_ = CJObjectTypeP(new CSVGJMatrixType());
+    type_ = CJObjTypeP(new CSVGJMatrixType(js));
 
     js->addObjectType("SVGMatrix", type_);
   }
@@ -360,8 +375,8 @@ instance(CJavaScript *js)
 }
 
 CSVGJMatrixType::
-CSVGJMatrixType() :
- CJObjectType(CJToken::Type::Object, "SVGMatrix")
+CSVGJMatrixType(CJavaScript *js) :
+ CJObjType(js, CJToken::Type::Object, "SVGMatrix")
 {
 }
 
@@ -369,26 +384,32 @@ CSVGJMatrixType() :
 
 CSVGJMatrix::
 CSVGJMatrix(CSVG *svg, CSVGObject *obj, bool baseVal, int ind) :
- CJObject(CSVGJMatrixType::instance(svg->js())), svg_(svg), obj_(obj), baseVal_(baseVal), ind_(ind)
+ CJObj(CSVGJMatrixType::instance(svg->js())), svg_(svg), obj_(obj), baseVal_(baseVal), ind_(ind)
+{
+}
+
+CSVGJMatrix::
+CSVGJMatrix(CSVG *svg, const CSVGJTransformStackP &stack) :
+ CJObj(CSVGJMatrixType::instance(svg->js())), svg_(svg), stack_(stack)
 {
 }
 
 CSVGJMatrix::
 CSVGJMatrix(CSVG *svg, const CMatrix2D &m) :
- CJObject(CSVGJMatrixType::instance(svg->js())), svg_(svg), m_(m)
+ CJObj(CSVGJMatrixType::instance(svg->js())), svg_(svg), m_(m)
 {
 }
 
 int
 CSVGJMatrix::
-cmp(CJObjectP obj) const
+cmp(CJObjP obj) const
 {
   CSVGJMatrixP matrix;
 
   if (obj->type()->name() == "SVGMatrix")
     matrix = std::static_pointer_cast<CSVGJMatrix>(obj);
   else
-    return CJObject::cmp(obj);
+    return CJObj::cmp(obj);
 
   return this->matrix().cmp(matrix->matrix());
 }
@@ -414,7 +435,7 @@ getProperty(const std::string &key) const
     return CJValueP();
   }
   else {
-    return CJObject::getProperty(key);
+    return CJObj::getProperty(key);
   }
 }
 
@@ -425,9 +446,9 @@ setProperty(const std::string &key, CJValueP value)
   if (key == "a" || key == "b" || key == "c" || key == "d" || key == "e" || key == "f") {
     double v = value->toReal();
 
-    double values[9];
-
     CMatrix2D m = matrix();
+
+    double values[9];
 
     m.getValues(values, 9);
 
@@ -443,7 +464,7 @@ setProperty(const std::string &key, CJValueP value)
     setMatrix(m);
   }
   else {
-    CJObject::setProperty(key, value);
+    CJObj::setProperty(key, value);
   }
 }
 
@@ -464,6 +485,9 @@ matrix() const
 
     return stack.transform(ind_).calcMatrix();
   }
+  else if (stack_) {
+    return stack_->matrix();
+  }
   else {
     return m_;
   }
@@ -480,6 +504,9 @@ setMatrix(const CMatrix2D &m)
 
     obj_->setTransform(stack);
   }
+  else if (stack_) {
+    stack_->setMatrix(m);
+  }
   else {
     m_ = m;
   }
@@ -490,4 +517,22 @@ CSVGJMatrix::
 execNameFn(CJavaScript *, const std::string &, const Values &)
 {
   return CJValueP();
+}
+
+void
+CSVGJMatrix::
+print(std::ostream &os) const
+{
+  CMatrix2D m = matrix();
+
+  double values[9];
+
+  m.getValues(values, 9);
+
+  os << "[ " << CJUtil::realToString(values[0]) << ", " <<
+                CJUtil::realToString(values[3]) << ", " <<
+                CJUtil::realToString(values[1]) << ", " <<
+                CJUtil::realToString(values[4]) << ", " <<
+                CJUtil::realToString(values[2]) << ", " <<
+                CJUtil::realToString(values[5]) << " ]";
 }

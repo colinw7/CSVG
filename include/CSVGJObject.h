@@ -5,16 +5,16 @@
 
 class CSVGObject;
 
-class CSVGJObjectType : public CJObjectType {
+class CSVGJObjectType : public CJObjType {
  public:
-  CSVGJObjectType();
+  CSVGJObjectType(CJavaScript *js);
 
   CJValueP exec(CJavaScript *, const std::string &, const Values &) override {
     return CJValueP();
   }
 };
 
-class CSVGJObject : public CJObject {
+class CSVGJObject : public CJObj {
  public:
   CSVGJObject(CSVGObject *obj);
 
@@ -37,6 +37,7 @@ class CSVGJObject : public CJObject {
 
  private:
   CSVGObject *obj_;
+  CJValueP    data_;
 };
 
 typedef std::shared_ptr<CSVGJObject> CSVGJObjectP;

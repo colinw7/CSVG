@@ -13,18 +13,18 @@ class CSVGJavaScript : public CJavaScript {
 
   virtual void init();
 
-  CJObjectTypeP objectType() const { return objectType_; }
-  CJObjectTypeP eventType () const { return eventType_; }
+  CJObjTypeP objectType() const { return objectType_; }
+  CJObjTypeP eventType () const { return eventType_; }
 
   CJValueP document() const { return document_; }
   CJValueP event   () const { return event_; }
 
  protected:
-  CSVG*         svg_;
-  CJObjectTypeP objectType_;
-  CJObjectTypeP eventType_;
-  CJValueP      document_;
-  CJValueP      event_;
+  CSVG*      svg_;
+  CJObjTypeP objectType_;
+  CJObjTypeP eventType_;
+  CJValueP   document_;
+  CJValueP   event_;
 };
 
 #endif

@@ -4,16 +4,16 @@
 #include <CSVG.h>
 #include <CJavaScript.h>
 
-class CSVGJEventType : public CJObjectType {
+class CSVGJEventType : public CJObjType {
  public:
-  CSVGJEventType();
+  CSVGJEventType(CJavaScript *js);
 
   CJValueP exec(CJavaScript *, const std::string &, const Values &) override {
     return CJValueP();
   }
 };
 
-class CSVGJEvent : public CJObject {
+class CSVGJEvent : public CJObj {
  public:
   CSVGJEvent(CSVG *svg);
 

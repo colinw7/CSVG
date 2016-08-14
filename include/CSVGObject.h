@@ -228,6 +228,8 @@ class CSVGObject {
 
   bool hasAnimation() const;
 
+  uint numChildren() const { return objects_.size(); }
+
   const ObjectList &children() const { return objects_; }
 
   virtual bool isHierDrawable() const { return true; }
@@ -447,6 +449,17 @@ class CSVGObject {
 
   virtual bool interpValue(const std::string &name, const std::string &from,
                            const std::string &to, double x, std::string &ystr) const;
+
+  //---
+
+  virtual const CSVGPathPartList &getPartList() const {
+    static CSVGPathPartList parts;
+    return parts;
+  }
+
+  double pathLength() const;
+
+  bool pointAtLength(double l, CPoint2D &p, double &a, int &pi) const;
 
   //---
 

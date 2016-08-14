@@ -74,6 +74,13 @@ CSVGPathPartList()
 {
 }
 
+CSVGPathPartList::
+~CSVGPathPartList()
+{
+  //for (auto &p : parts_)
+  //  delete p;
+}
+
 void
 CSVGPathPartList::
 push_back(CSVGPathPart *part)

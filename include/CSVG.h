@@ -348,7 +348,7 @@ class CSVG {
                                                      double x3, double y3);
   virtual CSVGPathMRBezier3To *createPathMRBezier3To(double x2, double y2, double x3, double y3);
 
-  virtual CSVGPathClosePath *createPathClosePath(bool relative);
+  virtual CSVGPathClosePath *createPathClosePath(bool relative=false);
 
   virtual void redraw() { }
 

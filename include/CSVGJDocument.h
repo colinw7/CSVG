@@ -4,21 +4,21 @@
 #include <CSVG.h>
 #include <CJavaScript.h>
 
-class CSVGJDocumentType : public CJObjectType {
+class CSVGJDocumentType : public CJObjType {
  public:
-  static CJObjectTypeP instance(CJavaScript *js);
+  static CJObjTypeP instance(CJavaScript *js);
 
-  CSVGJDocumentType();
+  CSVGJDocumentType(CJavaScript *js);
 
   CJValueP exec(CJavaScript *, const std::string &, const Values &) override {
     return CJValueP();
   }
 
  private:
-  static CJObjectTypeP type_;
+  static CJObjTypeP type_;
 };
 
-class CSVGJDocument : public CJObject {
+class CSVGJDocument : public CJObj {
  public:
   CSVGJDocument(CSVG *svg);
 
@@ -44,21 +44,21 @@ class CSVGJDocument : public CJObject {
 
 //------
 
-class CSVGJDocumentElementType : public CJObjectType {
+class CSVGJDocumentElementType : public CJObjType {
  public:
-  static CJObjectTypeP instance(CJavaScript *js);
+  static CJObjTypeP instance(CJavaScript *js);
 
-  CSVGJDocumentElementType();
+  CSVGJDocumentElementType(CJavaScript *js);
 
   CJValueP exec(CJavaScript *, const std::string &, const Values &) override {
     return CJValueP();
   }
 
  private:
-  static CJObjectTypeP type_;
+  static CJObjTypeP type_;
 };
 
-class CSVGJDocumentElement : public CJObject {
+class CSVGJDocumentElement : public CJObj {
  public:
   CSVGJDocumentElement(CSVG *svg);
 

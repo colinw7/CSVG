@@ -115,6 +115,8 @@ updateBBox()
   CPoint2D p2(x + w, y + h);
 
   bbox_ = CBBox2D(p1, p2);
+
+  parts_ = CSVGPathPartList();
 }
 
 bool
@@ -198,6 +200,32 @@ getBBox(CBBox2D &bbox) const
     bbox = getViewBox();
 
   return true;
+}
+
+const CSVGPathPartList &
+CSVGRect::
+getPartList() const
+{
+  if (parts_.empty()) {
+    // TODO: rounded rect
+    CBBox2D drawBBox = getDrawBBox();
+
+    double dw = drawBBox.getWidth ();
+    double dh = drawBBox.getHeight();
+
+    double x = getX     ().pxValue(dw);
+    double y = getY     ().pxValue(dh);
+    double w = getWidth ().pxValue(dw);
+    double h = getHeight().pxValue(dh);
+
+    parts_.push_back(svg_.createPathMoveTo(x, y));
+    parts_.push_back(svg_.createPathHLineTo(w));
+    parts_.push_back(svg_.createPathVLineTo(h));
+    parts_.push_back(svg_.createPathHLineTo(-w));
+    parts_.push_back(svg_.createPathClosePath());
+  }
+
+  return parts_;
 }
 
 void

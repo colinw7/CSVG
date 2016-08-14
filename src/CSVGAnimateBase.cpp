@@ -106,9 +106,9 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   else if (svg_.timeValueOption(opt_name, opt_value, "repeatDur", time))
     repeatDur_ = time;
   else if (svg_.stringOption(opt_name, opt_value, "from", str))
-    from_ = str;
+    from_ = CStrUtil::stripSpaces(str);
   else if (svg_.stringOption(opt_name, opt_value, "to"  , str))
-    to_ = str;
+    to_ = CStrUtil::stripSpaces(str);
   else if (svg_.stringOption(opt_name, opt_value, "by"  , str))
     by_ = str;
   else if (svg_.stringOption(opt_name, opt_value, "fill", str))

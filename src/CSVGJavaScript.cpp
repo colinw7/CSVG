@@ -14,8 +14,8 @@ void
 CSVGJavaScript::
 init()
 {
-  objectType_ = addObjectType("SVGObject", CJObjectTypeP(new CSVGJObjectType()));
-  eventType_  = addObjectType("SVGEvent" , CJObjectTypeP(new CSVGJEventType()));
+  objectType_ = addObjectType("SVGObject", CJObjTypeP(new CSVGJObjectType(this)));
+  eventType_  = addObjectType("SVGEvent" , CJObjTypeP(new CSVGJEventType(this)));
 
   document_ = CJValueP(new CSVGJDocument(svg_));
   event_    = CJValueP(new CSVGJEvent(svg_));

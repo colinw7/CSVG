@@ -47,6 +47,8 @@ class CSVGRect : public CSVGObject {
 
   bool getBBox(CBBox2D &bbox) const override;
 
+  const CSVGPathPartList &getPartList() const override;
+
   void moveTo(const CPoint2D &p) override;
   void moveBy(const CVector2D &delta) override;
 
@@ -62,13 +64,14 @@ class CSVGRect : public CSVGObject {
   void updateBBox();
 
  private:
-  COptValT<CScreenUnits> x_;
-  COptValT<CScreenUnits> y_;
-  COptValT<CScreenUnits> width_;
-  COptValT<CScreenUnits> height_;
-  COptReal               rx_;
-  COptReal               ry_;
-  mutable CBBox2D        bbox_;
+  COptValT<CScreenUnits>   x_;
+  COptValT<CScreenUnits>   y_;
+  COptValT<CScreenUnits>   width_;
+  COptValT<CScreenUnits>   height_;
+  COptReal                 rx_;
+  COptReal                 ry_;
+  mutable CBBox2D          bbox_;
+  mutable CSVGPathPartList parts_;
 };
 
 #endif

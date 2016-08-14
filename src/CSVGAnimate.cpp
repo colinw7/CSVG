@@ -70,7 +70,10 @@ animate(double t)
     if (words.size() >= 2) {
       std::string ystr;
 
-      if (getParent()->interpValue(getAttributeName(), words[0], words[1], t, ystr)) {
+      std::string from = CStrUtil::stripSpaces(words[0]);
+      std::string to   = CStrUtil::stripSpaces(words[1]);
+
+      if (getParent()->interpValue(getAttributeName(), from, to, t, ystr)) {
         getParent()->processOption(getAttributeName(), ystr);
 
         svg_.redraw();

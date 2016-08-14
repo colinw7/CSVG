@@ -17,7 +17,8 @@ class CSVGPath : public CSVGObject {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  const CSVGPathPartList &getPartList() const { return parts_; }
+  const CSVGPathPartList &getPartList() const override { return parts_; }
+
   void setPartList(const CSVGPathPartList &parts) { parts_ = parts; }
 
   bool hasPathLength() const { return pathLength_.isValid(); }

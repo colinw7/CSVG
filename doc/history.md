@@ -126,3 +126,9 @@
 ### 8/7/2016
  + Add move javascript interface functions
  + Move javascript classes to separate files
+
+### 8/14/2016
+ + Interp strings for animate when to/from the same
+ + Strip spaces from tag values
+ + Update to new CJavaScript interface
+ + Support more CSVGJObject functions for path interpolation

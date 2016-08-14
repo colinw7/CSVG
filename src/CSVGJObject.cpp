@@ -2,23 +2,31 @@
 #include <CSVGJTransform.h>
 #include <CSVG.h>
 #include <CSVGObject.h>
+#include <CSVGTSpan.h>
+#include <CSVGRect.h>
+#include <CSVGText.h>
+#include <CSVGAnimateBase.h>
 #include <CSVGJavaScript.h>
 
 CSVGJObjectType::
-CSVGJObjectType() :
- CJObjectType(CJToken::Type::Object, "SVGObject")
+CSVGJObjectType(CJavaScript *js) :
+ CJObjType(js, CJToken::Type::Object, "SVGObject")
 {
 }
 
 CSVGJObject::
 CSVGJObject(CSVGObject *obj) :
- CJObject(obj->getSVG().js()->objectType()), obj_(obj)
+ CJObj(obj->getSVG().js()->objectType()), obj_(obj)
 {
   CJavaScript *js = obj->getSVG().js();
 
-  type_->addFunction(js, "setAttribute");
-  type_->addFunction(js, "setAttributeNS");
-  type_->addFunction(js, "appendChild");
+  type_->addObjectFunction(js, "setAttribute");
+  type_->addObjectFunction(js, "setAttributeNS");
+  type_->addObjectFunction(js, "appendChild");
+  type_->addObjectFunction(js, "getTotalLength");
+  type_->addObjectFunction(js, "getPointAtLength");
+  type_->addObjectFunction(js, "getPathSegAtLength");
+  type_->addObjectFunction(js, "getStartTime");
 }
 
 CJValueP
@@ -33,8 +41,28 @@ getProperty(const std::string &key) const
     return js->createStringValue(obj_->getId());
   else if (key == "transform")
     return CJValueP(new CSVGJTransformStack(&obj_->getSVG(), obj_));
+  else if (key == "textContent")
+    return js->createStringValue(obj_->getText());
+  else if (key == "firstChild") {
+    CSVGText *text = dynamic_cast<CSVGText *>(obj_);
+
+    if (text && obj_->numChildren() == 0) {
+      CSVGTSpan *tspan = obj_->getSVG().createTSpan();
+
+      tspan->setText(text->getText());
+
+      obj_->addChildObject(tspan);
+    }
+
+    if (obj_->numChildren() > 0)
+      return CJValueP(new CSVGJObject(obj_->children().front()));
+    else
+      return CJValueP();
+  }
+  else if (key == "data")
+    return data_;
   else
-    return CJObject::getProperty(key);
+    return CJObj::getProperty(key);
 }
 
 void
@@ -46,13 +74,21 @@ setProperty(const std::string &key, CJValueP value)
 
     obj_->setText(text);
   }
+  else if (key == "data") {
+    CSVGTSpan *tspan = dynamic_cast<CSVGTSpan *>(obj_);
+
+    if (tspan)
+      tspan->setText(value->toString());
+    else
+      data_ = value;
+  }
   else
-    CJObject::setProperty(key, value);
+    CJObj::setProperty(key, value);
 }
 
 CJValueP
 CSVGJObject::
-execNameFn(CJavaScript *, const std::string &name, const Values &values)
+execNameFn(CJavaScript *js, const std::string &name, const Values &values)
 {
   if      (name == "setAttribute") {
     if (values.size() == 3) {
@@ -85,7 +121,7 @@ execNameFn(CJavaScript *, const std::string &name, const Values &values)
       CSVGJObjectP svgObj;
 
       if (objVal && objVal->type() == CJValue::Type::Object) {
-        CJObjectP obj = std::static_pointer_cast<CJObject>(objVal);
+        CJObjP obj = std::static_pointer_cast<CJObj>(objVal);
 
         if (obj->type()->name() == "SVGObject") {
           svgObj = std::static_pointer_cast<CSVGJObject>(obj);
@@ -98,6 +134,56 @@ execNameFn(CJavaScript *, const std::string &name, const Values &values)
     }
 
     return CJValueP();
+  }
+  else if (name == "getTotalLength") {
+    double len = obj_->pathLength();
+
+    return js->createNumberValue(len);
+  }
+  else if (name == "getPointAtLength") {
+    double l = 0;
+
+    if (values.size() >= 2)
+      l = values[1]->toReal();
+
+    CPoint2D p;
+    double   a;
+    int      pi;
+
+    (void) obj_->pointAtLength(l, p, a, pi);
+
+    //---
+
+    CJDictionary *dict = new CJDictionary(js);
+
+    dict->setRealProperty(js, "x", p.x);
+    dict->setRealProperty(js, "y", p.y);
+
+    return CJValueP(dict);
+  }
+  else if (name == "getPathSegAtLength") {
+    double l = 0;
+
+    if (values.size() >= 2)
+      l = values[1]->toReal();
+
+    CPoint2D p;
+    double   a;
+    int      pi;
+
+    (void) obj_->pointAtLength(l, p, a, pi);
+
+    return js->createNumberValue(long(pi));
+  }
+  else if (name == "getStartTime") {
+    CSVGAnimateBase *base = dynamic_cast<CSVGAnimateBase *>(obj_);
+
+    double t = 0.0;
+
+    if (base)
+      t = base->getStartTime();
+
+    return js->createNumberValue(t);
   }
   else
     return CJValueP();

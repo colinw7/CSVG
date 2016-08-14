@@ -58,6 +58,8 @@ class CSVGPathPartList {
  public:
   CSVGPathPartList();
 
+ ~CSVGPathPartList();
+
   const Parts &parts() const { return parts_; }
 
   void push_back(CSVGPathPart *part);

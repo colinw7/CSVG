@@ -1674,6 +1674,11 @@ interpValue(const std::string &name, const std::string &from, const std::string 
 
     return true;
   }
+  else if (from == to) {
+    ystr = from;
+
+    return true;
+  }
   else {
     double fromVal = 0;
     uint   fromPos = 0;
@@ -1695,6 +1700,29 @@ interpValue(const std::string &name, const std::string &from, const std::string 
 
     return true;
   }
+}
+
+double
+CSVGObject::
+pathLength() const
+{
+  return getPartList().getLength();
+}
+
+bool
+CSVGObject::
+pointAtLength(double l, CPoint2D &p, double &a, int &pi) const
+{
+  double s = l/pathLength();
+
+  double xi, yi;
+
+  if (! getPartList().interp(s, &xi, &yi, &a, &pi))
+    return false;
+
+  p = CPoint2D(xi, yi);
+
+  return true;
 }
 
 void

@@ -5,18 +5,20 @@
 #include <CSVGJavaScript.h>
 
 CSVGJEventType::
-CSVGJEventType() :
- CJObjectType(CJToken::Type::Object, "SVGEvent")
+CSVGJEventType(CJavaScript *js) :
+ CJObjType(js, CJToken::Type::Object, "SVGEvent")
 {
 }
 
+//------
+
 CSVGJEvent::
 CSVGJEvent(CSVG *svg) :
- CJObject(svg->js()->eventType()), svg_(svg)
+ CJObj(svg->js()->eventType()), svg_(svg)
 {
   CJavaScript *js = svg->js();
 
-  type_->addFunction(js, "getTarget");
+  type_->addObjectFunction(js, "getTarget");
 }
 
 CJValueP
