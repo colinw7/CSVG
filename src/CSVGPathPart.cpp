@@ -214,7 +214,7 @@ interp(double s, double *xi, double *yi, double *a, int *pi) const
     ++i;
   }
 
-  CSVGPathPart *part = 0;
+  CSVGPathPart *part = nullptr;
 
   CPoint2D p1 = p, p2 = p;
   double   l1 = 0, l2 = 0;

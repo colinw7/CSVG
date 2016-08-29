@@ -17,7 +17,7 @@ class CSVGClipPath : public CSVGObject {
 
   CSVGClipPath *dup() const override;
 
-  const CSVGPathPartList &getPartList() const { return parts_; }
+  const CSVGPathPartList &getPartList() const override { return parts_; }
   void setPartList(const CSVGPathPartList &parts) { parts_ = parts; }
 
   bool getUnitsValid() const { return clipPathUnits_.isValid(); }

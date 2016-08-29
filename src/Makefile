@@ -102,6 +102,7 @@ CSVGUtil.cpp \
 CSVGXLink.cpp \
 \
 CSVGJavaScript.cpp \
+CSVGJAnimated.cpp \
 CSVGJDocument.cpp \
 CSVGJEvent.cpp \
 CSVGJObject.cpp \

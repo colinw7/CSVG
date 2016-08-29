@@ -33,13 +33,14 @@ CSVGJTransformStackType(CJavaScript *js) :
 
 CSVGJTransformStack::
 CSVGJTransformStack(CSVG *svg, CSVGObject *obj, bool baseVal) :
- CJObj(CSVGJTransformStackType::instance(svg->js())), svg_(svg), obj_(obj), baseVal_(baseVal)
+ CJObj(svg->js(), CSVGJTransformStackType::instance(svg->js())),
+ svg_(svg), obj_(obj), baseVal_(baseVal)
 {
 }
 
 CSVGJTransformStack::
 CSVGJTransformStack(CSVG *svg, const CMatrixStack2D &stack) :
- CJObj(CSVGJTransformStackType::instance(svg->js())), svg_(svg), stack_(stack)
+ CJObj(svg->js(), CSVGJTransformStackType::instance(svg->js())), svg_(svg), stack_(stack)
 {
 }
 
@@ -109,7 +110,7 @@ setMatrix(const CMatrix2D &m)
 
 CJValueP
 CSVGJTransformStack::
-getProperty(const std::string &key) const
+getProperty(CJavaScript *js, const std::string &key) const
 {
   if      (key == "baseVal") {
     if (obj_)
@@ -125,7 +126,7 @@ getProperty(const std::string &key) const
     return CJValueP(new CSVGJMatrix(svg_, p));
   }
   else
-    return CJObj::getProperty(key);
+    return CJObj::getProperty(js, key);
 }
 
 CJValueP
@@ -214,20 +215,20 @@ CSVGJTransformType(CJavaScript *js) :
 
 CSVGJTransform::
 CSVGJTransform(CSVG *svg, CSVGObject *obj, bool baseVal, int ind) :
- CJObj(CSVGJTransformType::instance(svg->js())), svg_(svg), obj_(obj),
+ CJObj(svg->js(), CSVGJTransformType::instance(svg->js())), svg_(svg), obj_(obj),
  baseVal_(baseVal), ind_(ind)
 {
 }
 
 CSVGJTransform::
 CSVGJTransform(CSVG *svg, CSVGJMatrixP matrix) :
- CJObj(CSVGJTransformType::instance(svg->js())), svg_(svg), matrix_(matrix)
+ CJObj(svg->js(), CSVGJTransformType::instance(svg->js())), svg_(svg), matrix_(std::move(matrix))
 {
 }
 
 CJValueP
 CSVGJTransform::
-getProperty(const std::string &key) const
+getProperty(CJavaScript *js, const std::string &key) const
 {
   if      (key == "type") {
     CMatrixTransformType type = CMatrixTransformType::MATRIX;
@@ -244,7 +245,7 @@ getProperty(const std::string &key) const
         type = CMatrixTransformType::ROTATE;
     }
 
-    return svg_->js()->createNumberValue(long(type));
+    return js->createNumberValue(long(type));
   }
   else if (key == "matrix") {
     if (! matrix_)
@@ -253,7 +254,7 @@ getProperty(const std::string &key) const
     return std::static_pointer_cast<CJValue>(matrix_);
   }
   else {
-    return CJObj::getProperty(key);
+    return CJObj::getProperty(js, key);
   }
 }
 
@@ -384,19 +385,20 @@ CSVGJMatrixType(CJavaScript *js) :
 
 CSVGJMatrix::
 CSVGJMatrix(CSVG *svg, CSVGObject *obj, bool baseVal, int ind) :
- CJObj(CSVGJMatrixType::instance(svg->js())), svg_(svg), obj_(obj), baseVal_(baseVal), ind_(ind)
+ CJObj(svg->js(), CSVGJMatrixType::instance(svg->js())),
+ svg_(svg), obj_(obj), baseVal_(baseVal), ind_(ind)
 {
 }
 
 CSVGJMatrix::
 CSVGJMatrix(CSVG *svg, const CSVGJTransformStackP &stack) :
- CJObj(CSVGJMatrixType::instance(svg->js())), svg_(svg), stack_(stack)
+ CJObj(svg->js(), CSVGJMatrixType::instance(svg->js())), svg_(svg), stack_(stack)
 {
 }
 
 CSVGJMatrix::
 CSVGJMatrix(CSVG *svg, const CMatrix2D &m) :
- CJObj(CSVGJMatrixType::instance(svg->js())), svg_(svg), m_(m)
+ CJObj(svg->js(), CSVGJMatrixType::instance(svg->js())), svg_(svg), m_(m)
 {
 }
 
@@ -416,10 +418,8 @@ cmp(CJObjP obj) const
 
 CJValueP
 CSVGJMatrix::
-getProperty(const std::string &key) const
+getProperty(CJavaScript *js, const std::string &key) const
 {
-  CJavaScript *js = svg_->js();
-
   if (key == "a" || key == "b" || key == "c" || key == "d" || key == "e" || key == "f") {
     double values[9];
 
@@ -435,13 +435,13 @@ getProperty(const std::string &key) const
     return CJValueP();
   }
   else {
-    return CJObj::getProperty(key);
+    return CJObj::getProperty(js, key);
   }
 }
 
 void
 CSVGJMatrix::
-setProperty(const std::string &key, CJValueP value)
+setProperty(CJavaScript *js, const std::string &key, CJValueP value)
 {
   if (key == "a" || key == "b" || key == "c" || key == "d" || key == "e" || key == "f") {
     double v = value->toReal();
@@ -464,7 +464,7 @@ setProperty(const std::string &key, CJValueP value)
     setMatrix(m);
   }
   else {
-    CJObj::setProperty(key, value);
+    CJObj::setProperty(js, key, value);
   }
 }
 
@@ -535,4 +535,110 @@ print(std::ostream &os) const
                 CJUtil::realToString(values[4]) << ", " <<
                 CJUtil::realToString(values[2]) << ", " <<
                 CJUtil::realToString(values[5]) << " ]";
+}
+
+//------
+
+CJObjTypeP CSVGJRectType::type_;
+
+CJObjTypeP
+CSVGJRectType::
+instance(CJavaScript *js)
+{
+  if (! type_) {
+    type_ = CJObjTypeP(new CSVGJRectType(js));
+
+    js->addObjectType("SVGRect", type_);
+  }
+
+  return type_;
+}
+
+CSVGJRectType::
+CSVGJRectType(CJavaScript *js) :
+ CJObjType(js, CJToken::Type::Object, "SVGRect")
+{
+}
+
+//---
+
+CSVGJRect::
+CSVGJRect(CSVG *svg, const CBBox2D &rect) :
+ CJObj(svg->js(), CSVGJMatrixType::instance(svg->js())), svg_(svg), rect_(rect)
+{
+}
+
+int
+CSVGJRect::
+cmp(CJObjP obj) const
+{
+  CSVGJRectP rect;
+
+  if (obj->type()->name() == "SVGMatrix")
+    rect = std::static_pointer_cast<CSVGJRect>(obj);
+  else
+    return CJObj::cmp(obj);
+
+  return this->rect() == rect->rect();
+}
+
+CJValueP
+CSVGJRect::
+getProperty(CJavaScript *js, const std::string &key) const
+{
+  if      (key == "x") {
+    return js->createNumberValue(rect_.getXMin());
+  }
+  else if (key == "y") {
+    return js->createNumberValue(rect_.getYMin());
+  }
+  else if (key == "width") {
+    return js->createNumberValue(rect_.getWidth());
+  }
+  else if (key == "height") {
+    return js->createNumberValue(rect_.getHeight());
+  }
+  else {
+    return CJObj::getProperty(js, key);
+  }
+}
+
+void
+CSVGJRect::
+setProperty(CJavaScript *js, const std::string &key, CJValueP value)
+{
+  CJObj::setProperty(js, key, value);
+}
+
+CBBox2D
+CSVGJRect::
+rect() const
+{
+  return rect_;
+}
+
+void
+CSVGJRect::
+setRect(const CBBox2D &rect)
+{
+  rect_ = rect;
+}
+
+CJValueP
+CSVGJRect::
+execNameFn(CJavaScript *, const std::string &, const Values &)
+{
+  return CJValueP();
+}
+
+void
+CSVGJRect::
+print(std::ostream &os) const
+{
+  CBBox2D rect = this->rect();
+
+  os << "[ " << CJUtil::realToString(rect.getXMin()) << ", " <<
+                CJUtil::realToString(rect.getYMin()) << ", " <<
+                CJUtil::realToString(rect.getXMax()) << ", " <<
+                CJUtil::realToString(rect.getYMax()) << " ]";
 }

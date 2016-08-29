@@ -177,6 +177,7 @@ INCLUDEPATH += \
 ../../CUtil/include \
 ../../CMath/include \
 ../../CStrUtil/include \
+../../CRegExp/include \
 ../../CRGBName/include \
 ../../CCSS/include \
 ../../CXML/include \

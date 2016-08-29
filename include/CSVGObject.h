@@ -22,7 +22,7 @@
 #include <list>
 
 #define CSVG_OBJECT_DEF(name,id) \
-const CObjType &getObjType() const { \
+const CObjType &getObjType() const override { \
   static CObjType objType(getTypeMgr(), name, uint(id)); \
   return objType; \
 }
@@ -430,20 +430,11 @@ class CSVGObject {
 
   //---
 
-  void setNameValue(const std::string &name, const std::string &value) {
-    nameValues_[name] = value;
-  }
+  void setNameValue(const std::string &name, const std::string &value);
 
-  COptString getNameValue(const std::string &name) const {
-    COptString value;
+  virtual COptString getNameValue(const std::string &name) const;
 
-    auto p = nameValues_.find(name);
-
-    if (p != nameValues_.end())
-      value = (*p).second;
-
-    return value;
-  }
+  virtual COptReal getRealNameValue(const std::string &name) const;
 
   //---
 

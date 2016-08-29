@@ -20,7 +20,7 @@ class CSVGLinearGradient : public CSVGObject {
 
   CSVGLinearGradient *dup() const override;
 
-  bool getBBox(CBBox2D &bbox) const {
+  bool getBBox(CBBox2D &bbox) const override {
     if (! x1_.isValid() || ! y1_.isValid() || ! x2_.isValid() || ! y2_.isValid())
       return false;
 
@@ -71,7 +71,7 @@ class CSVGLinearGradient : public CSVGObject {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  void termParse();
+  void termParse() override;
 
   bool canFlatten() const override { return false; }
 

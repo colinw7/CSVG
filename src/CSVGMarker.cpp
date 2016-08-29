@@ -84,6 +84,25 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   return true;
 }
 
+COptString
+CSVGMarker::
+getNameValue(const std::string &name) const
+{
+  COptString str;
+
+  if (name == "orientAngle") {
+    double angle  = 0;
+    bool   isAuto = false;
+
+    if (decodeOrientAngle(angle, isAuto))
+      str = CStrUtil::toString(angle);
+  }
+  else
+    str = CSVGObject::getNameValue(name);
+
+  return str;
+}
+
 void
 CSVGMarker::
 drawMarker(double x, double y, double autoAngle)
@@ -92,16 +111,11 @@ drawMarker(double x, double y, double autoAngle)
   // marker drawn in box (0, 0, markerWidth, markerHeight) in markerUnits.
   // if angle is auto then autoAngle used, otherwise specified angle used (default 0).
 
-  double angle = 0;
+  double angle  = 0;
+  bool   isAuto = false;
 
-  if (orient_.isValid()) {
-    if (orient_.getValue() != "auto") {
-      double r;
-
-      if (! CStrUtil::toReal(orient_.getValue(), &r))
-        angle = r;
-    }
-    else
+  if (decodeOrientAngle(angle, isAuto)) {
+    if (isAuto)
       angle = autoAngle;
   }
 
@@ -238,6 +252,32 @@ drawMarker(double x, double y, double autoAngle)
   //---
 
   currentBuffer->setTransform(transform);
+}
+
+bool
+CSVGMarker::
+decodeOrientAngle(double &angle, bool &isAuto) const
+{
+  angle  = 0;
+  isAuto = false;
+
+  if (! orient_.isValid())
+    return false;
+
+  if (orient_.getValue() == "auto") {
+    isAuto = true;
+
+    return true;
+  }
+
+  double r;
+
+  if (! CStrUtil::toReal(orient_.getValue(), &r))
+    return false;
+
+  angle = r;
+
+  return true;
 }
 
 void

@@ -196,7 +196,7 @@ createRenderer()
   if (renderer_)
     return renderer_->dup();
 
-  return 0;
+  return nullptr;
 }
 
 void
@@ -226,7 +226,7 @@ CSVG::
 currentDrawObject() const
 {
   if (drawObjects_.empty())
-    return 0;
+    return nullptr;
 
   return drawObjects_.back();
 }
@@ -314,14 +314,14 @@ clear()
   if (xml_.isValid())
     xml_->clear();
 
-  buffer_ = 0;
+  buffer_ = nullptr;
 
   rootBlockData_.reset();
 
   blockData_.reset();
 
-  block_      = 0;
-  xmlTag_     = 0;
+  block_      = nullptr;
+  xmlTag_     = nullptr;
   background_ = CRGBA(1,1,1);
 
   fontList_.clear();
@@ -424,7 +424,7 @@ CSVG::
 tokenToObject(CSVGObject *parent, const CXMLToken *token)
 {
   if (! token->isTag())
-    return 0;
+    return nullptr;
 
   CXMLTag *tag = token->getTag();
 
@@ -433,7 +433,7 @@ tokenToObject(CSVGObject *parent, const CXMLToken *token)
   const std::string &tag_name = tag->getName();
 
   if (tag_name == "d:SVGTestCase")
-    return 0;
+    return nullptr;
 
   //-----
 
@@ -442,7 +442,7 @@ tokenToObject(CSVGObject *parent, const CXMLToken *token)
 
   if (! object) {
     CSVGLog() << "Unknown tag '" << tag_name << "'";
-    return 0;
+    return nullptr;
   }
 
   object->setParent(parent);
@@ -681,7 +681,7 @@ createObjectByName(const std::string &name)
   else if (name == "use")
     object = createUse();
   else
-    object = 0;
+    object = nullptr;
 
   //------
 
@@ -1353,7 +1353,7 @@ CSVG::
 getFont() const
 {
   if (fontList_.empty())
-    return 0;
+    return nullptr;
 
   return fontList_[0];
 }
@@ -1367,7 +1367,7 @@ getCharGlyph(char c) const
   if (font)
     return font->getCharGlyph(c);
   else
-    return 0;
+    return nullptr;
 }
 
 CSVGGlyph *
@@ -1375,7 +1375,7 @@ CSVG::
 getUnicodeGlyph(const std::string &unicode) const
 {
   if (fontList_.empty())
-    return 0;
+    return nullptr;
 
   CSVGFont *font = fontList_[0];
 
@@ -1528,7 +1528,7 @@ popBuffer()
 
   CSVGBuffer *buffer = bufferStack_.back();
 
-  buffer->setParentBuffer(0);
+  buffer->setParentBuffer(nullptr);
 
   bufferStack_.pop_back();
 
@@ -1716,7 +1716,7 @@ pushStyle(CSVGObject *object)
 
   double xSize;
 
-  styleData_.fontDef.textSize("x", &xSize, 0, 0);
+  styleData_.fontDef.textSize("x", &xSize, nullptr, nullptr);
 
   CScreenUnitsMgrInst->setExSize(xSize);
 }
@@ -1735,7 +1735,7 @@ popStyle()
 
   double xSize;
 
-  styleData_.fontDef.textSize("x", &xSize, 0, 0);
+  styleData_.fontDef.textSize("x", &xSize, nullptr, nullptr);
 
   CScreenUnitsMgrInst->setExSize(xSize);
 }
@@ -2955,7 +2955,7 @@ drawMarkers(const std::vector<CPoint2D> &points, const std::vector<double> &angl
   CSVGObject *drawObject = currentDrawObject();
 
   // get markers
-  CSVGObject *startMarker = 0, *midMarker = 0, *endMarker = 0;
+  CSVGObject *startMarker = nullptr, *midMarker = nullptr, *endMarker = nullptr;
 
   if (drawObject) {
     startMarker = drawObject->getFlatMarkerStart();
@@ -4390,7 +4390,7 @@ urlOption(const std::string &opt_name, const std::string &opt_value,
   if (opt_name != name)
     return false;
 
-  *obj = 0;
+  *obj = nullptr;
 
   if (opt_value == "none")
     return true;
@@ -4423,7 +4423,7 @@ decodeUrlObject(const std::string &str, std::string &id, CSVGObject **object)
 
   *object = lookupObjectById(id);
 
-  return (*object != 0);
+  return (*object != nullptr);
 }
 
 void
@@ -4539,7 +4539,7 @@ lookupObjectById(const std::string &id) const
   if (p != idObjectMap_.end())
     return (*p).second;
 
-  return 0;
+  return nullptr;
 }
 
 bool

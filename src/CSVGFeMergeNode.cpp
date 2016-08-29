@@ -75,7 +75,7 @@ getParentFilter() const
 {
   CSVGFeMerge *merge = dynamic_cast<CSVGFeMerge *>(getParent());
 
-  return (merge ? merge->getParentFilter() : 0);
+  return (merge ? merge->getParentFilter() : nullptr);
 }
 
 void

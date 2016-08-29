@@ -76,7 +76,7 @@ lookupBuffer(const std::string &name, bool create)
     if (buffer)
       return lookupAlphaBuffer(buffer, create);
     else
-      return 0;
+      return nullptr;
   }
   else if (name == "BackgroundAlpha") {
     CSVGBuffer *buffer = lookupBuffer("BackgroundImage", create);
@@ -84,12 +84,12 @@ lookupBuffer(const std::string &name, bool create)
     if (buffer)
       return lookupAlphaBuffer(buffer, create);
     else
-      return 0;
+      return nullptr;
   }
 
   //---
 
-  CSVGBuffer *buffer = 0;
+  CSVGBuffer *buffer = nullptr;
 
   auto p = bufferMap_.find(name);
 
@@ -98,7 +98,7 @@ lookupBuffer(const std::string &name, bool create)
   }
   else {
     if (! create)
-      return 0;
+      return nullptr;
 
     buffer = createBuffer(name);
   }
@@ -147,7 +147,7 @@ lookupAlphaBuffer(CSVGBuffer *buffer, bool create)
     return (*p).second;
 
   if (! create)
-    return 0;
+    return nullptr;
 
   return createAlphaBuffer(buffer);
 }
@@ -2600,7 +2600,7 @@ pathClip(CSVGBuffer *buffer)
 
   //---
 
-  renderer_->pathClip(buffer ? buffer->renderer_ : 0);
+  renderer_->pathClip(buffer ? buffer->renderer_ : nullptr);
 
   hasClipPath_ = true;
 }
@@ -2614,7 +2614,7 @@ pathEoClip(CSVGBuffer *buffer)
 
   //---
 
-  renderer_->pathEoclip(buffer ? buffer->renderer_ : 0);
+  renderer_->pathEoclip(buffer ? buffer->renderer_ : nullptr);
 
   hasClipPath_ = true;
 }

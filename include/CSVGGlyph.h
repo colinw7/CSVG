@@ -20,7 +20,7 @@ class CSVGGlyph : public CSVGObject {
   std::string getName   () const { return glyphName_.getValue(""); }
   int         getDx     () const { return horizAdvX_.getValue(0 ); }
 
-  const CSVGPathPartList &getPartList() const { return parts_; }
+  const CSVGPathPartList &getPartList() const override { return parts_; }
   void setPartList(const CSVGPathPartList &parts) { parts_ = parts; }
 
   virtual bool processOption(const std::string &name, const std::string &value) override;

@@ -389,7 +389,7 @@ getFlatStrokeFillObject() const
     parent = parent->getParent();
   }
 
-  CSVGObject* fillObject = 0;
+  CSVGObject* fillObject = nullptr;
   CSVGCSSType fillObjectType;
 
   if (svg_.getStyleStrokeFillObject(this, fillObject, fillObjectType))
@@ -698,7 +698,7 @@ getFlatFillFillObject() const
     parent = parent->getParent();
   }
 
-  CSVGObject* fillObject = 0;
+  CSVGObject* fillObject = nullptr;
   CSVGCSSType fillObjectType;
 
   if (svg_.getStyleFillFillObject(this, fillObject, fillObjectType))
@@ -1650,6 +1650,53 @@ notHandled(const std::string &optName, const std::string &optValue)
                "for " << getTagName();
 }
 
+COptString
+CSVGObject::
+getNameValue(const std::string &name) const
+{
+  COptString str;
+
+  if (name == "viewBox") {
+    CBBox2D bbox = getViewBox();
+
+    str = CStrUtil::toString(bbox.getXMin()) + ", " +
+          CStrUtil::toString(bbox.getYMin()) + ", " +
+          CStrUtil::toString(bbox.getXMax()) + ", " +
+          CStrUtil::toString(bbox.getYMax());
+  }
+  else {
+    auto p = nameValues_.find(name);
+
+    if (p != nameValues_.end())
+      str = (*p).second;
+  }
+
+  return str;
+}
+
+COptReal
+CSVGObject::
+getRealNameValue(const std::string &name) const
+{
+  COptString str = getNameValue(name);
+
+  if (! str.isValid()) return COptReal();
+
+  double r;
+
+  if (! CStrUtil::toReal(str.getValue(), &r))
+    return COptReal();
+
+  return COptReal(r);
+}
+
+void
+CSVGObject::
+setNameValue(const std::string &name, const std::string &value)
+{
+  nameValues_[name] = value;
+}
+
 bool
 CSVGObject::
 interpValue(const std::string &name, const std::string &from, const std::string &to,
@@ -1794,7 +1841,7 @@ getFlatMarkerStart() const
   if (parent_)
     return parent_->getFlatMarkerStart();
 
-  return 0;
+  return nullptr;
 }
 
 CSVGObject *
@@ -1814,7 +1861,7 @@ getFlatMarkerMid() const
   if (parent_)
     return parent_->getFlatMarkerMid();
 
-  return 0;
+  return nullptr;
 }
 
 CSVGObject *
@@ -1834,7 +1881,7 @@ getFlatMarkerEnd() const
   if (parent_)
     return parent_->getFlatMarkerEnd();
 
-  return 0;
+  return nullptr;
 }
 
 void
@@ -1876,7 +1923,7 @@ void
 CSVGObject::
 deleteChildObject(CSVGObject *object)
 {
-  object->setParent(0);
+  object->setParent(nullptr);
 
   if (object->isAnimated())
     animation_.removeObject(object);
@@ -2016,7 +2063,7 @@ drawObject()
   if (isMasked)
     saveImage = true;
 
-  CSVGBuffer *saveBuffer = 0;
+  CSVGBuffer *saveBuffer = nullptr;
 
   //---
 
@@ -2364,7 +2411,7 @@ toBufferImage()
   CBBox2D bbox;
 
   if (! getBBox(bbox))
-    return 0;
+    return nullptr;
 
   CSVGBuffer *imageBuffer = svg_.pushBuffer("_" + getUniqueName() + "_image");
 
@@ -2391,7 +2438,7 @@ toNamedBufferImage(const std::string &bufferName)
   CBBox2D bbox;
 
   if (! getBBox(bbox))
-    return 0;
+    return nullptr;
 
   COptValT<CSVGFilter*> saveFilter;
 
@@ -2686,8 +2733,8 @@ bool
 CSVGObject::
 decodeXLink(const std::string &str, CSVGObject **object, CSVGBuffer **buffer)
 {
-  if (object) *object = 0;
-  if (buffer) *buffer = 0;
+  if (object) *object = nullptr;
+  if (buffer) *buffer = nullptr;
 
   //---
 
@@ -2812,7 +2859,7 @@ decodeXLink(const std::string &str, CSVGObject **object, CSVGBuffer **buffer)
   std::string::size_type pos = str.find('#');
 
   if (pos != std::string::npos) {
-    CSVGObject *object1 = 0;
+    CSVGObject *object1 = nullptr;
 
     std::string lhs = str.substr(0, pos);
     std::string rhs = str.substr(pos + 1);

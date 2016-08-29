@@ -236,7 +236,7 @@ createGradient(CSVGObject *obj, const COptReal &opacity)
 
   getControlPoints(obj, &xc, &yc, &r, &xf, &yf);
 
-  CRadialGradient *gradient = new CRadialGradient;
+  auto gradient = new CRadialGradient;
 
   gradient->setCenter(xc, yc);
   gradient->setRadius(r);

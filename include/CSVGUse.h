@@ -34,7 +34,7 @@ class CSVGUse : public CSVGObject {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  void termParse();
+  void termParse() override;
 
   bool getBBox(CBBox2D &bbox) const override;
 

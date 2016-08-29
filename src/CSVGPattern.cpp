@@ -219,7 +219,7 @@ setFillImage(CSVGObject *parent, CSVGBuffer *buffer,
 
   //--
 
-  svg_.pushStyle(0);
+  svg_.pushStyle(nullptr);
 
   if (getDisplay() != "none")
     drawSubObject();
@@ -349,7 +349,7 @@ CSVGPattern::
 getObject()
 {
   if (! xlink_.isValid())
-    return 0;
+    return nullptr;
 
   return xlink_.getValue().getObject();
 }

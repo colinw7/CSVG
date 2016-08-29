@@ -46,7 +46,7 @@ isObject() const
 {
   resolve();
 
-  return (object_ != 0);
+  return (object_ != nullptr);
 }
 
 CSVGObject *

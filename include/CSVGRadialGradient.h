@@ -67,7 +67,7 @@ class CSVGRadialGradient : public CSVGObject {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  void termParse();
+  void termParse() override;
 
   bool canFlatten() const override { return false; }
 

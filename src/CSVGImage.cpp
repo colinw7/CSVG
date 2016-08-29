@@ -191,10 +191,10 @@ CSVGImage::
 getObject() const
 {
   if (! xlink_.isValid())
-    return 0;
+    return nullptr;
 
   if (! xlink_.getValue().isObject())
-    return 0;
+    return nullptr;
 
   return xlink_.getValue().getObject();
 }

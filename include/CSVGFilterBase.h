@@ -9,7 +9,7 @@ class CSVGFilterBase : public CSVGObject {
   CSVGFilterBase(CSVG &svg);
   CSVGFilterBase(const CSVGFilterBase &filter);
 
-  std::string getUniqueName() const;
+  std::string getUniqueName() const override;
 
   CSVGCoordUnits getFilterUnits() const {
     return filterUnits_.getValue(CSVGCoordUnits::USER_SPACE); }

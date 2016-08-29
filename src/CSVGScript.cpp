@@ -46,8 +46,17 @@ processOption(const std::string &opt_name, const std::string &opt_value)
 {
   std::string str;
 
-  if       (svg_.stringOption(opt_name, opt_value, "type", str))
+  if       (svg_.stringOption(opt_name, opt_value, "type", str)) {
     type_ = str;
+
+    if (type_ == "text/ecmascript") {
+      std::string text = getText();
+
+      svg_.setScript(text);
+
+      setText("");
+    }
+  }
   else if (svg_.stringOption(opt_name, opt_value, "xlink:href", str)) {
     xlink_ = CSVGXLink(this, str);
 

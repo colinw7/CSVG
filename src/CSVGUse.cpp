@@ -40,7 +40,7 @@ CSVGObject *
 CSVGUse::
 getLinkObject() const
 {
-  CSVGObject *object = 0;
+  CSVGObject *object = nullptr;
 
   if (xlink_.isValid()) {
     if (xlink_.getValue().isObject())
@@ -270,7 +270,7 @@ draw()
     if (oldBuffer->isClip())
       saveImage = false;
 
-    CSVGBuffer *saveBuffer = 0;
+    CSVGBuffer *saveBuffer = nullptr;
 
     //---
 

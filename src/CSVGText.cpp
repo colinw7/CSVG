@@ -145,6 +145,32 @@ moveBy(const CVector2D &delta)
   y_ = getY() + delta.y();
 }
 
+COptString
+CSVGText::
+getNameValue(const std::string &name) const
+{
+  COptString str;
+
+  if      (name == "x")
+    str = CStrUtil::toString(getX());
+  else if (name == "y")
+    str = CStrUtil::toString(getY());
+  else if (name == "dx")
+    str = CStrUtil::toString(getDX().pxValue(1));
+  else if (name == "dy")
+    str = CStrUtil::toString(getDY().pxValue(1));
+  else if (name == "rotate") {
+    Reals reals = getRotate();
+
+    if (! reals.empty())
+      str = CStrUtil::toString(reals[0]);
+  }
+  else
+    str = CSVGObject::getNameValue(name);
+
+  return str;
+}
+
 bool
 CSVGText::
 draw()

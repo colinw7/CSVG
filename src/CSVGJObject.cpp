@@ -1,12 +1,14 @@
 #include <CSVGJObject.h>
 #include <CSVGJTransform.h>
-#include <CSVG.h>
-#include <CSVGObject.h>
-#include <CSVGTSpan.h>
+#include <CSVGJAnimated.h>
+#include <CSVGJavaScript.h>
+#include <CSVGAnimateBase.h>
+#include <CSVGCircle.h>
+#include <CSVGMarker.h>
 #include <CSVGRect.h>
 #include <CSVGText.h>
-#include <CSVGAnimateBase.h>
-#include <CSVGJavaScript.h>
+#include <CSVGTSpan.h>
+#include <CSVG.h>
 
 CSVGJObjectType::
 CSVGJObjectType(CJavaScript *js) :
@@ -16,7 +18,7 @@ CSVGJObjectType(CJavaScript *js) :
 
 CSVGJObject::
 CSVGJObject(CSVGObject *obj) :
- CJObj(obj->getSVG().js()->objectType()), obj_(obj)
+ CJObj(obj->getSVG().js(), obj->getSVG().js()->objectType()), obj_(obj)
 {
   CJavaScript *js = obj->getSVG().js();
 
@@ -27,27 +29,26 @@ CSVGJObject(CSVGObject *obj) :
   type_->addObjectFunction(js, "getPointAtLength");
   type_->addObjectFunction(js, "getPathSegAtLength");
   type_->addObjectFunction(js, "getStartTime");
+  type_->addObjectFunction(js, "getBBox");
 }
 
 CJValueP
 CSVGJObject::
-getProperty(const std::string &key) const
+getProperty(CJavaScript *js, const std::string &key) const
 {
-  CJavaScript *js = obj_->getSVG().js();
+  CSVG *svg = &obj_->getSVG();
 
   if      (key == "className")
     return js->createStringValue(obj_->getObjName());
   else if (key == "id")
     return js->createStringValue(obj_->getId());
-  else if (key == "transform")
-    return CJValueP(new CSVGJTransformStack(&obj_->getSVG(), obj_));
   else if (key == "textContent")
     return js->createStringValue(obj_->getText());
   else if (key == "firstChild") {
     CSVGText *text = dynamic_cast<CSVGText *>(obj_);
 
     if (text && obj_->numChildren() == 0) {
-      CSVGTSpan *tspan = obj_->getSVG().createTSpan();
+      CSVGTSpan *tspan = svg->createTSpan();
 
       tspan->setText(text->getText());
 
@@ -59,15 +60,52 @@ getProperty(const std::string &key) const
     else
       return CJValueP();
   }
-  else if (key == "data")
+  else if (key == "data") {
     return data_;
+  }
+  else if (key == "viewBox") {
+    return CJValueP(new CSVGJAnimatedRect(svg, obj_, key));
+  }
+  else if (key == "preserveAspectRatio") {
+    return CJValueP(new CSVGJAnimatedPreserveAspectRatio(svg, obj_, key));
+  }
+  else if (obj_->getObjTypeId() == CSVGObjTypeId::TEXT) {
+    CSVGText *text = dynamic_cast<CSVGText *>(obj_);
+
+    if      (key == "x" || key == "y" || key == "dx" || key == "dy")
+      return CJValueP(new CSVGJAnimatedNumber(svg, text, key));
+    else if (key == "rotate")
+      return CJValueP(new CSVGJAnimatedNumberList(svg, text, "rotate"));
+    else
+      return CJObj::getProperty(js, key);
+  }
+  else if (obj_->getObjTypeId() == CSVGObjTypeId::CIRCLE) {
+    CSVGCircle *circle = dynamic_cast<CSVGCircle *>(obj_);
+
+    if      (key == "cx" || key == "cy" || key == "r")
+      return CJValueP(new CSVGJAnimatedNumber(svg, circle, key));
+    else if (key == "transform")
+      return CJValueP(new CSVGJAnimatedTransformList(svg, circle, key));
+    else
+      return CJObj::getProperty(js, key);
+  }
+  else if (obj_->getObjTypeId() == CSVGObjTypeId::MARKER) {
+    CSVGMarker *marker = dynamic_cast<CSVGMarker *>(obj_);
+
+    if (key == "orientAngle")
+      return CJValueP(new CSVGJAnimatedNumber(svg, marker, key));
+    else
+      return CJObj::getProperty(js, key);
+  }
+  else if (key == "transform")
+    return CJValueP(new CSVGJTransformStack(svg, obj_));
   else
-    return CJObj::getProperty(key);
+    return CJObj::getProperty(js, key);
 }
 
 void
 CSVGJObject::
-setProperty(const std::string &key, CJValueP value)
+setProperty(CJavaScript *js, const std::string &key, CJValueP value)
 {
   if      (key == "textContent") {
     std::string text = value->toString();
@@ -83,13 +121,15 @@ setProperty(const std::string &key, CJValueP value)
       data_ = value;
   }
   else
-    CJObj::setProperty(key, value);
+    CJObj::setProperty(js, key, value);
 }
 
 CJValueP
 CSVGJObject::
 execNameFn(CJavaScript *js, const std::string &name, const Values &values)
 {
+  CSVG *svg = &obj_->getSVG();
+
   if      (name == "setAttribute") {
     if (values.size() == 3) {
       std::string name  = (values[1] ? values[1]->toString() : "");
@@ -97,7 +137,7 @@ execNameFn(CJavaScript *js, const std::string &name, const Values &values)
 
       obj_->processOption(name, value);
 
-      obj_->getSVG().redraw();
+      svg->redraw();
     }
 
     return CJValueP();
@@ -109,7 +149,7 @@ execNameFn(CJavaScript *js, const std::string &name, const Values &values)
 
       obj_->processOption(name, value);
 
-      obj_->getSVG().redraw();
+      svg->redraw();
     }
 
     return CJValueP();
@@ -184,6 +224,14 @@ execNameFn(CJavaScript *js, const std::string &name, const Values &values)
       t = base->getStartTime();
 
     return js->createNumberValue(t);
+  }
+  else if (name == "getBBox") {
+    CBBox2D bbox;
+
+    if (! obj_->getBBox(bbox))
+      return CJValueP();
+
+    return CJValueP(new CSVGJRect(svg, bbox));
   }
   else
     return CJValueP();

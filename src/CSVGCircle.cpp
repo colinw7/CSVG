@@ -98,6 +98,31 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   return true;
 }
 
+COptString
+CSVGCircle::
+getNameValue(const std::string &name) const
+{
+  COptString str;
+
+  CBBox2D bbox = getDrawBBox();
+
+  double w = bbox.getWidth ();
+  double h = bbox.getHeight();
+
+  if      (name == "cx")
+    str = CStrUtil::toString(getCenterX().pxValue(w));
+  else if (name == "cx")
+    str = CStrUtil::toString(getCenterY().pxValue(h));
+  else if (name == "r")
+    str = CStrUtil::toString(getRadius ().pxValue(w));
+  else if (name == "transform")
+    str = ""; // TODO
+  else
+    str = CSVGObject::getNameValue(name);
+
+  return str;
+}
+
 bool
 CSVGCircle::
 draw()

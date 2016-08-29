@@ -254,7 +254,7 @@ getParentFilterObject() const
   CSVGFilter *filter = getParentFilter();
 
   if (! filter)
-    return 0;
+    return nullptr;
 
   return filter->getObject();
 }
@@ -263,7 +263,7 @@ CSVGFilter *
 CSVGFilterBase::
 getParentFilter() const
 {
-  CSVGFilter *filter = 0;
+  CSVGFilter *filter = nullptr;
 
   CSVGObject *parent = getParent();
 
@@ -276,7 +276,7 @@ getParentFilter() const
     parent = parent->getParent();
   }
 
-  return 0;
+  return nullptr;
 }
 
 bool

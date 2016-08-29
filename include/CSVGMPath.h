@@ -18,7 +18,7 @@ class CSVGMPath : public CSVGObject {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  const CSVGPathPartList &getPartList() const { return parts_; }
+  const CSVGPathPartList &getPartList() const override { return parts_; }
   void setPartList(const CSVGPathPartList &parts) { parts_ = parts; }
 
   const CSVGXLink &xlink() const { return xlink_.getValue(); }

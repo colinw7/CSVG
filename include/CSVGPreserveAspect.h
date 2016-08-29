@@ -3,6 +3,7 @@
 
 #include <CSVGTypes.h>
 #include <CAlignType.h>
+#include <sstream>
 
 class CSVGPreserveAspect {
  public:
@@ -20,6 +21,14 @@ class CSVGPreserveAspect {
 
   const CSVGScale &getScale() const { return scale_ ; }
   void setScale(const CSVGScale &s) { scale_ = s; }
+
+  std::string toString() const {
+    std::stringstream ss;
+
+    print(ss);
+
+    return ss.str();
+  }
 
   void print(std::ostream &os) const {
     if      (getHAlign() == CHALIGN_TYPE_LEFT  ) os << "xMin";

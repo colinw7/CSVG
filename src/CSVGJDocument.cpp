@@ -30,7 +30,7 @@ CSVGJDocumentType(CJavaScript *js) :
 
 CSVGJDocument::
 CSVGJDocument(CSVG *svg) :
- CJObj(CSVGJDocumentType::instance(svg->js())), svg_(svg)
+ CJObj(svg->js(), CSVGJDocumentType::instance(svg->js())), svg_(svg)
 {
   type_->addObjectFunction(svg->js(), "getElementById");
   type_->addObjectFunction(svg->js(), "createElementNS");
@@ -39,8 +39,8 @@ CSVGJDocument(CSVG *svg) :
 
   element_ = CJValueP(new CSVGJDocumentElement(svg));
 
-  setProperty("documentElement", element_);
-  setProperty("defaultView", CJValueP());
+  setProperty(js_, "documentElement", element_);
+  setProperty(js_, "defaultView", CJValueP());
 }
 
 CJValueP
@@ -110,7 +110,7 @@ CSVGJDocumentElementType(CJavaScript *js) :
 
 CSVGJDocumentElement::
 CSVGJDocumentElement(CSVG *svg) :
- CJObj(CSVGJDocumentElementType::instance(svg->js())), svg_(svg)
+ CJObj(svg->js(), CSVGJDocumentElementType::instance(svg->js())), svg_(svg)
 {
   type_->addObjectFunction(svg->js(), "createSVGMatrix");
   type_->addObjectFunction(svg->js(), "createSVGTransformFromMatrix");

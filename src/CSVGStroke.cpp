@@ -115,7 +115,7 @@ calcFillObject() const
   else if (getFillObjectValid())
     return fillObject_.getValue();
   else
-    return 0;
+    return nullptr;
 }
 
 void

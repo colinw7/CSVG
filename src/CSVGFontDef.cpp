@@ -192,7 +192,7 @@ resetObj()
 {
   delete obj_;
 
-  obj_ = 0;
+  obj_ = nullptr;
 }
 
 void

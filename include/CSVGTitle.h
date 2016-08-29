@@ -16,7 +16,7 @@ class CSVGTitle : public CSVGObject {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  bool isDrawable() const { return false; }
+  bool isDrawable() const override { return false; }
 };
 
 #endif

@@ -2,6 +2,7 @@
 #define CSVGJTransform_H
 
 #include <CMatrixStack2D.h>
+#include <CBBox2D.h>
 #include <CJavaScript.h>
 
 class CSVG;
@@ -9,9 +10,11 @@ class CSVGObject;
 class CSVGTransform;
 class CSVGJTransformStack;
 class CSVGJMatrix;
+class CSVGJRect;
 
 typedef std::shared_ptr<CSVGJTransformStack> CSVGJTransformStackP;
 typedef std::shared_ptr<CSVGJMatrix>         CSVGJMatrixP;
+typedef std::shared_ptr<CSVGJRect>           CSVGJRectP;
 
 //------
 
@@ -58,9 +61,9 @@ class CSVGJTransformStack : public CJObj {
   CMatrix2D matrix() const;
   void setMatrix(const CMatrix2D &m);
 
-  CJValueP getProperty(const std::string &key) const;
+  CJValueP getProperty(CJavaScript *js, const std::string &key) const override;
 
-  CJValueP execNameFn(CJavaScript *js, const std::string &name, const Values &values);
+  CJValueP execNameFn(CJavaScript *js, const std::string &name, const Values &values) override;
 
   void print(std::ostream &os) const override { os << "SVGTransformStack: " << matrixStack(); }
 
@@ -109,9 +112,9 @@ class CSVGJTransform : public CJObj {
   CMatrixStack2D::Transform transform() const;
   void setTransform(const CMatrixStack2D::Transform &transform);
 
-  CJValueP getProperty(const std::string &key) const;
+  CJValueP getProperty(CJavaScript *js, const std::string &key) const override;
 
-  CJValueP execNameFn(CJavaScript *js, const std::string &name, const Values &values);
+  CJValueP execNameFn(CJavaScript *js, const std::string &name, const Values &values) override;
 
   void print(std::ostream &os) const override { os << "SVGTransform: " << transform(); }
 
@@ -161,12 +164,12 @@ class CSVGJMatrix : public CJObj {
   CMatrix2D matrix() const;
   void setMatrix(const CMatrix2D &m);
 
-  int cmp(CJObjP obj) const;
+  int cmp(CJObjP obj) const override;
 
-  CJValueP getProperty(const std::string &key) const override;
-  void     setProperty(const std::string &key, CJValueP value) override;
+  CJValueP getProperty(CJavaScript *js, const std::string &key) const override;
+  void     setProperty(CJavaScript *js, const std::string &key, CJValueP value) override;
 
-  CJValueP execNameFn(CJavaScript *js, const std::string &name, const Values &values);
+  CJValueP execNameFn(CJavaScript *js, const std::string &name, const Values &values) override;
 
   void print(std::ostream &os) const override;
 
@@ -177,6 +180,56 @@ class CSVGJMatrix : public CJObj {
   int                  ind_ { 0 };
   CSVGJTransformStackP stack_;
   CMatrix2D            m_;
+};
+
+//------
+
+class CSVGJRectType : public CJObjType {
+ public:
+  static CJObjTypeP instance(CJavaScript *js);
+
+  CSVGJRectType(CJavaScript *js);
+
+  CJValueP exec(CJavaScript *, const std::string &, const Values &) override {
+    return CJValueP();
+  }
+
+ private:
+  static CJObjTypeP type_;
+};
+
+class CSVGJRect : public CJObj {
+ public:
+  CSVGJRect(CSVG *svg, const CBBox2D &rect);
+
+  CJValue *dup(CJavaScript *) const override {
+    return new CSVGJRect(svg_, rect_);
+  }
+
+  std::string toString() const override {
+    std::ostringstream ss; ss << *this;
+    return ss.str();
+  }
+
+  double toReal() const override { return 0; }
+
+  bool toBoolean() const override { return 0; }
+
+  CBBox2D rect() const;
+  void setRect(const CBBox2D &rect);
+
+  int cmp(CJObjP obj) const override;
+
+  CJValueP getProperty(CJavaScript *js, const std::string &key) const override;
+  void     setProperty(CJavaScript *js, const std::string &key, CJValueP value) override;
+
+  CJValueP execNameFn(CJavaScript *js, const std::string &name, const Values &values) override;
+
+  void print(std::ostream &os) const override;
+
+ private:
+  CSVG*   svg_ { 0 };
+  CBBox2D rect_;
 };
 
 #endif

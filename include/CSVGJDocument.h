@@ -33,7 +33,7 @@ class CSVGJDocument : public CJObj {
 
   bool toBoolean() const override { return 0; }
 
-  CJValueP execNameFn(CJavaScript *js, const std::string &name, const Values &values);
+  CJValueP execNameFn(CJavaScript *js, const std::string &name, const Values &values) override;
 
   void print(std::ostream &os) const override { os << "SVG"; }
 
@@ -73,7 +73,7 @@ class CSVGJDocumentElement : public CJObj {
 
   bool toBoolean() const override { return 0; }
 
-  CJValueP execNameFn(CJavaScript *js, const std::string &name, const Values &values);
+  CJValueP execNameFn(CJavaScript *js, const std::string &name, const Values &values) override;
 
   void print(std::ostream &os) const override { os << "SVGDocumentElement"; }
 

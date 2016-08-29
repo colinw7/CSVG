@@ -14,7 +14,7 @@ CSVGJEventType(CJavaScript *js) :
 
 CSVGJEvent::
 CSVGJEvent(CSVG *svg) :
- CJObj(svg->js()->eventType()), svg_(svg)
+ CJObj(svg->js(), svg->js()->eventType()), svg_(svg)
 {
   CJavaScript *js = svg->js();
 
@@ -28,7 +28,7 @@ execNameFn(CJavaScript *, const std::string &name, const Values &)
   if (name == "getTarget") {
     CSVGObject *obj = svg_->eventObject();
 
-    CSVGJObject *jobj = new CSVGJObject(obj);
+    auto jobj = new CSVGJObject(obj);
 
     return CJValueP(jobj);
   }

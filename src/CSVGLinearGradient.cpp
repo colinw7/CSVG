@@ -102,7 +102,7 @@ termParse()
   for (const auto &o : objects) {
     CSVGStop *stop = dynamic_cast<CSVGStop *>(o);
 
-    if (stop != 0)
+    if (stop != nullptr)
       addStop(stop);
   }
 }
@@ -229,7 +229,7 @@ createGradient(CSVGObject *obj, const COptReal &opacity)
 
   double l = hypot(x2 - x1, y2 - y1);
 
-  CLinearGradient *gradient = new CLinearGradient;
+  auto gradient = new CLinearGradient;
 
   gradient->setLine(x1, y1, x2, y2);
 

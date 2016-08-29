@@ -167,7 +167,7 @@ void
 CSVGFilter::
 initDraw(CSVGBuffer *buffer)
 {
-  lastElement_ = 0;
+  lastElement_ = nullptr;
 
   offset_ = CPoint2D();
 

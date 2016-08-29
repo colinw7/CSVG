@@ -33,7 +33,7 @@ CSVGObject *
 CSVGAnimation::
 prevObject(CSVGObject *obj) const
 {
-  CSVGObject *prev = 0;
+  CSVGObject *prev = nullptr;
 
   for (const auto &o : objects_) {
     if (o == obj)

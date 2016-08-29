@@ -14,7 +14,7 @@ class CSVGAnimate : public CSVGAnimateBase {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  void animate(double t);
+  void animate(double t) override;
 
   void print(std::ostream &os, bool hier) const override;
 

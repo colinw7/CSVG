@@ -132,3 +132,6 @@
  + Strip spaces from tag values
  + Update to new CJavaScript interface
  + Support more CSVGJObject functions for path interpolation
+
+### 8/28/2016
+ + Add SVG Animation classes

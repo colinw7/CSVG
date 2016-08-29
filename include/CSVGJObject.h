@@ -28,10 +28,10 @@ class CSVGJObject : public CJObj {
 
   bool toBoolean() const override { return 0; }
 
-  CJValueP getProperty(const std::string &key) const;
-  void setProperty(const std::string &key, CJValueP value);
+  CJValueP getProperty(CJavaScript *js, const std::string &key) const override;
+  void setProperty(CJavaScript *js, const std::string &key, CJValueP value) override;
 
-  CJValueP execNameFn(CJavaScript *js, const std::string &name, const Values &values);
+  CJValueP execNameFn(CJavaScript *js, const std::string &name, const Values &values) override;
 
   void print(std::ostream &os) const override;
 

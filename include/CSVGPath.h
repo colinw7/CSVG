@@ -25,7 +25,7 @@ class CSVGPath : public CSVGObject {
   double getPathLength() const { return pathLength_.getValue(0); }
   void setPathLength(double r) { pathLength_ = r; }
 
-  void moveBy(const CVector2D &d);
+  void moveBy(const CVector2D &d) override;
 
   bool draw() override;
 

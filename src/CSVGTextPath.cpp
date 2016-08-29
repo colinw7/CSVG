@@ -64,7 +64,7 @@ draw()
   if (svg_.getDebug())
     CSVGLog() << *this;
 
-  CSVGObject *obj = (xlink_.isValid() ? xlink_.getValue().getObject() : 0);
+  CSVGObject *obj = (xlink_.isValid() ? xlink_.getValue().getObject() : nullptr);
   if (! obj) return false;
 
   CSVGPath *path = dynamic_cast<CSVGPath *>(obj);

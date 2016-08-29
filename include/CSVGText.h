@@ -40,9 +40,11 @@ class CSVGText : public CSVGObject {
 
   bool hasFont() const override { return true; }
 
+  bool canFlatten() const override { return false; }
+
   bool processOption(const std::string &name, const std::string &value) override;
 
-  bool canFlatten() const override { return false; }
+  COptString getNameValue(const std::string &name) const;
 
   bool draw() override;
 
