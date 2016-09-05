@@ -1,26 +1,26 @@
-#ifndef CSVGJObject_H
-#define CSVGJObject_H
+#ifndef CSVGJElement_H
+#define CSVGJElement_H
 
 #include <CJavaScript.h>
 
 class CSVGObject;
 
-class CSVGJObjectType : public CJObjType {
+class CSVGJElementType : public CJObjType {
  public:
-  CSVGJObjectType(CJavaScript *js);
+  CSVGJElementType(CJavaScript *js);
 
   CJValueP exec(CJavaScript *, const std::string &, const Values &) override {
     return CJValueP();
   }
 };
 
-class CSVGJObject : public CJObj {
+class CSVGJElement : public CJObj {
  public:
-  CSVGJObject(CSVGObject *obj);
+  CSVGJElement(CSVGObject *obj);
 
   CSVGObject *obj() const { return obj_; }
 
-  CJValue *dup(CJavaScript *) const override { return new CSVGJObject(obj_); }
+  CJValue *dup(CJavaScript *) const override { return new CSVGJElement(obj_); }
 
   std::string toString() const override;
 
@@ -40,6 +40,6 @@ class CSVGJObject : public CJObj {
   CJValueP    data_;
 };
 
-typedef std::shared_ptr<CSVGJObject> CSVGJObjectP;
+typedef std::shared_ptr<CSVGJElement> CSVGJElementP;
 
 #endif

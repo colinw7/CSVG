@@ -4,6 +4,7 @@
 #include <cassert>
 #include <string>
 #include <iostream>
+#include <sstream>
 
 #define CScreenUnitsMgrInst CScreenUnitsMgr::instance()
 
@@ -298,6 +299,14 @@ class CScreenUnits {
       os << value_ << "ratio";
     else
       os << value_;
+  }
+
+  std::string toString() const {
+    std::stringstream ss;
+
+    ss << *this;
+
+    return ss.str();
   }
 
   friend std::ostream &operator<<(std::ostream &os, const CScreenUnits &units) {

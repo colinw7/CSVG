@@ -133,16 +133,17 @@ enum class CSVGMorphologyOperator {
 };
 
 enum class CSVGLengthType {
-  NONE,
-  EM,
-  EX,
-  PT,
-  PC,
-  CM,
-  MM,
-  IN,
-  PX,
-  PERCENT
+  UNKNOWN = 0,
+  NUMBER = 1,
+  PERCENTAGE = 2,
+  EMS = 3,
+  EXS = 4,
+  PX = 5,
+  CM = 6,
+  MM = 7,
+  IN = 8,
+  PT = 9,
+  PC = 10
 };
 
 enum class CSVGPathPartType {
@@ -200,6 +201,34 @@ enum class CSVGOverflowType {
   SCROLL,
   AUTO,
   INHERIT
+};
+
+enum class CSVGAngleType {
+  UNKNOWN,
+  UNSPECIFIED,
+  DEG,
+  RAD,
+  GRAD
+};
+
+enum class CSVGPreserveAspectAlign {
+  UNKNOWN  = 0,
+  NONE     = 1,
+  XMINYMIN = 2,
+  XMIDYMIN = 3,
+  XMAXYMIN = 4,
+  XMINYMID = 5,
+  XMIDYMID = 6,
+  XMAXYMID = 7,
+  XMINYMAX = 8,
+  XMIDYMAX = 9,
+  XMAXYMAX = 10
+};
+
+enum class CSVGPreserveAspectMeetOrSlice {
+  UNKNOWN = 0,
+  MEET    = 1,
+  SLICE   = 2
 };
 
 //------

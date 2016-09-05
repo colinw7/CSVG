@@ -83,6 +83,8 @@
 #include <CStrParse.h>
 #include <CRGBName.h>
 
+CSVG::Colors CSVG::colors_;
+
 CSVG::
 CSVG(CSVGRenderer *renderer) :
  renderer_ (renderer),
@@ -258,44 +260,9 @@ void
 CSVG::
 setDebug(bool b)
 {
-  debug_ = b;
+  debugData_.debug = b;
 
-  xml_->setDebug(debug_);
-}
-
-void
-CSVG::
-setDebugImage(bool b)
-{
-  debugImage_ = b;
-}
-
-void
-CSVG::
-setDebugObjImage(bool b)
-{
-  debugObjImage_ = b;
-}
-
-void
-CSVG::
-setDebugFilter(bool b)
-{
-  debugFilter_ = b;
-}
-
-void
-CSVG::
-setDebugMask(bool b)
-{
-  debugMask_ = b;
-}
-
-void
-CSVG::
-setDebugUse(bool b)
-{
-  debugUse_ = b;
+  xml_->setDebug(getDebug());
 }
 
 void
@@ -3070,33 +3037,41 @@ drawMarkers(const std::vector<CPoint2D> &points, const std::vector<double> &angl
 
 bool
 CSVG::
-coordOption(const std::string &opt_name, const std::string &opt_value,
-            const std::string &name, CScreenUnits &length)
+coordListOption(const std::string &opt_name, const std::string &opt_value,
+                const std::string &name, std::vector<CScreenUnits> &lengths)
 {
   if (opt_name != name)
     return false;
 
-  double value;
+  CStrParse parse(opt_value);
 
-  std::vector<std::string> match_strs;
+  parse.skipSpace();
 
-  if (CRegExpUtil::parse(opt_value, "\\(.*\\)%", match_strs)) {
-    if (! CStrUtil::toReal(match_strs[0], &value)) {
-      CSVGLog() << "Illegal coord value " << match_strs[0];
+  while (! parse.eof()) {
+    int pos = parse.getPos();
+
+    while (! parse.eof() && ! parse.isSpace() && ! parse.isChar(','))
+      parse.skipChar();
+
+    std::string str = parse.getBefore(pos);
+
+    CScreenUnits length;
+
+    if (! decodeCoordValue(str, length)) {
+      std::string msg = "Illegal coord list value " + str;
+      syntaxError(msg);
       return false;
     }
 
-    length = CScreenUnits(CScreenUnits::Units::PERCENT, value);
-  }
-  else {
-    CScreenUnits length1;
+    lengths.push_back(length);
 
-    if (! decodeLengthValue(opt_value, length1)) {
-      CSVGLog() << "Illegal coord value " << opt_value;
-      return false;
+    parse.skipSpace();
+
+    while (parse.isChar(',')) {
+      parse.skipChar();
+
+      parse.skipSpace();
     }
-
-    length = length1;
   }
 
   return true;
@@ -3105,50 +3080,16 @@ coordOption(const std::string &opt_name, const std::string &opt_value,
 bool
 CSVG::
 coordOption(const std::string &opt_name, const std::string &opt_value,
-            const std::string &name, double *value)
-{
-  if (opt_name != name)
-    return false;
-
-  bool flag = true;
-
-  std::vector<std::string> match_strs;
-
-  if (CRegExpUtil::parse(opt_value, "\\(.*\\)%", match_strs)) {
-    if (! CStrUtil::toReal(match_strs[0], value)) {
-      *value = 0;
-      flag   = false;
-    }
-    else
-      *value /= 100;
-  }
-  else {
-    CScreenUnits lvalue;
-
-    if (! decodeLengthValue(opt_value, lvalue)) {
-      CSVGLog() << "Illegal length value '" << opt_value << "' for " << name;
-      *value = 0;
-      flag   = false;
-    }
-    else
-      *value = lvalue.pxValue();
-  }
-
-  return flag;
-}
-
-bool
-CSVG::
-lengthOption(const std::string &opt_name, const std::string &opt_value,
-             const std::string &name, CScreenUnits &length)
+            const std::string &name, CScreenUnits &length)
 {
   if (opt_name != name)
     return false;
 
   CScreenUnits length1;
 
-  if (! decodeLengthValue(opt_value, length1)) {
-    CSVGLog() << "Illegal length value '" << opt_value << "' for " << name;
+  if (! decodeCoordValue(opt_value, length1)) {
+    std::string msg = "Illegal coord value " + opt_value;
+    syntaxError(msg);
     return false;
   }
 
@@ -3159,8 +3100,126 @@ lengthOption(const std::string &opt_name, const std::string &opt_value,
 
 bool
 CSVG::
-decodeLengthValue(const std::string &str, CScreenUnits &lvalue)
+coordOption(const std::string &opt_name, const std::string &opt_value,
+            const std::string &name, double *value)
 {
+  CScreenUnits length;
+
+  if (! coordOption(opt_name, opt_value, name, length))
+    return false;
+
+  *value = length.pxValue();
+
+  return true;
+}
+
+bool
+CSVG::
+decodeCoordValue(const std::string &str, CScreenUnits &length)
+{
+  double value;
+
+  std::vector<std::string> match_strs;
+
+  if (CRegExpUtil::parse(str, "\\(.*\\)%", match_strs)) {
+    if (! CStrUtil::toReal(match_strs[0], &value))
+      return false;
+
+    length = CScreenUnits(CScreenUnits::Units::PERCENT, value);
+  }
+  else {
+    COptValT<CScreenUnits> optLength = decodeLengthValue(str);
+
+    if (! optLength.isValid())
+      return false;
+
+    length = optLength.getValue();
+  }
+
+  return true;
+}
+
+//--------------
+
+bool
+CSVG::
+lengthListOption(const std::string &opt_name, const std::string &opt_value,
+                 const std::string &name, std::vector<CScreenUnits> &lengths)
+{
+  if (opt_name != name)
+    return false;
+
+  if (! decodeLengthListValue(opt_value, lengths)) {
+    std::string msg = "Illegal length list value " + opt_value;
+    syntaxError(msg);
+    return false;
+  }
+
+  return true;
+}
+
+bool
+CSVG::
+decodeLengthListValue(const std::string &str, std::vector<CScreenUnits> &lengths)
+{
+  CStrParse parse(str);
+
+  parse.skipSpace();
+
+  while (! parse.eof()) {
+    int pos = parse.getPos();
+
+    while (! parse.eof() && ! parse.isSpace() && ! parse.isChar(','))
+      parse.skipChar();
+
+    std::string str1 = parse.getBefore(pos);
+
+    COptValT<CScreenUnits> optLength = decodeLengthValue(str1);
+
+    if (! optLength.isValid())
+      return false;
+
+    lengths.push_back(optLength.getValue());
+
+    parse.skipSpace();
+
+    while (parse.isChar(',')) {
+      parse.skipChar();
+
+      parse.skipSpace();
+    }
+  }
+
+  return true;
+}
+
+bool
+CSVG::
+lengthOption(const std::string &opt_name, const std::string &opt_value,
+             const std::string &name, CScreenUnits &length)
+{
+  if (opt_name != name)
+    return false;
+
+  COptValT<CScreenUnits> optLength = decodeLengthValue(opt_value);
+
+  if (! optLength.isValid()) {
+    std::string msg = "Illegal length value '" + opt_value + "' for " + name;
+    syntaxError(msg);
+    return false;
+  }
+
+  length = optLength.getValue();
+
+  return true;
+}
+
+COptValT<CScreenUnits>
+CSVG::
+decodeLengthValue(const std::string &str)
+{
+  CScreenUnits lvalue;
+
   static CRegExp em_pattern("\\(.*\\)em");
   static CRegExp ex_pattern("\\(.*\\)ex");
   static CRegExp pt_pattern("\\(.*\\)pt");
@@ -3177,7 +3236,7 @@ decodeLengthValue(const std::string &str, CScreenUnits &lvalue)
 
   if      (CRegExpUtil::parse(str, em_pattern, match_strs)) {
     if (! CStrUtil::toReal(match_strs[0], &value))
-      return false;
+      return COptValT<CScreenUnits>();
 
     lvalue = CScreenUnits(CScreenUnits::Units::EM, value);
 
@@ -3185,7 +3244,7 @@ decodeLengthValue(const std::string &str, CScreenUnits &lvalue)
   }
   else if (CRegExpUtil::parse(str, ex_pattern, match_strs)) {
     if (! CStrUtil::toReal(match_strs[0], &value))
-      return false;
+      return COptValT<CScreenUnits>();
 
     lvalue = CScreenUnits(CScreenUnits::Units::EX, value);
 
@@ -3193,7 +3252,7 @@ decodeLengthValue(const std::string &str, CScreenUnits &lvalue)
   }
   else if (CRegExpUtil::parse(str, pt_pattern, match_strs)) {
     if (! CStrUtil::toReal(match_strs[0], &value))
-      return false;
+      return COptValT<CScreenUnits>();
 
     //double ivalue = value;
     //mmToPixel((25.4*value)/72.0, &value);
@@ -3202,7 +3261,7 @@ decodeLengthValue(const std::string &str, CScreenUnits &lvalue)
   }
   else if (CRegExpUtil::parse(str, pc_pattern, match_strs)) {
     if (! CStrUtil::toReal(match_strs[0], &value))
-      return false;
+      return COptValT<CScreenUnits>();
 
     //double ivalue = value;
     //mmToPixel((25.4*value)/6.0, &value);
@@ -3211,7 +3270,7 @@ decodeLengthValue(const std::string &str, CScreenUnits &lvalue)
   }
   else if (CRegExpUtil::parse(str, cm_pattern, match_strs)) {
     if (! CStrUtil::toReal(match_strs[0], &value))
-      return false;
+      return COptValT<CScreenUnits>();
 
     //double ivalue = value;
     //mmToPixel(10*value, &value);
@@ -3220,7 +3279,7 @@ decodeLengthValue(const std::string &str, CScreenUnits &lvalue)
   }
   else if (CRegExpUtil::parse(str, mm_pattern, match_strs)) {
     if (! CStrUtil::toReal(match_strs[0], &value))
-      return false;
+      return COptValT<CScreenUnits>();
 
     //double ivalue = value;
     //mmToPixel(value, &value);
@@ -3229,7 +3288,7 @@ decodeLengthValue(const std::string &str, CScreenUnits &lvalue)
   }
   else if (CRegExpUtil::parse(str, in_pattern, match_strs)) {
     if (! CStrUtil::toReal(match_strs[0], &value))
-      return false;
+      return COptValT<CScreenUnits>();
 
     //double ivalue = value;
     //mmToPixel(25.4*value, &value);
@@ -3238,44 +3297,27 @@ decodeLengthValue(const std::string &str, CScreenUnits &lvalue)
   }
   else if (CRegExpUtil::parse(str, px_pattern, match_strs)) {
     if (! CStrUtil::toReal(match_strs[0], &value))
-      return false;
+      return COptValT<CScreenUnits>();
 
     lvalue = CScreenUnits(CScreenUnits::Units::PX, value);
   }
   else if (CRegExpUtil::parse(str, ph_pattern, match_strs)) {
-    if (! CStrUtil::toReal(match_strs[0], &value)) {
-      CSVGLog() << "Illegal coord value " << match_strs[0];
-      return false;
-    }
+    if (! CStrUtil::toReal(match_strs[0], &value))
+      return COptValT<CScreenUnits>();
 
     lvalue = CScreenUnits(CScreenUnits::Units::PERCENT, value);
   }
   else {
     if (! CStrUtil::toReal(str, &value))
-      return false;
+      return COptValT<CScreenUnits>();
 
     lvalue = CScreenUnits(CScreenUnits::Units::PX, value);
   }
 
-  return true;
+  return COptValT<CScreenUnits>(lvalue);
 }
 
-bool
-CSVG::
-angleOption(const std::string &opt_name, const std::string &opt_value,
-            const std::string &name, double *value)
-{
-  // TODO: handle deg, grad, rad suffixes (default is degrees)
-  if (opt_name != name)
-    return false;
-
-  if (! CStrUtil::toReal(opt_value, value)) {
-    CSVGLog() << "Illegal angle value '" << opt_value << "' for " << name;
-    return false;
-  }
-
-  return true;
-}
+//--------------
 
 // TODO: frequency (Hz, kHz)
 // TODO: time (ms, s)
@@ -3325,6 +3367,128 @@ stringOption(const std::string &opt_name, const std::string &opt_value,
   return true;
 }
 
+//--------------
+
+bool
+CSVG::
+orientOption(const std::string &opt_name, const std::string &opt_value,
+             const std::string &name, CSVGOrient &orient)
+{
+  if (opt_name != name)
+    return false;
+
+  COptValT<CSVGOrient> optOrient = decodeOrientString(opt_value);
+
+  if (! optOrient.isValid()) {
+    std::string msg = "Illegal orient value '" + opt_value + "' for " + name;
+    syntaxError(msg);
+    return false;
+  }
+
+  orient = optOrient.getValue();
+
+  return true;
+}
+
+COptValT<CSVGOrient>
+CSVG::
+decodeOrientString(const std::string &str)
+{
+  CSVGOrient orient;
+
+  if (str == "auto") {
+    orient.setIsAuto(true);
+    return COptValT<CSVGOrient>(orient);
+  }
+
+  COptValT<CAngle> angle = decodeAngleString(str);
+
+  if (! angle.isValid())
+    return COptValT<CSVGOrient>();
+
+  orient.setAngle(angle.getValue());
+
+  return COptValT<CSVGOrient>(orient);
+}
+
+std::string
+CSVG::
+encodeOrientString(const CSVGOrient &orient)
+{
+  if (orient.isAuto())
+    return "auto";
+
+  return encodeAngleString(orient.angle());
+}
+
+//--------------
+
+bool
+CSVG::
+angleOption(const std::string &opt_name, const std::string &opt_value,
+            const std::string &name, CAngle &angle)
+{
+  if (opt_name != name)
+    return false;
+
+  COptValT<CAngle> optAngle = decodeAngleString(opt_value);
+
+  if (! optAngle.isValid()) {
+    std::string msg = "Invalid angle value '" + opt_value + "' for " + name;
+    syntaxError(msg);
+    return false;
+  }
+
+  angle = optAngle.getValue();
+
+  return true;
+}
+
+COptValT<CAngle>
+CSVG::
+decodeAngleString(const std::string &str)
+{
+  CStrParse parse(str);
+
+  parse.skipSpace();
+
+  double r;
+
+  if (! parse.readReal(&r))
+    return COptValT<CAngle>();
+
+  CAngle angle;
+
+  if      (parse.isString("deg"))
+    angle.setDegrees(r);
+  else if (parse.isString("grad"))
+    angle.setGrads(r);
+  else if (parse.isString("rad"))
+    angle.setRadians(r);
+  else
+    angle.setDegrees(r); // TODO: handle bad chars after real
+
+  return COptValT<CAngle>(angle);
+}
+
+std::string
+CSVG::
+encodeAngleString(const CAngle &angle)
+{
+  std::string str = CStrUtil::toString(angle.value());
+
+  if      (angle.type() == CAngle::Type::DEGREES)
+    str += "deg";
+  else if (angle.type() == CAngle::Type::RADIANS)
+    str += "rad";
+  else if (angle.type() == CAngle::Type::GRADS)
+    str += "grad";
+
+  return str;
+}
+
+//--------------
+
 bool
 CSVG::
 percentOption(const std::string &opt_name, const std::string &opt_value,
@@ -3335,11 +3499,40 @@ percentOption(const std::string &opt_name, const std::string &opt_value,
   if (! stringOption(opt_name, opt_value, name, str))
     return false;
 
-  if (! decodePercentString(str, length))
+  if (! decodePercentString(str, length)) {
+    std::string msg = "Illegal coord value " + str;
+    syntaxError(msg);
     return false;
+  }
 
   return true;
 }
+
+bool
+CSVG::
+decodePercentString(const std::string &str, CScreenUnits &length)
+{
+  double value;
+
+  std::vector<std::string> match_strs;
+
+  if (CRegExpUtil::parse(str, "\\(.*\\)%", match_strs)) {
+    if (! CStrUtil::toReal(match_strs[0], &value))
+      return false;
+
+    length = CScreenUnits(CScreenUnits::Units::PERCENT, value);
+  }
+  else {
+    if (! CStrUtil::toReal(str, &value))
+      return false;
+
+    length = CScreenUnits(CScreenUnits::Units::RATIO, value);
+  }
+
+  return true;
+}
+
+//--------------
 
 bool
 CSVG::
@@ -3359,20 +3552,63 @@ coordUnitsOption(const std::string &opt_name, const std::string &opt_value,
 
 bool
 CSVG::
+decodeUnitsString(const std::string &str, CSVGCoordUnits &units)
+{
+  if      (str == "objectBoundingBox")
+    units = CSVGCoordUnits::OBJECT_BBOX;
+  else if (str == "userSpaceOnUse")
+    units = CSVGCoordUnits::USER_SPACE;
+  else if (str == "strokeWidth")
+    units = CSVGCoordUnits::STROKE_WIDTH;
+  else
+    return false;
+
+  return true;
+}
+
+std::string
+CSVG::
+encodeUnitsString(const CSVGCoordUnits &units)
+{
+  if      (units == CSVGCoordUnits::OBJECT_BBOX)
+    return "objectBoundingBox";
+  else if (units == CSVGCoordUnits::USER_SPACE)
+    return "userSpaceOnUse";
+  else if (units == CSVGCoordUnits::STROKE_WIDTH)
+    return "strokeWidth";
+  else
+    return "??";
+}
+
+//--------------
+
+bool
+CSVG::
 bboxOption(const std::string &opt_name, const std::string &opt_value,
-           const std::string &name, CBBox2D *bbox)
+           const std::string &name, CBBox2D &bbox)
 {
   if (opt_name != name)
     return false;
 
-  std::vector<std::string> words;
-
-  CStrUtil::addWords(opt_value, words, " ,");
-
-  if (words.size() != 4) {
-    CSVGLog() << "Bad bbox " << opt_value;
+  if (! decodeBBoxString(opt_value, bbox)) {
+    std::string msg = "Bad bbox " + opt_value;
+    syntaxError(msg);
     return false;
   }
+
+  return true;
+}
+
+bool
+CSVG::
+decodeBBoxString(const std::string &name, CBBox2D &bbox)
+{
+  std::vector<std::string> words;
+
+  CStrUtil::addWords(name, words, " ,");
+
+  if (words.size() != 4)
+    return false;
 
   double x, y, w, h;
 
@@ -3381,10 +3617,12 @@ bboxOption(const std::string &opt_name, const std::string &opt_value,
   if (! CStrUtil::toReal(CStrUtil::stripSpaces(words[2]), &w)) return false;
   if (! CStrUtil::toReal(CStrUtil::stripSpaces(words[3]), &h)) return false;
 
-  *bbox = CBBox2D(x, y, x + w, y + h);
+  bbox = CBBox2D(x, y, x + w, y + h);
 
   return true;
 }
+
+//------
 
 bool
 CSVG::
@@ -3394,17 +3632,53 @@ preserveAspectOption(const std::string &opt_name, const std::string &opt_value,
   if (opt_name != name)
     return false;
 
-  CHAlignType halign;
-  CVAlignType valign;
-  CSVGScale   scale;
-
-  if (! decodePreserveAspectRatio(opt_value, &halign, &valign, &scale))
+  if (! decodePreserveAspectRatio(opt_value, preserveAspect))
     return false;
+
+  return true;
+}
+
+bool
+CSVG::
+decodePreserveAspectRatio(const std::string &str, CSVGPreserveAspect &preserveAspect)
+{
+  CHAlignType halign = CHALIGN_TYPE_CENTER;
+  CVAlignType valign = CVALIGN_TYPE_CENTER;
+  CSVGScale   scale  = CSVGScale::FIXED_MEET;
+
+  std::vector<std::string> words;
+
+  CStrUtil::addWords(str, words, " ,");
+
+  CRegExp mmp("xM[ia][ndx]YM[ia][ndx]");
+
+  for (const auto &word : words) {
+    if (mmp.find(word)) {
+      std::string lword = word.substr(0, 4);
+      std::string rword = word.substr(4, 8);
+
+      if      (lword == "xMin") halign = CHALIGN_TYPE_LEFT;
+      else if (lword == "xMid") halign = CHALIGN_TYPE_CENTER;
+      else if (lword == "xMax") halign = CHALIGN_TYPE_RIGHT;
+
+      if      (rword == "YMin") valign = CVALIGN_TYPE_BOTTOM;
+      else if (rword == "YMid") valign = CVALIGN_TYPE_CENTER;
+      else if (rword == "YMax") valign = CVALIGN_TYPE_TOP;
+    }
+    else if (word == "meet")
+      scale = CSVGScale::FIXED_MEET;
+    else if (word == "slice")
+      scale = CSVGScale::FIXED_SLICE;
+    else if (word == "none")
+      scale = CSVGScale::FREE;
+  }
 
   preserveAspect = CSVGPreserveAspect(halign, valign, scale);
 
   return true;
 }
+
+//------
 
 bool
 CSVG::
@@ -3424,7 +3698,8 @@ pointListOption(const std::string &opt_name, const std::string &opt_value,
     double r;
 
     if (! parse.readReal(&r)) {
-      CSVGLog() << "Bad point list value " << opt_value;
+      std::string msg = "Bad point list value " + opt_value;
+      syntaxError(msg);
       return false;
     }
 
@@ -3632,6 +3907,8 @@ stringToTime(const std::string &str, CSVGTimeValue &time) const
   return true;
 }
 
+//--------------
+
 bool
 CSVG::
 transformOption(const std::string &opt_name, const std::string &opt_value,
@@ -3640,8 +3917,10 @@ transformOption(const std::string &opt_name, const std::string &opt_value,
   if (opt_name != name)
     return false;
 
-  if (! decodeTransform(opt_value, matrixStack))
+  if (! decodeTransform(opt_value, matrixStack)) {
+    CSVGLog() << "Invalid transform " << opt_value;
     return false;
+  }
 
   return true;
 }
@@ -3659,18 +3938,14 @@ decodeTransform(const std::string &str, CMatrixStack2D &matrix)
   while (! parse.eof()) {
     parse.skipSpace();
 
-    if (! parse.readIdentifier(keyword)) {
-      CSVGLog() << "Invalid transform " << str;
+    if (! parse.readIdentifier(keyword))
       return false;
-    }
 
     parse.skipSpace();
 
     if      (keyword == "scale") {
-      if (! parse.isChar('(')) {
-        CSVGLog() << "Invalid scale " << str;
+      if (! parse.isChar('('))
         return false;
-      }
 
       parse.skipChar();
 
@@ -3678,20 +3953,16 @@ decodeTransform(const std::string &str, CMatrixStack2D &matrix)
 
       double sx, sy;
 
-      if (! parse.readReal(&sx)) {
-        CSVGLog() << "Invalid scale " << str;
+      if (! parse.readReal(&sx))
         return false;
-      }
 
       skipCommaSpace(parse);
 
       bool isEqualScale = true;
 
       if (! parse.isChar(')')) {
-        if (! parse.readReal(&sy)) {
-          CSVGLog() << "Invalid scale " << str;
+        if (! parse.readReal(&sy))
           return false;
-        }
 
         parse.skipSpace();
 
@@ -3700,10 +3971,8 @@ decodeTransform(const std::string &str, CMatrixStack2D &matrix)
       else
         sy = sx;
 
-      if (! parse.isChar(')')) {
-        CSVGLog() << "Invalid scale " << str;
+      if (! parse.isChar(')'))
         return false;
-      }
 
       parse.skipChar();
 
@@ -3717,10 +3986,8 @@ decodeTransform(const std::string &str, CMatrixStack2D &matrix)
         matrix.scale(sx, sy);
     }
     else if (keyword == "translate") {
-      if (! parse.isChar('(')) {
-        CSVGLog() << "Invalid translate " << str;
+      if (! parse.isChar('('))
         return false;
-      }
 
       parse.skipChar();
 
@@ -3729,27 +3996,21 @@ decodeTransform(const std::string &str, CMatrixStack2D &matrix)
       double dx = 0.0, dy = 0.0;
 
       if (! parse.isChar(')')) {
-        if (! parse.readReal(&dx)) {
-          CSVGLog() << "Invalid translate " << str;
+        if (! parse.readReal(&dx))
           return false;
-        }
 
         skipCommaSpace(parse);
 
         if (! parse.isChar(')')) {
-          if (! parse.readReal(&dy)) {
-            CSVGLog() << "Invalid translate " << str;
+          if (! parse.readReal(&dy))
             return false;
-          }
 
           parse.skipSpace();
         }
       }
 
-      if (! parse.isChar(')')) {
-        CSVGLog() << "Invalid translate " << str;
+      if (! parse.isChar(')'))
         return false;
-      }
 
       parse.skipChar();
 
@@ -3760,10 +4021,8 @@ decodeTransform(const std::string &str, CMatrixStack2D &matrix)
       matrix.translate(dx, dy);
     }
     else if (keyword == "rotate") {
-      if (! parse.isChar('(')) {
-        CSVGLog() << "Invalid rotate " << str;
+      if (! parse.isChar('('))
         return false;
-      }
 
       parse.skipChar();
 
@@ -3771,10 +4030,8 @@ decodeTransform(const std::string &str, CMatrixStack2D &matrix)
 
       double a;
 
-      if (! parse.readReal(&a)) {
-        CSVGLog() << "Invalid rotate " << str;
+      if (! parse.readReal(&a))
         return false;
-      }
 
       parse.skipSpace();
 
@@ -3785,27 +4042,21 @@ decodeTransform(const std::string &str, CMatrixStack2D &matrix)
       if (! parse.isChar(')')) {
         skipCommaSpace(parse);
 
-        if (! parse.readReal(&cx)) {
-          CSVGLog() << "Invalid rotate " << str;
+        if (! parse.readReal(&cx))
           return false;
-        }
 
         skipCommaSpace(parse);
 
-        if (! parse.readReal(&cy)) {
-          CSVGLog() << "Invalid rotate " << str;
+        if (! parse.readReal(&cy))
           return false;
-        }
 
         parse.skipSpace();
 
         translate = true;
       }
 
-      if (! parse.isChar(')')) {
-        CSVGLog() << "Invalid rotate " << str;
+      if (! parse.isChar(')'))
         return false;
-      }
 
       parse.skipChar();
 
@@ -3819,10 +4070,8 @@ decodeTransform(const std::string &str, CMatrixStack2D &matrix)
         matrix.rotate(CMathGen::DegToRad(a));
     }
     else if (keyword == "skewX") {
-      if (! parse.isChar('(')) {
-        CSVGLog() << "Invalid skewX " << str;
+      if (! parse.isChar('('))
         return false;
-      }
 
       parse.skipChar();
 
@@ -3830,17 +4079,13 @@ decodeTransform(const std::string &str, CMatrixStack2D &matrix)
 
       double angle;
 
-      if (! parse.readReal(&angle)) {
-        CSVGLog() << "Invalid skewX " << str;
+      if (! parse.readReal(&angle))
         return false;
-      }
 
       parse.skipSpace();
 
-      if (! parse.isChar(')')) {
-        CSVGLog() << "Invalid skewX " << str;
+      if (! parse.isChar(')'))
         return false;
-      }
 
       parse.skipChar();
 
@@ -3851,10 +4096,8 @@ decodeTransform(const std::string &str, CMatrixStack2D &matrix)
       matrix.skewX(CMathGen::DegToRad(angle));
     }
     else if (keyword == "skewY") {
-      if (! parse.isChar('(')) {
-        CSVGLog() << "Invalid skewY " << str;
+      if (! parse.isChar('('))
         return false;
-      }
 
       parse.skipChar();
 
@@ -3862,17 +4105,13 @@ decodeTransform(const std::string &str, CMatrixStack2D &matrix)
 
       double angle;
 
-      if (! parse.readReal(&angle)) {
-        CSVGLog() << "Invalid skewY " << str;
+      if (! parse.readReal(&angle))
         return false;
-      }
 
       parse.skipSpace();
 
-      if (! parse.isChar(')')) {
-        CSVGLog() << "Invalid skewY " << str;
+      if (! parse.isChar(')'))
         return false;
-      }
 
       parse.skipChar();
 
@@ -3883,10 +4122,8 @@ decodeTransform(const std::string &str, CMatrixStack2D &matrix)
       matrix.skewY(CMathGen::DegToRad(angle));
     }
     else if (keyword == "matrix") {
-      if (! parse.isChar('(')) {
-        CSVGLog() << "Invalid matrix " << str;
+      if (! parse.isChar('('))
         return false;
-      }
 
       parse.skipChar();
 
@@ -3895,52 +4132,38 @@ decodeTransform(const std::string &str, CMatrixStack2D &matrix)
       // SVG is ((a c e) (b d f) (0 0 1))
       double m00, m01, m10, m11, tx, ty;
 
-      if (! parse.readReal(&m00)) {
-        CSVGLog() << "Invalid matrix " << str;
+      if (! parse.readReal(&m00))
         return false;
-      }
 
       skipCommaSpace(parse);
 
-      if (! parse.readReal(&m10)) {
-        CSVGLog() << "Invalid matrix " << str;
+      if (! parse.readReal(&m10))
         return false;
-      }
 
       skipCommaSpace(parse);
 
-      if (! parse.readReal(&m01)) {
-        CSVGLog() << "Invalid matrix " << str;
+      if (! parse.readReal(&m01))
         return false;
-      }
 
       skipCommaSpace(parse);
 
-      if (! parse.readReal(&m11)) {
-        CSVGLog() << "Invalid matrix " << str;
+      if (! parse.readReal(&m11))
         return false;
-      }
 
       skipCommaSpace(parse);
 
-      if (! parse.readReal(&tx)) {
-        CSVGLog() << "Invalid matrix " << str;
+      if (! parse.readReal(&tx))
         return false;
-      }
 
       skipCommaSpace(parse);
 
-      if (! parse.readReal(&ty)) {
-        CSVGLog() << "Invalid matrix " << str;
+      if (! parse.readReal(&ty))
         return false;
-      }
 
       parse.skipSpace();
 
-      if (! parse.isChar(')')) {
-        CSVGLog() << "Invalid matrix " << str;
+      if (! parse.isChar(')'))
         return false;
-      }
 
       parse.skipChar();
 
@@ -3950,68 +4173,27 @@ decodeTransform(const std::string &str, CMatrixStack2D &matrix)
 
       matrix.matrix(m00, m01, m10, m11, tx, ty);
     }
-    else {
-      CSVGLog() << "Unrecognised transform keyword " << keyword << " in " << str;
+    else
       return false;
-    }
   }
 
   return true;
 }
 
-bool
-CSVG::
-decodePreserveAspectRatio(const std::string &str, CHAlignType *halign,
-                          CVAlignType *valign, CSVGScale *scale)
-{
-  *halign = CHALIGN_TYPE_CENTER;
-  *valign = CVALIGN_TYPE_CENTER;
-  *scale  = CSVGScale::FIXED_MEET;
-
-  std::vector<std::string> words;
-
-  CStrUtil::addWords(str, words, " ,");
-
-  CRegExp mmp("xM[ia][ndx]YM[ia][ndx]");
-
-  for (const auto &word : words) {
-    if (mmp.find(word)) {
-      std::string lword = word.substr(0, 4);
-      std::string rword = word.substr(4, 8);
-
-      if      (lword == "xMin") *halign = CHALIGN_TYPE_LEFT;
-      else if (lword == "xMid") *halign = CHALIGN_TYPE_CENTER;
-      else if (lword == "xMax") *halign = CHALIGN_TYPE_RIGHT;
-
-      if      (rword == "YMin") *valign = CVALIGN_TYPE_BOTTOM;
-      else if (rword == "YMid") *valign = CVALIGN_TYPE_CENTER;
-      else if (rword == "YMax") *valign = CVALIGN_TYPE_TOP;
-    }
-    else if (word == "meet")
-      *scale = CSVGScale::FIXED_MEET;
-    else if (word == "slice")
-      *scale = CSVGScale::FIXED_SLICE;
-    else if (word == "none")
-      *scale = CSVGScale::FREE;
-  }
-
-  return true;
-}
+//--------------
 
 /*TODO*/
-double
+bool
 CSVG::
-decodeWidthString(const std::string &width_str)
+decodeWidthString(const std::string &width_str, double &width)
 {
-  double width = 1.0;
+  width = 1.0;
 
   std::vector<std::string> match_strs;
 
   if      (CRegExpUtil::parse(width_str, "\\(.*\\)pt", match_strs)) {
-    if (! CStrUtil::toReal(match_strs[0], &width)) {
-      CSVGLog() << "Illegal width value " << width_str;
-      width = 1.0;
-    }
+    if (! CStrUtil::toReal(match_strs[0], &width))
+      return false;
 
     CScreenUnits units(width, CScreenUnits::Units::PT);
 
@@ -4019,37 +4201,32 @@ decodeWidthString(const std::string &width_str)
     //mmToPixel(25.4*width/72.0, &width);
   }
   else if (CRegExpUtil::parse(width_str, "\\(.*\\)px", match_strs)) {
-    if (! CStrUtil::toReal(match_strs[0], &width)) {
-      CSVGLog() << "Illegal width value " << width_str;
-      width = 1.0;
-    }
+    if (! CStrUtil::toReal(match_strs[0], &width))
+      return false;
   }
   else {
-    if (! CStrUtil::toReal(width_str, &width)) {
-      CSVGLog() << "Illegal width value " << width_str;
-      width = 1.0;
-    }
+    if (! CStrUtil::toReal(width_str, &width))
+      return false;
   }
 
-  return width;
+  return true;
 }
 
-/*TODO*/
-double
+bool
 CSVG::
-decodeOpacityString(const std::string &opacity_str)
+decodeOpacityString(const std::string &opacity_str, double &opacity)
 {
-  double opacity;
+  opacity = 1.0;
 
   if (! CStrUtil::toReal(opacity_str, &opacity))
-    opacity = 1.0;
+    return false;
 
-  return opacity;
+  return true;
 }
 
 CFillType
 CSVG::
-decodeFillRuleString(const std::string &rule_str) const
+decodeFillRuleString(const std::string &rule_str)
 {
   if      (rule_str == "nonzero")
     return FILL_TYPE_WINDING;
@@ -4063,7 +4240,7 @@ decodeFillRuleString(const std::string &rule_str) const
 
 std::string
 CSVG::
-encodeFillRuleString(CFillType rule) const
+encodeFillRuleString(CFillType rule)
 {
   if      (rule == FILL_TYPE_WINDING)
     return "nonzero";
@@ -4104,14 +4281,12 @@ decodeDashString(const std::string &dash_str, std::vector<CScreenUnits> &lengths
   for (uint i = 0; i < num_words; ++i) {
     std::string word = CStrUtil::stripSpaces(words[i]);
 
-    CScreenUnits length;
+    COptValT<CScreenUnits> optLength = decodeLengthValue(word);
 
-    if (! decodeLengthValue(word, length)) {
-      CSVGLog() << "Bad dash length value " << word;
-      continue;
-    }
+    if (! optLength.isValid())
+      return false;
 
-    lengths.push_back(length);
+    lengths.push_back(optLength.getValue());
   }
 
   if (duplicate) {
@@ -4216,7 +4391,7 @@ decodeRGBAString(const std::string &colorStr, CRGBA &rgba)
 
 CSVGColor
 CSVG::
-nameToColor(const std::string &name) const
+nameToColor(const std::string &name)
 {
   if (name == "currentColor")
     return CSVGColor(CSVGColor::Type::CURRENT);
@@ -4226,7 +4401,7 @@ nameToColor(const std::string &name) const
 
 CRGBA
 CSVG::
-nameToRGBA(const std::string &name) const
+nameToRGBA(const std::string &name)
 {
   double r, g, b, a;
 
@@ -4298,62 +4473,6 @@ decodeFontStyleString(const std::string &font_style_str)
 
 bool
 CSVG::
-decodePercentString(const std::string &str, CScreenUnits &length)
-{
-  double value;
-
-  std::vector<std::string> match_strs;
-
-  if (CRegExpUtil::parse(str, "\\(.*\\)%", match_strs)) {
-    if (! CStrUtil::toReal(match_strs[0], &value)) {
-      CSVGLog() << "Illegal coord value " << match_strs[0];
-      return false;
-    }
-
-    length = CScreenUnits(CScreenUnits::Units::PERCENT, value);
-  }
-  else {
-    if (! CStrUtil::toReal(str, &value))
-      return false;
-
-    length = CScreenUnits(CScreenUnits::Units::RATIO, value);
-  }
-
-  return true;
-}
-
-bool
-CSVG::
-decodeUnitsString(const std::string &str, CSVGCoordUnits &units)
-{
-  if      (str == "objectBoundingBox")
-    units = CSVGCoordUnits::OBJECT_BBOX;
-  else if (str == "userSpaceOnUse")
-    units = CSVGCoordUnits::USER_SPACE;
-  else if (str == "strokeWidth")
-    units = CSVGCoordUnits::STROKE_WIDTH;
-  else
-    return false;
-
-  return true;
-}
-
-std::string
-CSVG::
-encodeUnitsString(const CSVGCoordUnits &units)
-{
-  if      (units == CSVGCoordUnits::OBJECT_BBOX)
-    return "objectBoundingBox";
-  else if (units == CSVGCoordUnits::USER_SPACE)
-    return "userSpaceOnUse";
-  else if (units == CSVGCoordUnits::STROKE_WIDTH)
-    return "strokeWidth";
-  else
-    return "??";
-}
-
-bool
-CSVG::
 decodeGradientSpread(const std::string &str, CGradientSpreadType &spread)
 {
   if      (str == "pad")
@@ -4381,6 +4500,8 @@ encodeGradientSpread(const CGradientSpreadType &spread)
   else
     return "??";
 }
+
+//--------------
 
 bool
 CSVG::
@@ -4410,7 +4531,7 @@ urlOption(const std::string &opt_name, const std::string &opt_value,
 
 bool
 CSVG::
-decodeUrlObject(const std::string &str, std::string &id, CSVGObject **object)
+decodeUrlObject(const std::string &str, std::string &id, CSVGObject **object) const
 {
   std::vector<std::string> match_strs;
 
@@ -4425,6 +4546,48 @@ decodeUrlObject(const std::string &str, std::string &id, CSVGObject **object)
 
   return (*object != nullptr);
 }
+
+//--------------
+
+bool
+CSVG::
+booleanOption(const std::string &opt_name, const std::string &opt_value,
+              const std::string &name, bool &b)
+{
+  if (opt_name != name)
+    return false;
+
+  if (! decodeBoolean(opt_value, b))
+    return false;
+
+  return true;
+}
+
+bool
+CSVG::
+decodeBoolean(const std::string &str, bool &b)
+{
+  CStrParse parse(str);
+
+  parse.skipSpace();
+
+  std::string val;
+
+  parse.readNonSpace(val);
+
+  std::string lval = CStrUtil::toLower(val);
+
+  if      (lval == "true" || lval == "1")
+    b = true;
+  else if (lval == "false" || lval == "0")
+    b = false;
+  else
+    return false;
+
+  return true;
+}
+
+//--------------
 
 void
 CSVG::
@@ -5049,4 +5212,14 @@ printFlat(std::ostream &os) const
   getRoot()->printFlat(os, -1);
 
   //css_.print(os);
+}
+
+void
+CSVG::
+syntaxError(const std::string &msg)
+{
+  if (! js_)
+    CSVGLog() << "SyntaxError: " << msg;
+  else
+    js_->throwSyntaxError(0, msg);
 }

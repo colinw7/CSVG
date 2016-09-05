@@ -11,6 +11,7 @@
 #include <CSVGPreserveAspect.h>
 #include <CSVGCSSData.h>
 #include <CSVGColor.h>
+#include <CSVGOrient.h>
 
 #include <CCSS.h>
 
@@ -118,6 +119,16 @@ class CSVG {
   typedef std::map<std::string, CRGBA> Colors;
 
  public:
+  struct DebugData {
+    bool debug         { false };
+    bool debugObjImage { false };
+    bool debugImage    { false };
+    bool debugFilter   { false };
+    bool debugMask     { false };
+    bool debugUse      { false };
+  };
+
+ public:
   CSVG(CSVGRenderer *renderer=0);
 
   virtual ~CSVG();
@@ -223,23 +234,27 @@ class CSVG {
   bool getIgnoreFilter() const { return ignoreFilter_; }
   void setIgnoreFilter(bool b) { ignoreFilter_ = b; }
 
-  bool getDebug() const { return debug_; }
+  //---
+
+  bool getDebug() const { return debugData_.debug; }
   void setDebug(bool b);
 
-  bool getDebugObjImage() const { return debugObjImage_; }
-  void setDebugObjImage(bool b);
+  bool getDebugObjImage() const { return debugData_.debugObjImage; }
+  void setDebugObjImage(bool b) { debugData_.debugObjImage = b; }
 
-  bool getDebugImage() const { return debugImage_; }
-  void setDebugImage(bool b);
+  bool getDebugImage() const { return debugData_.debugImage; }
+  void setDebugImage(bool b) { debugData_.debugImage = b; }
 
-  bool getDebugFilter() const { return debugFilter_; }
-  void setDebugFilter(bool b);
+  bool getDebugFilter() const { return debugData_.debugFilter; }
+  void setDebugFilter(bool b) { debugData_.debugFilter = b; }
 
-  bool getDebugMask() const { return debugMask_; }
-  void setDebugMask(bool b);
+  bool getDebugMask() const { return debugData_.debugMask; }
+  void setDebugMask(bool b) { debugData_.debugMask = b; }
 
-  bool getDebugUse() const { return debugUse_; }
-  void setDebugUse(bool b);
+  bool getDebugUse() const { return debugData_.debugUse; }
+  void setDebugUse(bool b) { debugData_.debugUse = b; }
+
+  //---
 
   void init();
 
@@ -389,7 +404,7 @@ class CSVG {
 
   //---
 
-  const Colors &getColors() const { return colors_; }
+  static const Colors &getColors() { return colors_; }
 
   //---
 
@@ -483,83 +498,163 @@ class CSVG {
 
   void drawMarkers(const std::vector<CPoint2D> &points, const std::vector<double> &angles);
 
+  //---
+
+  // coord args
+  bool coordListOption(const std::string &opt_name, const std::string &opt_value,
+                       const std::string &name, std::vector<CScreenUnits> &lengths);
+
   bool coordOption(const std::string &opt_name, const std::string &opt_value,
                    const std::string &name, CScreenUnits &length);
   bool coordOption(const std::string &opt_name, const std::string &opt_value,
                    const std::string &name, double *real);
+  static bool decodeCoordValue(const std::string &str, CScreenUnits &length);
+
+  //---
+
+  // length args
   bool lengthOption(const std::string &opt_name, const std::string &opt_value,
                     const std::string &name, CScreenUnits &length);
-  bool angleOption(const std::string &opt_name, const std::string &opt_value,
-                   const std::string &name, double *real);
+  static COptValT<CScreenUnits> decodeLengthValue(const std::string &str);
+
+  bool lengthListOption(const std::string &opt_name, const std::string &opt_value,
+                        const std::string &name, std::vector<CScreenUnits> &lengths);
+  static bool decodeLengthListValue(const std::string &str, std::vector<CScreenUnits> &lengths);
+
+  //---
+
   bool realOption(const std::string &opt_name, const std::string &opt_value,
                   const std::string &name, double *real);
   bool integerOption(const std::string &opt_name, const std::string &opt_value,
                      const std::string &name, long *integer);
   bool stringOption(const std::string &opt_name, const std::string &opt_value,
                     const std::string &name, std::string &str);
+
+  //---
+
+  // orient arg
+  bool orientOption(const std::string &opt_name, const std::string &opt_value,
+                    const std::string &name, CSVGOrient &orient);
+  static COptValT<CSVGOrient> decodeOrientString(const std::string &str);
+  static std::string encodeOrientString(const CSVGOrient &orient);
+
+  static void printNameOrient(std::ostream &os, const std::string &name,
+                              const COptValT<CSVGOrient> &o) {
+    if (o.isValid())
+      os << " " << name << "=\"" + encodeOrientString(o.getValue()) + "\"";
+  }
+
+  //---
+
+  // angle arg
+  bool angleOption(const std::string &opt_name, const std::string &opt_value,
+                   const std::string &name, CAngle &angle);
+  static COptValT<CAngle> decodeAngleString(const std::string &str);
+  static std::string encodeAngleString(const CAngle &angle);
+
+  static void printNameAngle(std::ostream &os, const std::string &name,
+                             const COptValT<CAngle> &a) {
+    if (a.isValid())
+      os << " " << name << "=\"" + encodeAngleString(a.getValue()) + "\"";
+  }
+
+  //---
+
   bool percentOption(const std::string &opt_name, const std::string &opt_value,
                      const std::string &name, CScreenUnits &length);
+  static bool decodePercentString(const std::string &str, CScreenUnits &length);
+
+  //---
+
   bool coordUnitsOption(const std::string &opt_name, const std::string &opt_value,
                         const std::string &name, CSVGCoordUnits &units);
-  bool bboxOption(const std::string &opt_name, const std::string &opt_value,
-                  const std::string &name, CBBox2D *bbox);
+  static bool decodeUnitsString(const std::string &str, CSVGCoordUnits &units);
+  static std::string encodeUnitsString(const CSVGCoordUnits &units);
 
+  //---
+
+  // bbox
+  bool bboxOption(const std::string &opt_name, const std::string &opt_value,
+                  const std::string &name, CBBox2D &bbox);
+  static bool decodeBBoxString(const std::string &name, CBBox2D &bbox);
+
+  //---
+
+  // preserve aspect
   bool preserveAspectOption(const std::string &opt_name, const std::string &opt_value,
                             const std::string &name, CSVGPreserveAspect &preserveAspect);
+  static bool decodePreserveAspectRatio(const std::string &str,
+                                        CSVGPreserveAspect &preserveAspect);
 
+  // point list
   bool pointListOption(const std::string &opt_name, const std::string &opt_value,
                        const std::string &name, std::vector<CPoint2D> &points);
 
+  // real list
   bool realListOption(const std::string &opt_name, const std::string &opt_value,
                       const std::string &name, std::vector<double> &reals);
-  bool stringToReals(const std::string &str, std::vector<double> &reals);
+  static bool stringToReals(const std::string &str, std::vector<double> &reals);
 
+  // event value
   bool eventValueOption(const std::string &opt_name, const std::string &opt_value,
                         const std::string &name, CSVGEventValue &event);
+
+  // time value
   bool timeValueOption(const std::string &opt_name, const std::string &opt_value,
                        const std::string &name, CSVGTimeValue &time);
-  bool transformOption(const std::string &opt_name, const std::string &opt_value,
-                       const std::string &name, CMatrixStack2D &matrix);
-
   bool stringToTime(const std::string &str, CSVGTimeValue &time) const;
 
-  bool decodeLengthValue(const std::string &str, CScreenUnits &lvalue);
+  //---
 
+  // transform
+  bool transformOption(const std::string &opt_name, const std::string &opt_value,
+                       const std::string &name, CMatrixStack2D &matrix);
+  static bool decodeTransform(const std::string &str, CMatrixStack2D &matrix);
+
+  //---
+
+  // url
   bool urlOption(const std::string &opt_name, const std::string &opt_value,
                  const std::string &name, CSVGObject **obj);
+  bool decodeUrlObject(const std::string &str, std::string &id, CSVGObject **object) const;
 
-  bool decodeTransform(const std::string &str, CMatrixStack2D &matrix);
+  //---
 
-  bool decodePreserveAspectRatio(const std::string &str, CHAlignType *halign,
-                                 CVAlignType *valign, CSVGScale *scale);
+  // boolean
+  bool booleanOption(const std::string &opt_name, const std::string &opt_value,
+                     const std::string &name, bool &b);
+  static bool decodeBoolean(const std::string &str, bool &b);
 
-  double decodeWidthString(const std::string &width_str);
-  double decodeOpacityString(const std::string &opacity_str);
+  //---
 
-  CFillType   decodeFillRuleString(const std::string &rule_str) const;
-  std::string encodeFillRuleString(CFillType rule) const;
+  static bool decodeWidthString(const std::string &width_str, double &width);
+  static bool decodeOpacityString(const std::string &opacity_str, double &opacity);
 
-  bool       decodeDashString(const std::string &dash_str,
-                              std::vector<CScreenUnits> &lengths, bool &solid);
-  bool       decodeColorString(const std::string &color_str, CSVGColor &color);
-  bool       decodeRGBAString(const std::string &color_str, CRGBA &rgba);
-  CSVGColor  nameToColor(const std::string &name) const;
-  CRGBA      nameToRGBA(const std::string &name) const;
-  CFontStyle decodeFontWeightString(const std::string &weight_str);
-  CFontStyle decodeFontStyleString(const std::string &style_str);
-  bool       decodePercentString(const std::string &str, CScreenUnits &length);
+  static CFillType decodeFillRuleString(const std::string &rule_str);
+  static std::string encodeFillRuleString(CFillType rule);
 
-  static bool decodeUnitsString(const std::string &str, CSVGCoordUnits &units);
-  static std::string encodeUnitsString(const CSVGCoordUnits &units);
+  static bool decodeDashString(const std::string &dash_str,
+                               std::vector<CScreenUnits> &lengths, bool &solid);
+  static bool decodeColorString(const std::string &color_str, CSVGColor &color);
+  static bool decodeRGBAString(const std::string &color_str, CRGBA &rgba);
+
+  static CSVGColor nameToColor(const std::string &name);
+
+  static CRGBA nameToRGBA(const std::string &name);
+
+  static CFontStyle decodeFontWeightString(const std::string &weight_str);
+  static CFontStyle decodeFontStyleString(const std::string &style_str);
+
+  //---
 
   static bool decodeGradientSpread(const std::string &str, CGradientSpreadType &spread);
   static std::string encodeGradientSpread(const CGradientSpreadType &spread);
 
-  bool decodeUrlObject(const std::string &str, std::string &id, CSVGObject **object);
+  //---
 
   //bool mmToPixel(double mm, double *pixel);
 
-  void skipCommaSpace(CStrParse &parse);
+  static void skipCommaSpace(CStrParse &parse);
 
   bool getTitle(std::string &str);
 
@@ -619,6 +714,8 @@ class CSVG {
 
   void printFlat(std::ostream &os) const;
 
+  void syntaxError(const std::string &msg);
+
  private:
   CConfig *getConfig();
 
@@ -657,6 +754,8 @@ class CSVG {
   typedef std::vector<CSVGBlockData>          BlockDataStack;
   typedef COptValT<CSVGXmlStyleSheet>         OptXmlStyleSheet;
 
+  static Colors colors_;
+
   CSVGRenderer*           renderer_ { 0 };
   CAutoPtr<CSVGBufferMgr> bufferMgr_;
   CSVGBuffer*             buffer_ { 0 };
@@ -677,17 +776,11 @@ class CSVG {
   CSVGJavaScript*         js_ { 0 };
   CSVGObject*             eventObject_ { 0 };
   ObjectList              drawObjects_;
-  Colors                  colors_;
   OptXmlStyleSheet        xmlStyleSheet_;
   bool                    uniquify_      { false };
   bool                    autoName_      { false };
   bool                    ignoreFilter_  { false };
-  bool                    debug_         { false };
-  bool                    debugObjImage_ { false };
-  bool                    debugImage_    { false };
-  bool                    debugFilter_   { false };
-  bool                    debugMask_     { false };
-  bool                    debugUse_      { false };
+  DebugData               debugData_;
 };
 
 #endif

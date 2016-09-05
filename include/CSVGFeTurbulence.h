@@ -27,10 +27,10 @@ class CSVGFeTurbulence : public CSVGFilterBase {
   void setBaseFreqY(double r) { baseFreqY_ = r; }
 
   int getNumOctaves() const { return numOctaves_.getValue(1); }
-  void setNumOctaves(int i) { numOctaves_ = i; }
+  void setNumOctaves(int n) { numOctaves_ = n; }
 
-  int getSeed() const { return seed_.getValue(0); }
-  void setSeed(int i) { seed_ = i; }
+  double getSeed() const { return seed_.getValue(0); }
+  void setSeed(double r) { seed_ = r; }
 
   std::string getStitchTiles() const { return stitchTiles_.getValue("noStitch"); }
   void setStitchTiles(const std::string &s) { stitchTiles_ = s; }
@@ -42,6 +42,8 @@ class CSVGFeTurbulence : public CSVGFilterBase {
   void setFilterOut(const std::string &s) { filterOut_ = s; }
 
   bool processOption(const std::string &name, const std::string &value) override;
+
+  COptString getNameValue(const std::string &name) const override;
 
   bool drawElement() override;
 
@@ -56,7 +58,7 @@ class CSVGFeTurbulence : public CSVGFilterBase {
   COptReal   baseFreqX_;
   COptReal   baseFreqY_;
   COptInt    numOctaves_;
-  COptInt    seed_;
+  COptReal   seed_;
   COptString stitchTiles_;
   COptString filterIn_;
   COptString filterOut_;

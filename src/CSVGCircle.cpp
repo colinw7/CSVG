@@ -111,12 +111,10 @@ getNameValue(const std::string &name) const
 
   if      (name == "cx")
     str = CStrUtil::toString(getCenterX().pxValue(w));
-  else if (name == "cx")
+  else if (name == "cy")
     str = CStrUtil::toString(getCenterY().pxValue(h));
   else if (name == "r")
     str = CStrUtil::toString(getRadius ().pxValue(w));
-  else if (name == "transform")
-    str = ""; // TODO
   else
     str = CSVGObject::getNameValue(name);
 

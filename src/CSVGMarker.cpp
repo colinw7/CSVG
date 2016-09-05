@@ -2,11 +2,12 @@
 #include <CSVGBuffer.h>
 #include <CSVGLog.h>
 #include <CSVG.h>
+#include <CStrParse.h>
 
 /* Attributes:
     <Core>
-    <Style>
     <Presentation>
+    <Style>
     <External>
     refX <Coordinate>
     refY <Coordinate>
@@ -56,28 +57,32 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   std::string        str;
   double             real;
   CBBox2D            bbox;
+  CAngle             angle;
   CSVGCoordUnits     units;
   CScreenUnits       length;
+  CSVGOrient         orient;
   CSVGPreserveAspect preserveAspect;
 
-  if      (svg_.coordOption (opt_name, opt_value, "refX", &real))
-    refX_ = real;
-  else if (svg_.coordOption (opt_name, opt_value, "refY", &real))
-    refY_ = real;
+  if      (svg_.coordOption(opt_name, opt_value, "refX", &real))
+    setRefX(real);
+  else if (svg_.coordOption(opt_name, opt_value, "refY", &real))
+    setRefY(real);
   else if (svg_.coordUnitsOption(opt_name, opt_value, "markerUnits", units))
-    markerUnits_ = units;
+    setMarkerUnits(units);
   else if (svg_.lengthOption(opt_name, opt_value, "markerWidth", length) ||
            svg_.lengthOption(opt_name, opt_value, "marker-width", length))
-    markerWidth_ = length;
+    setMarkerWidth(length);
   else if (svg_.lengthOption(opt_name, opt_value, "markerHeight", length) ||
            svg_.lengthOption(opt_name, opt_value, "marker-height", length))
-    markerHeight_ = length;
-  else if (svg_.stringOption(opt_name, opt_value, "orient", str))
-    orient_ = str;
-  else if (svg_.bboxOption  (opt_name, opt_value, "viewBox", &bbox))
-    viewBox_ = bbox;
+    setMarkerHeight(length);
+  else if (svg_.orientOption(opt_name, opt_value, "orient", orient))
+    setOrient(orient);
+  else if (svg_.angleOption(opt_name, opt_value, "orientAngle", angle))
+    setOrientAngle(angle);
+  else if (svg_.bboxOption(opt_name, opt_value, "viewBox", bbox))
+    setViewBox(bbox);
   else if (svg_.preserveAspectOption(opt_name, opt_value, "preserveAspectRatio", preserveAspect))
-    preserveAspect_ = preserveAspect;
+    setPreserveAspect(preserveAspect);
   else
     return false;
 
@@ -90,13 +95,8 @@ getNameValue(const std::string &name) const
 {
   COptString str;
 
-  if (name == "orientAngle") {
-    double angle  = 0;
-    bool   isAuto = false;
-
-    if (decodeOrientAngle(angle, isAuto))
-      str = CStrUtil::toString(angle);
-  }
+  if (name == "orientAngle")
+    str = CSVG::encodeAngleString(getOrientAngle());
   else
     str = CSVGObject::getNameValue(name);
 
@@ -111,13 +111,12 @@ drawMarker(double x, double y, double autoAngle)
   // marker drawn in box (0, 0, markerWidth, markerHeight) in markerUnits.
   // if angle is auto then autoAngle used, otherwise specified angle used (default 0).
 
-  double angle  = 0;
-  bool   isAuto = false;
+  CAngle angle;
 
-  if (decodeOrientAngle(angle, isAuto)) {
-    if (isAuto)
-      angle = autoAngle;
-  }
+  if (getOrientIsAuto())
+    angle = CAngle(autoAngle);
+  else
+    angle = getOrientAngle();
 
   //---
 
@@ -197,7 +196,7 @@ drawMarker(double x, double y, double autoAngle)
 
   matrix.translate(x - refX*xs, y - refY*ys);
 
-  matrix.rotate(angle, CPoint2D(refX*xs, refY*ys));
+  matrix.rotate(angle.degrees(), CPoint2D(refX*xs, refY*ys));
 
   matrix.scale(xs, ys);
 
@@ -254,32 +253,6 @@ drawMarker(double x, double y, double autoAngle)
   currentBuffer->setTransform(transform);
 }
 
-bool
-CSVGMarker::
-decodeOrientAngle(double &angle, bool &isAuto) const
-{
-  angle  = 0;
-  isAuto = false;
-
-  if (! orient_.isValid())
-    return false;
-
-  if (orient_.getValue() == "auto") {
-    isAuto = true;
-
-    return true;
-  }
-
-  double r;
-
-  if (! CStrUtil::toReal(orient_.getValue(), &r))
-    return false;
-
-  angle = r;
-
-  return true;
-}
-
 void
 CSVGMarker::
 print(std::ostream &os, bool hier) const
@@ -313,7 +286,7 @@ printValues(std::ostream &os, bool flat) const
   printNameLength(os, "markerWidth" , markerWidth_ );
   printNameLength(os, "markerHeight", markerHeight_);
 
-  printNameValue(os, "orient", orient_);
+  CSVG::printNameOrient(os, "orient", orient_);
 
   printNamePreserveAspect(os, "preserveAspectRatio", preserveAspect_);
 }

@@ -5,7 +5,19 @@
 
 class CSVGText : public CSVGObject {
  public:
-  typedef std::vector<double> Reals;
+  typedef std::vector<double>       Reals;
+  typedef std::vector<CScreenUnits> Coords;
+  typedef std::vector<CScreenUnits> Lengths;
+
+  typedef COptValT<Reals>   OptReals;
+  typedef COptValT<Coords>  OptCoords;
+  typedef COptValT<Lengths> OptLengths;
+
+  enum class LengthAdjustType {
+    LENGTHADJUST_UNKNOWN          = 0,
+    LENGTHADJUST_SPACING          = 1,
+    LENGTHADJUST_SPACINGANDGLYPHS = 2
+  };
 
  public:
   CSVG_OBJECT_DEF("text", CSVGObjTypeId::TEXT)
@@ -15,17 +27,17 @@ class CSVGText : public CSVGObject {
 
   CSVGText *dup() const override;
 
-  double getX() const { return x_.getValue(0); }
-  void setX(double x) { x_ = x; }
+  CScreenUnits getX() const;
+  void setX(const CScreenUnits &x);
 
-  double getY() const { return y_.getValue(0); }
-  void setY(double y) { y_ = y; }
+  CScreenUnits getY() const;
+  void setY(const CScreenUnits &y);
 
-  CScreenUnits getDX() const { return dx_.getValue(CScreenUnits(0)); }
-  void setDX(const CScreenUnits x) { dx_ = x; }
+  CScreenUnits getDX() const;
+  void setDX(const CScreenUnits &x);
 
-  CScreenUnits getDY() const { return dy_.getValue(CScreenUnits(0)); }
-  void setDY(const CScreenUnits y) { dy_ = y; }
+  CScreenUnits getDY() const;
+  void setDY(const CScreenUnits &y);
 
   Reals getRotate() const { return rotate_.getValue(Reals()); }
   void setRotate(const Reals &r) { rotate_ = r; }
@@ -36,7 +48,16 @@ class CSVGText : public CSVGObject {
   std::string getLengthAdjust() const { return lengthAdjust_.getValue("spacing"); }
   void setLengthAdjust(const std::string &s) { lengthAdjust_ = s; }
 
-  CPoint2D getPosition() const { return CPoint2D(getX(), getY()); }
+  int getLengthAdjustValue() const {
+    if (getLengthAdjust() == "spacing")
+      return int(LengthAdjustType::LENGTHADJUST_SPACING);
+    if (getLengthAdjust() == "spacingAndGlyphs")
+      return int(LengthAdjustType::LENGTHADJUST_SPACINGANDGLYPHS);
+
+    return int(LengthAdjustType::LENGTHADJUST_UNKNOWN);
+  }
+
+  CPoint2D getPosition() const;
 
   bool hasFont() const override { return true; }
 
@@ -63,14 +84,14 @@ class CSVGText : public CSVGObject {
   friend std::ostream &operator<<(std::ostream &os, const CSVGText &text);
 
  private:
-  COptReal               x_;
-  COptReal               y_;
-  COptValT<CScreenUnits> dx_;
-  COptValT<CScreenUnits> dy_;
-  COptValT<Reals>        rotate_;
-  COptString             textLength_;
-  COptString             lengthAdjust_;
-  CPoint2D               lastPos_;
+  OptCoords  x_;
+  OptCoords  y_;
+  OptLengths dx_;
+  OptLengths dy_;
+  OptReals   rotate_;
+  COptString textLength_;
+  COptString lengthAdjust_;
+  CPoint2D   lastPos_;
 };
 
 #endif

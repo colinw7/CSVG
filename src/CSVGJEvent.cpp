@@ -1,5 +1,5 @@
 #include <CSVGJEvent.h>
-#include <CSVGJObject.h>
+#include <CSVGJElement.h>
 #include <CSVG.h>
 #include <CSVGObject.h>
 #include <CSVGJavaScript.h>
@@ -28,7 +28,7 @@ execNameFn(CJavaScript *, const std::string &name, const Values &)
   if (name == "getTarget") {
     CSVGObject *obj = svg_->eventObject();
 
-    auto jobj = new CSVGJObject(obj);
+    auto jobj = new CSVGJElement(obj);
 
     return CJValueP(jobj);
   }

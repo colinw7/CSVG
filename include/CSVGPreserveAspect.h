@@ -22,6 +22,45 @@ class CSVGPreserveAspect {
   const CSVGScale &getScale() const { return scale_ ; }
   void setScale(const CSVGScale &s) { scale_ = s; }
 
+  int alignValue() const {
+    if (isNone())
+      return int(CSVGPreserveAspectAlign::NONE);
+
+    if (getHAlign() == CHALIGN_TYPE_LEFT   && getVAlign() == CVALIGN_TYPE_BOTTOM)
+      return int(CSVGPreserveAspectAlign::XMINYMIN);
+    if (getHAlign() == CHALIGN_TYPE_CENTER && getVAlign() == CVALIGN_TYPE_BOTTOM)
+      return int(CSVGPreserveAspectAlign::XMIDYMIN);
+    if (getHAlign() == CHALIGN_TYPE_RIGHT  && getVAlign() == CVALIGN_TYPE_BOTTOM)
+      return int(CSVGPreserveAspectAlign::XMAXYMIN);
+    if (getHAlign() == CHALIGN_TYPE_LEFT   && getVAlign() == CVALIGN_TYPE_CENTER)
+      return int(CSVGPreserveAspectAlign::XMINYMID);
+    if (getHAlign() == CHALIGN_TYPE_CENTER && getVAlign() == CVALIGN_TYPE_CENTER)
+      return int(CSVGPreserveAspectAlign::XMIDYMID);
+    if (getHAlign() == CHALIGN_TYPE_RIGHT  && getVAlign() == CVALIGN_TYPE_CENTER)
+      return int(CSVGPreserveAspectAlign::XMAXYMID);
+    if (getHAlign() == CHALIGN_TYPE_LEFT   && getVAlign() == CVALIGN_TYPE_TOP)
+      return int(CSVGPreserveAspectAlign::XMINYMAX);
+    if (getHAlign() == CHALIGN_TYPE_CENTER && getVAlign() == CVALIGN_TYPE_TOP)
+      return int(CSVGPreserveAspectAlign::XMIDYMAX);
+    if (getHAlign() == CHALIGN_TYPE_RIGHT  && getVAlign() == CVALIGN_TYPE_TOP)
+      return int(CSVGPreserveAspectAlign::XMAXYMAX);
+
+    return int(CSVGPreserveAspectAlign::NONE);
+  }
+
+  int meetOrSliceValue() const {
+    if (getScale() == CSVGScale::FIXED_MEET)
+      return int(CSVGPreserveAspectMeetOrSlice::MEET);
+    if (getScale() == CSVGScale::FIXED_SLICE)
+      return int(CSVGPreserveAspectMeetOrSlice::SLICE);
+
+    return int(CSVGPreserveAspectMeetOrSlice::UNKNOWN);
+  }
+
+  bool isNone() const {
+    return (getScale() == CSVGScale::FREE);
+  }
+
   std::string toString() const {
     std::stringstream ss;
 
@@ -31,6 +70,8 @@ class CSVGPreserveAspect {
   }
 
   void print(std::ostream &os) const {
+    if (isNone()) { os << "none"; return; }
+
     if      (getHAlign() == CHALIGN_TYPE_LEFT  ) os << "xMin";
     else if (getHAlign() == CHALIGN_TYPE_CENTER) os << "xMid";
     else if (getHAlign() == CHALIGN_TYPE_RIGHT ) os << "xMax";
@@ -43,7 +84,6 @@ class CSVGPreserveAspect {
 
     if      (getScale() == CSVGScale::FIXED_MEET ) os << "meet";
     else if (getScale() == CSVGScale::FIXED_SLICE) os << "slice";
-    else if (getScale() == CSVGScale::FREE       ) os << "none";
   }
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGPreserveAspect &v) {

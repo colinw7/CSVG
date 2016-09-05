@@ -79,7 +79,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
     width_.setValue(length);
   else if (svg_.lengthOption(opt_name, opt_value, "height", length))
     height_.setValue(length);
-  else if (svg_.bboxOption  (opt_name, opt_value, "viewBox", &bbox))
+  else if (svg_.bboxOption  (opt_name, opt_value, "viewBox", bbox))
     viewBox_ = bbox;
   else if (svg_.preserveAspectOption(opt_name, opt_value, "preserveAspectRatio", preserveAspect))
     preserveAspect_ = preserveAspect;
@@ -112,6 +112,21 @@ processOption(const std::string &opt_name, const std::string &opt_value)
     return false;
 
   return true;
+}
+
+COptString
+CSVGBlock::
+getNameValue(const std::string &name) const
+{
+  COptString s;
+
+  if (name == "preserveAspectRatio") {
+    s = preserveAspect().toString();
+  }
+  else
+    s = CSVGObject::getNameValue(name);
+
+  return s;
 }
 
 double

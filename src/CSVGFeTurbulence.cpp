@@ -133,6 +133,36 @@ drawElement()
   return true;
 }
 
+COptString
+CSVGFeTurbulence::
+getNameValue(const std::string &name) const
+{
+  COptString str;
+
+  if      (name == "baseFrequencyX") {
+    str = CStrUtil::toString(getBaseFreqX());
+  }
+  else if (name == "baseFrequencyY") {
+    str = CStrUtil::toString(getBaseFreqY());
+  }
+  else if (name == "numOctaves") {
+    str = CStrUtil::toString(getNumOctaves());
+  }
+  else if (name == "seed") {
+    str = CStrUtil::toString(getSeed());
+  }
+  else if (name == "stitchTiles") {
+    str = getStitchTiles();
+  }
+  else if (name == "type") {
+    str = getType();
+  }
+  else
+    str = CSVGObject::getNameValue(name);
+
+  return str;
+}
+
 void
 CSVGFeTurbulence::
 print(std::ostream &os, bool hier) const

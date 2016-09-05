@@ -18,6 +18,7 @@
 #include <COptVal.h>
 #include <CAlignType.h>
 #include <CObjTypeOld.h>
+#include <CAngle.h>
 
 #include <list>
 
@@ -262,6 +263,8 @@ class CSVGObject {
 
   bool getFlatTransformedBBox(CBBox2D &bbox) const;
 
+  CMatrixStack2D getTransformTo(CSVGObject *parent) const;
+
   CBBox2D getDrawBBox() const;
 
   virtual bool inside(const CPoint2D &pos) const;
@@ -432,9 +435,9 @@ class CSVGObject {
 
   void setNameValue(const std::string &name, const std::string &value);
 
-  virtual COptString getNameValue(const std::string &name) const;
-
-  virtual COptReal getRealNameValue(const std::string &name) const;
+  virtual COptString getNameValue       (const std::string &name) const;
+  virtual COptReal   getRealNameValue   (const std::string &name) const;
+  virtual COptInt    getIntegerNameValue(const std::string &name) const;
 
   //---
 
@@ -513,6 +516,9 @@ class CSVGObject {
 
   const CBBox2D &enableBackgroundRect() const { return enableBackgroundRect_; }
   void setEnableBackgroundRect(const CBBox2D &v) { enableBackgroundRect_ = v; }
+
+  bool isExternalResourcesRequired() const { return externalResourcesRequired_; }
+  void setExternalResourcesRequired(bool b) { externalResourcesRequired_ = b; }
 
   //---
 
@@ -595,6 +601,19 @@ class CSVGObject {
     }
   }
 
+  template<typename T>
+  std::string valuesToString(const std::vector<T> &values) const {
+    std::stringstream ss;
+
+    for (uint i = 0; i < values.size(); ++i) {
+      if (i > 0) ss << " ";
+
+      ss << values[i];
+    }
+
+    return ss.str();
+  }
+
   void printNameParts(std::ostream &os, const std::string &name,
                       const CSVGPathPartList &parts) const;
 
@@ -669,6 +688,7 @@ class CSVGObject {
   CMatrixStack2D               transform_;
   CSVGEnableBackground         enableBackground_ { CSVGEnableBackground::ACCUMULATE };
   CBBox2D                      enableBackgroundRect_;
+  bool                         externalResourcesRequired_ { false };
   ObjectList                   objects_;
   CSVGAnimation                animation_;
   COptValT<CSVGFilter*>        filter_;

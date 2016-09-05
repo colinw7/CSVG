@@ -21,6 +21,12 @@ class CQSVGText : public CQSVGObject, public CSVGText {
  public:
   CQSVGText(CQSVG *svg);
 
+  double getX() const;
+  void setX(double x);
+
+  double getY() const;
+  void setY(double x);
+
   double getDX() const;
   void setDX(double x);
 

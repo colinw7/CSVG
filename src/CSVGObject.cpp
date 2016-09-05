@@ -143,7 +143,12 @@ void
 CSVGObject::
 setOpacity(const std::string &opacityDef)
 {
-  double opacity = svg_.decodeOpacityString(opacityDef);
+  double opacity;
+
+  if (! svg_.decodeOpacityString(opacityDef, opacity)) {
+    CSVGLog() << "Bad opacity value " << opacityDef;
+    return;
+  }
 
   setOpacity(opacity);
 }
@@ -876,6 +881,23 @@ getFlatTransform() const
     return getTransform();
 }
 
+CMatrixStack2D
+CSVGObject::
+getTransformTo(CSVGObject *parent) const
+{
+  CSVGObject *parent1 = getParent();
+
+  if (parent1 && parent != parent1) {
+    CMatrixStack2D matrix(parent1->getTransformTo(parent));
+
+    matrix.append(getTransform());
+
+    return matrix;
+  }
+  else
+    return getTransform();
+}
+
 void
 CSVGObject::
 setStyle(const std::string &style)
@@ -969,7 +991,7 @@ processOption(const std::string &optName, const std::string &optValue)
   // Other properties
   if      (svg_.transformOption(optName, optValue, "transform", transform))
     setTransform(transform);
-  else if (svg_.bboxOption(optName, optValue, "viewBox", &bbox))
+  else if (svg_.bboxOption(optName, optValue, "viewBox", bbox))
     viewBox_ = bbox;
 
   // xmlns
@@ -1493,10 +1515,10 @@ bool
 CSVGObject::
 processExternalOption(const std::string &optName, const std::string &optValue)
 {
-  std::string str;
+  bool b;
 
-  if (svg_.stringOption(optName, optValue, "externalResourcesRequired", str))
-    notHandled(optName, optValue);
+  if (svg_.booleanOption(optName, optValue, "externalResourcesRequired", b))
+    setExternalResourcesRequired(b);
   else
     return false;
 
@@ -1546,10 +1568,10 @@ parseFont(const std::string &str)
 
     parse.readNonSpace(word);
 
-    CScreenUnits length;
+    COptValT<CScreenUnits> length = svg_.decodeLengthValue(word);
 
-    if (! svg_.decodeLengthValue(word, length)) {
-      CSVGLog() << "Illegal length value '" << word << "'";
+    if (! length.isValid()) {
+      CSVGLog() << "Illegal font length value '" << word << "'";
       return false;
     }
 
@@ -1656,13 +1678,25 @@ getNameValue(const std::string &name) const
 {
   COptString str;
 
-  if (name == "viewBox") {
+  if      (name == "className") {
+    std::vector<std::string> classes = getClasses();
+
+    if (! classes.empty())
+      str = classes.front();
+  }
+  else if (name == "viewBox") {
     CBBox2D bbox = getViewBox();
 
     str = CStrUtil::toString(bbox.getXMin()) + ", " +
           CStrUtil::toString(bbox.getYMin()) + ", " +
           CStrUtil::toString(bbox.getXMax()) + ", " +
           CStrUtil::toString(bbox.getYMax());
+  }
+  else if (name == "transform") {
+    str = getTransform().toString();
+  }
+  else if (name == "externalResourcesRequired") {
+    str = (isExternalResourcesRequired() ? "true" : "false");
   }
   else {
     auto p = nameValues_.find(name);
@@ -1688,6 +1722,22 @@ getRealNameValue(const std::string &name) const
     return COptReal();
 
   return COptReal(r);
+}
+
+COptInt
+CSVGObject::
+getIntegerNameValue(const std::string &name) const
+{
+  COptString str = getNameValue(name);
+
+  if (! str.isValid()) return COptInt();
+
+  long i;
+
+  if (! CStrUtil::toInteger(str.getValue(), &i))
+    return COptInt();
+
+  return COptInt(i);
 }
 
 void

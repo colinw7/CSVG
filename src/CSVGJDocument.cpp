@@ -1,6 +1,6 @@
 #include <CSVGJDocument.h>
-#include <CSVGJObject.h>
-#include <CSVGJTransform.h>
+#include <CSVGJElement.h>
+#include <CSVGJTypes.h>
 #include <CSVG.h>
 #include <CSVGObject.h>
 #include <CSVGJavaScript.h>
@@ -28,6 +28,63 @@ CSVGJDocumentType(CJavaScript *js) :
 
 //------
 
+/*
+  interface SVGDocument : Document, DocumentEvent {
+    readonly attribute DOMString title;
+    readonly attribute DOMString referrer;
+    readonly attribute DOMString domain;
+    readonly attribute DOMString URL;
+    readonly attribute SVGSVGElement rootElement;
+  };
+*/
+
+/*
+  <svg> DOM
+
+  interface SVGSVGElement : SVGElement, SVGTests, SVGLangSpace, SVGExternalResourcesRequired,
+                            SVGStylable, SVGLocatable, SVGFitToViewBox, SVGZoomAndPan,
+                            DocumentEvent, ViewCSS, DocumentCSS {
+    readonly attribute SVGAnimatedLength x;
+    readonly attribute SVGAnimatedLength y;
+    readonly attribute SVGAnimatedLength width;
+    readonly attribute SVGAnimatedLength height;
+             attribute DOMString contentScriptType setraises(DOMException);
+             attribute DOMString contentStyleType setraises(DOMException);readonly
+    readonly attribute SVGRect viewport;
+    readonly attribute float pixelUnitToMillimeterX;
+    readonly attribute float pixelUnitToMillimeterY;
+    readonly attribute float screenPixelToMillimeterX;
+    readonly attribute float screenPixelToMillimeterY;
+    readonly attribute boolean useCurrentView;
+    readonly attribute SVGViewSpec currentView;
+                       float currentScale;
+    readonly attribute SVGPoint currentTranslate;
+
+    unsigned long suspendRedraw(in unsigned long maxWaitMilliseconds);
+    void unsuspendRedraw(in unsigned long suspendHandleID);
+    void unsuspendRedrawAll();
+    void forceRedraw();
+    void pauseAnimations();
+    void unpauseAnimations();
+    boolean animationsPaused();
+    float getCurrentTime();
+    void setCurrentTime(in float seconds);
+    NodeList getIntersectionList(in SVGRect rect, in SVGElement referenceElement);
+    NodeList getEnclosureList(in SVGRect rect, in SVGElement referenceElement);
+    boolean checkIntersection(in SVGElement element, in SVGRect rect);
+    boolean checkEnclosure(in SVGElement element, in SVGRect rect);
+    void deselectAll();
+    SVGNumber createSVGNumber();
+    SVGLength createSVGLength();
+    SVGAngle createSVGAngle();
+    SVGPoint createSVGPoint();
+    SVGMatrix createSVGMatrix();
+    SVGRect createSVGRect();
+    SVGTransform createSVGTransform();
+    SVGTransform createSVGTransformFromMatrix(in SVGMatrix matrix);
+    Element getElementById(in DOMString elementId);
+  };
+*/
 CSVGJDocument::
 CSVGJDocument(CSVG *svg) :
  CJObj(svg->js(), CSVGJDocumentType::instance(svg->js())), svg_(svg)
@@ -54,7 +111,7 @@ execNameFn(CJavaScript *, const std::string &name, const Values &values)
       CSVGObject *obj = svg_->lookupObjectById(id);
 
       if (obj)
-        return CJValueP(new CSVGJObject(obj));
+        return CJValueP(new CSVGJElement(obj));
     }
 
     return CJValueP();
@@ -66,18 +123,18 @@ execNameFn(CJavaScript *, const std::string &name, const Values &values)
       CSVGObject *obj = svg_->createObjectByName(name);
 
       if (obj)
-        return CJValueP(new CSVGJObject(obj));
+        return CJValueP(new CSVGJElement(obj));
     }
 
     return CJValueP();
   }
   else if (name == "createTextNode") {
-    assert(false);
+    std::cerr << "CSVGJDocument::createTextNode not implemented" << std::endl;
 
     return CJValueP();
   }
   else if (name == "createEvent") {
-    assert(false);
+    std::cerr << "CSVGJDocument::createEvent not implemented" << std::endl;
 
     return CJValueP();
   }

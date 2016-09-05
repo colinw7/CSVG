@@ -1,6 +1,7 @@
 #include <CSVGLib.h>
 #include <CSVGImageRenderer.h>
 #include <CSVGLogRenderer.h>
+#include <CImageLib.h>
 
 int
 main(int argc, char **argv)

@@ -76,19 +76,19 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   if (processExternalOption       (opt_name, opt_value)) return true;
 
   std::string    str;
-  double         real;
   Reals          reals;
-  CScreenUnits   length;
+  Coords         coords;
+  Lengths        lengths;
   CMatrixStack2D transform;
 
-  if      (svg_.coordOption (opt_name, opt_value, "x", &real))
-    x_ = real;
-  else if (svg_.coordOption (opt_name, opt_value, "y", &real))
-    y_ = real;
-  else if (svg_.lengthOption(opt_name, opt_value, "dx", length))
-    dx_ = length;
-  else if (svg_.lengthOption(opt_name, opt_value, "dy", length))
-    dy_ = length;
+  if      (svg_.coordListOption (opt_name, opt_value, "x", coords))
+    x_ = coords;
+  else if (svg_.coordListOption (opt_name, opt_value, "y", coords))
+    y_ = coords;
+  else if (svg_.lengthListOption(opt_name, opt_value, "dx", lengths))
+    dx_ = lengths;
+  else if (svg_.lengthListOption(opt_name, opt_value, "dy", lengths))
+    dy_ = lengths;
   else if (svg_.realListOption(opt_name, opt_value, "rotate", reals))
     rotate_ = reals;
   else if (svg_.stringOption(opt_name, opt_value, "textLength", str))
@@ -103,13 +103,99 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   return true;
 }
 
+CScreenUnits
+CSVGText::
+getX() const
+{
+  if (! x_.isValid() || x_.getValue().empty())
+    return 0;
+
+  return x_.getValue().front();
+}
+
+void
+CSVGText::
+setX(const CScreenUnits &x)
+{
+  Coords coords { x };
+
+  x_ = coords;
+}
+
+CScreenUnits
+CSVGText::
+getY() const
+{
+  if (! y_.isValid() || y_.getValue().empty())
+    return 0;
+
+  return y_.getValue().front();
+}
+
+void
+CSVGText::
+setY(const CScreenUnits &y)
+{
+  Coords coords { y };
+
+  y_ = coords;
+}
+
+CScreenUnits
+CSVGText::
+getDX() const
+{
+  if (! dx_.isValid() || dx_.getValue().empty())
+    return 0;
+
+  return dx_.getValue().front();
+}
+
+void
+CSVGText::
+setDX(const CScreenUnits &x)
+{
+  Lengths lengths { x };
+
+  dx_ = lengths;
+}
+
+CScreenUnits
+CSVGText::
+getDY() const
+{
+  if (! dy_.isValid() || dy_.getValue().empty())
+    return 0;
+
+  return dy_.getValue().front();
+}
+
+void
+CSVGText::
+setDY(const CScreenUnits &y)
+{
+  Lengths lengths { y };
+
+  dy_ = lengths;
+}
+
+CPoint2D
+CSVGText::
+getPosition() const
+{
+  double x = getX().pxValue(1);
+  double y = getY().pxValue(1);
+
+  return CPoint2D(x, y);
+}
+
 bool
 CSVGText::
 getBBox(CBBox2D &bbox) const
 {
   if (! hasViewBox()) {
-    double x = getX();
-    double y = getY();
+    double x = getX().pxValue(1);
+    double y = getY().pxValue(1);
     double w = 8;
     double a = 10;
     double d = 2;
@@ -133,16 +219,19 @@ void
 CSVGText::
 moveTo(const CPoint2D &p)
 {
-  x_ = p.x;
-  y_ = p.y;
+  setX(p.x);
+  setY(p.y);
 }
 
 void
 CSVGText::
 moveBy(const CVector2D &delta)
 {
-  x_ = getX() + delta.x();
-  y_ = getY() + delta.y();
+  double x = getX().pxValue(1);
+  double y = getY().pxValue(1);
+
+  setX(x + delta.x());
+  setY(y + delta.y());
 }
 
 COptString
@@ -151,19 +240,28 @@ getNameValue(const std::string &name) const
 {
   COptString str;
 
-  if      (name == "x")
-    str = CStrUtil::toString(getX());
-  else if (name == "y")
-    str = CStrUtil::toString(getY());
-  else if (name == "dx")
-    str = CStrUtil::toString(getDX().pxValue(1));
-  else if (name == "dy")
-    str = CStrUtil::toString(getDY().pxValue(1));
+  if      (name == "x") {
+    if (x_.isValid())
+      str = valuesToString(x_.getValue());
+  }
+  else if (name == "y") {
+    if (y_.isValid())
+      str = valuesToString(y_.getValue());
+  }
+  else if (name == "dx") {
+    if (dx_.isValid())
+      str = valuesToString(dx_.getValue());
+  }
+  else if (name == "dy") {
+    if (dy_.isValid())
+      str = valuesToString(dy_.getValue());
+  }
   else if (name == "rotate") {
-    Reals reals = getRotate();
-
-    if (! reals.empty())
-      str = CStrUtil::toString(reals[0]);
+    if (rotate_.isValid())
+      str = valuesToString(rotate_.getValue());
+  }
+  else if (name == "lengthAdjust") {
+    str = CStrUtil::toString(getLengthAdjustValue());
   }
   else
     str = CSVGObject::getNameValue(name);
@@ -184,8 +282,8 @@ draw()
 
   bool topBottom = (getWritingMode() == "tb");
 
-  double x = getX();
-  double y = getY();
+  double x = getX().pxValue(1);
+  double y = getY().pxValue(1);
 
   bool renderChars = false;
 
@@ -417,10 +515,10 @@ printValues(std::ostream &os, bool flat) const
 {
   CSVGObject::printValues(os, flat);
 
-  printNameValue (os, "x" , x_ );
-  printNameValue (os, "y" , y_ );
-  printNameLength(os, "dx", dx_);
-  printNameLength(os, "dy", dy_);
+  printNameValues(os, "x" , x_ );
+  printNameValues(os, "y" , y_ );
+  printNameValues(os, "dx", dx_);
+  printNameValues(os, "dy", dy_);
 
   printNameValues(os, "rotate", rotate_);
 

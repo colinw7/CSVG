@@ -92,7 +92,12 @@ void
 CSVGStroke::
 setOpacity(const std::string &opacity_def)
 {
-  double opacity = svg_.decodeOpacityString(opacity_def);
+  double opacity;
+
+  if (! svg_.decodeOpacityString(opacity_def, opacity)) {
+    CSVGLog() << "Bad opacity value " << opacity_def;
+    return;
+  }
 
   setOpacity(opacity);
 }
@@ -122,7 +127,12 @@ void
 CSVGStroke::
 setWidth(const std::string &width_def)
 {
-  double width = svg_.decodeWidthString(width_def);
+  double width;
+
+  if (! svg_.decodeWidthString(width_def, width)) {
+    CSVGLog() << "Illegal width value " << width_def;
+    return;
+  }
 
   setWidth(width);
 }
@@ -134,7 +144,10 @@ setDashArray(const std::string &dash_str)
   CSVGStrokeDash::Dashes dashes;
   bool                   solid;
 
-  svg_.decodeDashString(dash_str, dashes, solid);
+  if (! svg_.decodeDashString(dash_str, dashes, solid)) {
+    CSVGLog() << "Bad dash string " << dash_str;
+    return;
+  }
 
   if (! getDashValid())
     dash_ = CSVGStrokeDash();
@@ -157,12 +170,12 @@ void
 CSVGStroke::
 setDashOffset(const std::string &offset_str)
 {
-  CScreenUnits lvalue;
+  COptValT<CScreenUnits> lvalue = svg_.decodeLengthValue(offset_str);
 
-  if (! svg_.decodeLengthValue(offset_str, lvalue))
+  if (! lvalue.isValid())
     return;
 
-  setDashOffset(lvalue);
+  setDashOffset(lvalue.getValue());
 }
 
 void
@@ -219,12 +232,12 @@ void
 CSVGStroke::
 setMitreLimit(const std::string &limit_str)
 {
-  CScreenUnits lvalue;
+  COptValT<CScreenUnits> lvalue = svg_.decodeLengthValue(limit_str);
 
-  if (! svg_.decodeLengthValue(limit_str, lvalue))
+  if (! lvalue.isValid())
     return;
 
-  setMitreLimit(lvalue.pxValue(1));
+  setMitreLimit(lvalue.getValue().pxValue(1));
 }
 
 void

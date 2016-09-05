@@ -32,6 +32,10 @@ class CSVGColor {
   bool isRGBA   () const { return type_ == Type::RGBA;    }
   bool isInherit() const { return type_ == Type::INHERIT; }
 
+  friend bool operator==(const CSVGColor &lhs, const CSVGColor &rhs) {
+    return lhs.rgba() == rhs.rgba();
+  }
+
   void print(std::ostream &os) const {
     if      (type_ == Type::NONE   ) os << "none";
     else if (type_ == Type::CURRENT) os << "currentColor";

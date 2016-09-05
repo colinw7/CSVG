@@ -135,3 +135,7 @@
 
 ### 8/28/2016
  + Add SVG Animation classes
+
+### 9/5/2016
+ + Improve error handling and add throw for JavaScript
+ + Add more SVG DOM interface support

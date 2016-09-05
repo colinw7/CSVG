@@ -6,6 +6,27 @@
 
 //------
 
+class CSVGJObjValue : public CJObj {
+ public:
+  CSVGJObjValue(CSVG *svg, CSVGObject *obj, const std::string &name, CJObjTypeP type);
+
+  std::string toString() const override {
+    std::ostringstream ss; ss << *this;
+    return ss.str();
+  }
+
+  double toReal() const override { return 0; }
+
+  bool toBoolean() const override { return false; }
+
+ protected:
+  CSVG*       svg_ { 0 };
+  CSVGObject* obj_ { 0 };
+  std::string name_;
+};
+
+//------
+
 // SVGAnimatedInteger Type
 class CSVGJAnimatedIntegerType : public CJObjType {
  public:
@@ -22,32 +43,18 @@ class CSVGJAnimatedIntegerType : public CJObjType {
 };
 
 // SVGAnimatedInteger Value
-class CSVGJAnimatedInteger : public CJObj {
+class CSVGJAnimatedInteger : public CSVGJObjValue {
  public:
   CSVGJAnimatedInteger(CSVG *svg, CSVGObject *obj, const std::string &name);
 
   CJValue *dup(CJavaScript *) const override {
     return new CSVGJAnimatedInteger(svg_, obj_, name_); }
 
-  std::string toString() const override {
-    std::ostringstream ss; ss << *this;
-    return ss.str();
-  }
-
-  double toReal() const override { return 0; }
-
-  bool toBoolean() const override { return false; }
-
   CJValueP execNameFn(CJavaScript *js, const std::string &name, const Values &values) override;
 
   CJValueP getProperty(CJavaScript *, const std::string &) const override;
 
   void print(std::ostream &os) const override { os << "SVGAnimatedInteger"; }
-
- private:
-  CSVG*       svg_ { 0 };
-  CSVGObject* obj_ { 0 };
-  std::string name_;
 };
 
 //------
@@ -68,33 +75,21 @@ class CSVGJAnimatedNumberType : public CJObjType {
 };
 
 // SVGAnimatedNumber Value
-class CSVGJAnimatedNumber : public CJObj {
+class CSVGJAnimatedNumber : public CSVGJObjValue {
  public:
   CSVGJAnimatedNumber(CSVG *svg, CSVGObject *obj, const std::string &name);
 
   CJValue *dup(CJavaScript *) const override {
     return new CSVGJAnimatedNumber(svg_, obj_, name_); }
 
-  std::string toString() const override {
-    std::ostringstream ss; ss << *this;
-    return ss.str();
-  }
-
-  double toReal() const override { return 0; }
-
-  bool toBoolean() const override { return false; }
-
   CJValueP execNameFn(CJavaScript *js, const std::string &name, const Values &values) override;
 
   CJValueP getProperty(CJavaScript *, const std::string &) const override;
 
   void print(std::ostream &os) const override { os << "SVGAnimatedNumber"; }
-
- private:
-  CSVG*       svg_ { 0 };
-  CSVGObject* obj_ { 0 };
-  std::string name_;
 };
+
+//------
 
 // SVGAnimatedNumberList Type
 class CSVGJAnimatedNumberListType : public CJObjType {
@@ -112,32 +107,18 @@ class CSVGJAnimatedNumberListType : public CJObjType {
 };
 
 // SVGAnimatedNumberList Value
-class CSVGJAnimatedNumberList : public CJObj {
+class CSVGJAnimatedNumberList : public CSVGJObjValue {
  public:
   CSVGJAnimatedNumberList(CSVG *svg, CSVGObject *obj, const std::string &name);
 
   CJValue *dup(CJavaScript *) const override {
     return new CSVGJAnimatedNumberList(svg_, obj_, name_); }
 
-  std::string toString() const override {
-    std::ostringstream ss; ss << *this;
-    return ss.str();
-  }
-
-  double toReal() const override { return 0; }
-
-  bool toBoolean() const override { return false; }
-
   CJValueP execNameFn(CJavaScript *js, const std::string &name, const Values &values) override;
 
   CJValueP getProperty(CJavaScript *, const std::string &) const override;
 
   void print(std::ostream &os) const override { os << "SVGAnimatedNumberList"; }
-
- private:
-  CSVG*       svg_ { 0 };
-  CSVGObject* obj_ { 0 };
-  std::string name_;
 };
 
 //------
@@ -158,33 +139,21 @@ class CSVGJAnimatedLengthType : public CJObjType {
 };
 
 // SVGAnimatedLength Value
-class CSVGJAnimatedLength : public CJObj {
+class CSVGJAnimatedLength : public CSVGJObjValue {
  public:
   CSVGJAnimatedLength(CSVG *svg, CSVGObject *obj, const std::string &name);
 
   CJValue *dup(CJavaScript *) const override {
     return new CSVGJAnimatedLength(svg_, obj_, name_); }
 
-  std::string toString() const override {
-    std::ostringstream ss; ss << *this;
-    return ss.str();
-  }
-
-  double toReal() const override { return 0; }
-
-  bool toBoolean() const override { return false; }
-
   CJValueP execNameFn(CJavaScript *js, const std::string &name, const Values &values) override;
 
   CJValueP getProperty(CJavaScript *, const std::string &) const override;
 
   void print(std::ostream &os) const override { os << "SVGAnimatedLength"; }
-
- private:
-  CSVG*       svg_ { 0 };
-  CSVGObject* obj_ { 0 };
-  std::string name_;
 };
+
+//------
 
 // SVGAnimatedLengthList Type
 class CSVGJAnimatedLengthListType : public CJObjType {
@@ -202,32 +171,50 @@ class CSVGJAnimatedLengthListType : public CJObjType {
 };
 
 // SVGAnimatedLengthList Value
-class CSVGJAnimatedLengthList : public CJObj {
+class CSVGJAnimatedLengthList : public CSVGJObjValue {
  public:
   CSVGJAnimatedLengthList(CSVG *svg, CSVGObject *obj, const std::string &name);
 
   CJValue *dup(CJavaScript *) const override {
     return new CSVGJAnimatedLengthList(svg_, obj_, name_); }
 
-  std::string toString() const override {
-    std::ostringstream ss; ss << *this;
-    return ss.str();
-  }
-
-  double toReal() const override { return 0; }
-
-  bool toBoolean() const override { return false; }
-
   CJValueP execNameFn(CJavaScript *js, const std::string &name, const Values &values) override;
 
   CJValueP getProperty(CJavaScript *, const std::string &) const override;
 
   void print(std::ostream &os) const override { os << "SVGAnimatedLengthList"; }
+};
+
+//------
+
+// SVGAnimatedString Type
+class CSVGJAnimatedStringType : public CJObjType {
+ public:
+  static CJObjTypeP instance(CJavaScript *js);
+
+  CSVGJAnimatedStringType(CJavaScript *js);
+
+  CJValueP exec(CJavaScript *, const std::string &, const Values &) override {
+    return CJValueP();
+  }
 
  private:
-  CSVG*       svg_ { 0 };
-  CSVGObject* obj_ { 0 };
-  std::string name_;
+  static CJObjTypeP type_;
+};
+
+// SVGAnimatedString Value
+class CSVGJAnimatedString : public CSVGJObjValue {
+ public:
+  CSVGJAnimatedString(CSVG *svg, CSVGObject *obj, const std::string &name);
+
+  CJValue *dup(CJavaScript *) const override {
+    return new CSVGJAnimatedString(svg_, obj_, name_); }
+
+  CJValueP execNameFn(CJavaScript *js, const std::string &name, const Values &values) override;
+
+  CJValueP getProperty(CJavaScript *, const std::string &) const override;
+
+  void print(std::ostream &os) const override { os << "SVGAnimatedString"; }
 };
 
 //------
@@ -248,32 +235,18 @@ class CSVGJAnimatedRectType : public CJObjType {
 };
 
 // SVGAnimatedRect Value
-class CSVGJAnimatedRect : public CJObj {
+class CSVGJAnimatedRect : public CSVGJObjValue {
  public:
   CSVGJAnimatedRect(CSVG *svg, CSVGObject *obj, const std::string &name);
 
   CJValue *dup(CJavaScript *) const override {
     return new CSVGJAnimatedRect(svg_, obj_, name_); }
 
-  std::string toString() const override {
-    std::ostringstream ss; ss << *this;
-    return ss.str();
-  }
-
-  double toReal() const override { return 0; }
-
-  bool toBoolean() const override { return false; }
-
   CJValueP execNameFn(CJavaScript *js, const std::string &name, const Values &values) override;
 
   CJValueP getProperty(CJavaScript *, const std::string &) const override;
 
   void print(std::ostream &os) const override { os << "SVGAnimatedRect"; }
-
- private:
-  CSVG*       svg_ { 0 };
-  CSVGObject* obj_ { 0 };
-  std::string name_;
 };
 
 //------
@@ -294,32 +267,18 @@ class CSVGJAnimatedTransformListType : public CJObjType {
 };
 
 // SVGAnimatedTransformList Value
-class CSVGJAnimatedTransformList : public CJObj {
+class CSVGJAnimatedTransformList : public CSVGJObjValue {
  public:
   CSVGJAnimatedTransformList(CSVG *svg, CSVGObject *obj, const std::string &name);
 
   CJValue *dup(CJavaScript *) const override {
     return new CSVGJAnimatedTransformList(svg_, obj_, name_); }
 
-  std::string toString() const override {
-    std::ostringstream ss; ss << *this;
-    return ss.str();
-  }
-
-  double toReal() const override { return 0; }
-
-  bool toBoolean() const override { return false; }
-
   CJValueP execNameFn(CJavaScript *js, const std::string &name, const Values &values) override;
 
   CJValueP getProperty(CJavaScript *, const std::string &) const override;
 
   void print(std::ostream &os) const override { os << "SVGAnimatedTransformList"; }
-
- private:
-  CSVG*       svg_ { 0 };
-  CSVGObject* obj_ { 0 };
-  std::string name_;
 };
 
 //------
@@ -340,32 +299,18 @@ class CSVGJAnimatedAngleType : public CJObjType {
 };
 
 // SVGAnimatedAngle Value
-class CSVGJAnimatedAngle : public CJObj {
+class CSVGJAnimatedAngle : public CSVGJObjValue {
  public:
   CSVGJAnimatedAngle(CSVG *svg, CSVGObject *obj, const std::string &name);
 
   CJValue *dup(CJavaScript *) const override {
     return new CSVGJAnimatedAngle(svg_, obj_, name_); }
 
-  std::string toString() const override {
-    std::ostringstream ss; ss << *this;
-    return ss.str();
-  }
-
-  double toReal() const override { return 0; }
-
-  bool toBoolean() const override { return false; }
-
   CJValueP execNameFn(CJavaScript *js, const std::string &name, const Values &values) override;
 
   CJValueP getProperty(CJavaScript *, const std::string &) const override;
 
   void print(std::ostream &os) const override { os << "SVGAnimatedAngle"; }
-
- private:
-  CSVG*       svg_ { 0 };
-  CSVGObject* obj_ { 0 };
-  std::string name_;
 };
 
 //------
@@ -386,32 +331,123 @@ class CSVGJAnimatedPreserveAspectRatioType : public CJObjType {
 };
 
 // SVGAnimatedPreserveAspectRatio Value
-class CSVGJAnimatedPreserveAspectRatio : public CJObj {
+class CSVGJAnimatedPreserveAspectRatio : public CSVGJObjValue {
  public:
   CSVGJAnimatedPreserveAspectRatio(CSVG *svg, CSVGObject *obj, const std::string &name);
 
   CJValue *dup(CJavaScript *) const override {
     return new CSVGJAnimatedPreserveAspectRatio(svg_, obj_, name_); }
 
-  std::string toString() const override {
-    std::ostringstream ss; ss << *this;
-    return ss.str();
-  }
-
-  double toReal() const override { return 0; }
-
-  bool toBoolean() const override { return false; }
-
   CJValueP execNameFn(CJavaScript *js, const std::string &name, const Values &values) override;
 
   CJValueP getProperty(CJavaScript *, const std::string &) const override;
 
   void print(std::ostream &os) const override { os << "SVGAnimatedPreserveAspectRatio"; }
+};
+
+//------
+
+// SVGPreserveAspectRatio Type
+class CSVGJPreserveAspectRatioType : public CJObjType {
+ public:
+  static CJObjTypeP instance(CJavaScript *js);
+
+  CSVGJPreserveAspectRatioType(CJavaScript *js);
+
+  CJValueP exec(CJavaScript *, const std::string &, const Values &) override {
+    return CJValueP();
+  }
 
  private:
-  CSVG*       svg_ { 0 };
-  CSVGObject* obj_ { 0 };
-  std::string name_;
+  static CJObjTypeP type_;
+};
+
+// SVGPreserveAspectRatio Value
+class CSVGJPreserveAspectRatio : public CJObj {
+ public:
+  CSVGJPreserveAspectRatio(CSVG *svg, const CSVGPreserveAspect &preserveAspect);
+
+  CJValue *dup(CJavaScript *) const override {
+    return new CSVGJPreserveAspectRatio(svg_, preserveAspect_); }
+
+  std::string toString() const override {
+    std::ostringstream ss; ss << *this;
+    return ss.str();
+  }
+
+  CJValueP execNameFn(CJavaScript *js, const std::string &name, const Values &values) override;
+
+  CJValueP getProperty(CJavaScript *, const std::string &) const override;
+
+  void print(std::ostream &os) const override { os << "SVGPreserveAspectRatio"; }
+
+ protected:
+  CSVG*              svg_ { 0 };
+  CSVGPreserveAspect preserveAspect_;
+};
+
+//------
+
+// SVGAnimatedEnumeration Type
+class CSVGJAnimatedEnumerationType : public CJObjType {
+ public:
+  static CJObjTypeP instance(CJavaScript *js);
+
+  CSVGJAnimatedEnumerationType(CJavaScript *js);
+
+  CJValueP exec(CJavaScript *, const std::string &, const Values &) override {
+    return CJValueP();
+  }
+
+ private:
+  static CJObjTypeP type_;
+};
+
+// SVGAnimatedEnumeration Value
+class CSVGJAnimatedEnumeration : public CSVGJObjValue {
+ public:
+  CSVGJAnimatedEnumeration(CSVG *svg, CSVGObject *obj, const std::string &name);
+
+  CJValue *dup(CJavaScript *) const override {
+    return new CSVGJAnimatedEnumeration(svg_, obj_, name_); }
+
+  CJValueP execNameFn(CJavaScript *js, const std::string &name, const Values &values) override;
+
+  CJValueP getProperty(CJavaScript *, const std::string &) const override;
+
+  void print(std::ostream &os) const override { os << "SVGAnimatedEnumeration"; }
+};
+
+//------
+
+// SVGAnimatedBoolean Type
+class CSVGJAnimatedBooleanType : public CJObjType {
+ public:
+  static CJObjTypeP instance(CJavaScript *js);
+
+  CSVGJAnimatedBooleanType(CJavaScript *js);
+
+  CJValueP exec(CJavaScript *, const std::string &, const Values &) override {
+    return CJValueP();
+  }
+
+ private:
+  static CJObjTypeP type_;
+};
+
+// SVGAnimatedBoolean Value
+class CSVGJAnimatedBoolean : public CSVGJObjValue {
+ public:
+  CSVGJAnimatedBoolean(CSVG *svg, CSVGObject *obj, const std::string &name);
+
+  CJValue *dup(CJavaScript *) const override {
+    return new CSVGJAnimatedBoolean(svg_, obj_, name_); }
+
+  CJValueP execNameFn(CJavaScript *js, const std::string &name, const Values &values) override;
+
+  CJValueP getProperty(CJavaScript *, const std::string &) const override;
+
+  void print(std::ostream &os) const override { os << "SVGAnimatedBoolean"; }
 };
 
 #endif

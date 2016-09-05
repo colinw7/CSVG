@@ -15,7 +15,11 @@ class CSVGScript : public CSVGObject {
 
   CSVGScript *dup() const override;
 
+  std::string getType() const { return type_.getValue(""); }
+
   bool processOption(const std::string &name, const std::string &value) override;
+
+  void termParse() override;
 
   void setText(const std::string &text) override;
 

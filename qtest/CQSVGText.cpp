@@ -9,6 +9,34 @@ CQSVGText(CQSVG *svg) :
 
 double
 CQSVGText::
+getX() const
+{
+  return CSVGText::getX().px().value();
+}
+
+void
+CQSVGText::
+setX(double x)
+{
+  CSVGText::setX(x);
+}
+
+double
+CQSVGText::
+getY() const
+{
+  return CSVGText::getY().px().value();
+}
+
+void
+CQSVGText::
+setY(double y)
+{
+  CSVGText::setY(y);
+}
+
+double
+CQSVGText::
 getDX() const
 {
   return CSVGText::getDX().px().value();

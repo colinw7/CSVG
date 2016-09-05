@@ -91,7 +91,12 @@ void
 CSVGFill::
 setOpacity(const std::string &opacity_def)
 {
-  double opacity = svg_.decodeOpacityString(opacity_def);
+  double opacity;
+
+  if (! svg_.decodeOpacityString(opacity_def, opacity)) {
+    CSVGLog() << "Bad opacity value " << opacity_def;
+    return;
+  }
 
   setOpacity(opacity);
 }

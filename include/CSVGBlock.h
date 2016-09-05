@@ -72,6 +72,8 @@ class CSVGBlock : public CSVGObject {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
+  COptString getNameValue(const std::string &name) const override;
+
   bool propagateFlat() const override { return false; }
 
   void drawInit() override;

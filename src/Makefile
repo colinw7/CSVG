@@ -104,9 +104,9 @@ CSVGXLink.cpp \
 CSVGJavaScript.cpp \
 CSVGJAnimated.cpp \
 CSVGJDocument.cpp \
+CSVGJElement.cpp \
 CSVGJEvent.cpp \
-CSVGJObject.cpp \
-CSVGJTransform.cpp \
+CSVGJTypes.cpp \
 \
 CLog.cpp \
 CEncode64.cpp \

@@ -3,7 +3,7 @@
 #include <CAutoPtr.h>
 
 #include <ft2build.h>
-#include <freetype2/ftoutln.h>
+#include <freetype/ftoutln.h>
 #include FT_FREETYPE_H
 
 #include <vector>

@@ -2,6 +2,7 @@
 #define CSVGMarker_H
 
 #include <CSVGObject.h>
+#include <CSVGOrient.h>
 
 class CSVGMarker : public CSVGObject {
  public:
@@ -29,8 +30,22 @@ class CSVGMarker : public CSVGObject {
   CScreenUnits getMarkerHeight() const { return markerHeight_.getValue(CScreenUnits(3)); }
   void setMarkerHeight(const CScreenUnits &l) { markerHeight_ = l; }
 
-  std::string getOrient() const { return orient_.getValue(""); }
-  void setOrient(const std::string &s) { orient_ = s; }
+  CSVGOrient getOrient() const { return orient_.getValue(CSVGOrient()); }
+  void setOrient(const CSVGOrient &orient) { orient_ = orient; }
+
+  CAngle getOrientAngle() const { return getOrient().angle(); }
+  void setOrientAngle(const CAngle &a) {
+    CSVGOrient orient = getOrient();
+    orient.setAngle(a);
+    orient_ = orient;
+  }
+
+  bool getOrientIsAuto() const { return getOrient().isAuto(); }
+  void setOrientIsAuto(bool b) {
+    CSVGOrient orient = getOrient();
+    orient.setIsAuto(b);
+    orient_ = orient;
+  }
 
   CSVGPreserveAspect preserveAspect() const {
     return preserveAspect_.getValue(CSVGPreserveAspect()); }
@@ -48,8 +63,6 @@ class CSVGMarker : public CSVGObject {
 
   void drawMarker(double x, double y, double angle);
 
-  bool decodeOrientAngle(double &angle, bool &isAuto) const;
-
   void print(std::ostream &os, bool hier) const override;
 
   void printValues(std::ostream &os, bool flat=false) const override;
@@ -62,7 +75,7 @@ class CSVGMarker : public CSVGObject {
   COptValT<CSVGCoordUnits>     markerUnits_;
   COptValT<CScreenUnits>       markerWidth_;
   COptValT<CScreenUnits>       markerHeight_;
-  COptString                   orient_;
+  COptValT<CSVGOrient>         orient_;
   COptValT<CSVGPreserveAspect> preserveAspect_;
 };
 
