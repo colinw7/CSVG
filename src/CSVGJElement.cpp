@@ -36,18 +36,18 @@ CSVGJElement(CSVGObject *obj) :
 {
   CJavaScript *js = obj->getSVG().js();
 
-  type_->addObjectFunction(js, "setAttribute");
-  type_->addObjectFunction(js, "getAttributeNS");
-  type_->addObjectFunction(js, "setAttributeNS");
-  type_->addObjectFunction(js, "appendChild");
-  type_->addObjectFunction(js, "getTotalLength");
-  type_->addObjectFunction(js, "getPointAtLength");
-  type_->addObjectFunction(js, "getPathSegAtLength");
-  type_->addObjectFunction(js, "getStartTime");
-  type_->addObjectFunction(js, "getBBox");
-  type_->addObjectFunction(js, "getCTM");
-  type_->addObjectFunction(js, "getScreenCTM");
-  type_->addObjectFunction(js, "getTransformToElement");
+  objType_->addObjectFunction(js, "setAttribute");
+  objType_->addObjectFunction(js, "getAttributeNS");
+  objType_->addObjectFunction(js, "setAttributeNS");
+  objType_->addObjectFunction(js, "appendChild");
+  objType_->addObjectFunction(js, "getTotalLength");
+  objType_->addObjectFunction(js, "getPointAtLength");
+  objType_->addObjectFunction(js, "getPathSegAtLength");
+  objType_->addObjectFunction(js, "getStartTime");
+  objType_->addObjectFunction(js, "getBBox");
+  objType_->addObjectFunction(js, "getCTM");
+  objType_->addObjectFunction(js, "getScreenCTM");
+  objType_->addObjectFunction(js, "getTransformToElement");
 }
 
 CJValueP
@@ -286,7 +286,7 @@ execNameFn(CJavaScript *js, const std::string &name, const Values &values)
       if (objVal && objVal->type() == CJValue::Type::Object) {
         CJObjP obj = std::static_pointer_cast<CJObj>(objVal);
 
-        if (obj->type()->name() == "SVGElement") {
+        if (obj->objType()->name() == "SVGElement") {
           svgObj = std::static_pointer_cast<CSVGJElement>(obj);
         }
       }
@@ -375,7 +375,7 @@ execNameFn(CJavaScript *js, const std::string &name, const Values &values)
       if (objVal && objVal->type() == CJValue::Type::Object) {
         CJObjP obj = std::static_pointer_cast<CJObj>(objVal);
 
-        if (obj->type()->name() == "SVGElement") {
+        if (obj->objType()->name() == "SVGElement") {
           svgObj = std::static_pointer_cast<CSVGJElement>(obj);
         }
       }

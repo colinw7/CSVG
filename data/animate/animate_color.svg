@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<svg width="120" height="120"  viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<circle cx="60" cy="60" r="50">
+<animateColor attributeName="fill" attributeType="XML" from="black" to="red" dur="6s" repeatCount="indefinite"/>
+</circle>
+</svg>

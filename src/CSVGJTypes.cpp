@@ -180,7 +180,7 @@ execNameFn(CJavaScript *, const std::string &name, const Values &values)
       if (matrixVal && matrixVal->type() == CJValue::Type::Object) {
         CJObjP matrixObj = std::static_pointer_cast<CJObj>(matrixVal);
 
-        if (matrixObj->type()->name() == "SVGMatrix") {
+        if (matrixObj->objType()->name() == "SVGMatrix") {
           matrix1 = std::static_pointer_cast<CSVGJMatrix>(matrixObj);
         }
       }
@@ -381,7 +381,7 @@ execNameFn(CJavaScript *, const std::string &name, const Values &values)
     if (matrixVal && matrixVal->type() == CJValue::Type::Object) {
       CJObjP matrixObj = std::static_pointer_cast<CJObj>(matrixVal);
 
-      if (matrixObj->type()->name() == "SVGMatrix") {
+      if (matrixObj->objType()->name() == "SVGMatrix") {
         matrix = std::static_pointer_cast<CSVGJMatrix>(matrixObj);
       }
     }
@@ -465,7 +465,7 @@ cmp(CJObjP obj) const
 {
   CSVGJMatrixP matrix;
 
-  if (obj->type()->name() == "SVGMatrix")
+  if (obj->objType()->name() == "SVGMatrix")
     matrix = std::static_pointer_cast<CSVGJMatrix>(obj);
   else
     return CJObj::cmp(obj);
@@ -640,7 +640,7 @@ cmp(CJObjP obj) const
 {
   CSVGJRectP rect;
 
-  if (obj->type()->name() == "SVGRect")
+  if (obj->objType()->name() == "SVGRect")
     rect = std::static_pointer_cast<CSVGJRect>(obj);
   else
     return CJObj::cmp(obj);
@@ -785,7 +785,7 @@ cmp(CJObjP obj) const
 {
   CSVGJNumberListP reals;
 
-  if (obj->type()->name() == "SVGNumberList")
+  if (obj->objType()->name() == "SVGNumberList")
     reals = std::static_pointer_cast<CSVGJNumberList>(obj);
   else
     return CJObj::cmp(obj);
@@ -893,7 +893,7 @@ cmp(CJObjP obj) const
 {
   CSVGJNumberP r;
 
-  if (obj->type()->name() == "SVGNumber")
+  if (obj->objType()->name() == "SVGNumber")
     r = std::static_pointer_cast<CSVGJNumber>(obj);
   else
     return CJObj::cmp(obj);
@@ -998,7 +998,7 @@ cmp(CJObjP obj) const
 {
   CSVGJLengthListP lengths;
 
-  if (obj->type()->name() == "SVGLengthList")
+  if (obj->objType()->name() == "SVGLengthList")
     lengths = std::static_pointer_cast<CSVGJLengthList>(obj);
   else
     return CJObj::cmp(obj);
@@ -1131,7 +1131,7 @@ cmp(CJObjP obj) const
 {
   CSVGJLengthP length;
 
-  if (obj->type()->name() == "SVGLength")
+  if (obj->objType()->name() == "SVGLength")
     length = std::static_pointer_cast<CSVGJLength>(obj);
   else
     return CJObj::cmp(obj);
@@ -1278,7 +1278,7 @@ cmp(CJObjP obj) const
 {
   CSVGJStringListP strings;
 
-  if (obj->type()->name() == "SVGStringList")
+  if (obj->objType()->name() == "SVGStringList")
     strings = std::static_pointer_cast<CSVGJStringList>(obj);
   else
     return CJObj::cmp(obj);
@@ -1406,7 +1406,7 @@ cmp(CJObjP obj) const
 {
   CSVGJAngleP angle;
 
-  if (obj->type()->name() == "SVGAngle")
+  if (obj->objType()->name() == "SVGAngle")
     angle = std::static_pointer_cast<CSVGJAngle>(obj);
   else
     return CJObj::cmp(obj);
@@ -1549,7 +1549,7 @@ cmp(CJObjP obj) const
 {
   CSVGJColorP color;
 
-  if (obj->type()->name() == "SVGColor")
+  if (obj->objType()->name() == "SVGColor")
     color = std::static_pointer_cast<CSVGJColor>(obj);
   else
     return CJObj::cmp(obj);

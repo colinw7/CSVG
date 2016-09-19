@@ -1,0 +1,18 @@
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN"
+    "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+
+<svg width="375px" height="200px" viewBox="0 0 375 200">
+   <title>Korean syllables from an external font</title>
+
+<defs>
+<path id="round-corner"
+    d="M250 30 L 300 30 A 30 30 0 0 1 330 60 L 330 110"
+	style="stroke: gray; fill: none;"/>
+</defs>
+
+<use xlink:href="#round-corner"/>
+<text style="font-size: 12;">
+    <textPath xlink:href="#round-corner">Going 'round the bend</textPath>
+</text>
+
+</svg>

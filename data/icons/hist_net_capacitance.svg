@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="192"
+   height="192"
+   viewBox="0 0 192 192.00001"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   inkscape:export-filename="C:\Users\timm\Documents\icc2_icons\icc2_icons\add_object_shape.png"
+   inkscape:export-xdpi="2.1762404"
+   inkscape:export-ydpi="2.1762404"
+   sodipodi:docname="hist_net_capacitance_16_xpm.svg">
+  <title
+     id="title3338">Synopsys Inc. Icon</title>
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#eee6ea"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="4.0104167"
+     inkscape:cx="140.94545"
+     inkscape:cy="103.15811"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:window-width="1062"
+     inkscape:window-height="768"
+     inkscape:window-x="748"
+     inkscape:window-y="126"
+     inkscape:window-maximized="0"
+     inkscape:snap-others="true"
+     inkscape:snap-to-guides="false"
+     inkscape:snap-page="true"
+     inkscape:snap-grids="true"
+     units="px"
+     showguides="true"
+     inkscape:guide-bbox="true">
+    <sodipodi:guide
+       position="8,181.11592"
+       orientation="1,0"
+       id="guide4179"
+       inkscape:label=""
+       inkscape:color="rgb(0,0,255)" />
+    <sodipodi:guide
+       position="184,138.9804"
+       orientation="1,0"
+       id="guide4139"
+       inkscape:label=""
+       inkscape:color="rgb(0,0,255)" />
+    <sodipodi:guide
+       position="63.686275,184.00001"
+       orientation="0,1"
+       id="guide4141"
+       inkscape:label=""
+       inkscape:color="rgb(0,0,255)" />
+    <sodipodi:guide
+       position="82.823529,8.0000004"
+       orientation="0,1"
+       id="guide4143"
+       inkscape:label=""
+       inkscape:color="rgb(0,0,255)" />
+    <inkscape:grid
+       type="xygrid"
+       id="grid3340"
+       empspacing="4" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>Synopsys Inc. Icon</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Create" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-73.637022,-718.62455)">
+    <rect
+       style="fill:#de8d47;fill-opacity:1;stroke:none;stroke-width:10;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4140"
+       width="32"
+       height="93.769501"
+       x="81.637016"
+       y="808.85504" />
+    <rect
+       style="fill:#de8d47;fill-opacity:1;stroke:none;stroke-width:10;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4140-7"
+       width="32.000004"
+       height="144.00002"
+       x="123.01235"
+       y="758.62451" />
+    <rect
+       style="fill:#de8d47;fill-opacity:1;stroke:none;stroke-width:10;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4140-7-7"
+       width="32.000008"
+       height="84.292076"
+       x="164.38768"
+       y="818.33246" />
+    <rect
+       style="fill:#de8d47;fill-opacity:1;stroke:none;stroke-width:10;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4140-7-7-8"
+       width="32.000011"
+       height="58.702972"
+       x="205.76302"
+       y="843.92157" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:87.71055603px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';letter-spacing:0px;word-spacing:0px;fill:#659941;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="212.13539"
+       y="602.7132"
+       id="text4187"
+       sodipodi:linespacing="125%"
+       transform="scale(0.74091561,1.3496814)"><tspan
+         sodipodi:role="line"
+         id="tspan4189"
+         x="212.13539"
+         y="602.7132">NC</tspan></text>
+  </g>
+</svg>

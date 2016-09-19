@@ -1,0 +1,3142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="480">
+    <meta name="viewport" content="width=device-width, height=device-height initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+
+    <title>SVG Animation</title>
+
+    <meta name="description" content="This tutorial explains how to animate SVG shapes with SVG animation elements.">
+    <meta name="keywords"    content="svg animation">
+    <meta name="author" content="Jakob Jenkov">
+
+    <meta name="twitter:card" content="summary_large_image" >
+    <meta name="twitter:site" content="@jjenkov">
+    <meta name="twitter:title" content="SVG Animation">
+    <meta name="twitter:description" content="This tutorial explains how to animate SVG shapes with SVG animation elements.">
+    <meta name="twitter:creator" content="@jjenkov">
+    <meta name="twitter:domain" content="jenkov.com">
+
+    <meta name="twitter:image:src" content="http://tutorials.jenkov.com/images/svg/svg-teaser-500-300.png">
+
+    <meta name="og:type"  content="article"/>
+    <meta name="og:title" content="SVG Animation"/>
+    <meta property="og:url"   content="http://tutorials.jenkov.com/svg/svg-animation.html"/>
+    <meta property="og:description" content="This tutorial explains how to animate SVG shapes with SVG animation elements."/>
+
+    <meta property="og:image" content="http://tutorials.jenkov.com/images/svg/svg-teaser-500-300.png"/>
+
+    <link href="https://plus.google.com/108227213807945109821" rel="publisher" />
+
+    <meta name="google-site-verification" content="i_TwzdElg-by5uXLvyAjuIaCjxo0yjtW8LdRPUDEEcw" />
+
+    <!-- jQuery -->
+    <script  src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <!--<script type="text/javascript"            src="/js/jqc/1.7.0/jqc-custom-build-mini.js"></script>-->
+
+</head>
+<body>
+<style>
+body {background-color: #f0f0f0;background-image: linear-gradient(180deg, #f0f0f0, #e0e0e0);}
+.dataTable th, .dataTable td { padding: 2px 8px; }
+</style>
+<style id="layoutCss"></style>
+<style id="jqcCss"></style>
+<style id="articleCss"></style>
+<style id="navBarCss"></style>
+
+<script>
+lcv = "4";
+ls = localStorage;
+cacheLoaded = false;
+pageLoaded = false;
+
+var prevArticleInCategory = "/svg/svg-viewport-view-box.html";
+var nextArticleInCategory = "/svg/scripting.html";
+</script>
+
+<script id="jqcJs" ></script>
+<script id="bottomNavBarModule" ></script>
+
+
+<script>
+function jsonp(url) {
+    var script   = document.createElement("script"); script.type = "text/javascript"; script.src = url;
+    document.body.appendChild(script);
+}
+function insertById(ids) {
+    for(var i=0, n=ids.length; i < n; i++) {
+        var el = document.getElementById(ids[i]);
+        if(el != null) { el.innerHTML = localStorage[ids[i]]; }
+    }
+}
+function insertByClass(ids) {
+    for(var i=0, n=ids.length; i<n; i++) {
+        var els = document.getElementsByClassName(ids[i]);
+        for(var j=0,m=els.length; j<m; j++) { els[j].innerHTML = localStorage[ids[i]]; }
+    }
+}
+function init() {
+    if(cacheLoaded == true && pageLoaded == true) {
+        console.log("initializing page");
+        insertById(["layoutCss", "jqcCss", "topBarLogo", "articleCss", "navBarCss", "bottomNavBar", "bottomNavBarModule", "jqcJs"]);
+        insertByClass(["authorPhoto", "authorSocialLinks", "newsletterForm", "googlePlusShare"]);
+        $(document).ready(function() { bottomNavBarModule(); });
+        console.log("page initialized");
+    }
+}
+if(ls.lcv != lcv) {
+    for(var i=0; i < ls.length; i++){
+        ls.removeItem(ls.key(i));
+    }
+    jsonp("/cached-" + lcv + ".js");
+    console.log("cache cleared");
+} else {
+    cacheLoaded = true;
+}
+ls.lcv = lcv;
+</script>
+<!-- jqComponents -->
+
+
+<script>
+articleLen = 20418;
+adRandom = Math.random() * 100;
+
+function dw(text) { document.write(text); }
+
+function writeAd(adSlot, w, h) {
+ dw("<script async src='//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js'><"); dw("/script>");
+ dw("<ins class='adsbygoogle' style='display:inline-block;width:" + w + "px;height:" + h + "px' data-ad-client='ca-pub-5569543489255665' data-ad-slot='" +  adSlot + "'></ins>");
+ dw("<script>");
+ dw("(adsbygoogle = window.adsbygoogle || []).push({});");
+ dw("<"); dw("/script>");
+}
+
+function topAdStyles(w, mT, mB) {
+    var adEl = document.getElementById("topAds");
+    adEl.style.width = (w + "px"); adEl.style.marginTop = (mT + "px"); adEl.style.marginBottom = (mB + "px"); adEl.style.marginRight = "auto"; adEl.style.marginLeft = "auto";
+}
+
+function bottomAdStyles(elId, w, mT, mB) {
+    var adEl = document.getElementById(elId);
+    adEl.style.width = (w + "px"); adEl.style.marginTop = (mT + "px"); adEl.style.marginBottom = (mB + "px"); adEl.style.marginRight = "auto"; adEl.style.marginLeft = "auto";
+}
+</script>
+
+
+<div id="topBar">
+<div jqc-row jqc-row-paddings="0:0 3:24">
+    <div jqc-cell="0:12c">
+        <div id="topBarContent">
+        <div id="topBarLogo"></div>
+        <div id="topBarPhrase">Tech and Media Labs</div>
+        <div id="topBarMenu">
+        <a href="http://tutorials.jenkov.com">Tutorials</a>
+        <a href="http://jenkov.com/about/index.html">About</a>
+        <a href="http://jenkov.com/rss.xml">RSS</a>
+        </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<div id="cookieNote">
+<div jqc-row jqc-row-widths="0:100% 4:1200" jqc-row-paddings="0:0 3:24">
+    <div jqc-cell="0:12c" >
+        <div class="card">
+            This site uses cookies to improve the user experience. <button onclick="hideCookieNote()">OK</button>
+        </div>
+    </div>
+</div>
+</div>
+
+<script>
+function hideCookieNote() { document.getElementById("cookieNote").innerHTML = ""; ls.cookieNote = 0; }
+
+if(ls.cookieNote == 0) {
+    hideCookieNote();
+}
+</script>
+
+<div jqc-row jqc-row-widths="0:100% 4:1200" jqc-row-paddings="0:0">
+    <div jqc-cell="0:12c">
+        <div id="topAds">
+            <script>
+                var adEl = document.getElementById("topAds");
+                if(window.innerWidth > 970) {
+                    if(adRandom <= 5){
+                        writeAd("6094206201", 970, 90); /* wider ad - 5% of page views */
+                        topAdStyles(970, 20, 20);
+                    } else {
+                        writeAd("7630855405", 728, 90); /* standard ad */
+                        topAdStyles(728, 20, 20);
+                    }
+                } else if(window.innerWidth >= 728 && window.innerWidth <= 970)  {  /* Tutorials - Top Banner */
+                    writeAd("7630855405", 728, 90);
+                    topAdStyles(728, 20, 20);
+                } else {  /* Tutorials - Top Banner - Mobile */
+                    writeAd("3297914607", 320, 50);
+                    topAdStyles(320, 10, 0);
+                }
+            </script>
+        </div>
+    </div>
+</div>
+
+<div id="main">
+
+    <div jqc-row jqc-row-widths="0:100% 4:1200" jqc-column-counts="0:24" jqc-row-paddings="0:0 3:24" jqc-cell-spacings="0:8">
+        <div jqc-cell="0:0c  3:7c" >
+            <div id="trailToc" class="card">
+                <div id='trailTitle'>SVG - Scalable Vector Graphics</div><ol><li><a href="/svg/index.html">SVG Tutorial</a></li><li><a href="/svg/svg-examples.html">SVG Examples</a></li><li><a href="/svg/simple-svg-example.html">A Simple SVG Example</a></li><li><a href="/svg/displaying-svg-in-web-browsers.html">Displaying SVG in Web Browsers</a></li><li><a href="/svg/svg-icons.html">SVG Icons</a></li><li><a href="/svg/svg-coordinate-system.html">SVG Coordinate System</a></li><li><a href="/svg/svg-element.html">SVG svg element</a></li><li><a href="/svg/g-element.html">SVG g element</a></li><li><a href="/svg/rect-element.html">SVG rect element</a></li><li><a href="/svg/circle-element.html">SVG circle element</a></li><li><a href="/svg/ellipse-element.html">SVG ellipse element</a></li><li><a href="/svg/line-element.html">SVG line element</a></li><li><a href="/svg/polyline-element.html">SVG polyline element</a></li><li><a href="/svg/polygon-element.html">SVG polygon element</a></li><li><a href="/svg/path-element.html">SVG path element</a></li><li><a href="/svg/marker-element.html">SVG marker element</a></li><li><a href="/svg/text-element.html">SVG text element</a></li><li><a href="/svg/tspan-element.html">SVG tspan element</a></li><li><a href="/svg/tref-element.html">SVG tref element</a></li><li><a href="/svg/textpath-element.html">SVG textpath element</a></li><li><a href="/svg/switch-element.html">SVG switch element</a></li><li><a href="/svg/image-element.html">SVG image element</a></li><li><a href="/svg/a-element.html">SVG a element</a></li><li><a href="/svg/defs-element.html">SVG defs Elements</a></li><li><a href="/svg/symbol-element.html">SVG symbol Element</a></li><li><a href="/svg/use-element.html">SVG use Element</a></li><li><a href="/svg/svg-and-css.html">SVG and CSS - Cascading Style Sheets</a></li><li><a href="/svg/stroke.html">SVG Stroke</a></li><li><a href="/svg/fill.html">SVG Fill</a></li><li><a href="/svg/svg-viewport-view-box.html">SVG Viewport and View Box</a></li><li><a href="/svg/svg-animation.html"><b>SVG Animation</b></a></li><li><a href="/svg/scripting.html">SVG Scripting</a></li><li><a href="/svg/svg-transformation.html">SVG Transformation</a></li><li><a href="/svg/svg-gradients.html">SVG Gradients</a></li><li><a href="/svg/fill-patterns.html">SVG Fill Patterns</a></li><li><a href="/svg/clip-path.html">SVG Clip Path</a></li><li><a href="/svg/mask.html">SVG Masks</a></li><li><a href="/svg/filters.html">SVG Filters</a></li></ol>
+            </div>
+
+            <br><br>
+            <!-- Left Bar Adsense Banner Ad -->
+            <div id="side-ads">
+                <script>
+                if(window.innerWidth >= 900){
+                    if(adRandom <= 94)     { writeAd("5873880207", 300,  600);}
+                    else if(adRandom < 96) { writeAd("3389666608", 160,  600);}
+                    else                   { writeAd("4257546205", 300, 1050);}
+                }
+            </script>
+            </div>
+
+            <br><br>
+
+
+            <div class="card newsletterForm">
+            </div>
+        </div>
+        <div jqc-cell="0:24c 3:17c" >
+
+
+            <div class="card">
+            <h1>SVG Animation</h1>
+
+            <div id="mainBody">
+
+                <div id="pageToc" itemscope itemtype="http://schema.org/SiteNavigationElement">
+                    <ul><li><a href="#svg-animation-example">SVG Animation Example</a></li><li><a href="#overview">Overview of Animation Options</a></li><li><a href="#set">set</a><ul><li><a href="#attributetype">attributeType</a></li></ul></li><li><a href="#animate">animate</a></li><li><a href="#animatetransform">animateTransform</a></li><li><a href="#animatemotion">animateMotion</a></li><li><a href="#time-units">Time Units</a></li><li><a href="#coordinating-animations">Coordinating Animations</a></li><li><a href="#repeating-animations">Repeating Animations</a></li><li><a href="#combining-animations">Combining Animations</a></li></ul>
+                </div>
+                <div id="lastUpdate">
+                    <table><tr><td class="authorPhoto"></td>
+                            <td><p style="margin: 0px 0px 6px 0px;">
+                                    Jakob Jenkov<br>
+                                    Last update: 2015-02-01
+                                </p>
+                                <div class="authorSocialLinks"></div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <p>
+    It is possible to animate the shapes in an SVG image. There are several different ways
+    to animate SVG shapes. In this text I will go through the various possibilities.
+</p>
+
+
+
+<a name="svg-animation-example"></a>
+<h2>SVG Animation Example</h2>
+
+<p>
+    Here is a simple SVG animation example:
+</p>
+
+<pre class="codeBox">
+&lt;svg xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink"&gt;
+
+    &lt;rect x="10" y="10" height="110" width="110"
+         style="stroke:#ff0000; fill: #0000ff"&gt;
+
+        &lt;animateTransform
+            attributeName="transform"
+            begin="0s"
+            dur="20s"
+            type="rotate"
+            from="0 60 60"
+            to="360 60 60"
+            repeatCount="indefinite"
+        /&gt;
+    &lt;/rect&gt;
+
+&lt;/svg&gt;
+</pre>
+
+<p>
+    Notice how the <code>&lt;rect&gt;</code> element has a
+    <code>&lt;animateTransform&gt;</code> element nested inside it.
+    It is this element that animates the rectangle.
+</p>
+
+<p>
+    Here is the resulting SVG animation:
+</p>
+
+<svg width="320" height="200">
+    <rect x="10" y="10" height="110" width="110" style="stroke:#ff0000; fill: #0000ff">
+        <animateTransform
+                attributeName="transform"
+                begin="0s"
+                dur="10s"
+                type="rotate"
+                from="0 60 60"
+                to="360 60 60"
+                repeatCount="indefinite"
+        />
+    </rect>
+</svg>
+
+<a name="overview"></a>
+<h2>Overview of Animation Options</h2>
+
+<p>
+    Animation is done by manipulating the attributes of shapes over time. This is done using one
+    or more of the 5 SVG animation elements:
+</p>
+
+<ol>
+    <li>&lt;set&gt;</li>
+    <li>&lt;animate&gt;</li>
+    <li>&lt;animateColor&gt;</li>
+    <li>&lt;animateTransform&gt;</li>
+    <li>&lt;animateMotion&gt;</li>
+</ol>
+
+<p>
+    Each of these SVG animation elements sets or animates different aspects of SVG shapes.
+    These animation elements are explained throughout the rest of this text.
+
+</p>
+
+
+<a name="set"></a>
+<h2>set</h2>
+
+<p>
+    The <code>set</code> element is the simplest of the SVG animation elements.
+    It simply sets an attribute to a certain value after a specific time interval has passed.
+    As such, the shape is not continuously animating, but just changes attribute value once.
+</p>
+
+<p>
+    Here is a <code>&lt;set&gt;</code> element example:
+</p>
+
+<pre class="codeBox">
+&lt;circle cx="30" cy="30" r="25" style="stroke: none; fill: #0000ff;"&gt;
+    &lt;set attributeName="r" attributeType="XML"
+         to="100"
+         begin="0s"  /&gt;
+
+&lt;/circle&gt;
+</pre>
+
+<p>
+    Notice the <code>&lt;set&gt;</code> element nested inside the <code>circle</code>
+    element. This is how the <code>&lt;set&gt;</code> element is applied to a shape -
+    by nesting it inside the SVG element of the shape you want to apply it to.
+</p>
+
+<p>
+    The <code>&lt;set&gt;</code> element sets the value of an attribute at a certain time.
+    The name of the attribute to set is specified inside the <code>attributeName</code>
+    attribute. The value to set it to is specified inside the <code>to</code> attribute.
+    The time to set the attribute value is specified inside the <code>begin</code> attribute.
+</p>
+
+<p>
+    The example above sets the attribute <code>r</code> to 100 after 5 seconds. Here is the
+    resulting image:
+</p>
+
+<svg width="500" height="100">
+
+    <circle cx="30" cy="30" r="25" style="stroke: none; fill: #0000ff;">
+        <set attributeName="r" attributeType="XML"
+             to="100"
+             begin="5s" />
+
+    </circle>
+
+</svg>
+
+
+<a name="attributetype"></a>
+<h3>attributeType</h3>
+<p>
+    The previous example also had an <code>attributeType</code> attribute inside the <code>&lt;set&gt;</code> element. The value was
+    set to <code>XML</code>. That is because the attribute to set a value for in the example
+    (the <code>r</code> attribute) is an attribute of the SVG circle element. Since SVG elements
+    are XML elements, SVG attributes are XML attributes.
+</p>
+
+<p>
+    You can also
+    animate CSS properties of a shape. If you do so, you will need to set the <code>attributeType</code>
+    to <code>CSS</code>. If you do not provide an <code>attributeType</code> attribute, then the
+    browser will try to guess if the attribute to animate is an XML attribute or CSS property.
+</p>
+
+
+<a name="animate"></a>
+<h2>animate</h2>
+
+<p>
+    The <code>animate</code> element is used to animate an attribute of an SVG shape.
+    You nest the <code>animate</code> element inside the shape you want it applied to.
+    Here is an example:
+</p>
+
+
+<pre class="codeBox">
+&lt;circle cx="30" cy="30" r="25" style="stroke: none; fill: #0000ff;"&gt;
+    &lt;animate attributeName="cx" attributeType="XML"
+             from="30"  to="470"
+             begin="0s" dur="5s"
+             fill="remove" repeatCount="indefinite"/&gt;
+
+&lt;/circle&gt;
+</pre>
+
+<p>
+    This example animates the <code>cx</code> attribute of the <code>&lt;circle&gt;</code> element
+    from a value of 30 (the <code>from</code> attribute) to a value of 479 (the <code>to</code> attribute).
+    The animation starts at 0 seconds (the <code>begin</code> attribute) and has a duration of 5 seconds
+    (the <code>dur</code> attribute).
+</p>
+
+<p>
+    When the animation is finished the animated attribute is set
+    back to its original value (the <code>fill="remove"</code> attribute setting). If you wanted
+    the animated attribute to keep the to-value of the animation, set the <code>fill</code>
+    attribute to <code>freeze</code>. The animation
+    repeats indefinitely (the <code>repeatCount</code> attribute).
+</p>
+
+<p>
+    Here is the resulting animation:
+</p>
+
+<svg width="500" height="75">
+    <circle cx="30" cy="30" r="25" style="stroke: none; fill: #0000ff;">
+        <animate attributeName="cx" attributeType="XML"
+                 from="30"  to="470"
+                 begin="0s" dur="5s"
+                 fill="remove" repeatCount="indefinite"/>
+
+    </circle>
+</svg>
+
+
+
+
+<a name="animatetransform"></a>
+<h2>animateTransform</h2>
+
+<p>
+    The <code>&lt;animateTransform</code> element can animate the <code>transform</code> attribute of
+    a shape. The <code>&lt;animate&gt;</code> element cannot do that.
+</p>
+
+<p>
+    Here is an example:
+</p>
+
+
+<pre class="codeBox">
+&lt;rect x="20" y="20" width="100" height="40"
+    style="stroke: #ff00ff; fill:none;" &gt;
+  &lt;animateTransform attributeName="transform"
+                    type="rotate"
+                    from="0 100 100" to="360 100 100"
+                    begin="0s" dur="10s"
+                    repeatCount="indefinite"
+          /&gt;
+&lt;/rect&gt;
+</pre>
+
+<p>
+    This <code>&lt;animateTransform&gt;</code> example animates the <code>transform</code> attribute of the <code>&lt;rect&gt;</code> element it
+    is nested inside. The <code>type</code> attribute is set to <code>rotate</code> (the rotate transform function) meaning the animated transformation will be
+    a rotation. The <code>from</code> and <code>to</code> attributes set the parameters to be animated
+    and passed to the <code>rotate</code> function. This example rotates from a degree of 0 to a degree of 360
+    around the point 100,100 .
+</p>
+
+
+<svg width="500" height="200">
+
+    <rect x="20" y="20" width="100" height="40"
+          style="stroke: #ff00ff; fill: none;" >
+        <animateTransform attributeName="transform"
+                          type="rotate"
+                          from="0 100 100" to="360 100 100"
+                          begin="0s" dur="10s"
+                          repeatCount="indefinite"
+                />
+    </rect>
+    <circle cx="100" cy="100" r="2" style="stroke: none; fill: #0000ff;"/>
+</svg>
+
+
+<p>
+    Here is an example that animates the scale of a square:
+</p>
+
+<pre class="codeBox">
+&lt;rect x="20" y="20" width="40" height="40"
+      style="stroke: #ff00ff; fill: none;" &gt;
+    &lt;animateTransform attributeName="transform"
+                      type="scale"
+                      from="1 1" to="2 3"
+                      begin="0s" dur="10s"
+                      repeatCount="indefinite"
+            /&gt;
+&lt;/rect&gt;
+</pre>
+
+<p>
+    Notice again that the <code>from</code> and <code>to</code>  attributes contain
+    the values you would normally pass as parameters to the <code>scale()</code> transform function.
+</p>
+
+<p>
+    Here is the resulting animation:
+</p>
+
+<svg width="500" height="200">
+
+    <rect x="20" y="20" width="40" height="40"
+          style="stroke: #ff00ff; fill: none;" >
+        <animateTransform attributeName="transform"
+                          type="scale"
+                          from="1 1" to="2 3"
+                          begin="0s" dur="10s"
+                          repeatCount="indefinite"
+                />
+    </rect>
+</svg>
+
+
+
+<a name="animatemotion"></a>
+<h2>animateMotion</h2>
+
+<p>
+    The <code>&lt;animateMotion&gt;</code> element can animate the movement of a shape along a path.
+    It can also rotate the shape to match the slope of the path, like a car driving up and down hill.
+    Here is an example:
+</p>
+
+
+<pre class="codeBox">
+  &lt;rect x="0" y="0" width="30" height="15"
+        style="stroke: #ff0000; fill: none;"&gt;
+      &lt;animateMotion
+              path="M10,50 q60,50 100,0 q60,-50 100,0"
+              begin="0s" dur="10s" repeatCount="indefinite"
+              /&gt;
+  &lt;/rect&gt;
+</pre>
+
+<p>
+    The path to animate the rectangle along is specified in the <code>path</code> attribute
+    of the <code>&lt;animateMotion&gt;</code> element. The <code>path</code> attribute
+    uses the same syntax as the <a href="path-element.html">path element</a>.
+</p>
+
+<p>
+    Here is the resulting animation with the path shown too, so you can
+    better follow the motion.
+</p>
+
+<svg width="500" height="150">
+
+    <path d="M10,50 q60,50 100,0 q60,-50 100,0"
+          style="stroke: #000000; fill: none;"
+            />
+
+    <rect x="0" y="0" width="30" height="15"
+          style="stroke: #ff0000; fill: none;">
+        <animateMotion
+                path="M10,50 q60,50 100,0 q60,-50 100,0"
+                begin="0s" dur="10s" repeatCount="indefinite"
+                />
+    </rect>
+</svg>
+
+
+<p>
+    In order to rotate the square to align with the slope of the path, you set the <code>rotate</code>
+    attribute of the <code>&lt;animateMotion&gt;</code> element to <code>auto</code>. Here is an example:
+</p>
+
+<pre class="codeBox">
+  &lt;rect x="0" y="0" width="30" height="15"
+        style="stroke: #ff0000; fill: none;"&gt;
+      &lt;animateMotion
+              path="M10,50 q60,50 100,0 q60,-50 100,0"
+              begin="0s" dur="10s" repeatCount="indefinite"
+              <b>rotate="auto"</b>
+              /&gt;
+  &lt;/rect&gt;
+</pre>
+
+<p>
+    Here is the resulting animation. Notice how the rotation of the square changes to fit the path.
+</p>
+
+
+<svg width="500" height="150">
+
+    <path d="M10,50 q60,50 100,0 q60,-50 100,0"
+          style="stroke: #000000; fill: none;"
+            />
+
+    <rect x="0" y="0" width="30" height="15"
+          style="stroke: #ff0000; fill: none;">
+        <animateMotion
+                path="M10,50 q60,50 100,0 q60,-50 100,0"
+                begin="0s" dur="10s" repeatCount="indefinite"
+                rotate="auto"
+                />
+    </rect>
+</svg>
+
+
+<p>
+    You can also set the <code>rotate</code> attribute to a specific value, like 20 or 30 etc. That will
+    keep the shape rotated that number of degrees throughout the animation.
+</p>
+
+
+
+<a name="time-units"></a>
+<h2>Time Units</h2>
+
+<p>
+    When you define an SVG animation you specify when the animation start time and duration.
+    When specifying that, you have the choice between different time units.  The time
+    units are typically specified inside the <code>begin</code>, <code>dur</code>
+    and <code>end</code> attributes of the various animation elements.
+</p>
+
+<p>
+    Inside these attributes you can specify a number followed by a time unit, as done in the examples
+    in this text. For instance <code>5s</code> means 5 seconds. Here is a list of the time units
+    you can use:
+</p>
+
+<table class="dataTable" cellspacing="0">
+    <tr>
+        <th>Time Unit</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td><code>h</code></td>
+        <td>Hours</td>
+    </tr>
+    <tr>
+        <td><code>min</code></td>
+        <td>Minutes</td>
+    </tr>
+    <tr>
+        <td><code>s</code></td>
+        <td>Seconds</td>
+    </tr>
+    <tr>
+        <td><code>ms</code></td>
+        <td>Milliseconds</td>
+    </tr>
+</table>
+
+<p>
+    You can also specify time in a time format which contain both hours, minutes and seconds. Here
+    is how the format looks like:
+</p>
+
+<pre class="codeBox">
+hh:mm:ss
+</pre>
+
+<p>
+    Here is an example:
+</p>
+
+<pre class="codeBox">
+1:30:45
+</pre>
+
+<p>
+    This example specifies a time of 1 hour, 30 minutes and 45 seconds (which is of course very long time
+    for an animation).
+</p>
+
+
+<a name="coordinating-animations"></a>
+<h2>Coordinating Animations</h2>
+
+<p>
+    You can synchronize the beginning of one animation to the end of another.
+    You do so like this:
+</p>
+
+<pre class="codeBox">
+
+&lt;rect x="0" y="0" width="30" height="15"
+      style="stroke: #ff0000; fill: none;"&gt;
+
+    &lt;animate id="one"
+             attributeName="x" attributeType="XML"
+             from="0" to="400"
+             begin="0s" dur="10s" fill="freeze"
+            /&gt;
+    &lt;animate
+            attributeName="y" attributeType="XML"
+            from="0" to="50"
+            <b>begin="one.end"</b> dur="10s" fill="freeze"
+            /&gt;
+&lt;/rect&gt;
+
+</pre>
+
+<p>
+    Here is the resulting animation:
+</p>
+
+
+<svg width="500" height="100">
+
+    <rect x="0" y="0" width="30" height="15"
+          style="stroke: #ff0000; fill: none;">
+
+        <animate id="one"
+                 attributeName="x" attributeType="XML"
+                 from="0" to="400"
+                 begin="0s" dur="10s" fill="freeze"
+                />
+        <animate
+                attributeName="y" attributeType="XML"
+                from="0" to="80"
+                begin="one.end" dur="10s" fill="freeze"
+                />
+    </rect>
+
+</svg>
+
+<p>
+    The first animation has its <code>id</code> attribute set to <code>one</code>.
+</p>
+<p>
+    The second animation references the first animation via its <code>begin</code> attribute.
+    The <code>begin</code> attribute value is set to <code>one.end</code> which means that this animation should start when the
+    animation with the id <code>one</code> ends.
+</p>
+
+<p>
+    You can use the <code>id.begin</code> or <code>id.end</code> to start an animation when
+    another animation starts or ends. Instead of <code>id</code> use the ID of the animation
+    element to synchronize to.
+</p>
+
+<p>
+    You can also specify offsets to the start or end time of another animation, like this:
+</p>
+
+<pre class="codeBox">
+one.begin+10s
+
+one.end+5s
+</pre>
+
+
+<p>
+    Additionally you can specify an explicit end time in an animations <code>end</code> attribute.
+    This does not replace the <code>dur</code> attribute. All it does is to add another
+    possible end to an animation, so whichever occurs first. Here is an example:
+</p>
+
+<pre class="codeBox">
+&lt;animate
+        attributeName="y" attributeType="XML"
+        from="0" to="50"
+        begin="one.begin+3s" dur="10s" end="one.end"
+        fill="freeze"
+        /&gt;
+</pre>
+
+<p>
+    This animation will have a duration of 10 seconds, or stop when the animation with
+    the ID <code>one</code> ends, whichever occurs first.
+</p>
+
+
+<a name="repeating-animations"></a>
+<h2>Repeating Animations</h2>
+
+<p>
+    There are two attributes you can use inside an animation element which are used to repeat
+    the animation.
+</p>
+
+<p>
+    The first attribute is the <code>repeatCount</code> attribute. Inside
+    this attribute you can set a number, which will be repeat the animation that number of times,
+    or the value <code>indefinite</code> which will keep the animation running without ever stopping.
+</p>
+
+<p>
+    The second attribute is the <code>repeatDur</code> which specifies a duration for which
+    the animation is to be repeated. You can also use the value <code>indefinite</code> inside
+    the <code>repeatDur</code> attribute, and the effect is the same as using it inside the
+    <code>repeatCount</code> attribute.
+</p>
+
+<p>
+    Here are two examples:
+</p>
+
+<pre class="codeBox">
+&lt;animate
+        attributeName="y" attributeType="XML"
+        from="0" to="50"
+        begin="one.begin+3s" dur="10s"
+        repeatCount="3"
+        fill="freeze"
+        /&gt;
+</pre>
+
+<pre class="codeBox">
+&lt;animate
+        attributeName="y" attributeType="XML"
+        from="0" to="50"
+        begin="one.begin+3s" dur="10s"
+        repeatDur="30s"
+        fill="freeze"
+        /&gt;
+</pre>
+
+
+
+<a name="combining-animations"></a>
+<h2>Combining Animations</h2>
+
+<p>
+    You can combine animations by listing more than one <code>&lt;animation&gt;</code> inside the element to animate.
+    You have already seen that, but here is another example:
+</p>
+
+<pre class="codeBox">
+&lt;rect x="10" y="10" width="40" height="20"
+     style="stroke: #000000; fill: none;"&gt;
+   &lt;animate attributeName="x"
+            attributeType="XML"
+            from="10" to="400"
+            begin="0s" dur="10s"
+            repeatCount="indefinite"
+           /&gt;
+   &lt;animate attributeName="y"
+            attributeType="XML"
+            from="10" to="100"
+            begin="0s" dur="10s"
+            fill="freeze"
+            repeatCount="indefinite"
+           /&gt;
+&lt;/rect&gt;
+</pre>
+
+<p>
+    This example has two animations, each animating the <code>x</code> and <code>y</code> attributes
+    of the rectangle. Here is the resulting animation:
+</p>
+
+
+<svg width="500"  height="100">
+    <rect x="10" y="10" width="40" height="20"
+          style="stroke: #000000; fill: none;">
+        <animate attributeName="x" attributeType="XML"
+                 from="10" to="400"
+                 begin="0s" dur="10s"
+                 repeatCount="indefinite"
+                />
+        <animate attributeName="y" attributeType="XML"
+                 from="10" to="100"
+                 begin="0s" dur="10s"
+                 fill="freeze"
+                 repeatCount="indefinite"
+                />
+    </rect>
+</svg>
+
+<p>
+    When combining <code>&lt;animateTransform&gt;</code> elements, the default behaviour is for
+    the second animation to cancel out the first. However, you can combine the transformation animations
+    by adding the attribute <code>additive</code> with a value of <code>sum</code> to both
+    <code>&lt;animateTransform&gt;</code> elements. Here is an example:
+</p>
+
+<pre class="codeBox">
+&lt;rect x="10" y="10" width="40" height="20"
+      style="stroke: #000000; fill: none;"&gt;
+    &lt;animateTransform attributeName="transform" attributeType="XML"
+                      type="scale"
+                      from="1" to="3"
+                      begin="0s" dur="10s"
+                      repeatCount="indefinite"
+                      <b>additive="sum"</b>
+            /&gt;
+    &lt;animateTransform attributeName="transform" attributeType="XML"
+                      type="rotate"
+                      from="0 30 20" to="360 30 20"
+                      begin="0s" dur="10s"
+                      fill="freeze"
+                      repeatCount="indefinite"
+                      <b>additive="sum"</b>
+            /&gt;
+
+</pre>
+
+
+<p>
+    Here is the resulting animation which both scales and rotates a rectangle:
+</p>
+
+
+<svg width="500"  height="100">
+    <rect x="10" y="10" width="40" height="20"
+          style="stroke: #000000; fill: none;">
+        <animateTransform attributeName="transform" attributeType="XML"
+                          type="scale"
+                          from="1" to="3"
+                          begin="0s" dur="10s"
+                          repeatCount="indefinite"
+                          additive="sum"
+                />
+        <animateTransform attributeName="transform" attributeType="XML"
+                          type="rotate"
+                          from="0 30 20" to="360 30 20"
+                          begin="0s" dur="10s"
+                          fill="freeze"
+                          repeatCount="indefinite"
+                          additive="sum"
+                />
+    </rect>
+</svg>
+
+                <div>
+                </div>
+
+                <div id="next">Next: <a href="/svg/scripting.html">SVG Scripting</a></div>
+                <div id="bottomSocial">
+
+                    <div style="display:inline-block;">
+                        <table>
+                            <tr><td colspan="2">
+                                <div class='g-plus' data-action='share' data-height='24'  data-annotation='none'></div>
+                                <script type='text/javascript'>
+                                    (function() {
+                                        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+                                        po.src = 'https://apis.google.com/js/platform.js';
+                                        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+                                     })();
+                                </script>
+
+                                <a href='https://twitter.com/share' class='twitter-share-button' data-via='jjenkov' target="_blank">Tweet</a>
+                                <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+                            </td></tr>
+                            <tr><td class="authorPhoto"></td><td><p style="margin: 0px 0px 6px 0px;">Jakob Jenkov</p><div class="authorSocialLinks"></div></td></tr>
+                        </table>
+                    </div>
+                    <div class="newsletterForm"  style="display:inline-block;"></div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Bottom ads - (nested row is working, but should perhaps not be a nested row?) (note: was a nested row in old design - not in new) -->
+<div jqc-row jqc-row-paddings="0:0">
+    <div jqc-cell="0:12c">
+        <div id="pageBottomAds">
+            <script>
+                    if(articleLen >= 4000){ /* for longer articles place ads here, at the bottom of the page */
+                        if(window.innerWidth >= 728 ) {  /* Adsense Ads - Bottom Banner */
+                            if(adRandom < 5)       { writeAd("2721937400", 970, 90);  bottomAdStyles("pageBottomAds", 970, 20, 20);}
+                            else if(adRandom < 30) { writeAd("9547200207", 970, 250); bottomAdStyles("pageBottomAds", 970, 20, 20);}
+                            else                   { writeAd("7776167002", 728, 90);  bottomAdStyles("pageBottomAds", 728, 20, 20);}
+                        } else if(window.innerWidth < 728) {  /* Adsense Ads - Bottom Banner - Mobile */
+                            if(adRandom < 50) {
+                                writeAd("4216244607", 320, 50); bottomAdStyles("pageBottomAds", 320, 10, 0);
+                            } else {
+                                writeAd("7377085404", 320, 100); bottomAdStyles("pageBottomAds", 320, 10, 0);
+                            }
+                        }
+                    }
+                </script>
+            <br/><br/><br/>
+        </div>
+
+
+        <div style="height: 30px"></div>
+        <div id="disqusComments" class="card">
+            <div id="disqus_thread"></div>
+            <script type="text/javascript">
+                var disqus_shortname = 'tutorials-jenkov-com'; // required: replace example with your forum shortname
+
+                /* * * DON'T EDIT BELOW THIS LINE * * */
+                (function() {
+                    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                })();
+            </script>
+            <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+        </div>
+
+    </div>
+</div>
+
+<span id="layoutManager" jqc-type="jqcResponsiveLayoutManager" jqc-row-paddings="0:8 4:0"></span>
+
+
+<div id="footerBar">
+<div jqc-row>
+    <div jqc-cell="0:12c">
+        Copyright &nbsp;Jenkov Aps
+    </div>
+</div>
+</div>
+
+<div id="trailTocFixedDiv">
+  <div id="trailTocFixedCloseButton">Close TOC</div>
+  <div id="trailTocFixedInnerDiv"></div>
+</div>
+<div id="bottomNavBar"></div>
+
+<!-- init page -->
+<script>
+pageLoaded = true;
+init();
+</script>
+
+
+<!-- Google Analytics Script -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-4036229-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="480">
+    <meta name="viewport" content="width=device-width, height=device-height initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+
+    <title>SVG Animation</title>
+
+    <meta name="description" content="This tutorial explains how to animate SVG shapes with SVG animation elements.">
+    <meta name="keywords"    content="svg animation">
+    <meta name="author" content="Jakob Jenkov">
+
+    <meta name="twitter:card" content="summary_large_image" >
+    <meta name="twitter:site" content="@jjenkov">
+    <meta name="twitter:title" content="SVG Animation">
+    <meta name="twitter:description" content="This tutorial explains how to animate SVG shapes with SVG animation elements.">
+    <meta name="twitter:creator" content="@jjenkov">
+    <meta name="twitter:domain" content="jenkov.com">
+
+    <meta name="twitter:image:src" content="http://tutorials.jenkov.com/images/svg/svg-teaser-500-300.png">
+
+    <meta name="og:type"  content="article"/>
+    <meta name="og:title" content="SVG Animation"/>
+    <meta property="og:url"   content="http://tutorials.jenkov.com/svg/svg-animation.html"/>
+    <meta property="og:description" content="This tutorial explains how to animate SVG shapes with SVG animation elements."/>
+
+    <meta property="og:image" content="http://tutorials.jenkov.com/images/svg/svg-teaser-500-300.png"/>
+
+    <link href="https://plus.google.com/108227213807945109821" rel="publisher" />
+
+    <meta name="google-site-verification" content="i_TwzdElg-by5uXLvyAjuIaCjxo0yjtW8LdRPUDEEcw" />
+
+    <!-- jQuery -->
+    <script  src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <!--<script type="text/javascript"            src="/js/jqc/1.7.0/jqc-custom-build-mini.js"></script>-->
+
+</head>
+<body>
+<style>
+body {background-color: #f0f0f0;background-image: linear-gradient(180deg, #f0f0f0, #e0e0e0);}
+.dataTable th, .dataTable td { padding: 2px 8px; }
+</style>
+<style id="layoutCss"></style>
+<style id="jqcCss"></style>
+<style id="articleCss"></style>
+<style id="navBarCss"></style>
+
+<script>
+lcv = "4";
+ls = localStorage;
+cacheLoaded = false;
+pageLoaded = false;
+
+var prevArticleInCategory = "/svg/svg-viewport-view-box.html";
+var nextArticleInCategory = "/svg/scripting.html";
+</script>
+
+<script id="jqcJs" ></script>
+<script id="bottomNavBarModule" ></script>
+
+
+<script>
+function jsonp(url) {
+    var script   = document.createElement("script"); script.type = "text/javascript"; script.src = url;
+    document.body.appendChild(script);
+}
+function insertById(ids) {
+    for(var i=0, n=ids.length; i < n; i++) {
+        var el = document.getElementById(ids[i]);
+        if(el != null) { el.innerHTML = localStorage[ids[i]]; }
+    }
+}
+function insertByClass(ids) {
+    for(var i=0, n=ids.length; i<n; i++) {
+        var els = document.getElementsByClassName(ids[i]);
+        for(var j=0,m=els.length; j<m; j++) { els[j].innerHTML = localStorage[ids[i]]; }
+    }
+}
+function init() {
+    if(cacheLoaded == true && pageLoaded == true) {
+        console.log("initializing page");
+        insertById(["layoutCss", "jqcCss", "topBarLogo", "articleCss", "navBarCss", "bottomNavBar", "bottomNavBarModule", "jqcJs"]);
+        insertByClass(["authorPhoto", "authorSocialLinks", "newsletterForm", "googlePlusShare"]);
+        $(document).ready(function() { bottomNavBarModule(); });
+        console.log("page initialized");
+    }
+}
+if(ls.lcv != lcv) {
+    for(var i=0; i < ls.length; i++){
+        ls.removeItem(ls.key(i));
+    }
+    jsonp("/cached-" + lcv + ".js");
+    console.log("cache cleared");
+} else {
+    cacheLoaded = true;
+}
+ls.lcv = lcv;
+</script>
+<!-- jqComponents -->
+
+
+<script>
+articleLen = 20418;
+adRandom = Math.random() * 100;
+
+function dw(text) { document.write(text); }
+
+function writeAd(adSlot, w, h) {
+ dw("<script async src='//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js'><"); dw("/script>");
+ dw("<ins class='adsbygoogle' style='display:inline-block;width:" + w + "px;height:" + h + "px' data-ad-client='ca-pub-5569543489255665' data-ad-slot='" +  adSlot + "'></ins>");
+ dw("<script>");
+ dw("(adsbygoogle = window.adsbygoogle || []).push({});");
+ dw("<"); dw("/script>");
+}
+
+function topAdStyles(w, mT, mB) {
+    var adEl = document.getElementById("topAds");
+    adEl.style.width = (w + "px"); adEl.style.marginTop = (mT + "px"); adEl.style.marginBottom = (mB + "px"); adEl.style.marginRight = "auto"; adEl.style.marginLeft = "auto";
+}
+
+function bottomAdStyles(elId, w, mT, mB) {
+    var adEl = document.getElementById(elId);
+    adEl.style.width = (w + "px"); adEl.style.marginTop = (mT + "px"); adEl.style.marginBottom = (mB + "px"); adEl.style.marginRight = "auto"; adEl.style.marginLeft = "auto";
+}
+</script>
+
+
+<div id="topBar">
+<div jqc-row jqc-row-paddings="0:0 3:24">
+    <div jqc-cell="0:12c">
+        <div id="topBarContent">
+        <div id="topBarLogo"></div>
+        <div id="topBarPhrase">Tech and Media Labs</div>
+        <div id="topBarMenu">
+        <a href="http://tutorials.jenkov.com">Tutorials</a>
+        <a href="http://jenkov.com/about/index.html">About</a>
+        <a href="http://jenkov.com/rss.xml">RSS</a>
+        </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<div id="cookieNote">
+<div jqc-row jqc-row-widths="0:100% 4:1200" jqc-row-paddings="0:0 3:24">
+    <div jqc-cell="0:12c" >
+        <div class="card">
+            This site uses cookies to improve the user experience. <button onclick="hideCookieNote()">OK</button>
+        </div>
+    </div>
+</div>
+</div>
+
+<script>
+function hideCookieNote() { document.getElementById("cookieNote").innerHTML = ""; ls.cookieNote = 0; }
+
+if(ls.cookieNote == 0) {
+    hideCookieNote();
+}
+</script>
+
+<div jqc-row jqc-row-widths="0:100% 4:1200" jqc-row-paddings="0:0">
+    <div jqc-cell="0:12c">
+        <div id="topAds">
+            <script>
+                var adEl = document.getElementById("topAds");
+                if(window.innerWidth > 970) {
+                    if(adRandom <= 5){
+                        writeAd("6094206201", 970, 90); /* wider ad - 5% of page views */
+                        topAdStyles(970, 20, 20);
+                    } else {
+                        writeAd("7630855405", 728, 90); /* standard ad */
+                        topAdStyles(728, 20, 20);
+                    }
+                } else if(window.innerWidth >= 728 && window.innerWidth <= 970)  {  /* Tutorials - Top Banner */
+                    writeAd("7630855405", 728, 90);
+                    topAdStyles(728, 20, 20);
+                } else {  /* Tutorials - Top Banner - Mobile */
+                    writeAd("3297914607", 320, 50);
+                    topAdStyles(320, 10, 0);
+                }
+            </script>
+        </div>
+    </div>
+</div>
+
+<div id="main">
+
+    <div jqc-row jqc-row-widths="0:100% 4:1200" jqc-column-counts="0:24" jqc-row-paddings="0:0 3:24" jqc-cell-spacings="0:8">
+        <div jqc-cell="0:0c  3:7c" >
+            <div id="trailToc" class="card">
+                <div id='trailTitle'>SVG - Scalable Vector Graphics</div><ol><li><a href="/svg/index.html">SVG Tutorial</a></li><li><a href="/svg/svg-examples.html">SVG Examples</a></li><li><a href="/svg/simple-svg-example.html">A Simple SVG Example</a></li><li><a href="/svg/displaying-svg-in-web-browsers.html">Displaying SVG in Web Browsers</a></li><li><a href="/svg/svg-icons.html">SVG Icons</a></li><li><a href="/svg/svg-coordinate-system.html">SVG Coordinate System</a></li><li><a href="/svg/svg-element.html">SVG svg element</a></li><li><a href="/svg/g-element.html">SVG g element</a></li><li><a href="/svg/rect-element.html">SVG rect element</a></li><li><a href="/svg/circle-element.html">SVG circle element</a></li><li><a href="/svg/ellipse-element.html">SVG ellipse element</a></li><li><a href="/svg/line-element.html">SVG line element</a></li><li><a href="/svg/polyline-element.html">SVG polyline element</a></li><li><a href="/svg/polygon-element.html">SVG polygon element</a></li><li><a href="/svg/path-element.html">SVG path element</a></li><li><a href="/svg/marker-element.html">SVG marker element</a></li><li><a href="/svg/text-element.html">SVG text element</a></li><li><a href="/svg/tspan-element.html">SVG tspan element</a></li><li><a href="/svg/tref-element.html">SVG tref element</a></li><li><a href="/svg/textpath-element.html">SVG textpath element</a></li><li><a href="/svg/switch-element.html">SVG switch element</a></li><li><a href="/svg/image-element.html">SVG image element</a></li><li><a href="/svg/a-element.html">SVG a element</a></li><li><a href="/svg/defs-element.html">SVG defs Elements</a></li><li><a href="/svg/symbol-element.html">SVG symbol Element</a></li><li><a href="/svg/use-element.html">SVG use Element</a></li><li><a href="/svg/svg-and-css.html">SVG and CSS - Cascading Style Sheets</a></li><li><a href="/svg/stroke.html">SVG Stroke</a></li><li><a href="/svg/fill.html">SVG Fill</a></li><li><a href="/svg/svg-viewport-view-box.html">SVG Viewport and View Box</a></li><li><a href="/svg/svg-animation.html"><b>SVG Animation</b></a></li><li><a href="/svg/scripting.html">SVG Scripting</a></li><li><a href="/svg/svg-transformation.html">SVG Transformation</a></li><li><a href="/svg/svg-gradients.html">SVG Gradients</a></li><li><a href="/svg/fill-patterns.html">SVG Fill Patterns</a></li><li><a href="/svg/clip-path.html">SVG Clip Path</a></li><li><a href="/svg/mask.html">SVG Masks</a></li><li><a href="/svg/filters.html">SVG Filters</a></li></ol>
+            </div>
+
+            <br><br>
+            <!-- Left Bar Adsense Banner Ad -->
+            <div id="side-ads">
+                <script>
+                if(window.innerWidth >= 900){
+                    if(adRandom <= 94)     { writeAd("5873880207", 300,  600);}
+                    else if(adRandom < 96) { writeAd("3389666608", 160,  600);}
+                    else                   { writeAd("4257546205", 300, 1050);}
+                }
+            </script>
+            </div>
+
+            <br><br>
+
+
+            <div class="card newsletterForm">
+            </div>
+        </div>
+        <div jqc-cell="0:24c 3:17c" >
+
+
+            <div class="card">
+            <h1>SVG Animation</h1>
+
+            <div id="mainBody">
+
+                <div id="pageToc" itemscope itemtype="http://schema.org/SiteNavigationElement">
+                    <ul><li><a href="#svg-animation-example">SVG Animation Example</a></li><li><a href="#overview">Overview of Animation Options</a></li><li><a href="#set">set</a><ul><li><a href="#attributetype">attributeType</a></li></ul></li><li><a href="#animate">animate</a></li><li><a href="#animatetransform">animateTransform</a></li><li><a href="#animatemotion">animateMotion</a></li><li><a href="#time-units">Time Units</a></li><li><a href="#coordinating-animations">Coordinating Animations</a></li><li><a href="#repeating-animations">Repeating Animations</a></li><li><a href="#combining-animations">Combining Animations</a></li></ul>
+                </div>
+                <div id="lastUpdate">
+                    <table><tr><td class="authorPhoto"></td>
+                            <td><p style="margin: 0px 0px 6px 0px;">
+                                    Jakob Jenkov<br>
+                                    Last update: 2015-02-01
+                                </p>
+                                <div class="authorSocialLinks"></div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <p>
+    It is possible to animate the shapes in an SVG image. There are several different ways
+    to animate SVG shapes. In this text I will go through the various possibilities.
+</p>
+
+
+
+<a name="svg-animation-example"></a>
+<h2>SVG Animation Example</h2>
+
+<p>
+    Here is a simple SVG animation example:
+</p>
+
+<pre class="codeBox">
+&lt;svg xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink"&gt;
+
+    &lt;rect x="10" y="10" height="110" width="110"
+         style="stroke:#ff0000; fill: #0000ff"&gt;
+
+        &lt;animateTransform
+            attributeName="transform"
+            begin="0s"
+            dur="20s"
+            type="rotate"
+            from="0 60 60"
+            to="360 60 60"
+            repeatCount="indefinite"
+        /&gt;
+    &lt;/rect&gt;
+
+&lt;/svg&gt;
+</pre>
+
+<p>
+    Notice how the <code>&lt;rect&gt;</code> element has a
+    <code>&lt;animateTransform&gt;</code> element nested inside it.
+    It is this element that animates the rectangle.
+</p>
+
+<p>
+    Here is the resulting SVG animation:
+</p>
+
+<svg width="320" height="200">
+    <rect x="10" y="10" height="110" width="110" style="stroke:#ff0000; fill: #0000ff">
+        <animateTransform
+                attributeName="transform"
+                begin="0s"
+                dur="10s"
+                type="rotate"
+                from="0 60 60"
+                to="360 60 60"
+                repeatCount="indefinite"
+        />
+    </rect>
+</svg>
+
+<a name="overview"></a>
+<h2>Overview of Animation Options</h2>
+
+<p>
+    Animation is done by manipulating the attributes of shapes over time. This is done using one
+    or more of the 5 SVG animation elements:
+</p>
+
+<ol>
+    <li>&lt;set&gt;</li>
+    <li>&lt;animate&gt;</li>
+    <li>&lt;animateColor&gt;</li>
+    <li>&lt;animateTransform&gt;</li>
+    <li>&lt;animateMotion&gt;</li>
+</ol>
+
+<p>
+    Each of these SVG animation elements sets or animates different aspects of SVG shapes.
+    These animation elements are explained throughout the rest of this text.
+
+</p>
+
+
+<a name="set"></a>
+<h2>set</h2>
+
+<p>
+    The <code>set</code> element is the simplest of the SVG animation elements.
+    It simply sets an attribute to a certain value after a specific time interval has passed.
+    As such, the shape is not continuously animating, but just changes attribute value once.
+</p>
+
+<p>
+    Here is a <code>&lt;set&gt;</code> element example:
+</p>
+
+<pre class="codeBox">
+&lt;circle cx="30" cy="30" r="25" style="stroke: none; fill: #0000ff;"&gt;
+    &lt;set attributeName="r" attributeType="XML"
+         to="100"
+         begin="0s"  /&gt;
+
+&lt;/circle&gt;
+</pre>
+
+<p>
+    Notice the <code>&lt;set&gt;</code> element nested inside the <code>circle</code>
+    element. This is how the <code>&lt;set&gt;</code> element is applied to a shape -
+    by nesting it inside the SVG element of the shape you want to apply it to.
+</p>
+
+<p>
+    The <code>&lt;set&gt;</code> element sets the value of an attribute at a certain time.
+    The name of the attribute to set is specified inside the <code>attributeName</code>
+    attribute. The value to set it to is specified inside the <code>to</code> attribute.
+    The time to set the attribute value is specified inside the <code>begin</code> attribute.
+</p>
+
+<p>
+    The example above sets the attribute <code>r</code> to 100 after 5 seconds. Here is the
+    resulting image:
+</p>
+
+<svg width="500" height="100">
+
+    <circle cx="30" cy="30" r="25" style="stroke: none; fill: #0000ff;">
+        <set attributeName="r" attributeType="XML"
+             to="100"
+             begin="5s" />
+
+    </circle>
+
+</svg>
+
+
+<a name="attributetype"></a>
+<h3>attributeType</h3>
+<p>
+    The previous example also had an <code>attributeType</code> attribute inside the <code>&lt;set&gt;</code> element. The value was
+    set to <code>XML</code>. That is because the attribute to set a value for in the example
+    (the <code>r</code> attribute) is an attribute of the SVG circle element. Since SVG elements
+    are XML elements, SVG attributes are XML attributes.
+</p>
+
+<p>
+    You can also
+    animate CSS properties of a shape. If you do so, you will need to set the <code>attributeType</code>
+    to <code>CSS</code>. If you do not provide an <code>attributeType</code> attribute, then the
+    browser will try to guess if the attribute to animate is an XML attribute or CSS property.
+</p>
+
+
+<a name="animate"></a>
+<h2>animate</h2>
+
+<p>
+    The <code>animate</code> element is used to animate an attribute of an SVG shape.
+    You nest the <code>animate</code> element inside the shape you want it applied to.
+    Here is an example:
+</p>
+
+
+<pre class="codeBox">
+&lt;circle cx="30" cy="30" r="25" style="stroke: none; fill: #0000ff;"&gt;
+    &lt;animate attributeName="cx" attributeType="XML"
+             from="30"  to="470"
+             begin="0s" dur="5s"
+             fill="remove" repeatCount="indefinite"/&gt;
+
+&lt;/circle&gt;
+</pre>
+
+<p>
+    This example animates the <code>cx</code> attribute of the <code>&lt;circle&gt;</code> element
+    from a value of 30 (the <code>from</code> attribute) to a value of 479 (the <code>to</code> attribute).
+    The animation starts at 0 seconds (the <code>begin</code> attribute) and has a duration of 5 seconds
+    (the <code>dur</code> attribute).
+</p>
+
+<p>
+    When the animation is finished the animated attribute is set
+    back to its original value (the <code>fill="remove"</code> attribute setting). If you wanted
+    the animated attribute to keep the to-value of the animation, set the <code>fill</code>
+    attribute to <code>freeze</code>. The animation
+    repeats indefinitely (the <code>repeatCount</code> attribute).
+</p>
+
+<p>
+    Here is the resulting animation:
+</p>
+
+<svg width="500" height="75">
+    <circle cx="30" cy="30" r="25" style="stroke: none; fill: #0000ff;">
+        <animate attributeName="cx" attributeType="XML"
+                 from="30"  to="470"
+                 begin="0s" dur="5s"
+                 fill="remove" repeatCount="indefinite"/>
+
+    </circle>
+</svg>
+
+
+
+
+<a name="animatetransform"></a>
+<h2>animateTransform</h2>
+
+<p>
+    The <code>&lt;animateTransform</code> element can animate the <code>transform</code> attribute of
+    a shape. The <code>&lt;animate&gt;</code> element cannot do that.
+</p>
+
+<p>
+    Here is an example:
+</p>
+
+
+<pre class="codeBox">
+&lt;rect x="20" y="20" width="100" height="40"
+    style="stroke: #ff00ff; fill:none;" &gt;
+  &lt;animateTransform attributeName="transform"
+                    type="rotate"
+                    from="0 100 100" to="360 100 100"
+                    begin="0s" dur="10s"
+                    repeatCount="indefinite"
+          /&gt;
+&lt;/rect&gt;
+</pre>
+
+<p>
+    This <code>&lt;animateTransform&gt;</code> example animates the <code>transform</code> attribute of the <code>&lt;rect&gt;</code> element it
+    is nested inside. The <code>type</code> attribute is set to <code>rotate</code> (the rotate transform function) meaning the animated transformation will be
+    a rotation. The <code>from</code> and <code>to</code> attributes set the parameters to be animated
+    and passed to the <code>rotate</code> function. This example rotates from a degree of 0 to a degree of 360
+    around the point 100,100 .
+</p>
+
+
+<svg width="500" height="200">
+
+    <rect x="20" y="20" width="100" height="40"
+          style="stroke: #ff00ff; fill: none;" >
+        <animateTransform attributeName="transform"
+                          type="rotate"
+                          from="0 100 100" to="360 100 100"
+                          begin="0s" dur="10s"
+                          repeatCount="indefinite"
+                />
+    </rect>
+    <circle cx="100" cy="100" r="2" style="stroke: none; fill: #0000ff;"/>
+</svg>
+
+
+<p>
+    Here is an example that animates the scale of a square:
+</p>
+
+<pre class="codeBox">
+&lt;rect x="20" y="20" width="40" height="40"
+      style="stroke: #ff00ff; fill: none;" &gt;
+    &lt;animateTransform attributeName="transform"
+                      type="scale"
+                      from="1 1" to="2 3"
+                      begin="0s" dur="10s"
+                      repeatCount="indefinite"
+            /&gt;
+&lt;/rect&gt;
+</pre>
+
+<p>
+    Notice again that the <code>from</code> and <code>to</code>  attributes contain
+    the values you would normally pass as parameters to the <code>scale()</code> transform function.
+</p>
+
+<p>
+    Here is the resulting animation:
+</p>
+
+<svg width="500" height="200">
+
+    <rect x="20" y="20" width="40" height="40"
+          style="stroke: #ff00ff; fill: none;" >
+        <animateTransform attributeName="transform"
+                          type="scale"
+                          from="1 1" to="2 3"
+                          begin="0s" dur="10s"
+                          repeatCount="indefinite"
+                />
+    </rect>
+</svg>
+
+
+
+<a name="animatemotion"></a>
+<h2>animateMotion</h2>
+
+<p>
+    The <code>&lt;animateMotion&gt;</code> element can animate the movement of a shape along a path.
+    It can also rotate the shape to match the slope of the path, like a car driving up and down hill.
+    Here is an example:
+</p>
+
+
+<pre class="codeBox">
+  &lt;rect x="0" y="0" width="30" height="15"
+        style="stroke: #ff0000; fill: none;"&gt;
+      &lt;animateMotion
+              path="M10,50 q60,50 100,0 q60,-50 100,0"
+              begin="0s" dur="10s" repeatCount="indefinite"
+              /&gt;
+  &lt;/rect&gt;
+</pre>
+
+<p>
+    The path to animate the rectangle along is specified in the <code>path</code> attribute
+    of the <code>&lt;animateMotion&gt;</code> element. The <code>path</code> attribute
+    uses the same syntax as the <a href="path-element.html">path element</a>.
+</p>
+
+<p>
+    Here is the resulting animation with the path shown too, so you can
+    better follow the motion.
+</p>
+
+<svg width="500" height="150">
+
+    <path d="M10,50 q60,50 100,0 q60,-50 100,0"
+          style="stroke: #000000; fill: none;"
+            />
+
+    <rect x="0" y="0" width="30" height="15"
+          style="stroke: #ff0000; fill: none;">
+        <animateMotion
+                path="M10,50 q60,50 100,0 q60,-50 100,0"
+                begin="0s" dur="10s" repeatCount="indefinite"
+                />
+    </rect>
+</svg>
+
+
+<p>
+    In order to rotate the square to align with the slope of the path, you set the <code>rotate</code>
+    attribute of the <code>&lt;animateMotion&gt;</code> element to <code>auto</code>. Here is an example:
+</p>
+
+<pre class="codeBox">
+  &lt;rect x="0" y="0" width="30" height="15"
+        style="stroke: #ff0000; fill: none;"&gt;
+      &lt;animateMotion
+              path="M10,50 q60,50 100,0 q60,-50 100,0"
+              begin="0s" dur="10s" repeatCount="indefinite"
+              <b>rotate="auto"</b>
+              /&gt;
+  &lt;/rect&gt;
+</pre>
+
+<p>
+    Here is the resulting animation. Notice how the rotation of the square changes to fit the path.
+</p>
+
+
+<svg width="500" height="150">
+
+    <path d="M10,50 q60,50 100,0 q60,-50 100,0"
+          style="stroke: #000000; fill: none;"
+            />
+
+    <rect x="0" y="0" width="30" height="15"
+          style="stroke: #ff0000; fill: none;">
+        <animateMotion
+                path="M10,50 q60,50 100,0 q60,-50 100,0"
+                begin="0s" dur="10s" repeatCount="indefinite"
+                rotate="auto"
+                />
+    </rect>
+</svg>
+
+
+<p>
+    You can also set the <code>rotate</code> attribute to a specific value, like 20 or 30 etc. That will
+    keep the shape rotated that number of degrees throughout the animation.
+</p>
+
+
+
+<a name="time-units"></a>
+<h2>Time Units</h2>
+
+<p>
+    When you define an SVG animation you specify when the animation start time and duration.
+    When specifying that, you have the choice between different time units.  The time
+    units are typically specified inside the <code>begin</code>, <code>dur</code>
+    and <code>end</code> attributes of the various animation elements.
+</p>
+
+<p>
+    Inside these attributes you can specify a number followed by a time unit, as done in the examples
+    in this text. For instance <code>5s</code> means 5 seconds. Here is a list of the time units
+    you can use:
+</p>
+
+<table class="dataTable" cellspacing="0">
+    <tr>
+        <th>Time Unit</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td><code>h</code></td>
+        <td>Hours</td>
+    </tr>
+    <tr>
+        <td><code>min</code></td>
+        <td>Minutes</td>
+    </tr>
+    <tr>
+        <td><code>s</code></td>
+        <td>Seconds</td>
+    </tr>
+    <tr>
+        <td><code>ms</code></td>
+        <td>Milliseconds</td>
+    </tr>
+</table>
+
+<p>
+    You can also specify time in a time format which contain both hours, minutes and seconds. Here
+    is how the format looks like:
+</p>
+
+<pre class="codeBox">
+hh:mm:ss
+</pre>
+
+<p>
+    Here is an example:
+</p>
+
+<pre class="codeBox">
+1:30:45
+</pre>
+
+<p>
+    This example specifies a time of 1 hour, 30 minutes and 45 seconds (which is of course very long time
+    for an animation).
+</p>
+
+
+<a name="coordinating-animations"></a>
+<h2>Coordinating Animations</h2>
+
+<p>
+    You can synchronize the beginning of one animation to the end of another.
+    You do so like this:
+</p>
+
+<pre class="codeBox">
+
+&lt;rect x="0" y="0" width="30" height="15"
+      style="stroke: #ff0000; fill: none;"&gt;
+
+    &lt;animate id="one"
+             attributeName="x" attributeType="XML"
+             from="0" to="400"
+             begin="0s" dur="10s" fill="freeze"
+            /&gt;
+    &lt;animate
+            attributeName="y" attributeType="XML"
+            from="0" to="50"
+            <b>begin="one.end"</b> dur="10s" fill="freeze"
+            /&gt;
+&lt;/rect&gt;
+
+</pre>
+
+<p>
+    Here is the resulting animation:
+</p>
+
+
+<svg width="500" height="100">
+
+    <rect x="0" y="0" width="30" height="15"
+          style="stroke: #ff0000; fill: none;">
+
+        <animate id="one"
+                 attributeName="x" attributeType="XML"
+                 from="0" to="400"
+                 begin="0s" dur="10s" fill="freeze"
+                />
+        <animate
+                attributeName="y" attributeType="XML"
+                from="0" to="80"
+                begin="one.end" dur="10s" fill="freeze"
+                />
+    </rect>
+
+</svg>
+
+<p>
+    The first animation has its <code>id</code> attribute set to <code>one</code>.
+</p>
+<p>
+    The second animation references the first animation via its <code>begin</code> attribute.
+    The <code>begin</code> attribute value is set to <code>one.end</code> which means that this animation should start when the
+    animation with the id <code>one</code> ends.
+</p>
+
+<p>
+    You can use the <code>id.begin</code> or <code>id.end</code> to start an animation when
+    another animation starts or ends. Instead of <code>id</code> use the ID of the animation
+    element to synchronize to.
+</p>
+
+<p>
+    You can also specify offsets to the start or end time of another animation, like this:
+</p>
+
+<pre class="codeBox">
+one.begin+10s
+
+one.end+5s
+</pre>
+
+
+<p>
+    Additionally you can specify an explicit end time in an animations <code>end</code> attribute.
+    This does not replace the <code>dur</code> attribute. All it does is to add another
+    possible end to an animation, so whichever occurs first. Here is an example:
+</p>
+
+<pre class="codeBox">
+&lt;animate
+        attributeName="y" attributeType="XML"
+        from="0" to="50"
+        begin="one.begin+3s" dur="10s" end="one.end"
+        fill="freeze"
+        /&gt;
+</pre>
+
+<p>
+    This animation will have a duration of 10 seconds, or stop when the animation with
+    the ID <code>one</code> ends, whichever occurs first.
+</p>
+
+
+<a name="repeating-animations"></a>
+<h2>Repeating Animations</h2>
+
+<p>
+    There are two attributes you can use inside an animation element which are used to repeat
+    the animation.
+</p>
+
+<p>
+    The first attribute is the <code>repeatCount</code> attribute. Inside
+    this attribute you can set a number, which will be repeat the animation that number of times,
+    or the value <code>indefinite</code> which will keep the animation running without ever stopping.
+</p>
+
+<p>
+    The second attribute is the <code>repeatDur</code> which specifies a duration for which
+    the animation is to be repeated. You can also use the value <code>indefinite</code> inside
+    the <code>repeatDur</code> attribute, and the effect is the same as using it inside the
+    <code>repeatCount</code> attribute.
+</p>
+
+<p>
+    Here are two examples:
+</p>
+
+<pre class="codeBox">
+&lt;animate
+        attributeName="y" attributeType="XML"
+        from="0" to="50"
+        begin="one.begin+3s" dur="10s"
+        repeatCount="3"
+        fill="freeze"
+        /&gt;
+</pre>
+
+<pre class="codeBox">
+&lt;animate
+        attributeName="y" attributeType="XML"
+        from="0" to="50"
+        begin="one.begin+3s" dur="10s"
+        repeatDur="30s"
+        fill="freeze"
+        /&gt;
+</pre>
+
+
+
+<a name="combining-animations"></a>
+<h2>Combining Animations</h2>
+
+<p>
+    You can combine animations by listing more than one <code>&lt;animation&gt;</code> inside the element to animate.
+    You have already seen that, but here is another example:
+</p>
+
+<pre class="codeBox">
+&lt;rect x="10" y="10" width="40" height="20"
+     style="stroke: #000000; fill: none;"&gt;
+   &lt;animate attributeName="x"
+            attributeType="XML"
+            from="10" to="400"
+            begin="0s" dur="10s"
+            repeatCount="indefinite"
+           /&gt;
+   &lt;animate attributeName="y"
+            attributeType="XML"
+            from="10" to="100"
+            begin="0s" dur="10s"
+            fill="freeze"
+            repeatCount="indefinite"
+           /&gt;
+&lt;/rect&gt;
+</pre>
+
+<p>
+    This example has two animations, each animating the <code>x</code> and <code>y</code> attributes
+    of the rectangle. Here is the resulting animation:
+</p>
+
+
+<svg width="500"  height="100">
+    <rect x="10" y="10" width="40" height="20"
+          style="stroke: #000000; fill: none;">
+        <animate attributeName="x" attributeType="XML"
+                 from="10" to="400"
+                 begin="0s" dur="10s"
+                 repeatCount="indefinite"
+                />
+        <animate attributeName="y" attributeType="XML"
+                 from="10" to="100"
+                 begin="0s" dur="10s"
+                 fill="freeze"
+                 repeatCount="indefinite"
+                />
+    </rect>
+</svg>
+
+<p>
+    When combining <code>&lt;animateTransform&gt;</code> elements, the default behaviour is for
+    the second animation to cancel out the first. However, you can combine the transformation animations
+    by adding the attribute <code>additive</code> with a value of <code>sum</code> to both
+    <code>&lt;animateTransform&gt;</code> elements. Here is an example:
+</p>
+
+<pre class="codeBox">
+&lt;rect x="10" y="10" width="40" height="20"
+      style="stroke: #000000; fill: none;"&gt;
+    &lt;animateTransform attributeName="transform" attributeType="XML"
+                      type="scale"
+                      from="1" to="3"
+                      begin="0s" dur="10s"
+                      repeatCount="indefinite"
+                      <b>additive="sum"</b>
+            /&gt;
+    &lt;animateTransform attributeName="transform" attributeType="XML"
+                      type="rotate"
+                      from="0 30 20" to="360 30 20"
+                      begin="0s" dur="10s"
+                      fill="freeze"
+                      repeatCount="indefinite"
+                      <b>additive="sum"</b>
+            /&gt;
+
+</pre>
+
+
+<p>
+    Here is the resulting animation which both scales and rotates a rectangle:
+</p>
+
+
+<svg width="500"  height="100">
+    <rect x="10" y="10" width="40" height="20"
+          style="stroke: #000000; fill: none;">
+        <animateTransform attributeName="transform" attributeType="XML"
+                          type="scale"
+                          from="1" to="3"
+                          begin="0s" dur="10s"
+                          repeatCount="indefinite"
+                          additive="sum"
+                />
+        <animateTransform attributeName="transform" attributeType="XML"
+                          type="rotate"
+                          from="0 30 20" to="360 30 20"
+                          begin="0s" dur="10s"
+                          fill="freeze"
+                          repeatCount="indefinite"
+                          additive="sum"
+                />
+    </rect>
+</svg>
+
+                <div>
+                </div>
+
+                <div id="next">Next: <a href="/svg/scripting.html">SVG Scripting</a></div>
+                <div id="bottomSocial">
+
+                    <div style="display:inline-block;">
+                        <table>
+                            <tr><td colspan="2">
+                                <div class='g-plus' data-action='share' data-height='24'  data-annotation='none'></div>
+                                <script type='text/javascript'>
+                                    (function() {
+                                        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+                                        po.src = 'https://apis.google.com/js/platform.js';
+                                        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+                                     })();
+                                </script>
+
+                                <a href='https://twitter.com/share' class='twitter-share-button' data-via='jjenkov' target="_blank">Tweet</a>
+                                <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+                            </td></tr>
+                            <tr><td class="authorPhoto"></td><td><p style="margin: 0px 0px 6px 0px;">Jakob Jenkov</p><div class="authorSocialLinks"></div></td></tr>
+                        </table>
+                    </div>
+                    <div class="newsletterForm"  style="display:inline-block;"></div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Bottom ads - (nested row is working, but should perhaps not be a nested row?) (note: was a nested row in old design - not in new) -->
+<div jqc-row jqc-row-paddings="0:0">
+    <div jqc-cell="0:12c">
+        <div id="pageBottomAds">
+            <script>
+                    if(articleLen >= 4000){ /* for longer articles place ads here, at the bottom of the page */
+                        if(window.innerWidth >= 728 ) {  /* Adsense Ads - Bottom Banner */
+                            if(adRandom < 5)       { writeAd("2721937400", 970, 90);  bottomAdStyles("pageBottomAds", 970, 20, 20);}
+                            else if(adRandom < 30) { writeAd("9547200207", 970, 250); bottomAdStyles("pageBottomAds", 970, 20, 20);}
+                            else                   { writeAd("7776167002", 728, 90);  bottomAdStyles("pageBottomAds", 728, 20, 20);}
+                        } else if(window.innerWidth < 728) {  /* Adsense Ads - Bottom Banner - Mobile */
+                            if(adRandom < 50) {
+                                writeAd("4216244607", 320, 50); bottomAdStyles("pageBottomAds", 320, 10, 0);
+                            } else {
+                                writeAd("7377085404", 320, 100); bottomAdStyles("pageBottomAds", 320, 10, 0);
+                            }
+                        }
+                    }
+                </script>
+            <br/><br/><br/>
+        </div>
+
+
+        <div style="height: 30px"></div>
+        <div id="disqusComments" class="card">
+            <div id="disqus_thread"></div>
+            <script type="text/javascript">
+                var disqus_shortname = 'tutorials-jenkov-com'; // required: replace example with your forum shortname
+
+                /* * * DON'T EDIT BELOW THIS LINE * * */
+                (function() {
+                    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                })();
+            </script>
+            <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+        </div>
+
+    </div>
+</div>
+
+<span id="layoutManager" jqc-type="jqcResponsiveLayoutManager" jqc-row-paddings="0:8 4:0"></span>
+
+
+<div id="footerBar">
+<div jqc-row>
+    <div jqc-cell="0:12c">
+        Copyright &nbsp;Jenkov Aps
+    </div>
+</div>
+</div>
+
+<div id="trailTocFixedDiv">
+  <div id="trailTocFixedCloseButton">Close TOC</div>
+  <div id="trailTocFixedInnerDiv"></div>
+</div>
+<div id="bottomNavBar"></div>
+
+<!-- init page -->
+<script>
+pageLoaded = true;
+init();
+</script>
+
+
+<!-- Google Analytics Script -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-4036229-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="480">
+    <meta name="viewport" content="width=device-width, height=device-height initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+
+    <title>SVG Animation</title>
+
+    <meta name="description" content="This tutorial explains how to animate SVG shapes with SVG animation elements.">
+    <meta name="keywords"    content="svg animation">
+    <meta name="author" content="Jakob Jenkov">
+
+    <meta name="twitter:card" content="summary_large_image" >
+    <meta name="twitter:site" content="@jjenkov">
+    <meta name="twitter:title" content="SVG Animation">
+    <meta name="twitter:description" content="This tutorial explains how to animate SVG shapes with SVG animation elements.">
+    <meta name="twitter:creator" content="@jjenkov">
+    <meta name="twitter:domain" content="jenkov.com">
+
+    <meta name="twitter:image:src" content="http://tutorials.jenkov.com/images/svg/svg-teaser-500-300.png">
+
+    <meta name="og:type"  content="article"/>
+    <meta name="og:title" content="SVG Animation"/>
+    <meta property="og:url"   content="http://tutorials.jenkov.com/svg/svg-animation.html"/>
+    <meta property="og:description" content="This tutorial explains how to animate SVG shapes with SVG animation elements."/>
+
+    <meta property="og:image" content="http://tutorials.jenkov.com/images/svg/svg-teaser-500-300.png"/>
+
+    <link href="https://plus.google.com/108227213807945109821" rel="publisher" />
+
+    <meta name="google-site-verification" content="i_TwzdElg-by5uXLvyAjuIaCjxo0yjtW8LdRPUDEEcw" />
+
+    <!-- jQuery -->
+    <script  src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <!--<script type="text/javascript"            src="/js/jqc/1.7.0/jqc-custom-build-mini.js"></script>-->
+
+</head>
+<body>
+<style>
+body {background-color: #f0f0f0;background-image: linear-gradient(180deg, #f0f0f0, #e0e0e0);}
+.dataTable th, .dataTable td { padding: 2px 8px; }
+</style>
+<style id="layoutCss"></style>
+<style id="jqcCss"></style>
+<style id="articleCss"></style>
+<style id="navBarCss"></style>
+
+<script>
+lcv = "4";
+ls = localStorage;
+cacheLoaded = false;
+pageLoaded = false;
+
+var prevArticleInCategory = "/svg/svg-viewport-view-box.html";
+var nextArticleInCategory = "/svg/scripting.html";
+</script>
+
+<script id="jqcJs" ></script>
+<script id="bottomNavBarModule" ></script>
+
+
+<script>
+function jsonp(url) {
+    var script   = document.createElement("script"); script.type = "text/javascript"; script.src = url;
+    document.body.appendChild(script);
+}
+function insertById(ids) {
+    for(var i=0, n=ids.length; i < n; i++) {
+        var el = document.getElementById(ids[i]);
+        if(el != null) { el.innerHTML = localStorage[ids[i]]; }
+    }
+}
+function insertByClass(ids) {
+    for(var i=0, n=ids.length; i<n; i++) {
+        var els = document.getElementsByClassName(ids[i]);
+        for(var j=0,m=els.length; j<m; j++) { els[j].innerHTML = localStorage[ids[i]]; }
+    }
+}
+function init() {
+    if(cacheLoaded == true && pageLoaded == true) {
+        console.log("initializing page");
+        insertById(["layoutCss", "jqcCss", "topBarLogo", "articleCss", "navBarCss", "bottomNavBar", "bottomNavBarModule", "jqcJs"]);
+        insertByClass(["authorPhoto", "authorSocialLinks", "newsletterForm", "googlePlusShare"]);
+        $(document).ready(function() { bottomNavBarModule(); });
+        console.log("page initialized");
+    }
+}
+if(ls.lcv != lcv) {
+    for(var i=0; i < ls.length; i++){
+        ls.removeItem(ls.key(i));
+    }
+    jsonp("/cached-" + lcv + ".js");
+    console.log("cache cleared");
+} else {
+    cacheLoaded = true;
+}
+ls.lcv = lcv;
+</script>
+<!-- jqComponents -->
+
+
+<script>
+articleLen = 20418;
+adRandom = Math.random() * 100;
+
+function dw(text) { document.write(text); }
+
+function writeAd(adSlot, w, h) {
+ dw("<script async src='//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js'><"); dw("/script>");
+ dw("<ins class='adsbygoogle' style='display:inline-block;width:" + w + "px;height:" + h + "px' data-ad-client='ca-pub-5569543489255665' data-ad-slot='" +  adSlot + "'></ins>");
+ dw("<script>");
+ dw("(adsbygoogle = window.adsbygoogle || []).push({});");
+ dw("<"); dw("/script>");
+}
+
+function topAdStyles(w, mT, mB) {
+    var adEl = document.getElementById("topAds");
+    adEl.style.width = (w + "px"); adEl.style.marginTop = (mT + "px"); adEl.style.marginBottom = (mB + "px"); adEl.style.marginRight = "auto"; adEl.style.marginLeft = "auto";
+}
+
+function bottomAdStyles(elId, w, mT, mB) {
+    var adEl = document.getElementById(elId);
+    adEl.style.width = (w + "px"); adEl.style.marginTop = (mT + "px"); adEl.style.marginBottom = (mB + "px"); adEl.style.marginRight = "auto"; adEl.style.marginLeft = "auto";
+}
+</script>
+
+
+<div id="topBar">
+<div jqc-row jqc-row-paddings="0:0 3:24">
+    <div jqc-cell="0:12c">
+        <div id="topBarContent">
+        <div id="topBarLogo"></div>
+        <div id="topBarPhrase">Tech and Media Labs</div>
+        <div id="topBarMenu">
+        <a href="http://tutorials.jenkov.com">Tutorials</a>
+        <a href="http://jenkov.com/about/index.html">About</a>
+        <a href="http://jenkov.com/rss.xml">RSS</a>
+        </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<div id="cookieNote">
+<div jqc-row jqc-row-widths="0:100% 4:1200" jqc-row-paddings="0:0 3:24">
+    <div jqc-cell="0:12c" >
+        <div class="card">
+            This site uses cookies to improve the user experience. <button onclick="hideCookieNote()">OK</button>
+        </div>
+    </div>
+</div>
+</div>
+
+<script>
+function hideCookieNote() { document.getElementById("cookieNote").innerHTML = ""; ls.cookieNote = 0; }
+
+if(ls.cookieNote == 0) {
+    hideCookieNote();
+}
+</script>
+
+<div jqc-row jqc-row-widths="0:100% 4:1200" jqc-row-paddings="0:0">
+    <div jqc-cell="0:12c">
+        <div id="topAds">
+            <script>
+                var adEl = document.getElementById("topAds");
+                if(window.innerWidth > 970) {
+                    if(adRandom <= 5){
+                        writeAd("6094206201", 970, 90); /* wider ad - 5% of page views */
+                        topAdStyles(970, 20, 20);
+                    } else {
+                        writeAd("7630855405", 728, 90); /* standard ad */
+                        topAdStyles(728, 20, 20);
+                    }
+                } else if(window.innerWidth >= 728 && window.innerWidth <= 970)  {  /* Tutorials - Top Banner */
+                    writeAd("7630855405", 728, 90);
+                    topAdStyles(728, 20, 20);
+                } else {  /* Tutorials - Top Banner - Mobile */
+                    writeAd("3297914607", 320, 50);
+                    topAdStyles(320, 10, 0);
+                }
+            </script>
+        </div>
+    </div>
+</div>
+
+<div id="main">
+
+    <div jqc-row jqc-row-widths="0:100% 4:1200" jqc-column-counts="0:24" jqc-row-paddings="0:0 3:24" jqc-cell-spacings="0:8">
+        <div jqc-cell="0:0c  3:7c" >
+            <div id="trailToc" class="card">
+                <div id='trailTitle'>SVG - Scalable Vector Graphics</div><ol><li><a href="/svg/index.html">SVG Tutorial</a></li><li><a href="/svg/svg-examples.html">SVG Examples</a></li><li><a href="/svg/simple-svg-example.html">A Simple SVG Example</a></li><li><a href="/svg/displaying-svg-in-web-browsers.html">Displaying SVG in Web Browsers</a></li><li><a href="/svg/svg-icons.html">SVG Icons</a></li><li><a href="/svg/svg-coordinate-system.html">SVG Coordinate System</a></li><li><a href="/svg/svg-element.html">SVG svg element</a></li><li><a href="/svg/g-element.html">SVG g element</a></li><li><a href="/svg/rect-element.html">SVG rect element</a></li><li><a href="/svg/circle-element.html">SVG circle element</a></li><li><a href="/svg/ellipse-element.html">SVG ellipse element</a></li><li><a href="/svg/line-element.html">SVG line element</a></li><li><a href="/svg/polyline-element.html">SVG polyline element</a></li><li><a href="/svg/polygon-element.html">SVG polygon element</a></li><li><a href="/svg/path-element.html">SVG path element</a></li><li><a href="/svg/marker-element.html">SVG marker element</a></li><li><a href="/svg/text-element.html">SVG text element</a></li><li><a href="/svg/tspan-element.html">SVG tspan element</a></li><li><a href="/svg/tref-element.html">SVG tref element</a></li><li><a href="/svg/textpath-element.html">SVG textpath element</a></li><li><a href="/svg/switch-element.html">SVG switch element</a></li><li><a href="/svg/image-element.html">SVG image element</a></li><li><a href="/svg/a-element.html">SVG a element</a></li><li><a href="/svg/defs-element.html">SVG defs Elements</a></li><li><a href="/svg/symbol-element.html">SVG symbol Element</a></li><li><a href="/svg/use-element.html">SVG use Element</a></li><li><a href="/svg/svg-and-css.html">SVG and CSS - Cascading Style Sheets</a></li><li><a href="/svg/stroke.html">SVG Stroke</a></li><li><a href="/svg/fill.html">SVG Fill</a></li><li><a href="/svg/svg-viewport-view-box.html">SVG Viewport and View Box</a></li><li><a href="/svg/svg-animation.html"><b>SVG Animation</b></a></li><li><a href="/svg/scripting.html">SVG Scripting</a></li><li><a href="/svg/svg-transformation.html">SVG Transformation</a></li><li><a href="/svg/svg-gradients.html">SVG Gradients</a></li><li><a href="/svg/fill-patterns.html">SVG Fill Patterns</a></li><li><a href="/svg/clip-path.html">SVG Clip Path</a></li><li><a href="/svg/mask.html">SVG Masks</a></li><li><a href="/svg/filters.html">SVG Filters</a></li></ol>
+            </div>
+
+            <br><br>
+            <!-- Left Bar Adsense Banner Ad -->
+            <div id="side-ads">
+                <script>
+                if(window.innerWidth >= 900){
+                    if(adRandom <= 94)     { writeAd("5873880207", 300,  600);}
+                    else if(adRandom < 96) { writeAd("3389666608", 160,  600);}
+                    else                   { writeAd("4257546205", 300, 1050);}
+                }
+            </script>
+            </div>
+
+            <br><br>
+
+
+            <div class="card newsletterForm">
+            </div>
+        </div>
+        <div jqc-cell="0:24c 3:17c" >
+
+
+            <div class="card">
+            <h1>SVG Animation</h1>
+
+            <div id="mainBody">
+
+                <div id="pageToc" itemscope itemtype="http://schema.org/SiteNavigationElement">
+                    <ul><li><a href="#svg-animation-example">SVG Animation Example</a></li><li><a href="#overview">Overview of Animation Options</a></li><li><a href="#set">set</a><ul><li><a href="#attributetype">attributeType</a></li></ul></li><li><a href="#animate">animate</a></li><li><a href="#animatetransform">animateTransform</a></li><li><a href="#animatemotion">animateMotion</a></li><li><a href="#time-units">Time Units</a></li><li><a href="#coordinating-animations">Coordinating Animations</a></li><li><a href="#repeating-animations">Repeating Animations</a></li><li><a href="#combining-animations">Combining Animations</a></li></ul>
+                </div>
+                <div id="lastUpdate">
+                    <table><tr><td class="authorPhoto"></td>
+                            <td><p style="margin: 0px 0px 6px 0px;">
+                                    Jakob Jenkov<br>
+                                    Last update: 2015-02-01
+                                </p>
+                                <div class="authorSocialLinks"></div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <p>
+    It is possible to animate the shapes in an SVG image. There are several different ways
+    to animate SVG shapes. In this text I will go through the various possibilities.
+</p>
+
+
+
+<a name="svg-animation-example"></a>
+<h2>SVG Animation Example</h2>
+
+<p>
+    Here is a simple SVG animation example:
+</p>
+
+<pre class="codeBox">
+&lt;svg xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink"&gt;
+
+    &lt;rect x="10" y="10" height="110" width="110"
+         style="stroke:#ff0000; fill: #0000ff"&gt;
+
+        &lt;animateTransform
+            attributeName="transform"
+            begin="0s"
+            dur="20s"
+            type="rotate"
+            from="0 60 60"
+            to="360 60 60"
+            repeatCount="indefinite"
+        /&gt;
+    &lt;/rect&gt;
+
+&lt;/svg&gt;
+</pre>
+
+<p>
+    Notice how the <code>&lt;rect&gt;</code> element has a
+    <code>&lt;animateTransform&gt;</code> element nested inside it.
+    It is this element that animates the rectangle.
+</p>
+
+<p>
+    Here is the resulting SVG animation:
+</p>
+
+<svg width="320" height="200">
+    <rect x="10" y="10" height="110" width="110" style="stroke:#ff0000; fill: #0000ff">
+        <animateTransform
+                attributeName="transform"
+                begin="0s"
+                dur="10s"
+                type="rotate"
+                from="0 60 60"
+                to="360 60 60"
+                repeatCount="indefinite"
+        />
+    </rect>
+</svg>
+
+<a name="overview"></a>
+<h2>Overview of Animation Options</h2>
+
+<p>
+    Animation is done by manipulating the attributes of shapes over time. This is done using one
+    or more of the 5 SVG animation elements:
+</p>
+
+<ol>
+    <li>&lt;set&gt;</li>
+    <li>&lt;animate&gt;</li>
+    <li>&lt;animateColor&gt;</li>
+    <li>&lt;animateTransform&gt;</li>
+    <li>&lt;animateMotion&gt;</li>
+</ol>
+
+<p>
+    Each of these SVG animation elements sets or animates different aspects of SVG shapes.
+    These animation elements are explained throughout the rest of this text.
+
+</p>
+
+
+<a name="set"></a>
+<h2>set</h2>
+
+<p>
+    The <code>set</code> element is the simplest of the SVG animation elements.
+    It simply sets an attribute to a certain value after a specific time interval has passed.
+    As such, the shape is not continuously animating, but just changes attribute value once.
+</p>
+
+<p>
+    Here is a <code>&lt;set&gt;</code> element example:
+</p>
+
+<pre class="codeBox">
+&lt;circle cx="30" cy="30" r="25" style="stroke: none; fill: #0000ff;"&gt;
+    &lt;set attributeName="r" attributeType="XML"
+         to="100"
+         begin="0s"  /&gt;
+
+&lt;/circle&gt;
+</pre>
+
+<p>
+    Notice the <code>&lt;set&gt;</code> element nested inside the <code>circle</code>
+    element. This is how the <code>&lt;set&gt;</code> element is applied to a shape -
+    by nesting it inside the SVG element of the shape you want to apply it to.
+</p>
+
+<p>
+    The <code>&lt;set&gt;</code> element sets the value of an attribute at a certain time.
+    The name of the attribute to set is specified inside the <code>attributeName</code>
+    attribute. The value to set it to is specified inside the <code>to</code> attribute.
+    The time to set the attribute value is specified inside the <code>begin</code> attribute.
+</p>
+
+<p>
+    The example above sets the attribute <code>r</code> to 100 after 5 seconds. Here is the
+    resulting image:
+</p>
+
+<svg width="500" height="100">
+
+    <circle cx="30" cy="30" r="25" style="stroke: none; fill: #0000ff;">
+        <set attributeName="r" attributeType="XML"
+             to="100"
+             begin="5s" />
+
+    </circle>
+
+</svg>
+
+
+<a name="attributetype"></a>
+<h3>attributeType</h3>
+<p>
+    The previous example also had an <code>attributeType</code> attribute inside the <code>&lt;set&gt;</code> element. The value was
+    set to <code>XML</code>. That is because the attribute to set a value for in the example
+    (the <code>r</code> attribute) is an attribute of the SVG circle element. Since SVG elements
+    are XML elements, SVG attributes are XML attributes.
+</p>
+
+<p>
+    You can also
+    animate CSS properties of a shape. If you do so, you will need to set the <code>attributeType</code>
+    to <code>CSS</code>. If you do not provide an <code>attributeType</code> attribute, then the
+    browser will try to guess if the attribute to animate is an XML attribute or CSS property.
+</p>
+
+
+<a name="animate"></a>
+<h2>animate</h2>
+
+<p>
+    The <code>animate</code> element is used to animate an attribute of an SVG shape.
+    You nest the <code>animate</code> element inside the shape you want it applied to.
+    Here is an example:
+</p>
+
+
+<pre class="codeBox">
+&lt;circle cx="30" cy="30" r="25" style="stroke: none; fill: #0000ff;"&gt;
+    &lt;animate attributeName="cx" attributeType="XML"
+             from="30"  to="470"
+             begin="0s" dur="5s"
+             fill="remove" repeatCount="indefinite"/&gt;
+
+&lt;/circle&gt;
+</pre>
+
+<p>
+    This example animates the <code>cx</code> attribute of the <code>&lt;circle&gt;</code> element
+    from a value of 30 (the <code>from</code> attribute) to a value of 479 (the <code>to</code> attribute).
+    The animation starts at 0 seconds (the <code>begin</code> attribute) and has a duration of 5 seconds
+    (the <code>dur</code> attribute).
+</p>
+
+<p>
+    When the animation is finished the animated attribute is set
+    back to its original value (the <code>fill="remove"</code> attribute setting). If you wanted
+    the animated attribute to keep the to-value of the animation, set the <code>fill</code>
+    attribute to <code>freeze</code>. The animation
+    repeats indefinitely (the <code>repeatCount</code> attribute).
+</p>
+
+<p>
+    Here is the resulting animation:
+</p>
+
+<svg width="500" height="75">
+    <circle cx="30" cy="30" r="25" style="stroke: none; fill: #0000ff;">
+        <animate attributeName="cx" attributeType="XML"
+                 from="30"  to="470"
+                 begin="0s" dur="5s"
+                 fill="remove" repeatCount="indefinite"/>
+
+    </circle>
+</svg>
+
+
+
+
+<a name="animatetransform"></a>
+<h2>animateTransform</h2>
+
+<p>
+    The <code>&lt;animateTransform</code> element can animate the <code>transform</code> attribute of
+    a shape. The <code>&lt;animate&gt;</code> element cannot do that.
+</p>
+
+<p>
+    Here is an example:
+</p>
+
+
+<pre class="codeBox">
+&lt;rect x="20" y="20" width="100" height="40"
+    style="stroke: #ff00ff; fill:none;" &gt;
+  &lt;animateTransform attributeName="transform"
+                    type="rotate"
+                    from="0 100 100" to="360 100 100"
+                    begin="0s" dur="10s"
+                    repeatCount="indefinite"
+          /&gt;
+&lt;/rect&gt;
+</pre>
+
+<p>
+    This <code>&lt;animateTransform&gt;</code> example animates the <code>transform</code> attribute of the <code>&lt;rect&gt;</code> element it
+    is nested inside. The <code>type</code> attribute is set to <code>rotate</code> (the rotate transform function) meaning the animated transformation will be
+    a rotation. The <code>from</code> and <code>to</code> attributes set the parameters to be animated
+    and passed to the <code>rotate</code> function. This example rotates from a degree of 0 to a degree of 360
+    around the point 100,100 .
+</p>
+
+
+<svg width="500" height="200">
+
+    <rect x="20" y="20" width="100" height="40"
+          style="stroke: #ff00ff; fill: none;" >
+        <animateTransform attributeName="transform"
+                          type="rotate"
+                          from="0 100 100" to="360 100 100"
+                          begin="0s" dur="10s"
+                          repeatCount="indefinite"
+                />
+    </rect>
+    <circle cx="100" cy="100" r="2" style="stroke: none; fill: #0000ff;"/>
+</svg>
+
+
+<p>
+    Here is an example that animates the scale of a square:
+</p>
+
+<pre class="codeBox">
+&lt;rect x="20" y="20" width="40" height="40"
+      style="stroke: #ff00ff; fill: none;" &gt;
+    &lt;animateTransform attributeName="transform"
+                      type="scale"
+                      from="1 1" to="2 3"
+                      begin="0s" dur="10s"
+                      repeatCount="indefinite"
+            /&gt;
+&lt;/rect&gt;
+</pre>
+
+<p>
+    Notice again that the <code>from</code> and <code>to</code>  attributes contain
+    the values you would normally pass as parameters to the <code>scale()</code> transform function.
+</p>
+
+<p>
+    Here is the resulting animation:
+</p>
+
+<svg width="500" height="200">
+
+    <rect x="20" y="20" width="40" height="40"
+          style="stroke: #ff00ff; fill: none;" >
+        <animateTransform attributeName="transform"
+                          type="scale"
+                          from="1 1" to="2 3"
+                          begin="0s" dur="10s"
+                          repeatCount="indefinite"
+                />
+    </rect>
+</svg>
+
+
+
+<a name="animatemotion"></a>
+<h2>animateMotion</h2>
+
+<p>
+    The <code>&lt;animateMotion&gt;</code> element can animate the movement of a shape along a path.
+    It can also rotate the shape to match the slope of the path, like a car driving up and down hill.
+    Here is an example:
+</p>
+
+
+<pre class="codeBox">
+  &lt;rect x="0" y="0" width="30" height="15"
+        style="stroke: #ff0000; fill: none;"&gt;
+      &lt;animateMotion
+              path="M10,50 q60,50 100,0 q60,-50 100,0"
+              begin="0s" dur="10s" repeatCount="indefinite"
+              /&gt;
+  &lt;/rect&gt;
+</pre>
+
+<p>
+    The path to animate the rectangle along is specified in the <code>path</code> attribute
+    of the <code>&lt;animateMotion&gt;</code> element. The <code>path</code> attribute
+    uses the same syntax as the <a href="path-element.html">path element</a>.
+</p>
+
+<p>
+    Here is the resulting animation with the path shown too, so you can
+    better follow the motion.
+</p>
+
+<svg width="500" height="150">
+
+    <path d="M10,50 q60,50 100,0 q60,-50 100,0"
+          style="stroke: #000000; fill: none;"
+            />
+
+    <rect x="0" y="0" width="30" height="15"
+          style="stroke: #ff0000; fill: none;">
+        <animateMotion
+                path="M10,50 q60,50 100,0 q60,-50 100,0"
+                begin="0s" dur="10s" repeatCount="indefinite"
+                />
+    </rect>
+</svg>
+
+
+<p>
+    In order to rotate the square to align with the slope of the path, you set the <code>rotate</code>
+    attribute of the <code>&lt;animateMotion&gt;</code> element to <code>auto</code>. Here is an example:
+</p>
+
+<pre class="codeBox">
+  &lt;rect x="0" y="0" width="30" height="15"
+        style="stroke: #ff0000; fill: none;"&gt;
+      &lt;animateMotion
+              path="M10,50 q60,50 100,0 q60,-50 100,0"
+              begin="0s" dur="10s" repeatCount="indefinite"
+              <b>rotate="auto"</b>
+              /&gt;
+  &lt;/rect&gt;
+</pre>
+
+<p>
+    Here is the resulting animation. Notice how the rotation of the square changes to fit the path.
+</p>
+
+
+<svg width="500" height="150">
+
+    <path d="M10,50 q60,50 100,0 q60,-50 100,0"
+          style="stroke: #000000; fill: none;"
+            />
+
+    <rect x="0" y="0" width="30" height="15"
+          style="stroke: #ff0000; fill: none;">
+        <animateMotion
+                path="M10,50 q60,50 100,0 q60,-50 100,0"
+                begin="0s" dur="10s" repeatCount="indefinite"
+                rotate="auto"
+                />
+    </rect>
+</svg>
+
+
+<p>
+    You can also set the <code>rotate</code> attribute to a specific value, like 20 or 30 etc. That will
+    keep the shape rotated that number of degrees throughout the animation.
+</p>
+
+
+
+<a name="time-units"></a>
+<h2>Time Units</h2>
+
+<p>
+    When you define an SVG animation you specify when the animation start time and duration.
+    When specifying that, you have the choice between different time units.  The time
+    units are typically specified inside the <code>begin</code>, <code>dur</code>
+    and <code>end</code> attributes of the various animation elements.
+</p>
+
+<p>
+    Inside these attributes you can specify a number followed by a time unit, as done in the examples
+    in this text. For instance <code>5s</code> means 5 seconds. Here is a list of the time units
+    you can use:
+</p>
+
+<table class="dataTable" cellspacing="0">
+    <tr>
+        <th>Time Unit</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td><code>h</code></td>
+        <td>Hours</td>
+    </tr>
+    <tr>
+        <td><code>min</code></td>
+        <td>Minutes</td>
+    </tr>
+    <tr>
+        <td><code>s</code></td>
+        <td>Seconds</td>
+    </tr>
+    <tr>
+        <td><code>ms</code></td>
+        <td>Milliseconds</td>
+    </tr>
+</table>
+
+<p>
+    You can also specify time in a time format which contain both hours, minutes and seconds. Here
+    is how the format looks like:
+</p>
+
+<pre class="codeBox">
+hh:mm:ss
+</pre>
+
+<p>
+    Here is an example:
+</p>
+
+<pre class="codeBox">
+1:30:45
+</pre>
+
+<p>
+    This example specifies a time of 1 hour, 30 minutes and 45 seconds (which is of course very long time
+    for an animation).
+</p>
+
+
+<a name="coordinating-animations"></a>
+<h2>Coordinating Animations</h2>
+
+<p>
+    You can synchronize the beginning of one animation to the end of another.
+    You do so like this:
+</p>
+
+<pre class="codeBox">
+
+&lt;rect x="0" y="0" width="30" height="15"
+      style="stroke: #ff0000; fill: none;"&gt;
+
+    &lt;animate id="one"
+             attributeName="x" attributeType="XML"
+             from="0" to="400"
+             begin="0s" dur="10s" fill="freeze"
+            /&gt;
+    &lt;animate
+            attributeName="y" attributeType="XML"
+            from="0" to="50"
+            <b>begin="one.end"</b> dur="10s" fill="freeze"
+            /&gt;
+&lt;/rect&gt;
+
+</pre>
+
+<p>
+    Here is the resulting animation:
+</p>
+
+
+<svg width="500" height="100">
+
+    <rect x="0" y="0" width="30" height="15"
+          style="stroke: #ff0000; fill: none;">
+
+        <animate id="one"
+                 attributeName="x" attributeType="XML"
+                 from="0" to="400"
+                 begin="0s" dur="10s" fill="freeze"
+                />
+        <animate
+                attributeName="y" attributeType="XML"
+                from="0" to="80"
+                begin="one.end" dur="10s" fill="freeze"
+                />
+    </rect>
+
+</svg>
+
+<p>
+    The first animation has its <code>id</code> attribute set to <code>one</code>.
+</p>
+<p>
+    The second animation references the first animation via its <code>begin</code> attribute.
+    The <code>begin</code> attribute value is set to <code>one.end</code> which means that this animation should start when the
+    animation with the id <code>one</code> ends.
+</p>
+
+<p>
+    You can use the <code>id.begin</code> or <code>id.end</code> to start an animation when
+    another animation starts or ends. Instead of <code>id</code> use the ID of the animation
+    element to synchronize to.
+</p>
+
+<p>
+    You can also specify offsets to the start or end time of another animation, like this:
+</p>
+
+<pre class="codeBox">
+one.begin+10s
+
+one.end+5s
+</pre>
+
+
+<p>
+    Additionally you can specify an explicit end time in an animations <code>end</code> attribute.
+    This does not replace the <code>dur</code> attribute. All it does is to add another
+    possible end to an animation, so whichever occurs first. Here is an example:
+</p>
+
+<pre class="codeBox">
+&lt;animate
+        attributeName="y" attributeType="XML"
+        from="0" to="50"
+        begin="one.begin+3s" dur="10s" end="one.end"
+        fill="freeze"
+        /&gt;
+</pre>
+
+<p>
+    This animation will have a duration of 10 seconds, or stop when the animation with
+    the ID <code>one</code> ends, whichever occurs first.
+</p>
+
+
+<a name="repeating-animations"></a>
+<h2>Repeating Animations</h2>
+
+<p>
+    There are two attributes you can use inside an animation element which are used to repeat
+    the animation.
+</p>
+
+<p>
+    The first attribute is the <code>repeatCount</code> attribute. Inside
+    this attribute you can set a number, which will be repeat the animation that number of times,
+    or the value <code>indefinite</code> which will keep the animation running without ever stopping.
+</p>
+
+<p>
+    The second attribute is the <code>repeatDur</code> which specifies a duration for which
+    the animation is to be repeated. You can also use the value <code>indefinite</code> inside
+    the <code>repeatDur</code> attribute, and the effect is the same as using it inside the
+    <code>repeatCount</code> attribute.
+</p>
+
+<p>
+    Here are two examples:
+</p>
+
+<pre class="codeBox">
+&lt;animate
+        attributeName="y" attributeType="XML"
+        from="0" to="50"
+        begin="one.begin+3s" dur="10s"
+        repeatCount="3"
+        fill="freeze"
+        /&gt;
+</pre>
+
+<pre class="codeBox">
+&lt;animate
+        attributeName="y" attributeType="XML"
+        from="0" to="50"
+        begin="one.begin+3s" dur="10s"
+        repeatDur="30s"
+        fill="freeze"
+        /&gt;
+</pre>
+
+
+
+<a name="combining-animations"></a>
+<h2>Combining Animations</h2>
+
+<p>
+    You can combine animations by listing more than one <code>&lt;animation&gt;</code> inside the element to animate.
+    You have already seen that, but here is another example:
+</p>
+
+<pre class="codeBox">
+&lt;rect x="10" y="10" width="40" height="20"
+     style="stroke: #000000; fill: none;"&gt;
+   &lt;animate attributeName="x"
+            attributeType="XML"
+            from="10" to="400"
+            begin="0s" dur="10s"
+            repeatCount="indefinite"
+           /&gt;
+   &lt;animate attributeName="y"
+            attributeType="XML"
+            from="10" to="100"
+            begin="0s" dur="10s"
+            fill="freeze"
+            repeatCount="indefinite"
+           /&gt;
+&lt;/rect&gt;
+</pre>
+
+<p>
+    This example has two animations, each animating the <code>x</code> and <code>y</code> attributes
+    of the rectangle. Here is the resulting animation:
+</p>
+
+
+<svg width="500"  height="100">
+    <rect x="10" y="10" width="40" height="20"
+          style="stroke: #000000; fill: none;">
+        <animate attributeName="x" attributeType="XML"
+                 from="10" to="400"
+                 begin="0s" dur="10s"
+                 repeatCount="indefinite"
+                />
+        <animate attributeName="y" attributeType="XML"
+                 from="10" to="100"
+                 begin="0s" dur="10s"
+                 fill="freeze"
+                 repeatCount="indefinite"
+                />
+    </rect>
+</svg>
+
+<p>
+    When combining <code>&lt;animateTransform&gt;</code> elements, the default behaviour is for
+    the second animation to cancel out the first. However, you can combine the transformation animations
+    by adding the attribute <code>additive</code> with a value of <code>sum</code> to both
+    <code>&lt;animateTransform&gt;</code> elements. Here is an example:
+</p>
+
+<pre class="codeBox">
+&lt;rect x="10" y="10" width="40" height="20"
+      style="stroke: #000000; fill: none;"&gt;
+    &lt;animateTransform attributeName="transform" attributeType="XML"
+                      type="scale"
+                      from="1" to="3"
+                      begin="0s" dur="10s"
+                      repeatCount="indefinite"
+                      <b>additive="sum"</b>
+            /&gt;
+    &lt;animateTransform attributeName="transform" attributeType="XML"
+                      type="rotate"
+                      from="0 30 20" to="360 30 20"
+                      begin="0s" dur="10s"
+                      fill="freeze"
+                      repeatCount="indefinite"
+                      <b>additive="sum"</b>
+            /&gt;
+
+</pre>
+
+
+<p>
+    Here is the resulting animation which both scales and rotates a rectangle:
+</p>
+
+
+<svg width="500"  height="100">
+    <rect x="10" y="10" width="40" height="20"
+          style="stroke: #000000; fill: none;">
+        <animateTransform attributeName="transform" attributeType="XML"
+                          type="scale"
+                          from="1" to="3"
+                          begin="0s" dur="10s"
+                          repeatCount="indefinite"
+                          additive="sum"
+                />
+        <animateTransform attributeName="transform" attributeType="XML"
+                          type="rotate"
+                          from="0 30 20" to="360 30 20"
+                          begin="0s" dur="10s"
+                          fill="freeze"
+                          repeatCount="indefinite"
+                          additive="sum"
+                />
+    </rect>
+</svg>
+
+                <div>
+                </div>
+
+                <div id="next">Next: <a href="/svg/scripting.html">SVG Scripting</a></div>
+                <div id="bottomSocial">
+
+                    <div style="display:inline-block;">
+                        <table>
+                            <tr><td colspan="2">
+                                <div class='g-plus' data-action='share' data-height='24'  data-annotation='none'></div>
+                                <script type='text/javascript'>
+                                    (function() {
+                                        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+                                        po.src = 'https://apis.google.com/js/platform.js';
+                                        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+                                     })();
+                                </script>
+
+                                <a href='https://twitter.com/share' class='twitter-share-button' data-via='jjenkov' target="_blank">Tweet</a>
+                                <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+                            </td></tr>
+                            <tr><td class="authorPhoto"></td><td><p style="margin: 0px 0px 6px 0px;">Jakob Jenkov</p><div class="authorSocialLinks"></div></td></tr>
+                        </table>
+                    </div>
+                    <div class="newsletterForm"  style="display:inline-block;"></div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Bottom ads - (nested row is working, but should perhaps not be a nested row?) (note: was a nested row in old design - not in new) -->
+<div jqc-row jqc-row-paddings="0:0">
+    <div jqc-cell="0:12c">
+        <div id="pageBottomAds">
+            <script>
+                    if(articleLen >= 4000){ /* for longer articles place ads here, at the bottom of the page */
+                        if(window.innerWidth >= 728 ) {  /* Adsense Ads - Bottom Banner */
+                            if(adRandom < 5)       { writeAd("2721937400", 970, 90);  bottomAdStyles("pageBottomAds", 970, 20, 20);}
+                            else if(adRandom < 30) { writeAd("9547200207", 970, 250); bottomAdStyles("pageBottomAds", 970, 20, 20);}
+                            else                   { writeAd("7776167002", 728, 90);  bottomAdStyles("pageBottomAds", 728, 20, 20);}
+                        } else if(window.innerWidth < 728) {  /* Adsense Ads - Bottom Banner - Mobile */
+                            if(adRandom < 50) {
+                                writeAd("4216244607", 320, 50); bottomAdStyles("pageBottomAds", 320, 10, 0);
+                            } else {
+                                writeAd("7377085404", 320, 100); bottomAdStyles("pageBottomAds", 320, 10, 0);
+                            }
+                        }
+                    }
+                </script>
+            <br/><br/><br/>
+        </div>
+
+
+        <div style="height: 30px"></div>
+        <div id="disqusComments" class="card">
+            <div id="disqus_thread"></div>
+            <script type="text/javascript">
+                var disqus_shortname = 'tutorials-jenkov-com'; // required: replace example with your forum shortname
+
+                /* * * DON'T EDIT BELOW THIS LINE * * */
+                (function() {
+                    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                })();
+            </script>
+            <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+        </div>
+
+    </div>
+</div>
+
+<span id="layoutManager" jqc-type="jqcResponsiveLayoutManager" jqc-row-paddings="0:8 4:0"></span>
+
+
+<div id="footerBar">
+<div jqc-row>
+    <div jqc-cell="0:12c">
+        Copyright &nbsp;Jenkov Aps
+    </div>
+</div>
+</div>
+
+<div id="trailTocFixedDiv">
+  <div id="trailTocFixedCloseButton">Close TOC</div>
+  <div id="trailTocFixedInnerDiv"></div>
+</div>
+<div id="bottomNavBar"></div>
+
+<!-- init page -->
+<script>
+pageLoaded = true;
+init();
+</script>
+
+
+<!-- Google Analytics Script -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-4036229-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+
+</body>
+</html>

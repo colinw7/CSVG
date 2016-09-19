@@ -18,7 +18,7 @@ CSVGJEvent(CSVG *svg) :
 {
   CJavaScript *js = svg->js();
 
-  type_->addObjectFunction(js, "getTarget");
+  objType_->addObjectFunction(js, "getTarget");
 }
 
 CJValueP

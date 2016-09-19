@@ -1,0 +1,44 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN"
+    "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+
+<svg width="110" height="110" viewBox="0 0 110 110">
+   <title>Result of applying diffuse lighting filter</title>
+<defs>
+
+<path id="curve" d="M 0 0 Q 5 20 10 10 T 20 20"
+    style="stroke: white; fill: none;"/>
+
+<circle id="green-light" cx="50" cy="50" r="50"
+	style="fill: #060;" />
+
+<filter id="diff-light" color-interpolation-filters="sRGB"
+    x="0" y="0" width="100%" height="100%">
+
+    <feImage xlink:href="#curve" result="tile"
+        width="20" height="20"/>
+
+    <feTile in="tile" result="tile"/>
+
+    <feColorMatrix type="luminanceToAlpha" in="tile"
+        result="alphaTile"/>
+
+    <feDiffuseLighting in="alphaTile"
+        lighting-color="#ffffcc"
+        surfaceScale="1" 
+        diffuseConstant="0.5"  
+        result="diffuseOutput">
+        <fePointLight x="0" y="50" z="50"/>
+    </feDiffuseLighting>
+
+    <feComposite in="diffuseOutput" in2="SourceGraphic"
+        operator="in" result="diffuseOutput"/>
+
+    <feBlend in="diffuseOutput" in2="SourceGraphic"
+        mode="screen"/>
+</filter>
+</defs>
+
+<use xlink:href="#green-light" style="filter: url(#diff-light);"/>
+
+</svg>

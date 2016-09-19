@@ -89,10 +89,10 @@ CSVGJDocument::
 CSVGJDocument(CSVG *svg) :
  CJObj(svg->js(), CSVGJDocumentType::instance(svg->js())), svg_(svg)
 {
-  type_->addObjectFunction(svg->js(), "getElementById");
-  type_->addObjectFunction(svg->js(), "createElementNS");
-  type_->addObjectFunction(svg->js(), "createTextNode");
-  type_->addObjectFunction(svg->js(), "createEvent");
+  objType_->addObjectFunction(svg->js(), "getElementById");
+  objType_->addObjectFunction(svg->js(), "createElementNS");
+  objType_->addObjectFunction(svg->js(), "createTextNode");
+  objType_->addObjectFunction(svg->js(), "createEvent");
 
   element_ = CJValueP(new CSVGJDocumentElement(svg));
 
@@ -169,9 +169,9 @@ CSVGJDocumentElement::
 CSVGJDocumentElement(CSVG *svg) :
  CJObj(svg->js(), CSVGJDocumentElementType::instance(svg->js())), svg_(svg)
 {
-  type_->addObjectFunction(svg->js(), "createSVGMatrix");
-  type_->addObjectFunction(svg->js(), "createSVGTransformFromMatrix");
-  type_->addObjectFunction(svg->js(), "createSVGPoint");
+  objType_->addObjectFunction(svg->js(), "createSVGMatrix");
+  objType_->addObjectFunction(svg->js(), "createSVGTransformFromMatrix");
+  objType_->addObjectFunction(svg->js(), "createSVGPoint");
 }
 
 CJValueP
@@ -192,7 +192,7 @@ execNameFn(CJavaScript *js, const std::string &name, const Values &values)
       if (matrixVal && matrixVal->type() == CJValue::Type::Object) {
         CJObjP matrixObj = std::static_pointer_cast<CJObj>(matrixVal);
 
-        if (matrixObj->type()->name() == "SVGMatrix") {
+        if (matrixObj->objType()->name() == "SVGMatrix") {
           matrix1 = std::static_pointer_cast<CSVGJMatrix>(matrixObj);
         }
       }

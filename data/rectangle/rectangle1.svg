@@ -1,0 +1,9 @@
+<svg width="200px" height="200px" viewBox="0 0 200 200">
+  <rect x="10" y="10" width="30" height="50"/>
+
+  <rect x="50" y="10" width="20" height="40" style="fill: none; stroke: black;"/>
+
+  <rect x="10" y="70" width="25" height="30" style="fill: #0000ff; stroke: red; stroke-width: 7; stroke-opacity: 0.5;"/>
+
+  <rect x="50" y="70" width="35" height="20" style="fill: yellow; fill-opacity: 0.5; stroke: green; stroke-width: 2; stroke-dasharray: 5 2"/>
+</svg>

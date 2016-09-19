@@ -1,0 +1,11 @@
+<svg width="400px" height="300px" viewBox="0 0 400 300">
+
+<ellipse cx="154" cy="154" rx="150" ry="120" style="fill: #999999;"/>
+
+<ellipse cx="152" cy="152" rx="150" ry="120" style="fill: #cceeff;"/>
+
+<path d="M 302 152 A 150 120, 0, 1, 0, 2 152 A 75 60, 0, 1, 0, 152 152" style="fill: #ffcccc;"/>
+
+<path d="M 152 152 A 75 60, 0, 1, 1, 302 152" style="fill: #cceeff;"/>
+
+</svg>

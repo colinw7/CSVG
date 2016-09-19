@@ -1,0 +1,12 @@
+<svg width="800px" height="800px">
+  <defs>
+    <filter id="roughpaper">
+      <feTurbulence id="feTurbulence3005" type="fractalNoise" baseFrequency="0.84" numOctaves="4" seed="0" result="result4"/>
+      <feDisplacementMap id="feDisplacementMap3007" in2="result4" in="SourceGraphic" yChannelSelector="G" xChannelSelector="R" scale="10" result="result3"/>
+      <feDiffuseLighting id="feDiffuseLighting3009" lighting-color="rgb(233,100,215)" diffuseConstant="1" surfaceScale="2" result="result1" in="result4">
+        <feDistantLight id="feDistantLight3011" azimuth="235" elevation="40"/>
+      </feDiffuseLighting>
+    </filter>
+  </defs>
+  <rect filter="url(#roughpaper)" width="800px" height="800px" fill="grey"/>
+</svg>

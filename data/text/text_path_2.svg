@@ -1,0 +1,17 @@
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN"
+    "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+
+<svg width="375px" height="200px" viewBox="0 0 375 200">
+   <title>Korean syllables from an external font</title>
+
+<defs>
+<path id="curvepath" d="M30 40 C 50 10, 70 10, 120 40 S 150 0, 200 40"
+	style="stroke: gray; fill: none;"/>
+</defs>
+
+<use xlink:href="#curvepath"/>
+<text style="font-size: 12;">
+<textPath xlink:href="#curvepath">Following a cubic B&#xe9;zier curve.</textPath>
+</text>
+
+</svg>

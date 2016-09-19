@@ -1,0 +1,13 @@
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg width="375px" height="200px" viewBox="0 0 375 200"> <title>text path</title>
+<defs>
+<path id="sharp-corner" d="M 30 110 100 110 100 160" style="stroke: gray; fill: none;"/>
+</defs>
+
+<use xlink:href="#sharp-corner"/>
+
+<text style="font-size: 12;">
+<textPath xlink:href="#sharp-corner">Making a quick turn</textPath>
+</text>
+
+</svg>
