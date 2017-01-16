@@ -36,7 +36,7 @@ DISTNAME      = CQSVG1.0.0
 DISTDIR = /home/colinw/git/CSVG/obj/CQSVG1.0.0
 LINK          = @echo linking $@ && g++
 LFLAGS        = -m64
-LIBS          = $(SUBLIBS) -L/usr/X11R6/lib64 -L../lib -L../../CQUtil/lib -L../../CQPropertyTree/lib -L../../CCSS/lib -L../../CXML/lib -L../../CJavaScript/lib -L../../CReadLine/lib -L../../CFont/lib -L../../CUtil/lib -L../../CImageLib/lib -L../../CConfig/lib -L../../CFileUtil/lib -L../../CFile/lib -L../../COS/lib -L../../CStrUtil/lib -L../../CRegExp/lib -L../../CRGBName/lib -lCSVG -lCQPropertyTree -lCQUtil -lCCSS -lCXML -lCJavaScript -lCReadLine -lCConfig -lCUtil -lCFont -lCImageLib -lCRGBName -lCFileUtil -lCFile -lCOS -lCStrUtil -lCRegExp -lpng -ljpeg -ltre -lreadline -lQt5Widgets -lQt5Gui -lQt5Core -lGL -lpthread 
+LIBS          = $(SUBLIBS) -L/usr/X11R6/lib64 -L../lib -L../../CQUtil/lib -L../../CQPropertyTree/lib -L../../CCSS/lib -L../../CXML/lib -L../../CJavaScript/lib -L../../CJson/lib -L../../CReadLine/lib -L../../CFont/lib -L../../CUtil/lib -L../../CImageLib/lib -L../../CConfig/lib -L../../CFileUtil/lib -L../../CFile/lib -L../../COS/lib -L../../CStrUtil/lib -L../../CRegExp/lib -L../../CRGBName/lib -lCSVG -lCQPropertyTree -lCQUtil -lCCSS -lCXML -lCJavaScript -lCJson -lCReadLine -lCConfig -lCUtil -lCFont -lCImageLib -lCRGBName -lCFileUtil -lCFile -lCOS -lCStrUtil -lCRegExp -lpng -ljpeg -ltre -lreadline -lQt5Widgets -lQt5Gui -lQt5Core -lGL -lpthread 
 AR            = ar cqs
 RANLIB        = 
 SED           = sed
@@ -323,7 +323,6 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_core_private.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_dbus.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_dbus_private.pri \
-		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_declarative.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_eglfs_device_lib_private.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_gui.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_gui_private.pri \
@@ -343,7 +342,6 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_testlib_private.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_widgets.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_widgets_private.pri \
-		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_x11extras.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_xcb_qpa_lib_private.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_xml.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_xml_private.pri \
@@ -548,7 +546,6 @@ Makefile: CQSVG.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64/qmake.con
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_core_private.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_dbus.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_dbus_private.pri \
-		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_declarative.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_eglfs_device_lib_private.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_gui.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_gui_private.pri \
@@ -568,7 +565,6 @@ Makefile: CQSVG.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64/qmake.con
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_testlib_private.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_widgets.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_widgets_private.pri \
-		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_x11extras.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_xcb_qpa_lib_private.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_xml.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_xml_private.pri \
@@ -613,7 +609,6 @@ Makefile: CQSVG.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64/qmake.con
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_core_private.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_dbus.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_dbus_private.pri:
-/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_declarative.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_eglfs_device_lib_private.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_gui.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_gui_private.pri:
@@ -633,7 +628,6 @@ Makefile: CQSVG.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64/qmake.con
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_testlib_private.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_widgets.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_widgets_private.pri:
-/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_x11extras.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_xcb_qpa_lib_private.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_xml.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_xml_private.pri:
@@ -751,15 +745,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -829,15 +828,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -907,15 +911,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -984,15 +993,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -1063,15 +1077,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -1142,15 +1161,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -1220,15 +1244,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -1320,15 +1349,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -1397,15 +1431,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -1474,15 +1513,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -1551,15 +1595,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -1628,15 +1677,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -1665,7 +1719,7 @@ compiler_moc_header_clean:
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
 		../../CUtil/include/COptVal.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -1703,12 +1757,27 @@ compiler_moc_header_clean:
 		../../CUtil/include/CRefPtr.h \
 		../../CFont/include/CFontStyle.h \
 		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CFile/include/CFileType.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CStrUtil/include/CStrUtil.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
 		../include/CSVGPathPart.h \
 		../../CMath/include/CBBox2D.h \
 		../../CMath/include/CSize2D.h \
-		../../CMath/include/CISize2D.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
+		../../CMath/include/CAngle.h \
 		CQSVGEnum.h
 	@echo moc CQSVGEnum.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CSVG/qtest -I/home/colinw/git/CSVG/qtest -I/home/colinw/git/CSVG/include -I/home/colinw/git/CSVG/include -I/home/colinw/git/CQApp/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CQPropertyTree/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/CFile/include -I/home/colinw/git/COS/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CRGBName/include -I/home/colinw/git/CCSS/include -I/home/colinw/git/CXML/include -I/home/colinw/git/CJavaScript/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGEnum.h -o .moc/moc_CQSVGEnum.cpp
 
@@ -1761,15 +1830,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -1838,15 +1912,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -1914,15 +1993,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -1991,15 +2075,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -2069,15 +2158,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -2146,15 +2240,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -2223,15 +2322,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -2300,15 +2404,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -2377,15 +2486,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -2454,15 +2568,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -2531,15 +2650,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -2608,15 +2732,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -2685,15 +2814,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -2762,15 +2896,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -2841,15 +2980,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -2919,15 +3063,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -2998,15 +3147,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -3075,15 +3229,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -3152,15 +3311,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -3229,15 +3393,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -3277,7 +3446,7 @@ compiler_moc_header_clean:
 		../../CUtil/include/COptVal.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../../CUtil/include/CLineDash.h \
 		../../CUtil/include/CILineDash.h \
 		../../CUtil/include/CLineCapType.h \
@@ -3287,6 +3456,23 @@ compiler_moc_header_clean:
 		../../CUtil/include/CRefPtr.h \
 		../../CFont/include/CFontStyle.h \
 		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/CAlignType.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CStrUtil/include/CStrUtil.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
 		../include/CSVGBlock.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
@@ -3297,29 +3483,24 @@ compiler_moc_header_clean:
 		../../CMath/include/CMatrix2D.h \
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CPoint2D.h \
-		../../CMath/include/CIPoint2D.h \
 		../../CMath/include/CVector2D.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
 		../include/CSVGPreserveAspect.h \
-		../../CUtil/include/CAlignType.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGPathPart.h \
 		../../CMath/include/CBBox2D.h \
 		../../CMath/include/CSize2D.h \
-		../../CMath/include/CISize2D.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
+		../../CMath/include/CAngle.h \
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
+		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
-		../../CStrUtil/include/CStrUtil.h \
 		CQSVG.h
 	@echo moc CQSVG.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CSVG/qtest -I/home/colinw/git/CSVG/qtest -I/home/colinw/git/CSVG/include -I/home/colinw/git/CSVG/include -I/home/colinw/git/CQApp/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CQPropertyTree/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/CFile/include -I/home/colinw/git/COS/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CRGBName/include -I/home/colinw/git/CCSS/include -I/home/colinw/git/CXML/include -I/home/colinw/git/CJavaScript/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVG.h -o .moc/moc_CQSVG.cpp
 
@@ -3372,15 +3553,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -3452,15 +3638,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -3477,7 +3668,6 @@ compiler_moc_header_clean:
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
 		../include/CSVGLinearGradient.h \
-		../../CMath/include/CGenGradient.h \
 		CQSVGLinearGradient.h
 	@echo moc CQSVGLinearGradient.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CSVG/qtest -I/home/colinw/git/CSVG/qtest -I/home/colinw/git/CSVG/include -I/home/colinw/git/CSVG/include -I/home/colinw/git/CQApp/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CQPropertyTree/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/CFile/include -I/home/colinw/git/COS/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CRGBName/include -I/home/colinw/git/CCSS/include -I/home/colinw/git/CXML/include -I/home/colinw/git/CJavaScript/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGLinearGradient.h -o .moc/moc_CQSVGLinearGradient.cpp
 
@@ -3530,15 +3720,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -3607,15 +3802,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -3632,6 +3832,7 @@ compiler_moc_header_clean:
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
 		../include/CSVGMarker.h \
+		../include/CSVGOrient.h \
 		CQSVGMarker.h
 	@echo moc CQSVGMarker.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CSVG/qtest -I/home/colinw/git/CSVG/qtest -I/home/colinw/git/CSVG/include -I/home/colinw/git/CSVG/include -I/home/colinw/git/CQApp/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CQPropertyTree/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/CFile/include -I/home/colinw/git/COS/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CRGBName/include -I/home/colinw/git/CCSS/include -I/home/colinw/git/CXML/include -I/home/colinw/git/CJavaScript/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGMarker.h -o .moc/moc_CQSVGMarker.cpp
 
@@ -3684,15 +3885,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -3761,15 +3967,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -3837,15 +4048,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -3913,15 +4129,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -3944,7 +4165,7 @@ compiler_moc_header_clean:
 .moc/moc_CQSVGPathPart.cpp: ../include/CSVGPathPart.h \
 		../include/CSVGTypes.h \
 		../../CUtil/include/COptVal.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../../CMath/include/CBBox2D.h \
 		../../CMath/include/CMathGen.h \
 		../../COS/include/NaN.h \
@@ -4005,15 +4226,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -4082,15 +4308,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -4159,15 +4390,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -4239,15 +4475,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -4265,7 +4506,6 @@ compiler_moc_header_clean:
 		../include/CObjTypeOld.h \
 		../include/CSVGRadialGradient.h \
 		../../CMath/include/CRadialGradient.h \
-		../../CMath/include/CGenGradient.h \
 		../../CMath/include/CMathGeom2D.h \
 		../../CMath/include/CPolygonOrientation.h \
 		../../CMath/include/CLine2D.h \
@@ -4322,15 +4562,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -4399,15 +4644,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -4477,15 +4727,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -4526,7 +4781,7 @@ compiler_moc_header_clean:
 		../../CUtil/include/COptVal.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../../CUtil/include/CLineDash.h \
 		../../CUtil/include/CILineDash.h \
 		../../CUtil/include/CLineCapType.h \
@@ -4584,15 +4839,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -4661,15 +4921,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -4738,15 +5003,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -4815,15 +5085,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -4892,15 +5167,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -4969,15 +5249,20 @@ compiler_moc_header_clean:
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -5041,7 +5326,7 @@ compiler_clean: compiler_moc_header_clean
 		../../CUtil/include/COptVal.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../../CUtil/include/CLineDash.h \
 		../../CUtil/include/CILineDash.h \
 		../../CUtil/include/CLineCapType.h \
@@ -5051,6 +5336,23 @@ compiler_clean: compiler_moc_header_clean
 		../../CUtil/include/CRefPtr.h \
 		../../CFont/include/CFontStyle.h \
 		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/CAlignType.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CStrUtil/include/CStrUtil.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
 		../include/CSVGBlock.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
@@ -5061,45 +5363,32 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMatrix2D.h \
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CPoint2D.h \
-		../../CMath/include/CIPoint2D.h \
 		../../CMath/include/CVector2D.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
 		../include/CSVGPreserveAspect.h \
-		../../CUtil/include/CAlignType.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGPathPart.h \
 		../../CMath/include/CBBox2D.h \
 		../../CMath/include/CSize2D.h \
-		../../CMath/include/CISize2D.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
+		../../CMath/include/CAngle.h \
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
+		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
-		../../CStrUtil/include/CStrUtil.h \
 		CQSVGAnchor.h \
 		CQSVGObject.h \
 		../../CQUtil/include/CQUtil.h \
 		../../CUtil/include/CEvent.h \
 		../../CUtil/include/CKeyType.h \
-		../../CMath/include/CAngle.h \
-		../../CImageLib/include/CImageLib.h \
-		../../CImageLib/include/CImageState.h \
-		../../CImageLib/include/CImage.h \
-		../../CUtil/include/CRGBACombineDef.h \
-		../../CMath/include/CIBBox2D.h \
-		../../CMath/include/CIVector2D.h \
-		../../CImageLib/include/CImagePtr.h \
-		../../CImageLib/include/CImageMgr.h \
-		../../CImageLib/include/CImageAnim.h \
-		../../CImageLib/include/CImageFile.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CPen.h \
 		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
@@ -5272,15 +5561,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -5303,9 +5597,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGAnchor.o CQSVGAnchor.cpp
 
 ../obj/CQSVGAnimate.o: CQSVGAnimate.cpp CQSVGAnimate.h \
@@ -5359,15 +5652,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -5391,9 +5689,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGAnimate.o CQSVGAnimate.cpp
 
 ../obj/CQSVGAnimateBase.o: CQSVGAnimateBase.cpp CQSVGAnimateBase.h \
@@ -5446,15 +5743,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -5476,9 +5778,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
+		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h \
 		../include/CSVGAnimateBase.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGAnimateBase.o CQSVGAnimateBase.cpp
 
@@ -5533,15 +5834,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -5565,9 +5871,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGAnimateColor.o CQSVGAnimateColor.cpp
 
 ../obj/CQSVGAnimateMotion.o: CQSVGAnimateMotion.cpp CQSVGAnimateMotion.h \
@@ -5621,15 +5926,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -5653,9 +5963,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGAnimateMotion.o CQSVGAnimateMotion.cpp
 
 ../obj/CQSVGAnimateTransform.o: CQSVGAnimateTransform.cpp CQSVGAnimateTransform.h \
@@ -5709,15 +6018,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -5741,9 +6055,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGAnimateTransform.o CQSVGAnimateTransform.cpp
 
 ../obj/CQSVGBlock.o: CQSVGBlock.cpp CQSVGBlock.h \
@@ -5796,15 +6109,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -5826,9 +6144,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGBlock.o CQSVGBlock.cpp
 
 ../obj/CQSVGBufferView.o: CQSVGBufferView.cpp CQSVGBufferView.h \
@@ -5859,7 +6176,7 @@ compiler_clean: compiler_moc_header_clean
 		../../CUtil/include/COptVal.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../../CUtil/include/CLineDash.h \
 		../../CUtil/include/CILineDash.h \
 		../../CUtil/include/CLineCapType.h \
@@ -5869,6 +6186,21 @@ compiler_clean: compiler_moc_header_clean
 		../../CUtil/include/CRefPtr.h \
 		../../CFont/include/CFontStyle.h \
 		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/CAlignType.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CStrUtil/include/CStrUtil.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
 		../include/CSVGBlock.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
@@ -5881,21 +6213,18 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
 		../include/CSVGPreserveAspect.h \
-		../../CUtil/include/CAlignType.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
+		../../CMath/include/CAngle.h \
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
+		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
-		../../CStrUtil/include/CStrUtil.h \
 		CQSVGRenderer.h \
 		../include/CSVGRenderer.h \
 		CDisplayTransform2D.h \
@@ -5906,22 +6235,14 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CIPoint3D.h \
 		../include/CSVGConvolveData.h \
 		../include/CSVGImageData.h \
-		../../CImageLib/include/CImage.h \
-		../../CUtil/include/CRGBACombineDef.h \
-		../../CMath/include/CIBBox2D.h \
-		../../CMath/include/CIVector2D.h \
-		../../CImageLib/include/CImagePtr.h \
 		CQSVGUtil.h \
 		../../CQUtil/include/CQImage.h \
 		../../CQUtil/include/CQUtil.h \
 		../../CUtil/include/CEvent.h \
 		../../CUtil/include/CKeyType.h \
-		../../CMath/include/CAngle.h \
-		../../CImageLib/include/CImageLib.h \
-		../../CImageLib/include/CImageState.h \
-		../../CImageLib/include/CImageMgr.h \
-		../../CImageLib/include/CImageAnim.h \
-		../../CImageLib/include/CImageFile.h
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CPen.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGBufferView.o CQSVGBufferView.cpp
 
 ../obj/CQSVGCanvas.o: CQSVGCanvas.cpp CQSVGCanvas.h \
@@ -5952,7 +6273,7 @@ compiler_clean: compiler_moc_header_clean
 		../../CUtil/include/COptVal.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../../CUtil/include/CLineDash.h \
 		../../CUtil/include/CILineDash.h \
 		../../CUtil/include/CLineCapType.h \
@@ -5962,6 +6283,21 @@ compiler_clean: compiler_moc_header_clean
 		../../CUtil/include/CRefPtr.h \
 		../../CFont/include/CFontStyle.h \
 		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/CAlignType.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CStrUtil/include/CStrUtil.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
 		../include/CSVGBlock.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
@@ -5974,21 +6310,18 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
 		../include/CSVGPreserveAspect.h \
-		../../CUtil/include/CAlignType.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
+		../../CMath/include/CAngle.h \
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
+		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
-		../../CStrUtil/include/CStrUtil.h \
 		CQSVGWindow.h \
 		CHRTimer.h \
 		../../COS/include/CHRTime.h \
@@ -5996,17 +6329,9 @@ compiler_clean: compiler_moc_header_clean
 		../../CQUtil/include/CQUtil.h \
 		../../CUtil/include/CEvent.h \
 		../../CUtil/include/CKeyType.h \
-		../../CMath/include/CAngle.h \
-		../../CImageLib/include/CImageLib.h \
-		../../CImageLib/include/CImageState.h \
-		../../CImageLib/include/CImage.h \
-		../../CUtil/include/CRGBACombineDef.h \
-		../../CMath/include/CIBBox2D.h \
-		../../CMath/include/CIVector2D.h \
-		../../CImageLib/include/CImagePtr.h \
-		../../CImageLib/include/CImageMgr.h \
-		../../CImageLib/include/CImageAnim.h \
-		../../CImageLib/include/CImageFile.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CPen.h \
 		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
@@ -6068,15 +6393,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -6099,9 +6429,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGCircle.o CQSVGCircle.cpp
 
 ../obj/CQSVGClipPath.o: CQSVGClipPath.cpp CQSVGClipPath.h \
@@ -6154,15 +6483,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -6185,9 +6519,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGClipPath.o CQSVGClipPath.cpp
 
 ../obj/CQSVGDefs.o: CQSVGDefs.cpp CQSVGDefs.h \
@@ -6240,15 +6573,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -6271,9 +6609,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGDefs.o CQSVGDefs.cpp
 
 ../obj/CQSVGDesc.o: CQSVGDesc.cpp CQSVGDesc.h \
@@ -6326,15 +6663,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -6357,9 +6699,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGDesc.o CQSVGDesc.cpp
 
 ../obj/CQSVGEllipse.o: CQSVGEllipse.cpp CQSVGEllipse.h \
@@ -6412,15 +6753,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -6443,9 +6789,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGEllipse.o CQSVGEllipse.cpp
 
 ../obj/CQSVGEnum.o: CQSVGEnum.cpp CQSVGEnum.h \
@@ -6458,7 +6803,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
 		../../CUtil/include/COptVal.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -6496,12 +6841,27 @@ compiler_clean: compiler_moc_header_clean
 		../../CUtil/include/CRefPtr.h \
 		../../CFont/include/CFontStyle.h \
 		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CFile/include/CFileType.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CStrUtil/include/CStrUtil.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
 		../include/CSVGPathPart.h \
 		../../CMath/include/CBBox2D.h \
 		../../CMath/include/CSize2D.h \
-		../../CMath/include/CISize2D.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
+		../../CMath/include/CAngle.h \
 		CEnumConv.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGEnum.o CQSVGEnum.cpp
 
@@ -6555,15 +6915,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -6586,9 +6951,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeBlend.o CQSVGFeBlend.cpp
 
 ../obj/CQSVGFeColorMatrix.o: CQSVGFeColorMatrix.cpp CQSVGFeColorMatrix.h \
@@ -6641,15 +7005,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -6671,9 +7040,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeColorMatrix.o CQSVGFeColorMatrix.cpp
 
 ../obj/CQSVGFeComposite.o: CQSVGFeComposite.cpp CQSVGFeComposite.h \
@@ -6726,15 +7094,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -6757,9 +7130,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeComposite.o CQSVGFeComposite.cpp
 
 ../obj/CQSVGFeDiffuseLighting.o: CQSVGFeDiffuseLighting.cpp CQSVGFeDiffuseLighting.h \
@@ -6812,15 +7184,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -6844,9 +7221,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeDiffuseLighting.o CQSVGFeDiffuseLighting.cpp
 
 ../obj/CQSVGFeDisplacementMap.o: CQSVGFeDisplacementMap.cpp CQSVGFeDisplacementMap.h \
@@ -6899,15 +7275,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -6930,9 +7311,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeDisplacementMap.o CQSVGFeDisplacementMap.cpp
 
 ../obj/CQSVGFeDistantLight.o: CQSVGFeDistantLight.cpp CQSVGFeDistantLight.h \
@@ -6985,15 +7365,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -7016,9 +7401,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeDistantLight.o CQSVGFeDistantLight.cpp
 
 ../obj/CQSVGFeFlood.o: CQSVGFeFlood.cpp CQSVGFeFlood.h \
@@ -7071,15 +7455,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -7102,9 +7491,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeFlood.o CQSVGFeFlood.cpp
 
 ../obj/CQSVGFeGaussianBlur.o: CQSVGFeGaussianBlur.cpp CQSVGFeGaussianBlur.h \
@@ -7157,15 +7545,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -7188,9 +7581,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeGaussianBlur.o CQSVGFeGaussianBlur.cpp
 
 ../obj/CQSVGFeImage.o: CQSVGFeImage.cpp CQSVGFeImage.h \
@@ -7243,15 +7635,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -7274,9 +7671,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeImage.o CQSVGFeImage.cpp
 
 ../obj/CQSVGFeMerge.o: CQSVGFeMerge.cpp CQSVGFeMerge.h \
@@ -7329,15 +7725,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -7360,9 +7761,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeMerge.o CQSVGFeMerge.cpp
 
 ../obj/CQSVGFeMergeNode.o: CQSVGFeMergeNode.cpp CQSVGFeMergeNode.h \
@@ -7415,15 +7815,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -7446,9 +7851,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeMergeNode.o CQSVGFeMergeNode.cpp
 
 ../obj/CQSVGFeMorphology.o: CQSVGFeMorphology.cpp CQSVGFeMorphology.h \
@@ -7501,15 +7905,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -7532,9 +7941,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeMorphology.o CQSVGFeMorphology.cpp
 
 ../obj/CQSVGFeOffset.o: CQSVGFeOffset.cpp CQSVGFeOffset.h \
@@ -7587,15 +7995,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -7618,9 +8031,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeOffset.o CQSVGFeOffset.cpp
 
 ../obj/CQSVGFePointLight.o: CQSVGFePointLight.cpp CQSVGFePointLight.h \
@@ -7673,15 +8085,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -7706,9 +8123,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFePointLight.o CQSVGFePointLight.cpp
 
 ../obj/CQSVGFeSpecularLighting.o: CQSVGFeSpecularLighting.cpp CQSVGFeSpecularLighting.h \
@@ -7761,15 +8177,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -7793,9 +8214,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeSpecularLighting.o CQSVGFeSpecularLighting.cpp
 
 ../obj/CQSVGFeSpotLight.o: CQSVGFeSpotLight.cpp CQSVGFeSpotLight.h \
@@ -7848,15 +8268,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -7881,9 +8306,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeSpotLight.o CQSVGFeSpotLight.cpp
 
 ../obj/CQSVGFeTile.o: CQSVGFeTile.cpp CQSVGFeTile.h \
@@ -7936,15 +8360,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -7967,9 +8396,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeTile.o CQSVGFeTile.cpp
 
 ../obj/CQSVGFeTurbulence.o: CQSVGFeTurbulence.cpp CQSVGFeTurbulence.h \
@@ -8022,15 +8450,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -8053,9 +8486,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeTurbulence.o CQSVGFeTurbulence.cpp
 
 ../obj/CQSVGFilter.o: CQSVGFilter.cpp CQSVGFilter.h \
@@ -8108,15 +8540,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -8139,9 +8576,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFilter.o CQSVGFilter.cpp
 
 ../obj/CQSVGGroup.o: CQSVGGroup.cpp CQSVGGroup.h \
@@ -8194,15 +8630,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -8225,9 +8666,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGGroup.o CQSVGGroup.cpp
 
 ../obj/CQSVGImage.o: CQSVGImage.cpp CQSVGImage.h \
@@ -8280,15 +8720,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -8311,9 +8756,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGImage.o CQSVGImage.cpp
 
 ../obj/CQSVGJSDialog.o: CQSVGJSDialog.cpp CQSVGJSDialog.h \
@@ -8323,6 +8767,8 @@ compiler_clean: compiler_moc_header_clean
 		../../CJavaScript/include/CJToken.h \
 		../../CJavaScript/include/CJKeyword.h \
 		../../CJavaScript/include/CJNameSpace.h \
+		../../CJavaScript/include/CJPropertyValue.h \
+		../../CUtil/include/COptVal.h \
 		../../CJavaScript/include/CJIdentifier.h \
 		../../CJavaScript/include/CJObj.h \
 		../../CJavaScript/include/CJObjType.h \
@@ -8332,23 +8778,34 @@ compiler_clean: compiler_moc_header_clean
 		../../CJavaScript/include/CJNull.h \
 		../../CJavaScript/include/CJTrue.h \
 		../../CJavaScript/include/CJFalse.h \
+		../../CJavaScript/include/CJBoolean.h \
 		../../CJavaScript/include/CJNumber.h \
+		../../CJavaScript/include/CJUtil.h \
+		../../COS/include/COSNaN.h \
 		../../CJavaScript/include/CJString.h \
 		../../CJavaScript/include/CJArray.h \
 		../../CJavaScript/include/CJOperator.h \
-		../../CJavaScript/include/CJFunction.h \
+		../../CJavaScript/include/CJFunctionBase.h \
 		../../CJavaScript/include/CJRegExp.h \
 		../../CRegExp/include/CRegExp.h \
 		../../CJavaScript/include/CJDate.h \
+		../../CJavaScript/include/CJFunction.h \
 		../../CJavaScript/include/CJLValue.h \
-		../../CJavaScript/include/CJDictionaryRef.h \
 		../../CJavaScript/include/CJObject.h \
 		../../CJavaScript/include/CJTypeValue.h \
-		../../CJavaScript/include/CJObjectValue.h \
 		../../CJavaScript/include/CJUserObject.h \
-		../../CJavaScript/include/CJNameSpaceValue.h \
+		../../CJavaScript/include/CJTypeFunction.h \
+		../../CJavaScript/include/CJGetterSetter.h \
 		../../CJavaScript/include/CJExecBlock.h \
+		../../CJavaScript/include/CJExecStatement.h \
+		../../CJavaScript/include/CJExecExpression.h \
+		../../CJavaScript/include/CJExecExpressionList.h \
 		../../CJavaScript/include/CJTypeObjectFunction.h \
+		../../CJavaScript/include/CJExecData.h \
+		../../CJavaScript/include/CJPropertyData.h \
+		../../CJavaScript/include/CJGlobalFunction.h \
+		../../CJavaScript/include/CJRealFunction.h \
+		../../CJavaScript/include/CJRandFunction.h \
 		CQSVGWindow.h \
 		CHRTimer.h \
 		../../COS/include/CHRTime.h \
@@ -8370,10 +8827,9 @@ compiler_clean: compiler_moc_header_clean
 		../../CRGBName/include/CRGBName.h \
 		../../CUtil/include/CColorComponent.h \
 		../../CUtil/include/CFillType.h \
-		../../CUtil/include/COptVal.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../../CUtil/include/CLineDash.h \
 		../../CUtil/include/CILineDash.h \
 		../../CUtil/include/CLineCapType.h \
@@ -8383,6 +8839,23 @@ compiler_clean: compiler_moc_header_clean
 		../../CUtil/include/CRefPtr.h \
 		../../CFont/include/CFontStyle.h \
 		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/CAlignType.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CStrUtil/include/CStrUtil.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
 		../include/CSVGBlock.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
@@ -8393,29 +8866,24 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMatrix2D.h \
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CPoint2D.h \
-		../../CMath/include/CIPoint2D.h \
 		../../CMath/include/CVector2D.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
 		../include/CSVGPreserveAspect.h \
-		../../CUtil/include/CAlignType.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGPathPart.h \
 		../../CMath/include/CBBox2D.h \
 		../../CMath/include/CSize2D.h \
-		../../CMath/include/CISize2D.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
+		../../CMath/include/CAngle.h \
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
+		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
-		../../CStrUtil/include/CStrUtil.h \
 		CQHistoryLineEdit.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGJSDialog.o CQSVGJSDialog.cpp
 
@@ -8469,15 +8937,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -8494,15 +8967,14 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
 		../include/CSVGLinearGradient.h \
-		../../CMath/include/CGenGradient.h \
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGLinearGradient.o CQSVGLinearGradient.cpp
 
 ../obj/CQSVGLine.o: CQSVGLine.cpp CQSVGLine.h \
@@ -8555,15 +9027,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -8586,9 +9063,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGLine.o CQSVGLine.cpp
 
 ../obj/CQSVGMarker.o: CQSVGMarker.cpp CQSVGMarker.h \
@@ -8641,15 +9117,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -8666,15 +9147,14 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
 		../include/CSVGMarker.h \
+		../include/CSVGOrient.h \
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGMarker.o CQSVGMarker.cpp
 
 ../obj/CQSVGMask.o: CQSVGMask.cpp CQSVGMask.h \
@@ -8727,15 +9207,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -8758,9 +9243,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGMask.o CQSVGMask.cpp
 
 ../obj/CQSVGMPath.o: CQSVGMPath.cpp CQSVGMPath.h \
@@ -8813,15 +9297,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -8844,9 +9333,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGMPath.o CQSVGMPath.cpp
 
 ../obj/CQSVGObject.o: CQSVGObject.cpp CQSVGObject.h \
@@ -8898,15 +9386,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -8928,9 +9421,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
+		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h \
 		CQSVGWindow.h \
 		CHRTimer.h \
 		../../COS/include/CHRTime.h \
@@ -9001,15 +9493,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -9032,16 +9529,15 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGPath.o CQSVGPath.cpp
 
 ../obj/CQSVGPathPart.o: CQSVGPathPart.cpp CQSVGPathPart.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGTypes.h \
 		../../CUtil/include/COptVal.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../../CMath/include/CBBox2D.h \
 		../../CMath/include/CMathGen.h \
 		../../COS/include/NaN.h \
@@ -9077,6 +9573,21 @@ compiler_clean: compiler_moc_header_clean
 		../../CUtil/include/CRefPtr.h \
 		../../CFont/include/CFontStyle.h \
 		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/CAlignType.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CStrUtil/include/CStrUtil.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
 		../include/CSVGBlock.h \
 		../include/CSVGObject.h \
 		../include/CSVGTimeValue.h \
@@ -9088,20 +9599,17 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
 		../include/CSVGPreserveAspect.h \
-		../../CUtil/include/CAlignType.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
+		../../CMath/include/CAngle.h \
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
+		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h \
 		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
-		../../CStrUtil/include/CStrUtil.h
+		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGPathPart.o CQSVGPathPart.cpp
 
 ../obj/CQSVGPattern.o: CQSVGPattern.cpp CQSVGPattern.h \
@@ -9154,15 +9662,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -9185,9 +9698,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGPattern.o CQSVGPattern.cpp
 
 ../obj/CQSVGPolygon.o: CQSVGPolygon.cpp CQSVGPolygon.h \
@@ -9240,15 +9752,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -9271,9 +9788,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGPolygon.o CQSVGPolygon.cpp
 
 ../obj/CQSVGPolyLine.o: CQSVGPolyLine.cpp CQSVGPolyLine.h \
@@ -9326,15 +9842,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -9357,9 +9878,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGPolyLine.o CQSVGPolyLine.cpp
 
 ../obj/CQSVGPropertiesDlg.o: CQSVGPropertiesDlg.cpp CQSVGPropertiesDlg.h \
@@ -9389,7 +9909,7 @@ compiler_clean: compiler_moc_header_clean
 		../../CUtil/include/COptVal.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../../CUtil/include/CLineDash.h \
 		../../CUtil/include/CILineDash.h \
 		../../CUtil/include/CLineCapType.h \
@@ -9447,15 +9967,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -9473,7 +9998,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CObjTypeOld.h \
 		../include/CSVGRadialGradient.h \
 		../../CMath/include/CRadialGradient.h \
-		../../CMath/include/CGenGradient.h \
 		../../CMath/include/CMathGeom2D.h \
 		../../CMath/include/CPolygonOrientation.h \
 		../../CMath/include/CLine2D.h \
@@ -9484,8 +10008,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGRadialGradient.o CQSVGRadialGradient.cpp
 
 ../obj/CQSVGRect.o: CQSVGRect.cpp CQSVGRect.h \
@@ -9538,15 +10062,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -9569,9 +10098,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGRect.o CQSVGRect.cpp
 
 ../obj/CQSVGSet.o: CQSVGSet.cpp CQSVGSet.h \
@@ -9624,15 +10152,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -9656,9 +10189,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGSet.o CQSVGSet.cpp
 
 ../obj/CQSVGStop.o: CQSVGStop.cpp CQSVGStop.h \
@@ -9711,15 +10243,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -9742,9 +10279,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGStop.o CQSVGStop.cpp
 
 ../obj/CQSVGStyleTree.o: CQSVGStyleTree.cpp CQSVGStyleTree.h \
@@ -9769,7 +10305,7 @@ compiler_clean: compiler_moc_header_clean
 		../../CUtil/include/COptVal.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../../CUtil/include/CLineDash.h \
 		../../CUtil/include/CILineDash.h \
 		../../CUtil/include/CLineCapType.h \
@@ -9782,6 +10318,23 @@ compiler_clean: compiler_moc_header_clean
 		../../CUtil/include/CRefPtr.h \
 		../../CFont/include/CFontStyle.h \
 		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/CAlignType.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CStrUtil/include/CStrUtil.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
 		../include/CSVGBlock.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
@@ -9792,26 +10345,21 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMatrix2D.h \
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CPoint2D.h \
-		../../CMath/include/CIPoint2D.h \
 		../../CMath/include/CVector2D.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
 		../include/CSVGPreserveAspect.h \
-		../../CUtil/include/CAlignType.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGPathPart.h \
 		../../CMath/include/CBBox2D.h \
 		../../CMath/include/CSize2D.h \
-		../../CMath/include/CISize2D.h \
 		../include/CObjTypeOld.h \
+		../../CMath/include/CAngle.h \
 		../include/CSVGBlockData.h \
+		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h \
 		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
-		../../CStrUtil/include/CStrUtil.h
+		../../CMath/include/CGenGradient.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGStyleTree.o CQSVGStyleTree.cpp
 
 ../obj/CQSVGSymbol.o: CQSVGSymbol.cpp CQSVGSymbol.h \
@@ -9864,15 +10412,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -9895,9 +10448,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGSymbol.o CQSVGSymbol.cpp
 
 ../obj/CQSVGText.o: CQSVGText.cpp CQSVGText.h \
@@ -9950,15 +10502,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -9981,9 +10538,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGText.o CQSVGText.cpp
 
 ../obj/CQSVGTextPath.o: CQSVGTextPath.cpp CQSVGTextPath.h \
@@ -10036,15 +10592,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -10067,9 +10628,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGTextPath.o CQSVGTextPath.cpp
 
 ../obj/CQSVGTitle.o: CQSVGTitle.cpp CQSVGTitle.h \
@@ -10122,15 +10682,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -10153,9 +10718,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGTitle.o CQSVGTitle.cpp
 
 ../obj/CQSVGTSpan.o: CQSVGTSpan.cpp CQSVGTSpan.h \
@@ -10208,15 +10772,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -10239,9 +10808,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGTSpan.o CQSVGTSpan.cpp
 
 ../obj/CQSVGUse.o: CQSVGUse.cpp CQSVGUse.h \
@@ -10294,15 +10862,20 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
-		CQSVGEnum.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CFillType.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CMath/include/CGenGradient.h \
+		../../CUtil/include/CPen.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
-		../../CUtil/include/CFillType.h \
+		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
@@ -10325,9 +10898,8 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
-		../../CCSS/include/CCSS.h \
-		../../CUtil/include/CAutoPtr.h \
-		../../CMath/include/CGenGradient.h
+		../include/CSVGOrient.h \
+		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGUse.o CQSVGUse.cpp
 
 ../obj/CQSVGWindow.o: CQSVGWindow.cpp CQSVGWindow.h \
@@ -10354,7 +10926,7 @@ compiler_clean: compiler_moc_header_clean
 		../../CUtil/include/COptVal.h \
 		../include/CSVGClip.h \
 		../include/CSVGStrokeDash.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../../CUtil/include/CLineDash.h \
 		../../CUtil/include/CILineDash.h \
 		../../CUtil/include/CLineCapType.h \
@@ -10364,6 +10936,23 @@ compiler_clean: compiler_moc_header_clean
 		../../CUtil/include/CRefPtr.h \
 		../../CFont/include/CFontStyle.h \
 		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/CAlignType.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CStrUtil/include/CStrUtil.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
 		../include/CSVGBlock.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
@@ -10374,29 +10963,24 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMatrix2D.h \
 		../../CMath/include/CMathMacros.h \
 		../../CMath/include/CPoint2D.h \
-		../../CMath/include/CIPoint2D.h \
 		../../CMath/include/CVector2D.h \
 		../../CMath/include/CMatrixType.h \
 		../../CUtil/include/CThrow.h \
 		../include/CSVGPreserveAspect.h \
-		../../CUtil/include/CAlignType.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGPathPart.h \
 		../../CMath/include/CBBox2D.h \
 		../../CMath/include/CSize2D.h \
-		../../CMath/include/CISize2D.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
+		../../CMath/include/CAngle.h \
 		../include/CSVGBlockData.h \
 		../include/CSVGCSSData.h \
 		../include/CSVGStyleData.h \
+		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CFile/include/CFileType.h \
-		../../CStrUtil/include/CStrUtil.h \
 		CQSVGCanvas.h \
 		CQSVGPropertiesDlg.h \
 		CQSVGBufferView.h \
@@ -10406,17 +10990,9 @@ compiler_clean: compiler_moc_header_clean
 		../../CQUtil/include/CQUtil.h \
 		../../CUtil/include/CEvent.h \
 		../../CUtil/include/CKeyType.h \
-		../../CMath/include/CAngle.h \
-		../../CImageLib/include/CImageLib.h \
-		../../CImageLib/include/CImageState.h \
-		../../CImageLib/include/CImage.h \
-		../../CUtil/include/CRGBACombineDef.h \
-		../../CMath/include/CIBBox2D.h \
-		../../CMath/include/CIVector2D.h \
-		../../CImageLib/include/CImagePtr.h \
-		../../CImageLib/include/CImageMgr.h \
-		../../CImageLib/include/CImageAnim.h \
-		../../CImageLib/include/CImageFile.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CPen.h \
 		CQSVGEnum.h \
 		../include/CSVGFeColorMatrix.h \
 		../include/CSVGFilterBase.h \
@@ -10551,7 +11127,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGRenderer.h \
 		../include/CSVGTypes.h \
 		../../CUtil/include/COptVal.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../../CMath/include/CMatrix2D.h \
 		../../CMath/include/CMathGen.h \
 		../../COS/include/NaN.h \
@@ -10579,22 +11155,30 @@ compiler_clean: compiler_moc_header_clean
 		../../CUtil/include/CRefPtr.h \
 		../../CFont/include/CFontStyle.h \
 		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/CAlignType.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CStrUtil/include/CStrUtil.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
 		../../CUtil/include/CLineDash.h \
 		../../CUtil/include/CILineDash.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
 		../../CUtil/include/CFillType.h \
-		../../CUtil/include/CAlignType.h \
 		CDisplayTransform2D.h \
 		../../CMath/include/CDisplayRange2D.h \
 		CQSVGImageData.h \
 		../include/CSVGImageData.h \
-		../../CImageLib/include/CImage.h \
-		../../CUtil/include/CRGBACombineDef.h \
-		../../CMath/include/CIBBox2D.h \
-		../../CMath/include/CIVector2D.h \
-		../../CFile/include/CFileType.h \
-		../../CImageLib/include/CImagePtr.h \
 		CQSVGFontObj.h \
 		../include/CSVGFontObj.h \
 		../include/CSVGFontDef.h \
@@ -10602,14 +11186,10 @@ compiler_clean: compiler_moc_header_clean
 		../../CUtil/include/CEvent.h \
 		../../CUtil/include/CKeyType.h \
 		../../CMath/include/CAngle.h \
-		../../CImageLib/include/CImageLib.h \
-		../../CFile/include/CFile.h \
-		../../CFile/include/CFileBase.h \
-		../../CImageLib/include/CImageState.h \
-		../../CImageLib/include/CImageMgr.h \
-		../../CStrUtil/include/CStrUtil.h \
-		../../CImageLib/include/CImageAnim.h \
-		../../CImageLib/include/CImageFile.h \
+		../../CUtil/include/CBrush.h \
+		../../CUtil/include/CBrushStyle.h \
+		../../CUtil/include/CAutoPtr.h \
+		../../CUtil/include/CPen.h \
 		../../CMath/include/CLinearGradient.h \
 		../../CMath/include/CRadialGradient.h \
 		../../CMath/include/CMathGeom2D.h \
@@ -10622,7 +11202,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGImageData.h \
 		../include/CSVGTypes.h \
 		../../CUtil/include/COptVal.h \
-		../include/CScreenUnits.h \
+		../../CUtil/include/CScreenUnits.h \
 		../../CImageLib/include/CImage.h \
 		../../CUtil/include/CRGBA.h \
 		../../CUtil/include/CRGB.h \
@@ -10655,9 +11235,38 @@ compiler_clean: compiler_moc_header_clean
 		../../CUtil/include/CRefPtr.h \
 		../../CFont/include/CFontStyle.h \
 		../../CUtil/include/CFlags.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CFile/include/CFileType.h \
+		../../CUtil/include/CAlignType.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CHSV.h \
+		../../CUtil/include/CRGBUtil.h \
+		../../CUtil/include/CCMYK.h \
+		../../CUtil/include/CHSL.h \
+		../../CUtil/include/CHSB.h \
+		../../CUtil/include/CHSI.h \
+		../../CMath/include/CMathGen.h \
+		../../COS/include/NaN.h \
+		../../CRGBName/include/CRGBName.h \
+		../../CUtil/include/CColorComponent.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImage.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CMath/include/CISize2D.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CUtil/include/COptVal.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CStrUtil/include/CStrUtil.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
 		../include/CSVGFontDef.h \
-		../include/CScreenUnits.h \
-		../../CUtil/include/COptVal.h
+		../../CUtil/include/CScreenUnits.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFontObj.o CQSVGFontObj.cpp
 
 ../obj/CQSVGUtil.o: CQSVGUtil.cpp CQSVGUtil.h

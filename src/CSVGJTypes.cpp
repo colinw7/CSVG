@@ -60,16 +60,16 @@ CSVGJTransformList(CSVG *svg, const CMatrixStack2D &stack) :
 {
 }
 
-long
+COptLong
 CSVGJTransformList::
 length() const
 {
-  return matrixStack().length();
+  return COptLong(matrixStack().length());
 }
 
 CJValueP
 CSVGJTransformList::
-indexValue(int ind) const
+indexValue(long ind) const
 {
   if (ind >= 0 && ind < length()) {
     if (obj_)
@@ -148,7 +148,7 @@ execNameFn(CJavaScript *, const std::string &name, const Values &values)
 {
   if      (name == "getItem") {
     if (values.size() >= 2) {
-      long ind = values[1]->toInteger();
+      long ind = values[1]->toInteger().getValue(0);
 
       return indexValue(ind);
     }
@@ -338,11 +338,11 @@ execNameFn(CJavaScript *, const std::string &name, const Values &values)
     if (values.size() != 2 && values.size() != 4)
       return CJValueP();
 
-    double a = CMathGen::DegToRad(values[1]->toReal());
+    double a = CMathGen::DegToRad(values[1]->toReal().getValue(0));
 
     if (values.size() == 4) {
-      double cx = values[2]->toReal();
-      double cy = values[3]->toReal();
+      double cx = values[2]->toReal().getValue(0);
+      double cy = values[3]->toReal().getValue(0);
 
       setTransform(CMatrixStack2D::rotateTransform(a, CPoint2D(cx, cy)));
     }
@@ -353,11 +353,11 @@ execNameFn(CJavaScript *, const std::string &name, const Values &values)
     if (values.size() != 2 && values.size() != 3)
       return CJValueP();
 
-    double sx = values[1]->toReal();
+    double sx = values[1]->toReal().getValue(0);
     double sy = sx;
 
     if (values.size() == 3)
-      sy = values[2]->toReal();
+      sy = values[2]->toReal().getValue(0);
 
     setTransform(CMatrixStack2D::scaleTransform(sx, sy));
   }
@@ -365,8 +365,8 @@ execNameFn(CJavaScript *, const std::string &name, const Values &values)
     if (values.size() != 3)
       return CJValueP();
 
-    double dx = values[1]->toReal();
-    double dy = values[2]->toReal();
+    double dx = values[1]->toReal().getValue(0);
+    double dy = values[2]->toReal().getValue(0);
 
     setTransform(CMatrixStack2D::translateTransform(dx, dy));
   }
@@ -501,7 +501,7 @@ CSVGJMatrix::
 setProperty(CJavaScript *js, const std::string &key, CJValueP value)
 {
   if (key == "a" || key == "b" || key == "c" || key == "d" || key == "e" || key == "f") {
-    double v = value->toReal();
+    double v = value->toReal().getValue(0);
 
     CMatrix2D m = matrix();
 

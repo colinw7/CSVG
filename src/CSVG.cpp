@@ -4734,28 +4734,61 @@ processCSSIds()
   css_.getSelectors(selectors);
 
   for (const auto &selector : selectors) {
-    std::string id = selector.id();
-
-    const CCSS::StyleData &cssStyleData = css_.getStyleData(selector);
+    CCSS::SelectName::Type type = selector.type();
 
     std::string objName, objType, objClass;
 
-    auto p = id.find(".");
-
-    if (p != std::string::npos) {
-      objType  = id.substr(0, p);
-      objClass = id.substr(p + 1);
+    if      (type == CCSS::SelectName::Type::TYPE) {
+      objType = selector.name();
     }
-    else
-      objType = id;
-
-    if (objType.size() > 0 && objType[0] == '#') {
-      objName = objType.substr(1);
-      objType = "";
+    else if (type == CCSS::SelectName::Type::CLASS) {
+      objType  = selector.name();
+      objClass = selector.className();
+    }
+    else if (type == CCSS::SelectName::Type::ID) {
+      objName = selector.name();
     }
 
     if (objName == "" && objType == "" && objClass == "")
       continue;
+
+    //----
+
+    CCSS::SelectName::SubType subType = selector.subType();
+
+    if      (subType == CCSS::SelectName::SubType::CHILD) {
+    }
+    else if (subType == CCSS::SelectName::SubType::SIBLING) {
+    }
+    else if (subType == CCSS::SelectName::SubType::PRECEDER) {
+    }
+
+    std::string objSel = selector.expr();
+    std::string objFn  = selector.function();
+
+    std::string objFnArgs;
+
+    //---
+
+    if (objFn != "") {
+      auto p = objFn.find("(");
+
+      if (p != std::string::npos) {
+        objFnArgs = objFn.substr(p + 1);
+        objFn     = objFn.substr(0, p);
+
+        auto p1 = objFnArgs.find(")");
+
+        if (p1 != std::string::npos)
+          objFnArgs = objFnArgs.substr(0, p1);
+      }
+    }
+
+    //---
+
+    const CCSS::StyleData &cssStyleData = css_.getStyleData(selector);
+
+    //---
 
     if (objType  == "*") objType  = "";
     if (objClass == "*") objClass = "";

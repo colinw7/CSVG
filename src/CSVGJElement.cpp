@@ -307,7 +307,7 @@ execNameFn(CJavaScript *js, const std::string &name, const Values &values)
     double l = 0;
 
     if (values.size() >= 2)
-      l = values[1]->toReal();
+      l = values[1]->toReal().getValue(0);
 
     CPoint2D p;
     double   a;
@@ -317,7 +317,7 @@ execNameFn(CJavaScript *js, const std::string &name, const Values &values)
 
     //---
 
-    CJDictionary *dict = new CJDictionary(js);
+    CJDictionary *dict = new CJDictionary(js, "");
 
     dict->setRealProperty(js, "x", p.x);
     dict->setRealProperty(js, "y", p.y);
@@ -328,7 +328,7 @@ execNameFn(CJavaScript *js, const std::string &name, const Values &values)
     double l = 0;
 
     if (values.size() >= 2)
-      l = values[1]->toReal();
+      l = values[1]->toReal().getValue(0);
 
     CPoint2D p;
     double   a;

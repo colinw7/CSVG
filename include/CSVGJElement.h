@@ -24,9 +24,9 @@ class CSVGJElement : public CJObj {
 
   std::string toString() const override;
 
-  double toReal() const override { return 0; }
+  COptReal toReal() const override { return COptReal(); }
 
-  bool toBoolean() const override { return 0; }
+  bool toBoolean() const override { return false; }
 
   CJValueP getProperty(CJavaScript *js, const std::string &key) const override;
   void setProperty(CJavaScript *js, const std::string &key, CJValueP value) override;

@@ -190,6 +190,7 @@ unix:LIBS += \
 -L../../CCSS/lib \
 -L../../CXML/lib \
 -L../../CJavaScript/lib \
+-L../../CJson/lib \
 -L../../CReadLine/lib \
 -L../../CFont/lib \
 -L../../CUtil/lib \
@@ -202,6 +203,7 @@ unix:LIBS += \
 -L../../CRegExp/lib \
 -L../../CRGBName/lib \
 -lCSVG -lCQPropertyTree -lCQUtil \
--lCCSS -lCXML -lCJavaScript -lCReadLine -lCConfig -lCUtil -lCFont -lCImageLib \
+-lCCSS -lCXML -lCJavaScript -lCJson \
+-lCReadLine -lCConfig -lCUtil -lCFont -lCImageLib \
 -lCRGBName -lCFileUtil -lCFile -lCOS -lCStrUtil -lCRegExp \
 -lpng -ljpeg -ltre -lreadline

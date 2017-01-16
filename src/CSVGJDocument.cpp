@@ -205,7 +205,7 @@ execNameFn(CJavaScript *js, const std::string &name, const Values &values)
     return CJValueP(new CSVGJTransform(svg_, matrix));
   }
   else if (name == "createSVGPoint") {
-    CJDictionary *dict = new CJDictionary(js);
+    CJDictionary *dict = new CJDictionary(js, "");
 
     dict->setRealProperty(js, "x", 0.0);
     dict->setRealProperty(js, "y", 0.0);

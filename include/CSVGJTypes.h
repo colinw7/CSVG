@@ -68,15 +68,15 @@ class CSVGJTransformList : public CJObj {
     return ss.str();
   }
 
-  double toReal() const override { return 0; }
+  COptReal toReal() const override { return COptReal(); }
 
-  bool toBoolean() const override { return 0; }
+  bool toBoolean() const override { return false; }
 
   bool hasIndex() const override { return true; }
 
-  long length() const override;
+  COptLong length() const override;
 
-  CJValueP indexValue(int i) const override;
+  CJValueP indexValue(long i) const override;
 
   CMatrixStack2D matrixStack() const;
 
@@ -129,9 +129,9 @@ class CSVGJTransform : public CJObj {
     return ss.str();
   }
 
-  double toReal() const override { return 0; }
+  COptReal toReal() const override { return COptReal(); }
 
-  bool toBoolean() const override { return 0; }
+  bool toBoolean() const override { return false; }
 
   CMatrixStack2D::Transform transform() const;
   void setTransform(const CMatrixStack2D::Transform &transform);
@@ -183,9 +183,9 @@ class CSVGJMatrix : public CJObj {
     return ss.str();
   }
 
-  double toReal() const override { return 0; }
+  COptReal toReal() const override { return COptReal(); }
 
-  bool toBoolean() const override { return 0; }
+  bool toBoolean() const override { return false; }
 
   CMatrix2D matrix() const;
   void setMatrix(const CMatrix2D &m);
@@ -236,9 +236,9 @@ class CSVGJRect : public CJObj {
     return ss.str();
   }
 
-  double toReal() const override { return 0; }
+  COptReal toReal() const override { return COptReal(); }
 
-  bool toBoolean() const override { return 0; }
+  bool toBoolean() const override { return false; }
 
   CBBox2D rect() const;
   void setRect(const CBBox2D &rect);
@@ -289,9 +289,9 @@ class CSVGJNumberList : public CJObj {
     return ss.str();
   }
 
-  double toReal() const override { return 0; }
+  COptReal toReal() const override { return COptReal(); }
 
-  bool toBoolean() const override { return 0; }
+  bool toBoolean() const override { return false; }
 
   const Reals &numberList() const;
   void setNumberList(const Reals &reals);
@@ -337,7 +337,7 @@ class CSVGJNumber : public CJObj {
     return ss.str();
   }
 
-  double toReal() const override { return r_; }
+  COptReal toReal() const override { return COptReal(r_); }
 
   bool toBoolean() const override { return (r_ != 0.0); }
 
@@ -390,9 +390,9 @@ class CSVGJLengthList : public CJObj {
     return ss.str();
   }
 
-  double toReal() const override { return 0; }
+  COptReal toReal() const override { return COptReal(); }
 
-  bool toBoolean() const override { return 0; }
+  bool toBoolean() const override { return false; }
 
   const Lengths &getLengths() const;
   void setLengths(const Lengths &lengths);
@@ -446,9 +446,9 @@ class CSVGJLength : public CJObj {
     return ss.str();
   }
 
-  double toReal() const override { return 0; }
+  COptReal toReal() const override { return COptReal(); }
 
-  bool toBoolean() const override { return 0; }
+  bool toBoolean() const override { return false; }
 
   int cmp(CJObjP obj) const override;
 
@@ -498,9 +498,9 @@ class CSVGJStringList : public CJObj {
     return ss.str();
   }
 
-  double toReal() const override { return 0; }
+  COptReal toReal() const override { return COptReal(); }
 
-  bool toBoolean() const override { return 0; }
+  bool toBoolean() const override { return false; }
 
   const Strings &getStrings() const;
   void setStrings(const Strings &strings);
@@ -553,9 +553,9 @@ class CSVGJAngle : public CJObj {
     return ss.str();
   }
 
-  double toReal() const override { return angle_.degrees(); }
+  COptReal toReal() const override { return COptReal(angle_.degrees()); }
 
-  bool toBoolean() const override { return 0; }
+  bool toBoolean() const override { return false; }
 
   CAngle getAngle() const;
 
@@ -624,9 +624,9 @@ class CSVGJColor : public CJObj {
     return ss.str();
   }
 
-  double toReal() const override { return 0; }
+  COptReal toReal() const override { return COptReal(); }
 
-  bool toBoolean() const override { return 0; }
+  bool toBoolean() const override { return false; }
 
   CSVGColor getColor() const;
 

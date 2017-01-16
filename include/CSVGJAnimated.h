@@ -15,7 +15,7 @@ class CSVGJObjValue : public CJObj {
     return ss.str();
   }
 
-  double toReal() const override { return 0; }
+  COptReal toReal() const override { return COptReal(); }
 
   bool toBoolean() const override { return false; }
 

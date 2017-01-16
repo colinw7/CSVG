@@ -23,7 +23,7 @@ init()
   setProperty("document"   , document());
   setProperty("svgDocument", document());
 
-  CJDictionary *transformDict = new CJDictionary(this);
+  CJDictionary *transformDict = new CJDictionary(this, "");
 
   setProperty("SVGTransform", CJValueP(transformDict));
 
