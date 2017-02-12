@@ -31,7 +31,7 @@ class CSVGEllipse : public CSVGObject {
   CPoint2D getCenter() const;
   void setCenter(const CPoint2D &center);
 
-  void setRadius(double rx, double ry) { rx_ = rx; ry_ = ry; }
+  void setRadius(double rx, double ry) { rx_ = CScreenUnits(rx); ry_ = CScreenUnits(ry); }
 
   bool processOption(const std::string &name, const std::string &value) override;
 

@@ -30,7 +30,7 @@ class CSVGFontDef {
   void setSize(const CScreenUnits &lvalue);
 
   bool hasStyle() const { return style_.isValid(); }
-  CFontStyles getStyle() const { return style_.getValue(CFONT_STYLE_NORMAL); }
+  CFontStyles getStyle() const { return style_.getValue(CFontStyles(CFONT_STYLE_NORMAL)); }
   void setStyle(CFontStyles s);
 
   bool hasAngle() const { return angle_.isValid(); }

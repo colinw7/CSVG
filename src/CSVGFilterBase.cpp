@@ -203,7 +203,7 @@ getBBoxSubRegion(const CBBox2D &inBBox, const CBBox2D &objectBBox, CBBox2D &bbox
   //---
 
   if (hasX()) {
-    double x1 = getX().pxValue(1);
+    double x1 = getX().pxValue(CScreenUnits(1));
 
     if (primitiveUnits == CSVGCoordUnits::OBJECT_BBOX)
       x1 = CSVGUtil::map(x1, 0, 1, objectBBox.getXMin(), objectBBox.getXMax());

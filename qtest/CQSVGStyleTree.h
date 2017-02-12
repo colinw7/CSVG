@@ -16,9 +16,9 @@ class CQSVGStyleTree : public QTreeWidget {
   void load();
 
  private:
-  void addStyleData(QTreeWidgetItem *item, const CSVGCSSData::TypeStyleDataMap &styleData);
-  void addStyleData(QTreeWidgetItem *item, const CSVGCSSData::StyleDataMap &styleData);
-  void addStyleData(QTreeWidgetItem *item, const CSVGStyleData &styleData);
+  //void addStyleData(QTreeWidgetItem *item, const CSVGCSSData::TypeStyleDataMap &styleData);
+  //void addStyleData(QTreeWidgetItem *item, const CSVGCSSData::StyleDataMap &styleData);
+  //void addStyleData(QTreeWidgetItem *item, const CSVGStyleData &styleData);
 
  private:
   CQSVG *svg_;

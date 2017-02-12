@@ -25,19 +25,23 @@ class CSVGRadialGradient : public CSVGObject {
   CScreenUnits getCenterY(double y=0.5) const { return cy_.getValue(CScreenUnits(y)); }
   void setCenterY(const CScreenUnits &y) { cy_ = y; }
 
-  CPoint2D getCenter() { return CPoint2D(getCenterX().pxValue(1), getCenterY().pxValue(1)); }
-  void setCenter(const CPoint2D &center) { setCenterX(center.x); setCenterY(center.y); }
+  CPoint2D getCenter() {
+    return CPoint2D(getCenterX().pxValue(CScreenUnits(1)),
+                    getCenterY().pxValue(CScreenUnits(1)));
+  }
+  void setCenter(const CPoint2D &center) {
+    setCenterX(CScreenUnits(center.x)); setCenterY(CScreenUnits(center.y)); }
 
   CScreenUnits getRadius(double r=0.5) const { return radius_.getValue(CScreenUnits(r)); }
   void setRadius(const CScreenUnits &r) { radius_ = r; }
 
   double getFocusX() const {
-    return focusX_.isValid() ? focusX_.getValue() : getCenterX().pxValue(1);
+    return focusX_.isValid() ? focusX_.getValue() : getCenterX().pxValue(CScreenUnits(1));
   }
   void setFocusX(double x) { focusX_ = x; }
 
   double getFocusY() const {
-    return focusY_.isValid() ? focusY_.getValue() : getCenterY().pxValue(1);
+    return focusY_.isValid() ? focusY_.getValue() : getCenterY().pxValue(CScreenUnits(1));
   }
   void setFocusY(double y) { focusY_ = y; }
 

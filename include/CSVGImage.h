@@ -27,10 +27,10 @@ class CSVGImage : public CSVGObject {
   void setY(double y) { y_ = y; }
 
   double getWidth () const { return w_.getValue(CScreenUnits(100)).px().value(); }
-  void setWidth(double w) { w_ = w; }
+  void setWidth(double w) { w_ = CScreenUnits(w); }
 
   double getHeight() const { return h_.getValue(CScreenUnits(100)).px().value(); }
-  void setHeight(double h) { h_ = h; }
+  void setHeight(double h) { h_ = CScreenUnits(h); }
 
   CPoint2D getPosition() const { return CPoint2D(getX(), getY()); }
 

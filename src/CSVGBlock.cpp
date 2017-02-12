@@ -155,9 +155,9 @@ getWidth() const
     w = bbox.getWidth();
 
   if      (width_.isValid())
-    return width_.getValue().px(w).value();
+    return width_.getValue().px(CScreenUnits(w)).value();
   else if (height_.isValid())
-    return height_.getValue().px(w).value();
+    return height_.getValue().px(CScreenUnits(w)).value();
   else
     return w;
 }
@@ -174,9 +174,9 @@ getHeight() const
     h = bbox.getHeight();
 
   if      (height_.isValid())
-    return height_.getValue().px(h).value();
+    return height_.getValue().px(CScreenUnits(h)).value();
   else if (width_.isValid())
-    return width_.getValue().px(h).value();
+    return width_.getValue().px(CScreenUnits(h)).value();
   else
     return h;
 }
@@ -446,7 +446,7 @@ getBBox(CBBox2D &bbox) const
 
 void
 CSVGBlock::
-printRoot(std::ostream &os, const CCSS &css, bool hier) const
+printRoot(std::ostream &os, const std::vector<CCSS> &cssList, bool hier) const
 {
   if (hier) {
     os << "<svg";
@@ -455,12 +455,14 @@ printRoot(std::ostream &os, const CCSS &css, bool hier) const
 
     os << ">" << std::endl;
 
-    if (css.hasStyleData()) {
-      os << "<style type=\"text/css\"><![CDATA[" << std::endl;
+    for (const auto &css : cssList) {
+      if (css.hasStyleData()) {
+        os << "<style type=\"text/css\"><![CDATA[" << std::endl;
 
-      css.print(os);
+        css.print(os);
 
-      os << "]]></style>" << std::endl;
+        os << "]]></style>" << std::endl;
+      }
     }
 
     printChildren(os, hier);

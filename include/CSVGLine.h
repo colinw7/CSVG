@@ -25,12 +25,16 @@ class CSVGLine : public CSVGObject {
   void setY2(const CScreenUnits &y2) { y2_ = y2; }
 
   CPoint2D getStart(const CSize2D &size=CSize2D(1, 1)) const {
-    return CPoint2D(getX1().pxValue(size.getWidth()), getY1().pxValue(size.getHeight())); }
+    return CPoint2D(getX1().pxValue(CScreenUnits(size.getWidth ())),
+                    getY1().pxValue(CScreenUnits(size.getHeight()))); }
   CPoint2D getEnd  (const CSize2D &size=CSize2D(1, 1)) const {
-    return CPoint2D(getX2().pxValue(size.getWidth()), getY2().pxValue(size.getHeight())); }
+    return CPoint2D(getX2().pxValue(CScreenUnits(size.getWidth ())),
+                    getY2().pxValue(CScreenUnits(size.getHeight()))); }
 
-  void setStart(const CPoint2D &start) { setX1(start.x); setY1(start.y); }
-  void setEnd  (const CPoint2D &end  ) { setX2(end  .x); setY2(end  .y); }
+  void setStart(const CPoint2D &start) {
+    setX1(CScreenUnits(start.x)); setY1(CScreenUnits(start.y)); }
+  void setEnd  (const CPoint2D &end  ) {
+    setX2(CScreenUnits(end  .x)); setY2(CScreenUnits(end  .y)); }
 
   bool processOption(const std::string &name, const std::string &value) override;
 

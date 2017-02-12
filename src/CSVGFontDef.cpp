@@ -66,7 +66,7 @@ void
 CSVGFontDef::
 setWeight(const std::string &weight_def)
 {
-  CFontStyles weight = svg_.decodeFontWeightString(weight_def);
+  CFontStyles weight = CFontStyles(svg_.decodeFontWeightString(weight_def));
 
   if (hasStyle())
     style_.setValue(getStyle() | weight);
@@ -80,7 +80,7 @@ void
 CSVGFontDef::
 setStyle(const std::string &style_def)
 {
-  CFontStyles style = svg_.decodeFontStyleString(style_def);
+  CFontStyles style = CFontStyles(svg_.decodeFontStyleString(style_def));
 
   if (hasStyle())
     style_.setValue(getStyle() | style);

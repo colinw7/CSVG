@@ -49,6 +49,7 @@ $(LDEBUG) \
 -L$(LIB_DIR) \
 -L../../CSVG/lib \
 -L../../CCSS/lib \
+-L../../CJson/lib \
 -L../../CXML/lib \
 -L../../CJavaScript/lib \
 -L../../CImageLib/lib \
@@ -63,7 +64,7 @@ $(LDEBUG) \
 -L../../CUtil/lib \
 
 LIBS = \
--lCSVG -lCCSS -lCXML -lCJavaScript \
+-lCSVG -lCCSS -lCXML -lCJavaScript -lCJson \
 -lCImageLib -lCFont -lCConfig -lCFileUtil -lCFile \
 -lCUtil -lCOS -lCRGBName -lCRegExp -lCStrUtil \
 -ltre -lpng -ljpeg -lfreetype

@@ -141,55 +141,40 @@ update(const CSVGFill &fill)
   if      (fill.getColorValid())
     setColor(fill.getColor());
   else if (svg_.styleObject()) {
-    CSVGColor   color;
-    CSVGCSSType colorType;
-
-    if (svg_.getStyleFillColor(svg_.styleObject(), color, colorType))
-      setColor(color);
+    if (svg_.styleObject()->getFillColorValid())
+      setColor(svg_.styleObject()->getFlatFillColor().getValue());
   }
 
   // opacity
   if      (fill.getOpacityValid())
     setOpacity(fill.getOpacity());
   else if (svg_.styleObject()) {
-    double      opacity;
-    CSVGCSSType opacityType;
-
-    if (svg_.getStyleFillOpacity(svg_.styleObject(), opacity, opacityType))
-      setOpacity(opacity);
+    if (svg_.styleObject()->getFillOpacityValid())
+      setOpacity(svg_.styleObject()->getFlatFillOpacity().getValue());
   }
 
   // rule
   if      (fill.getRuleValid())
     setRule(fill.getRule());
   else if (svg_.styleObject()) {
-    CFillType   rule;
-    CSVGCSSType ruleType;
-
-    if (svg_.getStyleFillRule(svg_.styleObject(), rule, ruleType))
-      setRule(rule);
+    if (svg_.styleObject()->getFillRuleValid())
+      setRule(svg_.styleObject()->getFlatFillRule().getValue());
   }
 
   // url
   if      (fill.getUrlValid())
     setUrl(fill.getUrl());
   else if (svg_.styleObject()) {
-    std::string url;
-    CSVGCSSType urlType;
-
-    if (svg_.getStyleFillUrl(svg_.styleObject(), url, urlType))
-      setUrl(url);
+    if (svg_.styleObject()->getFillUrlValid())
+      setUrl(svg_.styleObject()->getFlatFillUrl().getValue());
   }
 
   // fill object
   if      (fill.getFillObjectValid())
     setFillObject(fill.getFillObject());
   else if (svg_.styleObject()) {
-    CSVGObject* fillObject;
-    CSVGCSSType fillObjectType;
-
-    if (svg_.getStyleFillFillObject(svg_.styleObject(), fillObject, fillObjectType))
-      setFillObject(fillObject);
+    if (svg_.styleObject()->getFillFillObjectValid())
+      setFillObject(svg_.styleObject()->getFlatFillFillObject().getValue());
   }
 
   //---

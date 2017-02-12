@@ -20,10 +20,10 @@ class CSVGMask : public CSVGObject {
   void setY(double y) { y_ = y; }
 
   double getWidth() const { return width_.isValid() ? width_ .getValue().px().value() : 1; }
-  void setWidth(double w) { width_ = w; }
+  void setWidth(double w) { width_ = CScreenUnits(w); }
 
   double getHeight() const { return height_.isValid() ? height_.getValue().px().value() : 1; }
-  void setHeight(double h) { height_ = h; }
+  void setHeight(double h) { height_ = CScreenUnits(h); }
 
   bool getUnitsValid() const { return units_.isValid(); }
   CSVGCoordUnits getUnits() const {

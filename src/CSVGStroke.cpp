@@ -264,110 +264,80 @@ update(const CSVGStroke &stroke)
   if      (stroke.getColorValid())
     setColor(stroke.getColor());
   else if (svg_.styleObject()) {
-    CSVGColor   color;
-    CSVGCSSType colorType;
-
-    if (svg_.getStyleStrokeColor(svg_.styleObject(), color, colorType))
-      setColor(color);
+    if (svg_.styleObject()->getStrokeColorValid())
+      setColor(svg_.styleObject()->getFlatStrokeColor().getValue());
   }
 
   // opacity
   if      (stroke.getOpacityValid())
     setOpacity(stroke.getOpacity());
   else if (svg_.styleObject()) {
-    double      opacity;
-    CSVGCSSType opacityType;
-
-    if (svg_.getStyleStrokeOpacity(svg_.styleObject(), opacity, opacityType))
-      opacity_ = opacity;
+    if (svg_.styleObject()->getStrokeOpacityValid())
+      opacity_ = svg_.styleObject()->getFlatStrokeOpacity().getValue();
   }
 
   // rule
   if      (stroke.getRuleValid())
     setRule(stroke.getRule());
   else if (svg_.styleObject()) {
-    CFillType   rule;
-    CSVGCSSType ruleType;
-
-    if (svg_.getStyleStrokeRule(svg_.styleObject(), rule, ruleType))
-      rule_ = rule;
+    if (svg_.styleObject()->getStrokeRuleValid())
+      rule_ = svg_.styleObject()->getFlatStrokeRule().getValue();
   }
 
   // url
   if      (stroke.getUrlValid())
     setUrl(stroke.getUrl());
   else if (svg_.styleObject()) {
-    std::string url;
-    CSVGCSSType urlType;
-
-    if (svg_.getStyleStrokeUrl(svg_.styleObject(), url, urlType))
-      url_ = url;
+    if (svg_.styleObject()->getStrokeUrlValid())
+      url_ = svg_.styleObject()->getFlatStrokeUrl().getValue();
   }
 
   // fill object
   if      (stroke.getFillObjectValid())
     setFillObject(stroke.getFillObject());
   else if (svg_.styleObject()) {
-    CSVGObject* fillObject;
-    CSVGCSSType fillObjectType;
-
-    if (svg_.getStyleStrokeFillObject(svg_.styleObject(), fillObject, fillObjectType))
-      fillObject_ = fillObject;
+    if (svg_.styleObject()->getStrokeFillObjectValid())
+      fillObject_ = svg_.styleObject()->getFlatStrokeFillObject().getValue();
   }
 
   // width
   if      (stroke.getWidthValid())
     setWidth(stroke.getWidth());
   else if (svg_.styleObject()) {
-    double      width;
-    CSVGCSSType widthType;
-
-    if (svg_.getStyleStrokeWidth(svg_.styleObject(), width, widthType))
-      setWidth(width);
+    if (svg_.styleObject()->getStrokeWidthValid())
+      setWidth(svg_.styleObject()->getFlatStrokeWidth().getValue());
   }
 
   // dash
   if      (stroke.getDashValid())
     setDash(stroke.getDash());
   else if (svg_.styleObject()) {
-    CSVGStrokeDash dash;
-    CSVGCSSType    dashType;
-
-    if (svg_.getStyleStrokeDash(svg_.styleObject(), dash, dashType))
-      setDash(dash);
+    if (svg_.styleObject()->getStrokeDashValid())
+      setDash(svg_.styleObject()->getFlatStrokeLineDash().getValue());
   }
 
   // line cap
   if      (stroke.getLineCapValid())
     setLineCap(stroke.getLineCap());
   else if (svg_.styleObject()) {
-    CLineCapType lineCap;
-    CSVGCSSType  lineCapType;
-
-    if (svg_.getStyleStrokeCap(svg_.styleObject(), lineCap, lineCapType))
-      setLineCap(lineCap);
+    if (svg_.styleObject()->getStrokeLineCapValid())
+      setLineCap(svg_.styleObject()->getFlatStrokeLineCap().getValue());
   }
 
   // line join
   if      (stroke.getLineJoinValid())
     setLineJoin(stroke.getLineJoin());
   else if (svg_.styleObject()) {
-    CLineJoinType lineJoin;
-    CSVGCSSType   lineJoinType;
-
-    if (svg_.getStyleStrokeJoin(svg_.styleObject(), lineJoin, lineJoinType))
-      setLineJoin(lineJoin);
+    if (svg_.styleObject()->getStrokeLineJoinValid())
+      setLineJoin(svg_.styleObject()->getFlatStrokeLineJoin().getValue());
   }
 
   // mitre limit
   if      (stroke.getMitreLimitValid())
     setMitreLimit(stroke.getMitreLimit());
   else if (svg_.styleObject()) {
-    double      mitreLimit;
-    CSVGCSSType mitreLimitType;
-
-    if (svg_.getStyleStrokeMitreLimit(svg_.styleObject(), mitreLimit, mitreLimitType))
-      setMitreLimit(mitreLimit);
+    if (svg_.styleObject()->getStrokeMitreLimitValid())
+      setMitreLimit(svg_.styleObject()->getFlatStrokeMitreLimit().getValue());
   }
 
   //---

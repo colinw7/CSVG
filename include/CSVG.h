@@ -9,7 +9,6 @@
 #include <CSVGEventValue.h>
 #include <CSVGTimeValue.h>
 #include <CSVGPreserveAspect.h>
-#include <CSVGCSSData.h>
 #include <CSVGColor.h>
 #include <CSVGOrient.h>
 
@@ -400,10 +399,6 @@ class CSVG {
 
   //---
 
-  const CSVGCSSData &getCSSData() const { return cssData_; }
-
-  //---
-
   static const Colors &getColors() { return colors_; }
 
   //---
@@ -672,37 +667,16 @@ class CSVG {
 
   bool processCSSIds();
 
-  void addStyleValues(CSVGStyleData &svgStyleData, const CCSS::StyleData &cssStyleData);
-
   void setScript(const std::string &str);
   void setScriptFile(const std::string &filename);
 
-  CSVGStyleData &getGlobalStyleData   ();
-  CSVGStyleData &getNameStyleData     (const std::string &objName);
-  CSVGStyleData &getTypeStyleData     (const std::string &objType);
-  CSVGStyleData &getClassStyleData    (const std::string &objClass);
-  CSVGStyleData &getTypeClassStyleData(const std::string &objType, const std::string &objClass);
+  //---
 
-  bool getStyleStrokeColor     (const CSVGObject *obj, CSVGColor &color, CSVGCSSType &type);
-  bool getStyleStrokeOpacity   (const CSVGObject *obj, double &opacity, CSVGCSSType &type);
-  bool getStyleStrokeRule      (const CSVGObject *obj, CFillType &rule, CSVGCSSType &type);
-  bool getStyleStrokeUrl       (const CSVGObject *obj, std::string &url, CSVGCSSType &type);
-  bool getStyleStrokeFillObject(const CSVGObject *obj, CSVGObject* &object, CSVGCSSType &type);
-  bool getStyleStrokeWidth     (const CSVGObject *obj, double &width, CSVGCSSType &type);
-  bool getStyleStrokeDash      (const CSVGObject *obj, CSVGStrokeDash &dash, CSVGCSSType &type);
-  bool getStyleStrokeCap       (const CSVGObject *obj, CLineCapType &cap, CSVGCSSType &type);
-  bool getStyleStrokeJoin      (const CSVGObject *obj, CLineJoinType &join, CSVGCSSType &type);
-  bool getStyleStrokeMitreLimit(const CSVGObject *obj, double &limit, CSVGCSSType &type);
+  bool applyStyle(CSVGObject *obj);
 
-  bool getStyleFillColor     (const CSVGObject *obj, CSVGColor &color, CSVGCSSType &type);
-  bool getStyleFillOpacity   (const CSVGObject *obj, double &opacity, CSVGCSSType &type);
-  bool getStyleFillRule      (const CSVGObject *obj, CFillType &rule, CSVGCSSType &type);
-  bool getStyleFillUrl       (const CSVGObject *obj, std::string &url, CSVGCSSType &type);
-  bool getStyleFillFillObject(const CSVGObject *obj, CSVGObject* &object, CSVGCSSType &type);
+  bool visitStyleData(const CCSS &css, const CCSSTagDataP &obj);
 
-  bool getStyleMarkerStart(const CSVGObject *obj, CSVGObject* &marker, CSVGCSSType &type);
-  bool getStyleMarkerMid  (const CSVGObject *obj, CSVGObject* &marker, CSVGCSSType &type);
-  bool getStyleMarkerEnd  (const CSVGObject *obj, CSVGObject* &marker, CSVGCSSType &type);
+  //---
 
   void getAllChildren(ObjectList &objects) const;
 
@@ -753,6 +727,7 @@ class CSVG {
   typedef std::vector<StyleData>              StyleDataStack;
   typedef std::vector<CSVGBlockData>          BlockDataStack;
   typedef COptValT<CSVGXmlStyleSheet>         OptXmlStyleSheet;
+  typedef std::vector<CCSS>                   CSSList;
 
   static Colors colors_;
 
@@ -771,8 +746,7 @@ class CSVG {
   StyleDataStack          styleDataStack_;
   FontList                fontList_;
   NameObjectMap           idObjectMap_;
-  CSVGCSSData             cssData_;
-  CCSS                    css_;
+  CSSList                 cssList_;
   CSVGJavaScript*         js_ { 0 };
   CSVGObject*             eventObject_ { 0 };
   ObjectList              drawObjects_;

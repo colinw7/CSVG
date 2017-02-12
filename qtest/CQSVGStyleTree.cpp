@@ -17,6 +17,7 @@ load()
 
   setColumnCount(2);
 
+#if 0
   const CSVGCSSData &cssData = svg_->getCSSData();
 
   //---
@@ -58,8 +59,10 @@ load()
   addStyleData(typeClassItem, cssData.typeClassStyle());
 
   addTopLevelItem(typeClassItem);
+#endif
 }
 
+#if 0
 void
 CQSVGStyleTree::
 addStyleData(QTreeWidgetItem *item, const CSVGCSSData::TypeStyleDataMap &styleData)
@@ -98,3 +101,4 @@ addStyleData(QTreeWidgetItem *item, const CSVGStyleData &styleData)
     item->addChild(childItem);
   }
 }
+#endif

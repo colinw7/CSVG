@@ -40,8 +40,9 @@ class CSVGPathPart;
 
 class CSVGObject {
  public:
-  typedef std::list<CSVGObject *>   ObjectList;
-  typedef std::vector<CSVGObject *> ObjectArray;
+  typedef std::list<CSVGObject *>           ObjectList;
+  typedef std::vector<CSVGObject *>         ObjectArray;
+  typedef std::map<std::string,std::string> NameValues;
 
  protected:
   CObjTypeMgr &getTypeMgr() const {
@@ -318,24 +319,39 @@ class CSVGObject {
   void setStrokeOpacity(double t) { stroke_.setOpacity(t); }
   bool getStrokeOpacityValid() const { return stroke_.getOpacityValid(); }
 
+  void setStrokeRule(const std::string &opacity) { stroke_.setRule(opacity); }
+  void setStrokeRule(const CFillType &rule) { stroke_.setRule(rule); }
+  bool getStrokeRuleValid() const { return stroke_.getRuleValid(); }
+
+  void setStrokeUrl(const std::string &url) { stroke_.setUrl(url); }
+  bool getStrokeUrlValid() const { return stroke_.getUrlValid(); }
+
+  void setStrokeFillObject(CSVGObject *object) { stroke_.setFillObject(object); }
+  bool getStrokeFillObjectValid() const { return stroke_.getFillObjectValid(); }
+
   void setStrokeWidth(const std::string &width) { stroke_.setWidth(width); }
   void setStrokeWidth(double width) { stroke_.setWidth(width); }
+  bool getStrokeWidthValid() const { return stroke_.getWidthValid(); }
 
   void setStrokeDashArray(const std::string &dashStr) { stroke_.setDashArray(dashStr); }
   void setStrokeDashOffset(const std::string &offsetStr) { stroke_.setDashOffset(offsetStr); }
 
   void setStrokeDash(const CSVGStrokeDash &dash) { stroke_.setDash(dash); }
   CSVGStrokeDash getStrokeDash() const { return stroke_.getDash(); }
+  bool getStrokeDashValid() const { return stroke_.getDashValid(); }
 
   void setStrokeLineCap(const std::string &capStr) { stroke_.setLineCap(capStr); }
   void setStrokeLineCap(const CLineCapType &cap) { stroke_.setLineCap(cap); }
   CLineCapType getStrokeLineCap() { return stroke_.getLineCap(); }
+  bool getStrokeLineCapValid() const { return stroke_.getLineCapValid(); }
 
   void setStrokeLineJoin(const std::string &joinStr) { stroke_.setLineJoin(joinStr); }
   void setStrokeLineJoin(const CLineJoinType &join) { stroke_.setLineJoin(join); }
   CLineJoinType getStrokeLineJoin() { return stroke_.getLineJoin(); }
+  bool getStrokeLineJoinValid() const { return stroke_.getLineJoinValid(); }
 
   void setStrokeMitreLimit(const std::string &limitStr) { stroke_.setMitreLimit(limitStr); }
+  bool getStrokeMitreLimitValid() const { return stroke_.getMitreLimitValid(); }
 
   //---
 
@@ -364,9 +380,15 @@ class CSVGObject {
 
   void setFillRule(const std::string &rule) { fill_.setRule(rule); }
   CFillType getFillRule() const { return fill_.getRule(); }
+  bool getFillRuleValid() const { return fill_.getRuleValid(); }
 
-  void setFillObject(CSVGObject *object) { fill_.setFillObject(object); }
-  CSVGObject *getFillObject() const { return fill_.getFillObject(); }
+  void setFillUrl(const std::string &url) { fill_.setUrl(url); }
+  std::string getFillUrl() const { return fill_.getUrl(); }
+  bool getFillUrlValid() const { return fill_.getUrlValid(); }
+
+  void setFillFillObject(CSVGObject *object) { fill_.setFillObject(object); }
+  CSVGObject *getFillFillObject() const { return fill_.getFillObject(); }
+  bool getFillFillObjectValid() const { return fill_.getFillObjectValid(); }
 
   //---
 
@@ -434,6 +456,8 @@ class CSVGObject {
   //---
 
   void setNameValue(const std::string &name, const std::string &value);
+
+  void setStyleValue(const std::string &name, const std::string &value);
 
   virtual COptString getNameValue       (const std::string &name) const;
   virtual COptReal   getRealNameValue   (const std::string &name) const;
@@ -508,6 +532,11 @@ class CSVGObject {
 
   bool hasWordSpacing() const { return wordSpacing_.isValid(); }
   CScreenUnits getWordSpacing() const { return wordSpacing_.getValue(CScreenUnits()); }
+
+  //---
+
+  const NameValues &nameValues() const { return nameValues_; }
+  const NameValues &styleValues() const { return styleValues_; }
 
   //---
 
@@ -662,8 +691,7 @@ class CSVGObject {
   CSVGObject &operator=(const CSVGObject &rhs);
 
  protected:
-  typedef std::map<std::string,std::string> NameValues;
-  typedef std::vector<std::string>          StringVector;
+  typedef std::vector<std::string> StringVector;
 
   CSVG&                        svg_;
   COptString                   id_;
@@ -685,6 +713,7 @@ class CSVGObject {
   COptValT<CScreenUnits>       letterSpacing_;
   COptValT<CScreenUnits>       wordSpacing_;
   NameValues                   nameValues_;
+  NameValues                   styleValues_;
   CMatrixStack2D               transform_;
   CSVGEnableBackground         enableBackground_ { CSVGEnableBackground::ACCUMULATE };
   CBBox2D                      enableBackgroundRect_;

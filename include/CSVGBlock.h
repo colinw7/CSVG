@@ -28,10 +28,10 @@ class CSVGBlock : public CSVGObject {
   void setY(double y) { y_ = y; }
 
   double getWidth() const;
-  void setWidth(double w) { width_ = w; }
+  void setWidth(double w) { width_ = CScreenUnits(w); }
 
   double getHeight() const;
-  void setHeight(double h) { height_ = h; }
+  void setHeight(double h) { height_ = CScreenUnits(h); }
 
   // preserve aspect
   bool hasPreserveAspect() const { return preserveAspect_.isValid(); }
@@ -82,7 +82,7 @@ class CSVGBlock : public CSVGObject {
 
   void drawTerm() override;
 
-  void printRoot(std::ostream &os, const CCSS &css, bool hier) const;
+  void printRoot(std::ostream &os, const std::vector<CCSS> &cssList, bool hier) const;
 
   void print(std::ostream &os, bool hier) const override;
 

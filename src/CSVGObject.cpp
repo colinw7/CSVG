@@ -293,12 +293,6 @@ getFlatStrokeColor() const
     parent = parent->getParent();
   }
 
-  CSVGColor   color;
-  CSVGCSSType colorType;
-
-  if (svg_.getStyleStrokeColor(this, color, colorType))
-    return COptValT<CSVGColor>(color);
-
   return COptValT<CSVGColor>();
 }
 
@@ -319,12 +313,6 @@ getFlatStrokeOpacity() const
     parent = parent->getParent();
   }
 
-  double      opacity = 1.0;
-  CSVGCSSType opacityType;
-
-  if (svg_.getStyleStrokeOpacity(this, opacity, opacityType))
-    return COptReal(opacity);
-
   return COptReal();
 }
 
@@ -343,12 +331,6 @@ getFlatStrokeRule() const
 
     parent = parent->getParent();
   }
-
-  CFillType   rule = FILL_TYPE_EVEN_ODD;
-  CSVGCSSType ruleType;
-
-  if (svg_.getStyleStrokeRule(this, rule, ruleType))
-    return COptValT<CFillType>(rule);
 
   return COptValT<CFillType>();
 }
@@ -369,12 +351,6 @@ getFlatStrokeUrl() const
     parent = parent->getParent();
   }
 
-  std::string url;
-  CSVGCSSType urlType;
-
-  if (svg_.getStyleStrokeUrl(this, url, urlType))
-    return COptString(url);
-
   return COptString();
 }
 
@@ -393,12 +369,6 @@ getFlatStrokeFillObject() const
 
     parent = parent->getParent();
   }
-
-  CSVGObject* fillObject = nullptr;
-  CSVGCSSType fillObjectType;
-
-  if (svg_.getStyleStrokeFillObject(this, fillObject, fillObjectType))
-    return COptValT<CSVGObject*>(fillObject);
 
   return COptValT<CSVGObject*>();
 }
@@ -419,12 +389,6 @@ getFlatStrokeWidth() const
     parent = parent->getParent();
   }
 
-  double      width = 1.0;
-  CSVGCSSType widthType;
-
-  if (svg_.getStyleStrokeWidth(this, width, widthType))
-    return COptReal(width);
-
   return COptReal();
 }
 
@@ -443,12 +407,6 @@ getFlatStrokeLineDash() const
 
     parent = parent->getParent();
   }
-
-  CSVGStrokeDash dash;
-  CSVGCSSType    dashType;
-
-  if (svg_.getStyleStrokeDash(this, dash, dashType))
-    return COptValT<CSVGStrokeDash>(dash);
 
   return COptValT<CSVGStrokeDash>();
 }
@@ -469,12 +427,6 @@ getFlatStrokeLineCap() const
     parent = parent->getParent();
   }
 
-  CLineCapType lineCap = LINE_CAP_TYPE_BUTT;
-  CSVGCSSType  lineCapType;
-
-  if (svg_.getStyleStrokeCap(this, lineCap, lineCapType))
-    return COptValT<CLineCapType>(lineCap);
-
   return COptValT<CLineCapType>();
 }
 
@@ -494,12 +446,6 @@ getFlatStrokeLineJoin() const
     parent = parent->getParent();
   }
 
-  CLineJoinType lineJoin = LINE_JOIN_TYPE_MITRE;
-  CSVGCSSType   lineJoinType;
-
-  if (svg_.getStyleStrokeJoin(this, lineJoin, lineJoinType))
-    return COptValT<CLineJoinType>(lineJoin);
-
   return COptValT<CLineJoinType>();
 }
 
@@ -518,12 +464,6 @@ getFlatStrokeMitreLimit() const
 
     parent = parent->getParent();
   }
-
-  double      mitreLimit = 0.0;
-  CSVGCSSType mitreLimitType;
-
-  if (svg_.getStyleStrokeMitreLimit(this, mitreLimit, mitreLimitType))
-    return COptReal(mitreLimit);
 
   return COptReal();
 }
@@ -599,12 +539,6 @@ getFlatFillColor() const
     parent = parent->getParent();
   }
 
-  CSVGColor   color;
-  CSVGCSSType colorType;
-
-  if (svg_.getStyleFillColor(this, color, colorType))
-    return COptValT<CSVGColor>(color);
-
   return COptValT<CSVGColor>();
 }
 
@@ -624,12 +558,6 @@ getFlatFillOpacity() const
 
     parent = parent->getParent();
   }
-
-  double      opacity = 1.0;
-  CSVGCSSType opacityType;
-
-  if (svg_.getStyleFillOpacity(this, opacity, opacityType))
-    return COptReal(opacity);
 
   return COptReal();
 }
@@ -651,12 +579,6 @@ getFlatFillRule() const
     parent = parent->getParent();
   }
 
-  CFillType   rule = FILL_TYPE_EVEN_ODD;
-  CSVGCSSType ruleType;
-
-  if (svg_.getStyleFillRule(this, rule, ruleType))
-    return COptValT<CFillType>(rule);
-
   return COptValT<CFillType>();
 }
 
@@ -677,12 +599,6 @@ getFlatFillUrl() const
     parent = parent->getParent();
   }
 
-  std::string url;
-  CSVGCSSType urlType;
-
-  if (svg_.getStyleFillUrl(this, url, urlType))
-    return COptString(url);
-
   return COptString();
 }
 
@@ -702,12 +618,6 @@ getFlatFillFillObject() const
 
     parent = parent->getParent();
   }
-
-  CSVGObject* fillObject = nullptr;
-  CSVGCSSType fillObjectType;
-
-  if (svg_.getStyleFillFillObject(this, fillObject, fillObjectType))
-    return COptValT<CSVGObject *>(fillObject);
 
   return COptValT<CSVGObject *>();
 }
@@ -764,7 +674,7 @@ getFlatFontStyle() const
     parent = parent->getParent();
   }
 
-  return CFONT_STYLE_NORMAL;
+  return CFontStyles(CFONT_STYLE_NORMAL);
 }
 
 CScreenUnits
@@ -1747,6 +1657,83 @@ setNameValue(const std::string &name, const std::string &value)
   nameValues_[name] = value;
 }
 
+void
+CSVGObject::
+setStyleValue(const std::string &name, const std::string &value)
+{
+  styleValues_[name] = value;
+
+  std::string lname = CStrUtil::toLower(name);
+
+  if      (lname == "fill")
+    fill_.setColor(value);
+  else if (lname == "fill-opacity")
+    fill_.setOpacity(value);
+  else if (lname == "stroke")
+    stroke_.setColor(value);
+  else if (lname == "stroke-width")
+    stroke_.setWidth(value);
+  else if (lname == "stroke-dasharray")
+    stroke_.setDashArray(value);
+  else if (lname == "marker-start") {
+    std::string  id;
+    CSVGObject  *obj;
+
+    if (svg_.decodeUrlObject(value, id, &obj))
+      marker_.setStart(obj);
+    else
+      CSVGLog() << "Illegal url value '" << id << "' for " << name;
+  }
+  else if (lname == "marker-mid") {
+    std::string  id;
+    CSVGObject  *obj;
+
+    if (svg_.decodeUrlObject(value, id, &obj))
+      marker_.setMid(obj);
+    else
+      CSVGLog() << "Illegal url value '" << id << "' for " << name;
+  }
+  else if (lname == "marker-end") {
+    std::string  id;
+    CSVGObject  *obj;
+
+    if (svg_.decodeUrlObject(value, id, &obj))
+      marker_.setEnd(obj);
+    else
+      CSVGLog() << "Illegal url value '" << id << "' for " << name;
+  }
+  else if (lname == "marker") {
+    std::string  id;
+    CSVGObject  *obj;
+
+    if (svg_.decodeUrlObject(value, id, &obj)) {
+      marker_.setStart(obj);
+      marker_.setMid  (obj);
+      marker_.setEnd  (obj);
+    }
+    else
+      CSVGLog() << "Illegal url value '" << id << "' for " << name;
+  }
+  else if (lname == "font-family") {
+    // TODO
+    CSVGLog() << "Unhandled style font-family: " << value;
+  }
+  else if (lname == "font-weight") {
+    // TODO
+    CSVGLog() << "Unhandled style font-weight: " << value;
+  }
+  else if (lname == "font-style") {
+    // TODO
+    CSVGLog() << "Unhandled style font-style: " << value;
+  }
+  else if (lname == "src") {
+    // TODO
+    CSVGLog() << "Unhandled style src: " << value;
+  }
+  else
+    CSVGLog() << "Unhandled style name: " << name << ":" << value;
+}
+
 bool
 CSVGObject::
 interpValue(const std::string &name, const std::string &from, const std::string &to,
@@ -1883,14 +1870,6 @@ getFlatMarkerStart() const
   if (marker)
     return marker;
 
-  CSVGCSSType cssType;
-
-  if (svg_.getStyleMarkerStart(this, marker, cssType))
-    return marker;
-
-  if (parent_)
-    return parent_->getFlatMarkerStart();
-
   return nullptr;
 }
 
@@ -1901,11 +1880,6 @@ getFlatMarkerMid() const
   CSVGObject *marker = marker_.getMid();
 
   if (marker)
-    return marker;
-
-  CSVGCSSType cssType;
-
-  if (svg_.getStyleMarkerMid(this, marker, cssType))
     return marker;
 
   if (parent_)
@@ -1921,11 +1895,6 @@ getFlatMarkerEnd() const
   CSVGObject *marker = marker_.getEnd();
 
   if (marker)
-    return marker;
-
-  CSVGCSSType cssType;
-
-  if (svg_.getStyleMarkerEnd(this, marker, cssType))
     return marker;
 
   if (parent_)

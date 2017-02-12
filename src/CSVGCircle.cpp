@@ -48,8 +48,8 @@ CPoint2D
 CSVGCircle::
 getCenter() const
 {
-  double xc = getCenterX().pxValue(1);
-  double yc = getCenterY().pxValue(1);
+  double xc = getCenterX().pxValue(CScreenUnits(1));
+  double yc = getCenterY().pxValue(CScreenUnits(1));
 
   return CPoint2D(xc, yc);
 }
@@ -58,8 +58,8 @@ void
 CSVGCircle::
 setCenter(const CPoint2D &center)
 {
-  setCenterX(center.x);
-  setCenterY(center.y);
+  setCenterX(CScreenUnits(center.x));
+  setCenterY(CScreenUnits(center.y));
 }
 
 bool
@@ -110,11 +110,11 @@ getNameValue(const std::string &name) const
   double h = bbox.getHeight();
 
   if      (name == "cx")
-    str = CStrUtil::toString(getCenterX().pxValue(w));
+    str = CStrUtil::toString(getCenterX().pxValue(CScreenUnits(w)));
   else if (name == "cy")
-    str = CStrUtil::toString(getCenterY().pxValue(h));
+    str = CStrUtil::toString(getCenterY().pxValue(CScreenUnits(h)));
   else if (name == "r")
-    str = CStrUtil::toString(getRadius ().pxValue(w));
+    str = CStrUtil::toString(getRadius ().pxValue(CScreenUnits(w)));
   else
     str = CSVGObject::getNameValue(name);
 
@@ -133,9 +133,9 @@ draw()
   double w = bbox.getWidth ();
   double h = bbox.getHeight();
 
-  double xc = getCenterX().pxValue(w);
-  double yc = getCenterY().pxValue(h);
-  double r  = getRadius ().pxValue(w);
+  double xc = getCenterX().pxValue(CScreenUnits(w));
+  double yc = getCenterY().pxValue(CScreenUnits(h));
+  double r  = getRadius ().pxValue(CScreenUnits(w));
 
   if (r <= 0)
     return false;
@@ -150,9 +150,9 @@ CSVGCircle::
 getBBox(CBBox2D &bbox) const
 {
   if (! hasViewBox()) {
-    double xc = getCenterX().pxValue(1);
-    double yc = getCenterY().pxValue(1);
-    double r  = getRadius ().pxValue(1);
+    double xc = getCenterX().pxValue(CScreenUnits(1));
+    double yc = getCenterY().pxValue(CScreenUnits(1));
+    double r  = getRadius ().pxValue(CScreenUnits(1));
 
     bbox = CBBox2D(xc - r, yc - r, xc + r, yc + r);
   }
@@ -177,7 +177,9 @@ void
 CSVGCircle::
 resizeTo(const CSize2D &size)
 {
-  setRadius(std::min(size.getWidth(), size.getHeight())/2.0);
+  double r = std::min(size.getWidth(), size.getHeight())/2.0;
+
+  setRadius(CScreenUnits(r));
 }
 
 void

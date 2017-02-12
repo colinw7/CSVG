@@ -59,7 +59,6 @@
 #include <CSVGSet.h>
 #include <CSVGStop.h>
 #include <CSVGStyle.h>
-#include <CSVGStyleData.h>
 #include <CSVGSwitch.h>
 #include <CSVGSymbol.h>
 #include <CSVGText.h>
@@ -69,6 +68,7 @@
 #include <CSVGUse.h>
 #include <CSVGUtil.h>
 #include <CSVGFontObj.h>
+#include <CSVGObjectCSSTagData.h>
 
 #include <CSVGJavaScript.h>
 
@@ -88,8 +88,7 @@ CSVG::Colors CSVG::colors_;
 CSVG::
 CSVG(CSVGRenderer *renderer) :
  renderer_ (renderer),
- styleData_(*this),
- cssData_  (*this)
+ styleData_(*this)
 {
   xml_ = new CXML();
 
@@ -294,7 +293,7 @@ clear()
   fontList_.clear();
 
   idObjectMap_.clear();
-  cssData_    .clear();
+  cssList_    .clear();
 
   styleData_.reset();
 
@@ -377,6 +376,8 @@ read(const std::string &filename, CSVGObject *object)
 
     if (object1)
       object->addChildObject(object1);
+
+    applyStyle(object1);
   }
 
   //------
@@ -4709,111 +4710,28 @@ bool
 CSVG::
 readCSSFile(const std::string &filename)
 {
-  if (! css_.processFile(filename))
+  CCSS css;
+
+  if (! css.processFile(filename))
     return false;
 
-  return processCSSIds();
+  cssList_.push_back(css);
+
+  return true;
 }
 
 bool
 CSVG::
 readCSSString(const std::string &str)
 {
-  if (! css_.processLine(str))
+  CCSS css;
+
+  if (! css.processLine(str))
     return false;
 
-  return processCSSIds();
-}
-
-bool
-CSVG::
-processCSSIds()
-{
-  std::vector<CCSS::Selector> selectors;
-
-  css_.getSelectors(selectors);
-
-  for (const auto &selector : selectors) {
-    CCSS::SelectName::Type type = selector.type();
-
-    std::string objName, objType, objClass;
-
-    if      (type == CCSS::SelectName::Type::TYPE) {
-      objType = selector.name();
-    }
-    else if (type == CCSS::SelectName::Type::CLASS) {
-      objType  = selector.name();
-      objClass = selector.className();
-    }
-    else if (type == CCSS::SelectName::Type::ID) {
-      objName = selector.name();
-    }
-
-    if (objName == "" && objType == "" && objClass == "")
-      continue;
-
-    //----
-
-    CCSS::SelectName::SubType subType = selector.subType();
-
-    if      (subType == CCSS::SelectName::SubType::CHILD) {
-    }
-    else if (subType == CCSS::SelectName::SubType::SIBLING) {
-    }
-    else if (subType == CCSS::SelectName::SubType::PRECEDER) {
-    }
-
-    std::string objSel = selector.expr();
-    std::string objFn  = selector.function();
-
-    std::string objFnArgs;
-
-    //---
-
-    if (objFn != "") {
-      auto p = objFn.find("(");
-
-      if (p != std::string::npos) {
-        objFnArgs = objFn.substr(p + 1);
-        objFn     = objFn.substr(0, p);
-
-        auto p1 = objFnArgs.find(")");
-
-        if (p1 != std::string::npos)
-          objFnArgs = objFnArgs.substr(0, p1);
-      }
-    }
-
-    //---
-
-    const CCSS::StyleData &cssStyleData = css_.getStyleData(selector);
-
-    //---
-
-    if (objType  == "*") objType  = "";
-    if (objClass == "*") objClass = "";
-
-    if      (objName != "")
-      addStyleValues(cssData_.getNameStyleData(objName), cssStyleData);
-    else if (objType != "" && objClass == "")
-      addStyleValues(cssData_.getTypeStyleData(objType), cssStyleData);
-    else if (objType == "" && objClass != "")
-      addStyleValues(cssData_.getClassStyleData(objClass), cssStyleData);
-    else if (objType != "" && objClass  != "")
-      addStyleValues(cssData_.getTypeClassStyleData(objType, objClass), cssStyleData);
-    else
-      addStyleValues(cssData_.getGlobalStyleData(), cssStyleData);
-  }
+  cssList_.push_back(css);
 
   return true;
-}
-
-void
-CSVG::
-addStyleValues(CSVGStyleData &svgStyleData, const CCSS::StyleData &cssStyleData)
-{
-  for (const auto &option : cssStyleData.getOptions())
-    svgStyleData.setValue(option.getName(), option.getValue());
 }
 
 //------
@@ -4838,365 +4756,51 @@ setScriptFile(const std::string &filename)
 
 //------
 
-namespace {
-
-template<typename VISITOR>
 bool
-visitStyleData(CSVGCSSData &cssData, const CSVGObject *obj, VISITOR &visitor)
+CSVG::
+applyStyle(CSVGObject *obj)
 {
-  if (cssData.hasNameStyleData(obj->getId())) {
-    CSVGStyleData &nameStyleData = cssData.getNameStyleData(obj->getId());
+  CCSSTagDataP tagData(new CSVGObjectCSSTagData(obj));
 
-   if (visitor(CSVGCSSType::NAME, nameStyleData))
-     return true;
+  bool rc = true;
+
+  for (const auto &css : cssList_) {
+    if (! visitStyleData(css, tagData))
+      rc = false;
   }
 
-  for (const auto &c : obj->getClasses()) {
-    if (cssData.hasTypeClassStyleData(obj->getTagName(), c)) {
-      CSVGStyleData &typeClassStyleData = cssData.getTypeClassStyleData(obj->getTagName(), c);
-
-      if (visitor(CSVGCSSType::TYPE_CLASS, typeClassStyleData))
-        return true;
-    }
-  }
-
-  if (cssData.hasTypeStyleData(obj->getTagName())) {
-    CSVGStyleData &typeStyleData = cssData.getTypeStyleData(obj->getTagName());
-
-    if (visitor(CSVGCSSType::TYPE, typeStyleData))
-      return true;
-  }
-
-  for (const auto &c : obj->getClasses()) {
-    if (cssData.hasClassStyleData(c)) {
-      CSVGStyleData &classStyleData = cssData.getClassStyleData(c);
-
-      if (visitor(CSVGCSSType::CLASS, classStyleData))
-        return true;
-    }
-  }
-
-  if (cssData.hasGlobalStyleData()) {
-    CSVGStyleData &globalStyleData = cssData.getGlobalStyleData();
-
-    if (visitor(CSVGCSSType::GLOBAL, globalStyleData))
-      return true;
-  }
-
-  return false;
+  return rc;
 }
 
+bool
+CSVG::
+visitStyleData(const CCSS &css, const CCSSTagDataP &tagData)
+{
+  bool match = false;
+
+  std::vector<CCSS::SelectorList> selectorListArray;
+
+  css.getSelectors(selectorListArray);
+
+  for (const auto &selectorList : selectorListArray) {
+    const CCSS::StyleData &styleData = css.getStyleData(selectorList);
+
+    if (! styleData.checkMatch(tagData))
+      continue;
+
+    CSVGObject *obj = dynamic_cast<CSVGObjectCSSTagData *>(tagData.get())->obj();
+
+    for (const auto &opt : styleData.getOptions()) {
+      obj->setStyleValue(opt.getName(), opt.getValue());
+    }
+
+    match = true;
+  }
+
+  return match;
 }
 
 //------
-
-bool
-CSVG::
-getStyleStrokeColor(const CSVGObject *obj, CSVGColor &color, CSVGCSSType &type)
-{
-  auto visitor = [&](CSVGCSSType styleType, CSVGStyleData &styleData) -> bool {
-    if (styleData.getStrokeColorValid()) {
-      color = styleData.getStrokeColor();
-      type  = styleType;
-      return true;
-    }
-
-    return false;
-  };
-
-  return visitStyleData(cssData_, obj, visitor);
-}
-
-bool
-CSVG::
-getStyleStrokeOpacity(const CSVGObject *obj, double &opacity, CSVGCSSType &type)
-{
-  auto visitor = [&](CSVGCSSType styleType, CSVGStyleData &styleData) -> bool {
-    if (styleData.getStrokeOpacityValid()) {
-      opacity = styleData.getStrokeOpacity();
-      type    = styleType;
-      return true;
-    }
-
-    return false;
-  };
-
-  return visitStyleData(cssData_, obj, visitor);
-}
-
-bool
-CSVG::
-getStyleStrokeRule(const CSVGObject *obj, CFillType &rule, CSVGCSSType &type)
-{
-  auto visitor = [&](CSVGCSSType styleType, CSVGStyleData &styleData) -> bool {
-    if (styleData.getStrokeRuleValid()) {
-      rule = styleData.getStrokeRule();
-      type = styleType;
-      return true;
-    }
-
-    return false;
-  };
-
-  return visitStyleData(cssData_, obj, visitor);
-}
-
-bool
-CSVG::
-getStyleStrokeUrl(const CSVGObject *obj, std::string &url, CSVGCSSType &type)
-{
-  auto visitor = [&](CSVGCSSType styleType, CSVGStyleData &styleData) -> bool {
-    if (styleData.getStrokeUrlValid()) {
-      url  = styleData.getStrokeUrl();
-      type = styleType;
-      return true;
-    }
-
-    return false;
-  };
-
-  return visitStyleData(cssData_, obj, visitor);
-}
-
-bool
-CSVG::
-getStyleStrokeFillObject(const CSVGObject *obj, CSVGObject* &fillObject, CSVGCSSType &type)
-{
-  auto visitor = [&](CSVGCSSType styleType, CSVGStyleData &styleData) -> bool {
-    if (styleData.getStrokeFillObjectValid()) {
-      fillObject = styleData.getStrokeFillObject();
-      type       = styleType;
-      return true;
-    }
-
-    return false;
-  };
-
-  return visitStyleData(cssData_, obj, visitor);
-}
-
-bool
-CSVG::
-getStyleStrokeWidth(const CSVGObject *obj, double &width, CSVGCSSType &type)
-{
-  auto visitor = [&](CSVGCSSType styleType, CSVGStyleData &styleData) -> bool {
-    if (styleData.getStrokeWidthValid()) {
-      width = styleData.getStrokeWidth();
-      type  = styleType;
-      return true;
-    }
-
-    return false;
-  };
-
-  return visitStyleData(cssData_, obj, visitor);
-}
-
-bool
-CSVG::
-getStyleStrokeDash(const CSVGObject *obj, CSVGStrokeDash &dash, CSVGCSSType &type)
-{
-  auto visitor = [&](CSVGCSSType styleType, CSVGStyleData &styleData) -> bool {
-    if (styleData.getStrokeDashValid()) {
-      dash = styleData.getStrokeDash();
-      type = styleType;
-      return true;
-    }
-
-    return false;
-  };
-
-  return visitStyleData(cssData_, obj, visitor);
-}
-
-bool
-CSVG::
-getStyleStrokeCap(const CSVGObject *obj, CLineCapType &cap, CSVGCSSType &type)
-{
-  auto visitor = [&](CSVGCSSType styleType, CSVGStyleData &styleData) -> bool {
-    if (styleData.getStrokeLineCapValid()) {
-      cap  = styleData.getStrokeLineCap();
-      type = styleType;
-      return true;
-    }
-
-    return false;
-  };
-
-  return visitStyleData(cssData_, obj, visitor);
-}
-
-bool
-CSVG::
-getStyleStrokeJoin(const CSVGObject *obj, CLineJoinType &join, CSVGCSSType &type)
-{
-  auto visitor = [&](CSVGCSSType styleType, CSVGStyleData &styleData) -> bool {
-    if (styleData.getStrokeLineJoinValid()) {
-      join = styleData.getStrokeLineJoin();
-      type = styleType;
-      return true;
-    }
-
-    return false;
-  };
-
-  return visitStyleData(cssData_, obj, visitor);
-}
-
-bool
-CSVG::
-getStyleStrokeMitreLimit(const CSVGObject *obj, double &limit, CSVGCSSType &type)
-{
-  auto visitor = [&](CSVGCSSType styleType, CSVGStyleData &styleData) -> bool {
-    if (styleData.getStrokeMitreLimitValid()) {
-      limit = styleData.getStrokeMitreLimit();
-      type  = styleType;
-      return true;
-    }
-
-    return false;
-  };
-
-  return visitStyleData(cssData_, obj, visitor);
-}
-
-//------
-
-bool
-CSVG::
-getStyleFillColor(const CSVGObject *obj, CSVGColor &color, CSVGCSSType &type)
-{
-  auto visitor = [&](CSVGCSSType styleType, CSVGStyleData &styleData) -> bool {
-    if (styleData.getFillColorValid()) {
-      color = styleData.getFillColor();
-      type  = styleType;
-      return true;
-    }
-
-    return false;
-  };
-
-  return visitStyleData(cssData_, obj, visitor);
-}
-
-bool
-CSVG::
-getStyleFillOpacity(const CSVGObject *obj, double &opacity, CSVGCSSType &type)
-{
-  auto visitor = [&](CSVGCSSType styleType, CSVGStyleData &styleData) -> bool {
-    if (styleData.getFillOpacityValid()) {
-      opacity = styleData.getFillOpacity();
-      type    = styleType;
-      return true;
-    }
-
-    return false;
-  };
-
-  return visitStyleData(cssData_, obj, visitor);
-}
-
-bool
-CSVG::
-getStyleFillRule(const CSVGObject *obj, CFillType &rule, CSVGCSSType &type)
-{
-  auto visitor = [&](CSVGCSSType styleType, CSVGStyleData &styleData) -> bool {
-    if (styleData.getFillRuleValid()) {
-      rule = styleData.getFillRule();
-      type = styleType;
-      return true;
-    }
-
-    return false;
-  };
-
-  return visitStyleData(cssData_, obj, visitor);
-}
-
-bool
-CSVG::
-getStyleFillUrl(const CSVGObject *obj, std::string &url, CSVGCSSType &type)
-{
-  auto visitor = [&](CSVGCSSType styleType, CSVGStyleData &styleData) -> bool {
-    if (styleData.getFillUrlValid()) {
-      url  = styleData.getFillUrl();
-      type = styleType;
-      return true;
-    }
-
-    return false;
-  };
-
-  return visitStyleData(cssData_, obj, visitor);
-}
-
-bool
-CSVG::
-getStyleFillFillObject(const CSVGObject *obj, CSVGObject* &fillObject, CSVGCSSType &type)
-{
-  auto visitor = [&](CSVGCSSType styleType, CSVGStyleData &styleData) -> bool {
-    if (styleData.getFillFillObjectValid()) {
-      fillObject = styleData.getFillFillObject();
-      type       = styleType;
-      return true;
-    }
-
-    return false;
-  };
-
-  return visitStyleData(cssData_, obj, visitor);
-}
-
-bool
-CSVG::
-getStyleMarkerStart(const CSVGObject *obj, CSVGObject* &marker, CSVGCSSType &type)
-{
-  auto visitor = [&](CSVGCSSType styleType, CSVGStyleData &styleData) -> bool {
-    if (styleData.getMarkerStart()) {
-      marker  = styleData.getMarkerStart();
-      type    = styleType;
-      return true;
-    }
-
-    return false;
-  };
-
-  return visitStyleData(cssData_, obj, visitor);
-}
-
-bool
-CSVG::
-getStyleMarkerMid(const CSVGObject *obj, CSVGObject* &marker, CSVGCSSType &type)
-{
-  auto visitor = [&](CSVGCSSType styleType, CSVGStyleData &styleData) -> bool {
-    if (styleData.getMarkerMid()) {
-      marker  = styleData.getMarkerMid();
-      type    = styleType;
-      return true;
-    }
-
-    return false;
-  };
-
-  return visitStyleData(cssData_, obj, visitor);
-}
-
-bool
-CSVG::
-getStyleMarkerEnd(const CSVGObject *obj, CSVGObject* &marker, CSVGCSSType &type)
-{
-  auto visitor = [&](CSVGCSSType styleType, CSVGStyleData &styleData) -> bool {
-    if (styleData.getMarkerEnd()) {
-      marker  = styleData.getMarkerEnd();
-      type    = styleType;
-      return true;
-    }
-
-    return false;
-  };
-
-  return visitStyleData(cssData_, obj, visitor);
-}
 
 void
 CSVG::
@@ -5223,7 +4827,7 @@ void
 CSVG::
 print(std::ostream &os, bool hier) const
 {
-  getRoot()->printRoot(os, css_, hier);
+  getRoot()->printRoot(os, cssList_, hier);
 }
 
 void

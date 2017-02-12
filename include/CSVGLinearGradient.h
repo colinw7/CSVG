@@ -26,8 +26,10 @@ class CSVGLinearGradient : public CSVGObject {
 
     double s = 1;
 
-    bbox = CBBox2D(getX1().pxValue(s), getY1().pxValue(s),
-                   getX2().pxValue(s), getY2().pxValue(s));
+    bbox = CBBox2D(getX1().pxValue(CScreenUnits(s)),
+                   getY1().pxValue(CScreenUnits(s)),
+                   getX2().pxValue(CScreenUnits(s)),
+                   getY2().pxValue(CScreenUnits(s)));
 
     return true;
   }
@@ -45,10 +47,10 @@ class CSVGLinearGradient : public CSVGObject {
   void setY2(const CScreenUnits &y2) { y2_ = y2; }
 
   void setBBox(const CBBox2D &bbox) {
-    setX1(bbox.getXMin());
-    setY1(bbox.getYMin());
-    setX2(bbox.getXMax());
-    setY2(bbox.getYMax());
+    setX1(CScreenUnits(bbox.getXMin()));
+    setY1(CScreenUnits(bbox.getYMin()));
+    setX2(CScreenUnits(bbox.getXMax()));
+    setY2(CScreenUnits(bbox.getYMax()));
   }
 
   bool getGTransformValid() const { return gtransform_.isValid(); }
