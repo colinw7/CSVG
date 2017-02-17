@@ -16,15 +16,6 @@ dirs:
 
 SRC = \
 CSVGTest.cpp \
-CImageRenderer2D.cpp \
-CRenderer2D.cpp \
-CRendererRegion2D.cpp \
-CPath2D.cpp \
-CImagePixelRenderer.cpp \
-CPixelRenderer.cpp \
-CPixelClip.cpp \
-CFreeType.cpp \
-CSymbol2D.cpp \
 
 OBJS = $(patsubst %.cpp,$(OBJ_DIR)/%.o,$(SRC))
 
@@ -35,6 +26,7 @@ $(CDEBUG) \
 -I$(INC_DIR) \
 -I../../CCSS/include \
 -I../../CConfig/include \
+-I../../CRenderer/include \
 -I../../CImageLib/include \
 -I../../CFont/include \
 -I../../CFileUtil/include \
@@ -52,6 +44,7 @@ $(LDEBUG) \
 -L../../CJson/lib \
 -L../../CXML/lib \
 -L../../CJavaScript/lib \
+-L../../CRenderer/lib \
 -L../../CImageLib/lib \
 -L../../CRGBName/lib \
 -L../../CFont/lib \
@@ -65,7 +58,7 @@ $(LDEBUG) \
 
 LIBS = \
 -lCSVG -lCCSS -lCXML -lCJavaScript -lCJson \
--lCImageLib -lCFont -lCConfig -lCFileUtil -lCFile \
+-lCRenderer -lCImageLib -lCFont -lCConfig -lCFileUtil -lCFile \
 -lCUtil -lCOS -lCRGBName -lCRegExp -lCStrUtil \
 -ltre -lpng -ljpeg -lfreetype
 
