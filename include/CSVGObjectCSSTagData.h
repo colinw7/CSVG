@@ -50,6 +50,29 @@ class CSVGObjectCSSTagData : public CCSSTagData {
 #endif
   }
 
+  bool isNthChild(int n) const override {
+    if (! obj_->getParent())
+      return false;
+
+    const CSVGObject::ObjectList &children = obj_->getParent()->children();
+
+    int i = 1;
+
+    for (const auto &child : children) {
+      if (child == obj_)
+        return (i == n);
+
+      ++i;
+    }
+
+    return false;
+  }
+
+  bool isInputValue(const std::string &) const override {
+    //TODO
+    return false;
+  }
+
   CCSSTagDataP getParent() const override {
     if (! obj_->getParent())
       return CCSSTagDataP();

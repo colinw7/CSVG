@@ -9,4 +9,4 @@ SOURCES += \
 CQScreenUnits.cpp
 
 INCLUDEPATH = \
-$(INC_DIR)/CScreenUnits \
+../include/CScreenUnits \

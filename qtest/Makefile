@@ -335,11 +335,17 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_platformsupport_private.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_printsupport.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_printsupport_private.pri \
+		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_qml.pri \
+		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_qmltest.pri \
+		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_quick.pri \
+		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_quickwidgets.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_sql.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_sql_private.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_svg.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_testlib.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_testlib_private.pri \
+		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_webkit.pri \
+		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_webkitwidgets.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_widgets.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_widgets_private.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_xcb_qpa_lib_private.pri \
@@ -558,11 +564,17 @@ Makefile: CQSVG.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64/qmake.con
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_platformsupport_private.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_printsupport.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_printsupport_private.pri \
+		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_qml.pri \
+		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_qmltest.pri \
+		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_quick.pri \
+		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_quickwidgets.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_sql.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_sql_private.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_svg.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_testlib.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_testlib_private.pri \
+		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_webkit.pri \
+		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_webkitwidgets.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_widgets.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_widgets_private.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_xcb_qpa_lib_private.pri \
@@ -621,11 +633,17 @@ Makefile: CQSVG.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64/qmake.con
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_platformsupport_private.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_printsupport.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_printsupport_private.pri:
+/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_qml.pri:
+/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_qmltest.pri:
+/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_quick.pri:
+/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_quickwidgets.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_sql.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_sql_private.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_svg.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_testlib.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_testlib_private.pri:
+/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_webkit.pri:
+/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_webkitwidgets.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_widgets.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_widgets_private.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_xcb_qpa_lib_private.pri:
@@ -3495,8 +3513,6 @@ compiler_moc_header_clean:
 		../include/CObjTypeOld.h \
 		../../CMath/include/CAngle.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h \
 		../../CUtil/include/CAutoPtr.h \
@@ -4510,6 +4526,8 @@ compiler_moc_header_clean:
 		../../CMath/include/CPolygonOrientation.h \
 		../../CMath/include/CLine2D.h \
 		../../CMath/include/CShape2D.h \
+		../../CMath/include/C3Bezier2D.h \
+		../../CMath/include/C2Bezier2D.h \
 		CQSVGRadialGradient.h
 	@echo moc CQSVGRadialGradient.h && /usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/colinw/git/CSVG/qtest -I/home/colinw/git/CSVG/qtest -I/home/colinw/git/CSVG/include -I/home/colinw/git/CSVG/include -I/home/colinw/git/CQApp/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CQPropertyTree/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/CFile/include -I/home/colinw/git/COS/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CRGBName/include -I/home/colinw/git/CCSS/include -I/home/colinw/git/CXML/include -I/home/colinw/git/CJavaScript/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include CQSVGRadialGradient.h -o .moc/moc_CQSVGRadialGradient.cpp
 
@@ -5375,8 +5393,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CObjTypeOld.h \
 		../../CMath/include/CAngle.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h \
 		../../CUtil/include/CAutoPtr.h \
@@ -5485,6 +5501,8 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CPolygonOrientation.h \
 		../../CMath/include/CLine2D.h \
 		../../CMath/include/CShape2D.h \
+		../../CMath/include/C3Bezier2D.h \
+		../../CMath/include/C2Bezier2D.h \
 		CQSVGRect.h \
 		../include/CSVGRect.h \
 		CQSVGSet.h \
@@ -5595,8 +5613,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGAnchor.o CQSVGAnchor.cpp
@@ -5687,8 +5703,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGAnimate.o CQSVGAnimate.cpp
@@ -5776,8 +5790,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h \
 		../include/CSVGAnimateBase.h
@@ -5869,8 +5881,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGAnimateColor.o CQSVGAnimateColor.cpp
@@ -5961,8 +5971,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGAnimateMotion.o CQSVGAnimateMotion.cpp
@@ -6053,8 +6061,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGAnimateTransform.o CQSVGAnimateTransform.cpp
@@ -6142,8 +6148,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGBlockData.h \
 		CQSVG.h \
 		../include/CSVG.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGBlock.o CQSVGBlock.cpp
@@ -6219,15 +6223,13 @@ compiler_clean: compiler_moc_header_clean
 		../include/CObjTypeOld.h \
 		../../CMath/include/CAngle.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h \
 		../../CUtil/include/CAutoPtr.h \
 		../../CMath/include/CGenGradient.h \
 		CQSVGRenderer.h \
 		../include/CSVGRenderer.h \
-		CDisplayTransform2D.h \
+		../../CUtil/include/CDisplayTransform2D.h \
 		../../CMath/include/CDisplayRange2D.h \
 		../include/CSVGBuffer.h \
 		../include/CSVGLightData.h \
@@ -6316,8 +6318,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CObjTypeOld.h \
 		../../CMath/include/CAngle.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h \
 		../../CUtil/include/CAutoPtr.h \
@@ -6337,7 +6337,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		CQSVGRenderer.h \
 		../include/CSVGRenderer.h \
-		CDisplayTransform2D.h \
+		../../CUtil/include/CDisplayTransform2D.h \
 		../../CMath/include/CDisplayRange2D.h \
 		CQSVGUtil.h \
 		../../CQPropertyTree/include/CQPropertyTree.h
@@ -6427,8 +6427,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGCircle.o CQSVGCircle.cpp
@@ -6517,8 +6515,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGClipPath.o CQSVGClipPath.cpp
@@ -6607,8 +6603,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGDefs.o CQSVGDefs.cpp
@@ -6697,8 +6691,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGDesc.o CQSVGDesc.cpp
@@ -6787,8 +6779,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGEllipse.o CQSVGEllipse.cpp
@@ -6949,8 +6939,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeBlend.o CQSVGFeBlend.cpp
@@ -7038,8 +7026,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeColorMatrix.o CQSVGFeColorMatrix.cpp
@@ -7128,8 +7114,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeComposite.o CQSVGFeComposite.cpp
@@ -7219,8 +7203,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeDiffuseLighting.o CQSVGFeDiffuseLighting.cpp
@@ -7309,8 +7291,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeDisplacementMap.o CQSVGFeDisplacementMap.cpp
@@ -7399,8 +7379,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeDistantLight.o CQSVGFeDistantLight.cpp
@@ -7489,8 +7467,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeFlood.o CQSVGFeFlood.cpp
@@ -7579,8 +7555,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeGaussianBlur.o CQSVGFeGaussianBlur.cpp
@@ -7669,8 +7643,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeImage.o CQSVGFeImage.cpp
@@ -7759,8 +7731,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeMerge.o CQSVGFeMerge.cpp
@@ -7849,8 +7819,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeMergeNode.o CQSVGFeMergeNode.cpp
@@ -7939,8 +7907,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeMorphology.o CQSVGFeMorphology.cpp
@@ -8029,8 +7995,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeOffset.o CQSVGFeOffset.cpp
@@ -8121,8 +8085,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFePointLight.o CQSVGFePointLight.cpp
@@ -8212,8 +8174,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeSpecularLighting.o CQSVGFeSpecularLighting.cpp
@@ -8304,8 +8264,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeSpotLight.o CQSVGFeSpotLight.cpp
@@ -8394,8 +8352,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeTile.o CQSVGFeTile.cpp
@@ -8484,8 +8440,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFeTurbulence.o CQSVGFeTurbulence.cpp
@@ -8574,8 +8528,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFilter.o CQSVGFilter.cpp
@@ -8664,8 +8616,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGGroup.o CQSVGGroup.cpp
@@ -8754,8 +8704,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGImage.o CQSVGImage.cpp
@@ -8878,8 +8826,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CObjTypeOld.h \
 		../../CMath/include/CAngle.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h \
 		../../CUtil/include/CAutoPtr.h \
@@ -8971,8 +8917,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGLinearGradient.o CQSVGLinearGradient.cpp
@@ -9061,8 +9005,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGLine.o CQSVGLine.cpp
@@ -9152,8 +9094,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGMarker.o CQSVGMarker.cpp
 
@@ -9241,8 +9181,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGMask.o CQSVGMask.cpp
@@ -9331,8 +9269,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGMPath.o CQSVGMPath.cpp
@@ -9419,8 +9355,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h \
 		CQSVGWindow.h \
@@ -9431,7 +9365,7 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVGFontObj.h \
 		CQSVGRenderer.h \
 		../include/CSVGRenderer.h \
-		CDisplayTransform2D.h \
+		../../CUtil/include/CDisplayTransform2D.h \
 		../../CMath/include/CDisplayRange2D.h \
 		../include/CSVGLinearGradient.h \
 		../include/CSVGRadialGradient.h \
@@ -9440,6 +9374,8 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CPolygonOrientation.h \
 		../../CMath/include/CLine2D.h \
 		../../CMath/include/CShape2D.h \
+		../../CMath/include/C3Bezier2D.h \
+		../../CMath/include/C2Bezier2D.h \
 		../include/CSVGFilter.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGObject.o CQSVGObject.cpp
 
@@ -9527,8 +9463,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGPath.o CQSVGPath.cpp
@@ -9604,8 +9538,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CObjTypeOld.h \
 		../../CMath/include/CAngle.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h \
 		../../CUtil/include/CAutoPtr.h \
@@ -9696,8 +9628,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGPattern.o CQSVGPattern.cpp
@@ -9786,8 +9716,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGPolygon.o CQSVGPolygon.cpp
@@ -9876,8 +9804,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGPolyLine.o CQSVGPolyLine.cpp
@@ -10002,12 +9928,12 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CPolygonOrientation.h \
 		../../CMath/include/CLine2D.h \
 		../../CMath/include/CShape2D.h \
+		../../CMath/include/C3Bezier2D.h \
+		../../CMath/include/C2Bezier2D.h \
 		CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGRadialGradient.o CQSVGRadialGradient.cpp
@@ -10096,8 +10022,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGRect.o CQSVGRect.cpp
@@ -10187,8 +10111,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGSet.o CQSVGSet.cpp
@@ -10277,8 +10199,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGStop.o CQSVGStop.cpp
@@ -10446,8 +10366,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGSymbol.o CQSVGSymbol.cpp
@@ -10536,8 +10454,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGText.o CQSVGText.cpp
@@ -10626,8 +10542,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGTextPath.o CQSVGTextPath.cpp
@@ -10716,8 +10630,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGTitle.o CQSVGTitle.cpp
@@ -10806,8 +10718,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGTSpan.o CQSVGTSpan.cpp
@@ -10896,8 +10806,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CSVG.h \
 		../include/CSVGBlock.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGUse.o CQSVGUse.cpp
@@ -10975,8 +10883,6 @@ compiler_clean: compiler_moc_header_clean
 		../include/CObjTypeOld.h \
 		../../CMath/include/CAngle.h \
 		../include/CSVGBlockData.h \
-		../include/CSVGCSSData.h \
-		../include/CSVGStyleData.h \
 		../include/CSVGOrient.h \
 		../../CCSS/include/CCSS.h \
 		../../CUtil/include/CAutoPtr.h \
@@ -11085,6 +10991,8 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CPolygonOrientation.h \
 		../../CMath/include/CLine2D.h \
 		../../CMath/include/CShape2D.h \
+		../../CMath/include/C3Bezier2D.h \
+		../../CMath/include/C2Bezier2D.h \
 		CQSVGRect.h \
 		../include/CSVGRect.h \
 		CQSVGStop.h \
@@ -11103,7 +11011,7 @@ compiler_clean: compiler_moc_header_clean
 		CQSVGPathPart.h \
 		CQSVGRenderer.h \
 		../include/CSVGRenderer.h \
-		CDisplayTransform2D.h \
+		../../CUtil/include/CDisplayTransform2D.h \
 		../../CMath/include/CDisplayRange2D.h \
 		../../CQPropertyTree/include/CQPropertyTree.h \
 		../../CQPropertyTree/include/CQPropertyItem.h \
@@ -11175,7 +11083,7 @@ compiler_clean: compiler_moc_header_clean
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
 		../../CUtil/include/CFillType.h \
-		CDisplayTransform2D.h \
+		../../CUtil/include/CDisplayTransform2D.h \
 		../../CMath/include/CDisplayRange2D.h \
 		CQSVGImageData.h \
 		../include/CSVGImageData.h \
@@ -11195,7 +11103,9 @@ compiler_clean: compiler_moc_header_clean
 		../../CMath/include/CMathGeom2D.h \
 		../../CMath/include/CPolygonOrientation.h \
 		../../CMath/include/CLine2D.h \
-		../../CMath/include/CShape2D.h
+		../../CMath/include/CShape2D.h \
+		../../CMath/include/C3Bezier2D.h \
+		../../CMath/include/C2Bezier2D.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGRenderer.o CQSVGRenderer.cpp
 
 ../obj/CQSVGImageData.o: CQSVGImageData.cpp CQSVGImageData.h \

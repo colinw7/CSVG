@@ -567,9 +567,11 @@ setFont(const CSVGFontDef &fontDef)
 
   CQSVGFontObj *fontObj = dynamic_cast<CQSVGFontObj *>(fontDef.getObj());
 
-  qfont_ = fontObj->font();
+  if (fontObj) {
+    qfont_ = fontObj->font();
 
-  painter_->setFont(qfont_);
+    painter_->setFont(qfont_);
+  }
 }
 
 void
