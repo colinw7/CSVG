@@ -110,8 +110,6 @@ CSVGJTypes.cpp \
 \
 CLog.cpp \
 CEncode64.cpp \
-CMathGeom2D.cpp \
-CArcToBezier.cpp \
 
 OBJS = $(patsubst %.cpp,$(OBJ_DIR)/%.o,$(SRC))
 
