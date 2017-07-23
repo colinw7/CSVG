@@ -7,7 +7,6 @@ CDEBUG = -g
 INC_DIR = ../include
 OBJ_DIR = ../obj
 LIB_DIR = ../lib
-BIN_DIR = ../bin
 
 all: dirs $(LIB_DIR)/libCSVG.a
 
