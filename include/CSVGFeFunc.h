@@ -10,15 +10,15 @@ class CSVGFeFunc : public CSVGObject {
  public:
   CSVG_OBJECT_DEF("feFunc", CSVGObjTypeId::FE_FUNC)
 
-  CSVGFeFunc(CSVG &svg, CColorComponent component);
+  CSVGFeFunc(CSVG &svg, CRGBAComponent component);
   CSVGFeFunc(const CSVGFeFunc &func);
 
   CSVGFeFunc *dup() const override;
 
   std::string getTagName() const override;
 
-  CColorComponent getComponent() const { return component_; }
-  void setComponent(CColorComponent c) { component_ = c; }
+  CRGBAComponent getComponent() const { return component_; }
+  void setComponent(CRGBAComponent c) { component_ = c; }
 
   CSVGFilterFuncType getType() const { return type_.getValue(CSVGFilterFuncType::LINEAR); }
 
@@ -51,7 +51,7 @@ class CSVGFeFunc : public CSVGObject {
   friend std::ostream &operator<<(std::ostream &os, const CSVGFeFunc &filter);
 
  private:
-  CColorComponent              component_;
+  CRGBAComponent               component_;
   COptValT<CSVGFilterFuncType> type_;
   // linear
   COptReal                     slope_;

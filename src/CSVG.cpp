@@ -555,13 +555,13 @@ createObjectByName(const std::string &name)
   else if (name == "feFlood")
     object = createFeFlood();
   else if (name == "feFuncR")
-    object = createFeFunc(CCOLOR_COMPONENT_RED);
+    object = createFeFunc(CRGBA_COMPONENT_RED);
   else if (name == "feFuncG")
-    object = createFeFunc(CCOLOR_COMPONENT_GREEN);
+    object = createFeFunc(CRGBA_COMPONENT_GREEN);
   else if (name == "feFuncB")
-    object = createFeFunc(CCOLOR_COMPONENT_BLUE);
+    object = createFeFunc(CRGBA_COMPONENT_BLUE);
   else if (name == "feFuncA")
-    object = createFeFunc(CCOLOR_COMPONENT_ALPHA);
+    object = createFeFunc(CRGBA_COMPONENT_ALPHA);
   else if (name == "feGaussianBlur")
     object = createFeGaussianBlur();
   else if (name == "feImage")
@@ -817,7 +817,7 @@ createFeFlood()
 
 CSVGFeFunc *
 CSVG::
-createFeFunc(CColorComponent component)
+createFeFunc(CRGBAComponent component)
 {
   return new CSVGFeFunc(*this, component);
 }

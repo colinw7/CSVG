@@ -68,17 +68,17 @@ class CSVGImageData {
 
   virtual void luminanceToAlpha();
 
-  virtual void linearFunc(CColorComponent component, double slope, double intercept);
+  virtual void linearFunc(CRGBAComponent component, double slope, double intercept);
 
-  virtual void gammaFunc(CColorComponent component, double amplitude,
+  virtual void gammaFunc(CRGBAComponent component, double amplitude,
                          double exponent, double offset);
 
-  virtual void tableFunc(CColorComponent component, const std::vector<double> &table);
+  virtual void tableFunc(CRGBAComponent component, const std::vector<double> &table);
 
-  virtual void discreteFunc(CColorComponent component, const std::vector<double> &table);
+  virtual void discreteFunc(CRGBAComponent component, const std::vector<double> &table);
 
-  virtual CSVGImageData *displacementMap(CSVGImageData *in, CColorComponent xcolor,
-                                         CColorComponent ycolor, double scale);
+  virtual CSVGImageData *displacementMap(CSVGImageData *in, CRGBAComponent xcolor,
+                                         CRGBAComponent ycolor, double scale);
 
   virtual void gaussianBlur(CSVGImageData *in, double stdDevX, double stdDevY);
 

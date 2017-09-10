@@ -2,7 +2,7 @@
 #include <CSVG.h>
 
 CSVGFeFunc::
-CSVGFeFunc(CSVG &svg, CColorComponent component) :
+CSVGFeFunc(CSVG &svg, CRGBAComponent component) :
  CSVGObject(svg), component_(component)
 {
 }
@@ -68,10 +68,10 @@ getTagName() const
 {
   std::string name = "feFunc";
 
-  if      (component_ == CCOLOR_COMPONENT_RED  ) name = "feFuncR";
-  else if (component_ == CCOLOR_COMPONENT_GREEN) name = "feFuncG";
-  else if (component_ == CCOLOR_COMPONENT_BLUE ) name = "feFuncB";
-  else if (component_ == CCOLOR_COMPONENT_ALPHA) name = "feFuncA";
+  if      (component_ == CRGBA_COMPONENT_RED  ) name = "feFuncR";
+  else if (component_ == CRGBA_COMPONENT_GREEN) name = "feFuncG";
+  else if (component_ == CRGBA_COMPONENT_BLUE ) name = "feFuncB";
+  else if (component_ == CRGBA_COMPONENT_ALPHA) name = "feFuncA";
 
   return name;
 }

@@ -74,7 +74,7 @@ class CSVGRenderer {
   virtual void pathStroke() = 0;
   virtual void pathFill() = 0;
 
-  virtual void savePath(const CMatrix2D &m=CMatrix2D(CMATRIX_TYPE_IDENTITY)) = 0;
+  virtual void savePath(const CMatrix2D &m=CMatrix2D(CMatrix2D::Type::IDENTITY)) = 0;
 
   virtual void pathClip  (CSVGRenderer *renderer=0) = 0;
   virtual void pathEoclip(CSVGRenderer *renderer=0) = 0;

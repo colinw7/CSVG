@@ -224,35 +224,35 @@ luminanceToAlpha()
 
 void
 CSVGImageData::
-linearFunc(CColorComponent component, double slope, double intercept)
+linearFunc(CRGBAComponent component, double slope, double intercept)
 {
   image_->linearFunc(component, slope, intercept);
 }
 
 void
 CSVGImageData::
-gammaFunc(CColorComponent component, double amplitude, double exponent, double offset)
+gammaFunc(CRGBAComponent component, double amplitude, double exponent, double offset)
 {
   image_->gammaFunc(component, amplitude, exponent, offset);
 }
 
 void
 CSVGImageData::
-tableFunc(CColorComponent component, const std::vector<double> &table)
+tableFunc(CRGBAComponent component, const std::vector<double> &table)
 {
   image_->tableFunc(component, table);
 }
 
 void
 CSVGImageData::
-discreteFunc(CColorComponent component, const std::vector<double> &table)
+discreteFunc(CRGBAComponent component, const std::vector<double> &table)
 {
   image_->discreteFunc(component, table);
 }
 
 CSVGImageData *
 CSVGImageData::
-displacementMap(CSVGImageData *in, CColorComponent xcolor, CColorComponent ycolor, double scale)
+displacementMap(CSVGImageData *in, CRGBAComponent xcolor, CRGBAComponent ycolor, double scale)
 {
   CImagePtr image = image_->displacementMap(in->image_, xcolor, ycolor, scale);
 

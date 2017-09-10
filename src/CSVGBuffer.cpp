@@ -410,7 +410,7 @@ componentTransferBuffers(CSVGBuffer *inBuffer, const CBBox2D &bbox,
 
   for (const auto &func : funcs) {
     CSVGFilterFuncType type      = func->getType();
-    CColorComponent    component = func->getComponent();
+    CRGBAComponent     component = func->getComponent();
 
     //CSVGImageDataP dst_image = src_image->dup();
 
@@ -528,18 +528,18 @@ displacementMapBuffers(CSVGBuffer *inBuffer1, CSVGBuffer *inBuffer2, const CBBox
 
   //---
 
-  CColorComponent xcolor = CCOLOR_COMPONENT_RED;
-  CColorComponent ycolor = CCOLOR_COMPONENT_RED;
+  CRGBAComponent xcolor = CRGBA_COMPONENT_RED;
+  CRGBAComponent ycolor = CRGBA_COMPONENT_RED;
 
-  if      (xchannel == "R") xcolor = CCOLOR_COMPONENT_RED;
-  else if (xchannel == "G") xcolor = CCOLOR_COMPONENT_GREEN;
-  else if (xchannel == "B") xcolor = CCOLOR_COMPONENT_BLUE;
-  else if (xchannel == "A") xcolor = CCOLOR_COMPONENT_ALPHA;
+  if      (xchannel == "R") xcolor = CRGBA_COMPONENT_RED;
+  else if (xchannel == "G") xcolor = CRGBA_COMPONENT_GREEN;
+  else if (xchannel == "B") xcolor = CRGBA_COMPONENT_BLUE;
+  else if (xchannel == "A") xcolor = CRGBA_COMPONENT_ALPHA;
 
-  if      (ychannel == "R") ycolor = CCOLOR_COMPONENT_RED;
-  else if (ychannel == "G") ycolor = CCOLOR_COMPONENT_GREEN;
-  else if (ychannel == "B") ycolor = CCOLOR_COMPONENT_BLUE;
-  else if (ychannel == "A") ycolor = CCOLOR_COMPONENT_ALPHA;
+  if      (ychannel == "R") ycolor = CRGBA_COMPONENT_RED;
+  else if (ychannel == "G") ycolor = CRGBA_COMPONENT_GREEN;
+  else if (ychannel == "B") ycolor = CRGBA_COMPONENT_BLUE;
+  else if (ychannel == "A") ycolor = CRGBA_COMPONENT_ALPHA;
 
   CSVGImageDataP dst_image(src_image1->
     displacementMap(src_image2.getPtr(), xcolor, ycolor, scale));

@@ -286,7 +286,7 @@ class CSVG {
   virtual CSVGFeDisplacementMap   *createFeDisplacementMap();
   virtual CSVGFeDistantLight      *createFeDistantLight();
   virtual CSVGFeFlood             *createFeFlood();
-  virtual CSVGFeFunc              *createFeFunc(CColorComponent component);
+  virtual CSVGFeFunc              *createFeFunc(CRGBAComponent component);
   virtual CSVGFeGaussianBlur      *createFeGaussianBlur();
   virtual CSVGFeImage             *createFeImage();
   virtual CSVGFeMerge             *createFeMerge();
