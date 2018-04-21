@@ -47,8 +47,8 @@ class CSVGFont : public CSVGObject {
   COptReal          vdy_;
   COptReal          vxo_;
   COptReal          vyo_;
-  CSVGFontFace     *font_face_     { 0 };
-  CSVGMissingGlyph *missing_glyph_ { 0 };
+  CSVGFontFace     *font_face_     { nullptr };
+  CSVGMissingGlyph *missing_glyph_ { nullptr };
   CharGlyphMap      char_glyph_map_;
   UnicodeGlyphMap   unicode_glyph_map_;
 };

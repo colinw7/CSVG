@@ -1,7 +1,0 @@
-#!/bin/csh -f
-
-foreach file (*.svg)
-  CBinArr -class $file > $file:r_svg.h
-end
-
-exit 0

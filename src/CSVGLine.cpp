@@ -180,8 +180,8 @@ resizeTo(const CSize2D &size)
   double x1 = getX1().pxValue(w);
   double y1 = getY1().pxValue(h);
 
-  setX2(x1 + size.width );
-  setY2(y1 + size.height);
+  setX2(x1 + size.getWidth ());
+  setY2(y1 + size.getHeight());
 }
 
 void

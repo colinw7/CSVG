@@ -121,7 +121,8 @@ class CSVGImageRenderer : public CSVGRenderer {
   void setStrokeFillImage(CSVGImageData *) override { }
 
   void setAlign(CHAlignType halign, CVAlignType valign) override {
-    renderer_->setAlign(halign, valign); }
+    renderer_->setAlign((CDisplayRange2D::HAlign) halign, (CDisplayRange2D::VAlign) valign);
+  }
 
   void windowToPixel(const CPoint2D &w, CPoint2D &p) override { renderer_->windowToPixel(w, p); }
   void pixelToWindow(const CPoint2D &p, CPoint2D &w) override { renderer_->pixelToWindow(p, w); }

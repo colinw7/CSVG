@@ -187,6 +187,10 @@ getBBox(CBBox2D &bbox) const
       rc = parts_.getBBox(currentBuffer, bbox);
     }
 
+    double lw = getFlatStrokeWidth().getValue(1);
+
+    bbox.expand(lw);
+
     bbox_ = bbox;
   }
   else

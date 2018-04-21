@@ -16,19 +16,19 @@ class CSVGRect : public CSVGObject {
 
   bool hasX() const { return x_.isValid(); }
   CScreenUnits getX() const { return x_.getValue(CScreenUnits(0)); }
-  void setX(const CScreenUnits &x) { x_ = x; }
+  void setX(const CScreenUnits &x) { x_ = x; updateBBox(); }
 
   bool hasY() const { return y_.isValid(); }
   CScreenUnits getY() const { return y_.getValue(CScreenUnits(0)); }
-  void setY(const CScreenUnits &y) { y_ = y; }
+  void setY(const CScreenUnits &y) { y_ = y; updateBBox(); }
 
   bool hasWidth() const { return width_.isValid(); }
   CScreenUnits getWidth() const { return width_.getValue(CScreenUnits(0)); }
-  void setWidth(const CScreenUnits &w) { width_ = w; }
+  void setWidth(const CScreenUnits &w) { width_ = w; updateBBox(); }
 
   bool hasHeight() const { return height_.isValid(); }
   CScreenUnits getHeight() const { return height_ .getValue(CScreenUnits(0)); }
-  void setHeight(const CScreenUnits &h) { height_ = h; }
+  void setHeight(const CScreenUnits &h) { height_ = h; updateBBox(); }
 
   bool hasRX() const { return rx_.isValid(); }
   double getRX() { return rx_.getValue(0); }
@@ -42,6 +42,8 @@ class CSVGRect : public CSVGObject {
   void setSize  (const CSize2D  &size );
 
   bool processOption(const std::string &name, const std::string &value) override;
+
+  void strokeChanged();
 
   bool draw() override;
 

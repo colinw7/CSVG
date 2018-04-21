@@ -130,7 +130,7 @@ CSVGObject::
 setText(const std::string &str)
 {
   // if (! hasText())
-  //   std::cerr << "Option does not support text '" + str + "'" << std::endl;
+  //   std::cerr << "Option does not support text '" + str + "'\n";
 
   std::string str1 = CStrUtil::stripSpaces(str);
 
@@ -184,6 +184,15 @@ CSVGObject::
 getFlatStroke() const
 {
   CSVGStroke stroke(svg_);
+
+  if (! stroke_.isSet()) {
+    CSVGObject *parent = getParent();
+
+    if (parent)
+      return parent->getFlatStroke();
+    else
+      return stroke;
+  }
 
   COptValT<CSVGColor> color = getFlatStrokeColor();
 
@@ -1447,7 +1456,7 @@ processFontOption(const std::string &optName, const std::string &optValue)
     parseFont(str);
   else if (svg_.stringOption(optName, optValue, "font-family", str))
     setFontFamily(str);
-  else if (svg_.lengthOption(optName, optValue, "font-size", length))
+  else if (svg_.fontSizeOption(optName, optValue, "font-size", length))
     setFontSize(length);
   else if (svg_.stringOption(optName, optValue, "font-size-adjust", str))
     nameValues_["font-size-adjust"] = str;
@@ -1459,6 +1468,8 @@ processFontOption(const std::string &optName, const std::string &optValue)
     nameValues_["font-variant"] = str;
   else if (svg_.stringOption(optName, optValue, "font-weight", str))
     setFontWeight(str);
+  else if (svg_.stringOption(optName, optValue, "-inkscape-font-specification", str))
+   nameValues_["-inkscape-font-specification"] = str;
   else
     return false;
 
@@ -1544,7 +1555,7 @@ processTextContentOption(const std::string &optName, const std::string &optValue
 
   else if (svg_.stringOption(optName, optValue, "direction", str))
     nameValues_["direction"] = str;
-  else if (svg_.lengthOption(optName, optValue, "letter-spacing", length))
+  else if (svg_.letterSpacingOption(optName, optValue, "letter-spacing", length))
     letterSpacing_ = length;
   else if (svg_.stringOption(optName, optValue, "text-decoration", str))
     setTextDecoration(str);
@@ -1552,7 +1563,7 @@ processTextContentOption(const std::string &optName, const std::string &optValue
     nameValues_["text-rendering"] = str;
   else if (svg_.stringOption(optName, optValue, "unicode-bidi", str))
     nameValues_["unicode-bidi"] = str;
-  else if (svg_.lengthOption(optName, optValue, "word-spacing", length))
+  else if (svg_.wordSpacingOption(optName, optValue, "word-spacing", length))
     wordSpacing_ = length;
   else
     return false;
@@ -1950,9 +1961,25 @@ deleteChildObject(CSVGObject *object)
     objects_.remove(object);
 }
 
+CSVGObject *
+CSVGObject::
+child(int i) const
+{
+  int i1 = 0;
+
+  for (auto &c : children()) {
+    if (i1 == i)
+      return c;
+
+    ++i1;
+  }
+
+  return nullptr;
+}
+
 bool
 CSVGObject::
-getAllChildren(std::vector<CSVGObject *> &objects)
+getAllChildren(ObjectArray &objects)
 {
   for (const auto &c : children())
     objects.push_back(c);
@@ -1965,7 +1992,7 @@ getAllChildren(std::vector<CSVGObject *> &objects)
 
 bool
 CSVGObject::
-getAllChildrenOfType(CSVGObjTypeId id, std::vector<CSVGObject *> &objects)
+getAllChildrenOfType(CSVGObjTypeId id, ObjectArray &objects)
 {
   getChildrenOfType(id, objects);
 
@@ -1977,7 +2004,7 @@ getAllChildrenOfType(CSVGObjTypeId id, std::vector<CSVGObject *> &objects)
 
 bool
 CSVGObject::
-getChildrenOfType(CSVGObjTypeId id, std::vector<CSVGObject *> &objects)
+getChildrenOfType(CSVGObjTypeId id, ObjectArray &objects)
 {
   for (const auto &c : children())
     if (c->isObjType(id))
@@ -1988,7 +2015,7 @@ getChildrenOfType(CSVGObjTypeId id, std::vector<CSVGObject *> &objects)
 
 bool
 CSVGObject::
-getAllChildrenOfId(const std::string &id, std::vector<CSVGObject *> &objects)
+getAllChildrenOfId(const std::string &id, ObjectArray &objects)
 {
   getChildrenOfId(id, objects);
 
@@ -2000,7 +2027,7 @@ getAllChildrenOfId(const std::string &id, std::vector<CSVGObject *> &objects)
 
 bool
 CSVGObject::
-getChildrenOfId(const std::string &id, std::vector<CSVGObject *> &objects)
+getChildrenOfId(const std::string &id, ObjectArray &objects)
 {
   for (const auto &c : children())
     if (c->getId() == id)
@@ -3027,8 +3054,7 @@ getObjectsAtPoint(const CPoint2D &p, ObjectArray &objects) const
 
 void
 CSVGObject::
-handleEvent(CSVGEventType type, const std::string &id, const std::string &data,
-            bool propagate)
+handleEvent(CSVGEventType type, const std::string &id, const std::string &data, bool propagate)
 {
   if (id == "" || id == this->getId())
     execEvent(type);
@@ -3102,21 +3128,21 @@ print(std::ostream &os, bool hier) const
     printValues(os);
 
     if (hasChildren()) {
-      os << ">" << std::endl;
+      os << ">\n";
 
       if (s != "")
-        os << s << std::endl;
+        os << s << "\n";
 
       printChildren(os, hier);
 
-      os << "</" << getTagName() << ">" << std::endl;
+      os << "</" << getTagName() << ">\n";
     }
     else if (s != "") {
       os << ">" << s;
-      os << "</" << getTagName() << ">" << std::endl;
+      os << "</" << getTagName() << ">\n";
     }
     else
-      os << "/>" << std::endl;
+      os << "/>\n";
   }
   else
     os << getTagName() << ": '" << getId() << "'";
@@ -3124,16 +3150,16 @@ print(std::ostream &os, bool hier) const
 
 void
 CSVGObject::
-printFlat(std::ostream &os, int depth) const
+printFlat(std::ostream &os, bool force, int depth) const
 {
   CSVGObjTypeId id = getObjTypeId();
 
   if (id == CSVGObjTypeId::BLOCK) {
     os << "<svg";
 
-    printValues(os);
+    printValues(os, /*flat*/ false); // true ?
 
-    os << ">" << std::endl;
+    os << ">\n";
   }
 
   if (hasChildren()) {
@@ -3159,15 +3185,15 @@ printFlat(std::ostream &os, int depth) const
 
       printValues(os, /*flat*/true);
 
-      os << ">" << std::endl;
+      os << ">\n";
     }
 
     for (const auto &c : children()) {
-      if (propagateFlat()) {
+      if (force || propagateFlat()) {
         if (startTag)
-          c->printFlat(os, depth + 1);
+          c->printFlat(os, force, depth + 1);
         else
-          c->printFlat(os, depth);
+          c->printFlat(os, force, depth);
       }
       else
         c->print(os, /*hier*/true);
@@ -3177,12 +3203,11 @@ printFlat(std::ostream &os, int depth) const
       for (int i = 0; i < depth; ++i)
         os << " ";
 
-      os << "</" << getTagName() << ">" << std::endl;
+      os << "</" << getTagName() << ">\n";
     }
   }
   else {
-    if (id == CSVGObjTypeId::GROUP ||
-        id == CSVGObjTypeId::DEFS)
+    if (id == CSVGObjTypeId::GROUP || id == CSVGObjTypeId::DEFS)
       return;
 
     for (int i = 0; i < depth; ++i)
@@ -3197,14 +3222,14 @@ printFlat(std::ostream &os, int depth) const
     if (s != "") {
       os << ">" << s;
 
-      os << "</" << getTagName() << ">" << std::endl;
+      os << "</" << getTagName() << ">\n";
     }
     else
-      os << "/>" << std::endl;
+      os << "/>\n";
   }
 
   if (id == CSVGObjTypeId::BLOCK) {
-    os << "</svg>" << std::endl;
+    os << "</svg>\n";
   }
 }
 

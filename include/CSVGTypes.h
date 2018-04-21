@@ -49,6 +49,7 @@ enum class CSVGObjTypeId {
   LINE,
   MARKER,
   MASK,
+  METADATA,
   MISSING_GLYPH,
   MPATH,
   PATH,

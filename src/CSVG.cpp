@@ -45,6 +45,7 @@
 #include <CSVGLog.h>
 #include <CSVGMask.h>
 #include <CSVGMarker.h>
+#include <CSVGMetaData.h>
 #include <CSVGMissingGlyph.h>
 #include <CSVGMPath.h>
 #include <CSVGPath.h>
@@ -124,6 +125,7 @@ CSVG(CSVGRenderer *renderer) :
 CSVG::
 ~CSVG()
 {
+  delete xmlTag_;
 }
 
 CSVG *
@@ -136,6 +138,16 @@ dup() const
 CSVGBlock *
 CSVG::
 getRoot() const
+{
+  if (altData_.isSet())
+    return altData_.block;
+
+  return getRootBlock();
+}
+
+CSVGBlock *
+CSVG::
+getRootBlock() const
 {
   // get root block
   if (! block_.isValid()) {
@@ -257,6 +269,85 @@ setAutoName(bool autoName)
 
 void
 CSVG::
+setAltRoot(CSVGObject *o)
+{
+  if (altData_.isSet()) {
+    // remove from alt block and add back to original parent
+    altData_.block->deleteChildObject(altData_.object);
+
+    altData_.parent->addChildObject(altData_.object);
+
+    delete altData_.block;
+
+    altData_.reset();
+  }
+
+  if (o) {
+    // get current object postion
+
+    //CMatrixStack2D m = o->getFlatTransform();
+
+    //CMatrix2D m1 = m.getMatrix();
+
+    //CMatrix2D im1 = m1.inverse();
+
+    //double tx, ty;
+
+    //m1.getTranslate(&tx, &ty);
+
+    CBBox2D flatBBox;
+
+    (void) o->getFlatTransformedBBox(flatBBox);
+
+    double flatX = flatBBox.getXMin();
+    double flatY = flatBBox.getYMin();
+
+    double scale = 1.0;
+
+    if (altSize_.isSet()) {
+      double flatW = flatBBox.getWidth();
+      double flatH = flatBBox.getHeight();
+
+      double xs = altSize_.getWidth ()/flatW;
+      double ys = altSize_.getHeight()/flatH;
+
+      scale = std::min(xs, ys);
+    }
+
+    //---
+
+    altData_.block  = createBlock();
+    altData_.object = o;
+    altData_.parent = o->getParent();
+
+    altData_.parent->deleteChildObject(altData_.object);
+
+    altData_.block->addChildObject(altData_.object);
+
+    //---
+
+    CSVGBlock *block = getRootBlock();
+
+    altData_.block->setX     (block->getX     ());
+    altData_.block->setY     (block->getY     ());
+    altData_.block->setWidth (block->getWidth ());
+    altData_.block->setHeight(block->getHeight());
+
+    //---
+
+    // place block so object appears top left
+    CMatrixStack2D altM;
+
+    altM.scale(scale, scale);
+    altM.translate(-flatX, -flatY);
+    //altM.matrix(im1);
+
+    altData_.block->setTransform(altM);
+  }
+}
+
+void
+CSVG::
 setDebug(bool b)
 {
   debugData_.debug = b;
@@ -306,7 +397,7 @@ read(const std::string &filename)
 {
   clear();
 
-  return read(filename, getRoot());
+  return read(filename, getRootBlock());
 }
 
 bool
@@ -345,8 +436,7 @@ read(const std::string &filename, CSVGObject *object)
             xmlStyleSheet.is_css = (opt.getValue() == "text/css");
         }
 
-        if (xmlStyleSheet.is_css.getValue(false) &&
-            ! xmlStyleSheet.ref.getValue("").empty())
+        if (xmlStyleSheet.is_css.getValue(false) && ! xmlStyleSheet.ref.getValue("").empty())
           readCSSFile(xmlStyleSheet.ref.getValue());
 
         xmlStyleSheet_ = xmlStyleSheet;
@@ -382,7 +472,7 @@ read(const std::string &filename, CSVGObject *object)
 
   //------
 
-  getRoot()->execEvent(CSVGEventType::LOAD);
+  object->execEvent(CSVGEventType::LOAD);
 
   return true;
 }
@@ -409,7 +499,12 @@ tokenToObject(CSVGObject *parent, const CXMLToken *token)
   CSVGObject *object = createObjectByName(tag_name);
 
   if (! object) {
+    if (CRegExpUtil::parse(tag_name, "sodipodi:.*") ||
+        CRegExpUtil::parse(tag_name, "inkscape:.*"))
+      return nullptr;
+
     CSVGLog() << "Unknown tag '" << tag_name << "'";
+
     return nullptr;
   }
 
@@ -610,6 +705,8 @@ createObjectByName(const std::string &name)
     object = createMarker();
   else if (name == "mask")
     object = createMask();
+  else if (name == "metadata")
+    object = createMetaData();
   else if (name == "missing-glyph")
     object = createMissingGlyph();
   else if (name == "mpath")
@@ -988,6 +1085,13 @@ CSVG::
 createMask()
 {
   return new CSVGMask(*this);
+}
+
+CSVGMetaData *
+CSVG::
+createMetaData()
+{
+  return new CSVGMetaData(*this);
 }
 
 CSVGMissingGlyph *
@@ -3196,6 +3300,114 @@ decodeLengthListValue(const std::string &str, std::vector<CScreenUnits> &lengths
 
 bool
 CSVG::
+fontSizeOption(const std::string &opt_name, const std::string &opt_value,
+               const std::string &name, CScreenUnits &length)
+{
+  if (opt_name != name)
+    return false;
+
+  if      (opt_value == "xx-small") {
+    length = CScreenUnits(CScreenUnits::Units::PX, 6); // TODO
+  }
+  else if (opt_value == "x-small") {
+    length = CScreenUnits(CScreenUnits::Units::PX, 8); // TODO
+  }
+  else if (opt_value == "small") {
+    length = CScreenUnits(CScreenUnits::Units::PX, 10); // TODO
+  }
+  else if (opt_value == "medium") {
+    length = CScreenUnits(CScreenUnits::Units::PX, 12); // TODO
+  }
+  else if (opt_value == "large") {
+    length = CScreenUnits(CScreenUnits::Units::PX, 14); // TODO
+  }
+  else if (opt_value == "x-large") {
+    length = CScreenUnits(CScreenUnits::Units::PX, 16); // TODO
+  }
+  else if (opt_value == "xx-large") {
+    length = CScreenUnits(CScreenUnits::Units::PX, 18); // TODO
+  }
+  else if (opt_value == "larger") {
+    length = CScreenUnits(CScreenUnits::Units::PX, 14); // TODO
+  }
+  else if (opt_value == "smaller") {
+    length = CScreenUnits(CScreenUnits::Units::PX, 10); // TODO
+  }
+  else {
+    COptValT<CScreenUnits> optLength = decodeLengthValue(opt_value);
+
+    if (! optLength.isValid()) {
+      std::string msg = "Illegal font size value '" + opt_value + "' for " + name;
+      syntaxError(msg);
+      return false;
+    }
+
+    length = optLength.getValue();
+  }
+
+  return true;
+}
+
+bool
+CSVG::
+letterSpacingOption(const std::string &opt_name, const std::string &opt_value,
+                    const std::string &name, CScreenUnits &length)
+{
+  if (opt_name != name)
+    return false;
+
+  if      (opt_value == "normal") {
+    // TODO
+  }
+  else if (opt_value == "inherit") {
+    // TODO
+  }
+  else {
+    COptValT<CScreenUnits> optLength = decodeLengthValue(opt_value);
+
+    if (! optLength.isValid()) {
+      std::string msg = "Illegal font size value '" + opt_value + "' for " + name;
+      syntaxError(msg);
+      return false;
+    }
+
+    length = optLength.getValue();
+  }
+
+  return true;
+}
+
+bool
+CSVG::
+wordSpacingOption(const std::string &opt_name, const std::string &opt_value,
+                  const std::string &name, CScreenUnits &length)
+{
+  if (opt_name != name)
+    return false;
+
+  if      (opt_value == "normal") {
+    // TODO
+  }
+  else if (opt_value == "inherit") {
+    // TODO
+  }
+  else {
+    COptValT<CScreenUnits> optLength = decodeLengthValue(opt_value);
+
+    if (! optLength.isValid()) {
+      std::string msg = "Illegal font size value '" + opt_value + "' for " + name;
+      syntaxError(msg);
+      return false;
+    }
+
+    length = optLength.getValue();
+  }
+
+  return true;
+}
+
+bool
+CSVG::
 lengthOption(const std::string &opt_name, const std::string &opt_value,
              const std::string &name, CScreenUnits &length)
 {
@@ -4818,6 +5030,15 @@ getObjectsAtPoint(const CPoint2D &p, ObjectList &objects) const
 
 void
 CSVG::
+getChildrenOfId(const std::string &id, ObjectList &objects) const
+{
+  getRoot()->getChildrenOfId(id, objects);
+}
+
+//---
+
+void
+CSVG::
 sendEvent(CSVGEventType type, const std::string &id, const std::string &data)
 {
   getRoot()->handleEvent(type, id, data);
@@ -4832,7 +5053,7 @@ print(std::ostream &os, bool hier) const
 
 void
 CSVG::
-printFlat(std::ostream &os) const
+printFlat(std::ostream &os, bool force) const
 {
   if (xmlStyleSheet_.isValid()) {
     os << "<?xml-stylesheet";
@@ -4846,7 +5067,7 @@ printFlat(std::ostream &os) const
     os << "?>" << std::endl;
   }
 
-  getRoot()->printFlat(os, -1);
+  getRoot()->printFlat(os, force, -1);
 
   //css_.print(os);
 }

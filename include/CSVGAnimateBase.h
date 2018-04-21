@@ -83,7 +83,7 @@ class CSVGAnimateBase : public CSVGObject {
   COptReal                 startTime_;
   COptReal                 endTime_;
   COptInt                  repeatNum_;
-  int                      repeatInd_;
+  int                      repeatInd_   { 0 };
 };
 
 #endif

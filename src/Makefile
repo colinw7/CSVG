@@ -72,6 +72,7 @@ CSVGLinearGradient.cpp \
 CSVGLine.cpp \
 CSVGMarker.cpp \
 CSVGMask.cpp \
+CSVGMetaData.cpp \
 CSVGMissingGlyph.cpp \
 CSVGMPath.cpp \
 CSVGObject.cpp \
@@ -113,7 +114,7 @@ CEncode64.cpp \
 OBJS = $(patsubst %.cpp,$(OBJ_DIR)/%.o,$(SRC))
 
 CPPFLAGS = \
--std=c++11 \
+-std=c++14 \
 $(CDEBUG) \
 -I. \
 -I$(INC_DIR) \

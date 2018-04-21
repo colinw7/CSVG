@@ -116,8 +116,8 @@ void
 CSVGImage::
 setSize(const CSize2D &size)
 {
-  w_ = size.width;
-  h_ = size.height;
+  w_ = size.getWidth ();
+  h_ = size.getHeight();
 }
 
 bool

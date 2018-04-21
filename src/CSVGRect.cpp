@@ -101,6 +101,8 @@ void
 CSVGRect::
 updateBBox()
 {
+  double lw = getFlatStrokeWidth().getValue(1);
+
   CBBox2D drawBBox = getDrawBBox();
 
   double dw = drawBBox.getWidth ();
@@ -111,12 +113,19 @@ updateBBox()
   double w = getWidth ().pxValue(dw);
   double h = getHeight().pxValue(dh);
 
-  CPoint2D p1(x    , y);
-  CPoint2D p2(x + w, y + h);
+  CPoint2D p1(x     - lw, y     - lw);
+  CPoint2D p2(x + w + lw, y + h + lw);
 
   bbox_ = CBBox2D(p1, p2);
 
   parts_ = CSVGPathPartList();
+}
+
+void
+CSVGRect::
+strokeChanged()
+{
+  updateBBox();
 }
 
 bool
@@ -242,8 +251,8 @@ void
 CSVGRect::
 setSize(const CSize2D &size)
 {
-  width_  = size.width ;
-  height_ = size.height;
+  width_  = size.getWidth ();
+  height_ = size.getHeight();
 
   updateBBox();
 }
@@ -280,8 +289,8 @@ void
 CSVGRect::
 resizeTo(const CSize2D &size)
 {
-  width_  = size.width ;
-  height_ = size.height;
+  width_  = size.getWidth ();
+  height_ = size.getHeight();
 
   updateBBox();
 }

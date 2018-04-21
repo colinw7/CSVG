@@ -77,11 +77,11 @@ class CSVGObject {
 
   bool hasStroke() const { return stroke_.isSet(); }
   const CSVGStroke &getStroke() const { return stroke_; }
-  void setStroke(const CSVGStroke &s) { stroke_ = s; }
+  void setStroke(const CSVGStroke &s) { stroke_ = s; strokeChanged(); }
 
   bool hasFill() const { return fill_.isSet(); }
   const CSVGFill &getFill() const { return fill_; }
-  void setFill(const CSVGFill &f) { fill_ = f; }
+  void setFill(const CSVGFill &f) { fill_ = f; fillChanged(); }
 
   const CSVGClip &getClip() const { return clip_; }
 
@@ -233,6 +233,7 @@ class CSVGObject {
   uint numChildren() const { return objects_.size(); }
 
   const ObjectList &children() const { return objects_; }
+  CSVGObject *child(int i) const;
 
   virtual bool isHierDrawable() const { return true; }
 
@@ -311,47 +312,49 @@ class CSVGObject {
   //------
 
   // stroke
-  void setStrokeColor(const std::string &color) { stroke_.setColor(color); }
-  void setStrokeColor(const CSVGColor &color) { stroke_.setColor(color); }
+  void setStrokeColor(const std::string &color) { stroke_.setColor(color); strokeChanged(); }
+  void setStrokeColor(const CSVGColor &color) { stroke_.setColor(color); strokeChanged(); }
   bool getStrokeColorValid() const { return stroke_.getColorValid(); }
 
-  void setStrokeOpacity(const std::string &opacity) { stroke_.setOpacity(opacity); }
-  void setStrokeOpacity(double t) { stroke_.setOpacity(t); }
+  void setStrokeOpacity(const std::string &s) { stroke_.setOpacity(s); strokeChanged(); }
+  void setStrokeOpacity(double t) { stroke_.setOpacity(t); strokeChanged(); }
   bool getStrokeOpacityValid() const { return stroke_.getOpacityValid(); }
 
-  void setStrokeRule(const std::string &opacity) { stroke_.setRule(opacity); }
-  void setStrokeRule(const CFillType &rule) { stroke_.setRule(rule); }
+  void setStrokeRule(const std::string &s) { stroke_.setRule(s); strokeChanged(); }
+  void setStrokeRule(const CFillType &rule) { stroke_.setRule(rule); strokeChanged(); }
   bool getStrokeRuleValid() const { return stroke_.getRuleValid(); }
 
-  void setStrokeUrl(const std::string &url) { stroke_.setUrl(url); }
+  void setStrokeUrl(const std::string &url) { stroke_.setUrl(url); strokeChanged(); }
   bool getStrokeUrlValid() const { return stroke_.getUrlValid(); }
 
-  void setStrokeFillObject(CSVGObject *object) { stroke_.setFillObject(object); }
+  void setStrokeFillObject(CSVGObject *o) { stroke_.setFillObject(o); strokeChanged(); }
   bool getStrokeFillObjectValid() const { return stroke_.getFillObjectValid(); }
 
-  void setStrokeWidth(const std::string &width) { stroke_.setWidth(width); }
-  void setStrokeWidth(double width) { stroke_.setWidth(width); }
+  void setStrokeWidth(const std::string &s) { stroke_.setWidth(s); strokeChanged(); }
+  void setStrokeWidth(double width) { stroke_.setWidth(width); strokeChanged(); }
   bool getStrokeWidthValid() const { return stroke_.getWidthValid(); }
 
-  void setStrokeDashArray(const std::string &dashStr) { stroke_.setDashArray(dashStr); }
-  void setStrokeDashOffset(const std::string &offsetStr) { stroke_.setDashOffset(offsetStr); }
+  void setStrokeDashArray(const std::string &s) { stroke_.setDashArray(s); strokeChanged(); }
+  void setStrokeDashOffset(const std::string &s) { stroke_.setDashOffset(s); strokeChanged(); }
 
-  void setStrokeDash(const CSVGStrokeDash &dash) { stroke_.setDash(dash); }
+  void setStrokeDash(const CSVGStrokeDash &dash) { stroke_.setDash(dash); strokeChanged(); }
   CSVGStrokeDash getStrokeDash() const { return stroke_.getDash(); }
   bool getStrokeDashValid() const { return stroke_.getDashValid(); }
 
-  void setStrokeLineCap(const std::string &capStr) { stroke_.setLineCap(capStr); }
-  void setStrokeLineCap(const CLineCapType &cap) { stroke_.setLineCap(cap); }
+  void setStrokeLineCap(const std::string &s) { stroke_.setLineCap(s); strokeChanged(); }
+  void setStrokeLineCap(const CLineCapType &cap) { stroke_.setLineCap(cap); strokeChanged(); }
   CLineCapType getStrokeLineCap() { return stroke_.getLineCap(); }
   bool getStrokeLineCapValid() const { return stroke_.getLineCapValid(); }
 
-  void setStrokeLineJoin(const std::string &joinStr) { stroke_.setLineJoin(joinStr); }
-  void setStrokeLineJoin(const CLineJoinType &join) { stroke_.setLineJoin(join); }
+  void setStrokeLineJoin(const std::string &s) { stroke_.setLineJoin(s); strokeChanged(); }
+  void setStrokeLineJoin(const CLineJoinType &join) { stroke_.setLineJoin(join); strokeChanged(); }
   CLineJoinType getStrokeLineJoin() { return stroke_.getLineJoin(); }
   bool getStrokeLineJoinValid() const { return stroke_.getLineJoinValid(); }
 
-  void setStrokeMitreLimit(const std::string &limitStr) { stroke_.setMitreLimit(limitStr); }
+  void setStrokeMitreLimit(const std::string &s) { stroke_.setMitreLimit(s); strokeChanged(); }
   bool getStrokeMitreLimitValid() const { return stroke_.getMitreLimitValid(); }
+
+  virtual void strokeChanged() { }
 
   //---
 
@@ -370,25 +373,27 @@ class CSVGObject {
   //------
 
   // fill
-  void setFillColor(const std::string &color) { fill_.setColor(color); }
-  void setFillColor(const CSVGColor &color) { fill_.setColor(color); }
+  void setFillColor(const std::string &s) { fill_.setColor(s); fillChanged(); }
+  void setFillColor(const CSVGColor &color) { fill_.setColor(color); fillChanged(); }
   bool getFillColorValid() const { return fill_.getColorValid(); }
 
-  void setFillOpacity(const std::string &opacity) { fill_.setOpacity(opacity); }
-  void setFillOpacity(double r) { fill_.setOpacity(r); }
+  void setFillOpacity(const std::string &s) { fill_.setOpacity(s); fillChanged(); }
+  void setFillOpacity(double r) { fill_.setOpacity(r); fillChanged(); }
   bool getFillOpacityValid() const { return fill_.getOpacityValid(); }
 
-  void setFillRule(const std::string &rule) { fill_.setRule(rule); }
+  void setFillRule(const std::string &s) { fill_.setRule(s); fillChanged(); }
   CFillType getFillRule() const { return fill_.getRule(); }
   bool getFillRuleValid() const { return fill_.getRuleValid(); }
 
-  void setFillUrl(const std::string &url) { fill_.setUrl(url); }
+  void setFillUrl(const std::string &s) { fill_.setUrl(s); fillChanged(); }
   std::string getFillUrl() const { return fill_.getUrl(); }
   bool getFillUrlValid() const { return fill_.getUrlValid(); }
 
-  void setFillFillObject(CSVGObject *object) { fill_.setFillObject(object); }
+  void setFillFillObject(CSVGObject *object) { fill_.setFillObject(object); fillChanged(); }
   CSVGObject *getFillFillObject() const { return fill_.getFillObject(); }
   bool getFillFillObjectValid() const { return fill_.getFillObjectValid(); }
+
+  virtual void fillChanged() { }
 
   //---
 
@@ -579,7 +584,7 @@ class CSVGObject {
   // print
   virtual void print(std::ostream &os, bool hier=false) const;
 
-  virtual void printFlat(std::ostream &os, int depth=0) const;
+  virtual void printFlat(std::ostream &os, bool force=false, int depth=0) const;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGObject &object) {
     object.print(os);

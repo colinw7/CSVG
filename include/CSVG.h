@@ -74,6 +74,7 @@ class CSVGLine;
 class CSVGLinearGradient;
 class CSVGMarker;
 class CSVGMask;
+class CSVGMetaData;
 class CSVGMissingGlyph;
 class CSVGMPath;
 class CSVGPath;
@@ -182,6 +183,8 @@ class CSVG {
 
   CSVGBlock *getRoot() const;
 
+  CSVGBlock *getRootBlock() const;
+
   //---
 
   virtual void updateBusy() { }
@@ -232,6 +235,14 @@ class CSVG {
 
   bool getIgnoreFilter() const { return ignoreFilter_; }
   void setIgnoreFilter(bool b) { ignoreFilter_ = b; }
+
+  //---
+
+  CSVGObject *getAltRoot() const { return altRoot_; }
+  void setAltRoot(CSVGObject *o);
+
+  const CSize2D &getAltSize() const { return altSize_; }
+  void setAltSize(const CSize2D &s) { altSize_ = s; }
 
   //---
 
@@ -311,6 +322,7 @@ class CSVG {
   virtual CSVGLinearGradient      *createLinearGradient();
   virtual CSVGMarker              *createMarker();
   virtual CSVGMask                *createMask();
+  virtual CSVGMetaData            *createMetaData();
   virtual CSVGMissingGlyph        *createMissingGlyph();
   virtual CSVGMPath               *createMPath();
   virtual CSVGPath                *createPath();
@@ -507,6 +519,19 @@ class CSVG {
 
   //---
 
+  // font size args
+  bool fontSizeOption(const std::string &opt_name, const std::string &opt_value,
+                      const std::string &name, CScreenUnits &length);
+
+  // spacing args
+  bool letterSpacingOption(const std::string &opt_name, const std::string &opt_value,
+                           const std::string &name, CScreenUnits &length);
+
+  bool wordSpacingOption(const std::string &opt_name, const std::string &opt_value,
+                         const std::string &name, CScreenUnits &length);
+
+  //---
+
   // length args
   bool lengthOption(const std::string &opt_name, const std::string &opt_value,
                     const std::string &name, CScreenUnits &length);
@@ -682,11 +707,15 @@ class CSVG {
 
   void getObjectsAtPoint(const CPoint2D &p, ObjectList &objects) const;
 
+  void getChildrenOfId(const std::string &id, ObjectList &objects) const;
+
+  //--
+
   void sendEvent(CSVGEventType type, const std::string &id="", const std::string &data="");
 
   void print(std::ostream &os, bool hier=false) const;
 
-  void printFlat(std::ostream &os) const;
+  void printFlat(std::ostream &os, bool force=false) const;
 
   void syntaxError(const std::string &msg);
 
@@ -721,40 +750,60 @@ class CSVG {
     CSVGObject* object { 0 };
   };
 
+  struct AltData {
+    CSVGBlock  *block  { nullptr };
+    CSVGObject *object { nullptr };
+    CSVGObject *parent { nullptr };
+
+    bool isSet() const { return block; }
+
+    void reset() {
+      block  = nullptr;
+      object = nullptr;
+      parent = nullptr;
+    }
+  };
+
   typedef std::vector<CSVGBuffer *>           BufferStack;
   typedef std::vector<CSVGFont *>             FontList;
   typedef std::map<std::string, CSVGObject *> NameObjectMap;
   typedef std::vector<StyleData>              StyleDataStack;
   typedef std::vector<CSVGBlockData>          BlockDataStack;
+  typedef CAutoPtr<CSVGBufferMgr>             BufferMgrP;
+  typedef CAutoPtr<CSVGBlock>                 BlockP;
+  typedef CAutoPtr<CXML>                      XMLP;
   typedef COptValT<CSVGXmlStyleSheet>         OptXmlStyleSheet;
   typedef std::vector<CCSS>                   CSSList;
 
   static Colors colors_;
 
-  CSVGRenderer*           renderer_ { 0 };
-  CAutoPtr<CSVGBufferMgr> bufferMgr_;
-  CSVGBuffer*             buffer_ { 0 };
-  BufferStack             bufferStack_;
-  CSVGBlockData           rootBlockData_;
-  CSVGBlockData           blockData_;
-  BlockDataStack          blockDataStack_;
-  CAutoPtr<CSVGBlock>     block_;
-  CAutoPtr<CXML>          xml_;
-  CXMLTag*                xmlTag_ { 0 };
-  CRGBA                   background_ { 1, 1, 1};
-  StyleData               styleData_;
-  StyleDataStack          styleDataStack_;
-  FontList                fontList_;
-  NameObjectMap           idObjectMap_;
-  CSSList                 cssList_;
-  CSVGJavaScript*         js_ { 0 };
-  CSVGObject*             eventObject_ { 0 };
-  ObjectList              drawObjects_;
-  OptXmlStyleSheet        xmlStyleSheet_;
-  bool                    uniquify_      { false };
-  bool                    autoName_      { false };
-  bool                    ignoreFilter_  { false };
-  DebugData               debugData_;
+  CSVGRenderer*    renderer_      { nullptr };
+  BufferMgrP       bufferMgr_;
+  CSVGBuffer*      buffer_        { nullptr };
+  BufferStack      bufferStack_;
+  CSVGBlockData    rootBlockData_;
+  CSVGBlockData    blockData_;
+  BlockDataStack   blockDataStack_;
+  BlockP           block_;
+  XMLP             xml_;
+  CXMLTag*         xmlTag_        { nullptr };
+  CRGBA            background_    { 1, 1, 1};
+  StyleData        styleData_;
+  StyleDataStack   styleDataStack_;
+  FontList         fontList_;
+  NameObjectMap    idObjectMap_;
+  CSSList          cssList_;
+  CSVGJavaScript*  js_            { nullptr };
+  CSVGObject*      eventObject_   { nullptr };
+  ObjectList       drawObjects_;
+  OptXmlStyleSheet xmlStyleSheet_;
+  bool             uniquify_      { false };
+  bool             autoName_      { false };
+  bool             ignoreFilter_  { false };
+  CSize2D          altSize_;
+  CSVGObject*      altRoot_       { nullptr };
+  AltData          altData_;
+  DebugData        debugData_;
 };
 
 #endif

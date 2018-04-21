@@ -119,7 +119,7 @@ draw(CSVGBuffer *buffer, std::vector<CPoint2D> &points, std::vector<double> &ang
 
     buffer->pathGetCurrentPoint(&x2, &y2);
 
-    if (! REAL_EQ(x1, x2) || ! REAL_EQ(y1, y2)) {
+    if (! CMathGen::realEq(x1, x2) || ! CMathGen::realEq(y1, y2)) {
       if (points.size() == 1) {
         double g = atan2(y2 - y1, x2 - x1);
 
@@ -253,12 +253,26 @@ bool
 CSVGPathPartList::
 getBBox(CSVGBuffer *buffer, CBBox2D &bbox) const
 {
-  buffer->pathInit();
+  if (buffer) {
+    buffer->pathInit();
 
-  for (const auto &p : parts_)
-    p->draw(buffer);
+    for (const auto &p : parts_)
+      p->draw(buffer);
 
-  buffer->pathBBox(bbox);
+    buffer->pathBBox(bbox);
+  }
+  else {
+    CSVGPathPartList *th = const_cast<CSVGPathPartList *>(this);
+
+    bbox = CBBox2D();
+
+    for (const auto &p : parts_) {
+      CBBox2D bbox1;
+
+      if (p->getBBox(th, bbox1))
+        bbox += bbox1;
+    }
+  }
 
   return bbox.isSet();
 }
@@ -301,6 +315,17 @@ CSVGPathMoveTo(CSVG &svg, double x, double y) :
 {
 }
 
+bool
+CSVGPathMoveTo::
+getBBox(CSVGPathPartList *partList, CBBox2D &bbox)
+{
+  partList->setCurrentPoint(point_);
+
+  bbox.add(point_);
+
+  return true;
+}
+
 void
 CSVGPathMoveTo::
 moveBy(const CVector2D &d)
@@ -340,6 +365,21 @@ CSVGPathRMoveTo(CSVG &svg, double x, double y) :
 {
 }
 
+bool
+CSVGPathRMoveTo::
+getBBox(CSVGPathPartList *partList, CBBox2D &bbox)
+{
+  const CPoint2D &p = partList->currentPoint();
+
+  CPoint2D p1 = p + point_;
+
+  bbox.add(p1);
+
+  partList->setCurrentPoint(p1);
+
+  return true;
+}
+
 void
 CSVGPathRMoveTo::
 moveBy(const CVector2D & /*d*/)
@@ -376,6 +416,19 @@ CSVGPathLineTo::
 CSVGPathLineTo(CSVG &svg, double x, double y) :
  CSVGPathPart(svg, CSVGPathPartType::LINE_TO), point_(x, y)
 {
+}
+
+bool
+CSVGPathLineTo::
+getBBox(CSVGPathPartList *partList, CBBox2D &bbox)
+{
+  //const CPoint2D &p = partList->currentPoint();
+
+  bbox.add(point_);
+
+  partList->setCurrentPoint(point_);
+
+  return true;
 }
 
 void
@@ -425,6 +478,21 @@ CSVGPathRLineTo::
 CSVGPathRLineTo(CSVG &svg, double x, double y) :
  CSVGPathPart(svg, CSVGPathPartType::RLINE_TO), point_(x, y)
 {
+}
+
+bool
+CSVGPathRLineTo::
+getBBox(CSVGPathPartList *partList, CBBox2D &bbox)
+{
+  const CPoint2D &p = partList->currentPoint();
+
+  CPoint2D p1 = p + point_;
+
+  partList->setCurrentPoint(p1);
+
+  bbox.add(p1);
+
+  return true;
 }
 
 void
@@ -482,6 +550,21 @@ getLength(const CPoint2D &p) const
   return fabs(x_ - p.x);
 }
 
+bool
+CSVGPathHLineTo::
+getBBox(CSVGPathPartList *partList, CBBox2D &bbox)
+{
+  const CPoint2D &p = partList->currentPoint();
+
+  CPoint2D p1 = CPoint2D(x_, p.y);
+
+  partList->setCurrentPoint(p1);
+
+  bbox.add(p1);
+
+  return true;
+}
+
 void
 CSVGPathHLineTo::
 moveBy(const CVector2D &d)
@@ -528,6 +611,21 @@ CSVGPathRHLineTo::
 CSVGPathRHLineTo(CSVG &svg, double dx) :
  CSVGPathPart(svg, CSVGPathPartType::RHLINE_TO), dx_(dx)
 {
+}
+
+bool
+CSVGPathRHLineTo::
+getBBox(CSVGPathPartList *partList, CBBox2D &bbox)
+{
+  const CPoint2D &p = partList->currentPoint();
+
+  CPoint2D p1 = CPoint2D(p.x + dx_, p.y);
+
+  partList->setCurrentPoint(p1);
+
+  bbox.add(p1);
+
+  return true;
 }
 
 void
@@ -581,6 +679,21 @@ getLength(const CPoint2D &p) const
   return fabs(y_ - p.y);
 }
 
+bool
+CSVGPathVLineTo::
+getBBox(CSVGPathPartList *partList, CBBox2D &bbox)
+{
+  const CPoint2D &p = partList->currentPoint();
+
+  CPoint2D p1 = CPoint2D(p.x, y_);
+
+  partList->setCurrentPoint(p1);
+
+  bbox.add(p1);
+
+  return true;
+}
+
 void
 CSVGPathVLineTo::
 moveBy(const CVector2D &d)
@@ -629,6 +742,21 @@ CSVGPathRVLineTo(CSVG &svg, double dy) :
 {
 }
 
+bool
+CSVGPathRVLineTo::
+getBBox(CSVGPathPartList *partList, CBBox2D &bbox)
+{
+  const CPoint2D &p = partList->currentPoint();
+
+  CPoint2D p1 = CPoint2D(p.x, p.y + dy_);
+
+  partList->setCurrentPoint(p1);
+
+  bbox.add(p1);
+
+  return true;
+}
+
 void
 CSVGPathRVLineTo::
 moveBy(const CVector2D & /*d*/)
@@ -672,6 +800,21 @@ CSVGPathArcTo(CSVG &svg, double rx, double ry, double xa, int fa, int fs, double
  CSVGPathPart(svg, CSVGPathPartType::ARC_TO), rx_(rx), ry_(ry), xa_(xa),
  fa_(fa), fs_(fs), point2_(x2, y2)
 {
+}
+
+bool
+CSVGPathArcTo::
+getBBox(CSVGPathPartList *partList, CBBox2D &bbox)
+{
+  //const CPoint2D &p = partList->currentPoint();
+
+  CPoint2D p1 = point2_; // TODO
+
+  partList->setCurrentPoint(p1);
+
+  bbox.add(p1);
+
+  return true;
 }
 
 void
@@ -802,6 +945,21 @@ CSVGPathRArcTo(CSVG &svg, double rx, double ry, double xa, int fa, int fs, doubl
 {
 }
 
+bool
+CSVGPathRArcTo::
+getBBox(CSVGPathPartList *partList, CBBox2D &bbox)
+{
+  const CPoint2D &p = partList->currentPoint();
+
+  CPoint2D p1 = CPoint2D(p.x + point2_.x, p.y + point2_.y); // TODO
+
+  partList->setCurrentPoint(p1);
+
+  bbox.add(p1);
+
+  return true;
+}
+
 void
 CSVGPathRArcTo::
 moveBy(const CVector2D &)
@@ -928,6 +1086,21 @@ CSVGPathBezier2To(CSVG &svg, double x1, double y1, double x2, double y2) :
 {
 }
 
+bool
+CSVGPathBezier2To::
+getBBox(CSVGPathPartList *partList, CBBox2D &bbox)
+{
+  //const CPoint2D &p = partList->currentPoint();
+
+  CPoint2D p1 = point2_; // TODO
+
+  partList->setCurrentPoint(p1);
+
+  bbox.add(p1);
+
+  return true;
+}
+
 void
 CSVGPathBezier2To::
 moveBy(const CVector2D &d)
@@ -996,6 +1169,21 @@ CSVGPathMBezier2To::
 CSVGPathMBezier2To(CSVG &svg, double x2, double y2) :
  CSVGPathPart(svg, CSVGPathPartType::MBEZIER2_TO), point2_(x2, y2)
 {
+}
+
+bool
+CSVGPathMBezier2To::
+getBBox(CSVGPathPartList *partList, CBBox2D &bbox)
+{
+  //const CPoint2D &p = partList->currentPoint();
+
+  CPoint2D p1 = point2_; // TODO
+
+  partList->setCurrentPoint(p1);
+
+  bbox.add(p1);
+
+  return true;
 }
 
 void
@@ -1067,6 +1255,21 @@ CSVGPathRBezier2To::
 CSVGPathRBezier2To(CSVG &svg, double x1, double y1, double x2, double y2) :
  CSVGPathPart(svg, CSVGPathPartType::RBEZIER2_TO), point1_(x1, y1), point2_(x2, y2)
 {
+}
+
+bool
+CSVGPathRBezier2To::
+getBBox(CSVGPathPartList *partList, CBBox2D &bbox)
+{
+  const CPoint2D &p = partList->currentPoint();
+
+  CPoint2D p1 = p + point2_; // TODO
+
+  partList->setCurrentPoint(p1);
+
+  bbox.add(p1);
+
+  return true;
 }
 
 void
@@ -1142,6 +1345,21 @@ CSVGPathMRBezier2To::
 CSVGPathMRBezier2To(CSVG &svg, double x2, double y2) :
  CSVGPathPart(svg, CSVGPathPartType::MRBEZIER2_TO), point2_(x2, y2)
 {
+}
+
+bool
+CSVGPathMRBezier2To::
+getBBox(CSVGPathPartList *partList, CBBox2D &bbox)
+{
+  const CPoint2D &p = partList->currentPoint();
+
+  CPoint2D p1 = p + point2_; // TODO
+
+  partList->setCurrentPoint(p1);
+
+  bbox.add(p1);
+
+  return true;
 }
 
 void
@@ -1221,6 +1439,21 @@ CSVGPathBezier3To(CSVG &svg, double x1, double y1, double x2, double y2, double 
 {
 }
 
+bool
+CSVGPathBezier3To::
+getBBox(CSVGPathPartList *partList, CBBox2D &bbox)
+{
+  //const CPoint2D &p = partList->currentPoint();
+
+  CPoint2D p1 = point3_; // TODO;
+
+  partList->setCurrentPoint(p1);
+
+  bbox.add(p1);
+
+  return true;
+}
+
 void
 CSVGPathBezier3To::
 moveBy(const CVector2D &d)
@@ -1291,6 +1524,21 @@ CSVGPathMBezier3To::
 CSVGPathMBezier3To(CSVG &svg, double x2, double y2, double x3, double y3) :
  CSVGPathPart(svg, CSVGPathPartType::MBEZIER3_TO), point2_(x2, y2), point3_(x3, y3)
 {
+}
+
+bool
+CSVGPathMBezier3To::
+getBBox(CSVGPathPartList *partList, CBBox2D &bbox)
+{
+  //const CPoint2D &p = partList->currentPoint();
+
+  CPoint2D p1 = point3_; // TODO;
+
+  partList->setCurrentPoint(p1);
+
+  bbox.add(p1);
+
+  return true;
 }
 
 void
@@ -1364,6 +1612,21 @@ CSVGPathRBezier3To(CSVG &svg, double x1, double y1, double x2, double y2, double
  CSVGPathPart(svg, CSVGPathPartType::RBEZIER3_TO),
  point1_(x1, y1), point2_(x2, y2), point3_(x3, y3)
 {
+}
+
+bool
+CSVGPathRBezier3To::
+getBBox(CSVGPathPartList *partList, CBBox2D &bbox)
+{
+  const CPoint2D &p = partList->currentPoint();
+
+  CPoint2D p1 = p + point3_; // TODO;
+
+  partList->setCurrentPoint(p1);
+
+  bbox.add(p1);
+
+  return true;
 }
 
 void
@@ -1443,6 +1706,21 @@ CSVGPathMRBezier3To(CSVG &svg, double x2, double y2, double x3, double y3) :
 {
 }
 
+bool
+CSVGPathMRBezier3To::
+getBBox(CSVGPathPartList *partList, CBBox2D &bbox)
+{
+  const CPoint2D &p = partList->currentPoint();
+
+  CPoint2D p1 = p + point3_; // TODO;
+
+  partList->setCurrentPoint(p1);
+
+  bbox.add(p1);
+
+  return true;
+}
+
 void
 CSVGPathMRBezier3To::
 moveBy(const CVector2D & /*d*/)
@@ -1518,6 +1796,13 @@ CSVGPathClosePath::
 CSVGPathClosePath(CSVG &svg, bool relative) :
  CSVGPathPart(svg, CSVGPathPartType::CLOSE_PATH), relative_(relative)
 {
+}
+
+bool
+CSVGPathClosePath::
+getBBox(CSVGPathPartList *, CBBox2D &)
+{
+  return false;
 }
 
 void

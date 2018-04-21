@@ -292,7 +292,7 @@ blendBuffers(CSVGBuffer *inBuffer1, CSVGBuffer *inBuffer2, const CBBox2D &bbox,
   //inBuffer1->getRenderer()->blend(inBuffer2->getRenderer(), mode, outBuffer->getRenderer());
 
   if (getenv("CSVG_DEBUG_FILTER"))
-    std::cerr << "blendBuffers: " << bbox << std::endl;
+    std::cerr << "blendBuffers: " << bbox << "\n";
 
   // get image contents from buffer
   CSVGImageDataP src_image1 = inBuffer1->subImage(bbox);
@@ -325,7 +325,7 @@ colorMatrixBuffers(CSVGBuffer *inBuffer, const CBBox2D &bbox, CSVGColorMatrixTyp
                    const std::vector<double> &values, CSVGBuffer *outBuffer)
 {
   if (getenv("CSVG_DEBUG_FILTER"))
-    std::cerr << "colorMatrixBuffers: " << bbox << std::endl;
+    std::cerr << "colorMatrixBuffers: " << bbox << "\n";
 
   // get image contents from buffer
   CSVGImageDataP dst_image = inBuffer->subImage(bbox);
@@ -398,7 +398,7 @@ componentTransferBuffers(CSVGBuffer *inBuffer, const CBBox2D &bbox,
                          const FeFuncs &funcs, CSVGBuffer *outBuffer)
 {
   if (getenv("CSVG_DEBUG_FILTER"))
-    std::cerr << "componentTransferBuffers: " << bbox << std::endl;
+    std::cerr << "componentTransferBuffers: " << bbox << "\n";
 
   // get image contents from buffer
   CSVGImageDataP dst_image = inBuffer->subImage(bbox);
@@ -445,7 +445,7 @@ compositeBuffers(CSVGBuffer *inBuffer1, CSVGBuffer *inBuffer2, const CBBox2D &bb
                  CSVGBuffer *outBuffer)
 {
   if (getenv("CSVG_DEBUG_FILTER"))
-    std::cerr << "compositeBuffers: " << bbox << std::endl;
+    std::cerr << "compositeBuffers: " << bbox << "\n";
 
   // get image contents from buffer
   CSVGImageDataP src_image1 = inBuffer1->subImage(bbox);
@@ -481,7 +481,7 @@ CSVGBuffer::
 convolveMatrixBuffers(CSVGBuffer *inBuffer, const CBBox2D &bbox, const CSVGConvolveData &data)
 {
   if (getenv("CSVG_DEBUG_FILTER"))
-    std::cerr << "convolveMatrixBuffers: " << bbox << std::endl;
+    std::cerr << "convolveMatrixBuffers: " << bbox << "\n";
 
   // get image contents from buffer
   CSVGImageDataP src_image = inBuffer->subImage(bbox);
@@ -517,7 +517,7 @@ displacementMapBuffers(CSVGBuffer *inBuffer1, CSVGBuffer *inBuffer2, const CBBox
                        double scale, CSVGBuffer *outBuffer)
 {
   if (getenv("CSVG_DEBUG_FILTER"))
-    std::cerr << "displacementMapBuffers: " << bbox << std::endl;
+    std::cerr << "displacementMapBuffers: " << bbox << "\n";
 
   // get image contents from buffer
   CSVGImageDataP src_image1 = inBuffer1->subImage(bbox);
@@ -555,7 +555,7 @@ CSVGBuffer::
 floodBuffers(const CRGBA &c, const CBBox2D &bbox, CSVGBuffer *outBuffer)
 {
   if (getenv("CSVG_DEBUG_FILTER"))
-    std::cerr << "floodBuffers: " << bbox << std::endl;
+    std::cerr << "floodBuffers: " << bbox << "\n";
 
   double x1 = 0, y1 = 0, x2 = 100, y2 = 100;
 
@@ -601,7 +601,7 @@ gaussianBlurBuffers(CSVGBuffer *inBuffer, const CBBox2D &inBBox,
                     double stdDevX, double stdDevY, CSVGBuffer *outBuffer)
 {
   if (getenv("CSVG_DEBUG_FILTER"))
-    std::cerr << "gaussianBlurBuffers: " << inBBox << std::endl;
+    std::cerr << "gaussianBlurBuffers: " << inBBox << "\n";
 
   // get image contents from buffer
   CSVGImageDataP src_image = inBuffer->subImage(inBBox);
@@ -627,7 +627,7 @@ imageBuffers(CSVGBuffer *inBuffer, const CBBox2D &bbox, CSVGPreserveAspect prese
              CSVGBuffer *outBuffer)
 {
   if (getenv("CSVG_DEBUG_FILTER"))
-    std::cerr << "imageBuffers: " << bbox << std::endl;
+    std::cerr << "imageBuffers: " << bbox << "\n";
 
   //---
 
@@ -687,7 +687,7 @@ imageBuffers(CSVGBuffer *inBuffer, const CBBox2D &bbox, CSVGPreserveAspect prese
     if (! filterBase->getFilterRegion(pbbox))
       pbbox = bbox;
   if (getenv("CSVG_DEBUG_FILTER"))
-    std::cerr << "imageBuffers 1: " << pbbox << std::endl;
+    std::cerr << "imageBuffers 1: " << pbbox << "\n";
 
     // window to svg pixel
     double px1, py1, px2, py2;
@@ -737,7 +737,7 @@ maskBuffers(CSVGBuffer *oldBuffer, CSVGBuffer *buffer,
             const CSVGObject *object, double x, double y)
 {
   if (getenv("CSVG_DEBUG_FILTER"))
-    std::cerr << "maskBuffers: " << std::endl;
+    std::cerr << "maskBuffers:\n";
 
   // create mask image
   CSVGImageDataP mask_image(buffer->getImage());
@@ -787,7 +787,7 @@ mergeBuffers(const std::vector<CSVGFeMergeNode *> &nodes,
              int w, int h, CSVGBuffer *outBuffer)
 {
   if (getenv("CSVG_DEBUG_FILTER"))
-    std::cerr << "mergeBuffers: " << std::endl;
+    std::cerr << "mergeBuffers:\n";
 
   CSVGFilterBase *filterBase = dynamic_cast<CSVGFilterBase *>(outBuffer->svg_.currentDrawObject());
 
@@ -841,7 +841,7 @@ morphologyBuffers(CSVGBuffer *inBuffer, const CBBox2D &bbox,
                   CSVGMorphologyOperator op, int r)
 {
   if (getenv("CSVG_DEBUG_FILTER"))
-    std::cerr << "morphologyBuffers: " << bbox << std::endl;
+    std::cerr << "morphologyBuffers: " << bbox << "\n";
 
   // get image contents from buffer
   CSVGImageDataP src_image = inBuffer->subImage(bbox);
@@ -870,7 +870,7 @@ offsetBuffers(CSVGBuffer *inBuffer, const CBBox2D &bbox, double dx, double dy,
               CSVGBuffer *outBuffer)
 {
   if (getenv("CSVG_DEBUG_FILTER"))
-    std::cerr << "offsetBuffers: " << bbox << " (" << dx << "," << dy << ")" << std::endl;
+    std::cerr << "offsetBuffers: " << bbox << " (" << dx << "," << dy << ")\n";
 
   // get image contents from buffer
   CSVGImageDataP src_image = inBuffer->subImage(bbox);
@@ -892,7 +892,7 @@ tileBuffers(CSVGBuffer *inBuffer, const CBBox2D &inBBox,
             const CBBox2D &outBBox, CSVGBuffer *outBuffer)
 {
   if (getenv("CSVG_DEBUG_FILTER"))
-    std::cerr << "tileBuffers: " << inBBox << " to " << outBBox << std::endl;
+    std::cerr << "tileBuffers: " << inBBox << " to " << outBBox << "\n";
 
   // get image contents from buffer
   CSVGImageDataP inImage = inBuffer->subImage(inBBox);
@@ -949,7 +949,7 @@ turbulenceBuffers(CSVGBuffer *inBuffer, const CBBox2D &bbox, bool fractalNoise,
                   CSVGBuffer *outBuffer)
 {
   if (getenv("CSVG_DEBUG_FILTER"))
-    std::cerr << "turbulenceBuffers: " << bbox << std::endl;
+    std::cerr << "turbulenceBuffers: " << bbox << "\n";
 
   // get image contents from buffer
   CSVGImageDataP dst_image = inBuffer->subImage(bbox);
@@ -974,7 +974,7 @@ lightBuffers(CSVGBuffer *inBuffer, const CBBox2D &bbox,
              const CSVGLightData &lightData, CSVGBuffer *outBuffer)
 {
   if (getenv("CSVG_DEBUG_FILTER"))
-    std::cerr << "lightBuffers: " << bbox << std::endl;
+    std::cerr << "lightBuffers: " << bbox << "\n";
 
   // get image contents from buffer
   CSVGImageDataP dst_image = inBuffer->subImage(bbox);
@@ -1311,7 +1311,7 @@ setImageFile(const std::string &filename)
   CSVGImageDataP image(svg_.createImageData());
 
   if (! image->read(filename)) {
-    std::cerr << "Failed to load '" << filename << "'" << std::endl;
+    std::cerr << "Failed to load '" << filename << "'\n";
     return;
   }
 
