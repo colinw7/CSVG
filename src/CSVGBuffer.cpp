@@ -686,8 +686,9 @@ imageBuffers(CSVGBuffer *inBuffer, const CBBox2D &bbox, CSVGPreserveAspect prese
 
     if (! filterBase->getFilterRegion(pbbox))
       pbbox = bbox;
-  if (getenv("CSVG_DEBUG_FILTER"))
-    std::cerr << "imageBuffers 1: " << pbbox << "\n";
+
+    if (getenv("CSVG_DEBUG_FILTER"))
+      std::cerr << "imageBuffers 1: " << pbbox << "\n";
 
     // window to svg pixel
     double px1, py1, px2, py2;
