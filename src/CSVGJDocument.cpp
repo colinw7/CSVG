@@ -118,9 +118,9 @@ execNameFn(CJavaScript *, const std::string &name, const Values &values)
   }
   else if (name == "createElementNS") {
     if (values.size() == 3) {
-      std::string name = values[2]->toString();
+      std::string name1 = values[2]->toString();
 
-      CSVGObject *obj = svg_->createObjectByName(name);
+      CSVGObject *obj = svg_->createObjectByName(name1);
 
       if (obj)
         return CJValueP(new CSVGJElement(obj));

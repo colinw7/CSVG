@@ -43,7 +43,7 @@ class CSVGRect : public CSVGObject {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  void strokeChanged();
+  void strokeChanged() override;
 
   bool draw() override;
 

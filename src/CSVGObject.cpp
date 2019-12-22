@@ -2137,10 +2137,10 @@ drawObject()
     if      (block)
       svg_.beginDrawBuffer(saveBuffer, svg_.offset(), svg_.xscale(), svg_.yscale());
     else if (bbox.isSet()) {
-      CSVGBlock *block = svg_.getRoot();
+      CSVGBlock *root = svg_.getRoot();
 
-      CBBox2D            pixelBox       = block->calcPixelBox();
-      CBBox2D            viewBox        = block->calcViewBox();
+      CBBox2D            pixelBox       = root->calcPixelBox();
+      CBBox2D            viewBox        = root->calcViewBox();
       CPoint2D           offset         = CPoint2D(0, 0);
       double             xs             = 1;
       double             ys             = 1;

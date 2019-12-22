@@ -65,7 +65,7 @@ class CSVGText : public CSVGObject {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  COptString getNameValue(const std::string &name) const;
+  COptString getNameValue(const std::string &name) const override;
 
   bool draw() override;
 

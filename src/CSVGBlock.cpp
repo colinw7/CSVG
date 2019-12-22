@@ -218,16 +218,16 @@ drawInit()
     CSVGScale scale = getScale();
 
     if      (scale == CSVGScale::FIXED_MEET) {
-      double scale = std::min(xscale, yscale);
+      double minScale = std::min(xscale, yscale);
 
-      xscale = scale;
-      yscale = scale;
+      xscale = minScale;
+      yscale = minScale;
     }
     else if (scale == CSVGScale::FIXED_SLICE) {
-      double scale = std::max(xscale, yscale);
+      double maxScale = std::max(xscale, yscale);
 
-      xscale = scale;
-      yscale = scale;
+      xscale = maxScale;
+      yscale = maxScale;
     }
   }
 

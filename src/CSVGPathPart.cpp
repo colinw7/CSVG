@@ -119,7 +119,7 @@ draw(CSVGBuffer *buffer, std::vector<CPoint2D> &points, std::vector<double> &ang
 
     buffer->pathGetCurrentPoint(&x2, &y2);
 
-    if (! CMathGen::realEq(x1, x2) || ! CMathGen::realEq(y1, y2)) {
+    if (! CMathUtil::realEq(x1, x2) || ! CMathUtil::realEq(y1, y2)) {
       if (points.size() == 1) {
         double g = atan2(y2 - y1, x2 - x1);
 

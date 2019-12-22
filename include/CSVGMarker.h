@@ -53,7 +53,7 @@ class CSVGMarker : public CSVGObject {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  COptString getNameValue(const std::string &name) const;
+  COptString getNameValue(const std::string &name) const override;
 
   bool canFlatten() const override { return false; }
 

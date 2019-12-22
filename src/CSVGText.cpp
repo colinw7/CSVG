@@ -356,7 +356,7 @@ draw()
       //---
 
       if (i < text.size() - 1) {
-        std::string text1 = text.substr(i + 1, 1);
+        std::string text2 = text.substr(i + 1, 1);
 
         x += w1;
       }

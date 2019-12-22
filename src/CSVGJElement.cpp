@@ -244,10 +244,10 @@ execNameFn(CJavaScript *js, const std::string &name, const Values &values)
 
   if      (name == "setAttribute") {
     if (values.size() == 3) {
-      std::string name  = (values[1] ? values[1]->toString() : "");
-      std::string value = (values[2] ? values[2]->toString() : "");
+      std::string name1  = (values[1] ? values[1]->toString() : "");
+      std::string value1 = (values[2] ? values[2]->toString() : "");
 
-      obj_->processOption(name, value);
+      obj_->processOption(name1, value1);
 
       svg->redraw();
     }
@@ -258,19 +258,19 @@ execNameFn(CJavaScript *js, const std::string &name, const Values &values)
     CJValueP value;
 
     if (values.size() == 3) {
-      std::string name = (values[2] ? values[2]->toString() : "");
+      std::string name1 = (values[2] ? values[2]->toString() : "");
 
-      value = getProperty(js, name);
+      value = getProperty(js, name1);
     }
 
     return value;
   }
   else if (name == "setAttributeNS") {
     if (values.size() == 4) {
-      std::string name  = (values[2] ? values[2]->toString() : "");
-      std::string value = (values[3] ? values[3]->toString() : "");
+      std::string name1  = (values[2] ? values[2]->toString() : "");
+      std::string value1 = (values[3] ? values[3]->toString() : "");
 
-      obj_->processOption(name, value);
+      obj_->processOption(name1, value1);
 
       svg->redraw();
     }

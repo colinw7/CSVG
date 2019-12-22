@@ -521,9 +521,9 @@ tokenToObject(CSVGObject *parent, const CXMLToken *token)
   std::string textStr;
   bool        hasTextSpan = false;
 
-  for (const auto &token : tag->getChildren()) {
-    if      (token->isText()) {
-      CXMLText *text = token->getText();
+  for (const auto &ttoken : tag->getChildren()) {
+    if      (ttoken->isText()) {
+      CXMLText *text = ttoken->getText();
 
       if (hasTextSpan) {
         CSVGTSpan *tspan = dynamic_cast<CSVGTSpan *>(object);
@@ -539,7 +539,7 @@ tokenToObject(CSVGObject *parent, const CXMLToken *token)
       else
         textStr += text->getText();
     }
-    else if (token->isTag() && token->getTag()->getName() == "tspan") {
+    else if (ttoken->isTag() && ttoken->getTag()->getName() == "tspan") {
       if (! hasTextSpan && textStr != "") {
         CSVGTSpan *tspan = createTSpan();
 
@@ -548,7 +548,7 @@ tokenToObject(CSVGObject *parent, const CXMLToken *token)
         object->addChildObject(tspan);
       }
 
-      CSVGObject *object1 = tokenToObject(object, token);
+      CSVGObject *object1 = tokenToObject(object, ttoken);
       assert(object1);
 
       object->addChildObject(object1);
@@ -577,13 +577,13 @@ tokenToObject(CSVGObject *parent, const CXMLToken *token)
   //-----
 
   // process tag children
-  for (const auto &token : tag->getChildren()) {
-    if (token->isTag() && token->getTag()->getName() == "tspan")
+  for (const auto &ttoken : tag->getChildren()) {
+    if (ttoken->isTag() && ttoken->getTag()->getName() == "tspan")
       continue;
 
     //---
 
-    CSVGObject *object1 = tokenToObject(object, token);
+    CSVGObject *object1 = tokenToObject(object, ttoken);
 
     if (object1)
       object->addChildObject(object1);
@@ -2570,13 +2570,13 @@ pathStringToParts(const std::string &data, CSVGPathPartList &parts)
         skipCommaSpace(parse);
 
         // read fa, fs (single digit integers)
-        int fa, fs;
+        int fa1, fs1;
 
-        if (! parseFlag(parse, &fa)) { flag = false; break; }
+        if (! parseFlag(parse, &fa1)) { flag = false; break; }
 
         skipCommaSpace(parse);
 
-        if (! parseFlag(parse, &fs)) { flag = false; break; }
+        if (! parseFlag(parse, &fs1)) { flag = false; break; }
 
         skipCommaSpace(parse);
 
@@ -2588,7 +2588,7 @@ pathStringToParts(const std::string &data, CSVGPathPartList &parts)
         if (! parse.readReal(&y2)) { flag = false; break; }
 
         // add arc
-        parts.push_back(createPathRArcTo(rx, ry, xa, fa, fs, x2, y2));
+        parts.push_back(createPathRArcTo(rx, ry, xa, fa1, fs1, x2, y2));
 
         parse.skipSpace();
       }

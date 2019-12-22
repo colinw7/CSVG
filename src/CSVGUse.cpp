@@ -359,16 +359,16 @@ draw()
 
           //saveBuffer->setOrigin(CPoint2D(x - dx, y - dy));
 
-          double xs = svg_.flatXScale();
-          double ys = svg_.flatYScale();
+          double xs1 = svg_.flatXScale();
+          double ys1 = svg_.flatYScale();
 
-          double px1 = (dx    )*xs;
-          double py1 = (dy    )*ys;
-          double px2 = (dx + w)*xs;
-          double py2 = (dy + h)*ys;
+          double px1 = (dx    )*xs1;
+          double py1 = (dy    )*ys1;
+          double px2 = (dx + w)*xs1;
+          double py2 = (dy + h)*ys1;
 
-          double x1 = x*xs;
-          double y1 = y*ys;
+          double x1 = x*xs1;
+          double y1 = y*ys1;
 
           bool oldDrawing = oldBuffer->isDrawing();
 
