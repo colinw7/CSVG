@@ -136,11 +136,9 @@ encode(const uchar *in, size_t in_len, uchar *out, size_t out_size)
 {
   uchar buffer[5] = { 0 };
 
-#if 0
-  if (out_size < (in_len*(in_len/3)) + 2)
-    return false;
-#endif
-  if (out_size < (4*(in_len/3)) + 2)
+  size_t min_out_size = calcOutSize(in_len);
+
+  if (out_size < min_out_size)
     return false;
 
   size_t out_len    = 0;
@@ -167,6 +165,17 @@ encode(const uchar *in, size_t in_len, uchar *out, size_t out_size)
   }
 
   return true;
+}
+
+size_t
+CEncode64::
+calcOutSize(size_t in_len) const
+{
+#if 0
+  return (in_len*(in_len/3)) + 2;
+#else
+  return (4*(in_len/3)) + 2;
+#endif
 }
 
 void

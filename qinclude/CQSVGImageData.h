@@ -46,7 +46,7 @@ class CQSVGImageData : public CSVGImageData {
 
   void copyAlpha(CSVGImageData *dst, int x, int y) override;
 
-  void scaleAlpha(double alpha);
+  void scaleAlpha(double alpha) override;
 
   void reshape(int w, int h) override;
 

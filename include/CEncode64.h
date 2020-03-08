@@ -9,10 +9,6 @@ class CFile;
 #define CEncode64Inst CEncode64::getInstance()
 
 class CEncode64 {
- private:
-  char base_64_chars_[65];
-  char end_char_;
-
  public:
   static CEncode64 *getInstance();
 
@@ -28,6 +24,8 @@ class CEncode64 {
 
   std::string decode(const std::string &str);
 
+  size_t calcOutSize(size_t in_len) const;
+
  private:
   CEncode64();
  ~CEncode64();
@@ -38,6 +36,10 @@ class CEncode64 {
              const unsigned char *from, size_t from_len);
 
   bool decodeChar(char c, int *pos);
+
+ private:
+  char base_64_chars_[65];
+  char end_char_ { '\0' };
 };
 
 #endif

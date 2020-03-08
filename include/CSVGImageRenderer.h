@@ -113,7 +113,7 @@ class CSVGImageRenderer : public CSVGRenderer {
   void setFillColor(const CRGBA &c) override { renderer_->setForeground(c); }
   void setFillGradient(CGenGradient *) override { }
   void setFillImage(double, double, CSVGImageData *) override { }
-  void setFillMatrix(const CMatrix2D &) { std::cerr << "setFillMatrix" << std::endl; }
+  void setFillMatrix(const CMatrix2D &) override { std::cerr << "setFillMatrix" << std::endl; }
 
   void setStrokeFilled(bool) override { }
   void setStrokeFillType(CFillType) override { }

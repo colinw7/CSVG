@@ -22,7 +22,7 @@ class CQSVGRenderer : public CSVGRenderer {
   QPainter *painter() const { return painter_; }
 
   const CRGBA &background() const { return background_; }
-  void setBackground(const CRGBA &v) { background_ = v; }
+  void setBackground(const CRGBA &v) override { background_ = v; }
 
   bool isDrawing() const { return drawing_; }
   void setDrawing(bool b) { drawing_ = b; }
@@ -30,7 +30,7 @@ class CQSVGRenderer : public CSVGRenderer {
   void setSize(int width, int height) override;
   void getSize(int *width, int *height) const override;
 
-  void setPixelRange(int width, int height);
+  void setPixelRange(int width, int height) override;
 
   void setDataRange(double xmin, double ymin, double xmax, double ymax) override;
   void getDataRange(double *xmin, double *ymin, double *xmax, double *ymax) const override;

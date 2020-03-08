@@ -62,6 +62,8 @@
 #include <CQPropertyItem.h>
 #include <CQPixmapCache.h>
 
+#include <CImageMgr.h>
+
 #include <QApplication>
 #include <QSplitter>
 #include <QHBoxLayout>
@@ -473,7 +475,7 @@ loadFile()
     std::string name;
 
     if (imageDir() != "")
-      name = CStrUtil::strprintf("%s/svg_%s.png", imageDir(), base.c_str());
+      name = CStrUtil::strprintf("%s/svg_%s.png", imageDir().toLatin1().constData(), base.c_str());
     else
       name = CStrUtil::strprintf("svg_%s.png", base.c_str());
 
@@ -1347,7 +1349,7 @@ void
 CQSVGWindow::
 startBusy()
 {
-  startTime_ = CHRTimerMgr::getHRTime();
+  startTime_ = CHRTime::getTime();
   busyTime_  = startTime_;
 
   busyButton_->setIcon(CQPixmapCacheInst->getIcon("BUSY"));
@@ -1357,11 +1359,11 @@ void
 CQSVGWindow::
 endBusy()
 {
-  endTime_ = CHRTimerMgr::getHRTime();
+  endTime_ = CHRTime::getTime();
 
   busyButton_->setIcon(CQPixmapCacheInst->getIcon("READY"));
 
-  CHRTime dtime = CHRTimerMgr::diffHRTime(startTime_, endTime_);
+  CHRTime dtime = CHRTime::diffTime(startTime_, endTime_);
 
   std::stringstream sstr;
 
@@ -1376,9 +1378,9 @@ updateBusy()
 {
   busyButton_->update();
 
-  CHRTime currentTime = CHRTimerMgr::getHRTime();
+  CHRTime currentTime = CHRTime::getTime();
 
-  CHRTime dtime = CHRTimerMgr::diffHRTime(busyTime_, currentTime);
+  CHRTime dtime = CHRTime::diffTime(busyTime_, currentTime);
 
   if (dtime.getMSecs() > 100) {
     busyTime_ = currentTime;

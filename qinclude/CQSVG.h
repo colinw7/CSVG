@@ -44,7 +44,7 @@ class CQSVG : public QObject, public CSVG {
   bool isShowFilterBox() const { return showFilterBox_; }
   void setShowFilterBox(bool b) { showFilterBox_ = b; }
 
-  void updateBusy();
+  void updateBusy() override;
 
   //---
 

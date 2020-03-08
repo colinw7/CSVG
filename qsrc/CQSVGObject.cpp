@@ -9,6 +9,7 @@
 #include <CSVGObject.h>
 #include <CSVGFilter.h>
 
+#include <CQFontUtil.h>
 #include <CQUtil.h>
 #include <QPainter>
 
@@ -416,7 +417,7 @@ void
 CQSVGObject::
 setFont(QFont f)
 {
-  CFontPtr font = CQUtil::fromQFont(f);
+  CFontPtr font = CQFontUtil::fromQFont(f);
 
   CSVGFontDef fontDef = obj_->getFontDef();
 
