@@ -109,7 +109,6 @@ CSVGJEvent.cpp \
 CSVGJTypes.cpp \
 \
 CLog.cpp \
-CEncode64.cpp \
 
 OBJS = $(patsubst %.cpp,$(OBJ_DIR)/%.o,$(SRC))
 
