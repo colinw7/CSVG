@@ -10,8 +10,8 @@
 #include <CSVGPattern.h>
 #include <CSVG.h>
 #include <CSVGRenderer.h>
-#include <CSVGUtil.h>
 #include <CVector3D.h>
+#include <CMathRound.h>
 
 namespace {
   CSVGImageDataP createImage(CSVG &svg, int w, int h) {
@@ -658,8 +658,8 @@ imageBuffers(CSVGBuffer *inBuffer, const CBBox2D &bbox, CSVGPreserveAspect prese
   double    pw    = std::max(fabs(p2.x - p1.x), 1.0);
   double    ph    = std::max(fabs(p2.y - p1.y), 1.0);
 
-  int ipw = CSVGUtil::round(pw);
-  int iph = CSVGUtil::round(ph);
+  int ipw = CMathRound::RoundNearest(pw);
+  int iph = CMathRound::RoundNearest(ph);
 
   CSVGFilterBase *filterBase = dynamic_cast<CSVGFilterBase *>(inBuffer->svg_.currentDrawObject());
 
@@ -675,8 +675,8 @@ imageBuffers(CSVGBuffer *inBuffer, const CBBox2D &bbox, CSVGPreserveAspect prese
     //---
 
     // create dest image
-    int w1 = CSVGUtil::round(p1.x + pw);
-    int h1 = CSVGUtil::round(p1.y + ph);
+    int w1 = CMathRound::RoundNearest(p1.x + pw);
+    int h1 = CMathRound::RoundNearest(p1.y + ph);
 
     dst_image = createImage(outBuffer->svg_, w1, h1);
 
@@ -708,15 +708,15 @@ imageBuffers(CSVGBuffer *inBuffer, const CBBox2D &bbox, CSVGPreserveAspect prese
     double dx = (pw - src_image1->getWidth ())/2;
     double dy = (ph - src_image1->getHeight())/2;
 
-    int ix1 = CSVGUtil::round(p1.x + dx);
-    int iy1 = CSVGUtil::round(p1.y + dy);
-    int ix2 = CSVGUtil::round(p2.x + dx);
-    int iy2 = CSVGUtil::round(p2.y + dy);
+    int ix1 = CMathRound::RoundNearest(p1.x + dx);
+    int iy1 = CMathRound::RoundNearest(p1.y + dy);
+    int ix2 = CMathRound::RoundNearest(p2.x + dx);
+    int iy2 = CMathRound::RoundNearest(p2.y + dy);
 
-    ix1 = std::max(ix1, CSVGUtil::round(pp1.x));
-    iy1 = std::max(iy1, CSVGUtil::round(pp1.y));
-    ix2 = std::min(ix2, CSVGUtil::round(pp2.x));
-    iy2 = std::min(iy2, CSVGUtil::round(pp2.y));
+    ix1 = std::max(ix1, CMathRound::RoundNearest(pp1.x));
+    iy1 = std::max(iy1, CMathRound::RoundNearest(pp1.y));
+    ix2 = std::min(ix2, CMathRound::RoundNearest(pp2.x));
+    iy2 = std::min(iy2, CMathRound::RoundNearest(pp2.y));
 
     src_image1->subCopyTo(dst_image.getPtr(), 0, 0, ix2 - ix1, iy2 - iy1, ix1, iy1);
   }
@@ -922,10 +922,10 @@ tileBuffers(CSVGBuffer *inBuffer, const CBBox2D &inBBox,
   //---
 
   // tile (output is new image of (iw,ih) at (0,0)
-  int ix = CSVGUtil::round(p1.x);
-  int iy = CSVGUtil::round(p1.y);
-  int iw = CSVGUtil::round(p2.x - p1.x + 0.499);
-  int ih = CSVGUtil::round(p2.y - p1.y + 0.499);
+  int ix = CMathRound::RoundNearest(p1.x);
+  int iy = CMathRound::RoundNearest(p1.y);
+  int iw = CMathRound::RoundNearest(p2.x - p1.x + 0.499);
+  int ih = CMathRound::RoundNearest(p2.y - p1.y + 0.499);
 
   CHAlignType halign = CHALIGN_TYPE_LEFT;
   CVAlignType valign = CVALIGN_TYPE_TOP;
@@ -1176,10 +1176,10 @@ subImage(const CBBox2D &bbox) const
   CPoint2D p2(x2, y2);
 #endif
 
-  int ix = CSVGUtil::round(p1.x);
-  int iy = CSVGUtil::round(p1.y);
-  int iw = CSVGUtil::round(p2.x - p1.x + 0.499);
-  int ih = CSVGUtil::round(p2.y - p1.y + 0.499);
+  int ix = CMathRound::RoundNearest(p1.x);
+  int iy = CMathRound::RoundNearest(p1.y);
+  int iw = CMathRound::RoundNearest(p2.x - p1.x + 0.499);
+  int ih = CMathRound::RoundNearest(p2.y - p1.y + 0.499);
 
   return CSVGImageDataP(image->subImage(ix, iy, iw, ih));
 }
@@ -1197,10 +1197,10 @@ putImage(const CBBox2D &bbox, const CSVGImageDataP &image)
   CPoint2D p1(x1, y1);
   CPoint2D p2(x2, y2);
 
-  int ix = CSVGUtil::round(p1.x);
-  int iy = CSVGUtil::round(p1.y);
-  int iw = CSVGUtil::round(p2.x - p1.x + 0.499);
-  int ih = CSVGUtil::round(p2.y - p1.y + 0.499);
+  int ix = CMathRound::RoundNearest(p1.x);
+  int iy = CMathRound::RoundNearest(p1.y);
+  int iw = CMathRound::RoundNearest(p2.x - p1.x + 0.499);
+  int ih = CMathRound::RoundNearest(p2.y - p1.y + 0.499);
 
   getRenderer()->setSize(ix + iw, iy + ih);
 
@@ -1399,8 +1399,8 @@ addReshapeImage(CSVGBuffer *buffer, double x, double y, int pw, int ph)
   if (oldDrawing)
     stopDraw();
 
-  int px = CSVGUtil::round(x);
-  int py = CSVGUtil::round(y);
+  int px = CMathRound::RoundNearest(x);
+  int py = CMathRound::RoundNearest(y);
 
   if (! buffer->isAlpha())
     getRenderer()->addResizedImage(buffer->getRenderer(), px, py, pw, ph);
@@ -1434,8 +1434,8 @@ addImageBuffer(double x, double y, CSVGBuffer *buffer)
 
   //---
 
-  int ix = CSVGUtil::round(x);
-  int iy = CSVGUtil::round(y);
+  int ix = CMathRound::RoundNearest(x);
+  int iy = CMathRound::RoundNearest(y);
 
   if (! buffer->isAlpha()) {
     if (drawing_)
@@ -1465,8 +1465,8 @@ addImage(double x, double y, CSVGImageDataP &image2)
 
   //---
 
-  int ix = CSVGUtil::round(x);
-  int iy = CSVGUtil::round(y);
+  int ix = CMathRound::RoundNearest(x);
+  int iy = CMathRound::RoundNearest(y);
 
   CSVGImageDataP image1 = getImage();
 
@@ -1560,8 +1560,8 @@ setup(const CBBox2D &bbox)
   double x2 = bbox.getXMax();
   double y2 = bbox.getYMax();
 
-  int w = CSVGUtil::round(x2 - x1);
-  int h = CSVGUtil::round(y2 - y1);
+  int w = CMathRound::RoundNearest(x2 - x1);
+  int h = CMathRound::RoundNearest(y2 - y1);
 
   renderer->setSize(w, h);
 
@@ -1653,10 +1653,10 @@ updateBBoxSize(const CBBox2D &bbox)
   prenderer->windowToPixel(CPoint2D(bbox.getXMin(), bbox.getYMin()), p1);
   prenderer->windowToPixel(CPoint2D(bbox.getXMax(), bbox.getYMax()), p2);
 
-  int ix = CSVGUtil::round(p1.x);
-  int iy = CSVGUtil::round(p1.y);
-  int iw = CSVGUtil::round(p2.x - p1.x + 0.499);
-  int ih = CSVGUtil::round(p2.y - p1.y + 0.499);
+  int ix = CMathRound::RoundNearest(p1.x);
+  int iy = CMathRound::RoundNearest(p1.y);
+  int iw = CMathRound::RoundNearest(p2.x - p1.x + 0.499);
+  int ih = CMathRound::RoundNearest(p2.y - p1.y + 0.499);
 
   renderer->setSize(ix + iw, iy + ih);
 }

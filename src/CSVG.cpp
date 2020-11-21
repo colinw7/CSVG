@@ -67,11 +67,11 @@
 #include <CSVGTitle.h>
 #include <CSVGTSpan.h>
 #include <CSVGUse.h>
-#include <CSVGUtil.h>
 #include <CSVGFontObj.h>
 #include <CSVGObjectCSSTagData.h>
 
 #include <CSVGJavaScript.h>
+#include <CSVGUtil.h>
 
 #include <CRadialGradient.h>
 #include <CLinearGradient.h>
@@ -2304,680 +2304,111 @@ bool
 CSVG::
 pathStringToParts(const std::string &data, CSVGPathPartList &parts)
 {
-  auto parseFlag = [](CStrParse &parse, int *i) -> bool {
-    if (! parse.isChar('0') && ! parse.isChar('1'))
-      return false;
+  class PathVisitor : public CSVGUtil::PathVisitor {
+   public:
+    PathVisitor(CSVG *svg) :
+     svg_(svg) {
+    }
 
-    *i = (parse.getCharAt() - '0');
+    const CSVGPathPartList &parts() const { return parts_; }
 
-    parse.skipChar();
+    void moveTo(double x, double y) override {
+      parts_.push_back(svg_->createPathMoveTo(x, y));
+    }
 
-    return true;
+    void rmoveTo(double dx, double dy) override {
+      parts_.push_back(svg_->createPathRMoveTo(dx, dy));
+    }
+
+    void lineTo(double x, double y) override {
+      parts_.push_back(svg_->createPathLineTo(x, y));
+    }
+
+    void rlineTo(double dx, double dy) override {
+      parts_.push_back(svg_->createPathRLineTo(dx, dy));
+    }
+
+    void hlineTo(double x) override {
+      parts_.push_back(svg_->createPathHLineTo(x));
+    }
+
+    void vlineTo(double y) override {
+      parts_.push_back(svg_->createPathVLineTo(y));
+    }
+
+    void rhlineTo(double dx) override {
+      parts_.push_back(svg_->createPathRHLineTo(dx));
+    }
+
+    void rvlineTo(double dy) override {
+      parts_.push_back(svg_->createPathRVLineTo(dy));
+    }
+
+    void arcTo(double rx, double ry, double xa, int fa, int fs, double x2, double y2) override {
+      parts_.push_back(svg_->createPathArcTo(rx, ry, xa, fa, fs, x2, y2));
+    }
+
+    void rarcTo(double rx, double ry, double xa, int fa, int fs, double dx2, double dy2) override {
+      parts_.push_back(svg_->createPathRArcTo(rx, ry, xa, fa, fs, dx2, dy2));
+    }
+
+    void bezier2To(double x1, double y1, double x2, double y2) override {
+      parts_.push_back(svg_->createPathBezier2To(x1, y1, x2, y2));
+    }
+
+    void rbezier2To(double dx1, double dy1, double dx2, double dy2) override {
+      parts_.push_back(svg_->createPathRBezier2To(dx1, dy1, dx2, dy2));
+    }
+
+    void bezier3To(double x1, double y1, double x2, double y2, double x3, double y3) override {
+      parts_.push_back(svg_->createPathBezier3To(x1, y1, x2, y2, x3, y3));
+    }
+
+    void rbezier3To(double dx1, double dy1, double dx2, double dy2,
+                   double dx3, double dy3) override {
+      parts_.push_back(svg_->createPathRBezier3To(dx1, dy1, dx2, dy2, dx3, dy3));
+    }
+
+    void mbezier2To(double x2, double y2) override {
+      parts_.push_back(svg_->createPathMBezier2To(x2, y2));
+    }
+
+    void mrbezier2To(double dx2, double dy2) override {
+      parts_.push_back(svg_->createPathMRBezier2To(dx2, dy2));
+    }
+
+    void mbezier3To(double x2, double y2, double x3, double y3) override {
+      parts_.push_back(svg_->createPathMBezier3To(x2, y2, x3, y3));
+    }
+
+    void mrbezier3To(double dx2, double dy2, double dx3, double dy3) override {
+      parts_.push_back(svg_->createPathMRBezier3To(dx2, dy2, dx3, dy3));
+    }
+
+    void closePath(bool relative) override {
+      parts_.push_back(svg_->createPathClosePath(relative));
+    }
+
+    void handleError(const std::string &preStr, const std::string &atStr,
+                     const std::string &postStr) const override {
+      CSVGLog() << "Path parse fail :";
+      CSVGLog() << preStr << ">" << atStr << "<" << postStr;
+    }
+
+   private:
+    CSVG*            svg_ { nullptr };
+    CSVGPathPartList parts_;
   };
 
   //---
 
-  char c = '\0', lastC = '\0';
+  PathVisitor pathVisitor(this);
 
-  bool rereadCmd = false;
-
-  CStrParse parse(data);
-
-  parse.skipSpace();
-
-  bool flag = true;
-
-  while (! parse.eof()) {
-    if (! rereadCmd)
-      parse.readChar(&c);
-    else
-      rereadCmd = false;
-
-    // relative move to
-    if      (c == 'm') {
-      lastC = c;
-
-      double x, y;
-
-      parse.skipSpace();
-
-      if (! parse.readReal(&x)) { flag = false; break; }
-
-      skipCommaSpace(parse);
-
-      if (! parse.readReal(&y)) { flag = false; break; }
-
-      skipCommaSpace(parse);
-
-      parts.push_back(createPathRMoveTo(x, y));
-
-      // TODO: leave to rereadCmd logic
-      while (parse.isDigit() || parse.isChar('-') || parse.isChar('+') || parse.isChar('.')) {
-        if (! parse.readReal(&x)) { flag = false; break; }
-
-        skipCommaSpace(parse);
-
-        if (! parse.readReal(&y)) { flag = false; break; }
-
-        skipCommaSpace(parse);
-
-        parts.push_back(createPathRLineTo(x, y));
-      }
-    }
-    // absolute move to
-    else if (c == 'M') {
-      lastC = c;
-
-      double x, y;
-
-      parse.skipSpace();
-
-      if (! parse.readReal(&x)) { flag = false; break; }
-
-      skipCommaSpace(parse);
-
-      if (! parse.readReal(&y)) { flag = false; break; }
-
-      skipCommaSpace(parse);
-
-      parts.push_back(createPathMoveTo(x, y));
-
-      // TODO: leave to rereadCmd logic
-      while (parse.isDigit() || parse.isChar('-') || parse.isChar('+') || parse.isChar('.')) {
-        if (! parse.readReal(&x)) { flag = false; break; }
-
-        skipCommaSpace(parse);
-
-        if (! parse.readReal(&y)) { flag = false; break; }
-
-        skipCommaSpace(parse);
-
-        parts.push_back(createPathLineTo(x, y));
-      }
-    }
-    // relative line to
-    else if (c == 'l') {
-      lastC = c;
-
-      double x, y;
-
-      parse.skipSpace();
-
-      if (! parse.readReal(&x)) { flag = false; break; }
-
-      skipCommaSpace(parse);
-
-      if (! parse.readReal(&y)) { flag = false; break; }
-
-      skipCommaSpace(parse);
-
-      parts.push_back(createPathRLineTo(x, y));
-
-      // TODO: leave to rereadCmd logic
-      while (parse.isDigit() || parse.isChar('-') || parse.isChar('+') || parse.isChar('.')) {
-        if (! parse.readReal(&x)) { flag = false; break; }
-
-        skipCommaSpace(parse);
-
-        if (! parse.readReal(&y)) { flag = false; break; }
-
-        skipCommaSpace(parse);
-
-        parts.push_back(createPathRLineTo(x, y));
-      }
-    }
-    // absolute line to
-    else if (c == 'L') {
-      lastC = c;
-
-      double x, y;
-
-      parse.skipSpace();
-
-      if (! parse.readReal(&x)) { flag = false; break; }
-
-      skipCommaSpace(parse);
-
-      if (! parse.readReal(&y)) { flag = false; break; }
-
-      skipCommaSpace(parse);
-
-      parts.push_back(createPathLineTo(x, y));
-
-      // TODO: leave to rereadCmd logic
-      while (parse.isDigit() || parse.isChar('-') || parse.isChar('+') || parse.isChar('.')) {
-        if (! parse.readReal(&x)) { flag = false; break; }
-
-        skipCommaSpace(parse);
-
-        if (! parse.readReal(&y)) { flag = false; break; }
-
-        skipCommaSpace(parse);
-
-        parts.push_back(createPathLineTo(x, y));
-      }
-    }
-    // relative hline to
-    else if (c == 'h') {
-      lastC = c;
-
-      double d;
-
-      parse.skipSpace();
-
-      if (! parse.readReal(&d)) { flag = false; break; }
-
-      parts.push_back(createPathRHLineTo(d));
-    }
-    // absolute hline to
-    else if (c == 'H') {
-      lastC = c;
-
-      double d;
-
-      parse.skipSpace();
-
-      if (! parse.readReal(&d)) { flag = false; break; }
-
-      parts.push_back(createPathHLineTo(d));
-    }
-    // relative vline to
-    else if (c == 'v') {
-      lastC = c;
-
-      double d;
-
-      parse.skipSpace();
-
-      if (! parse.readReal(&d)) { flag = false; break; }
-
-      parts.push_back(createPathRVLineTo(d));
-    }
-    // absolute vline to
-    else if (c == 'V') {
-      lastC = c;
-
-      double d;
-
-      parse.skipSpace();
-
-      if (! parse.readReal(&d)) { flag = false; break; }
-
-      parts.push_back(createPathVLineTo(d));
-    }
-    // relative arc to
-    else if (c == 'a') {
-      lastC = c;
-
-      parse.skipSpace();
-
-      // read (rx, ry)
-      double rx, ry;
-
-      if (! parse.readReal(&rx)) { flag = false; break; }
-
-      skipCommaSpace(parse);
-
-      if (! parse.readReal(&ry)) { flag = false; break; }
-
-      skipCommaSpace(parse);
-
-      // read xa
-      double xa;
-
-      if (! parse.readReal(&xa)) { flag = false; break; }
-
-      skipCommaSpace(parse);
-
-      // read fa, fs (single digit integers)
-      int fa, fs;
-      if (! parseFlag(parse, &fa)) { flag = false; break; }
-
-      skipCommaSpace(parse);
-
-      if (! parseFlag(parse, &fs)) { flag = false; break; }
-
-      skipCommaSpace(parse);
-
-      // read (x2, y2)
-      double x2, y2;
-
-      if (! parse.readReal(&x2)) { flag = false; break; }
-
-      skipCommaSpace(parse);
-
-      if (! parse.readReal(&y2)) { flag = false; break; }
-
-      // add arc
-      parts.push_back(createPathRArcTo(rx, ry, xa, fa, fs, x2, y2));
-
-      skipCommaSpace(parse);
-
-      // TODO: leave to rereadCmd logic
-      while (parse.isDigit() || parse.isChar('-') || parse.isChar('+') || parse.isChar('.')) {
-        // read (rx, ry)
-        if (! parse.readReal(&rx)) { flag = false; break; }
-
-        skipCommaSpace(parse);
-
-        if (! parse.readReal(&ry)) { flag = false; break; }
-
-        skipCommaSpace(parse);
-
-        // read xa
-        if (! parse.readReal(&xa)) { flag = false; break; }
-
-        skipCommaSpace(parse);
-
-        // read fa, fs (single digit integers)
-        int fa1, fs1;
-
-        if (! parseFlag(parse, &fa1)) { flag = false; break; }
-
-        skipCommaSpace(parse);
-
-        if (! parseFlag(parse, &fs1)) { flag = false; break; }
-
-        skipCommaSpace(parse);
-
-        // read (x2, y2)
-        if (! parse.readReal(&x2)) { flag = false; break; }
-
-        skipCommaSpace(parse);
-
-        if (! parse.readReal(&y2)) { flag = false; break; }
-
-        // add arc
-        parts.push_back(createPathRArcTo(rx, ry, xa, fa1, fs1, x2, y2));
-
-        parse.skipSpace();
-      }
-    }
-    // absolute arc to
-    else if (c == 'A') {
-      lastC = c;
-
-      int    fa, fs;
-      double rx, ry, xa, x2, y2;
-
-      parse.skipSpace();
-
-      if (! parse.readReal(&rx)) { flag = false; break; }
-
-      skipCommaSpace(parse);
-
-      if (! parse.readReal(&ry)) { flag = false; break; }
-
-      skipCommaSpace(parse);
-
-      if (! parse.readReal(&xa)) { flag = false; break; }
-
-      skipCommaSpace(parse);
-
-      if (! parse.readInteger(&fa)) { flag = false; break; }
-
-      skipCommaSpace(parse);
-
-      if (! parse.readInteger(&fs)) { flag = false; break; }
-
-      skipCommaSpace(parse);
-
-      if (! parse.readReal(&x2)) { flag = false; break; }
-
-      skipCommaSpace(parse);
-
-      if (! parse.readReal(&y2)) { flag = false; break; }
-
-      parts.push_back(createPathArcTo(rx, ry, xa, fa, fs, x2, y2));
-    }
-    // relative quadratic bezier to
-    else if (c == 'q') {
-      lastC = c;
-
-      double x1, y1, x2, y2;
-
-      parse.skipSpace();
-
-      if (! parse.readReal(&x1)) { flag = false; break; }
-
-      skipCommaSpace(parse);
-
-      if (! parse.readReal(&y1)) { flag = false; break; }
-
-      skipCommaSpace(parse);
-
-      if (! parse.readReal(&x2)) { flag = false; break; }
-
-      skipCommaSpace(parse);
-
-      if (! parse.readReal(&y2)) { flag = false; break; }
-
-      skipCommaSpace(parse);
-
-      parts.push_back(createPathRBezier2To(x1, y1, x2, y2));
-
-      // TODO: leave to rereadCmd logic
-      while (parse.isDigit() || parse.isChar('-') || parse.isChar('+') || parse.isChar('.')) {
-        if (! parse.readReal(&x1)) { flag = false; break; }
-
-        skipCommaSpace(parse);
-
-        if (! parse.readReal(&y1)) { flag = false; break; }
-
-        skipCommaSpace(parse);
-
-        if (! parse.readReal(&x2)) { flag = false; break; }
-
-        skipCommaSpace(parse);
-
-        if (! parse.readReal(&y2)) { flag = false; break; }
-
-        skipCommaSpace(parse);
-
-        parts.push_back(createPathRBezier2To(x1, y1, x2, y2));
-      }
-    }
-    // absolute quadratic bezier to
-    else if (c == 'Q') {
-      lastC = c;
-
-      double x1, y1, x2, y2;
-
-      parse.skipSpace();
-
-      if (! parse.readReal(&x1)) { flag = false; break; }
-
-      skipCommaSpace(parse);
-
-      if (! parse.readReal(&y1)) { flag = false; break; }
-
-      skipCommaSpace(parse);
-
-      if (! parse.readReal(&x2)) { flag = false; break; }
-
-      skipCommaSpace(parse);
-
-      if (! parse.readReal(&y2)) { flag = false; break; }
-
-      skipCommaSpace(parse);
-
-      parts.push_back(createPathBezier2To(x1, y1, x2, y2));
-
-      // TODO: leave to rereadCmd logic
-      while (parse.isDigit() || parse.isChar('-') || parse.isChar('+') || parse.isChar('.')) {
-        if (! parse.readReal(&x1)) { flag = false; break; }
-
-        skipCommaSpace(parse);
-
-        if (! parse.readReal(&y1)) { flag = false; break; }
-
-        skipCommaSpace(parse);
-
-        if (! parse.readReal(&x2)) { flag = false; break; }
-
-        skipCommaSpace(parse);
-
-        if (! parse.readReal(&y2)) { flag = false; break; }
-
-        skipCommaSpace(parse);
-
-        parts.push_back(createPathBezier2To(x1, y1, x2, y2));
-      }
-    }
-    // relative quadratic bezier to (with mirrored control point)
-    else if (c == 't') {
-      lastC = c;
-
-      double x2, y2;
-
-      parse.skipSpace();
-
-      if (! parse.readReal(&x2)) { flag = false; break; }
-
-      skipCommaSpace(parse);
-
-      if (! parse.readReal(&y2)) { flag = false; break; }
-
-      parts.push_back(createPathMRBezier2To(x2, y2));
-    }
-    // absolute quadratic bezier to (with mirrored control point)
-    else if (c == 'T') {
-      lastC = c;
-
-      double x2, y2;
-
-      parse.skipSpace();
-
-      if (! parse.readReal(&x2)) { flag = false; break; }
-
-      skipCommaSpace(parse);
-
-      if (! parse.readReal(&y2)) { flag = false; break; }
-
-      parts.push_back(createPathMBezier2To(x2, y2));
-    }
-    // relative cubic bezier to
-    else if (c == 'c') {
-      lastC = c;
-
-      double x1, y1, x2, y2, x3, y3;
-
-      parse.skipSpace();
-
-      if (! parse.readReal(&x1)) { flag = false; break; }
-
-      skipCommaSpace(parse);
-
-      if (! parse.readReal(&y1)) { flag = false; break; }
-
-      skipCommaSpace(parse);
-
-      if (! parse.readReal(&x2)) { flag = false; break; }
-
-      skipCommaSpace(parse);
-
-      if (! parse.readReal(&y2)) { flag = false; break; }
-
-      skipCommaSpace(parse);
-
-      if (! parse.readReal(&x3)) { flag = false; break; }
-
-      skipCommaSpace(parse);
-
-      if (! parse.readReal(&y3)) { flag = false; break; }
-
-      skipCommaSpace(parse);
-
-      parts.push_back(createPathRBezier3To(x1, y1, x2, y2, x3, y3));
-
-      // TODO: leave to rereadCmd logic
-      while (parse.isDigit() || parse.isChar('-') || parse.isChar('+') || parse.isChar('.')) {
-        if (! parse.readReal(&x1)) { flag = false; break; }
-
-        skipCommaSpace(parse);
-
-        if (! parse.readReal(&y1)) { flag = false; break; }
-
-        skipCommaSpace(parse);
-
-        if (! parse.readReal(&x2)) { flag = false; break; }
-
-        skipCommaSpace(parse);
-
-        if (! parse.readReal(&y2)) { flag = false; break; }
-
-        skipCommaSpace(parse);
-
-        if (! parse.readReal(&x3)) { flag = false; break; }
-
-        skipCommaSpace(parse);
-
-        if (! parse.readReal(&y3)) { flag = false; break; }
-
-        skipCommaSpace(parse);
-
-        parts.push_back(createPathRBezier3To(x1, y1, x2, y2, x3, y3));
-      }
-    }
-    // absolute cubic bezier to
-    else if (c == 'C') {
-      lastC = c;
-
-      double x1, y1, x2, y2, x3, y3;
-
-      parse.skipSpace();
-
-      if (! parse.readReal(&x1)) { flag = false; break; }
-
-      skipCommaSpace(parse);
-
-      if (! parse.readReal(&y1)) { flag = false; break; }
-
-      skipCommaSpace(parse);
-
-      if (! parse.readReal(&x2)) { flag = false; break; }
-
-      skipCommaSpace(parse);
-
-      if (! parse.readReal(&y2)) { flag = false; break; }
-
-      skipCommaSpace(parse);
-
-      if (! parse.readReal(&x3)) { flag = false; break; }
-
-      skipCommaSpace(parse);
-
-      if (! parse.readReal(&y3)) { flag = false; break; }
-
-      skipCommaSpace(parse);
-
-      parts.push_back(createPathBezier3To(x1, y1, x2, y2, x3, y3));
-
-      // TODO: leave to rereadCmd logic
-      while (parse.isDigit() || parse.isChar('-') || parse.isChar('+') || parse.isChar('.')) {
-        if (! parse.readReal(&x1)) { flag = false; break; }
-
-        skipCommaSpace(parse);
-
-        if (! parse.readReal(&y1)) { flag = false; break; }
-
-        skipCommaSpace(parse);
-
-        if (! parse.readReal(&x2)) { flag = false; break; }
-
-        skipCommaSpace(parse);
-
-        if (! parse.readReal(&y2)) { flag = false; break; }
-
-        skipCommaSpace(parse);
-
-        if (! parse.readReal(&x3)) { flag = false; break; }
-
-        skipCommaSpace(parse);
-
-        if (! parse.readReal(&y3)) { flag = false; break; }
-
-        skipCommaSpace(parse);
-
-        parts.push_back(createPathBezier3To(x1, y1, x2, y2, x3, y3));
-      }
-    }
-    // relative cubic bezier to (with mirrored control point)
-    else if (c == 's') {
-      lastC = c;
-
-      double x2, y2, x3, y3;
-
-      parse.skipSpace();
-
-      if (! parse.readReal(&x2)) { flag = false; break; }
-
-      skipCommaSpace(parse);
-
-      if (! parse.readReal(&y2)) { flag = false; break; }
-
-      skipCommaSpace(parse);
-
-      if (! parse.readReal(&x3)) { flag = false; break; }
-
-      skipCommaSpace(parse);
-
-      if (! parse.readReal(&y3)) { flag = false; break; }
-
-      parts.push_back(createPathMRBezier3To(x2, y2, x3, y3));
-    }
-    // absolute cubic bezier to (with mirrored control point)
-    else if (c == 'S') {
-      lastC = c;
-
-      double x2, y2, x3, y3;
-
-      parse.skipSpace();
-
-      if (! parse.readReal(&x2)) { flag = false; break; }
-
-      skipCommaSpace(parse);
-
-      if (! parse.readReal(&y2)) { flag = false; break; }
-
-      skipCommaSpace(parse);
-
-      if (! parse.readReal(&x3)) { flag = false; break; }
-
-      skipCommaSpace(parse);
-
-      if (! parse.readReal(&y3)) { flag = false; break; }
-
-      parts.push_back(createPathMBezier3To(x2, y2, x3, y3));
-    }
-    // relative close path
-    else if (c == 'z') {
-      lastC = c;
-
-      parts.push_back(createPathClosePath(/*relative*/true));
-    }
-    // absolute close path
-    else if (c == 'Z') {
-      lastC = c;
-
-      parts.push_back(createPathClosePath(/*relative*/false));
-    }
-    else {
-      // repeat last command if any
-      bool isNumber = false;
-
-      if (c == '-' || c == '+' || c == '.') {
-        if (isdigit(parse.getCharAt()))
-          isNumber = true;
-      }
-      else if (isdigit(c)) {
-        isNumber = true;
-      }
-
-      if (isNumber && lastC != '\0') {
-        parse.unreadChar();
-
-        c = lastC;
-
-        rereadCmd = true;
-
-        continue;
-      }
-
-      CSVGLog() << "Invalid path command '" << c << "'";
-
-      flag = false;
-
-      break;
-    }
-
-    skipCommaSpace(parse);
+  if (! CSVGUtil::visitPath(data, pathVisitor)) {
+    // TODO: flag failure
   }
 
-  if (! flag) {
-    CSVGLog() << "Path parse fail :";
-    CSVGLog() << parse.getBefore() << ">" << parse.getAt() << "<" << parse.getAfter();
-  }
+  parts = pathVisitor.parts();
 
   // stop at syntax error but still pass
   return true;
@@ -4146,6 +3577,20 @@ decodeTransform(const std::string &str, CMatrixStack2D &matrix)
 
   CStrParse parse(str);
 
+  //---
+
+  auto skipCommaSpace = [&]() {
+    parse.skipSpace();
+
+    while (parse.isChar(',')) {
+      parse.skipChar();
+
+      parse.skipSpace();
+    }
+  };
+
+  //---
+
   std::string keyword;
 
   while (! parse.eof()) {
@@ -4169,7 +3614,7 @@ decodeTransform(const std::string &str, CMatrixStack2D &matrix)
       if (! parse.readReal(&sx))
         return false;
 
-      skipCommaSpace(parse);
+      skipCommaSpace();
 
       bool isEqualScale = true;
 
@@ -4189,7 +3634,7 @@ decodeTransform(const std::string &str, CMatrixStack2D &matrix)
 
       parse.skipChar();
 
-      skipCommaSpace(parse);
+      skipCommaSpace();
 
       //------
 
@@ -4212,7 +3657,7 @@ decodeTransform(const std::string &str, CMatrixStack2D &matrix)
         if (! parse.readReal(&dx))
           return false;
 
-        skipCommaSpace(parse);
+        skipCommaSpace();
 
         if (! parse.isChar(')')) {
           if (! parse.readReal(&dy))
@@ -4227,7 +3672,7 @@ decodeTransform(const std::string &str, CMatrixStack2D &matrix)
 
       parse.skipChar();
 
-      skipCommaSpace(parse);
+      skipCommaSpace();
 
       //------
 
@@ -4253,12 +3698,12 @@ decodeTransform(const std::string &str, CMatrixStack2D &matrix)
       double cx = 0.0, cy = 0.0;
 
       if (! parse.isChar(')')) {
-        skipCommaSpace(parse);
+        skipCommaSpace();
 
         if (! parse.readReal(&cx))
           return false;
 
-        skipCommaSpace(parse);
+        skipCommaSpace();
 
         if (! parse.readReal(&cy))
           return false;
@@ -4273,7 +3718,7 @@ decodeTransform(const std::string &str, CMatrixStack2D &matrix)
 
       parse.skipChar();
 
-      skipCommaSpace(parse);
+      skipCommaSpace();
 
       //------
 
@@ -4302,7 +3747,7 @@ decodeTransform(const std::string &str, CMatrixStack2D &matrix)
 
       parse.skipChar();
 
-      skipCommaSpace(parse);
+      skipCommaSpace();
 
       //------
 
@@ -4328,7 +3773,7 @@ decodeTransform(const std::string &str, CMatrixStack2D &matrix)
 
       parse.skipChar();
 
-      skipCommaSpace(parse);
+      skipCommaSpace();
 
       //------
 
@@ -4348,27 +3793,27 @@ decodeTransform(const std::string &str, CMatrixStack2D &matrix)
       if (! parse.readReal(&m00))
         return false;
 
-      skipCommaSpace(parse);
+      skipCommaSpace();
 
       if (! parse.readReal(&m10))
         return false;
 
-      skipCommaSpace(parse);
+      skipCommaSpace();
 
       if (! parse.readReal(&m01))
         return false;
 
-      skipCommaSpace(parse);
+      skipCommaSpace();
 
       if (! parse.readReal(&m11))
         return false;
 
-      skipCommaSpace(parse);
+      skipCommaSpace();
 
       if (! parse.readReal(&tx))
         return false;
 
-      skipCommaSpace(parse);
+      skipCommaSpace();
 
       if (! parse.readReal(&ty))
         return false;
@@ -4380,7 +3825,7 @@ decodeTransform(const std::string &str, CMatrixStack2D &matrix)
 
       parse.skipChar();
 
-      skipCommaSpace(parse);
+      skipCommaSpace();
 
       //------
 
@@ -4801,19 +4246,6 @@ decodeBoolean(const std::string &str, bool &b)
 }
 
 //--------------
-
-void
-CSVG::
-skipCommaSpace(CStrParse &parse)
-{
-  parse.skipSpace();
-
-  while (parse.isChar(',')) {
-    parse.skipChar();
-
-    parse.skipSpace();
-  }
-}
 
 CConfig *
 CSVG::

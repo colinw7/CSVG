@@ -1,7 +1,6 @@
 #include <CSVGMPath.h>
 #include <CSVG.h>
 #include <CSVGLog.h>
-#include <CSVGUtil.h>
 
 CSVGMPath::
 CSVGMPath(CSVG &svg) :

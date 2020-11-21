@@ -2,7 +2,6 @@
 #include <CSVGBuffer.h>
 #include <CSVG.h>
 #include <CSVGLog.h>
-#include <CSVGUtil.h>
 
 CSVGImage::
 CSVGImage(CSVG &svg) :

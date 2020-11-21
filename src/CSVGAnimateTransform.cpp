@@ -1,7 +1,6 @@
 #include <CSVGAnimateTransform.h>
 #include <CSVG.h>
 #include <CSVGLog.h>
-#include <CSVGUtil.h>
 
 /* Attributes:
     <Core>
@@ -81,8 +80,8 @@ animate(double t)
       if (fromValues.size() < 2 || toValues.size() < 2)
         return;
 
-      double xs = CSVGUtil::map(t, 0, 1, fromValues[0], toValues[0]);
-      double ys = CSVGUtil::map(t, 0, 1, fromValues[1], toValues[1]);
+      double xs = CMathUtil::map(t, 0, 1, fromValues[0], toValues[0]);
+      double ys = CMathUtil::map(t, 0, 1, fromValues[1], toValues[1]);
 
       //std::cerr << "CSVGAnimateTransform: translate " << currentTime_ << ":" <<
       //             xs << " " << ys << std::endl;
@@ -106,9 +105,9 @@ animate(double t)
       if (fromValues.size() < 3 || toValues.size() < 3)
         return;
 
-      double a = CSVGUtil::map(t, 0, 1, fromValues[0], toValues[0]);
-      double x = CSVGUtil::map(t, 0, 1, fromValues[1], toValues[1]);
-      double y = CSVGUtil::map(t, 0, 1, fromValues[2], toValues[2]);
+      double a = CMathUtil::map(t, 0, 1, fromValues[0], toValues[0]);
+      double x = CMathUtil::map(t, 0, 1, fromValues[1], toValues[1]);
+      double y = CMathUtil::map(t, 0, 1, fromValues[2], toValues[2]);
 
       //std::cerr << "CSVGAnimateTransform: transform " << currentTime_ << ":" << a << std::endl;
       CMatrixStack2D m;
@@ -131,8 +130,8 @@ animate(double t)
       if (fromValues.size() < 2 || toValues.size() < 2)
         return;
 
-      double xs = CSVGUtil::map(t, 0, 1, fromValues[0], toValues[0]);
-      double ys = CSVGUtil::map(t, 0, 1, fromValues[1], toValues[1]);
+      double xs = CMathUtil::map(t, 0, 1, fromValues[0], toValues[0]);
+      double ys = CMathUtil::map(t, 0, 1, fromValues[1], toValues[1]);
 
       //std::cerr << "CSVGAnimateTransform: scale " << currentTime_ << ":" <<
       //             xs << " " << ys << std::endl;

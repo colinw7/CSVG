@@ -1,7 +1,6 @@
 #include <CSVGFeOffset.h>
 #include <CSVGBuffer.h>
 #include <CSVGFilter.h>
-#include <CSVGUtil.h>
 #include <CSVG.h>
 
 CSVGFeOffset::

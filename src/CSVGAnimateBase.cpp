@@ -1,7 +1,6 @@
 #include <CSVGAnimateBase.h>
 #include <CSVG.h>
 #include <CSVGLog.h>
-#include <CSVGUtil.h>
 #include <CStrUtil.h>
 
 /* Attributes:
@@ -210,7 +209,7 @@ updateAnimation()
 
   //---
 
-  double t = CSVGUtil::map(currentTime_, getStartTime(), getEndTime(), 0, 1);
+  double t = CMathUtil::map(currentTime_, getStartTime(), getEndTime(), 0, 1);
 
   animate(t);
 }

@@ -1,7 +1,6 @@
 #include <CSVGFilterBase.h>
 #include <CSVGFilter.h>
 #include <CSVGBuffer.h>
-#include <CSVGUtil.h>
 #include <CSVG.h>
 
 CSVGFilterBase::
@@ -206,7 +205,7 @@ getBBoxSubRegion(const CBBox2D &inBBox, const CBBox2D &objectBBox, CBBox2D &bbox
     double x1 = getX().pxValue(CScreenUnits(1));
 
     if (primitiveUnits == CSVGCoordUnits::OBJECT_BBOX)
-      x1 = CSVGUtil::map(x1, 0, 1, objectBBox.getXMin(), objectBBox.getXMax());
+      x1 = CMathUtil::map(x1, 0, 1, objectBBox.getXMin(), objectBBox.getXMax());
 
     x = x1;
   }
@@ -215,7 +214,7 @@ getBBoxSubRegion(const CBBox2D &inBBox, const CBBox2D &objectBBox, CBBox2D &bbox
     double y1 = getY().pxValue(1);
 
     if (primitiveUnits == CSVGCoordUnits::OBJECT_BBOX)
-      y1 = CSVGUtil::map(y1, 0, 1, objectBBox.getYMin(), objectBBox.getYMax());
+      y1 = CMathUtil::map(y1, 0, 1, objectBBox.getYMin(), objectBBox.getYMax());
 
     y = y1;
   }

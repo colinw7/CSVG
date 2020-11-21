@@ -1,7 +1,6 @@
 #include <CSVGFeTile.h>
 #include <CSVGFilter.h>
 #include <CSVGBuffer.h>
-#include <CSVGUtil.h>
 #include <CSVG.h>
 
 CSVGFeTile::

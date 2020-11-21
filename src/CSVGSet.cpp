@@ -1,7 +1,6 @@
 #include <CSVGSet.h>
 #include <CSVG.h>
 #include <CSVGLog.h>
-#include <CSVGUtil.h>
 
 /* Attributes:
     <Core>

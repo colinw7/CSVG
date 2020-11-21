@@ -7,7 +7,6 @@
 #include <CSVGBuffer.h>
 #include <CSVG.h>
 #include <CSVGLog.h>
-#include <CSVGUtil.h>
 
 #include <CFontMgr.h>
 #include <CEncode64.h>
@@ -1789,7 +1788,7 @@ interpValue(const std::string &name, const std::string &from, const std::string 
     if (! CStrUtil::readReal(to, &toPos, &toVal))
       return false;
 
-    double y = CSVGUtil::map(x, 0, 1, fromVal, toVal);
+    double y = CMathUtil::map(x, 0, 1, fromVal, toVal);
 
     ystr = std::to_string(y);
 
@@ -2182,7 +2181,7 @@ drawObject()
 
   // restore transform
   //if (! isFiltered)
-    currentBuffer->setTransform(transform);
+  currentBuffer->setTransform(transform);
 
   //------
 

@@ -1,9 +1,9 @@
 #include <CSVGStroke.h>
 #include <CSVG.h>
 #include <CSVGLog.h>
-#include <CSVGUtil.h>
 #include <CRegExp.h>
 #include <CStrParse.h>
+#include <CMathRound.h>
 
 bool
 CSVGStroke::
@@ -418,7 +418,7 @@ print(std::ostream &os) const
     if      (getLineCap() == LINE_CAP_TYPE_BUTT  ) ss << "butt";
     else if (getLineCap() == LINE_CAP_TYPE_ROUND ) ss << "round";
     else if (getLineCap() == LINE_CAP_TYPE_SQUARE) ss << "square";
-    else                                           ss << CSVGUtil::round(getLineCap());
+    else                                           ss << CMathRound::RoundNearest(getLineCap());
 
     ss << ";";
 
@@ -433,7 +433,7 @@ print(std::ostream &os) const
     if      (getLineJoin() == LINE_JOIN_TYPE_MITRE) ss << "miter";
     else if (getLineJoin() == LINE_JOIN_TYPE_ROUND) ss << "round";
     else if (getLineJoin() == LINE_JOIN_TYPE_BEVEL) ss << "bevel";
-    else                                            ss << CSVGUtil::round(getLineJoin());
+    else                                            ss << CMathRound::RoundNearest(getLineJoin());
 
     ss << ";";
 

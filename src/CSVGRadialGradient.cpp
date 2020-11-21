@@ -5,7 +5,6 @@
 #include <CSVG.h>
 #include <CSVGLog.h>
 #include <CMathGen.h>
-#include <CSVGUtil.h>
 #include <CRadialGradient.h>
 
 /* Attributes:
@@ -304,11 +303,11 @@ getControlPoints(CSVGObject *obj, double *xc, double *yc, double *r, double *xf,
 
     obj->getBBox(bbox);
 
-    *xc = CSVGUtil::map(*xc, 0, 1, bbox.getXMin(), bbox.getXMax());
-    *yc = CSVGUtil::map(*yc, 0, 1, bbox.getYMin(), bbox.getYMax());
-    *xf = CSVGUtil::map(*xf, 0, 1, bbox.getXMin(), bbox.getXMax());
-    *yf = CSVGUtil::map(*yf, 0, 1, bbox.getYMin(), bbox.getYMax());
-    *r  = CSVGUtil::map(*r , 0, 1, 0, bbox.getWidth()); // w or h or both
+    *xc = CMathUtil::map(*xc, 0, 1, bbox.getXMin(), bbox.getXMax());
+    *yc = CMathUtil::map(*yc, 0, 1, bbox.getYMin(), bbox.getYMax());
+    *xf = CMathUtil::map(*xf, 0, 1, bbox.getXMin(), bbox.getXMax());
+    *yf = CMathUtil::map(*yf, 0, 1, bbox.getYMin(), bbox.getYMax());
+    *r  = CMathUtil::map(*r , 0, 1, 0, bbox.getWidth()); // w or h or both
   }
 }
 

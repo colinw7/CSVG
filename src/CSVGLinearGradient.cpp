@@ -4,7 +4,6 @@
 #include <CSVGBuffer.h>
 #include <CSVG.h>
 #include <CSVGLog.h>
-#include <CSVGUtil.h>
 #include <CLinearGradient.h>
 
 /* Attributes:
@@ -284,10 +283,10 @@ getEndPoints(CSVGObject *obj, double *x1, double *y1, double *x2, double *y2) co
     if (obj) {
       obj->getBBox(bbox);
 
-      *x1 = CSVGUtil::map(p1.x, 0, 1, bbox.getXMin(), bbox.getXMax());
-      *y1 = CSVGUtil::map(p1.y, 0, 1, bbox.getYMin(), bbox.getYMax());
-      *x2 = CSVGUtil::map(p2.x, 0, 1, bbox.getXMin(), bbox.getXMax());
-      *y2 = CSVGUtil::map(p2.y, 0, 1, bbox.getYMin(), bbox.getYMax());
+      *x1 = CMathUtil::map(p1.x, 0, 1, bbox.getXMin(), bbox.getXMax());
+      *y1 = CMathUtil::map(p1.y, 0, 1, bbox.getYMin(), bbox.getYMax());
+      *x2 = CMathUtil::map(p2.x, 0, 1, bbox.getXMin(), bbox.getXMax());
+      *y2 = CMathUtil::map(p2.y, 0, 1, bbox.getYMin(), bbox.getYMax());
     }
   }
 

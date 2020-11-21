@@ -674,8 +674,6 @@ class CSVG {
 
   //bool mmToPixel(double mm, double *pixel);
 
-  static void skipCommaSpace(CStrParse &parse);
-
   bool getTitle(std::string &str);
 
   CBBox2D transformBBox(const CMatrixStack2D &m, const CBBox2D &bbox) const;

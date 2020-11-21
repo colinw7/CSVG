@@ -1,6 +1,5 @@
 #include <CSVGFilter.h>
 #include <CSVGBuffer.h>
-#include <CSVGUtil.h>
 #include <CSVG.h>
 
 CSVGFilter::
@@ -113,23 +112,23 @@ getRegion(CSVGObject *obj, CBBox2D &bbox) const
     double x1 = getX().pxValue(1);
 
     if (filterUnits == CSVGCoordUnits::OBJECT_BBOX)
-      x = CSVGUtil::map(x1, 0, 1, bbox1.getXMin(), bbox1.getXMax());
+      x = CMathUtil::map(x1, 0, 1, bbox1.getXMin(), bbox1.getXMax());
     else
       x = x1;
   }
   else
-    x = CSVGUtil::map(-0.1, 0, 1, bbox1.getXMin(), bbox1.getXMax());
+    x = CMathUtil::map(-0.1, 0, 1, bbox1.getXMin(), bbox1.getXMax());
 
   if (hasY()) {
     double y1 = getY().pxValue(1);
 
     if (filterUnits == CSVGCoordUnits::OBJECT_BBOX)
-      y = CSVGUtil::map(y1, 0, 1, bbox1.getYMin(), bbox1.getYMax());
+      y = CMathUtil::map(y1, 0, 1, bbox1.getYMin(), bbox1.getYMax());
     else
       y = y1;
   }
   else
-    y = CSVGUtil::map(-0.1, 0, 1, bbox1.getYMin(), bbox1.getYMax());
+    y = CMathUtil::map(-0.1, 0, 1, bbox1.getYMin(), bbox1.getYMax());
 
   //---
 

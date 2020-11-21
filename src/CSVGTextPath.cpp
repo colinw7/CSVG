@@ -4,8 +4,36 @@
 #include <CSVGBuffer.h>
 #include <CSVG.h>
 #include <CSVGLog.h>
-#include <CSVGUtil.h>
 #include <CUtf8.h>
+
+#if 0
+namespace {
+
+inline int angleQuadrant(double a) {
+  while (a <  0     ) a += 2*M_PI;
+  while (a >= 2*M_PI) a -= 2*M_PI;
+
+  if (a <   M_PI/2) return 0;
+  if (a <   M_PI  ) return 1;
+  if (a < 3*M_PI/2) return 2;
+
+  return 3;
+}
+
+inline void adjustAngles(double &a1, double &a2) {
+  int seg1 = angleQuadrant(a1);
+  int seg2 = angleQuadrant(a2);
+
+  if      (seg1 == 0 && seg2 == 3)
+    a2 -= 2*M_PI;
+  else if (seg1 == 3 && seg2 == 0)
+    a2 += 2*M_PI;
+}
+
+}
+#endif
+
+//---
 
 CSVGTextPath::
 CSVGTextPath(CSVG &svg) :
@@ -158,7 +186,7 @@ draw()
 #if 0
     if (pi1 == pi2) {
 std::cerr << "Adjust angles " << ai1 << " " << ai2 << std::endl;
-      CSVGUtil::adjustAngles(ai1, ai2);
+      adjustAngles(ai1, ai2);
 
       ai = (ai1 + ai2)/2;
 std::cerr << "New angles " << ai1 << " " << ai2 << std::endl;

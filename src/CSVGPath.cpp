@@ -3,7 +3,6 @@
 #include <CSVGBuffer.h>
 #include <CSVG.h>
 #include <CSVGLog.h>
-#include <CSVGUtil.h>
 
 CSVGPath::
 CSVGPath(CSVG &svg) :

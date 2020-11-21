@@ -14,8 +14,8 @@ CSVGPathPart::
 interp(double s, const CPoint2D &p1, const CPoint2D &p2, CPoint2D &pi, double &a) const
 {
 std::cerr << "CSVGPathPart::interp " << id() << std::endl;
-  double xi = CSVGUtil::map(s, 0, 1, p1.x, p2.x);
-  double yi = CSVGUtil::map(s, 0, 1, p1.y, p2.y);
+  double xi = CMathUtil::map(s, 0, 1, p1.x, p2.x);
+  double yi = CMathUtil::map(s, 0, 1, p1.y, p2.y);
 
   pi = CPoint2D(xi, yi);
   a  = CMathGen::atan2(p2.x - p1.x, p2.y - p1.y);
@@ -238,7 +238,7 @@ interp(double s, double *xi, double *yi, double *a, int *pi) const
 
   CPoint2D ip;
 
-  double ss = CSVGUtil::map(s, s1, s2, 0, 1);
+  double ss = CMathUtil::map(s, s1, s2, 0, 1);
 
   part->interp(ss, p1, p2, ip, *a);
 
@@ -456,8 +456,8 @@ bool
 CSVGPathLineTo::
 interp(double s, const CPoint2D &p1, const CPoint2D & /*p2*/, CPoint2D &pi, double &a) const
 {
-  double xi = CSVGUtil::map(s, 0, 1, p1.x, point_.x);
-  double yi = CSVGUtil::map(s, 0, 1, p1.y, point_.y);
+  double xi = CMathUtil::map(s, 0, 1, p1.x, point_.x);
+  double yi = CMathUtil::map(s, 0, 1, p1.y, point_.y);
 
   pi = CPoint2D(xi, yi);
   a  = CMathGen::atan2(point_.x - p1.x, point_.y - p1.y);
@@ -519,8 +519,8 @@ bool
 CSVGPathRLineTo::
 interp(double s, const CPoint2D &p1, const CPoint2D & /*p2*/, CPoint2D &pi, double &a) const
 {
-  double dx = CSVGUtil::map(s, 0, 1, 0, point_.x);
-  double dy = CSVGUtil::map(s, 0, 1, 0, point_.y);
+  double dx = CMathUtil::map(s, 0, 1, 0, point_.x);
+  double dy = CMathUtil::map(s, 0, 1, 0, point_.y);
 
   pi = CPoint2D(p1.x + dx, p1.y + dy);
   a  = CMathGen::atan2(dx, dy);
@@ -590,7 +590,7 @@ bool
 CSVGPathHLineTo::
 interp(double s, const CPoint2D &p1, const CPoint2D & /*p2*/, CPoint2D &pi, double &a) const
 {
-  double x = CSVGUtil::map(s, 0, 1, p1.x, x_);
+  double x = CMathUtil::map(s, 0, 1, p1.x, x_);
 
   pi = CPoint2D(x, p1.y);
   a  = CMathGen::atan2(1.0, 0.0);
@@ -649,7 +649,7 @@ bool
 CSVGPathRHLineTo::
 interp(double s, const CPoint2D &p1, const CPoint2D & /*p2*/, CPoint2D &pi, double &a) const
 {
-  double dx = CSVGUtil::map(s, 0, 1, 0, dx_);
+  double dx = CMathUtil::map(s, 0, 1, 0, dx_);
 
   pi = CPoint2D(p1.x + dx, p1.y);
   a  = CMathGen::atan2(dx_, 0.0);
@@ -719,7 +719,7 @@ bool
 CSVGPathVLineTo::
 interp(double s, const CPoint2D &p1, const CPoint2D & /*p2*/, CPoint2D &pi, double &a) const
 {
-  double y = CSVGUtil::map(s, 0, 1, p1.y, y_);
+  double y = CMathUtil::map(s, 0, 1, p1.y, y_);
 
   pi = CPoint2D(p1.x, y);
   a  = CMathGen::atan2(0.0, 1.0);
@@ -778,7 +778,7 @@ bool
 CSVGPathRVLineTo::
 interp(double s, const CPoint2D &p1, const CPoint2D & /*p2*/, CPoint2D &pi, double &a) const
 {
-  double dy = CSVGUtil::map(s, 0, 1, 0, dy_);
+  double dy = CMathUtil::map(s, 0, 1, 0, dy_);
 
   pi = CPoint2D(p1.x, p1.y + dy);
   a  = CMathGen::atan2(0.0, dy_);
@@ -903,7 +903,7 @@ interp(double s, const CPoint2D &p1, const CPoint2D & /*p2*/, CPoint2D &pi, doub
   CMathGeom2D::ArcToBeziers(cx, cy, rx, ry, CMathGen::DegToRad(theta),
                             CMathGen::DegToRad(theta + delta), beziers);
 
-  double t = CSVGUtil::map(s, 0, 1, 0, l);
+  double t = CMathUtil::map(s, 0, 1, 0, l);
 
   double l1 = 0, l2 = 0;
 
@@ -914,7 +914,7 @@ interp(double s, const CPoint2D &p1, const CPoint2D & /*p2*/, CPoint2D &pi, doub
     double xi, yi;
 
     if (t >= l1 && t <= l2) {
-      double t1 = CSVGUtil::map(t, l1, l2, 0, 1);
+      double t1 = CMathUtil::map(t, l1, l2, 0, 1);
 
       b.calc(t1, &xi, &yi);
 
@@ -1045,7 +1045,7 @@ interp(double s, const CPoint2D &p1, const CPoint2D & /*p2*/, CPoint2D &pi, doub
   CMathGeom2D::ArcToBeziers(cx, cy, rx, ry, CMathGen::DegToRad(theta),
                             CMathGen::DegToRad(theta + delta), beziers);
 
-  double t = CSVGUtil::map(s, 0, 1, 0, l);
+  double t = CMathUtil::map(s, 0, 1, 0, l);
 
   double l1 = 0, l2 = 0;
 
@@ -1056,7 +1056,7 @@ interp(double s, const CPoint2D &p1, const CPoint2D & /*p2*/, CPoint2D &pi, doub
     double xi, yi;
 
     if (t >= l1 && t <= l2) {
-      double t1 = CSVGUtil::map(t, l1, l2, 0, 1);
+      double t1 = CMathUtil::map(t, l1, l2, 0, 1);
 
       b.calc(t1, &xi, &yi);
 

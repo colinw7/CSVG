@@ -2,7 +2,6 @@
 #include <CSVGFilter.h>
 #include <CSVGBuffer.h>
 #include <CSVG.h>
-#include <CSVGUtil.h>
 
 CSVGFeFlood::
 CSVGFeFlood(CSVG &svg) :
