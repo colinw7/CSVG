@@ -34,6 +34,7 @@ $(CDEBUG) \
 -I../../CStrUtil/include \
 -I../../CUtil/include \
 -I../../CMath/include \
+-I../../COS/include \
 -I/usr/include/freetype2 \
 
 LFLAGS = \
@@ -51,6 +52,7 @@ $(LDEBUG) \
 -L../../CConfig/lib \
 -L../../CFileUtil/lib \
 -L../../CFile/lib \
+-L../../CMath/lib \
 -L../../COS/lib \
 -L../../CRegExp/lib \
 -L../../CStrUtil/lib \
@@ -59,7 +61,7 @@ $(LDEBUG) \
 LIBS = \
 -lCSVG -lCCSS -lCXML -lCJavaScript -lCJson \
 -lCRenderer -lCImageLib -lCFont -lCConfig -lCFileUtil -lCFile \
--lCUtil -lCOS -lCRGBName -lCRegExp -lCStrUtil \
+-lCUtil -lCMath -lCOS -lCRGBName -lCRegExp -lCStrUtil \
 -ltre -lpng -ljpeg -lfreetype
 
 clean:

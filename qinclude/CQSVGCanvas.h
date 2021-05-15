@@ -30,15 +30,15 @@ class CQSVGCanvas : public QWidget {
   double scale() const { return scale_; }
   void setScale(double r) { scale_ = r; }
 
-  void resizeEvent(QResizeEvent *);
+  void resizeEvent(QResizeEvent *) override;
 
-  void paintEvent(QPaintEvent *);
+  void paintEvent(QPaintEvent *) override;
 
-  void mousePressEvent  (QMouseEvent *e);
-  void mouseMoveEvent   (QMouseEvent *e);
-  void mouseReleaseEvent(QMouseEvent *e);
+  void mousePressEvent  (QMouseEvent *e) override;
+  void mouseMoveEvent   (QMouseEvent *e) override;
+  void mouseReleaseEvent(QMouseEvent *e) override;
 
-  void keyPressEvent(QKeyEvent *ke);
+  void keyPressEvent(QKeyEvent *ke) override;
 
   void drawSelected();
 

@@ -50,11 +50,11 @@ class CQSVGBufferCanvas : public QWidget {
  public:
   CQSVGBufferCanvas(CQSVGBufferView *view);
 
-  void paintEvent(QPaintEvent *);
+  void paintEvent(QPaintEvent *) override;
 
-  void mouseMoveEvent(QMouseEvent *e);
+  void mouseMoveEvent(QMouseEvent *e) override;
 
-  QSize sizeHint() const;
+  QSize sizeHint() const override;
 
  private:
   CQSVGBufferView *view_ { 0 };

@@ -70,7 +70,7 @@ class CQSVGWindow : public QMainWindow {
 
   void updateBusy();
 
-  QSize sizeHint() const;
+  QSize sizeHint() const override;
 
  private:
   void updateAltRoot();

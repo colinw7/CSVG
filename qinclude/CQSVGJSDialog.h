@@ -17,7 +17,7 @@ class CQSVGJSDialog : public QFrame {
 
   CQSVGWindow *window() const { return window_; }
 
-  QSize sizeHint() const;
+  QSize sizeHint() const override;
 
  private slots:
   void historySlot(QListWidgetItem *item);

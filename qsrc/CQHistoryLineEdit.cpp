@@ -6,7 +6,7 @@ CQHistoryLineEdit::
 CQHistoryLineEdit(QWidget *parent) :
  QLineEdit(parent)
 {
-  history_ = new CHistory;
+  history_ = std::make_unique<CHistory>();
 
   connect(this, SIGNAL(returnPressed()), this, SLOT(execSlot()));
 }
@@ -24,7 +24,10 @@ execSlot()
 
   emit exec(str);
 
-  history_->addCommand(str.toStdString());
+  QString str1 = str.simplified();
+
+  if (str1.length())
+    history_->addCommand(str1.toStdString());
 
   setText("");
 }

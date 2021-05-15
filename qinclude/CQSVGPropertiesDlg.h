@@ -21,7 +21,7 @@ class CQSVGPropertiesDlg : public QFrame {
 
   void loadCSS();
 
-  QSize sizeHint() const;
+  QSize sizeHint() const override;
 
  private:
   CQSVGWindow    *window_         { 0 };
