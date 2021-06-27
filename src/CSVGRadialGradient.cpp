@@ -106,7 +106,7 @@ termParse()
   getChildrenOfType(CSVGObjTypeId::STOP, objects);
 
   for (const auto &o : objects) {
-    CSVGStop *stop = dynamic_cast<CSVGStop *>(o);
+    auto *stop = dynamic_cast<CSVGStop *>(o);
 
     stops_.push_back(stop);
   }
@@ -123,8 +123,8 @@ addLinkStops()
     return;
   }
 
-  CSVGRadialGradient *rg = dynamic_cast<CSVGRadialGradient *>(object);
-  CSVGLinearGradient *lg = dynamic_cast<CSVGLinearGradient *>(object);
+  auto *rg = dynamic_cast<CSVGRadialGradient *>(object);
+  auto *lg = dynamic_cast<CSVGLinearGradient *>(object);
 
   if      (rg) {
     if (rg->cx_    .isValid()) cx_     = rg->cx_;

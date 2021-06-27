@@ -2,15 +2,22 @@
 #define CSVGImageData_H
 
 #include <CSVGTypes.h>
-#include <CImage.h>
+#include <CImagePtr.h>
+#include <CFileType.h>
+#include <CRGBA.h>
 #include <CRefPtr.h>
+#include <vector>
+
+struct CImageTileData;
+struct CImageConvolveData;
+struct CRGBACombineDef;
 
 class CSVGImageData {
  public:
   CSVGImageData();
   CSVGImageData(const CSVGImageData &data);
 
-  virtual ~CSVGImageData() { }
+  virtual ~CSVGImageData();
 
   virtual CSVGImageData *dup() const;
 
@@ -86,7 +93,7 @@ class CSVGImageData {
 
   virtual CSVGImageData *dilate(int r, bool isAlpha);
 
-  virtual CSVGImageData *tile(int w, int h, const CImageTile &tile);
+  virtual CSVGImageData *tile(int w, int h, const CImageTileData &tile);
 
   virtual void turbulence(bool fractalNoise, double baseFreqX, double baseFreqY,
                           int numOctaves, int seed);
@@ -104,6 +111,6 @@ class CSVGImageData {
   int       y2_ { -1 };
 };
 
-typedef CRefPtr<CSVGImageData> CSVGImageDataP;
+using CSVGImageDataP = CRefPtr<CSVGImageData>;
 
 #endif

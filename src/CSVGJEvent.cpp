@@ -1,4 +1,7 @@
 #include <CSVGJEvent.h>
+
+#ifdef CSVG_JAVASCRIPT
+
 #include <CSVGJElement.h>
 #include <CSVG.h>
 #include <CSVGObject.h>
@@ -35,3 +38,5 @@ execNameFn(CJavaScript *, const std::string &name, const Values &)
   else
     return CJValueP();
 }
+
+#endif

@@ -23,7 +23,7 @@ class CSVGFill {
    fillObject_(fill.fillObject_) {
   }
 
-  const CSVGFill &operator=(const CSVGFill &fill) {
+  CSVGFill &operator=(const CSVGFill &fill) {
     color_      = fill.color_;
     opacity_    = fill.opacity_;
     rule_       = fill.rule_;

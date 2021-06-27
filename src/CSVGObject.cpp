@@ -77,7 +77,7 @@ CSVGObject(const CSVGObject &obj) :
   animation_.setParent(const_cast<CSVGObject *>(this));
 
   for (const auto &o : obj.children()) {
-    CSVGObject *child = o->dup();
+    auto *child = o->dup();
 
     addChildObject(child);
   }
@@ -185,7 +185,7 @@ getFlatStroke() const
   CSVGStroke stroke(svg_);
 
   if (! stroke_.isSet()) {
-    CSVGObject *parent = getParent();
+    auto *parent = getParent();
 
     if (parent)
       return parent->getFlatStroke();
@@ -292,7 +292,7 @@ getFlatStrokeColor() const
   if (stroke_.getColorValid())
     return COptValT<CSVGColor>(stroke_.getColor());
 
-  CSVGObject *parent = getParent();
+  auto *parent = getParent();
 
   while (parent) {
     if (parent->stroke_.getColorValid())
@@ -312,7 +312,7 @@ getFlatStrokeOpacity() const
   if (stroke_.getOpacityValid())
     return COptReal(stroke_.getOpacity());
 
-  CSVGObject *parent = getParent();
+  auto *parent = getParent();
 
   while (parent) {
     if (parent->stroke_.getOpacityValid())
@@ -331,7 +331,7 @@ getFlatStrokeRule() const
   if (stroke_.getRuleValid())
     return COptValT<CFillType>(stroke_.getRule());
 
-  CSVGObject *parent = getParent();
+  auto *parent = getParent();
 
   while (parent) {
     if (parent->stroke_.getRuleValid())
@@ -350,7 +350,7 @@ getFlatStrokeUrl() const
   if (stroke_.getUrlValid())
     return COptString(stroke_.getUrl());
 
-  CSVGObject *parent = getParent();
+  auto *parent = getParent();
 
   while (parent) {
     if (parent->stroke_.getUrlValid())
@@ -369,7 +369,7 @@ getFlatStrokeFillObject() const
   if (stroke_.getFillObjectValid())
     return COptValT<CSVGObject*>(stroke_.getFillObject());
 
-  CSVGObject *parent = getParent();
+  auto *parent = getParent();
 
   while (parent) {
     if (parent->stroke_.getFillObjectValid())
@@ -388,7 +388,7 @@ getFlatStrokeWidth() const
   if (stroke_.getWidthValid())
     return COptReal(stroke_.getWidth());
 
-  CSVGObject *parent = getParent();
+  auto *parent = getParent();
 
   while (parent) {
     if (parent->stroke_.getWidthValid())
@@ -407,7 +407,7 @@ getFlatStrokeLineDash() const
   if (stroke_.getDashValid())
     return COptValT<CSVGStrokeDash>(stroke_.getDash());
 
-  CSVGObject *parent = getParent();
+  auto *parent = getParent();
 
   while (parent) {
     if (parent->stroke_.getDashValid())
@@ -426,7 +426,7 @@ getFlatStrokeLineCap() const
   if (stroke_.getLineCapValid())
     return COptValT<CLineCapType>(stroke_.getLineCap());
 
-  CSVGObject *parent = getParent();
+  auto *parent = getParent();
 
   while (parent) {
     if (parent->stroke_.getLineCapValid())
@@ -445,7 +445,7 @@ getFlatStrokeLineJoin() const
   if (stroke_.getLineJoinValid())
     return COptValT<CLineJoinType>(stroke_.getLineJoin());
 
-  CSVGObject *parent = getParent();
+  auto *parent = getParent();
 
   while (parent) {
     if (parent->stroke_.getLineJoinValid())
@@ -464,7 +464,7 @@ getFlatStrokeMitreLimit() const
   if (stroke_.getMitreLimitValid())
     return COptReal(stroke_.getMitreLimit());
 
-  CSVGObject *parent = getParent();
+  auto *parent = getParent();
 
   while (parent) {
     if (parent->stroke_.getMitreLimitValid())
@@ -538,7 +538,7 @@ getFlatFillColor() const
   if (fill_.getColorValid())
     return COptValT<CSVGColor>(fill_.getColor());
 
-  CSVGObject *parent = getParent();
+  auto *parent = getParent();
 
   while (parent) {
     if (parent->fill_.getColorValid())
@@ -558,7 +558,7 @@ getFlatFillOpacity() const
   if (fill_.getOpacityValid())
     return COptReal(fill_.getOpacity());
 
-  CSVGObject *parent = getParent();
+  auto *parent = getParent();
 
   while (parent) {
     if (parent->fill_.getOpacityValid())
@@ -578,7 +578,7 @@ getFlatFillRule() const
   if (fill_.getRuleValid())
     return COptValT<CFillType>(fill_.getRule());
 
-  CSVGObject *parent = getParent();
+  auto *parent = getParent();
 
   while (parent) {
     if (parent->fill_.getRuleValid())
@@ -598,7 +598,7 @@ getFlatFillUrl() const
   if (fill_.getUrlValid())
     return COptString(fill_.getUrl());
 
-  CSVGObject *parent = getParent();
+  auto *parent = getParent();
 
   while (parent) {
     if (parent->fill_.getUrlValid())
@@ -618,7 +618,7 @@ getFlatFillFillObject() const
   if (fill_.getFillObjectValid())
     return COptValT<CSVGObject *>(fill_.getFillObject());
 
-  CSVGObject *parent = getParent();
+  auto *parent = getParent();
 
   while (parent) {
     if (parent->fill_.getFillObjectValid())
@@ -634,9 +634,9 @@ CSVGFontDef
 CSVGObject::
 getFlatFontDef() const
 {
-  std::string  fontFamily = getFlatFontFamily();
-  CScreenUnits fontSize   = getFlatFontSize();
-  CFontStyles  fontStyles = getFlatFontStyle();
+  auto fontFamily = getFlatFontFamily();
+  auto fontSize   = getFlatFontSize();
+  auto fontStyles = getFlatFontStyle();
 
   CSVGFontDef fontDef(svg_);
 
@@ -654,7 +654,7 @@ getFlatFontFamily() const
   if (fontDef_.hasFamily())
     return fontDef_.getFamily();
 
-  CSVGObject *parent = getParent();
+  auto *parent = getParent();
 
   while (parent) {
     if (parent->fontDef_.hasFamily())
@@ -673,7 +673,7 @@ getFlatFontStyle() const
   if (fontDef_.hasStyle())
     return fontDef_.getStyle();
 
-  CSVGObject *parent = getParent();
+  auto *parent = getParent();
 
   while (parent) {
     if (parent->fontDef_.hasStyle())
@@ -692,7 +692,7 @@ getFlatFontSize() const
   if (fontDef_.hasSize())
     return fontDef_.getSize();
 
-  CSVGObject *parent = getParent();
+  auto *parent = getParent();
 
   while (parent) {
     if (parent->fontDef_.hasSize())
@@ -772,7 +772,7 @@ CSVGObject::
 getFlatCurrentColor() const
 {
   if (hasCurrentColor()) {
-    CSVGColor color = currentColor();
+    auto color = currentColor();
 
     if (color.isRGBA())
       return color.rgba();
@@ -803,7 +803,7 @@ CMatrixStack2D
 CSVGObject::
 getTransformTo(CSVGObject *parent) const
 {
-  CSVGObject *parent1 = getParent();
+  auto *parent1 = getParent();
 
   if (parent1 && parent != parent1) {
     CMatrixStack2D matrix(parent1->getTransformTo(parent));
@@ -1156,7 +1156,7 @@ processMarkerOption(const std::string &optName, const std::string &optValue)
   // Marker
   if      (svg_.urlOption(optName, optValue, "marker", &obj)) {
     // no shortcut "marker" for group (other grouping svg)
-    CSVGGroup *group = dynamic_cast<CSVGGroup *>(this);
+    auto *group = dynamic_cast<CSVGGroup *>(this);
 
     if (! group) {
       setMarkerStart(obj);
@@ -1284,7 +1284,7 @@ processGradientOption(const std::string &optName, const std::string &optValue)
 
   // Gradient Properties
   if      (svg_.stringOption(optName, optValue, "stop-color", str)) {
-    CSVGStop *stop = dynamic_cast<CSVGStop *>(this);
+    auto *stop = dynamic_cast<CSVGStop *>(this);
 
     if (stop)
       stop->processOption(optName, optValue);
@@ -1292,7 +1292,7 @@ processGradientOption(const std::string &optName, const std::string &optValue)
       notHandled(optName, optValue);
   }
   else if (svg_.stringOption(optName, optValue, "stop-opacity", str)) {
-    CSVGStop *stop = dynamic_cast<CSVGStop *>(this);
+    auto *stop = dynamic_cast<CSVGStop *>(this);
 
     if (stop)
       stop->processOption(optName, optValue);
@@ -1605,7 +1605,7 @@ getNameValue(const std::string &name) const
       str = classes.front();
   }
   else if (name == "viewBox") {
-    CBBox2D bbox = getViewBox();
+    auto bbox = getViewBox();
 
     str = CStrUtil::toString(bbox.getXMin()) + ", " +
           CStrUtil::toString(bbox.getYMin()) + ", " +
@@ -1632,7 +1632,7 @@ COptReal
 CSVGObject::
 getRealNameValue(const std::string &name) const
 {
-  COptString str = getNameValue(name);
+  auto str = getNameValue(name);
 
   if (! str.isValid()) return COptReal();
 
@@ -1648,7 +1648,7 @@ COptInt
 CSVGObject::
 getIntegerNameValue(const std::string &name) const
 {
-  COptString str = getNameValue(name);
+  auto str = getNameValue(name);
 
   if (! str.isValid()) return COptInt();
 
@@ -1762,7 +1762,7 @@ interpValue(const std::string &name, const std::string &from, const std::string 
       return false;
     }
 
-    CRGBA c = fromColor.rgba()*(1 - x) + toColor.rgba()*x;
+    auto c = fromColor.rgba()*(1 - x) + toColor.rgba()*x;
 
     ystr = CStrUtil::strprintf("rgb(%d,%d,%d)", c.getRedI(), c.getGreenI(), c.getBlueI());
 
@@ -1859,7 +1859,7 @@ getFlatTextAnchor() const
   if (textAnchor_.isValid())
     return textAnchor_.getValue();
 
-  CSVGObject *parent = getParent();
+  auto *parent = getParent();
 
   while (parent) {
     if (parent->textAnchor_.isValid())
@@ -1875,7 +1875,7 @@ CSVGObject *
 CSVGObject::
 getFlatMarkerStart() const
 {
-  CSVGObject *marker = marker_.getStart();
+  auto *marker = marker_.getStart();
 
   if (marker)
     return marker;
@@ -1887,7 +1887,7 @@ CSVGObject *
 CSVGObject::
 getFlatMarkerMid() const
 {
-  CSVGObject *marker = marker_.getMid();
+  auto *marker = marker_.getMid();
 
   if (marker)
     return marker;
@@ -1902,7 +1902,7 @@ CSVGObject *
 CSVGObject::
 getFlatMarkerEnd() const
 {
-  CSVGObject *marker = marker_.getEnd();
+  auto *marker = marker_.getEnd();
 
   if (marker)
     return marker;
@@ -2055,8 +2055,8 @@ drawObject()
 
   // draw to new temp background
   if (enableBackground() == CSVGEnableBackground::NEW) {
-    CSVGBuffer *bgBuffer      = svg_.getBuffer("BackgroundImage");
-    CSVGBuffer *tempBgBuffer1 = svg_.getBuffer(getUniqueName() + "_BackgroundImage1");
+    auto *bgBuffer      = svg_.getBuffer("BackgroundImage");
+    auto *tempBgBuffer1 = svg_.getBuffer(getUniqueName() + "_BackgroundImage1");
 
     if (tempBgBuffer1->isDrawing())
       tempBgBuffer1->stopDraw();
@@ -2077,8 +2077,8 @@ drawObject()
   //------
 
   // get current buffer
-  CSVGBuffer *oldBuffer     = svg_.getCurrentBuffer();
-  CSVGBuffer *currentBuffer = oldBuffer;
+  auto *oldBuffer     = svg_.getCurrentBuffer();
+  auto *currentBuffer = oldBuffer;
 
   //------
 
@@ -2119,7 +2119,7 @@ drawObject()
     saveBuffer = svg_.pushBuffer("_" + getUniqueName());
 
     if (isFiltered) {
-      CSVGFilter *filter = getFilter();
+      auto *filter = getFilter();
 
       filter->getRegion(this, bbox);
 
@@ -2128,7 +2128,7 @@ drawObject()
 
     saveBuffer->clear();
 
-    CSVGBlock *block = dynamic_cast<CSVGBlock *>(this);
+    auto *block = dynamic_cast<CSVGBlock *>(this);
 
     if (bbox.isSet())
       saveBuffer->setBBox(bbox);
@@ -2136,14 +2136,14 @@ drawObject()
     if      (block)
       svg_.beginDrawBuffer(saveBuffer, svg_.offset(), svg_.xscale(), svg_.yscale());
     else if (bbox.isSet()) {
-      CSVGBlock *root = svg_.getRoot();
+      auto *root = svg_.getRoot();
 
-      CBBox2D            pixelBox       = root->calcPixelBox();
-      CBBox2D            viewBox        = root->calcViewBox();
-      CPoint2D           offset         = CPoint2D(0, 0);
-      double             xs             = 1;
-      double             ys             = 1;
-      CSVGPreserveAspect preserveAspect = svg_.blockPreserveAspect();
+      auto   pixelBox       = root->calcPixelBox();
+      auto   viewBox        = root->calcViewBox();
+      auto   offset         = CPoint2D(0, 0);
+      double xs             = 1;
+      double ys             = 1;
+      auto   preserveAspect = svg_.blockPreserveAspect();
 
       viewBox.setXMax(std::max(viewBox.getXMax(), bbox.getXMax()));
       viewBox.setYMax(std::max(viewBox.getYMax(), bbox.getYMax()));
@@ -2159,7 +2159,7 @@ drawObject()
   //------
 
   // set current transform
-  CMatrixStack2D transform = oldBuffer->transform();
+  auto transform = oldBuffer->transform();
 
   CMatrixStack2D transform1(transform);
 
@@ -2256,9 +2256,9 @@ drawObject()
 
   // add new background to original
   if (enableBackground() == CSVGEnableBackground::NEW) {
-    CSVGBuffer *bgBuffer      = svg_.getBuffer("BackgroundImage");
-    CSVGBuffer *tempBgBuffer1 = svg_.getBuffer(getUniqueName() + "_BackgroundImage1");
-    CSVGBuffer *tempBgBuffer2 = svg_.getBuffer(getUniqueName() + "_BackgroundImage2");
+    auto *bgBuffer      = svg_.getBuffer("BackgroundImage");
+    auto *tempBgBuffer1 = svg_.getBuffer(getUniqueName() + "_BackgroundImage1");
+    auto *tempBgBuffer2 = svg_.getBuffer(getUniqueName() + "_BackgroundImage2");
 
     bool oldBgDrawing = bgBuffer->isDrawing();
 
@@ -2295,7 +2295,7 @@ drawSubObject(bool forceDraw)
 
   bool drawn = false;
 
-  CSVGBuffer *oldBuffer = svg_.getCurrentBuffer();
+  auto *oldBuffer = svg_.getCurrentBuffer();
 
   // set stroke
   //CSVGTempStroke tempStroke(*this);
@@ -2347,7 +2347,7 @@ drawSubObject(bool forceDraw)
     isFiltered = false;
 
   if (isFiltered) {
-    CSVGFilter *filter = getFilter();
+    auto *filter = getFilter();
 
     // init filter
     if (filter) {
@@ -2458,7 +2458,7 @@ toBufferImage()
   if (! getBBox(bbox))
     return nullptr;
 
-  CSVGBuffer *imageBuffer = svg_.pushBuffer("_" + getUniqueName() + "_image");
+  auto *imageBuffer = svg_.pushBuffer("_" + getUniqueName() + "_image");
 
   imageBuffer->clear();
 
@@ -2489,7 +2489,7 @@ toNamedBufferImage(const std::string &bufferName)
 
   std::swap(saveFilter, filter_);
 
-  CSVGBuffer *imageBuffer = svg_.pushBuffer(bufferName);
+  auto *imageBuffer = svg_.pushBuffer(bufferName);
 
   imageBuffer->clear();
 
@@ -2608,7 +2608,7 @@ bool
 CSVGObject::
 getTransformedBBox(CBBox2D &bbox) const
 {
-  CMatrixStack2D m = getTransform();
+  auto m = getTransform();
 
   if (! getBBox(bbox))
     return false;
@@ -2622,7 +2622,7 @@ bool
 CSVGObject::
 getFlatTransformedBBox(CBBox2D &bbox) const
 {
-  CMatrixStack2D m = getFlatTransform();
+  auto m = getFlatTransform();
 
   if (! getBBox(bbox)) {
     if (! getParent())
@@ -2813,7 +2813,7 @@ decodeXLink(const std::string &str, CSVGObject **object, CSVGBuffer **buffer)
 
       decodeStringToFile(str.substr(pos), filename);
 
-      CSVGBuffer *imgBuffer = getXLinkBuffer();
+      auto *imgBuffer = getXLinkBuffer();
 
       imgBuffer->setImageFile(filename);
 
@@ -2828,7 +2828,7 @@ decodeXLink(const std::string &str, CSVGObject **object, CSVGBuffer **buffer)
 
       decodeStringToFile(str.substr(pos), filename);
 
-      CFileType type = CFileUtil::getTextType(filename);
+      auto type = CFileUtil::getTextType(filename);
 
       if (type == CFILE_TYPE_TEXT_GZIP) {
         std::string gzfilename = filename + ".gz";
@@ -2841,7 +2841,7 @@ decodeXLink(const std::string &str, CSVGObject **object, CSVGBuffer **buffer)
       }
 
       // draw SVG file to image at current scale
-      CSVG *svg = svg_.dup();
+      auto *svg = svg_.dup();
 
       svg->setRenderer(svg_.getRenderer());
 
@@ -2855,7 +2855,7 @@ decodeXLink(const std::string &str, CSVGObject **object, CSVGBuffer **buffer)
 
       svg->getRoot()->setSize(size);
 
-      CSVGBuffer *imgBuffer = getXLinkBuffer();
+      auto *imgBuffer = getXLinkBuffer();
 
       int w = svg->getIWidth();
       int h = svg->getIHeight();
@@ -2875,7 +2875,7 @@ decodeXLink(const std::string &str, CSVGObject **object, CSVGBuffer **buffer)
 
       decodeStringToFile(str.substr(pos), filename);
 
-      CFileType type = CFileUtil::getTextType(filename);
+      auto type = CFileUtil::getTextType(filename);
 
       if (type == CFILE_TYPE_TEXT_GZIP) {
         std::string gzfilename = filename + ".gz";
@@ -2912,7 +2912,7 @@ decodeXLink(const std::string &str, CSVGObject **object, CSVGBuffer **buffer)
     // Handle file: <filename>#<id>
     if (lhs != "") {
       // read file
-      CSVGBlock *block = svg_.createBlock();
+      auto *block = svg_.createBlock();
 
       svg_.read(lhs, block);
 
@@ -2951,7 +2951,7 @@ decodeXLink(const std::string &str, CSVGObject **object, CSVGBuffer **buffer)
     }
 
     // get type from contents/suffix
-    CFileType type = CFileUtil::getType(&file);
+    auto type = CFileUtil::getType(&file);
 
     if (type == CFILE_TYPE_INODE_REG && file.getSuffix() == "svg")
       type = CFILE_TYPE_IMAGE_SVG;
@@ -2961,7 +2961,7 @@ decodeXLink(const std::string &str, CSVGObject **object, CSVGBuffer **buffer)
       // svg image
       if (type == CFILE_TYPE_IMAGE_SVG) {
         // draw SVG file to image at current scale
-        CSVG *svg = svg_.dup();
+        auto *svg = svg_.dup();
 
         svg->setRenderer(svg_.getRenderer());
 
@@ -2975,7 +2975,7 @@ decodeXLink(const std::string &str, CSVGObject **object, CSVGBuffer **buffer)
 
         svg->getRoot()->setSize(size);
 
-        CSVGBuffer *imgBuffer = getXLinkBuffer();
+        auto *imgBuffer = getXLinkBuffer();
 
         int w = svg->getIWidth();
         int h = svg->getIHeight();
@@ -2987,7 +2987,7 @@ decodeXLink(const std::string &str, CSVGObject **object, CSVGBuffer **buffer)
       }
       // image file (png, jpeg, ...)
       else {
-        CSVGBuffer *imgBuffer = getXLinkBuffer();
+        auto *imgBuffer = getXLinkBuffer();
 
         imgBuffer->setImageFile(str);
 
@@ -2998,7 +2998,7 @@ decodeXLink(const std::string &str, CSVGObject **object, CSVGBuffer **buffer)
     // handle svg file
     else if (type == CFILE_TYPE_TEXT_HTML) {
       // read svg file
-      CSVGBlock *block = svg_.createBlock();
+      auto *block = svg_.createBlock();
 
       svg_.read(str, block);
 
@@ -3151,7 +3151,7 @@ void
 CSVGObject::
 printFlat(std::ostream &os, bool force, int depth) const
 {
-  CSVGObjTypeId id = getObjTypeId();
+  auto id = getObjTypeId();
 
   if (id == CSVGObjTypeId::BLOCK) {
     os << "<svg";
@@ -3240,7 +3240,7 @@ printValues(std::ostream &os, bool flat) const
   printNameValues(os, "class", classes_);
 
   if (hasViewBox()) {
-    CBBox2D viewBox = getViewBox();
+    auto viewBox = getViewBox();
 
     os << " viewBox=\"" << viewBox.getXMin() << " " << viewBox.getYMin() <<
                     " " << viewBox.getXMax() << " " << viewBox.getYMax() << "\"";
@@ -3298,7 +3298,7 @@ CSVGObject::
 printFilter(std::ostream &os) const
 {
   if (hasFilter()) {
-    CSVGFilter *filter = getFilter();
+    auto *filter = getFilter();
 
     if (filter)
       os << " filter=\"url(#" << filter->getId() << ")\"";
@@ -3431,12 +3431,12 @@ CSVGObject::
 printStroke(std::ostream &os, bool flat) const
 {
   if (flat) {
-    CSVGStroke stroke = getFlatStroke();
+    auto stroke = getFlatStroke();
 
     stroke.print(os);
   }
   else {
-    const CSVGStroke &stroke = getStroke();
+    const auto &stroke = getStroke();
 
     stroke.print(os);
   }
@@ -3447,12 +3447,12 @@ CSVGObject::
 printFill(std::ostream &os, bool flat) const
 {
   if (flat) {
-    CSVGFill fill = getFlatFill();
+    auto fill = getFlatFill();
 
     fill.print(os);
   }
   else {
-    const CSVGFill &fill = getFill();
+    const auto &fill = getFill();
 
     fill.print(os);
   }
@@ -3495,7 +3495,7 @@ printTransform(std::ostream &os, bool flat) const
   }
   else {
     if (! hasChildren()) {
-      CMatrixStack2D transform = getFlatTransform();
+      auto transform = getFlatTransform();
 
       if (! transform.isEmpty()) {
         os << " transform=\"";

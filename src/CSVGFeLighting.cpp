@@ -46,9 +46,9 @@ filterImage(CSVGBuffer *inBuffer, const CBBox2D &bbox, CSVGBuffer *outBuffer)
   std::vector<CSVGFilterBase *> lights;
 
   for (const auto &c : children()) {
-    CSVGFeDistantLight *dl = dynamic_cast<CSVGFeDistantLight *>(c);
-    CSVGFePointLight   *pl = dynamic_cast<CSVGFePointLight   *>(c);
-    CSVGFeSpotLight    *sl = dynamic_cast<CSVGFeSpotLight    *>(c);
+    auto *dl = dynamic_cast<CSVGFeDistantLight *>(c);
+    auto *pl = dynamic_cast<CSVGFePointLight   *>(c);
+    auto *sl = dynamic_cast<CSVGFeSpotLight    *>(c);
 
     if      (dl) lights.push_back(dl);
     else if (pl) lights.push_back(pl);

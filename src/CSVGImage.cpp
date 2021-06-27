@@ -131,7 +131,7 @@ draw()
 
   //---
 
-  CSVGBuffer *oldBuffer = svg_.getCurrentBuffer();
+  auto *oldBuffer = svg_.getCurrentBuffer();
 
   //---
 
@@ -139,6 +139,13 @@ draw()
   CBBox2D bbox;
 
   getBBox(bbox);
+
+  if (svg_.isCheckViewBox()) {
+    auto dbbox = getDrawBBox();
+
+    if (! bbox.overlaps(dbbox))
+      CSVGLog() << "Outside viewbox : " << *this;
+  }
 
   // resize image to bbox
   double x1, y1, x2, y2;

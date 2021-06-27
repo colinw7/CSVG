@@ -89,7 +89,7 @@ drawElement()
   std::vector<CSVGFeFunc *> funcs;
 
   for (const auto &c : children()) {
-    CSVGFeFunc *func = dynamic_cast<CSVGFeFunc *>(c);
+    auto *func = dynamic_cast<CSVGFeFunc *>(c);
     if (! func) continue;
 
     funcs.push_back(func);

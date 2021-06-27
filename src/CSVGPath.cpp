@@ -57,82 +57,96 @@ draw()
 
   bbox_.setInvalid();
 
+  // zero length path with line cap square or round draw square of circle shape to match line width
   double l = parts_.getLength();
 
-  // zero length path with line cap square or round draw square of circle shape to match line width
-  if (l == 0) {
-    bool drawCap = true;
+  if (l == 0)
+    return drawZeroLength();
 
-    if (! svg_.isStroked())
-      drawCap = false;
-
-    if (drawCap && ! stroke_.getLineCapValid())
-      drawCap = false;
-
-    COptValT<CSVGColor> c = getFlatStrokeColor();
-    double              r = getFlatStrokeWidth().getValue(1)/2;
-
-    CSVGBuffer *buffer = svg_.getCurrentBuffer();
-
-    CPoint2D p;
-
-    if (drawCap) {
-      std::vector<CPoint2D> points;
-      std::vector<double>   angles;
-
-      buffer->pathInit();
-
-      parts_.draw(buffer, points, angles);
-
-      if (! points.empty())
-        p = points[0];
-      else
-        drawCap = false;
-    }
-
-    if (drawCap) {
-      buffer->resetFill();
-
-      if (c.isValid())
-        buffer->setFillColor(c.getValue().rgba());
-
-      if      (stroke_.getLineCap() == LINE_CAP_TYPE_SQUARE) {
-        buffer->pathInit();
-
-        CBBox2D bbox(p.x - r, p.y - r, p.x + r, p.y + r);
-
-        buffer->pathMoveTo(bbox.getXMin(), bbox.getYMin());
-        buffer->pathLineTo(bbox.getXMax(), bbox.getYMin());
-        buffer->pathLineTo(bbox.getXMax(), bbox.getYMax());
-        buffer->pathLineTo(bbox.getXMin(), bbox.getYMax());
-
-        buffer->pathClose();
-
-        buffer->pathFill();
-
-        return true;
-      }
-      else if (stroke_.getLineCap() == LINE_CAP_TYPE_ROUND) {
-        buffer->pathInit();
-
-        buffer->pathMoveTo(p.x + r, p.y);
-        buffer->pathArcTo (p.x, p.y, r, r, 0,  M_PI);
-        buffer->pathArcTo (p.x, p.y, r, r, M_PI, 2*M_PI);
-
-        buffer->pathClose();
-
-        buffer->pathFill();
-
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  //------
+  //---
 
   svg_.drawParts(parts_);
+
+  //---
+
+  if (svg_.isCheckViewBox()) {
+    auto drawBox = getDrawBBox();
+
+    CBBox2D fbbox;
+
+    getFlatTransformedBBox(fbbox);
+
+    if (! fbbox.overlaps(drawBox))
+      CSVGLog() << "Outside viewbox : " << *this;
+  }
+
+  return true;
+}
+
+bool
+CSVGPath::
+drawZeroLength()
+{
+  bool drawCap = true;
+
+  if (! svg_.isStroked())
+    drawCap = false;
+
+  if (drawCap && ! stroke_.getLineCapValid())
+    drawCap = false;
+
+  COptValT<CSVGColor> c = getFlatStrokeColor();
+  double              r = getFlatStrokeWidth().getValue(1)/2;
+
+  auto *buffer = svg_.getCurrentBuffer();
+
+  CPoint2D p;
+
+  if (drawCap) {
+    std::vector<CPoint2D> points;
+    std::vector<double>   angles;
+
+    buffer->pathInit();
+
+    parts_.draw(buffer, points, angles);
+
+    if (! points.empty())
+      p = points[0];
+    else
+      drawCap = false;
+  }
+
+  if (! drawCap)
+    return false;
+
+  buffer->resetFill();
+
+  if (c.isValid())
+    buffer->setFillColor(c.getValue().rgba());
+
+  if (stroke_.getLineCap() != LINE_CAP_TYPE_SQUARE &&
+      stroke_.getLineCap() != LINE_CAP_TYPE_ROUND)
+    return false;
+
+  buffer->pathInit();
+
+  if (stroke_.getLineCap() == LINE_CAP_TYPE_SQUARE) {
+    CBBox2D bbox(p.x - r, p.y - r, p.x + r, p.y + r);
+
+    buffer->pathMoveTo(bbox.getXMin(), bbox.getYMin());
+    buffer->pathLineTo(bbox.getXMax(), bbox.getYMin());
+    buffer->pathLineTo(bbox.getXMax(), bbox.getYMax());
+    buffer->pathLineTo(bbox.getXMin(), bbox.getYMax());
+  }
+  else {
+    buffer->pathMoveTo(p.x + r, p.y);
+    buffer->pathArcTo (p.x, p.y, r, r, 0,  M_PI);
+    buffer->pathArcTo (p.x, p.y, r, r, M_PI, 2*M_PI);
+  }
+
+  buffer->pathClose();
+
+  buffer->pathFill();
 
   return true;
 }
@@ -157,7 +171,7 @@ print(std::ostream &os, bool hier) const
       os << "/>" << std::endl;
   }
   else {
-    os << "path (" << parts_ << ")";
+    os << "path (" << getId() << ") parts (" << parts_ << ")";
   }
 }
 

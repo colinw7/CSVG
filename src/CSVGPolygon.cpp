@@ -68,10 +68,8 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   if      (svg_.pointListOption(opt_name, opt_value, "points", points)) {
     points_.clear();
 
-    uint num_points = points.size();
-
-    for (uint i = 0; i < num_points; ++i)
-      addPoint(points[i]);
+    for (const auto &p : points)
+      addPoint(p);
   }
   else if (svg_.transformOption(opt_name, opt_value, "transform", transform))
     setTransform(transform);
@@ -94,6 +92,18 @@ draw()
 {
   if (svg_.getDebug())
     CSVGLog() << *this;
+
+  if (svg_.isCheckViewBox()) {
+    auto dbbox = getDrawBBox();
+
+    CBBox2D pbbox;
+
+    for (const auto &p : points_)
+      pbbox.add(p);
+
+    if (! pbbox.overlaps(dbbox))
+      CSVGLog() << "Outside viewbox : " << *this;
+  }
 
   if (svg_.isFilled() || svg_.isStroked()) {
     if (svg_.isFilled())

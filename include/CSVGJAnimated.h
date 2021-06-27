@@ -1,6 +1,8 @@
 #ifndef CSVGJAnimated_H
 #define CSVGJAnimated_H
 
+#ifdef CSVG_JAVASCRIPT
+
 #include <CSVG.h>
 #include <CJavaScript.h>
 
@@ -449,5 +451,7 @@ class CSVGJAnimatedBoolean : public CSVGJObjValue {
 
   void print(std::ostream &os) const override { os << "SVGAnimatedBoolean"; }
 };
+
+#endif
 
 #endif

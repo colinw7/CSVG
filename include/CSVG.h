@@ -14,14 +14,13 @@
 
 #include <CCSS.h>
 
-#include <CFont.h>
 #include <CScreenUnits.h>
 #include <CMatrixStack2D.h>
 #include <CBBox2D.h>
 #include <CFillType.h>
 #include <CAutoPtr.h>
 #include <CGenGradient.h>
-#include <CFont.h>
+#include <CFontStyle.h>
 #include <CFile.h>
 #include <CStrUtil.h>
 
@@ -115,8 +114,8 @@ struct CSVGXmlStyleSheet {
 
 class CSVG {
  public:
-  typedef std::vector<CSVGObject *>    ObjectList;
-  typedef std::map<std::string, CRGBA> Colors;
+  using ObjectList = std::vector<CSVGObject *>;
+  using Colors     = std::map<std::string, CRGBA>;
 
  public:
   struct DebugData {
@@ -246,6 +245,7 @@ class CSVG {
 
   //---
 
+  // get/set debug
   bool getDebug() const { return debugData_.debug; }
   void setDebug(bool b);
 
@@ -266,6 +266,11 @@ class CSVG {
 
   //---
 
+  bool isCheckViewBox() const { return checkViewBox_; }
+  void setCheckViewBox(bool b) { checkViewBox_ = b; }
+
+  //---
+
   void init();
 
   void clear();
@@ -275,7 +280,9 @@ class CSVG {
 
   virtual CSVGObject *createObjectByName(const std::string &name);
 
+#ifdef CSVG_JAVASCRIPT
   virtual CSVGJavaScript          *createJavaScript();
+#endif
   virtual CSVGBlock               *createBlock();
   virtual CSVGAnchor              *createAnchor();
   virtual CSVGAnimate             *createAnimate();
@@ -415,7 +422,9 @@ class CSVG {
 
   //---
 
+#ifdef CSVG_JAVASCRIPT
   CSVGJavaScript *js() { return js_; }
+#endif
 
   CSVGObject *eventObject() { return eventObject_; }
   void setEventObject(CSVGObject *p) { eventObject_ = p; }
@@ -762,16 +771,16 @@ class CSVG {
     }
   };
 
-  typedef std::vector<CSVGBuffer *>           BufferStack;
-  typedef std::vector<CSVGFont *>             FontList;
-  typedef std::map<std::string, CSVGObject *> NameObjectMap;
-  typedef std::vector<StyleData>              StyleDataStack;
-  typedef std::vector<CSVGBlockData>          BlockDataStack;
-  typedef CAutoPtr<CSVGBufferMgr>             BufferMgrP;
-  typedef CAutoPtr<CSVGBlock>                 BlockP;
-  typedef CAutoPtr<CXML>                      XMLP;
-  typedef COptValT<CSVGXmlStyleSheet>         OptXmlStyleSheet;
-  typedef std::vector<CCSS>                   CSSList;
+  using BufferStack      = std::vector<CSVGBuffer *>;
+  using FontList         = std::vector<CSVGFont *>;
+  using NameObjectMap    = std::map<std::string, CSVGObject *>;
+  using StyleDataStack   = std::vector<StyleData>;
+  using BlockDataStack   = std::vector<CSVGBlockData>;
+  using BufferMgrP       = CAutoPtr<CSVGBufferMgr>;
+  using BlockP           = CAutoPtr<CSVGBlock>;
+  using XMLP             = CAutoPtr<CXML>;
+  using OptXmlStyleSheet = COptValT<CSVGXmlStyleSheet>;
+  using CSSList          = std::vector<CCSS>;
 
   static Colors colors_;
 
@@ -791,7 +800,9 @@ class CSVG {
   FontList         fontList_;
   NameObjectMap    idObjectMap_;
   CSSList          cssList_;
+#ifdef CSVG_JAVASCRIPT
   CSVGJavaScript*  js_            { nullptr };
+#endif
   CSVGObject*      eventObject_   { nullptr };
   ObjectList       drawObjects_;
   OptXmlStyleSheet xmlStyleSheet_;
@@ -802,6 +813,7 @@ class CSVG {
   CSVGObject*      altRoot_       { nullptr };
   AltData          altData_;
   DebugData        debugData_;
+  bool             checkViewBox_  { false };
 };
 
 #endif

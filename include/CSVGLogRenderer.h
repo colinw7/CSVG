@@ -5,15 +5,11 @@
 
 class CSVGLogRenderer : public CSVGRenderer {
  public:
-  CSVGLogRenderer() : os_(&std::cout) { }
+  CSVGLogRenderer();
 
-  CSVGLogRenderer(const CSVGLogRenderer &r) :
-   os_(r.os_), silent_(r.silent_) {
-  }
+  CSVGLogRenderer(const CSVGLogRenderer &r);
 
-  CSVGLogRenderer *dup() const override {
-    return new CSVGLogRenderer(*this);
-  }
+  CSVGLogRenderer *dup() const override;
 
   std::ostream &os() const { return *os_; }
 
@@ -128,32 +124,20 @@ class CSVGLogRenderer : public CSVGRenderer {
 
   CISize2D getImageSize() const override { logNL("getImageSize"); return CISize2D(); }
 
-  CSVGImageData *getImage() const override { logNL("getImage"); return 0; }
+  CSVGImageData *getImage() const override { logNL("getImage"); return nullptr; }
 
   void setImage(CSVGRenderer *) override { logNL("setImage"); }
   void setImage(CSVGImageData *) override { logNL("setImage"); }
 
   template<typename T>
-  void logT(const T &t) {
-    std::stringstream ss;
+  void logT(const T &t) { std::stringstream ss; ss << t; logNL(ss.str()); }
 
-    ss << t;
+  void logNL(const std::string &str) const;
 
-    logNL(ss.str());
-  }
-
-  void logNL(const std::string &str) const {
-    if (! isSilent())
-      os() << str << std::endl;
-  }
-
-  void log(const std::string &str) const {
-    if (! isSilent())
-      os() << str;
-  }
+  void log(const std::string &str) const;
 
  private:
-  std::ostream *os_;
+  std::ostream *os_ { nullptr };
 
   bool   silent_ { false };
   int    width_  { 0 };

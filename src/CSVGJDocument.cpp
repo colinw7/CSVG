@@ -1,4 +1,7 @@
 #include <CSVGJDocument.h>
+
+#ifdef CSVG_JAVASCRIPT
+
 #include <CSVGJElement.h>
 #include <CSVGJTypes.h>
 #include <CSVG.h>
@@ -205,7 +208,7 @@ execNameFn(CJavaScript *js, const std::string &name, const Values &values)
     return CJValueP(new CSVGJTransform(svg_, matrix));
   }
   else if (name == "createSVGPoint") {
-    CJDictionary *dict = new CJDictionary(js, "");
+    auto *dict = new CJDictionary(js, "");
 
     dict->setRealProperty(js, "x", 0.0);
     dict->setRealProperty(js, "y", 0.0);
@@ -215,3 +218,5 @@ execNameFn(CJavaScript *js, const std::string &name, const Values &values)
   else
     return CJValueP();
 }
+
+#endif

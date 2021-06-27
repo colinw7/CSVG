@@ -1,4 +1,7 @@
 #include <CSVGJavaScript.h>
+
+#ifdef CSVG_JAVASCRIPT
+
 #include <CSVGJDocument.h>
 #include <CSVGJElement.h>
 #include <CSVGJEvent.h>
@@ -23,7 +26,7 @@ init()
   setProperty("document"   , document());
   setProperty("svgDocument", document());
 
-  CJDictionary *transformDict = new CJDictionary(this, "");
+  auto *transformDict = new CJDictionary(this, "");
 
   setProperty("SVGTransform", CJValueP(transformDict));
 
@@ -36,3 +39,5 @@ init()
   transformDict->setIntegerProperty(this, "SVG_TRANSFORM_MATRIX"   ,
                                     long(CMatrixTransformType::MATRIX));
 }
+
+#endif

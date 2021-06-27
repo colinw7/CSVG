@@ -1,6 +1,8 @@
 #ifndef CSVGJDocument_H
 #define CSVGJDocument_H
 
+#ifdef CSVG_JAVASCRIPT
+
 #include <CSVG.h>
 #include <CJavaScript.h>
 
@@ -78,7 +80,9 @@ class CSVGJDocumentElement : public CJObj {
   void print(std::ostream &os) const override { os << "SVGDocumentElement"; }
 
  private:
-  CSVG *svg_;
+  CSVG *svg_ { nullptr };
 };
+
+#endif
 
 #endif

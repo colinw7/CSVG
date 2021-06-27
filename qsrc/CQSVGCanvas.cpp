@@ -127,7 +127,7 @@ mousePressEvent(QMouseEvent *e)
   //std::cout << objects.size() << std::endl;
 
   for (const auto &obj : objects) {
-    CQSVGObject *qobj = dynamic_cast<CQSVGObject *>(obj);
+    auto *qobj = dynamic_cast<CQSVGObject *>(obj);
     if (! qobj) continue;
 
     qobj->setSelected(true);
@@ -160,7 +160,7 @@ mouseMoveEvent(QMouseEvent *e)
   svg_->getAllChildren(objects);
 
   for (const auto &obj : objects) {
-    CQSVGObject *qobj = dynamic_cast<CQSVGObject *>(obj);
+    auto *qobj = dynamic_cast<CQSVGObject *>(obj);
     if (! qobj) continue;
 
     if (obj->inside(w)) {
@@ -195,7 +195,7 @@ mouseReleaseEvent(QMouseEvent *e)
   svg_->getObjectsAtPoint(w, objects);
 
   for (const auto &obj : objects) {
-    CQSVGObject *qobj = dynamic_cast<CQSVGObject *>(obj);
+    auto *qobj = dynamic_cast<CQSVGObject *>(obj);
     if (! qobj) continue;
 
     qobj->object()->handleEvent(CSVGEventType::CLICK, "", "", /*propagate*/false);
@@ -245,9 +245,9 @@ drawSelected()
 
   std::vector<CSVGObject *> objects;
 
-  CSVGBlock *block = svg_->getRoot();
+  auto *block = svg_->getRoot();
 
-  CQSVGObject *qblock = dynamic_cast<CQSVGObject *>(block);
+  auto *qblock = dynamic_cast<CQSVGObject *>(block);
 
   if (qblock)
     qblock->drawSelected();
@@ -255,7 +255,7 @@ drawSelected()
   block->getAllChildren(objects);
 
   for (const auto &obj : objects) {
-    CQSVGObject *qobj = dynamic_cast<CQSVGObject *>(obj);
+    auto *qobj = dynamic_cast<CQSVGObject *>(obj);
     if (! qobj) continue;
 
     qobj->drawSelected();

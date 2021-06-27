@@ -1,6 +1,8 @@
 #ifndef CSVGJTypes_H
 #define CSVGJTypes_H
 
+#ifdef CSVG_JAVASCRIPT
+
 #include <CSVGTypes.h>
 #include <CSVGColor.h>
 #include <CJavaScript.h>
@@ -645,5 +647,7 @@ class CSVGJColor : public CJObj {
   CSVGColor   color_;
   std::string name_;
 };
+
+#endif
 
 #endif

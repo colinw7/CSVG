@@ -132,7 +132,7 @@ CSVGPattern::
 setFillImage(CSVGObject *parent, CSVGBuffer *buffer,
              double *x1, double *y1, double *w1, double *h1)
 {
-  CSVGPattern *linkPattern = dynamic_cast< CSVGPattern *>(getObject());
+  auto *linkPattern = dynamic_cast< CSVGPattern *>(getObject());
 
   if (linkPattern) {
     if (patternTransform_.isValid())
@@ -173,9 +173,9 @@ setFillImage(CSVGObject *parent, CSVGBuffer *buffer,
 
   //---
 
-  CSVGBuffer *oldBuffer = svg_.getCurrentBuffer();
+  auto *oldBuffer = svg_.getCurrentBuffer();
 
-  CMatrixStack2D transform = oldBuffer->transform();
+  auto transform = oldBuffer->transform();
 
   //---
 

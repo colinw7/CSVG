@@ -10,12 +10,14 @@
 #include <CSVGPattern.h>
 #include <CSVG.h>
 #include <CSVGRenderer.h>
+
+#include <CImage.h>
 #include <CVector3D.h>
 #include <CMathRound.h>
 
 namespace {
   CSVGImageDataP createImage(CSVG &svg, int w, int h) {
-    CSVGImageData *image = svg.createImageData();
+    auto *image = svg.createImageData();
 
     image->setSize(w, h);
 
@@ -71,7 +73,7 @@ CSVGBufferMgr::
 lookupBuffer(const std::string &name, bool create)
 {
   if      (name == "SourceAlpha") {
-    CSVGBuffer *buffer = lookupBuffer("SourceGraphic", create);
+    auto *buffer = lookupBuffer("SourceGraphic", create);
 
     if (buffer)
       return lookupAlphaBuffer(buffer, create);
@@ -79,7 +81,7 @@ lookupBuffer(const std::string &name, bool create)
       return nullptr;
   }
   else if (name == "BackgroundAlpha") {
-    CSVGBuffer *buffer = lookupBuffer("BackgroundImage", create);
+    auto *buffer = lookupBuffer("BackgroundImage", create);
 
     if (buffer)
       return lookupAlphaBuffer(buffer, create);
@@ -107,7 +109,7 @@ lookupBuffer(const std::string &name, bool create)
 
   // auto generate fill and stroke paint contents
   if      (name == "FillPaint" || name == "StrokePaint") {
-    CBBox2D bbox = paintBBox();
+    auto bbox = paintBBox();
 
     buffer->updateBBoxSize(bbox);
 
@@ -156,7 +158,7 @@ CSVGBuffer *
 CSVGBufferMgr::
 createBuffer(const std::string &name)
 {
-  CSVGBuffer *buffer = svg_.createBuffer(name);
+  auto *buffer = svg_.createBuffer(name);
 
   buffer->setAntiAlias(antiAlias_);
 
@@ -169,7 +171,7 @@ CSVGBuffer *
 CSVGBufferMgr::
 createAlphaBuffer(CSVGBuffer *buffer)
 {
-  CSVGBuffer *alphaBuffer = buffer->dup();
+  auto *alphaBuffer = buffer->dup();
 
   addAlphaBuffer(alphaBuffer);
 
@@ -247,7 +249,7 @@ getRenderer() const
   //---
 
   if (! renderer_) {
-    CSVGBuffer *th = const_cast<CSVGBuffer *>(this);
+    auto *th = const_cast<CSVGBuffer *>(this);
 
     th->renderer_ = svg_.createRenderer();
 
@@ -567,7 +569,7 @@ floodBuffers(const CRGBA &c, const CBBox2D &bbox, CSVGBuffer *outBuffer)
   CPoint2D p1, p2;
 
 #if 0
-  CSVGRenderer *renderer = outBuffer->svg_.getCurrentBuffer()->getRenderer();
+  auto *renderer = outBuffer->svg_.getCurrentBuffer()->getRenderer();
 
   renderer->windowToPixel(CPoint2D(x1, y1), p1);
   renderer->windowToPixel(CPoint2D(x2, y2), p2);
@@ -586,11 +588,11 @@ floodBuffers(const CRGBA &c, const CBBox2D &bbox, CSVGBuffer *outBuffer)
   dst_image->set(c);
 
   // draw in renderer
-  CSVGRenderer *outRenderer = outBuffer->getRenderer();
+  auto *outRenderer = outBuffer->getRenderer();
 
   outRenderer->setSize(p1.x + w1, p1.y + h1);
 
-  outRenderer->clear(CRGBA(0,0,0,0));
+  outRenderer->clear(CRGBA(0, 0, 0, 0));
 
   outRenderer->addImage(p1.x, p1.y, dst_image.getPtr());
 }
@@ -645,7 +647,7 @@ imageBuffers(CSVGBuffer *inBuffer, const CBBox2D &bbox, CSVGPreserveAspect prese
   outBuffer->svg_.windowToPixel(bbox.getXMax(), bbox.getYMax(), &x2, &y2);
 
   // to image pixel
-  CSVGRenderer *irenderer = inBuffer->getRenderer();
+  auto *irenderer = inBuffer->getRenderer();
 
   CPoint2D p1, p2;
 
@@ -654,14 +656,14 @@ imageBuffers(CSVGBuffer *inBuffer, const CBBox2D &bbox, CSVGPreserveAspect prese
 
   //---
 
-  CSVGScale scale = preserveAspect.getScale();
-  double    pw    = std::max(fabs(p2.x - p1.x), 1.0);
-  double    ph    = std::max(fabs(p2.y - p1.y), 1.0);
+  auto   scale = preserveAspect.getScale();
+  double pw    = std::max(fabs(p2.x - p1.x), 1.0);
+  double ph    = std::max(fabs(p2.y - p1.y), 1.0);
 
   int ipw = CMathRound::RoundNearest(pw);
   int iph = CMathRound::RoundNearest(ph);
 
-  CSVGFilterBase *filterBase = dynamic_cast<CSVGFilterBase *>(inBuffer->svg_.currentDrawObject());
+  auto *filterBase = dynamic_cast<CSVGFilterBase *>(inBuffer->svg_.currentDrawObject());
 
   if (filterBase->hasLink() && filterBase->xlink().isImage()) {
     // resize source image (to bbox pixel size)
@@ -748,7 +750,7 @@ maskBuffers(CSVGBuffer *oldBuffer, CSVGBuffer *buffer,
   if (oldBuffer->svg_.getDebugMask()) {
     std::string maskBufferName = "rgb_mask_" + object->getUniqueName();
 
-    CSVGBuffer *maskBuffer = oldBuffer->svg_.getBuffer(maskBufferName);
+    auto *maskBuffer = oldBuffer->svg_.getBuffer(maskBufferName);
 
     maskBuffer->getRenderer()->setImage(mask_image1.getPtr());
   }
@@ -763,7 +765,7 @@ maskBuffers(CSVGBuffer *oldBuffer, CSVGBuffer *buffer,
   if (oldBuffer->svg_.getDebugMask()) {
     std::string maskBufferName = "alpha_mask_" + object->getUniqueName();
 
-    CSVGBuffer *maskBuffer = oldBuffer->svg_.getBuffer(maskBufferName);
+    auto *maskBuffer = oldBuffer->svg_.getBuffer(maskBufferName);
 
     maskBuffer->getRenderer()->setImage(dest_image.getPtr());
   }
@@ -790,7 +792,7 @@ mergeBuffers(const std::vector<CSVGFeMergeNode *> &nodes,
   if (getenv("CSVG_DEBUG_FILTER"))
     std::cerr << "mergeBuffers:\n";
 
-  CSVGFilterBase *filterBase = dynamic_cast<CSVGFilterBase *>(outBuffer->svg_.currentDrawObject());
+  auto *filterBase = dynamic_cast<CSVGFilterBase *>(outBuffer->svg_.currentDrawObject());
 
   // create image to merge into
   CSVGImageDataP dst_image = createImage(outBuffer->svg_, w, h);
@@ -802,7 +804,7 @@ mergeBuffers(const std::vector<CSVGFeMergeNode *> &nodes,
 
   for (const auto &node : nodes) {
     std::string filterIn = node->getFilterIn();
-    CSVGBuffer* bufferIn = outBuffer->svg_.getBuffer(filterIn);
+    auto *bufferIn = outBuffer->svg_.getBuffer(filterIn);
 
     if (outBuffer->svg_.getDebugFilter()) {
       std::string objectBufferName = "_" + filterBase->getUniqueName();
@@ -882,7 +884,7 @@ offsetBuffers(CSVGBuffer *inBuffer, const CBBox2D &bbox, double dx, double dy,
   //---
 
   // add back to outbuffer (offset)
-  CBBox2D bbox1 = bbox.movedBy(CPoint2D(dx, dy));
+  auto bbox1 = bbox.movedBy(CPoint2D(dx, dy));
 
   outBuffer->putImage(bbox1, src_image);
 }
@@ -912,7 +914,7 @@ tileBuffers(CSVGBuffer *inBuffer, const CBBox2D &inBBox,
   outBuffer->svg_.windowToPixel(outBBox.getXMax(), outBBox.getYMax(), &x2, &y2);
 
   // to image pixel
-  CSVGRenderer *irenderer = inBuffer->getRenderer();
+  auto *irenderer = inBuffer->getRenderer();
 
   CPoint2D p1, p2;
 
@@ -930,7 +932,7 @@ tileBuffers(CSVGBuffer *inBuffer, const CBBox2D &inBBox,
   CHAlignType halign = CHALIGN_TYPE_LEFT;
   CVAlignType valign = CVALIGN_TYPE_TOP;
 
-  CSVGImageDataP tiledImage(inImage->tile(iw, ih, CImageTile(halign, valign)));
+  CSVGImageDataP tiledImage(inImage->tile(iw, ih, CImageTileData(halign, valign)));
 
   // create dest image
   CSVGImageDataP outImage(outBuffer->svg_.getCurrentBuffer()->getImage()->dup());
@@ -986,11 +988,11 @@ lightBuffers(CSVGBuffer *inBuffer, const CBBox2D &bbox,
   //---
 
   for (const auto &l : lights) {
-    CSVGFeDistantLight *dl = dynamic_cast<CSVGFeDistantLight *>(l);
-    CSVGFePointLight   *pl = dynamic_cast<CSVGFePointLight   *>(l);
-    CSVGFeSpotLight    *sl = dynamic_cast<CSVGFeSpotLight    *>(l);
+    auto *dl = dynamic_cast<CSVGFeDistantLight *>(l);
+    auto *pl = dynamic_cast<CSVGFePointLight   *>(l);
+    auto *sl = dynamic_cast<CSVGFeSpotLight    *>(l);
 
-    CSVGLightData lightData1 = lightData;
+    auto lightData1 = lightData;
 
     lightData1.ltype = l->getObjTypeId();
 
@@ -1017,7 +1019,7 @@ distantLight(CSVGImageDataP &image, CSVGFeDistantLight *light, CSVGLightData &li
 
   for (int y = 0; y < h; ++y) {
     for (int x = 0; x < w; ++x) {
-      CRGBA rgba1 = lightPoint(image, x, y, lightData);
+      auto rgba1 = lightPoint(image, x, y, lightData);
 
       image->setPixel(x, y, rgba1);
     }
@@ -1035,7 +1037,7 @@ pointLight(CSVGImageDataP &image, CSVGFePointLight *light, CSVGLightData &lightD
 
   for (int y = 0; y < h; ++y) {
     for (int x = 0; x < w; ++x) {
-      CRGBA rgba1 = lightPoint(image, x, y, lightData);
+      auto rgba1 = lightPoint(image, x, y, lightData);
 
       image->setPixel(x, y, rgba1);
     }
@@ -1056,7 +1058,7 @@ spotLight(CSVGImageDataP &image, CSVGFeSpotLight *light, CSVGLightData &lightDat
 
   for (int y = 0; y < h; ++y) {
     for (int x = 0; x < w; ++x) {
-      CRGBA rgba1 = lightPoint(image, x, y, lightData);
+      auto rgba1 = lightPoint(image, x, y, lightData);
 
       image->setPixel(x, y, rgba1);
     }
@@ -1076,7 +1078,7 @@ lightPoint(CSVGImageDataP &image, int x, int y, const CSVGLightData &lightData)
     lz = sin(lightData.lelevation);
   }
   else {
-    CRGBA rgba1 = image->getPixel(x, y);
+    auto rgba1 = image->getPixel(x, y);
 
     double gray = rgba1.getGray();
 
@@ -1087,7 +1089,7 @@ lightPoint(CSVGImageDataP &image, int x, int y, const CSVGLightData &lightData)
     lz = lightData.lpoint.z - z;
   }
 
-  CVector3D lightDir = CVector3D(lx, ly, lz).unit();
+  auto lightDir = CVector3D(lx, ly, lz).unit();
 
   CRGBA lcolor;
 
@@ -1116,21 +1118,21 @@ lightPoint(CSVGImageDataP &image, int x, int y, const CSVGLightData &lightData)
   double ny = -lightData.surfaceScale*yf*ygray;
   double nz = 1;
 
-  CVector3D normal = CVector3D(nx, ny, nz).unit();
+  auto normal = CVector3D(nx, ny, nz).unit();
 
   //---
 
   if      (lightData.isSpecular) {
     CVector3D eye(0, 0, 1);
 
-    CVector3D halfway = (lightDir + eye).unit();
+    auto halfway = (lightDir + eye).unit();
 
     //---
 
   //double dot = normal.dotProduct(lightDir);
     double dot = normal.dotProduct(halfway);
 
-    CRGBA  scolor = lightData.specConstant*pow(dot, lightData.specExponent)*lcolor;
+    auto   scolor = lightData.specConstant*pow(dot, lightData.specExponent)*lcolor;
     double sa     = scolor.getIntensity();
 
     scolor.setAlpha(sa);
@@ -1140,7 +1142,7 @@ lightPoint(CSVGImageDataP &image, int x, int y, const CSVGLightData &lightData)
   else if (lightData.isDiffuse) {
     double dot = normal.dotProduct(lightDir);
 
-    CRGBA diffuse = lightData.diffuseConstant*dot*lcolor;
+    auto diffuse = lightData.diffuseConstant*dot*lcolor;
 
     diffuse.setAlpha(1);
 
@@ -1165,7 +1167,7 @@ subImage(const CBBox2D &bbox) const
 
 #if 0
   // to image pixel
-  CSVGRenderer *irenderer = inBuffer->getRenderer();
+  auto *irenderer = inBuffer->getRenderer();
 
   CPoint2D p1, p2;
 
@@ -1204,7 +1206,7 @@ putImage(const CBBox2D &bbox, const CSVGImageDataP &image)
 
   getRenderer()->setSize(ix + iw, iy + ih);
 
-  getRenderer()->clear(CRGBA(0,0,0,0));
+  getRenderer()->clear(CRGBA(0, 0, 0, 0));
 
   getRenderer()->addImage(ix, iy, image.getPtr());
 //getRenderer()->setImage(image.getPtr())
@@ -1348,9 +1350,8 @@ setFlatImageBuffer(CSVGBuffer *buffer)
     addImageBuffer(0, 0, buffer);
 
 #if 0
-CSVGBuffer *tempBuffer = svg_.getBuffer(buffer->getName() + "+" +
-                         buffer->parentBuffer_->getName());
-tempBuffer->setImageBuffer(this);
+    auto *tempBuffer = svg_.getBuffer(buffer->getName() + "+" + buffer->parentBuffer_->getName());
+    tempBuffer->setImageBuffer(this);
 #endif
 
     if (parentDrawing)
@@ -1510,7 +1511,7 @@ reset()
 
   //---
 
-  CSVGRenderer *renderer = getRenderer();
+  auto *renderer = getRenderer();
 
   renderer->setDataRange(0, 0, 1, 1);
 
@@ -1537,7 +1538,7 @@ clear()
 
   //---
 
-  CSVGRenderer *renderer = getRenderer();
+  auto *renderer = getRenderer();
 
   renderer->clear(CRGBA());
 }
@@ -1553,7 +1554,7 @@ setup(const CBBox2D &bbox)
 
   reset();
 
-  CSVGRenderer *renderer = getRenderer();
+  auto *renderer = getRenderer();
 
   double x1 = bbox.getXMin();
   double y1 = bbox.getYMin();
@@ -1587,7 +1588,7 @@ beginDraw(double w, double h, const CBBox2D &bbox)
 
   startDraw();
 
-  const CMatrixStack2D &viewMatrix = svg_.blockData().viewMatrix();
+  const auto &viewMatrix = svg_.blockData().viewMatrix();
 
   CPoint2D bmin, bmax;
 
@@ -1645,8 +1646,8 @@ void
 CSVGBuffer::
 updateBBoxSize(const CBBox2D &bbox)
 {
-  CSVGRenderer *prenderer = svg_.getCurrentBuffer()->getRenderer();
-  CSVGRenderer *renderer  = this->getRenderer();
+  auto *prenderer = svg_.getCurrentBuffer()->getRenderer();
+  auto *renderer  = this->getRenderer();
 
   CPoint2D p1, p2;
 
@@ -1722,7 +1723,7 @@ setTransform(const CMatrixStack2D &matrix)
 
   transform_ = matrix;
 
-  const CMatrixStack2D &viewMatrix = svg_.blockData().viewMatrix();
+  const auto &viewMatrix = svg_.blockData().viewMatrix();
 
   CMatrixStack2D matrix1(viewMatrix);
 
@@ -1742,7 +1743,7 @@ unsetTransform()
 
   transform_.reset();
 
-  const CMatrixStack2D &viewMatrix = svg_.blockData().viewMatrix();
+  const auto &viewMatrix = svg_.blockData().viewMatrix();
 
   setViewMatrix(viewMatrix);
 }
@@ -1767,9 +1768,9 @@ setStroke(const CSVGStroke &stroke)
 {
   resetStroke();
 
-  CSVGObject *drawObject = svg_.currentDrawObject();
+  auto *drawObject = svg_.currentDrawObject();
 
-  CSVGObject *fillObject = stroke.calcFillObject();
+  auto *fillObject = stroke.calcFillObject();
 
   if (fillObject) {
     setStrokeFilled(true);
@@ -1779,9 +1780,9 @@ setStroke(const CSVGStroke &stroke)
     if (stroke.getOpacityValid())
       opacity = stroke.getOpacity();
 
-    CSVGLinearGradient *lg = dynamic_cast<CSVGLinearGradient *>(fillObject);
-    CSVGRadialGradient *rg = dynamic_cast<CSVGRadialGradient *>(fillObject);
-    CSVGPattern        *pt = dynamic_cast<CSVGPattern        *>(fillObject);
+    auto *lg = dynamic_cast<CSVGLinearGradient *>(fillObject);
+    auto *rg = dynamic_cast<CSVGRadialGradient *>(fillObject);
+    auto *pt = dynamic_cast<CSVGPattern        *>(fillObject);
 
     if      (lg) {
       lg->setStrokeBuffer(this, drawObject, opacity);
@@ -1802,9 +1803,9 @@ setStroke(const CSVGStroke &stroke)
     setStrokeFilled(false);
 
     if (stroke.getColorValid()) {
-      CSVGColor color = stroke.getColor();
+      auto color = stroke.getColor();
 
-      CRGBA rgba = svg_.colorToRGBA(color);
+      auto rgba = svg_.colorToRGBA(color);
 
       if (stroke.getOpacityValid())
         rgba.setAlpha(stroke.getOpacity());
@@ -1996,9 +1997,9 @@ setFill(const CSVGFill &fill)
 {
   resetFill();
 
-  CSVGObject *drawObject = svg_.currentDrawObject();
+  auto *drawObject = svg_.currentDrawObject();
 
-  CSVGObject *fillObject = fill.calcFillObject();
+  auto *fillObject = fill.calcFillObject();
 
   if (fillObject) {
     COptReal opacity;
@@ -2006,9 +2007,9 @@ setFill(const CSVGFill &fill)
     if (fill.getOpacityValid())
       opacity = fill.getOpacity();
 
-    CSVGLinearGradient *lg = dynamic_cast<CSVGLinearGradient *>(fillObject);
-    CSVGRadialGradient *rg = dynamic_cast<CSVGRadialGradient *>(fillObject);
-    CSVGPattern        *pt = dynamic_cast<CSVGPattern        *>(fillObject);
+    auto *lg = dynamic_cast<CSVGLinearGradient *>(fillObject);
+    auto *rg = dynamic_cast<CSVGRadialGradient *>(fillObject);
+    auto *pt = dynamic_cast<CSVGPattern        *>(fillObject);
 
     if      (lg) {
       lg->setFillBuffer(this, drawObject, opacity);
@@ -2027,9 +2028,9 @@ setFill(const CSVGFill &fill)
   }
   else {
     if (fill.getColorValid()) {
-      CSVGColor color = fill.getColor();
+      auto color = fill.getColor();
 
-      CRGBA rgba = svg_.colorToRGBA(color);
+      auto rgba = svg_.colorToRGBA(color);
 
       if (fill.getOpacityValid())
         rgba.setAlpha(fill.getOpacity());
@@ -2193,8 +2194,8 @@ drawRoundedRectangle(const CBBox2D &bbox, double rx, double ry)
 {
   svg_.setStrokeBuffer(this);
 
-  const CPoint2D &ll = bbox.getLL();
-  const CPoint2D &ur = bbox.getUR();
+  const auto &ll = bbox.getLL();
+  const auto &ur = bbox.getUR();
 
   pathInit();
 
@@ -2219,8 +2220,8 @@ fillRoundedRectangle(const CBBox2D &bbox, double rx, double ry)
 {
   svg_.setFillBuffer(this);
 
-  const CPoint2D &ll = bbox.getLL();
-  const CPoint2D &ur = bbox.getUR();
+  const auto &ll = bbox.getLL();
+  const auto &ur = bbox.getUR();
 
   pathInit();
 

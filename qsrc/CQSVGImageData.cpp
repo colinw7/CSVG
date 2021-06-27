@@ -1,6 +1,11 @@
 #include <CQSVGImageData.h>
+#include <CImageResizeType.h>
+#include <CImageConvolveData.h>
+#include <CImageTileData.h>
 #include <CTurbulenceUtil.h>
 #include <CGaussianBlur.h>
+#include <CRGBACombineDef.h>
+#include <CImageLib.h>
 #include <CRGBUtil.h>
 #include <CMathRound.h>
 #include <QColor>
@@ -18,6 +23,11 @@ CQSVGImageData(const CQSVGImageData &data) :
   qimage_ = data.qimage_;
 }
 
+CQSVGImageData::
+~CQSVGImageData()
+{
+}
+
 CSVGImageData *
 CQSVGImageData::
 dup() const
@@ -31,16 +41,14 @@ image() const
 {
   assert(false);
 
-  return CSVGImageData::image();
+  return CImagePtr();
 }
 
 void
 CQSVGImageData::
-setImage(CImagePtr &image)
+setImage(CImagePtr &)
 {
   assert(false);
-
-  CSVGImageData::setImage(image);
 }
 
 void
@@ -1253,7 +1261,7 @@ isErodePixel(int x, int y, bool isAlpha, CRGBA &rgba) const
 
 CSVGImageData *
 CQSVGImageData::
-tile(int width, int height, const CImageTile &tile)
+tile(int width, int height, const CImageTileData &tile)
 {
   CSVGImageData *image = dup();
 

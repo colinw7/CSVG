@@ -31,7 +31,7 @@ class CSVGStroke {
    mlimit_    (stroke.mlimit_) {
   }
 
-  const CSVGStroke &operator=(const CSVGStroke &stroke) {
+  CSVGStroke &operator=(const CSVGStroke &stroke) {
     color_      = stroke.color_;
     opacity_    = stroke.opacity_;
     rule_       = stroke.rule_;

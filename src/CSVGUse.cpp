@@ -169,7 +169,7 @@ getBBox(CBBox2D &bbox) const
     if (! object->getBBox(bbox))
       return false;
 
-    CSVGSymbol *symbol = dynamic_cast<CSVGSymbol *>(object);
+    auto *symbol = dynamic_cast<CSVGSymbol *>(object);
 
     if (symbol) {
       double w = getWidth(), h = getHeight();
@@ -236,7 +236,7 @@ draw()
   if (svg_.getDebug())
     CSVGLog() << *this;
 
-  CSVGObject *object = getLinkObject();
+  auto *object = getLinkObject();
 
   if      (object) {
     if (object->getDisplay() == "none")
@@ -261,7 +261,7 @@ draw()
     if (object->getOpacityValid())
       saveImage = true;
 
-    CSVGSymbol *symbol = dynamic_cast<CSVGSymbol *>(object);
+    auto *symbol = dynamic_cast<CSVGSymbol *>(object);
 
     if (symbol)
       saveImage = true;

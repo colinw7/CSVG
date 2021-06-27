@@ -262,7 +262,7 @@ getBBox(CSVGBuffer *buffer, CBBox2D &bbox) const
     buffer->pathBBox(bbox);
   }
   else {
-    CSVGPathPartList *th = const_cast<CSVGPathPartList *>(this);
+    auto *th = const_cast<CSVGPathPartList *>(this);
 
     bbox = CBBox2D();
 

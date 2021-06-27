@@ -841,10 +841,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -903,10 +899,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -965,10 +957,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -1026,10 +1014,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -1089,10 +1073,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -1152,10 +1132,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -1214,10 +1190,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -1304,10 +1276,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -1365,10 +1333,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -1426,10 +1390,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -1487,10 +1447,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -1548,10 +1504,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -1595,12 +1547,8 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
 		../../CFont/include/CFontStyle.h \
 		../../CUtil/include/CFlags.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../../CMath/include/CBBox2D.h \
 		../../CMath/include/CSize2D.h \
@@ -1661,10 +1609,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -1722,10 +1666,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -1782,10 +1722,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -1843,10 +1779,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -1905,10 +1837,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -1966,10 +1894,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -2027,10 +1951,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -2088,10 +2008,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -2149,10 +2065,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -2210,10 +2122,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -2271,10 +2179,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -2332,10 +2236,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -2393,10 +2293,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -2454,10 +2350,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -2517,10 +2409,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -2579,10 +2467,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -2642,10 +2526,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -2703,10 +2583,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -2764,10 +2640,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -2825,10 +2697,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -2855,12 +2723,8 @@ compiler_moc_header_clean:
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
 		../../CFont/include/CFontStyle.h \
 		../../CUtil/include/CFlags.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGBlock.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
@@ -2948,10 +2812,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -3014,10 +2874,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -3076,10 +2932,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -3137,10 +2989,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -3199,10 +3047,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -3260,10 +3104,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -3320,10 +3160,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -3380,10 +3216,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -3459,10 +3291,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -3520,10 +3348,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -3581,10 +3405,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -3647,10 +3467,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -3716,10 +3532,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -3777,10 +3589,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -3839,10 +3647,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -3923,10 +3727,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -3984,10 +3784,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -4045,10 +3841,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -4106,10 +3898,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -4167,10 +3955,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -4228,10 +4012,6 @@ compiler_moc_header_clean:
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -4286,12 +4066,8 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
 		../../CFont/include/CFontStyle.h \
 		../../CUtil/include/CFlags.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGBlock.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
@@ -4405,8 +4181,8 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGImage.h \
 		../qinclude/CQSVGImageData.h \
 		../include/CSVGImageData.h \
-		../../CImageLib/include/CImage.h \
-		../../CUtil/include/CRGBACombineDef.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
 		../qinclude/CQSVGLine.h \
 		../include/CSVGLine.h \
 		../qinclude/CQSVGLinearGradient.h \
@@ -4457,7 +4233,9 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../../COS/include/CHRTime.h \
 		../qinclude/CQSVGPathPart.h \
 		../qinclude/CQSVGFontObj.h \
-		../include/CSVGFontObj.h
+		../include/CSVGFontObj.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontPtr.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVG.o CQSVG.cpp
 
 ../obj/CQSVGAnchor.o: CQSVGAnchor.cpp ../qinclude/CQSVGAnchor.h \
@@ -4509,10 +4287,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -4582,10 +4356,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -4655,10 +4425,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -4728,10 +4494,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -4802,10 +4564,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -4876,10 +4634,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -4949,10 +4703,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -4999,12 +4749,8 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
 		../../CFont/include/CFontStyle.h \
 		../../CUtil/include/CFlags.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGBlock.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
@@ -5032,6 +4778,10 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../../CStrUtil/include/CStrUtil.h \
 		../qinclude/CQSVGRenderer.h \
 		../include/CSVGRenderer.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontPtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CImageLib/include/CImagePtr.h \
 		../../CUtil/include/CDisplayTransform2D.h \
 		../../CUtil/include/CDisplayRange2D.h \
 		../../CMath/include/CMathRound.h \
@@ -5041,12 +4791,15 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../../CMath/include/CIPoint3D.h \
 		../include/CSVGConvolveData.h \
 		../include/CSVGImageData.h \
+		../qinclude/CQSVGUtil.h \
+		../../CQUtil/include/CQImage.h \
 		../../CImageLib/include/CImage.h \
 		../../CUtil/include/CRGBACombineDef.h \
 		../../CMath/include/CIBBox2D.h \
 		../../CMath/include/CIVector2D.h \
-		../qinclude/CQSVGUtil.h \
-		../../CQUtil/include/CQImage.h \
+		../../CImageLib/include/CImageResizeType.h \
+		../../CImageLib/include/CImageConvolveData.h \
+		../../CImageLib/include/CImageTileData.h \
 		../../CQUtil/include/CQUtil.h \
 		../../CUtil/include/CEvent.h \
 		../../CUtil/include/CKeyType.h \
@@ -5081,12 +4834,8 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
 		../../CFont/include/CFontStyle.h \
 		../../CUtil/include/CFlags.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGBlock.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
@@ -5127,6 +4876,10 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGFilterBase.h \
 		../qinclude/CQSVGRenderer.h \
 		../include/CSVGRenderer.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontPtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CImageLib/include/CImagePtr.h \
 		../../CUtil/include/CDisplayTransform2D.h \
 		../../CUtil/include/CDisplayRange2D.h \
 		../../CMath/include/CMathRound.h \
@@ -5183,10 +4936,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -5255,10 +5004,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -5327,10 +5072,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -5399,10 +5140,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -5471,10 +5208,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -5529,12 +5262,8 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
 		../../CFont/include/CFontStyle.h \
 		../../CUtil/include/CFlags.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../../CMath/include/CBBox2D.h \
 		../../CMath/include/CSize2D.h \
@@ -5594,10 +5323,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -5666,10 +5391,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -5737,10 +5458,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -5809,10 +5526,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -5882,10 +5595,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -5954,10 +5663,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -6026,10 +5731,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -6098,10 +5799,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -6170,10 +5867,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -6242,10 +5935,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -6314,10 +6003,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -6386,10 +6071,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -6458,10 +6139,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -6530,10 +6207,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -6604,10 +6277,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -6677,10 +6346,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -6751,10 +6416,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -6823,10 +6484,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -6895,10 +6552,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -6967,10 +6620,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -7039,10 +6688,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -7128,12 +6773,8 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
 		../../CFont/include/CFontStyle.h \
 		../../CUtil/include/CFlags.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGBlock.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
@@ -7219,10 +6860,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -7291,10 +6928,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -7363,10 +6996,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -7435,10 +7064,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -7507,10 +7132,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -7578,10 +7199,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -7604,6 +7221,10 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../qinclude/CQSVGCanvas.h \
 		../qinclude/CQSVGFontObj.h \
 		../include/CSVGFontObj.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontPtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CImageLib/include/CImagePtr.h \
 		../qinclude/CQSVGRenderer.h \
 		../include/CSVGRenderer.h \
 		../../CUtil/include/CDisplayTransform2D.h \
@@ -7671,10 +7292,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -7724,12 +7341,8 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
 		../../CFont/include/CFontStyle.h \
 		../../CUtil/include/CFlags.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGBlock.h \
 		../include/CSVGObject.h \
 		../include/CSVGTimeValue.h \
@@ -7804,10 +7417,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -7876,10 +7485,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -7948,10 +7553,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -8046,10 +7647,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -8125,10 +7722,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -8197,10 +7790,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -8270,10 +7859,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -8315,12 +7900,8 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../qinclude/CQSVG.h \
 		../include/CSVG.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
 		../../CFont/include/CFontStyle.h \
 		../../CUtil/include/CFlags.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGBlock.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
@@ -8405,10 +7986,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -8477,10 +8054,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -8549,10 +8122,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -8621,10 +8190,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -8693,10 +8258,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -8765,10 +8326,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGPreserveAspect.h \
 		../include/CSVGAnimation.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGPathPart.h \
 		../include/CSVGObjectMarker.h \
 		../include/CObjTypeOld.h \
@@ -8809,12 +8366,8 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
 		../include/CSVGFontDef.h \
-		../../CFont/include/CFont.h \
-		../../CFont/include/CFontPtr.h \
-		../../CUtil/include/CRefPtr.h \
 		../../CFont/include/CFontStyle.h \
 		../../CUtil/include/CFlags.h \
-		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGBlock.h \
 		../include/CSVGObject.h \
 		../include/CSVGTypes.h \
@@ -8970,18 +8523,19 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../qinclude/CQSVGUse.h \
 		../include/CSVGUse.h \
 		../include/CSVGImageData.h \
-		../../CImageLib/include/CImage.h \
-		../../CUtil/include/CRGBACombineDef.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
 		../qinclude/CQSVGPathPart.h \
 		../qinclude/CQSVGRenderer.h \
 		../include/CSVGRenderer.h \
+		../../CFont/include/CFont.h \
+		../../CFont/include/CFontPtr.h \
 		../../CUtil/include/CDisplayTransform2D.h \
 		../../CUtil/include/CDisplayRange2D.h \
 		../../CMath/include/CMathRound.h \
 		../../CQPropertyTree/include/CQPropertyTree.h \
 		../../CQPropertyTree/include/CQPropertyItem.h \
 		../../CQUtil/include/CQPixmapCache.h \
-		../../CImageLib/include/CImageMgr.h \
 		svg/next_svg.h \
 		svg/prev_svg.h \
 		svg/properties_svg.h \
@@ -9031,10 +8585,6 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../../CMath/include/CMathRound.h \
 		../qinclude/CQSVGImageData.h \
 		../include/CSVGImageData.h \
-		../../CImageLib/include/CImage.h \
-		../../CUtil/include/CRGBACombineDef.h \
-		../../CMath/include/CIBBox2D.h \
-		../../CMath/include/CIVector2D.h \
 		../../CFile/include/CFileType.h \
 		../qinclude/CQSVGFontObj.h \
 		../include/CSVGFontObj.h \
@@ -9043,6 +8593,8 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../../CUtil/include/CEvent.h \
 		../../CUtil/include/CKeyType.h \
 		../../CMath/include/CAngle.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIVector2D.h \
 		../../CQUtil/include/CQUtilMeta.h \
 		../../CMath/include/CLinearGradient.h \
 		../../CMath/include/CRadialGradient.h \
@@ -9059,24 +8611,35 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGTypes.h \
 		../../CUtil/include/COptVal.h \
 		../../CUtil/include/CScreenUnits.h \
-		../../CImageLib/include/CImage.h \
+		../../CImageLib/include/CImagePtr.h \
+		../../CUtil/include/CRefPtr.h \
+		../../CFile/include/CFileType.h \
 		../../CUtil/include/CRGBA.h \
 		../../CUtil/include/CRGB.h \
 		../../CUtil/include/CRGBName.h \
-		../../CUtil/include/CRGBACombineDef.h \
+		../../CImageLib/include/CImageResizeType.h \
+		../../CImageLib/include/CImageConvolveData.h \
+		../../CImageLib/include/CImageTileData.h \
 		../../CUtil/include/CAlignType.h \
+		../../CMath/include/CTurbulenceUtil.h \
+		../../CMath/include/CGaussianBlur.h \
+		../../CMath/include/CMathUtil.h \
+		../../COS/include/COSNaN.h \
+		../../CUtil/include/CRGBACombineDef.h \
+		../../CImageLib/include/CImageLib.h \
+		../../CImageLib/include/CImageState.h \
+		../../CImageLib/include/CImage.h \
 		../../CMath/include/CISize2D.h \
 		../../CMath/include/CIBBox2D.h \
 		../../CMath/include/CIPoint2D.h \
 		../../CMath/include/CIVector2D.h \
 		../../CMath/include/CMathGen.h \
-		../../CFile/include/CFileType.h \
-		../../CImageLib/include/CImagePtr.h \
-		../../CUtil/include/CRefPtr.h \
-		../../CMath/include/CTurbulenceUtil.h \
-		../../CMath/include/CGaussianBlur.h \
-		../../CMath/include/CMathUtil.h \
-		../../COS/include/COSNaN.h \
+		../../CImageLib/include/CImageMgr.h \
+		../../CFile/include/CFile.h \
+		../../CFile/include/CFileBase.h \
+		../../CStrUtil/include/CStrUtil.h \
+		../../CImageLib/include/CImageAnim.h \
+		../../CImageLib/include/CImageFile.h \
 		../../CUtil/include/CRGBUtil.h \
 		../../CUtil/include/CCMYK.h \
 		../../CUtil/include/CHSL.h \

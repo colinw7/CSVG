@@ -284,7 +284,7 @@ draw()
 {
   bool rc = drawElement();
 
-  CSVGFilter *filter = getParentFilter();
+  auto *filter = getParentFilter();
 
   filter->setLastElement(this);
 

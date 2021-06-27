@@ -120,9 +120,9 @@ drawMarker(double x, double y, double autoAngle)
 
   //---
 
-  CSVGBuffer *currentBuffer = svg_.getCurrentBuffer();
+  auto *currentBuffer = svg_.getCurrentBuffer();
 
-  CMatrixStack2D transform = currentBuffer->transform();
+  auto transform = currentBuffer->transform();
 
   double refX = getRefX();
   double refY = getRefY();

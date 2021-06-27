@@ -120,7 +120,8 @@ execCmd(const QString &cmd)
 
   //---
 
-  CSVGJavaScript *js = window_->svg()->js();
+#ifdef CSVG_JAVASCRIPT
+  auto *js = window_->svg()->js();
 
   js->loadString(cmd.toStdString());
 
@@ -134,6 +135,7 @@ execCmd(const QString &cmd)
     cursor.insertText(str.c_str());
     cursor.insertText("\n");
   }
+#endif
 }
 
 void
@@ -149,18 +151,21 @@ loadFile()
   if (filename == "")
     return;
 
-  CSVGJavaScript *js = window_->svg()->js();
+#ifdef CSVG_JAVASCRIPT
+  auto *js = window_->svg()->js();
 
   js->loadFile(filename.toStdString());
 
   js->exec();
+#endif
 }
 
 void
 CQSVGJSDialog::
 loadVariables()
 {
-  CSVGJavaScript *js = window_->svg()->js();
+#ifdef CSVG_JAVASCRIPT
+  auto *js = window_->svg()->js();
 
   variablesList_->clear();
 
@@ -168,13 +173,15 @@ loadVariables()
 
   for (const auto &n : names)
     variablesList_->addItem(n.c_str());
+#endif
 }
 
 void
 CQSVGJSDialog::
 loadFunctions()
 {
-  CSVGJavaScript *js = window_->svg()->js();
+#ifdef CSVG_JAVASCRIPT
+  auto *js = window_->svg()->js();
 
   functionsList_->clear();
 
@@ -182,6 +189,7 @@ loadFunctions()
 
   for (const auto &n : names)
     functionsList_->addItem(n.c_str());
+#endif
 }
 
 QSize

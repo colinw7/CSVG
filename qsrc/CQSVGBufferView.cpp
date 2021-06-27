@@ -105,7 +105,7 @@ updateBuffer()
 {
   QString text;
 
-  CSVGBuffer *buffer = qsvg_->getBuffer(bufferName().toStdString());
+  auto *buffer = qsvg_->getBuffer(bufferName().toStdString());
 
   if (buffer) {
     text += QString("Opacity: %1").arg(buffer->opacity());
@@ -129,24 +129,13 @@ bufferName() const
   return combo_->currentText();
 }
 
-#if 0
-CImagePtr
-CQSVGBufferView::
-bufferImage() const
-{
-  CSVGBuffer *buffer = qsvg_->getBuffer(bufferName().toStdString());
-
-  return buffer->getRenderer()->getImage();
-}
-#endif
-
 QImage
 CQSVGBufferView::
 bufferImage() const
 {
-  CSVGBuffer *buffer = qsvg_->getBuffer(bufferName().toStdString());
+  auto *buffer = qsvg_->getBuffer(bufferName().toStdString());
 
-  CQSVGRenderer *renderer = dynamic_cast<CQSVGRenderer *>(buffer->getRenderer());
+  auto *renderer = dynamic_cast<CQSVGRenderer *>(buffer->getRenderer());
   if (! renderer) return QImage();
 
   return renderer->qimage();
@@ -204,13 +193,13 @@ paintEvent(QPaintEvent *)
   else
     painter.fillRect(rect(), Qt::white);
 
-  QImage    image  = view_->bufferImage ();
-  CPoint2D  origin = view_->bufferOrigin();
+  auto image  = view_->bufferImage ();
+  auto origin = view_->bufferOrigin();
 
   if (! image.isNull())
     painter.drawImage(QPointF(origin.x, origin.y), image);
 
-  CBBox2D bbox = view_->bufferBBox();
+  auto bbox = view_->bufferBBox();
 
   if (bbox.isSet()) {
     // TODO: transform

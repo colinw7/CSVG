@@ -2,7 +2,7 @@
 #define CSVGFontDef_H
 
 #include <CScreenUnits.h>
-#include <CFont.h>
+#include <CFontStyle.h>
 #include <COptVal.h>
 
 class CSVG;
@@ -13,7 +13,7 @@ class CSVGFontDef {
   CSVGFontDef(CSVG &svg);
   CSVGFontDef(const CSVGFontDef &font_def);
 
-  const CSVGFontDef &operator=(const CSVGFontDef &font_def);
+  CSVGFontDef &operator=(const CSVGFontDef &font_def);
 
   bool isSet() const {
     return (family_.isValid() || size_.isValid() || style_.isValid());

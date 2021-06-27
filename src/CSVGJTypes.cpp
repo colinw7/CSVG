@@ -1,4 +1,7 @@
 #include <CSVGJTypes.h>
+
+#ifdef CSVG_JAVASCRIPT
+
 #include <CSVGJavaScript.h>
 #include <CSVG.h>
 #include <CSVGObject.h>
@@ -129,7 +132,7 @@ CSVGJTransformList::
 getProperty(CJavaScript *js, const std::string &key) const
 {
   if      (key == "matrix") {
-    CSVGJTransformList *th = const_cast<CSVGJTransformList *>(this);
+    auto *th = const_cast<CSVGJTransformList *>(this);
 
     CSVGJTransformListP p = std::static_pointer_cast<CSVGJTransformList>(th->shared_from_this());
 
@@ -1755,3 +1758,5 @@ print(std::ostream &os) const
     const unsigned short RENDERING_INTENT_ABSOLUTE_COLORIMETRIC = 5;
   };
 */
+
+#endif

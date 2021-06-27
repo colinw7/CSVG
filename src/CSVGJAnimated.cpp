@@ -1,4 +1,7 @@
 #include <CSVGJAnimated.h>
+
+#ifdef CSVG_JAVASCRIPT
+
 #include <CSVGJElement.h>
 #include <CSVGJTypes.h>
 #include <CSVG.h>
@@ -863,3 +866,5 @@ getProperty(CJavaScript *js, const std::string &name) const
 
   return CSVGJObjValue::getProperty(js, name);
 }
+
+#endif

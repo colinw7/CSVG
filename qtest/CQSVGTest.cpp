@@ -8,46 +8,51 @@
 int
 main(int argc, char **argv)
 {
-  bool    debug    = false;
-  bool    nofilter = false;
-  bool    image    = false;
-  QString imageDir = "";
-  bool    print    = false;
-  int     dpi      = -1;
+  bool    debug         = false;
+  bool    check_viewbox = false;
+  bool    image         = false;
+  QString imageDir      = "";
+  bool    print         = false;
+  bool    nofilter      = false;
+  int     dpi           = -1;
 
   CQSVGWindow::Files files;
   CQSVGWindow::Ids   ids;
 
   for (int i = 1; i < argc; i++) {
     if (argv[i][0] == '-') {
-      if      (strcmp(&argv[i][1], "debug") == 0)
+      auto arg = std::string(&argv[i][1]);
+
+      if      (arg == "debug")
         debug = true;
-      else if (strcmp(&argv[i][1], "image") == 0)
+      else if (arg == "check_viewbox")
+        check_viewbox = true;
+      else if (arg == "image")
         image = true;
-      else if (strcmp(&argv[i][1], "image_dir") == 0) {
+      else if (arg == "image_dir") {
         ++i;
 
         if (i < argc)
           imageDir = argv[i];
       }
-      else if (strcmp(&argv[i][1], "print") == 0)
+      else if (arg == "print")
         print = true;
-      else if (strcmp(&argv[i][1], "nofilter") == 0)
+      else if (arg == "nofilter")
         nofilter = true;
-      else if (strcmp(&argv[i][1], "dpi") == 0) {
+      else if (arg == "dpi") {
         ++i;
 
         if (i < argc)
           dpi = atoi(argv[i]);
       }
-      else if (strcmp(&argv[i][1], "id") == 0) {
+      else if (arg == "id") {
         ++i;
 
         if (i < argc)
           ids.push_back(argv[i]);
       }
       else
-        std::cerr << "Invalid option: " << argv[i] << std::endl;
+        std::cerr << "Invalid option: " << argv[i] << "\n";
     }
     else
       files.push_back(argv[i]);
@@ -62,13 +67,13 @@ main(int argc, char **argv)
   if (dpi > 0)
     CScreenUnitsMgrInst->setDpi(dpi);
 
-  CQSVGWindow *window = new CQSVGWindow;
+  auto *window = new CQSVGWindow;
 
-  if (nofilter)
-    window->svg()->setIgnoreFilter(true);
+  window->svg()->setIgnoreFilter(nofilter);
 
-  if (debug)
-    window->svg()->setDebug(true);
+  window->svg()->setDebug(debug);
+
+  window->svg()->setCheckViewBox(check_viewbox);
 
   if (image)
     window->setIsImage(image);
@@ -76,8 +81,7 @@ main(int argc, char **argv)
   if (imageDir != "")
     window->setImageDir(imageDir);
 
-  if (print)
-    window->setPrint(print);
+  window->setPrint(print);
 
   window->addFiles(files);
 

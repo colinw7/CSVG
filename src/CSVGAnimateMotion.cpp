@@ -101,9 +101,9 @@ animate(double t)
     svg_.redraw();
   }
   else if (getChildrenOfType(CSVGObjTypeId::MPATH, objects)) {
-    CSVGMPath *mpath = dynamic_cast<CSVGMPath *>(objects[0]);
+    auto *mpath = dynamic_cast<CSVGMPath *>(objects[0]);
 
-    const CSVGPathPartList *path = (mpath ? &mpath->getPartList() : nullptr);
+    const auto *path = (mpath ? &mpath->getPartList() : nullptr);
 
     if (path_.empty()) {
       CSVGObject *obj = mpath->xlink().getObject();

@@ -104,7 +104,7 @@ getImage(CSVGBuffer *buffer) const
     buffer->setImageBuffer(getImageBuffer());
   }
   else if (isObject()) {
-    CSVGBuffer *imageBuffer = getObject()->toBufferImage();
+    auto *imageBuffer = getObject()->toBufferImage();
 
     if (! imageBuffer)
       return false;
@@ -131,9 +131,9 @@ void
 CSVGXLink::
 resolve() const
 {
-  CSVGXLink *th = const_cast<CSVGXLink *>(this);
+  auto *th = const_cast<CSVGXLink *>(this);
 
-  CSVG &svg = parent_->getSVG();
+  auto &svg = parent_->getSVG();
 
   double xscale = svg.flatXScale();
   double yscale = svg.flatYScale();
@@ -165,7 +165,7 @@ void
 CSVGXLink::
 initImageBuffer()
 {
-  CSVG &svg = parent_->getSVG();
+  auto &svg = parent_->getSVG();
 
   imageBuffer_ = svg.getBuffer(parent_->getUniqueName() + "_xlink_image");
 }

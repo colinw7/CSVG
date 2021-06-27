@@ -16,7 +16,7 @@ class CSVGClip {
    svg_(clip.svg_), rule_(clip.rule_) {
   }
 
-  const CSVGClip &operator=(const CSVGClip &clip) {
+  CSVGClip &operator=(const CSVGClip &clip) {
     rule_ = clip.rule_;
 
     return *this;

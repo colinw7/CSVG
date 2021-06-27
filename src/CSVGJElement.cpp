@@ -1,4 +1,7 @@
 #include <CSVGJElement.h>
+
+#ifdef CSVG_JAVASCRIPT
+
 #include <CSVGJTypes.h>
 #include <CSVGJAnimated.h>
 #include <CSVGJavaScript.h>
@@ -34,7 +37,7 @@ CSVGJElement::
 CSVGJElement(CSVGObject *obj) :
  CJObj(obj->getSVG().js(), obj->getSVG().js()->objectType()), obj_(obj)
 {
-  CJavaScript *js = obj->getSVG().js();
+  auto *js = obj->getSVG().js();
 
   objType_->addObjectFunction(js, "setAttribute");
   objType_->addObjectFunction(js, "getAttributeNS");
@@ -54,7 +57,7 @@ CJValueP
 CSVGJElement::
 getProperty(CJavaScript *js, const std::string &key) const
 {
-  CSVG *svg = &obj_->getSVG();
+  auto *svg = &obj_->getSVG();
 
   if      (key == "className") {
     return CJValueP(new CSVGJAnimatedString(svg, obj_, key));
@@ -66,10 +69,10 @@ getProperty(CJavaScript *js, const std::string &key) const
     return js->createStringValue(obj_->getText());
   }
   else if (key == "firstChild") {
-    CSVGText *text = dynamic_cast<CSVGText *>(obj_);
+    auto *text = dynamic_cast<CSVGText *>(obj_);
 
     if (text && obj_->numChildren() == 0) {
-      CSVGTSpan *tspan = svg->createTSpan();
+      auto *tspan = svg->createTSpan();
 
       tspan->setText(text->getText());
 
@@ -86,7 +89,7 @@ getProperty(CJavaScript *js, const std::string &key) const
 
     obj_->getFlatTransformedBBox(bbox);
 
-    CSVGObject* maxObj = 0;
+    CSVGObject* maxObj = nullptr;
     double      d      = 1E50;
 
     CSVG::ObjectList objects;
@@ -118,7 +121,7 @@ getProperty(CJavaScript *js, const std::string &key) const
 
     obj_->getFlatTransformedBBox(bbox);
 
-    CSVGObject* minObj = 0;
+    CSVGObject* minObj = nullptr;
     double      d      = 1E50;
 
     CSVG::ObjectList objects;
@@ -158,7 +161,7 @@ getProperty(CJavaScript *js, const std::string &key) const
     return CJValueP(new CSVGJAnimatedBoolean(svg, obj_, key));
   }
   else if (obj_->getObjTypeId() == CSVGObjTypeId::BLOCK) {
-    CSVGBlock *block = dynamic_cast<CSVGBlock *>(obj_);
+    auto *block = dynamic_cast<CSVGBlock *>(obj_);
 
     if (key == "preserveAspectRatio")
       return CJValueP(new CSVGJAnimatedPreserveAspectRatio(svg, block, key));
@@ -166,7 +169,7 @@ getProperty(CJavaScript *js, const std::string &key) const
       return CJObj::getProperty(js, key);
   }
   else if (obj_->getObjTypeId() == CSVGObjTypeId::TEXT) {
-    CSVGText *text = dynamic_cast<CSVGText *>(obj_);
+    auto *text = dynamic_cast<CSVGText *>(obj_);
 
     if      (key == "x" || key == "y")
       return CJValueP(new CSVGJAnimatedLengthList(svg, text, key));
@@ -180,7 +183,7 @@ getProperty(CJavaScript *js, const std::string &key) const
       return CJObj::getProperty(js, key);
   }
   else if (obj_->getObjTypeId() == CSVGObjTypeId::CIRCLE) {
-    CSVGCircle *circle = dynamic_cast<CSVGCircle *>(obj_);
+    auto *circle = dynamic_cast<CSVGCircle *>(obj_);
 
     if      (key == "cx" || key == "cy")
       return CJValueP(new CSVGJAnimatedNumber(svg, circle, key));
@@ -190,7 +193,7 @@ getProperty(CJavaScript *js, const std::string &key) const
       return CJObj::getProperty(js, key);
   }
   else if (obj_->getObjTypeId() == CSVGObjTypeId::MARKER) {
-    CSVGMarker *marker = dynamic_cast<CSVGMarker *>(obj_);
+    auto *marker = dynamic_cast<CSVGMarker *>(obj_);
 
     if (key == "orientAngle")
       return CJValueP(new CSVGJAnimatedAngle(svg, marker, key));
@@ -198,7 +201,7 @@ getProperty(CJavaScript *js, const std::string &key) const
       return CJObj::getProperty(js, key);
   }
   else if (obj_->getObjTypeId() == CSVGObjTypeId::FE_TURBULENCE) {
-    CSVGFeTurbulence *feTurbulence = dynamic_cast<CSVGFeTurbulence *>(obj_);
+    auto *feTurbulence = dynamic_cast<CSVGFeTurbulence *>(obj_);
 
     if      (key == "baseFrequencyX" || key == "baseFrequencyY" || key == "seed")
       return CJValueP(new CSVGJAnimatedNumber(svg, feTurbulence, key));
@@ -225,7 +228,7 @@ setProperty(CJavaScript *js, const std::string &key, CJValueP value)
     obj_->setText(text);
   }
   else if (key == "data") {
-    CSVGTSpan *tspan = dynamic_cast<CSVGTSpan *>(obj_);
+    auto *tspan = dynamic_cast<CSVGTSpan *>(obj_);
 
     if (tspan)
       tspan->setText(value->toString());
@@ -240,7 +243,7 @@ CJValueP
 CSVGJElement::
 execNameFn(CJavaScript *js, const std::string &name, const Values &values)
 {
-  CSVG *svg = &obj_->getSVG();
+  auto *svg = &obj_->getSVG();
 
   if      (name == "setAttribute") {
     if (values.size() == 3) {
@@ -317,7 +320,7 @@ execNameFn(CJavaScript *js, const std::string &name, const Values &values)
 
     //---
 
-    CJDictionary *dict = new CJDictionary(js, "");
+    auto *dict = new CJDictionary(js, "");
 
     dict->setRealProperty(js, "x", p.x);
     dict->setRealProperty(js, "y", p.y);
@@ -339,7 +342,7 @@ execNameFn(CJavaScript *js, const std::string &name, const Values &values)
     return js->createNumberValue(long(pi));
   }
   else if (name == "getStartTime") {
-    CSVGAnimateBase *base = dynamic_cast<CSVGAnimateBase *>(obj_);
+    auto *base = dynamic_cast<CSVGAnimateBase *>(obj_);
 
     double t = 0.0;
 
@@ -357,12 +360,12 @@ execNameFn(CJavaScript *js, const std::string &name, const Values &values)
     return CJValueP(new CSVGJRect(svg, bbox));
   }
   else if (name == "getCTM") {
-    CMatrix2D matrix = obj_->getTransform().getMatrix();
+    auto matrix = obj_->getTransform().getMatrix();
 
     return CJValueP(new CSVGJMatrix(svg, matrix));
   }
   else if (name == "getScreenCTM") {
-    CMatrix2D matrix = obj_->getFlatTransform().getMatrix();
+    auto matrix = obj_->getFlatTransform().getMatrix();
 
     return CJValueP(new CSVGJMatrix(svg, matrix));
   }
@@ -381,9 +384,9 @@ execNameFn(CJavaScript *js, const std::string &name, const Values &values)
       }
 
       if (svgObj) {
-        CMatrixStack2D matrixStack = obj_->getTransformTo(svgObj->obj());
+        auto matrixStack = obj_->getTransformTo(svgObj->obj());
 
-        CMatrix2D matrix = matrixStack.getMatrix();
+        auto matrix = matrixStack.getMatrix();
 
         return CJValueP(new CSVGJMatrix(svg, matrix));
       }
@@ -409,3 +412,5 @@ print(std::ostream &os) const
 {
   os << "SVGElement" << *obj_;
 }
+
+#endif

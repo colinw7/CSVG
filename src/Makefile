@@ -83,7 +83,6 @@ CSVGPolygon.cpp \
 CSVGPolyLine.cpp \
 CSVGRadialGradient.cpp \
 CSVGRect.cpp \
-CSVGRenderer.cpp \
 CSVGScript.cpp \
 CSVGSet.cpp \
 CSVGStop.cpp \
@@ -108,6 +107,10 @@ CSVGJElement.cpp \
 CSVGJEvent.cpp \
 CSVGJTypes.cpp \
 \
+CSVGRenderer.cpp \
+CSVGImageRenderer.cpp \
+CSVGLogRenderer.cpp \
+\
 CLog.cpp \
 
 OBJS = $(patsubst %.cpp,$(OBJ_DIR)/%.o,$(SRC))
@@ -119,6 +122,7 @@ $(CDEBUG) \
 -I$(INC_DIR) \
 -I../../CXML/include \
 -I../../CJavaScript/include \
+-I../../CRenderer/include \
 -I../../CCSS/include \
 -I../../CConfig/include \
 -I../../CImageLib/include \

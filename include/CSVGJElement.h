@@ -1,6 +1,8 @@
 #ifndef CSVGJElement_H
 #define CSVGJElement_H
 
+#ifdef CSVG_JAVASCRIPT
+
 #include <CJavaScript.h>
 
 class CSVGObject;
@@ -41,5 +43,7 @@ class CSVGJElement : public CJObj {
 };
 
 typedef std::shared_ptr<CSVGJElement> CSVGJElementP;
+
+#endif
 
 #endif

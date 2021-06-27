@@ -66,8 +66,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
       }
       else if (begin_.getValue().type() == CSVGEventType::ANIMATE_BEGIN &&
                begin_.getValue().id() == "prev") {
-        CSVGAnimateBase *prev = dynamic_cast<CSVGAnimateBase *>(
-          getParent()->getAnimation().prevObject(this));
+        auto *prev = dynamic_cast<CSVGAnimateBase *>(getParent()->getAnimation().prevObject(this));
 
         if (prev) {
           startTime_ = prev->startTime_;

@@ -38,6 +38,9 @@ class CSVGPath : public CSVGObject {
   friend std::ostream &operator<<(std::ostream &os, const CSVGPath &path);
 
  protected:
+  bool drawZeroLength();
+
+ protected:
   CSVGPathPartList parts_;
   COptReal         pathLength_;
 };

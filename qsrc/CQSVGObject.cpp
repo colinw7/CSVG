@@ -121,7 +121,7 @@ void
 CQSVGObject::
 setStrokeIsNoColor(bool b)
 {
-  CSVGStroke stroke = obj_->getStroke();
+  auto stroke = obj_->getStroke();
 
   if (b)
     stroke.setColor(CSVGColor(CSVGColor::Type::NONE));
@@ -140,7 +140,7 @@ void
 CQSVGObject::
 setStrokeIsCurrentColor(bool b)
 {
-  CSVGStroke stroke = obj_->getStroke();
+  auto stroke = obj_->getStroke();
 
   if (b)
     stroke.setColor(CSVGColor(CSVGColor::Type::CURRENT));
@@ -204,7 +204,7 @@ void
 CQSVGObject::
 setStrokeDash(const CLineDash &dash)
 {
-  CSVGStrokeDash sdash = obj_->getStrokeDash();
+  auto sdash = obj_->getStrokeDash();
 
   CSVGStrokeDash::Dashes dashes;
 
@@ -227,7 +227,7 @@ void
 CQSVGObject::
 setStrokeOffset(double o)
 {
-  CSVGStrokeDash sdash = obj_->getStrokeDash();
+  auto sdash = obj_->getStrokeDash();
 
   sdash.setOffset(o);
 
@@ -273,7 +273,7 @@ void
 CQSVGObject::
 setFillIsNoColor(bool b)
 {
-  CSVGFill fill = obj_->getFill();
+  auto fill = obj_->getFill();
 
   if (b)
     fill.setColor(CSVGColor(CSVGColor::Type::NONE));
@@ -292,7 +292,7 @@ void
 CQSVGObject::
 setFillIsCurrentColor(bool b)
 {
-  CSVGFill fill = obj_->getFill();
+  auto fill = obj_->getFill();
 
   if (b)
     fill.setColor(CSVGColor(CSVGColor::Type::CURRENT));
@@ -314,7 +314,7 @@ void
 CQSVGObject::
 setFillColor(const QColor &c)
 {
-  CSVGFill fill = obj_->getFill();
+  auto fill = obj_->getFill();
 
   fill.setColor(CQUtil::colorToRGBA(c));
 
@@ -346,7 +346,7 @@ void
 CQSVGObject::
 setFillRule(const CQSVGEnum::FillType &r)
 {
-  CSVGFill fill = obj_->getFill();
+  auto fill = obj_->getFill();
 
   fill.setRule(CQSVGEnum::fillTypeConv(r));
 
@@ -364,7 +364,7 @@ void
 CQSVGObject::
 setFillUrl(const QString &str)
 {
-  CSVGFill fill = obj_->getFill();
+  auto fill = obj_->getFill();
 
   if (str != "")
     fill.setUrl(str.toStdString());
@@ -406,26 +406,22 @@ QFont
 CQSVGObject::
 getFont() const
 {
-  CSVGFontDef fontDef = obj_->getFlatFontDef();
+  auto fontDef = obj_->getFlatFontDef();
 
-  CQSVGFontObj *fontObj = dynamic_cast<CQSVGFontObj *>(fontDef.getObj());
+  auto *fontObj = dynamic_cast<CQSVGFontObj *>(fontDef.getObj());
 
-  return fontObj->font();
+  return fontObj->qfont();
 }
 
 void
 CQSVGObject::
 setFont(QFont f)
 {
-  CFontPtr font = CQFontUtil::fromQFont(f);
+  auto fontDef = obj_->getFontDef();
 
-  CSVGFontDef fontDef = obj_->getFontDef();
+  auto *fontObj = dynamic_cast<CQSVGFontObj *>(fontDef.getObj());
 
-  //CQSVGFontObj *fontObj = dynamic_cast<CQSVGFontObj *>(fontDef.getObj());
-
-  //fontDef.setFont(font);
-
-  obj_->setFontDef(fontDef);
+  fontObj->setQFont(f);
 }
 
 void
@@ -435,7 +431,7 @@ drawSelected()
   if (! isSelected())
     return;
 
-  CQSVGCanvas *canvas = qsvg_->window()->canvas();
+  auto *canvas = qsvg_->window()->canvas();
 
   //---
 
@@ -459,10 +455,10 @@ drawSelected()
   //---
 
   if (qsvg_->isShowFilterBox()) {
-    CSVGFilter *filter = obj_->getFilter();
+    auto *filter = obj_->getFilter();
 
     if (filter) {
-      const CBBox2D &bbox = filter->getContentsBBox();
+      const auto &bbox = filter->getContentsBBox();
 
       double xscale = obj_->getSVG().xscale();
       double yscale = obj_->getSVG().yscale();
@@ -482,12 +478,12 @@ drawSelected()
   //---
 
   if (qsvg_->isShowGradient()) {
-    const CSVGFill &fill = obj_->getFill();
+    const auto &fill = obj_->getFill();
 
-    CSVGObject *fillObj = fill.getFillObject();
+    auto *fillObj = fill.getFillObject();
 
-    CSVGLinearGradient *lgrad = dynamic_cast<CSVGLinearGradient *>(fillObj);
-    CSVGRadialGradient *rgrad = dynamic_cast<CSVGRadialGradient *>(fillObj);
+    auto *lgrad = dynamic_cast<CSVGLinearGradient *>(fillObj);
+    auto *rgrad = dynamic_cast<CSVGRadialGradient *>(fillObj);
 
     QColor bg(Qt::white);
     QColor fg(Qt::blue);
@@ -500,7 +496,7 @@ drawSelected()
       CPoint2D p1(x1, y1);
       CPoint2D p2(x2, y2);
 
-      CMatrixStack2D m = obj_->getFlatTransform();
+      auto m = obj_->getFlatTransform();
 
       m.multiplyPoint(p1.x, p1.y, &x1, &y1);
       m.multiplyPoint(p2.x, p2.y, &x2, &y2);
@@ -524,7 +520,7 @@ drawSelected()
       CPoint2D p2(xc, yc + r);
       CPoint2D pf(xf, yf);
 
-      CMatrixStack2D m = obj_->getFlatTransform();
+      auto m = obj_->getFlatTransform();
 
       double x1, y1, x2, y2;
 

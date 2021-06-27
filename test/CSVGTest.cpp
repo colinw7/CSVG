@@ -1,30 +1,37 @@
 #include <CSVGLib.h>
 #include <CSVGImageRenderer.h>
 #include <CSVGLogRenderer.h>
+#include <CSVGImageData.h>
+#include <CImageRenderer2D.h>
 #include <CImageLib.h>
 
 int
 main(int argc, char **argv)
 {
-  bool debug  = false;
-  bool print  = false;
-  bool flat   = false;
-  bool log    = false;
-  bool colors = false;
+  bool debug         = false;
+  bool check_viewbox = false;
+  bool print         = false;
+  bool flat          = false;
+  bool log           = false;
+  bool colors        = false;
 
   std::vector<std::string> files;
 
   for (int i = 1; i < argc; i++) {
     if (argv[i][0] == '-') {
-      if      (strcmp(&argv[i][1], "debug") == 0)
+      auto arg = std::string(&argv[i][1]);
+
+      if      (arg == "debug")
         debug = true;
-      else if (strcmp(&argv[i][1], "print") == 0)
+      else if (arg == "check_viewbox")
+        check_viewbox = true;
+      else if (arg == "print")
         print = true;
-      else if (strcmp(&argv[i][1], "flat") == 0)
+      else if (arg == "flat")
         flat = true;
-      else if (strcmp(&argv[i][1], "log") == 0)
+      else if (arg == "log")
         log = true;
-      else if (strcmp(&argv[i][1], "colors") == 0)
+      else if (arg == "colors")
         colors = true;
       else
         std::cerr << "Invalid option: " << argv[i] << std::endl;
@@ -38,21 +45,19 @@ main(int argc, char **argv)
     exit(1);
   }
 
-  uint num_files = files.size();
+  //---
 
-  for (uint i = 0; i < num_files; ++i) {
-    CImageNoSrc src;
-
-    CImagePtr image = CImageMgrInst->createImage(src);
-
+  for (const auto &file : files) {
     CSVG svg;
 
     svg.setDebug(debug);
 
+    svg.setCheckViewBox(check_viewbox);
+
     svg.init();
 
-    if (! svg.read(files[i])) {
-      std::cerr << "Failed to read '" << files[i] << "'" << std::endl;
+    if (! svg.read(file)) {
+      std::cerr << "Failed to read '" << file << "'" << std::endl;
       continue;
     }
 
@@ -82,30 +87,27 @@ main(int argc, char **argv)
       svg.draw();
     }
     else if (colors) {
-      const CSVG::Colors &colors = svg.getColors();
+      const auto &colors1 = svg.getColors();
 
-      for (const auto &c : colors) {
-        std::cerr << c.first << " : " << c.second << std::endl;
-      }
+      for (const auto &c : colors1)
+        std::cerr << c.first << " : " << c.second << "\n";
     }
     else {
-      image->setDataSize(svg.getIWidth(), svg.getIHeight());
+      auto *irenderer = new CSVGImageRenderer(svg.getIWidth(), svg.getIHeight());
 
-      CImageRenderer2D renderer(image);
-
-      CSVGImageRenderer irenderer(&renderer);
-
-      svg.setRenderer(&irenderer);
+      svg.setRenderer(irenderer);
 
       svg.draw();
 
-      CFile file(files[i]);
+      CFile fp(file);
 
-      std::string base = file.getBase();
+      auto base = fp.getBase();
 
-      std::string name = CStrUtil::strprintf("svg_%s.png", base.c_str());
+      auto name = CStrUtil::strprintf("svg_%s.png", base.c_str());
 
-      renderer.getImage()->write(name, CFILE_TYPE_IMAGE_PNG);
+      irenderer->getImagePtr()->write(name, CFILE_TYPE_IMAGE_PNG);
+
+      delete irenderer;
     }
   }
 

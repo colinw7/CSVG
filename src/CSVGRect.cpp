@@ -103,10 +103,10 @@ updateBBox()
 {
   double lw = getFlatStrokeWidth().getValue(1);
 
-  CBBox2D drawBBox = getDrawBBox();
+  CBBox2D drawBox = getDrawBBox();
 
-  double dw = drawBBox.getWidth ();
-  double dh = drawBBox.getHeight();
+  double dw = drawBox.getWidth ();
+  double dh = drawBox.getHeight();
 
   double x = getX     ().pxValue(dw);
   double y = getY     ().pxValue(dh);
@@ -135,10 +135,10 @@ draw()
   if (svg_.getDebug())
     CSVGLog() << *this;
 
-  CBBox2D drawBBox = getDrawBBox();
+  auto drawBox = getDrawBBox();
 
-  double dw = drawBBox.getWidth ();
-  double dh = drawBBox.getHeight();
+  double dw = drawBox.getWidth ();
+  double dh = drawBox.getHeight();
 
   double x = getX     ().pxValue(dw);
   double y = getY     ().pxValue(dh);
@@ -150,6 +150,17 @@ draw()
     return false;
 
   CBBox2D bbox(x, y, x + w, y + h);
+
+  //---
+
+  if (svg_.isCheckViewBox()) {
+    CBBox2D fbbox;
+
+    getFlatTransformedBBox(fbbox);
+
+    if (! fbbox.overlaps(drawBox))
+      CSVGLog() << "Outside viewbox : " << *this;
+  }
 
   //---
 
@@ -217,10 +228,10 @@ getPartList() const
 {
   if (parts_.empty()) {
     // TODO: rounded rect
-    CBBox2D drawBBox = getDrawBBox();
+    CBBox2D drawBox = getDrawBBox();
 
-    double dw = drawBBox.getWidth ();
-    double dh = drawBBox.getHeight();
+    double dw = drawBox.getWidth ();
+    double dh = drawBox.getHeight();
 
     double x = getX     ().pxValue(dw);
     double y = getY     ().pxValue(dh);
@@ -271,10 +282,10 @@ void
 CSVGRect::
 moveBy(const CVector2D &delta)
 {
-  CBBox2D drawBBox = getDrawBBox();
+  CBBox2D drawBox = getDrawBBox();
 
-  double dw = drawBBox.getWidth ();
-  double dh = drawBBox.getHeight();
+  double dw = drawBox.getWidth ();
+  double dh = drawBox.getHeight();
 
   double x = getX().pxValue(dw);
   double y = getY().pxValue(dh);
@@ -315,7 +326,7 @@ print(std::ostream &os, bool hier) const
       os << "/>" << std::endl;
   }
   else
-    os << "rect " << bbox_;
+    os << "rect (" << getId() << ") bbox " << bbox_;
 }
 
 void

@@ -1,5 +1,6 @@
 #include <CSVGImageData.h>
 #include <CImageMgr.h>
+#include <CImage.h>
 
 CSVGImageData::
 CSVGImageData()
@@ -13,6 +14,11 @@ CSVGImageData::
 CSVGImageData(const CSVGImageData &data)
 {
   image_ = data.image_->dup();
+}
+
+CSVGImageData::
+~CSVGImageData()
+{
 }
 
 CSVGImageData *
@@ -298,7 +304,7 @@ dilate(int r, bool isAlpha)
 
 CSVGImageData *
 CSVGImageData::
-tile(int w, int h, const CImageTile &tile)
+tile(int w, int h, const CImageTileData &tile)
 {
   CImagePtr image = image_->tile(w, h, tile);
 

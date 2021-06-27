@@ -71,7 +71,7 @@ drawElement()
   std::vector<CSVGFeMergeNode *> nodes;
 
   for (const auto &o : objects) {
-    CSVGFeMergeNode *node = dynamic_cast<CSVGFeMergeNode *>(o);
+    auto *node = dynamic_cast<CSVGFeMergeNode *>(o);
 
     nodes.push_back(node);
   }

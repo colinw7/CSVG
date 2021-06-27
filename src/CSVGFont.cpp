@@ -89,7 +89,7 @@ termParse()
   getChildrenOfType(CSVGObjTypeId::GLYPH, objects);
 
   for (const auto &o : objects) {
-    CSVGGlyph *glyph = dynamic_cast<CSVGGlyph *>(o);
+    auto *glyph = dynamic_cast<CSVGGlyph *>(o);
     if (! glyph) continue;
 
     std::string unicode = glyph->getUnicode();

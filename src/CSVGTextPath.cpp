@@ -95,7 +95,7 @@ draw()
   CSVGObject *obj = (xlink_.isValid() ? xlink_.getValue().getObject() : nullptr);
   if (! obj) return false;
 
-  CSVGPath *path = dynamic_cast<CSVGPath *>(obj);
+  auto *path = dynamic_cast<CSVGPath *>(obj);
   if (! path) return false;
 
   CSVGText *parentText = getParentText();
@@ -103,11 +103,11 @@ draw()
 
   //---
 
-  CSVGBuffer *currentBuffer = svg_.getCurrentBuffer();
+  auto *currentBuffer = svg_.getCurrentBuffer();
 
-  CMatrixStack2D transform = currentBuffer->transform();
+  auto transform = currentBuffer->transform();
 
-  CMatrixStack2D transform1(transform);
+  auto transform1 = transform;
 
   transform1.append(path->getTransform());
 

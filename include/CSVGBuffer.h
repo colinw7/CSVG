@@ -9,7 +9,6 @@
 #include <CSVGStroke.h>
 #include <CSVGImageData.h>
 
-#include <CFont.h>
 #include <CBBox2D.h>
 #include <CMatrixStack2D.h>
 #include <CLineDash.h>
@@ -29,7 +28,9 @@ class CSVGFeSpotLight;
 class CSVGFeMergeNode;
 class CSVGFontDef;
 class CSVGObject;
+
 class CGenGradient;
+class CFile;
 
 //------
 
@@ -326,22 +327,24 @@ class CSVGBuffer {
   CSVGBuffer &operator=(const CSVGBuffer &rhs);
 
  private:
-  CSVG&              svg_;
-  std::string        name_;
-  CSVGBuffer*        refBuffer_ { 0 };
-  CSVGBuffer*        parentBuffer_ { 0 };
-  CSVGRenderer*      renderer_ { 0 };
-  bool               alpha_ { false };
-  COptReal           opacity_;
-  CMatrixStack2D     transform_;
-  CLineDash          lineDash_;
-  CPoint2D           origin_ { 0, 0 };
-  CBBox2D            bbox_;
-  COptValT<CPoint2D> pathLastControlPoint1_;
-  COptValT<CPoint2D> pathLastControlPoint2_;
-  bool               clip_ { false };
-  bool               hasClipPath_ { false };
-  bool               drawing_ { false };
+  using OptPoint2D = COptValT<CPoint2D>;
+
+  CSVG&          svg_;
+  std::string    name_;
+  CSVGBuffer*    refBuffer_    { nullptr };
+  CSVGBuffer*    parentBuffer_ { nullptr };
+  CSVGRenderer*  renderer_     { nullptr };
+  bool           alpha_        { false };
+  COptReal       opacity_;
+  CMatrixStack2D transform_;
+  CLineDash      lineDash_;
+  CPoint2D       origin_       { 0, 0 };
+  CBBox2D        bbox_;
+  OptPoint2D     pathLastControlPoint1_;
+  OptPoint2D     pathLastControlPoint2_;
+  bool           clip_         { false };
+  bool           hasClipPath_  { false };
+  bool           drawing_      { false };
 };
 
 #endif

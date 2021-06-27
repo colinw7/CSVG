@@ -3,7 +3,7 @@
 
 namespace {
   CSVGImageData *createImage(int w, int h) {
-    CSVGImageData *dst_image = new CSVGImageData();
+    auto *dst_image = new CSVGImageData();
 
     dst_image->setSize(w, h);
 
@@ -37,24 +37,30 @@ combine(int ix, int iy, CSVGRenderer *r)
   int w = std::max(iwidth1 , ix + iwidth2 );
   int h = std::max(iheight1, iy + iheight2);
 
-  CSVGImageData *image1 = getImage();
-  CSVGImageData *image2 = r->getImage();
+  auto *image1 = getImage();
+  auto *image2 = r->getImage();
 
-  if (r->opacity() < 1)
-    image2->scaleAlpha(r->opacity());
+  if (r->opacity() < 1) {
+    if (image2)
+      image2->scaleAlpha(r->opacity());
+  }
 
   if (w > iwidth1 || h > iheight1) {
-    CSVGImageData *image3 = createImage(w, h);
+    auto *image3 = createImage(w, h);
 
-    image3->combine( 0,  0, image1);
-    image3->combine(ix, iy, image2);
+    if (image3) {
+      image3->combine( 0,  0, image1);
+      image3->combine(ix, iy, image2);
 
-    setImage(image3);
+      setImage(image3);
+    }
   }
   else {
-    image1->combine(ix, iy, image2);
+    if (image1) {
+      image1->combine(ix, iy, image2);
 
-    setImage(image1);
+      setImage(image1);
+    }
   }
 }
 
@@ -62,11 +68,11 @@ void
 CSVGRenderer::
 addResizedImage(CSVGRenderer *src, double x, double y, double w, double h)
 {
-  CSVGImageData *image2 = src->getImage();
+  auto *image2 = src->getImage();
 
   image2->reshape(w, h);
 
-  CSVGImageData *image1 = getImage();
+  auto *image1 = getImage();
 
   // TODO: handle out of bounds
   image1->combine(x, y, image2);
@@ -78,7 +84,7 @@ void
 CSVGRenderer::
 addClippedImage(CSVGRenderer *src, int x, int y, int px1, int py1, int px2, int py2)
 {
-  CSVGImageData *image = src->getImage();
+  auto *image = src->getImage();
 
   image->clipOutside(px1, py1, px2, py2);
 
@@ -89,7 +95,7 @@ void
 CSVGRenderer::
 setClippedImage(CSVGRenderer *src, int px1, int py1, int px2, int py2)
 {
-  CSVGImageData *image = src->getImage();
+  auto *image = src->getImage();
 
   image->clipOutside(px1, py1, px2, py2);
 
@@ -100,7 +106,7 @@ void
 CSVGRenderer::
 addImage(int x, int y, CSVGImageData *image2)
 {
-  CSVGImageData *image1 = getImage();
+  auto *image1 = getImage();
 
   image1->combine(x, y, image2);
 
@@ -111,12 +117,12 @@ void
 CSVGRenderer::
 setOffsetImage(CSVGRenderer *src, int dx, int dy)
 {
-  CSVGImageData *src_image = src->getImage();
+  auto *src_image = src->getImage();
 
   int w = src_image->getWidth () + dx;
   int h = src_image->getHeight() + dy;
 
-  CSVGImageData *dst_image = createImage(w, h);
+  auto *dst_image = createImage(w, h);
 
   src_image->subCopyTo(dst_image, 0, 0, -1, -1, dx, dy);
 
@@ -127,13 +133,13 @@ void
 CSVGRenderer::
 gaussianBlur(CSVGRenderer *dst, CBBox2D &bbox, double stdDevX, double stdDevY)
 {
-  CSVGImageData *src_image = getImage();
+  auto *src_image = getImage();
 
   // set alpha
   if (isAlpha())
     src_image->setAlphaGray(0);
 
-  CSVGImageData *dst_image = src_image->dup();
+  auto *dst_image = src_image->dup();
 
   if (bbox.isSet()) {
     CPoint2D p1, p2;
@@ -153,14 +159,14 @@ void
 CSVGRenderer::
 blend(CSVGRenderer *in2, CSVGBlendMode mode, CSVGRenderer *dst)
 {
-  CSVGImageData *src_image1 =      getImage();
-  CSVGImageData *src_image2 = in2->getImage();
+  auto *src_image1 =      getImage();
+  auto *src_image2 = in2->getImage();
 
   // set alpha
   if (     isAlpha()) src_image1->setAlphaGray(0);
   if (dst->isAlpha()) src_image2->setAlphaGray(0);
 
-  CSVGImageData *dst_image = src_image1->dup();
+  auto *dst_image = src_image1->dup();
 
   CRGBABlendMode mode1 = CRGBA_BLEND_NORMAL;
 

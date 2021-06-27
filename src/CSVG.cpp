@@ -117,9 +117,11 @@ CSVG(CSVGRenderer *renderer) :
 
   //---
 
+#ifdef CSVG_JAVASCRIPT
   js_ = createJavaScript();
 
   js_->init();
+#endif
 }
 
 CSVG::
@@ -151,7 +153,7 @@ getRootBlock() const
 {
   // get root block
   if (! block_.isValid()) {
-    CSVG *th = const_cast<CSVG *>(this);
+    auto *th = const_cast<CSVG *>(this);
 
     th->block_ = th->createBlock();
   }
@@ -285,11 +287,9 @@ setAltRoot(CSVGObject *o)
   if (o) {
     // get current object postion
 
-    //CMatrixStack2D m = o->getFlatTransform();
-
-    //CMatrix2D m1 = m.getMatrix();
-
-    //CMatrix2D im1 = m1.inverse();
+    //auto m   = o->getFlatTransform();
+    //auto m1  = m.getMatrix();
+    //auto im1 = m1.inverse();
 
     //double tx, ty;
 
@@ -526,7 +526,7 @@ tokenToObject(CSVGObject *parent, const CXMLToken *token)
       CXMLText *text = ttoken->getText();
 
       if (hasTextSpan) {
-        CSVGTSpan *tspan = dynamic_cast<CSVGTSpan *>(object);
+        auto *tspan = dynamic_cast<CSVGTSpan *>(object);
 
         if (! tspan) {
           tspan = createTSpan();
@@ -758,12 +758,14 @@ createObjectByName(const std::string &name)
   return object;
 }
 
+#ifdef CSVG_JAVASCRIPT
 CSVGJavaScript *
 CSVG::
 createJavaScript()
 {
   return new CSVGJavaScript(this);
 }
+#endif
 
 CSVGBlock *
 CSVG::
@@ -1485,6 +1487,7 @@ void
 CSVG::
 execJsEvent(CSVGObject *obj, const std::string &str)
 {
+#ifdef CSVG_JAVASCRIPT
   setEventObject(obj);
 
   js()->setProperty("evt", js()->event());
@@ -1492,6 +1495,11 @@ execJsEvent(CSVGObject *obj, const std::string &str)
   js()->loadString(str);
 
   js()->exec();
+#else
+  assert(obj);
+
+  std::cerr << "CSVG::execJsEvent " << str << "\n";
+#endif
 }
 
 void
@@ -2365,7 +2373,7 @@ pathStringToParts(const std::string &data, CSVGPathPartList &parts)
     }
 
     void rbezier3To(double dx1, double dy1, double dx2, double dy2,
-                   double dx3, double dy3) override {
+                    double dx3, double dy3) override {
       parts_.push_back(svg_->createPathRBezier3To(dx1, dy1, dx2, dy2, dx3, dy3));
     }
 
@@ -2499,7 +2507,7 @@ drawMarkers(const std::vector<CPoint2D> &points, const std::vector<double> &angl
     double gg = (g1 + g2)/2;
 
     if (startMarker) {
-      CSVGMarker *marker = dynamic_cast<CSVGMarker *>(startMarker);
+      auto *marker = dynamic_cast<CSVGMarker *>(startMarker);
 
       if (marker)
         marker->drawMarker(x1, y1, gg);
@@ -2522,7 +2530,7 @@ drawMarkers(const std::vector<CPoint2D> &points, const std::vector<double> &angl
 
       if (i != num - 1) {
         if (midMarker) {
-          CSVGMarker *marker = dynamic_cast<CSVGMarker *>(midMarker);
+          auto *marker = dynamic_cast<CSVGMarker *>(midMarker);
 
           if (marker)
             marker->drawMarker(x2, y2, gg);
@@ -2530,7 +2538,7 @@ drawMarkers(const std::vector<CPoint2D> &points, const std::vector<double> &angl
       }
       else {
         if (endMarker) {
-          CSVGMarker *marker = dynamic_cast<CSVGMarker *>(endMarker);
+          auto *marker = dynamic_cast<CSVGMarker *>(endMarker);
 
           if (marker)
             marker->drawMarker(x2, y2, g1);
@@ -2544,14 +2552,14 @@ drawMarkers(const std::vector<CPoint2D> &points, const std::vector<double> &angl
     }
 #else
     if (startMarker) {
-      CSVGMarker *marker = dynamic_cast<CSVGMarker *>(startMarker);
+      auto *marker = dynamic_cast<CSVGMarker *>(startMarker);
 
       if (marker)
         marker->drawMarker(points[0].x, points[0].y, angles[0]);
     }
 
     if (midMarker) {
-      CSVGMarker *marker = dynamic_cast<CSVGMarker *>(midMarker);
+      auto *marker = dynamic_cast<CSVGMarker *>(midMarker);
 
       if (marker) {
         for (uint i = 1; i < num - 1; ++i)
@@ -2560,7 +2568,7 @@ drawMarkers(const std::vector<CPoint2D> &points, const std::vector<double> &angl
     }
 
     if (endMarker) {
-      CSVGMarker *marker = dynamic_cast<CSVGMarker *>(endMarker);
+      auto *marker = dynamic_cast<CSVGMarker *>(endMarker);
 
       if (marker)
         marker->drawMarker(points[num - 1].x, points[num - 1].y, angles[num - 1]);
@@ -4267,7 +4275,7 @@ getTitle(std::string &str)
   if (objects.empty())
     return false;
 
-  CSVGTitle *title = dynamic_cast<CSVGTitle *>(objects[0]);
+  auto *title = dynamic_cast<CSVGTitle *>(objects[0]);
 
   str = title->getText();
 
@@ -4384,18 +4392,26 @@ void
 CSVG::
 setScript(const std::string &str)
 {
+#ifdef CSVG_JAVASCRIPT
   js()->loadString(str);
 
   js()->exec();
+#else
+  std::cerr << "CSVG::setScript " << str << "\n";
+#endif
 }
 
 void
 CSVG::
 setScriptFile(const std::string &filename)
 {
+#ifdef CSVG_JAVASCRIPT
   js()->loadFile(filename);
 
   js()->exec();
+#else
+  std::cerr << "CSVG::setScriptFile " << filename << "\n";
+#endif
 }
 
 //------
@@ -4432,7 +4448,7 @@ visitStyleData(const CCSS &css, const CCSSTagDataP &tagData)
     if (! styleData.checkMatch(tagData))
       continue;
 
-    CSVGObject *obj = dynamic_cast<CSVGObjectCSSTagData *>(tagData.get())->obj();
+    auto *obj = dynamic_cast<CSVGObjectCSSTagData *>(tagData.get())->obj();
 
     for (const auto &opt : styleData.getOptions()) {
       obj->setStyleValue(opt.getName(), opt.getValue());
@@ -4508,8 +4524,12 @@ void
 CSVG::
 syntaxError(const std::string &msg)
 {
+#ifdef CSVG_JAVASCRIPT
   if (! js_)
     CSVGLog() << "SyntaxError: " << msg;
   else
     js_->throwSyntaxError(0, msg);
+#else
+  CSVGLog() << "SyntaxError: " << msg;
+#endif
 }

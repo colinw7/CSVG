@@ -18,7 +18,7 @@ CSVGFontDef(const CSVGFontDef &font_def) :
 {
 }
 
-const CSVGFontDef &
+CSVGFontDef &
 CSVGFontDef::
 operator=(const CSVGFontDef &font_def)
 {

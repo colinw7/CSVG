@@ -2,7 +2,7 @@ TEMPLATE = app
 
 QT += widgets
 
-TARGET = CQSVG
+TARGET = CQSVGTest
 
 DEPENDPATH += .
 
@@ -15,7 +15,7 @@ CONFIG += silent
 
 # Input
 SOURCES += \
-CQSVGMain.cpp \
+CQSVGTest.cpp \
 
 HEADERS += \
 

@@ -14,10 +14,12 @@ class CQSVGImageData;
 class CQSVGRenderer : public CSVGRenderer {
  public:
   CQSVGRenderer();
-
  ~CQSVGRenderer();
 
   CQSVGRenderer *dup() const override;
+
+  CQSVGRenderer(const CQSVGRenderer &) = delete;
+  CQSVGRenderer &operator=(const CQSVGRenderer &) = delete;
 
   QPainter *painter() const { return painter_; }
 

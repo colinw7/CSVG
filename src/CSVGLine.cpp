@@ -96,12 +96,22 @@ draw()
 
   //---
 
-  CSVGBuffer *buffer = svg_.getCurrentBuffer();
+  auto *buffer = svg_.getCurrentBuffer();
 
   buffer->pathInit();
 
   buffer->pathMoveTo(points[0].x, points[0].y);
   buffer->pathLineTo(points[1].x, points[1].y);
+
+  //---
+
+  if (svg_.isCheckViewBox()) {
+    auto dbbox = getDrawBBox();
+    auto lbbox = CBBox2D(points[0], points[1]);
+
+    if (! lbbox.overlaps(dbbox))
+      CSVGLog() << "Outside viewbox : " << *this;
+  }
 
   //---
 

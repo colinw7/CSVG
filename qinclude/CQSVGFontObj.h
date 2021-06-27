@@ -8,7 +8,8 @@ class CQSVGFontObj : public CSVGFontObj {
  public:
   CQSVGFontObj(const CSVGFontDef &def);
 
-  const QFont &font() const { return qfont_; }
+  const QFont &qfont() const { return qfont_; }
+  void setQFont(const QFont &font) { qfont_ = font; }
 
   void textSize(const std::string &text, double *w, double *a, double *d) const;
 

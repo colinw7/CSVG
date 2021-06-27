@@ -25,8 +25,8 @@ class CQSVGWindow : public QMainWindow {
   Q_PROPERTY(bool     print    READ isPrint  WRITE setPrint   )
 
  public:
-  typedef std::vector<QString> Files;
-  typedef std::vector<QString> Ids;
+  using Files = std::vector<QString>;
+  using Ids   = std::vector<QString>;
 
  public:
   CQSVGWindow();

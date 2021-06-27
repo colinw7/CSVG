@@ -1,6 +1,8 @@
 #ifndef CSVGJEvent_H
 #define CSVGJEvent_H
 
+#ifdef CSVG_JAVASCRIPT
+
 #include <CSVG.h>
 #include <CJavaScript.h>
 
@@ -35,5 +37,7 @@ class CSVGJEvent : public CJObj {
  private:
   CSVG *svg_;
 };
+
+#endif
 
 #endif

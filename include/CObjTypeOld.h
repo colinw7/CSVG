@@ -1,17 +1,9 @@
 #ifndef COBJ_TYPE_H
 #define COBJ_TYPE_H
 
+#include <map>
+
 class CObjTypeMgr {
- private:
-  typedef std::map<std::string,uint> NameIdMap;
-  typedef std::map<uint,std::string> IdNameMap;
-
-  uint      next_id_;
-  NameIdMap name_id_map_;
-  IdNameMap id_name_map_;
-
-  friend class CObjType;
-
  public:
   CObjTypeMgr() :
    next_id_(1), name_id_map_(), id_name_map_() {
@@ -34,13 +26,19 @@ class CObjTypeMgr {
   uint getNameId(const std::string & name) {
     return name_id_map_[name];
   }
+
+ private:
+  friend class CObjType;
+
+  using NameIdMap = std::map<std::string,uint>;
+  using IdNameMap = std::map<uint,std::string>;
+
+  uint      next_id_;
+  NameIdMap name_id_map_;
+  IdNameMap id_name_map_;
 };
 
 class CObjType {
- private:
-  std::string name_;
-  uint        id_;
-
  public:
   CObjType(CObjTypeMgr &mgr, const std::string &name, uint id=0) :
    name_(name), id_(id) {
@@ -51,6 +49,10 @@ class CObjType {
 
   uint               getId  () const { return id_  ; }
   const std::string &getName() const { return name_; }
+
+ private:
+  std::string name_;
+  uint        id_;
 };
 
 #endif

@@ -34,12 +34,12 @@ class CQSVGBufferView : public QFrame {
   void updateBuffer();
 
  private:
-  CQSVG*             qsvg_        { 0 };
-  QComboBox*         combo_       { 0 };
-  QCheckBox*         bgCheck_     { 0 };
-  CQSVGBufferCanvas* canvas_      { 0 };
-  QLabel*            statusLabel_ { 0 };
-  QLabel*            posLabel_    { 0 };
+  CQSVG*             qsvg_        { nullptr };
+  QComboBox*         combo_       { nullptr };
+  QCheckBox*         bgCheck_     { nullptr };
+  CQSVGBufferCanvas* canvas_      { nullptr };
+  QLabel*            statusLabel_ { nullptr };
+  QLabel*            posLabel_    { nullptr };
 };
 
 //---
@@ -57,7 +57,7 @@ class CQSVGBufferCanvas : public QWidget {
   QSize sizeHint() const override;
 
  private:
-  CQSVGBufferView *view_ { 0 };
+  CQSVGBufferView *view_ { nullptr };
 };
 
 #endif

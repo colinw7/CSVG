@@ -62,8 +62,6 @@
 #include <CQPropertyItem.h>
 #include <CQPixmapCache.h>
 
-#include <CImageMgr.h>
-
 #include <QApplication>
 #include <QSplitter>
 #include <QHBoxLayout>
@@ -450,13 +448,9 @@ loadFile()
   std::string filename = files_[fileInd_].toStdString();
 
   if      (isImage()) {
-    CImageNoSrc src;
-
-    CImagePtr image = CImageMgrInst->createImage(src);
-
     svg_->read(filename);
 
-    CQSVGRenderer *renderer = new CQSVGRenderer;
+    auto *renderer = new CQSVGRenderer;
 
     renderer->setSize(svg_->getIWidth(), svg_->getIHeight());
 
@@ -604,7 +598,7 @@ addProperties()
   propTree_->addProperty("", svg_, "showFilterBox");
   propTree_->addProperty("", svg_, "ignoreFilter");
 
-  CSVGBlock *block = svg_->getRoot();
+  auto *block = svg_->getRoot();
 
   std::string id = block->getId();
 
@@ -622,57 +616,57 @@ addObjectToTree(const std::string &name, CSVGObject *obj)
 {
   //QObject *qobj = dynamic_cast<QObject *>(obj);
 
-  CQSVGObject *qobj = dynamic_cast<CQSVGObject *>(obj);
+  auto *qobj = dynamic_cast<CQSVGObject *>(obj);
 
   if (qobj) {
-    CQSVGBlock              *qblock    = dynamic_cast<CQSVGBlock              *>(obj);
-    CQSVGAnchor             *qanchor   = dynamic_cast<CQSVGAnchor             *>(obj);
-    CQSVGAnimate            *qanim     = dynamic_cast<CQSVGAnimate            *>(obj);
-    CQSVGAnimateColor       *qanimcol  = dynamic_cast<CQSVGAnimateColor       *>(obj);
-    CQSVGAnimateMotion      *qanimmot  = dynamic_cast<CQSVGAnimateMotion      *>(obj);
-    CQSVGAnimateTransform   *qanimtran = dynamic_cast<CQSVGAnimateTransform   *>(obj);
-    CQSVGCircle             *qcircle   = dynamic_cast<CQSVGCircle             *>(obj);
-    CQSVGClipPath           *qclippath = dynamic_cast<CQSVGClipPath           *>(obj);
-    CQSVGDefs               *qdefs     = dynamic_cast<CQSVGDefs               *>(obj);
-    CQSVGDesc               *qdesc     = dynamic_cast<CQSVGDesc               *>(obj);
-    CQSVGEllipse            *qellipse  = dynamic_cast<CQSVGEllipse            *>(obj);
-    CQSVGFeBlend            *qfeblend  = dynamic_cast<CQSVGFeBlend            *>(obj);
-    CQSVGFeColorMatrix      *qfecmtrx  = dynamic_cast<CQSVGFeColorMatrix      *>(obj);
-    CQSVGFeComposite        *qfecomp   = dynamic_cast<CQSVGFeComposite        *>(obj);
-    CQSVGFeDiffuseLighting  *qfediffl  = dynamic_cast<CQSVGFeDiffuseLighting  *>(obj);
-    CQSVGFeDisplacementMap  *qfedmap   = dynamic_cast<CQSVGFeDisplacementMap  *>(obj);
-    CQSVGFeDistantLight     *qfedlight = dynamic_cast<CQSVGFeDistantLight     *>(obj);
-    CQSVGFeFlood            *qfeflood  = dynamic_cast<CQSVGFeFlood            *>(obj);
-    CQSVGFeGaussianBlur     *qfegauss  = dynamic_cast<CQSVGFeGaussianBlur     *>(obj);
-    CQSVGFeImage            *qfeimage  = dynamic_cast<CQSVGFeImage            *>(obj);
-    CQSVGFeMerge            *femerge   = dynamic_cast<CQSVGFeMerge            *>(obj);
-    CQSVGFeMergeNode        *femnode   = dynamic_cast<CQSVGFeMergeNode        *>(obj);
-    CQSVGFeMorphology       *femorph   = dynamic_cast<CQSVGFeMorphology       *>(obj);
-    CQSVGFeOffset           *qfeoff    = dynamic_cast<CQSVGFeOffset           *>(obj);
-    CQSVGFePointLight       *qfepl     = dynamic_cast<CQSVGFePointLight       *>(obj);
-    CQSVGFeSpecularLighting *qfespec   = dynamic_cast<CQSVGFeSpecularLighting *>(obj);
-    CQSVGFeSpotLight        *qfespot   = dynamic_cast<CQSVGFeSpotLight        *>(obj);
-    CQSVGFeTile             *qfetile   = dynamic_cast<CQSVGFeTile             *>(obj);
-    CQSVGFeTurbulence       *qfeturb   = dynamic_cast<CQSVGFeTurbulence       *>(obj);
-    CQSVGFilter             *qfilter   = dynamic_cast<CQSVGFilter             *>(obj);
-    CQSVGGroup              *qgroup    = dynamic_cast<CQSVGGroup              *>(obj);
-    CQSVGImage              *qimage    = dynamic_cast<CQSVGImage              *>(obj);
-    CQSVGLine               *qline     = dynamic_cast<CQSVGLine               *>(obj);
-    CQSVGLinearGradient     *qlgrad    = dynamic_cast<CQSVGLinearGradient     *>(obj);
-    CQSVGMarker             *qmarker   = dynamic_cast<CQSVGMarker             *>(obj);
-    CQSVGMask               *qmask     = dynamic_cast<CQSVGMask               *>(obj);
-    CQSVGPath               *qpath     = dynamic_cast<CQSVGPath               *>(obj);
-    CQSVGPattern            *qpattern  = dynamic_cast<CQSVGPattern            *>(obj);
-    CQSVGPolygon            *qpolygon  = dynamic_cast<CQSVGPolygon            *>(obj);
-    CQSVGPolyLine           *qpolyline = dynamic_cast<CQSVGPolyLine           *>(obj);
-    CQSVGRadialGradient     *qrgrad    = dynamic_cast<CQSVGRadialGradient     *>(obj);
-    CQSVGRect               *qrect     = dynamic_cast<CQSVGRect               *>(obj);
-    CQSVGStop               *qstop     = dynamic_cast<CQSVGStop               *>(obj);
-    CQSVGText               *qtext     = dynamic_cast<CQSVGText               *>(obj);
-    CQSVGTextPath           *qtextpath = dynamic_cast<CQSVGTextPath           *>(obj);
-    CQSVGTitle              *qtitle    = dynamic_cast<CQSVGTitle              *>(obj);
-    CQSVGTSpan              *qtspan    = dynamic_cast<CQSVGTSpan              *>(obj);
-    CQSVGUse                *quse      = dynamic_cast<CQSVGUse                *>(obj);
+    auto *qblock    = dynamic_cast<CQSVGBlock              *>(obj);
+    auto *qanchor   = dynamic_cast<CQSVGAnchor             *>(obj);
+    auto *qanim     = dynamic_cast<CQSVGAnimate            *>(obj);
+    auto *qanimcol  = dynamic_cast<CQSVGAnimateColor       *>(obj);
+    auto *qanimmot  = dynamic_cast<CQSVGAnimateMotion      *>(obj);
+    auto *qanimtran = dynamic_cast<CQSVGAnimateTransform   *>(obj);
+    auto *qcircle   = dynamic_cast<CQSVGCircle             *>(obj);
+    auto *qclippath = dynamic_cast<CQSVGClipPath           *>(obj);
+    auto *qdefs     = dynamic_cast<CQSVGDefs               *>(obj);
+    auto *qdesc     = dynamic_cast<CQSVGDesc               *>(obj);
+    auto *qellipse  = dynamic_cast<CQSVGEllipse            *>(obj);
+    auto *qfeblend  = dynamic_cast<CQSVGFeBlend            *>(obj);
+    auto *qfecmtrx  = dynamic_cast<CQSVGFeColorMatrix      *>(obj);
+    auto *qfecomp   = dynamic_cast<CQSVGFeComposite        *>(obj);
+    auto *qfediffl  = dynamic_cast<CQSVGFeDiffuseLighting  *>(obj);
+    auto *qfedmap   = dynamic_cast<CQSVGFeDisplacementMap  *>(obj);
+    auto *qfedlight = dynamic_cast<CQSVGFeDistantLight     *>(obj);
+    auto *qfeflood  = dynamic_cast<CQSVGFeFlood            *>(obj);
+    auto *qfegauss  = dynamic_cast<CQSVGFeGaussianBlur     *>(obj);
+    auto *qfeimage  = dynamic_cast<CQSVGFeImage            *>(obj);
+    auto *femerge   = dynamic_cast<CQSVGFeMerge            *>(obj);
+    auto *femnode   = dynamic_cast<CQSVGFeMergeNode        *>(obj);
+    auto *femorph   = dynamic_cast<CQSVGFeMorphology       *>(obj);
+    auto *qfeoff    = dynamic_cast<CQSVGFeOffset           *>(obj);
+    auto *qfepl     = dynamic_cast<CQSVGFePointLight       *>(obj);
+    auto *qfespec   = dynamic_cast<CQSVGFeSpecularLighting *>(obj);
+    auto *qfespot   = dynamic_cast<CQSVGFeSpotLight        *>(obj);
+    auto *qfetile   = dynamic_cast<CQSVGFeTile             *>(obj);
+    auto *qfeturb   = dynamic_cast<CQSVGFeTurbulence       *>(obj);
+    auto *qfilter   = dynamic_cast<CQSVGFilter             *>(obj);
+    auto *qgroup    = dynamic_cast<CQSVGGroup              *>(obj);
+    auto *qimage    = dynamic_cast<CQSVGImage              *>(obj);
+    auto *qline     = dynamic_cast<CQSVGLine               *>(obj);
+    auto *qlgrad    = dynamic_cast<CQSVGLinearGradient     *>(obj);
+    auto *qmarker   = dynamic_cast<CQSVGMarker             *>(obj);
+    auto *qmask     = dynamic_cast<CQSVGMask               *>(obj);
+    auto *qpath     = dynamic_cast<CQSVGPath               *>(obj);
+    auto *qpattern  = dynamic_cast<CQSVGPattern            *>(obj);
+    auto *qpolygon  = dynamic_cast<CQSVGPolygon            *>(obj);
+    auto *qpolyline = dynamic_cast<CQSVGPolyLine           *>(obj);
+    auto *qrgrad    = dynamic_cast<CQSVGRadialGradient     *>(obj);
+    auto *qrect     = dynamic_cast<CQSVGRect               *>(obj);
+    auto *qstop     = dynamic_cast<CQSVGStop               *>(obj);
+    auto *qtext     = dynamic_cast<CQSVGText               *>(obj);
+    auto *qtextpath = dynamic_cast<CQSVGTextPath           *>(obj);
+    auto *qtitle    = dynamic_cast<CQSVGTitle              *>(obj);
+    auto *qtspan    = dynamic_cast<CQSVGTSpan              *>(obj);
+    auto *quse      = dynamic_cast<CQSVGUse                *>(obj);
 
     //---
 
@@ -896,26 +890,26 @@ addObjectToTree(const std::string &name, CSVGObject *obj)
       int ind = 0;
 
       for (const auto &part : qpath->getPartList().parts()) {
-        CQSVGPathPart *qpathpart = dynamic_cast<CQSVGPathPart *>(part);
+        auto *qpathpart = dynamic_cast<CQSVGPathPart *>(part);
 
-        CQSVGPathMoveTo      *qmoveto   = dynamic_cast<CQSVGPathMoveTo      *>(qpathpart);
-        CQSVGPathRMoveTo     *qrmoveto  = dynamic_cast<CQSVGPathRMoveTo     *>(qpathpart);
-        CQSVGPathLineTo      *qlineto   = dynamic_cast<CQSVGPathLineTo      *>(qpathpart);
-        CQSVGPathRLineTo     *qrlineto  = dynamic_cast<CQSVGPathRLineTo     *>(qpathpart);
-        CQSVGPathHLineTo     *qhlineto  = dynamic_cast<CQSVGPathHLineTo     *>(qpathpart);
-        CQSVGPathRHLineTo    *qrhlineto = dynamic_cast<CQSVGPathRHLineTo    *>(qpathpart);
-        CQSVGPathVLineTo     *qvlineto  = dynamic_cast<CQSVGPathVLineTo     *>(qpathpart);
-        CQSVGPathRVLineTo    *qrvlineto = dynamic_cast<CQSVGPathRVLineTo    *>(qpathpart);
-        CQSVGPathArcTo       *qarcto    = dynamic_cast<CQSVGPathArcTo       *>(qpathpart);
-        CQSVGPathRArcTo      *qrarcto   = dynamic_cast<CQSVGPathRArcTo      *>(qpathpart);
-        CQSVGPathBezier2To   *qbez2to   = dynamic_cast<CQSVGPathBezier2To   *>(qpathpart);
-        CQSVGPathMBezier2To  *qmbez2to  = dynamic_cast<CQSVGPathMBezier2To  *>(qpathpart);
-        CQSVGPathRBezier2To  *qrbez2to  = dynamic_cast<CQSVGPathRBezier2To  *>(qpathpart);
-        CQSVGPathMRBezier2To *qmrbez2to = dynamic_cast<CQSVGPathMRBezier2To *>(qpathpart);
-        CQSVGPathBezier3To   *qbez3to   = dynamic_cast<CQSVGPathBezier3To   *>(qpathpart);
-        CQSVGPathMBezier3To  *qmbez3to  = dynamic_cast<CQSVGPathMBezier3To  *>(qpathpart);
-        CQSVGPathRBezier3To  *qrbez3to  = dynamic_cast<CQSVGPathRBezier3To  *>(qpathpart);
-        CQSVGPathMRBezier3To *qmrbez3to = dynamic_cast<CQSVGPathMRBezier3To *>(qpathpart);
+        auto *qmoveto   = dynamic_cast<CQSVGPathMoveTo      *>(qpathpart);
+        auto *qrmoveto  = dynamic_cast<CQSVGPathRMoveTo     *>(qpathpart);
+        auto *qlineto   = dynamic_cast<CQSVGPathLineTo      *>(qpathpart);
+        auto *qrlineto  = dynamic_cast<CQSVGPathRLineTo     *>(qpathpart);
+        auto *qhlineto  = dynamic_cast<CQSVGPathHLineTo     *>(qpathpart);
+        auto *qrhlineto = dynamic_cast<CQSVGPathRHLineTo    *>(qpathpart);
+        auto *qvlineto  = dynamic_cast<CQSVGPathVLineTo     *>(qpathpart);
+        auto *qrvlineto = dynamic_cast<CQSVGPathRVLineTo    *>(qpathpart);
+        auto *qarcto    = dynamic_cast<CQSVGPathArcTo       *>(qpathpart);
+        auto *qrarcto   = dynamic_cast<CQSVGPathRArcTo      *>(qpathpart);
+        auto *qbez2to   = dynamic_cast<CQSVGPathBezier2To   *>(qpathpart);
+        auto *qmbez2to  = dynamic_cast<CQSVGPathMBezier2To  *>(qpathpart);
+        auto *qrbez2to  = dynamic_cast<CQSVGPathRBezier2To  *>(qpathpart);
+        auto *qmrbez2to = dynamic_cast<CQSVGPathMRBezier2To *>(qpathpart);
+        auto *qbez3to   = dynamic_cast<CQSVGPathBezier3To   *>(qpathpart);
+        auto *qmbez3to  = dynamic_cast<CQSVGPathMBezier3To  *>(qpathpart);
+        auto *qrbez3to  = dynamic_cast<CQSVGPathRBezier3To  *>(qpathpart);
+        auto *qmrbez3to = dynamic_cast<CQSVGPathMRBezier3To *>(qpathpart);
 
         QString typeName = CSVGPathPart::partTypeName(qpathpart->getType()).c_str();
         QString partName = partsName + "/" + typeName + ":" + QString("%1").arg(ind + 1);
@@ -1166,7 +1160,7 @@ itemSelectedSlot(QObject *obj, const QString & /*path*/)
 
   //std::cerr << "Object \'" << qobject->objectName().toStdString() << "\'" << std::endl;
 
-  CQSVGObject *qobj = dynamic_cast<CQSVGObject *>(obj);
+  auto *qobj = dynamic_cast<CQSVGObject *>(obj);
 
   if (qobj)
     qobj->setSelected(true);
@@ -1192,7 +1186,7 @@ void
 CQSVGWindow::
 deselectAllObjects()
 {
-  CSVGBlock *block = svg_->getRoot();
+  auto *block = svg_->getRoot();
 
   deselectObjects(block);
 }
@@ -1201,7 +1195,7 @@ void
 CQSVGWindow::
 deselectObjects(CSVGObject *obj)
 {
-  CQSVGObject *qobj = dynamic_cast<CQSVGObject *>(obj);
+  auto *qobj = dynamic_cast<CQSVGObject *>(obj);
 
   if (qobj)
     qobj->setSelected(false);
@@ -1363,7 +1357,7 @@ endBusy()
 
   busyButton_->setIcon(CQPixmapCacheInst->getIcon("READY"));
 
-  CHRTime dtime = CHRTime::diffTime(startTime_, endTime_);
+  auto dtime = CHRTime::diffTime(startTime_, endTime_);
 
   std::stringstream sstr;
 
@@ -1378,9 +1372,9 @@ updateBusy()
 {
   busyButton_->update();
 
-  CHRTime currentTime = CHRTime::getTime();
+  auto currentTime = CHRTime::getTime();
 
-  CHRTime dtime = CHRTime::diffTime(busyTime_, currentTime);
+  auto dtime = CHRTime::diffTime(busyTime_, currentTime);
 
   if (dtime.getMSecs() > 100) {
     busyTime_ = currentTime;

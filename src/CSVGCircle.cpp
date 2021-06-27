@@ -104,7 +104,7 @@ getNameValue(const std::string &name) const
 {
   COptString str;
 
-  CBBox2D bbox = getDrawBBox();
+  auto bbox = getDrawBBox();
 
   double w = bbox.getWidth ();
   double h = bbox.getHeight();
@@ -128,10 +128,10 @@ draw()
   if (svg_.getDebug())
     CSVGLog() << *this;
 
-  CBBox2D bbox = getDrawBBox();
+  auto drawBox = getDrawBBox();
 
-  double w = bbox.getWidth ();
-  double h = bbox.getHeight();
+  double w = drawBox.getWidth ();
+  double h = drawBox.getHeight();
 
   double xc = getCenterX().pxValue(CScreenUnits(w));
   double yc = getCenterY().pxValue(CScreenUnits(h));
@@ -139,6 +139,15 @@ draw()
 
   if (r <= 0)
     return false;
+
+  if (svg_.isCheckViewBox()) {
+    CBBox2D fbbox;
+
+    getFlatTransformedBBox(fbbox);
+
+    if (! fbbox.overlaps(drawBox))
+      CSVGLog() << "Outside viewbox : " << *this;
+  }
 
   svg_.drawCircle(xc, yc, r);
 
@@ -166,7 +175,7 @@ void
 CSVGCircle::
 moveBy(const CVector2D &delta)
 {
-  CPoint2D c = getCenter();
+  auto c = getCenter();
 
   c += delta;
 
@@ -190,7 +199,8 @@ print(std::ostream &os, bool hier) const
     CSVGObject::print(os, hier);
   }
   else
-    os << "circle " << getCenter() << " radius " << getRadius();
+    os << "circle (" << getId() << ") center " <<
+          getCenter() << " radius " << getRadius();
 }
 
 void

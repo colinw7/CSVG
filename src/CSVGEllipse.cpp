@@ -109,10 +109,10 @@ draw()
   if (svg_.getDebug())
     CSVGLog() << *this;
 
-  CBBox2D bbox = getDrawBBox();
+  auto drawBox = getDrawBBox();
 
-  double w = bbox.getWidth ();
-  double h = bbox.getHeight();
+  double w = drawBox.getWidth ();
+  double h = drawBox.getHeight();
 
   double xc = getCenterX().pxValue(CScreenUnits(w));
   double yc = getCenterY().pxValue(CScreenUnits(h));
@@ -121,6 +121,19 @@ draw()
 
   if (xr <= 0 || yr <= 0)
     return false;
+
+  //---
+
+  if (svg_.isCheckViewBox()) {
+    CBBox2D fbbox;
+
+    getFlatTransformedBBox(fbbox);
+
+    if (! fbbox.overlaps(drawBox))
+      CSVGLog() << "Outside viewbox : " << *this;
+  }
+
+  //---
 
   svg_.drawEllipse(xc, yc, xr, yr);
 
@@ -149,7 +162,7 @@ void
 CSVGEllipse::
 moveBy(const CVector2D &delta)
 {
-  CPoint2D c = getCenter();
+  auto c = getCenter();
 
   c += delta;
 
@@ -171,7 +184,8 @@ print(std::ostream &os, bool hier) const
     CSVGObject::print(os, hier);
   }
   else
-    os << "ellipse " << getCenter() << " radius " << getRadiusX() << " " << getRadiusY();
+    os << "ellipse (" << getId() << ") center " <<
+          getCenter() << " radius " << getRadiusX() << " " << getRadiusY();
 }
 
 void

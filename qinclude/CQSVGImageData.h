@@ -9,7 +9,7 @@ class CQSVGImageData : public CSVGImageData {
   CQSVGImageData();
   CQSVGImageData(const CQSVGImageData &data);
 
- ~CQSVGImageData() { }
+ ~CQSVGImageData();
 
   CSVGImageData *dup() const override;
 
@@ -85,7 +85,7 @@ class CQSVGImageData : public CSVGImageData {
   CSVGImageData *erode (int r, bool isAlpha) override;
   CSVGImageData *dilate(int r, bool isAlpha) override;
 
-  CSVGImageData *tile(int w, int h, const CImageTile &tile) override;
+  CSVGImageData *tile(int w, int h, const CImageTileData &tile) override;
 
   void turbulence(bool fractalNoise, double baseFreqX, double baseFreqY,
                   int numOctaves, int seed) override;

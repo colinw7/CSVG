@@ -73,7 +73,7 @@ CSVGFilter *
 CSVGFeMergeNode::
 getParentFilter() const
 {
-  CSVGFeMerge *merge = dynamic_cast<CSVGFeMerge *>(getParent());
+  auto *merge = dynamic_cast<CSVGFeMerge *>(getParent());
 
   return (merge ? merge->getParentFilter() : nullptr);
 }
