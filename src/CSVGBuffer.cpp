@@ -1159,6 +1159,9 @@ subImage(const CBBox2D &bbox) const
   // get image contents from buffer
   CSVGImageDataP image = this->getImage();
 
+  if (! image.isValid())
+    return CSVGImageDataP();
+
   // to SVG pixel
   double x1, y1, x2, y2;
 

@@ -24,20 +24,20 @@ class CSVGFilter : public CSVGObject {
   void setPrimitiveUnits(CSVGCoordUnits units) { primitiveUnits_ = units; }
 
   bool hasX() const { return x_.isValid(); }
-  CScreenUnits getX(const CScreenUnits &x=CScreenUnits()) const { return x_.getValue(x); }
+  CScreenUnits getX(const CScreenUnits &x=CScreenUnits(0)) const { return x_.getValue(x); }
   void setX(const CScreenUnits &x) { x_ = x; }
 
   bool hasY() const { return y_.isValid(); }
-  CScreenUnits getY(const CScreenUnits &y=CScreenUnits()) const { return y_.getValue(y); }
+  CScreenUnits getY(const CScreenUnits &y=CScreenUnits(0)) const { return y_.getValue(y); }
   void setY(const CScreenUnits &y) { y_ = y; }
 
   bool hasWidth() const { return width_.isValid(); }
-  CScreenUnits getWidth(const CScreenUnits &w=CScreenUnits()) const {
+  CScreenUnits getWidth(const CScreenUnits &w=CScreenUnits(0)) const {
     return width_.getValue(w); }
   void setWidth(const CScreenUnits &w) { width_ = w; }
 
   bool hasHeight() const { return height_.isValid(); }
-  CScreenUnits getHeight(const CScreenUnits &h=CScreenUnits()) const {
+  CScreenUnits getHeight(const CScreenUnits &h=CScreenUnits(0)) const {
     return height_.getValue(h); }
   void setHeight(const CScreenUnits &h) { height_ = h; }
 

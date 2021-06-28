@@ -266,6 +266,13 @@ class CSVG {
 
   //---
 
+  // get/set quiet
+  bool isQuiet() const { return quiet_; }
+  void setQuiet(bool b) { quiet_ = b; }
+
+  //---
+
+  // get/set check view box
   bool isCheckViewBox() const { return checkViewBox_; }
   void setCheckViewBox(bool b) { checkViewBox_ = b; }
 
@@ -813,6 +820,7 @@ class CSVG {
   CSVGObject*      altRoot_       { nullptr };
   AltData          altData_;
   DebugData        debugData_;
+  bool             quiet_         { false };
   bool             checkViewBox_  { false };
 };
 

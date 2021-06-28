@@ -451,9 +451,11 @@ read(const std::string &filename, CSVGObject *object)
     const std::string &opt_name  = opt->getName ();
     const std::string &opt_value = opt->getValue();
 
-    if (! object->processOption(opt_name, opt_value))
-      CSVGLog() << "Invalid option '" << opt_name << "=" << opt_value <<
-                   " for " << object->getTagName();
+    if (! object->processOption(opt_name, opt_value)) {
+      if (! isQuiet())
+        CSVGLog() << "Invalid option '" << opt_name << "=" << opt_value <<
+                     " for " << object->getTagName();
+    }
   }
 
   //------
@@ -500,7 +502,8 @@ tokenToObject(CSVGObject *parent, const CXMLToken *token)
 
   if (! object) {
     if (CRegExpUtil::parse(tag_name, "sodipodi:.*") ||
-        CRegExpUtil::parse(tag_name, "inkscape:.*"))
+        CRegExpUtil::parse(tag_name, "inkscape:.*") ||
+        CRegExpUtil::parse(tag_name, "rdf:.*"))
       return nullptr;
 
     CSVGLog() << "Unknown tag '" << tag_name << "'";
@@ -567,9 +570,15 @@ tokenToObject(CSVGObject *parent, const CXMLToken *token)
     const std::string &opt_name  = option->getName ();
     const std::string &opt_value = option->getValue();
 
-    if (! object->processOption(opt_name, opt_value))
-      CSVGLog() << "Unhandled tag option " << opt_name << "=" << opt_value <<
-                   " for " << object->getTagName();
+    if (! object->processOption(opt_name, opt_value)) {
+      if (CRegExpUtil::parse(opt_name, "sodipodi:.*") ||
+          CRegExpUtil::parse(opt_name, "inkscape:.*"))
+        continue;
+
+      if (! isQuiet())
+        CSVGLog() << "Unhandled tag option " << opt_name << "=" << opt_value <<
+                     " for " << object->getTagName();
+    }
   }
 
   object->setXMLTag(tag);

@@ -533,10 +533,10 @@ class CSVGObject {
   }
 
   bool hasLetterSpacing() const { return letterSpacing_.isValid(); }
-  CScreenUnits getLetterSpacing() const { return letterSpacing_.getValue(CScreenUnits()); }
+  CScreenUnits getLetterSpacing() const { return letterSpacing_.getValue(CScreenUnits(0)); }
 
   bool hasWordSpacing() const { return wordSpacing_.isValid(); }
-  CScreenUnits getWordSpacing() const { return wordSpacing_.getValue(CScreenUnits()); }
+  CScreenUnits getWordSpacing() const { return wordSpacing_.getValue(CScreenUnits(0)); }
 
   //---
 

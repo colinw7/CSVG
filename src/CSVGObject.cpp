@@ -856,8 +856,9 @@ setStyle(const std::string &style)
           ! processFilterOption     (words1[0], words1[1]) &&
           ! processCSSOption        (words1[0], words1[1]) &&
           ! processContainerOption  (words1[0], words1[1])) {
-        CSVGLog() << "Invalid style option " << words1[0] << ":" << words1[1] <<
-                     " for " << getTagName();
+        if (! svg_.isQuiet())
+          CSVGLog() << "Invalid style option " << words1[0] << ":" << words1[1] <<
+                       " for " << getTagName();
       }
     }
     else {
@@ -924,7 +925,8 @@ processOption(const std::string &optName, const std::string &optValue)
   }
 
   else {
-    CSVGLog() << "Unhandled option " << optName << " for " << getTagName();
+    if (! svg_.isQuiet())
+      CSVGLog() << "Unhandled option " << optName << " for " << getTagName();
     return true; // don't propagate warning
   }
 
@@ -1588,8 +1590,9 @@ void
 CSVGObject::
 notHandled(const std::string &optName, const std::string &optValue)
 {
-  CSVGLog() << "Option " << optName << ":" << optValue << " not handled " <<
-               "for " << getTagName();
+  if (! svg_.isQuiet())
+    CSVGLog() << "Option " << optName << ":" << optValue << " not handled " <<
+                 "for " << getTagName();
 }
 
 COptString

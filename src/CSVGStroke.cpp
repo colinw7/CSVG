@@ -200,6 +200,8 @@ setLineCap(const std::string &cap_str)
     cap = LINE_CAP_TYPE_ROUND;
   else if (cap_str == "square")
     cap = LINE_CAP_TYPE_SQUARE;
+  else if (cap_str == "none")
+    cap = LINE_CAP_TYPE_NONE;
   else {
     CSVGLog() << "Illegal line_cap " << cap_str;
     return;
@@ -220,6 +222,8 @@ setLineJoin(const std::string &join_str)
     join = LINE_JOIN_TYPE_ROUND;
   else if (join_str == "bevel")
     join = LINE_JOIN_TYPE_BEVEL;
+  else if (join_str == "none")
+    join = LINE_JOIN_TYPE_NONE;
   else {
     CSVGLog() << "Illegal line_join " << join_str;
     return;

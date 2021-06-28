@@ -9,6 +9,7 @@ int
 main(int argc, char **argv)
 {
   bool debug         = false;
+  bool quiet         = false;
   bool check_viewbox = false;
   bool print         = false;
   bool flat          = false;
@@ -23,6 +24,8 @@ main(int argc, char **argv)
 
       if      (arg == "debug")
         debug = true;
+      else if (arg == "quiet")
+        quiet = true;
       else if (arg == "check_viewbox")
         check_viewbox = true;
       else if (arg == "print")
@@ -51,6 +54,8 @@ main(int argc, char **argv)
     CSVG svg;
 
     svg.setDebug(debug);
+
+    svg.setQuiet(quiet);
 
     svg.setCheckViewBox(check_viewbox);
 
@@ -81,6 +86,9 @@ main(int argc, char **argv)
     }
     else if (log) {
       CSVGLogRenderer lrenderer;
+
+      if (quiet)
+        lrenderer.setSilent(true);
 
       svg.setRenderer(&lrenderer);
 
