@@ -117,11 +117,11 @@ draw()
   if (svg_.getDebug())
     CSVGLog() << *this;
 
-  CSVGText *parentText = getParentText();
+  auto *parentText = getParentText();
 
-  std::string text    = getText();
-  CHAlignType anchor  = getFlatTextAnchor();
-  CSVGFontDef fontDef = getFlatFontDef();
+  auto text    = getText();
+  auto anchor  = getFlatTextAnchor();
+  auto fontDef = getFlatFontDef();
 
   double x = 0, y = 0;
 
@@ -185,7 +185,7 @@ void
 CSVGTSpan::
 getDrawPos(double &x, double &y, int i) const
 {
-  CSVGText *parentText = getParentText();
+  auto *parentText = getParentText();
 
   CPoint2D lastPos;
 
@@ -220,7 +220,7 @@ CSVGText *
 CSVGTSpan::
 getParentText() const
 {
-  CSVGObject *parent = getParent();
+  auto *parent = getParent();
 
   while (parent && ! dynamic_cast<CSVGText *>(parent))
     parent = parent->getParent();

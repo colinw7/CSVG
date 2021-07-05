@@ -7,7 +7,7 @@ class CSVGBuffer;
 
 class CSVGFeColorMatrix : public CSVGFilterBase {
  public:
-  typedef std::vector<double> ValueList;
+  using ValueList = std::vector<double>;
 
  public:
   CSVG_OBJECT_DEF("feColorMatrix", CSVGObjTypeId::FE_COLOR_MATRIX)

@@ -58,13 +58,13 @@ bool
 CSVGFeTile::
 drawElement()
 {
-  CSVGBuffer *inBuffer  = svg_.getBuffer(getFilterIn ());
-  CSVGBuffer *outBuffer = svg_.getBuffer(getFilterOut());
+  auto *inBuffer  = svg_.getBuffer(getFilterIn ());
+  auto *outBuffer = svg_.getBuffer(getFilterOut());
 
   if (svg_.getDebugFilter()) {
     std::string objectBufferName = "_" + getUniqueName();
 
-    CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_in");
+    auto *buffer = svg_.getBuffer(objectBufferName + "_in");
 
     buffer->setImageBuffer(inBuffer);
 
@@ -95,7 +95,7 @@ drawElement()
   if (svg_.getDebugFilter()) {
     std::string objectBufferName = "_" + getUniqueName();
 
-    CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_out");
+    auto *buffer = svg_.getBuffer(objectBufferName + "_out");
 
     buffer->setImageBuffer(outBuffer);
 

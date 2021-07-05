@@ -103,7 +103,7 @@ updateBBox()
 {
   double lw = getFlatStrokeWidth().getValue(1);
 
-  CBBox2D drawBox = getDrawBBox();
+  auto drawBox = getDrawBBox();
 
   double dw = drawBox.getWidth ();
   double dh = drawBox.getHeight();
@@ -164,7 +164,7 @@ draw()
 
   //---
 
-  CSVGBuffer *buffer = svg_.getCurrentBuffer();
+  auto *buffer = svg_.getCurrentBuffer();
 
   // handle rounded rect of rx or ry specified
   if (hasRX() || hasRY()) {
@@ -228,7 +228,7 @@ getPartList() const
 {
   if (parts_.empty()) {
     // TODO: rounded rect
-    CBBox2D drawBox = getDrawBBox();
+    auto drawBox = getDrawBBox();
 
     double dw = drawBox.getWidth ();
     double dh = drawBox.getHeight();
@@ -282,7 +282,7 @@ void
 CSVGRect::
 moveBy(const CVector2D &delta)
 {
-  CBBox2D drawBox = getDrawBBox();
+  auto drawBox = getDrawBBox();
 
   double dw = drawBox.getWidth ();
   double dh = drawBox.getHeight();

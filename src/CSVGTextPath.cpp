@@ -92,13 +92,13 @@ draw()
   if (svg_.getDebug())
     CSVGLog() << *this;
 
-  CSVGObject *obj = (xlink_.isValid() ? xlink_.getValue().getObject() : nullptr);
+  auto *obj = (xlink_.isValid() ? xlink_.getValue().getObject() : nullptr);
   if (! obj) return false;
 
   auto *path = dynamic_cast<CSVGPath *>(obj);
   if (! path) return false;
 
-  CSVGText *parentText = getParentText();
+  auto *parentText = getParentText();
   if (! parentText) return false;
 
   //---
@@ -115,11 +115,11 @@ draw()
 
   //---
 
-  std::string text    = getText();
-  CHAlignType anchor  = getFlatTextAnchor();
-  CSVGFontDef fontDef = getFlatFontDef();
+  auto text    = getText();
+  auto anchor  = getFlatTextAnchor();
+  auto fontDef = getFlatFontDef();
 
-  const CSVGPathPartList &parts = path->getPartList();
+  const auto &parts = path->getPartList();
 
   double l   = parts.getLength();
   int    len = text.length();
@@ -144,7 +144,7 @@ draw()
 
   fontDef.textSize(text, &w, &a, &d);
 
-  CHAlignType textAnchor = this->getFlatTextAnchor();
+  auto textAnchor = this->getFlatTextAnchor();
 
   if (textAnchor == CHALIGN_TYPE_CENTER)
     s2 -= w/(2*l);
@@ -195,7 +195,7 @@ std::cerr << "New angles " << ai1 << " " << ai2 << std::endl;
 
     //---
 
-    CSVGFontDef fontDef1 = fontDef;
+    auto fontDef1 = fontDef;
 
     if (ai) {
       fontDef1.setFamily   (fontDef.getFamily());
@@ -221,7 +221,7 @@ CSVGText *
 CSVGTextPath::
 getParentText() const
 {
-  CSVGObject *parent = getParent();
+  auto *parent = getParent();
 
   while (parent && ! dynamic_cast<CSVGText *>(parent))
     parent = parent->getParent();

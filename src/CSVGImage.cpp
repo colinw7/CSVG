@@ -168,12 +168,12 @@ initImage() const
   if (! xlink_.isValid())
     return false;
 
-  CSVGBuffer *imageBuffer = getImageBuffer();
+  auto *imageBuffer = getImageBuffer();
 
   if      (xlink_.getValue().isObject()) {
-    CSVGObject *object = xlink_.getValue().getObject();
+    auto *object = xlink_.getValue().getObject();
 
-    CSVGBuffer *objImageBuffer = object->toBufferImage();
+    auto *objImageBuffer = object->toBufferImage();
 
     // TODO: don't cache image as could be rescaled
     //th->xlink_.getValue().setObject(0);
@@ -230,7 +230,7 @@ void
 CSVGImage::
 moveBy(const CVector2D &delta)
 {
-  CPoint2D p = getPosition();
+  auto p = getPosition();
 
   p += delta;
 

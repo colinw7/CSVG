@@ -31,7 +31,7 @@ getFilterIn() const
   if (filterIn_.isValid())
     return filterIn_.getValue();
 
-  CSVGFilter *filter = getParentFilter();
+  auto *filter = getParentFilter();
 
   return (filter ? filter->getLastFilterName() : "FilterGraphic");
 }
@@ -40,7 +40,7 @@ std::string
 CSVGFeMergeNode::
 getFilterOut() const
 {
-  CSVGFilter *filter = getParentFilter();
+  auto *filter = getParentFilter();
 
   std::string name = "FilterGraphic";
 

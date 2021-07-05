@@ -107,7 +107,7 @@ void
 CSVGMarker::
 drawMarker(double x, double y, double autoAngle)
 {
-  // draw marker at (x,y) at specified angle (offset by and rotated around refX, refY).
+  // draw marker at (x, y) at specified angle (offset by and rotated around refX, refY).
   // marker drawn in box (0, 0, markerWidth, markerHeight) in markerUnits.
   // if angle is auto then autoAngle used, otherwise specified angle used (default 0).
 
@@ -164,7 +164,7 @@ drawMarker(double x, double y, double autoAngle)
       double lw = 1;
 
       if (svg_.currentDrawObject()) {
-        COptReal lw1 = svg_.currentDrawObject()->getFlatStrokeWidth();
+        auto lw1 = svg_.currentDrawObject()->getFlatStrokeWidth();
 
         if (lw1.isValid())
           lw = lw1.getValue();
@@ -179,7 +179,7 @@ drawMarker(double x, double y, double autoAngle)
   }
   else if (hasViewBox()) {
     // fit inside view box
-    CBBox2D viewBox = getViewBox();
+    auto viewBox = getViewBox();
 
     w1 = viewBox.getWidth ();
     h1 = viewBox.getHeight();
@@ -213,7 +213,7 @@ drawMarker(double x, double y, double autoAngle)
 
   if (clip) {
     // draw rectangle as clip
-    CSVGBuffer *buffer = svg_.pushBuffer("clipPath_" + getUniqueName());
+    auto *buffer = svg_.pushBuffer("clipPath_" + getUniqueName());
 
     buffer->setClip(true);
 
@@ -226,7 +226,7 @@ drawMarker(double x, double y, double autoAngle)
     buffer->pathInit();
 
     // expand for line width/alias
-    CBBox2D bbox1 = bbox.expanded(-1, -1, 1, 1);
+    auto bbox1 = bbox.expanded(-1, -1, 1, 1);
 
     buffer->drawRectangle(bbox1);
 

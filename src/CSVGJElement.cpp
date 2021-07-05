@@ -31,7 +31,6 @@ CSVGJElementType(CJavaScript *js) :
 };
 
 readonly attribute
-};
 */
 CSVGJElement::
 CSVGJElement(CSVGObject *obj) :

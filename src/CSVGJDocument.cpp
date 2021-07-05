@@ -111,7 +111,7 @@ execNameFn(CJavaScript *, const std::string &name, const Values &values)
     if (values.size() == 2) {
       std::string id = values[1]->toString();
 
-      CSVGObject *obj = svg_->lookupObjectById(id);
+      auto *obj = svg_->lookupObjectById(id);
 
       if (obj)
         return CJValueP(new CSVGJElement(obj));
@@ -123,7 +123,7 @@ execNameFn(CJavaScript *, const std::string &name, const Values &values)
     if (values.size() == 3) {
       std::string name1 = values[2]->toString();
 
-      CSVGObject *obj = svg_->createObjectByName(name1);
+      auto *obj = svg_->createObjectByName(name1);
 
       if (obj)
         return CJValueP(new CSVGJElement(obj));
@@ -188,12 +188,12 @@ execNameFn(CJavaScript *js, const std::string &name, const Values &values)
     CSVGJMatrixP matrix(new CSVGJMatrix(svg_, CMatrix2D()));
 
     if (values.size() >= 2) {
-      CJValueP matrixVal = values[1];
+      auto matrixVal = values[1];
 
       CSVGJMatrixP matrix1;
 
       if (matrixVal && matrixVal->type() == CJValue::Type::Object) {
-        CJObjP matrixObj = std::static_pointer_cast<CJObj>(matrixVal);
+        auto matrixObj = std::static_pointer_cast<CJObj>(matrixVal);
 
         if (matrixObj->objType()->name() == "SVGMatrix") {
           matrix1 = std::static_pointer_cast<CSVGJMatrix>(matrixObj);

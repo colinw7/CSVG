@@ -53,7 +53,7 @@ bool
 CSVGFeMorphology::
 drawElement()
 {
-  CSVGBuffer *inBuffer = svg_.getBuffer(getFilterIn());
+  auto *inBuffer = svg_.getBuffer(getFilterIn());
 
   bool inDrawing = inBuffer->isDrawing();
 
@@ -71,7 +71,7 @@ drawElement()
   if (svg_.getDebugFilter()) {
     std::string objectBufferName = "_" + getUniqueName();
 
-    CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_in");
+    auto *buffer = svg_.getBuffer(objectBufferName + "_in");
 
     buffer->setImageBuffer(inBuffer);
     buffer->setBBox       (inBBox);
@@ -91,7 +91,7 @@ drawElement()
   if (svg_.getDebugFilter()) {
     std::string objectBufferName = "_" + getUniqueName();
 
-    CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_out");
+    auto *buffer = svg_.getBuffer(objectBufferName + "_out");
 
     buffer->setImageBuffer(inBuffer);
     buffer->setBBox       (inBBox);
@@ -130,7 +130,7 @@ printValues(std::ostream &os, bool flat) const
   printNameValue(os, "in", filterIn_);
 
   if (operator_.isValid()) {
-    CSVGMorphologyOperator op = getOperator();
+    auto op = getOperator();
 
     if      (op == CSVGMorphologyOperator::ERODE ) os << " operator=\"erode\"";
     else if (op == CSVGMorphologyOperator::DILATE) os << " operator=\"dilate\"";

@@ -59,7 +59,7 @@ bool
 CSVGFeMerge::
 drawElement()
 {
-  CSVGBuffer *outBuffer = svg_.getBuffer(getFilterOut());
+  auto *outBuffer = svg_.getBuffer(getFilterOut());
 
   //---
 
@@ -83,9 +83,9 @@ drawElement()
 
   for (const auto &node : nodes) {
     std::string filterIn = node->getFilterIn();
-    CSVGBuffer* bufferIn = svg_.getBuffer(filterIn);
+    auto* bufferIn = svg_.getBuffer(filterIn);
 
-    CISize2D size = bufferIn->getImageSize();
+    auto size = bufferIn->getImageSize();
 
     w = std::max(w, size.getWidth ());
     h = std::max(h, size.getHeight());
@@ -101,7 +101,7 @@ drawElement()
   if (svg_.getDebugFilter()) {
     std::string objectBufferName = "_" + getUniqueName();
 
-    CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_out");
+    auto *buffer = svg_.getBuffer(objectBufferName + "_out");
 
     buffer->setImageBuffer(outBuffer);
   }

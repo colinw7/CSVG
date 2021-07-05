@@ -5,7 +5,7 @@
 
 class CSVGFeFunc : public CSVGObject {
  public:
-  typedef std::vector<double> ValueTable;
+  using ValueTable = std::vector<double>;
 
  public:
   CSVG_OBJECT_DEF("feFunc", CSVGObjTypeId::FE_FUNC)

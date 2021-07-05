@@ -237,6 +237,6 @@ enum class CSVGPreserveAspectMeetOrSlice {
 #include <COptVal.h>
 #include <CScreenUnits.h>
 
-typedef COptValT<CScreenUnits> COptScreenUnits;
+using COptScreenUnits = COptValT<CScreenUnits>;
 
 #endif

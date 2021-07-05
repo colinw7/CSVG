@@ -54,7 +54,7 @@ class CSVGPathPart {
 
 class CSVGPathPartList {
  public:
-  typedef std::vector<CSVGPathPart *> Parts;
+  using Parts = std::vector<CSVGPathPart *>;
 
  public:
   CSVGPathPartList();

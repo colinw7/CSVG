@@ -7,7 +7,7 @@ class CSVGBuffer;
 
 class CSVGFeConvolveMatrix : public CSVGFilterBase {
  public:
-  typedef std::vector<double> Reals;
+  using Reals = std::vector<double>;
 
  public:
   CSVG_OBJECT_DEF("feConvolveMatrix", CSVGObjTypeId::FE_CONVOLVE_MATRIX)

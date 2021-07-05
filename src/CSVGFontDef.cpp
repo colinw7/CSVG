@@ -66,7 +66,7 @@ void
 CSVGFontDef::
 setWeight(const std::string &weight_def)
 {
-  CFontStyles weight = CFontStyles(svg_.decodeFontWeightString(weight_def));
+  auto weight = CFontStyles(svg_.decodeFontWeightString(weight_def));
 
   if (hasStyle())
     style_.setValue(getStyle() | weight);
@@ -80,7 +80,7 @@ void
 CSVGFontDef::
 setStyle(const std::string &style_def)
 {
-  CFontStyles style = CFontStyles(svg_.decodeFontStyleString(style_def));
+  auto style = CFontStyles(svg_.decodeFontStyleString(style_def));
 
   if (hasStyle())
     style_.setValue(getStyle() | style);
@@ -199,7 +199,7 @@ void
 CSVGFontDef::
 textSize(const std::string &text, double *w, double *a, double *d) const
 {
-  CSVGFontObj *obj = getObj();
+  auto *obj = getObj();
 
   obj->textSize(text, w, a, d);
 }
@@ -225,7 +225,7 @@ print(std::ostream &os) const
   }
 
   if (style_.isValid()) {
-    CFontStyles styles = style_.getValue();
+    auto styles = style_.getValue();
 
     if (styles & CFONT_STYLE_BOLD) {
       if (output) os << " ";

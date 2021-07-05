@@ -67,7 +67,7 @@ bool
 CSVGFeConvolveMatrix::
 drawElement()
 {
-  CSVGBuffer *inBuffer = svg_.getBuffer(getFilterIn());
+  auto *inBuffer = svg_.getBuffer(getFilterIn());
 
   bool inDrawing = inBuffer->isDrawing();
 
@@ -85,7 +85,7 @@ drawElement()
   if (svg_.getDebugFilter()) {
     std::string objectBufferName = "_" + getUniqueName();
 
-    CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_in1");
+    auto *buffer = svg_.getBuffer(objectBufferName + "_in1");
 
     buffer->setImageBuffer(inBuffer);
     buffer->setBBox       (bbox);
@@ -122,7 +122,7 @@ drawElement()
   if (svg_.getDebugFilter()) {
     std::string objectBufferName = "_" + getUniqueName();
 
-    CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_out");
+    auto *buffer = svg_.getBuffer(objectBufferName + "_out");
 
     buffer->setImageBuffer(inBuffer);
     buffer->setBBox       (bbox);

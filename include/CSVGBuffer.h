@@ -66,7 +66,7 @@ class CSVGBufferMgr {
   void addAlphaBuffer(CSVGBuffer *buffer);
 
  private:
-  typedef std::map<std::string,CSVGBuffer*> BufferMap;
+  using BufferMap = std::map<std::string, CSVGBuffer*>;
 
   CSVG&      svg_;
   bool       antiAlias_ { true };
@@ -81,7 +81,7 @@ class CSVGBufferMgr {
 
 class CSVGBuffer {
  public:
-  typedef std::vector<CSVGFeFunc *> FeFuncs;
+  using FeFuncs = std::vector<CSVGFeFunc *>;
 
  public:
   CSVGBuffer(CSVG &svg, const std::string &name);

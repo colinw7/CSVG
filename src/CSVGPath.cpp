@@ -95,8 +95,8 @@ drawZeroLength()
   if (drawCap && ! stroke_.getLineCapValid())
     drawCap = false;
 
-  COptValT<CSVGColor> c = getFlatStrokeColor();
-  double              r = getFlatStrokeWidth().getValue(1)/2;
+  auto   c = getFlatStrokeColor();
+  double r = getFlatStrokeWidth().getValue(1)/2;
 
   auto *buffer = svg_.getCurrentBuffer();
 
@@ -195,7 +195,7 @@ getBBox(CBBox2D &bbox) const
     if (hasViewBox())
       bbox = getViewBox();
     else {
-      CSVGBuffer *currentBuffer = svg_.getCurrentBuffer();
+      auto *currentBuffer = svg_.getCurrentBuffer();
 
       rc = parts_.getBBox(currentBuffer, bbox);
     }

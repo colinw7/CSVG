@@ -52,7 +52,7 @@ CSVGFeImage::
 drawElement()
 {
   // get object or file image into buffer (untransformed)
-  CSVGBuffer *inBuffer = svg_.getBuffer(getUniqueName() + "_xlink");
+  auto *inBuffer = svg_.getBuffer(getUniqueName() + "_xlink");
 
   if (hasLink()) {
     if (! xlink().getImage(inBuffer))
@@ -69,12 +69,12 @@ drawElement()
 
   //---
 
-  CSVGBuffer *outBuffer = svg_.getBuffer(getFilterOut());
+  auto *outBuffer = svg_.getBuffer(getFilterOut());
 
   if (svg_.getDebugFilter()) {
     std::string objectBufferName = "_" + getUniqueName();
 
-    CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_in");
+    auto *buffer = svg_.getBuffer(objectBufferName + "_in");
 
     buffer->setImageBuffer(inBuffer);
   }
@@ -89,7 +89,7 @@ drawElement()
   if (svg_.getDebugFilter()) {
     std::string objectBufferName = "_" + getUniqueName();
 
-    CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_out");
+    auto *buffer = svg_.getBuffer(objectBufferName + "_out");
 
     buffer->setImageBuffer(outBuffer);
     buffer->setBBox       (outBuffer->bbox());

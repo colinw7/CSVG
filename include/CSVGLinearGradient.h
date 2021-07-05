@@ -10,7 +10,7 @@ class CLinearGradient;
 
 class CSVGLinearGradient : public CSVGObject {
  public:
-  typedef std::vector<CSVGStop *> StopList;
+  using StopList = std::vector<CSVGStop *>;
 
  public:
   CSVG_OBJECT_DEF("linearGradient", CSVGObjTypeId::LINEAR_GRADIENT)

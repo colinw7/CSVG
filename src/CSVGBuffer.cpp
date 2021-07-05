@@ -366,7 +366,7 @@ colorMatrixBuffers(CSVGBuffer *inBuffer, const CBBox2D &bbox, CSVGColorMatrixTyp
   //                        [+0.787 -0.715 -0.072]
   // cos(hueRotate value) * [-0.213 +0.285 -0.072] +
   //                        [-0.213 -0.715 +0.928]
-  //                        [-0.213 -0.715 +0.928]
+  //                        [-0.213 -0.715  0.928]
   // sin(hueRotate value) * [+0.143 +0.140 -0.283]
   //                        [-0.787 +0.715 +0.072]
   // Thus, the upper left term of the hue matrix turns out to be:
@@ -923,7 +923,7 @@ tileBuffers(CSVGBuffer *inBuffer, const CBBox2D &inBBox,
 
   //---
 
-  // tile (output is new image of (iw,ih) at (0,0)
+  // tile (output is new image of (iw, ih) at (0, 0)
   int ix = CMathRound::RoundNearest(p1.x);
   int iy = CMathRound::RoundNearest(p1.y);
   int iw = CMathRound::RoundNearest(p2.x - p1.x + 0.499);
@@ -1101,7 +1101,7 @@ lightPoint(CSVGImageDataP &image, int x, int y, const CSVGLightData &lightData)
     if (ldot >= 0 && -ldot >= lightData.lcone)
       lcolor = lightData.lcolor*pow(-ldot, lightData.lexponent);
     else
-      lcolor = CRGBA(0,0,0);
+      lcolor = CRGBA(0, 0, 0);
   }
   else
     lcolor = lightData.lcolor;
@@ -1528,8 +1528,8 @@ reset()
 
   //------
 
-  renderer->setStrokeColor(CRGBA(0,0,0,1));
-  renderer->setFillColor  (CRGBA(0,0,0,1));
+  renderer->setStrokeColor(CRGBA(0, 0, 0, 1));
+  renderer->setFillColor  (CRGBA(0, 0, 0, 1));
 }
 
 void
@@ -1816,7 +1816,7 @@ setStroke(const CSVGStroke &stroke)
       setStrokeColor(rgba);
     }
     else
-      setStrokeColor(CRGBA(0,0,0));
+      setStrokeColor(CRGBA(0, 0, 0));
   }
 
   //---
@@ -2041,7 +2041,7 @@ setFill(const CSVGFill &fill)
       setFillColor(rgba);
     }
     else
-      setFillColor(CRGBA(0,0,0));
+      setFillColor(CRGBA(0, 0, 0));
   }
 
   //---

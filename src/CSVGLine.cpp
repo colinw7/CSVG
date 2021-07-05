@@ -92,7 +92,7 @@ draw()
   double a = atan2(points[1].y - points[0].y, points[1].x - points[0].x);
 
   angles.push_back(a);
-  angles.push_back(a);
+  angles.push_back(a); // dup
 
   //---
 

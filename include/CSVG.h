@@ -449,10 +449,10 @@ class CSVG {
   CSVGGlyph *getCharGlyph(char c) const;
   CSVGGlyph *getUnicodeGlyph(const std::string &unicode) const;
 
-  void drawToBuffer(CSVGBuffer *buffer, int w, int h, const CPoint2D &offset=CPoint2D(0,0),
+  void drawToBuffer(CSVGBuffer *buffer, int w, int h, const CPoint2D &offset=CPoint2D(0, 0),
                     double xscale=1, double yscale=1);
 
-  void drawToRenderer(CSVGRenderer *renderer, int w, int h, const CPoint2D &offset=CPoint2D(0,0),
+  void drawToRenderer(CSVGRenderer *renderer, int w, int h, const CPoint2D &offset=CPoint2D(0, 0),
                       double xscale=1, double yscale=1);
 
   bool hasAnimation() const;
@@ -461,7 +461,7 @@ class CSVG {
 
   void draw(const CPoint2D &offset, double xscale, double yscale);
 
-  void drawRoot(CSVGBlock *block, const CPoint2D &offset=CPoint2D(0,0),
+  void drawRoot(CSVGBlock *block, const CPoint2D &offset=CPoint2D(0, 0),
                 double xscale=1, double yscale=1,
                 const CSVGPreserveAspect &preserveAspect=CSVGPreserveAspect());
 

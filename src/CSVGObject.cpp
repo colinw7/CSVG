@@ -101,7 +101,7 @@ void
 CSVGObject::
 autoName()
 {
-  typedef std::map<std::string,int> IdMap;
+  using IdMap = std::map<std::string, int>;
 
   static IdMap idMap;
 
@@ -193,7 +193,7 @@ getFlatStroke() const
       return stroke;
   }
 
-  COptValT<CSVGColor> color = getFlatStrokeColor();
+  auto color = getFlatStrokeColor();
 
   if (color.isValid())
     stroke.setColor(color.getValue());
@@ -202,7 +202,7 @@ getFlatStroke() const
 
   //---
 
-  COptReal opacity = getFlatStrokeOpacity();
+  auto opacity = getFlatStrokeOpacity();
 
   if (opacity.isValid())
     stroke.setOpacity(opacity.getValue());
@@ -211,7 +211,7 @@ getFlatStroke() const
 
   //---
 
-  COptValT<CFillType> rule = getFlatStrokeRule();
+  auto rule = getFlatStrokeRule();
 
   if (rule.isValid())
     stroke.setRule(rule.getValue());
@@ -220,7 +220,7 @@ getFlatStroke() const
 
   //---
 
-  COptString url = getFlatStrokeUrl();
+  auto url = getFlatStrokeUrl();
 
   if (url.isValid())
     stroke.setUrl(url.getValue());
@@ -229,7 +229,7 @@ getFlatStroke() const
 
   //---
 
-  COptValT<CSVGObject*> obj = getFlatStrokeFillObject();
+  auto obj = getFlatStrokeFillObject();
 
   if (obj.isValid())
     stroke.setFillObject(obj.getValue());
@@ -238,7 +238,7 @@ getFlatStroke() const
 
   //---
 
-  COptReal width = getFlatStrokeWidth();
+  auto width = getFlatStrokeWidth();
 
   if (width.isValid())
     stroke.setWidth(width.getValue());
@@ -247,7 +247,7 @@ getFlatStroke() const
 
   //---
 
-  COptValT<CSVGStrokeDash> dash = getFlatStrokeLineDash();
+  auto dash = getFlatStrokeLineDash();
 
   if (dash.isValid())
     stroke.setDash(dash.getValue());
@@ -256,7 +256,7 @@ getFlatStroke() const
 
   //---
 
-  COptValT<CLineCapType> lineCap = getFlatStrokeLineCap();
+  auto lineCap = getFlatStrokeLineCap();
 
   if (lineCap.isValid())
     stroke.setLineCap(lineCap.getValue());
@@ -265,7 +265,7 @@ getFlatStroke() const
 
   //---
 
-  COptValT<CLineJoinType> lineJoin = getFlatStrokeLineJoin();
+  auto lineJoin = getFlatStrokeLineJoin();
 
   if (lineJoin.isValid())
     stroke.setLineJoin(lineJoin.getValue());
@@ -274,7 +274,7 @@ getFlatStroke() const
 
   //---
 
-  COptReal mlimit = getFlatStrokeMitreLimit();
+  auto mlimit = getFlatStrokeMitreLimit();
 
   if (mlimit.isValid())
     stroke.setMitreLimit(mlimit.getValue());
@@ -484,7 +484,7 @@ getFlatFill() const
 {
   CSVGFill fill(svg_);
 
-  COptValT<CSVGColor> color = getFlatFillColor();
+  auto color = getFlatFillColor();
 
   if (color.isValid())
     fill.setColor(color.getValue());
@@ -493,7 +493,7 @@ getFlatFill() const
 
   //---
 
-  COptReal opacity = getFlatFillOpacity();
+  auto opacity = getFlatFillOpacity();
 
   if (opacity.isValid())
     fill.setOpacity(opacity.getValue());
@@ -502,7 +502,7 @@ getFlatFill() const
 
   //---
 
-  COptValT<CFillType> rule = getFlatFillRule();
+  auto rule = getFlatFillRule();
 
   if (rule.isValid())
     fill.setRule(rule.getValue());
@@ -511,7 +511,7 @@ getFlatFill() const
 
   //---
 
-  COptString url = getFlatFillUrl();
+  auto url = getFlatFillUrl();
 
   if (url.isValid())
     fill.setUrl(url.getValue());
@@ -520,7 +520,7 @@ getFlatFill() const
 
   //---
 
-  COptValT<CSVGObject *> obj = getFlatFillFillObject();
+  auto obj = getFlatFillFillObject();
 
   if (obj.isValid())
     fill.setFillObject(obj.getValue());
@@ -761,10 +761,10 @@ colorToRGBA(const CSVGColor &color) const
     if (parent_)
       return parent_->colorToRGBA(color);
     else
-      return CRGBA(0,0,0);
+      return CRGBA(0, 0, 0);
   }
 
-  return CRGBA(0,0,0,0);
+  return CRGBA(0, 0, 0, 0);
 }
 
 CRGBA
@@ -781,7 +781,7 @@ getFlatCurrentColor() const
   if (parent_)
     return parent_->getFlatCurrentColor();
 
-  return CRGBA(0,0,0);
+  return CRGBA(0, 0, 0);
 }
 
 CMatrixStack2D
@@ -1490,7 +1490,7 @@ parseFont(const std::string &str)
 
     parse.readNonSpace(word);
 
-    COptValT<CScreenUnits> length = svg_.decodeLengthValue(word);
+    auto length = svg_.decodeLengthValue(word);
 
     if (! length.isValid()) {
       CSVGLog() << "Illegal font length value '" << word << "'";

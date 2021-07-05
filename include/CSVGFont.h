@@ -9,8 +9,8 @@ class CSVGGlyph;
 
 class CSVGFont : public CSVGObject {
  public:
-  typedef std::map<char       , CSVGGlyph *> CharGlyphMap;
-  typedef std::map<std::string, CSVGGlyph *> UnicodeGlyphMap;
+  using CharGlyphMap    = std::map<char       , CSVGGlyph *>;
+  using UnicodeGlyphMap = std::map<std::string, CSVGGlyph *>;
 
  public:
   CSVG_OBJECT_DEF("font", CSVGObjTypeId::FONT)

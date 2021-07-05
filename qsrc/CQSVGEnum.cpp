@@ -3,7 +3,7 @@
 
 namespace Conv {
 
-typedef CEnumConv<CHAlignType, CQSVGEnum::HAlignType> HAlignConv;
+using HAlignConv = CEnumConv<CHAlignType, CQSVGEnum::HAlignType>;
 
 HAlignConv halignConv({
  { CHALIGN_TYPE_LEFT  , CQSVGEnum::AlignLeft    },
@@ -13,7 +13,7 @@ HAlignConv halignConv({
 
 //---
 
-typedef CEnumConv<CVAlignType, CQSVGEnum::VAlignType> VAlignConv;
+using VAlignConv = CEnumConv<CVAlignType, CQSVGEnum::VAlignType>;
 
 VAlignConv valignConv({
  { CVALIGN_TYPE_BOTTOM, CQSVGEnum::AlignBottom  },
@@ -23,7 +23,7 @@ VAlignConv valignConv({
 
 //---
 
-typedef CEnumConv<CLineCapType, CQSVGEnum::LineCapType> LineCapConv;
+using LineCapConv = CEnumConv<CLineCapType, CQSVGEnum::LineCapType>;
 
 LineCapConv lineCapConv({
  { LINE_CAP_TYPE_BUTT  , CQSVGEnum::LineCapButt   },
@@ -33,7 +33,7 @@ LineCapConv lineCapConv({
 
 //---
 
-typedef CEnumConv<CLineJoinType, CQSVGEnum::LineJoinType> LineJoinConv;
+using LineJoinConv = CEnumConv<CLineJoinType, CQSVGEnum::LineJoinType>;
 
 LineJoinConv lineJoinConv({
  { LINE_JOIN_TYPE_MITRE, CQSVGEnum::LineJoinMitre },
@@ -43,7 +43,7 @@ LineJoinConv lineJoinConv({
 
 //---
 
-typedef CEnumConv<CFillType, CQSVGEnum::FillType> FillTypeConv;
+using FillTypeConv = CEnumConv<CFillType, CQSVGEnum::FillType>;
 
 FillTypeConv fillTypeConv({
  { FILL_TYPE_NONE    , CQSVGEnum::FillTypeNone    },
@@ -53,7 +53,7 @@ FillTypeConv fillTypeConv({
 
 //---
 
-typedef CEnumConv<CSVGColorMatrixType, CQSVGEnum::ColorMatrixType> ColorMatrixTypeConv;
+using ColorMatrixTypeConv = CEnumConv<CSVGColorMatrixType, CQSVGEnum::ColorMatrixType>;
 
 ColorMatrixTypeConv colorMatrixTypeConv({
  { CSVGColorMatrixType::MATRIX            , CQSVGEnum::ColorMatrixTypeMatrix           },
@@ -64,7 +64,7 @@ ColorMatrixTypeConv colorMatrixTypeConv({
 
 //---
 
-typedef CEnumConv<CSVGCoordUnits, CQSVGEnum::CoordUnitsType> CoordUnitsTypeConv;
+using CoordUnitsTypeConv = CEnumConv<CSVGCoordUnits, CQSVGEnum::CoordUnitsType>;
 
 CoordUnitsTypeConv coordUnitsTypeConv({
  { CSVGCoordUnits::OBJECT_BBOX , CQSVGEnum::CoordUnitsObjectBBox  },

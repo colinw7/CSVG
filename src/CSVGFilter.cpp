@@ -98,13 +98,13 @@ bool
 CSVGFilter::
 getRegion(CSVGObject *obj, CBBox2D &bbox) const
 {
-  CBBox2D bbox1 = getObjectBBox(obj);
+  auto bbox1 = getObjectBBox(obj);
 
   //---
 
   // get filter specified x, y, width, height in filterUnits units
   // default is (x=-0.1, y=-0.1, w=1.2, h=1.2)
-  CSVGCoordUnits filterUnits = getFilterUnits();
+  auto filterUnits = getFilterUnits();
 
   double x = 0, y = 0;
 
@@ -172,9 +172,9 @@ initDraw(CSVGBuffer *buffer)
 
   // use update background image
   if (buffer->parentBuffer()) {
-    CSVGBuffer *bgBuffer  = svg_.getBuffer("BackgroundImage");
-    CSVGBuffer *bgBuffer1 = svg_.getBuffer(buffer->getName() + "_FilterBackgroundImage1");
-    CSVGBuffer *bgBuffer2 = svg_.getBuffer(buffer->getName() + "_FilterBackgroundImage2");
+    auto *bgBuffer  = svg_.getBuffer("BackgroundImage");
+    auto *bgBuffer1 = svg_.getBuffer(buffer->getName() + "_FilterBackgroundImage1");
+    auto *bgBuffer2 = svg_.getBuffer(buffer->getName() + "_FilterBackgroundImage2");
 
     bool bg_drawing = bgBuffer->isDrawing();
 
@@ -205,8 +205,8 @@ initDraw(CSVGBuffer *buffer)
   lastFilterName_ = "FilterGraphic";
 
   // store current buffer image into SourceGraphic and in filter
-  CSVGBuffer *srcBuffer = svg_.getBuffer("SourceGraphic");
-  CSVGBuffer *fltBuffer = svg_.getBuffer(lastFilterName_);
+  auto *srcBuffer = svg_.getBuffer("SourceGraphic");
+  auto *fltBuffer = svg_.getBuffer(lastFilterName_);
 
   // reset input bboxes
   srcBuffer->setBBox(CBBox2D());
@@ -221,8 +221,8 @@ initDraw(CSVGBuffer *buffer)
   svg_.setPaintBox(bbox);
 
   if (object_) {
-    CSVGFill   fill   = object_->getFlatFill  ();
-    CSVGStroke stroke = object_->getFlatStroke();
+    auto fill   = object_->getFlatFill  ();
+    auto stroke = object_->getFlatStroke();
 
     svg_.setPaintStyle(fill, stroke);
   }
@@ -244,7 +244,7 @@ initDraw(CSVGBuffer *buffer)
 
   // save current image into filter in
   if (svg_.getDebugFilter()) {
-    CSVGBuffer *filterInBuffer = svg_.getBuffer(buffer->getName() + "_filter_in");
+    auto *filterInBuffer = svg_.getBuffer(buffer->getName() + "_filter_in");
 
     filterInBuffer->setImageBuffer(srcBuffer);
     filterInBuffer->setBBox       (bbox);
@@ -257,8 +257,8 @@ termDraw(CSVGBuffer *buffer)
 {
   // restore background
   if (buffer->parentBuffer()) {
-    CSVGBuffer *bgBuffer  = svg_.getBuffer("BackgroundImage");
-    CSVGBuffer *bgBuffer1 = svg_.getBuffer(buffer->getName() + "_FilterBackgroundImage1");
+    auto *bgBuffer  = svg_.getBuffer("BackgroundImage");
+    auto *bgBuffer1 = svg_.getBuffer(buffer->getName() + "_FilterBackgroundImage1");
 
     bool bg_drawing = bgBuffer->isDrawing();
 
@@ -273,11 +273,11 @@ termDraw(CSVGBuffer *buffer)
 
   //---
 
-  CSVGBuffer *fltBuffer = svg_.getBuffer(lastFilterName_);
+  auto *fltBuffer = svg_.getBuffer(lastFilterName_);
 
   if (svg_.getDebugFilter()) {
     // save last filter output name (output of filter) into filter_out
-    CSVGBuffer *filterOutBuffer = svg_.getBuffer(buffer->getName() + "_filter_out");
+    auto *filterOutBuffer = svg_.getBuffer(buffer->getName() + "_filter_out");
 
     filterOutBuffer->setImageBuffer(fltBuffer);
     filterOutBuffer->setBBox       (buffer->bbox());

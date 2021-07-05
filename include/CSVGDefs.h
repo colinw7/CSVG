@@ -7,7 +7,7 @@ class CXMLToken;
 
 class CSVGDefs : public CSVGObject {
  public:
-  typedef std::vector<const CXMLToken *> TokenList;
+  using TokenList = std::vector<const CXMLToken *>;
 
  public:
   CSVG_OBJECT_DEF("defs", CSVGObjTypeId::DEFS)

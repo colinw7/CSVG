@@ -201,7 +201,7 @@ setFillImage(CSVGObject *parent, CSVGBuffer *buffer,
   CMatrixStack2D matrix;
 
   if      (hasViewBox()) {
-    CBBox2D viewBox = viewBox_.getValue();
+    auto viewBox = viewBox_.getValue();
 
     //matrix.translate(0, 0);
     matrix.scale(*w1/viewBox.getWidth(), *h1/viewBox.getHeight());
@@ -278,9 +278,9 @@ setStrokeImage(CSVGObject *parent, CSVGBuffer *buffer, double *w1, double *h1)
 
   //---
 
-  CSVGBuffer *oldBuffer = svg_.getCurrentBuffer();
+  auto *oldBuffer = svg_.getCurrentBuffer();
 
-  CMatrixStack2D transform = oldBuffer->transform();
+  auto transform = oldBuffer->transform();
 
   //---
 
@@ -316,7 +316,7 @@ setStrokeImage(CSVGObject *parent, CSVGBuffer *buffer, double *w1, double *h1)
     }
   }
   else if (hasViewBox()) {
-    CBBox2D viewBox = viewBox_.getValue();
+    auto viewBox = viewBox_.getValue();
 
     //matrix.translate(0, 0);
     matrix.scale(*w1/viewBox.getWidth(), *h1/viewBox.getHeight());

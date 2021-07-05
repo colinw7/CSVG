@@ -6,7 +6,7 @@
 
 class CSVGObjectCSSTagData : public CCSSTagData {
  public:
-  typedef std::vector<CSVGObject *> Children;
+  using Children = std::vector<CSVGObject *>;
 
  public:
   explicit CSVGObjectCSSTagData(CSVGObject *obj) :

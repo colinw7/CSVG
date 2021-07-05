@@ -147,7 +147,7 @@ double
 CSVGBlock::
 getWidth() const
 {
-  CBBox2D bbox = getViewBox();
+  auto bbox = getViewBox();
 
   double w = 400;
 
@@ -166,7 +166,7 @@ double
 CSVGBlock::
 getHeight() const
 {
-  CBBox2D bbox = getViewBox();
+  auto bbox = getViewBox();
 
   double h = 400;
 
@@ -199,11 +199,11 @@ drawInit()
   blockData_ = svg_.blockData();
 
   // pixel and view box
-  CBBox2D pbbox = calcPixelBox();
-  CBBox2D vbbox = calcViewBox ();
+  auto pbbox = calcPixelBox();
+  auto vbbox = calcViewBox ();
 
-  //CPoint2D bmin = vbbox.getLL();
-  //CPoint2D bmax = vbbox.getUR();
+  //auto bmin = vbbox.getLL();
+  //auto bmax = vbbox.getUR();
 
   //svg_.viewMatrix().multiplyPoint(vbbox.getLL(), bmin);
   //svg_.viewMatrix().multiplyPoint(vbbox.getUR(), bmax);
@@ -215,7 +215,7 @@ drawInit()
   double yscale = pbbox.getHeight()/vbbox.getHeight();
 
   if (hasPreserveAspect()) {
-    CSVGScale scale = getScale();
+    auto scale = getScale();
 
     if      (scale == CSVGScale::FIXED_MEET) {
       double minScale = std::min(xscale, yscale);
@@ -244,7 +244,7 @@ drawInit()
   //------
 
   if (parent_) {
-    CSVGBuffer *drawBuffer = svg_.pushBuffer("_" + getUniqueName() + "_svg");
+    auto *drawBuffer = svg_.pushBuffer("_" + getUniqueName() + "_svg");
 
     drawBuffer->clear();
 
@@ -265,22 +265,22 @@ drawTerm()
   //------
 
   if (parent_) {
-    CSVGBuffer *drawBuffer = svg_.getBuffer("_" + getUniqueName() + "_svg");
+    auto *drawBuffer = svg_.getBuffer("_" + getUniqueName() + "_svg");
 
     svg_.endDrawBuffer(drawBuffer);
 
     //---
 
-    CMatrixStack2D transform = oldBuffer_->transform();
+    auto transform = oldBuffer_->transform();
 
     //---
 
     // pixel and view box
-    CBBox2D pbbox = calcPixelBox();
-    //CBBox2D vbbox = calcViewBox ();
+    auto pbbox = calcPixelBox();
+    //auto vbbox = calcViewBox ();
 
-    //CPoint2D bmin = vbbox.getLL();
-    //CPoint2D bmax = vbbox.getUR();
+    //auto bmin = vbbox.getLL();
+    //auto bmax = vbbox.getUR();
 
     //svg_.viewMatrix().multiplyPoint(vbbox.getLL(), bmin);
     //svg_.viewMatrix().multiplyPoint(vbbox.getUR(), bmax);
@@ -299,9 +299,9 @@ drawTerm()
     double s       = 0;
 
     if (hasPreserveAspect()) {
-      CSVGScale   scale  = getScale();
-      CHAlignType halign = getHAlign();
-      CVAlignType valign = getVAlign();
+      auto scale  = getScale();
+      auto halign = getHAlign();
+      auto valign = getVAlign();
 
       if      (scale == CSVGScale::FIXED_MEET) {
         s = std::min(bw, bh);
@@ -357,7 +357,7 @@ drawTerm()
       double xs = svg_.flatXScale();
       double ys = svg_.flatYScale();
 
-      CSVGBuffer *clipBuffer = svg_.getBuffer("_" + getUniqueName() + "_svg_clip");
+      auto *clipBuffer = svg_.getBuffer("_" + getUniqueName() + "_svg_clip");
 
       double px1 = -ix*xs;
       double py1 = -iy*ys;

@@ -5,7 +5,7 @@
 
 class CSVGPolyLine : public CSVGObject {
  public:
-  typedef std::vector<CPoint2D> PointList;
+  using PointList = std::vector<CPoint2D>;
 
  public:
   CSVG_OBJECT_DEF("polyline", CSVGObjTypeId::POLYLINE)

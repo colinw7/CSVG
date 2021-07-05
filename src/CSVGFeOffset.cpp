@@ -84,8 +84,8 @@ drawElement()
 {
   std::string objectBufferName = "_" + getUniqueName();
 
-  CSVGBuffer *inBuffer  = svg_.getBuffer(getFilterIn ());
-  CSVGBuffer *outBuffer = svg_.getBuffer(getFilterOut());
+  auto *inBuffer  = svg_.getBuffer(getFilterIn ());
+  auto *outBuffer = svg_.getBuffer(getFilterOut());
 
   bool inDrawing = inBuffer->isDrawing();
 
@@ -108,12 +108,12 @@ drawElement()
 
   calcDelta(dx, dy);
 
-  //CBBox2D outBBox = inBBox.movedBy(CPoint2D(dx, dy));
+  //auto outBBox = inBBox.movedBy(CPoint2D(dx, dy));
 
   //---
 
   if (svg_.getDebugFilter()) {
-    CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_in");
+    auto *buffer = svg_.getBuffer(objectBufferName + "_in");
 
     buffer->setImageBuffer(inBuffer);
     buffer->setBBox       (inBBox);
@@ -121,7 +121,7 @@ drawElement()
 
   //---
 
-  CSVGFilter *filter = getParentFilter();
+  auto *filter = getParentFilter();
 
   if (filter)
     filter->setOffset(CPoint2D(dx, dy));
@@ -133,7 +133,7 @@ drawElement()
   //---
 
   if (svg_.getDebugFilter()) {
-    CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_out");
+    auto *buffer = svg_.getBuffer(objectBufferName + "_out");
 
     buffer->setImageBuffer(outBuffer);
     buffer->setBBox       (inBBox);
@@ -153,12 +153,12 @@ calcDelta(double &dx, double &dy) const
   dx = this->getDX();
   dy = this->getDY();
 
-  CSVGFilter *filter = getParentFilter();
+  auto *filter = getParentFilter();
 
-  CSVGCoordUnits primitiveUnits = filter->getPrimitiveUnits();
+  auto primitiveUnits = filter->getPrimitiveUnits();
 
   if (primitiveUnits == CSVGCoordUnits::OBJECT_BBOX) {
-    CBBox2D filterBBox = filter->getObjectBBox();
+    auto filterBBox = filter->getObjectBBox();
 
     dx *= filterBBox.getWidth ();
     dy *= filterBBox.getHeight();

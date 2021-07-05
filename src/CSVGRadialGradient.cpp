@@ -116,7 +116,7 @@ void
 CSVGRadialGradient::
 addLinkStops()
 {
-  CSVGObject *object = xlink_.getValue().getObject();
+  auto *object = xlink_.getValue().getObject();
 
   if (! object) {
     //CSVGLog() << "No object for radial gradient link";

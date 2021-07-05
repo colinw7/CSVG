@@ -62,10 +62,10 @@ drawPath(CSVGObject* obj)
 
   //---
 
-  CSVGBuffer *oldBuffer = svg_.getCurrentBuffer();
+  auto *oldBuffer = svg_.getCurrentBuffer();
 
   // set temp buffer for clip path data
-  CSVGBuffer *buffer = svg_.pushBuffer("clipPath_" + obj->getUniqueName());
+  auto *buffer = svg_.pushBuffer("clipPath_" + obj->getUniqueName());
 
   buffer->setClip(true);
 
@@ -82,7 +82,7 @@ drawPath(CSVGObject* obj)
 
   //---
 
-  CMatrixStack2D transform = buffer->transform();
+  auto transform = buffer->transform();
 
   // set transform
   CMatrixStack2D transform1;

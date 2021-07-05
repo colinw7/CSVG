@@ -10,10 +10,10 @@ class CSVGObject;
 
 class CSVGAnimation {
  public:
-  typedef std::list<CSVGObject *> Objects;
+  using Objects = std::list<CSVGObject *>;
 
  public:
-  CSVGAnimation(CSVGObject *parent=0);
+  CSVGAnimation(CSVGObject *parent=nullptr);
 
  ~CSVGAnimation();
 
@@ -37,7 +37,7 @@ class CSVGAnimation {
   void handleEvent(CSVGEventType type, const std::string &id, const std::string &data);
 
  private:
-  CSVGObject               *parent_ { 0 };
+  CSVGObject               *parent_ { nullptr };
   Objects                   objects_;
   COptValT<CMatrixStack2D>  t_;
 };

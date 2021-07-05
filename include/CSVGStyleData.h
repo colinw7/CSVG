@@ -8,7 +8,7 @@
 
 class CSVGStyleData {
  public:
-  typedef std::map<std::string, std::string> NameValues;
+  using NameValues = std::map<std::string, std::string>;
 
  public:
   CSVGStyleData(CSVG &svg, const std::string &id) :

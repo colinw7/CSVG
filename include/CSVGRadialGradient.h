@@ -9,7 +9,7 @@ class CSVGStop;
 
 class CSVGRadialGradient : public CSVGObject {
  public:
-  typedef std::vector<CSVGStop *> StopList;
+  using StopList = std::vector<CSVGStop *>;
 
  public:
   CSVG_OBJECT_DEF("radialGradient", CSVGObjTypeId::RADIAL_GRADIENT)

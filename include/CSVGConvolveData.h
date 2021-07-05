@@ -5,7 +5,7 @@
 #include <string>
 
 struct CSVGConvolveData {
-  typedef std::vector<double> Reals;
+  using Reals = std::vector<double>;
 
   double      xorder           { 3 };
   double      yorder           { 3 };

@@ -165,7 +165,7 @@ CPoint2D
 CSVG::
 flatOffset() const
 {
-  CPoint2D o = blockData_.offset();
+  auto o = blockData_.offset();
 
   for (const auto &b : blockDataStack_)
     o += b.offset();
@@ -326,7 +326,7 @@ setAltRoot(CSVGObject *o)
 
     //---
 
-    CSVGBlock *block = getRootBlock();
+    auto *block = getRootBlock();
 
     altData_.block->setX     (block->getX     ());
     altData_.block->setY     (block->getY     ());
@@ -379,7 +379,7 @@ clear()
 
   block_      = nullptr;
   xmlTag_     = nullptr;
-  background_ = CRGBA(1,1,1);
+  background_ = CRGBA(1, 1, 1);
 
   fontList_.clear();
 
@@ -418,7 +418,7 @@ read(const std::string &filename, CSVGObject *object)
   // Process top (execute) tokens
   for (const auto &token : xml_->getTokens()) {
     if (token->isExecute()) {
-      CXMLExecute *exec = token->getExecute();
+      auto *exec = token->getExecute();
 
       const std::string &id = exec->getId();
 
@@ -428,7 +428,7 @@ read(const std::string &filename, CSVGObject *object)
         uint numOptions = exec->getNumOptions();
 
         for (uint j = 0; j < numOptions; ++j) {
-          const CXMLExecute::Option &opt = exec->getOption(j);
+          const auto &opt = exec->getOption(j);
 
           if      (opt.getName() == "href")
             xmlStyleSheet.ref = opt.getValue();
@@ -464,7 +464,7 @@ read(const std::string &filename, CSVGObject *object)
   object->setXMLTag(xmlTag_);
 
   for (const auto &token : xmlTag_->getChildren()) {
-    CSVGObject *object1 = tokenToObject(object, token);
+    auto *object1 = tokenToObject(object, token);
 
     if (object1)
       object->addChildObject(object1);
@@ -486,7 +486,7 @@ tokenToObject(CSVGObject *parent, const CXMLToken *token)
   if (! token->isTag())
     return nullptr;
 
-  CXMLTag *tag = token->getTag();
+  auto *tag = token->getTag();
 
   //-----
 
@@ -498,7 +498,7 @@ tokenToObject(CSVGObject *parent, const CXMLToken *token)
   //-----
 
   // Create object from tag name
-  CSVGObject *object = createObjectByName(tag_name);
+  auto *object = createObjectByName(tag_name);
 
   if (! object) {
     if (CRegExpUtil::parse(tag_name, "sodipodi:.*") ||
@@ -526,7 +526,7 @@ tokenToObject(CSVGObject *parent, const CXMLToken *token)
 
   for (const auto &ttoken : tag->getChildren()) {
     if      (ttoken->isText()) {
-      CXMLText *text = ttoken->getText();
+      auto *text = ttoken->getText();
 
       if (hasTextSpan) {
         auto *tspan = dynamic_cast<CSVGTSpan *>(object);
@@ -544,14 +544,14 @@ tokenToObject(CSVGObject *parent, const CXMLToken *token)
     }
     else if (ttoken->isTag() && ttoken->getTag()->getName() == "tspan") {
       if (! hasTextSpan && textStr != "") {
-        CSVGTSpan *tspan = createTSpan();
+        auto *tspan = createTSpan();
 
         tspan->setText(textStr);
 
         object->addChildObject(tspan);
       }
 
-      CSVGObject *object1 = tokenToObject(object, ttoken);
+      auto *object1 = tokenToObject(object, ttoken);
       assert(object1);
 
       object->addChildObject(object1);
@@ -592,7 +592,7 @@ tokenToObject(CSVGObject *parent, const CXMLToken *token)
 
     //---
 
-    CSVGObject *object1 = tokenToObject(object, ttoken);
+    auto *object1 = tokenToObject(object, ttoken);
 
     if (object1)
       object->addChildObject(object1);
@@ -1445,7 +1445,7 @@ CSVGGlyph *
 CSVG::
 getCharGlyph(char c) const
 {
-  CSVGFont *font = getFont();
+  auto *font = getFont();
 
   if (font)
     return font->getCharGlyph(c);
@@ -1460,7 +1460,7 @@ getUnicodeGlyph(const std::string &unicode) const
   if (fontList_.empty())
     return nullptr;
 
-  CSVGFont *font = fontList_[0];
+  auto *font = fontList_[0];
 
   return font->getUnicodeGlyph(unicode);
 }
@@ -1546,7 +1546,7 @@ drawRoot(CSVGBlock *block, const CPoint2D &offset, double xscale, double yscale,
 
   //------
 
-  const CMatrixStack2D &viewMatrix = rootBlockData_.viewMatrix();
+  const auto &viewMatrix = rootBlockData_.viewMatrix();
 
   renderer_->beginDraw();
 
@@ -1566,7 +1566,7 @@ drawRoot(CSVGBlock *block, const CPoint2D &offset, double xscale, double yscale,
 
   //------
 
-  CSVGBuffer *bgBuffer = getBuffer("BackgroundImage");
+  auto *bgBuffer = getBuffer("BackgroundImage");
 
   setCurrentBuffer(bgBuffer);
 
@@ -1598,7 +1598,7 @@ pushBuffer(const std::string &name)
   if (buffer_)
     bufferStack_.push_back(buffer_);
 
-  CSVGBuffer *buffer = getBuffer(name);
+  auto *buffer = getBuffer(name);
 
   buffer->setParentBuffer(buffer_);
 
@@ -1615,7 +1615,7 @@ popBuffer()
 {
   assert(! bufferStack_.empty());
 
-  CSVGBuffer *buffer = bufferStack_.back();
+  auto *buffer = bufferStack_.back();
 
   buffer->setParentBuffer(nullptr);
 
@@ -1676,10 +1676,10 @@ void
 CSVG::
 beginDrawBuffer(CSVGBuffer *buffer, const CPoint2D &offset, double xs, double ys)
 {
-  CSVGBlock *block = getRoot();
+  auto *block = getRoot();
 
-  CBBox2D pixelBox = block->calcPixelBox();
-  CBBox2D viewBox  = block->calcViewBox ();
+  auto pixelBox = block->calcPixelBox();
+  auto viewBox  = block->calcViewBox ();
 
   beginDrawBuffer(buffer, pixelBox, viewBox, offset, xs, ys, blockPreserveAspect());
 }
@@ -1688,9 +1688,9 @@ void
 CSVG::
 beginDrawBuffer(CSVGBuffer *buffer, const CBBox2D &viewBox)
 {
-  CSVGBlock *block = getRoot();
+  auto *block = getRoot();
 
-  CBBox2D pixelBox = block->calcPixelBox();
+  auto pixelBox = block->calcPixelBox();
 
   beginDrawBuffer(buffer, pixelBox, viewBox,
                   rootBlockOffset(), rootBlockXScale(), rootBlockYScale(),
@@ -1716,7 +1716,7 @@ beginDrawBuffer(CSVGBuffer *buffer, const CBBox2D &pixelBox, const CBBox2D &view
 
   //---
 
-  CBBox2D bbox1 = blockData_.viewBBox();
+  auto bbox1 = blockData_.viewBBox();
 
   double w = bbox1.getWidth ();
   double h = bbox1.getHeight();
@@ -1754,7 +1754,7 @@ void
 CSVG::
 updateDrawBuffer(CSVGBuffer *buffer)
 {
-  const CMatrixStack2D &viewMatrix = blockData_.viewMatrix();
+  const auto &viewMatrix = blockData_.viewMatrix();
 
   buffer->setViewMatrix(viewMatrix);
 
@@ -1847,7 +1847,7 @@ void
 CSVG::
 setSelectedStroke()
 {
-  styleData_.stroke.setColor    (CSVGColor(CRGB(1,0,0)));
+  styleData_.stroke.setColor    (CSVGColor(CRGB(1, 0, 0)));
   styleData_.stroke.setWidth    (2);
   styleData_.stroke.setOpacity  (1);
   styleData_.stroke.setDashArray("solid");
@@ -1904,12 +1904,12 @@ colorToRGBA(const CSVGColor &color) const
   if (color.isRGBA())
     return color.rgba();
 
-  CSVGObject *drawObject = currentDrawObject();
+  auto *drawObject = currentDrawObject();
 
   if (drawObject)
     return drawObject->colorToRGBA(color);
 
-  return CRGBA(0,0,0,0);
+  return CRGBA(0, 0, 0, 0);
 }
 
 void
@@ -2160,10 +2160,10 @@ drawText(double x, double y, const std::string &text, const CSVGFontDef &fontDef
 {
   setStrokeBuffer(buffer_);
 
-  CSVGFont *svg_font = getFont();
+  auto *svg_font = getFont();
 
   if (svg_font) {
-    CSVGFontFace *font_face = svg_font->getFontFace();
+    auto *font_face = svg_font->getFontFace();
 
     double units = 1000;
 
@@ -2172,7 +2172,7 @@ drawText(double x, double y, const std::string &text, const CSVGFontDef &fontDef
 
     //-----
 
-    CMatrixStack2D transform = buffer_->transform();
+    auto transform = buffer_->transform();
 
     double font_size = 10.0;
 
@@ -2182,7 +2182,7 @@ drawText(double x, double y, const std::string &text, const CSVGFontDef &fontDef
     uint len = text.size();
 
     for (uint i = 0; i < len; ++i) {
-      CSVGGlyph *glyph = getCharGlyph(text[i]);
+      auto *glyph = getCharGlyph(text[i]);
 
       if (glyph) {
         setTransform(transform);
@@ -2199,9 +2199,9 @@ drawText(double x, double y, const std::string &text, const CSVGFontDef &fontDef
     setTransform(transform);
   }
   else {
-    CMatrixStack2D transform = buffer_->transform();
+    auto transform = buffer_->transform();
 
-    CMatrixStack2D transform1 = transform;
+    auto transform1 = transform;
 
     if (fontDef.getAngle()) {
       transform1.rotate(fontDef.getAngle(), CPoint2D(x, y));
@@ -2234,10 +2234,10 @@ fillText(double x, double y, const std::string &text, const CSVGFontDef &fontDef
 {
   setFillBuffer(buffer_);
 
-  CSVGFont *svg_font = getFont();
+  auto *svg_font = getFont();
 
   if (svg_font) {
-    CSVGFontFace *font_face = svg_font->getFontFace();
+    auto *font_face = svg_font->getFontFace();
 
     double units = 1000;
 
@@ -2246,7 +2246,7 @@ fillText(double x, double y, const std::string &text, const CSVGFontDef &fontDef
 
     //-----
 
-    CMatrixStack2D transform = buffer_->transform();
+    auto transform = buffer_->transform();
 
     double font_size = 10.0;
 
@@ -2256,7 +2256,7 @@ fillText(double x, double y, const std::string &text, const CSVGFontDef &fontDef
     uint len = text.size();
 
     for (uint i = 0; i < len; ++i) {
-      CSVGGlyph *glyph = getCharGlyph(text[i]);
+      auto *glyph = getCharGlyph(text[i]);
 
       if (glyph) {
         setTransform(transform);
@@ -2273,9 +2273,9 @@ fillText(double x, double y, const std::string &text, const CSVGFontDef &fontDef
     setTransform(transform);
   }
   else {
-    CMatrixStack2D transform = buffer_->transform();
+    auto transform = buffer_->transform();
 
-    CMatrixStack2D transform1 = transform;
+    auto transform1 = transform;
 
     if (fontDef.getAngle()) {
       transform1.rotate(fontDef.getAngle(), CPoint2D(x, y));
@@ -2472,7 +2472,7 @@ void
 CSVG::
 drawMarkers(const std::vector<CPoint2D> &points, const std::vector<double> &angles)
 {
-  CSVGObject *drawObject = currentDrawObject();
+  auto *drawObject = currentDrawObject();
 
   // get markers
   CSVGObject *startMarker = nullptr, *midMarker = nullptr, *endMarker = nullptr;
@@ -2681,7 +2681,7 @@ decodeCoordValue(const std::string &str, CScreenUnits &length)
     length = CScreenUnits(CScreenUnits::Units::PERCENT, value);
   }
   else {
-    COptValT<CScreenUnits> optLength = decodeLengthValue(str);
+    auto optLength = decodeLengthValue(str);
 
     if (! optLength.isValid())
       return false;
@@ -2727,7 +2727,7 @@ decodeLengthListValue(const std::string &str, std::vector<CScreenUnits> &lengths
 
     std::string str1 = parse.getBefore(pos);
 
-    COptValT<CScreenUnits> optLength = decodeLengthValue(str1);
+    auto optLength = decodeLengthValue(str1);
 
     if (! optLength.isValid())
       return false;
@@ -2782,7 +2782,7 @@ fontSizeOption(const std::string &opt_name, const std::string &opt_value,
     length = CScreenUnits(CScreenUnits::Units::PX, 10); // TODO
   }
   else {
-    COptValT<CScreenUnits> optLength = decodeLengthValue(opt_value);
+    auto optLength = decodeLengthValue(opt_value);
 
     if (! optLength.isValid()) {
       std::string msg = "Illegal font size value '" + opt_value + "' for " + name;
@@ -2811,7 +2811,7 @@ letterSpacingOption(const std::string &opt_name, const std::string &opt_value,
     // TODO
   }
   else {
-    COptValT<CScreenUnits> optLength = decodeLengthValue(opt_value);
+    auto optLength = decodeLengthValue(opt_value);
 
     if (! optLength.isValid()) {
       std::string msg = "Illegal font size value '" + opt_value + "' for " + name;
@@ -2840,7 +2840,7 @@ wordSpacingOption(const std::string &opt_name, const std::string &opt_value,
     // TODO
   }
   else {
-    COptValT<CScreenUnits> optLength = decodeLengthValue(opt_value);
+    auto optLength = decodeLengthValue(opt_value);
 
     if (! optLength.isValid()) {
       std::string msg = "Illegal font size value '" + opt_value + "' for " + name;
@@ -2862,7 +2862,7 @@ lengthOption(const std::string &opt_name, const std::string &opt_value,
   if (opt_name != name)
     return false;
 
-  COptValT<CScreenUnits> optLength = decodeLengthValue(opt_value);
+  auto optLength = decodeLengthValue(opt_value);
 
   if (! optLength.isValid()) {
     std::string msg = "Illegal length value '" + opt_value + "' for " + name;
@@ -3038,7 +3038,7 @@ orientOption(const std::string &opt_name, const std::string &opt_value,
   if (opt_name != name)
     return false;
 
-  COptValT<CSVGOrient> optOrient = decodeOrientString(opt_value);
+  auto optOrient = decodeOrientString(opt_value);
 
   if (! optOrient.isValid()) {
     std::string msg = "Illegal orient value '" + opt_value + "' for " + name;
@@ -3062,7 +3062,7 @@ decodeOrientString(const std::string &str)
     return COptValT<CSVGOrient>(orient);
   }
 
-  COptValT<CAngle> angle = decodeAngleString(str);
+  auto angle = decodeAngleString(str);
 
   if (! angle.isValid())
     return COptValT<CSVGOrient>();
@@ -3092,7 +3092,7 @@ angleOption(const std::string &opt_name, const std::string &opt_value,
   if (opt_name != name)
     return false;
 
-  COptValT<CAngle> optAngle = decodeAngleString(opt_value);
+  auto optAngle = decodeAngleString(opt_value);
 
   if (! optAngle.isValid()) {
     std::string msg = "Invalid angle value '" + opt_value + "' for " + name;
@@ -3956,7 +3956,7 @@ decodeDashString(const std::string &dash_str, std::vector<CScreenUnits> &lengths
   for (uint i = 0; i < num_words; ++i) {
     std::string word = CStrUtil::stripSpaces(words[i]);
 
-    COptValT<CScreenUnits> optLength = decodeLengthValue(word);
+    auto optLength = decodeLengthValue(word);
 
     if (! optLength.isValid())
       return false;
@@ -4056,7 +4056,7 @@ decodeRGBAString(const std::string &colorStr, CRGBA &rgba)
   }
   else {
     if (colorStr == "none")
-      rgba = CRGBA(0,0,0,0);
+      rgba = CRGBA(0, 0, 0, 0);
     else
       rgba = nameToRGBA(colorStr);
   }
@@ -4121,7 +4121,7 @@ nameToRGBA(const std::string &name)
 
   CSVGLog() << "Illegal color name '" << name << "'";
 
-  return CRGBA(0,0,0);
+  return CRGBA(0, 0, 0);
 }
 
 CFontStyle
@@ -4452,7 +4452,7 @@ visitStyleData(const CCSS &css, const CCSSTagDataP &tagData)
   css.getSelectors(selectorListArray);
 
   for (const auto &selectorList : selectorListArray) {
-    const CCSS::StyleData &styleData = css.getStyleData(selectorList);
+    const auto &styleData = css.getStyleData(selectorList);
 
     if (! styleData.checkMatch(tagData))
       continue;

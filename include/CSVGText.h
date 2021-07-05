@@ -5,13 +5,13 @@
 
 class CSVGText : public CSVGObject {
  public:
-  typedef std::vector<double>       Reals;
-  typedef std::vector<CScreenUnits> Coords;
-  typedef std::vector<CScreenUnits> Lengths;
+  using Reals   = std::vector<double>;
+  using Coords  = std::vector<CScreenUnits>;
+  using Lengths = std::vector<CScreenUnits>;
 
-  typedef COptValT<Reals>   OptReals;
-  typedef COptValT<Coords>  OptCoords;
-  typedef COptValT<Lengths> OptLengths;
+  using OptReals   = COptValT<Reals>;
+  using OptCoords  = COptValT<Coords>;
+  using OptLengths = COptValT<Lengths>;
 
   enum class LengthAdjustType {
     LENGTHADJUST_UNKNOWN          = 0,

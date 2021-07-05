@@ -276,9 +276,9 @@ draw()
   if (svg_.getDebug())
     CSVGLog() << *this;
 
-  std::string text    = getText();
-  CHAlignType anchor  = getFlatTextAnchor();
-  CSVGFontDef fontDef = getFlatFontDef();
+  auto text    = getText();
+  auto anchor  = getFlatTextAnchor();
+  auto fontDef = getFlatFontDef();
 
   bool topBottom = (getWritingMode() == "tb");
 
@@ -311,7 +311,7 @@ draw()
 
     //---
 
-    CSVGFontDef fontDef1 = fontDef;
+    auto fontDef1 = fontDef;
 
     double dx = 0;
     double fs = 1;
@@ -431,7 +431,7 @@ draw()
     else if (CStrUtil::toReal(getVGlyphOrient(), &r))
       fa = r;
 
-    CSVGFontDef fontDef1 = fontDef;
+    auto fontDef1 = fontDef;
 
     if (fa.isValid()) {
       fontDef1.setFamily   (fontDef.getFamily());

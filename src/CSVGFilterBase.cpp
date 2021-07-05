@@ -21,7 +21,7 @@ std::string
 CSVGFilterBase::
 getUniqueName() const
 {
-  CSVGFilter *filter = getParentFilter();
+  auto *filter = getParentFilter();
 
   std::string name;
 
@@ -79,7 +79,7 @@ calcFilterIn(const COptString &filterIn) const
   if (filterIn.isValid())
     return filterIn.getValue();
 
-  CSVGFilter *filter = getParentFilter();
+  auto *filter = getParentFilter();
 
   return (filter ? filter->getLastFilterName() : "FilterGraphic");
 }
@@ -88,7 +88,7 @@ std::string
 CSVGFilterBase::
 calcFilterOut(const COptString &filterOut) const
 {
-  CSVGFilter *filter = getParentFilter();
+  auto *filter = getParentFilter();
 
   std::string name = "FilterGraphic";
 
@@ -105,12 +105,12 @@ bool
 CSVGFilterBase::
 getFilterObjectBBox(CBBox2D &bbox) const
 {
-  CSVGFilter *filter = getParentFilter();
+  auto *filter = getParentFilter();
 
   if (! filter)
     return false;
 
-  CSVGObject *obj = filter->getObject();
+  auto *obj = filter->getObject();
 
   bbox = filter->getObjectBBox(obj);
 
@@ -121,12 +121,12 @@ bool
 CSVGFilterBase::
 getFilterRegion(CBBox2D &bbox) const
 {
-  CSVGFilter *filter = getParentFilter();
+  auto *filter = getParentFilter();
 
   if (! filter)
     return false;
 
-  CSVGObject *obj = filter->getObject();
+  auto *obj = filter->getObject();
 
   if (! obj)
     return false;
@@ -142,7 +142,7 @@ CSVGFilterBase::
 getBufferSubRegion(CSVGBuffer *inBuffer, CBBox2D &bbox) const
 {
   // get input buffer region
-  CBBox2D bufferBBox = inBuffer->bbox();
+  auto bufferBBox = inBuffer->bbox();
 
   if (! bufferBBox.isSet())
     return getSubRegion(bbox);
@@ -197,7 +197,7 @@ getBBoxSubRegion(const CBBox2D &inBBox, const CBBox2D &objectBBox, CBBox2D &bbox
   double w = inBBox.getWidth ();
   double h = inBBox.getHeight();
 
-  CSVGCoordUnits primitiveUnits = getParentFilter()->getPrimitiveUnits();
+  auto primitiveUnits = getParentFilter()->getPrimitiveUnits();
 
   //---
 
@@ -250,7 +250,7 @@ CSVGObject *
 CSVGFilterBase::
 getParentFilterObject() const
 {
-  CSVGFilter *filter = getParentFilter();
+  auto *filter = getParentFilter();
 
   if (! filter)
     return nullptr;
@@ -264,7 +264,7 @@ getParentFilter() const
 {
   CSVGFilter *filter = nullptr;
 
-  CSVGObject *parent = getParent();
+  auto *parent = getParent();
 
   while (parent) {
     filter = dynamic_cast<CSVGFilter *>(parent);

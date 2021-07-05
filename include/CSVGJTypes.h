@@ -26,16 +26,16 @@ class CSVGJStringList;
 class CSVGJAngle;
 class CSVGJColor;
 
-typedef std::shared_ptr<CSVGJTransformList> CSVGJTransformListP;
-typedef std::shared_ptr<CSVGJMatrix>        CSVGJMatrixP;
-typedef std::shared_ptr<CSVGJRect>          CSVGJRectP;
-typedef std::shared_ptr<CSVGJNumberList>    CSVGJNumberListP;
-typedef std::shared_ptr<CSVGJNumber>        CSVGJNumberP;
-typedef std::shared_ptr<CSVGJLengthList>    CSVGJLengthListP;
-typedef std::shared_ptr<CSVGJLength>        CSVGJLengthP;
-typedef std::shared_ptr<CSVGJStringList>    CSVGJStringListP;
-typedef std::shared_ptr<CSVGJAngle>         CSVGJAngleP;
-typedef std::shared_ptr<CSVGJColor>         CSVGJColorP;
+using CSVGJTransformListP = std::shared_ptr<CSVGJTransformList>;
+using CSVGJMatrixP        = std::shared_ptr<CSVGJMatrix>;
+using CSVGJRectP          = std::shared_ptr<CSVGJRect>;
+using CSVGJNumberListP    = std::shared_ptr<CSVGJNumberList>;
+using CSVGJNumberP        = std::shared_ptr<CSVGJNumber>;
+using CSVGJLengthListP    = std::shared_ptr<CSVGJLengthList>;
+using CSVGJLengthP        = std::shared_ptr<CSVGJLength>;
+using CSVGJStringListP    = std::shared_ptr<CSVGJStringList>;
+using CSVGJAngleP         = std::shared_ptr<CSVGJAngle>;
+using CSVGJColorP         = std::shared_ptr<CSVGJColor>;
 
 //------
 
@@ -277,7 +277,7 @@ class CSVGJNumberListType : public CJObjType {
 
 class CSVGJNumberList : public CJObj {
  public:
-  typedef std::vector<double> Reals;
+  using Reals = std::vector<double>;
 
  public:
   CSVGJNumberList(CSVG *svg, const Reals &reals);
@@ -378,7 +378,7 @@ class CSVGJLengthListType : public CJObjType {
 
 class CSVGJLengthList : public CJObj {
  public:
-  typedef std::vector<CScreenUnits> Lengths;
+  using Lengths = std::vector<CScreenUnits>;
 
  public:
   CSVGJLengthList(CSVG *svg, const Lengths &lengths);
@@ -486,7 +486,7 @@ class CSVGJStringListType : public CJObjType {
 
 class CSVGJStringList : public CJObj {
  public:
-  typedef std::vector<std::string> Strings;
+  using Strings = std::vector<std::string>;
 
  public:
   CSVGJStringList(CSVG *svg, const Strings &reals);

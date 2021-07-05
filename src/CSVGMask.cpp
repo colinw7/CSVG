@@ -78,10 +78,10 @@ drawMask(const CSVGObject *object)
 
   //---
 
-  CSVGBuffer *oldBuffer = svg_.getCurrentBuffer();
+  auto *oldBuffer = svg_.getCurrentBuffer();
 
   // set temp buffer for mask image
-  CSVGBuffer *buffer = svg_.pushBuffer("mask_" + object->getUniqueName());
+  auto *buffer = svg_.pushBuffer("mask_" + object->getUniqueName());
 
   double x = bbox.getXMin  ();
   double y = bbox.getYMin  ();
@@ -94,7 +94,7 @@ drawMask(const CSVGObject *object)
 
   //---
 
-  CMatrixStack2D transform = buffer->transform();
+  auto transform = buffer->transform();
 
   // set transform
   CMatrixStack2D transform1;

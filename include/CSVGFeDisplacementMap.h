@@ -7,7 +7,7 @@ class CSVGBuffer;
 
 class CSVGFeDisplacementMap : public CSVGFilterBase {
  public:
-  typedef std::vector<double> Reals;
+  using Reals = std::vector<double>;
 
  public:
   CSVG_OBJECT_DEF("feDisplacementMap", CSVGObjTypeId::FE_DISPLACEMENT_MAP)

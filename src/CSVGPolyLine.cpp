@@ -84,7 +84,7 @@ draw()
 
   //---
 
-  CSVGBuffer *buffer = svg_.getCurrentBuffer();
+  auto *buffer = svg_.getCurrentBuffer();
 
   buffer->pathInit();
 

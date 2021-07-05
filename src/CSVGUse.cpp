@@ -94,10 +94,10 @@ termParse()
 {
 #if 0
   if (svg_.getUniquify()) {
-    CSVGObject *object = getLinkObject();
+    auto *object = getLinkObject();
 
     if (object) {
-      CSVGObject *object1 = object->dup();
+      auto *object1 = object->dup();
 
       CBBox2D box;
 
@@ -113,7 +113,7 @@ termParse()
       }
 
       if (width_.isValid() || height_.isValid()) {
-        CSize2D size = box.getSize();
+        auto size = box.getSize();
 
         if (width_ .isValid())
           size.width  = getWidth();
@@ -138,13 +138,13 @@ termParse()
 
 #if 0
   if (x_.isValid() || y_.isValid()) {
-    CMatrixStack2D transform = adjustedTransform() const
+    auto transform = adjustedTransform() const
 
     setTransform(transform);
   }
 
   if (width_.isValid() || height_.isValid()) {
-    //CSize2D size = box.getSize();
+    //auto size = box.getSize();
 
     //if (width_ .isValid())
     //  size.width  = getWidth();
@@ -161,7 +161,7 @@ CSVGUse::
 getBBox(CBBox2D &bbox) const
 {
   if (! hasViewBox()) {
-    CSVGObject *object = getLinkObject();
+    auto *object = getLinkObject();
 
     if (! object)
       return false;
@@ -220,7 +220,7 @@ void
 CSVGUse::
 moveBy(const CVector2D &delta)
 {
-  CSVGObject *object = getLinkObject();
+  auto *object = getLinkObject();
 
   if (object)
     object->moveBy(delta);
@@ -247,8 +247,8 @@ draw()
     //------
 
     // get current buffer
-    CSVGBuffer *oldBuffer     = svg_.getCurrentBuffer();
-    CSVGBuffer *currentBuffer = oldBuffer;
+    auto *oldBuffer     = svg_.getCurrentBuffer();
+    auto *currentBuffer = oldBuffer;
 
     //------
 
@@ -283,7 +283,7 @@ draw()
       xs = getWidth ()/symbolBBox.getWidth ();
       ys = getHeight()/symbolBBox.getHeight();
 
-      CSVGPreserveAspect pa = symbol->preserveAspect();
+      auto pa = symbol->preserveAspect();
 
       if (pa.getScale() == CSVGScale::FIXED_MEET || pa.getScale() == CSVGScale::FIXED_SLICE) {
         double s = (pa.getScale() == CSVGScale::FIXED_MEET ? std::min(xs, ys) : std::max(xs, ys));
@@ -312,9 +312,9 @@ draw()
     //------
 
     // set current transform
-    CMatrixStack2D transform = oldBuffer->transform();
+    auto transform = oldBuffer->transform();
 
-    CMatrixStack2D transform1 = adjustedTransform(transform);
+    auto transform1 = adjustedTransform(transform);
 
     transform1.append(object->getTransform());
 
@@ -411,7 +411,7 @@ draw()
   }
   else if (xlink_.isValid()) {
     if (xlink_.getValue().isImage()) {
-      CSVGBuffer *buffer = svg_.getCurrentBuffer();
+      auto *buffer = svg_.getCurrentBuffer();
 
       buffer->drawImage(0, 0, xlink_.getValue().getImageBuffer());
     }

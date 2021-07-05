@@ -65,13 +65,13 @@ bool
 CSVGFeFlood::
 drawElement()
 {
-  CSVGBuffer *outBuffer = svg_.getBuffer(getFilterOut());
+  auto *outBuffer = svg_.getBuffer(getFilterOut());
 
   //---
 
   CBBox2D bbox;
 
-  CSVGFilter *filter = getParentFilter();
+  auto *filter = getParentFilter();
 
   if (filter && filter->lastElement()) {
     filter->lastElement()->getSubRegion(bbox);
@@ -84,7 +84,7 @@ drawElement()
 
   //---
 
-  CRGBA c(0,0,0,0);
+  CRGBA c(0, 0, 0, 0);
 
   if (color_.isValid())
     c = color_.getValue().rgba();
@@ -101,7 +101,7 @@ drawElement()
   if (svg_.getDebugFilter()) {
     std::string objectBufferName = "_" + getUniqueName();
 
-    CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_out");
+    auto *buffer = svg_.getBuffer(objectBufferName + "_out");
 
     buffer->setImageBuffer(outBuffer);
     buffer->setBBox       (bbox);

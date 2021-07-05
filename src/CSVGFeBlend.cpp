@@ -76,9 +76,9 @@ bool
 CSVGFeBlend::
 drawElement()
 {
-  CSVGBuffer *inBuffer1 = svg_.getBuffer(getFilterIn1());
-  CSVGBuffer *inBuffer2 = svg_.getBuffer(getFilterIn2());
-  CSVGBuffer *outBuffer = svg_.getBuffer(getFilterOut());
+  auto *inBuffer1 = svg_.getBuffer(getFilterIn1());
+  auto *inBuffer2 = svg_.getBuffer(getFilterIn2());
+  auto *outBuffer = svg_.getBuffer(getFilterOut());
 
   bool inDrawing1 = inBuffer1->isDrawing();
   bool inDrawing2 = inBuffer2->isDrawing();
@@ -94,15 +94,15 @@ drawElement()
   getBufferSubRegion(inBuffer1, inBBox1);
   getBufferSubRegion(inBuffer2, inBBox2);
 
-  CBBox2D inBBox = inBBox1 + inBBox2;
+  auto inBBox = inBBox1 + inBBox2;
 
   //---
 
   if (svg_.getDebugFilter()) {
     std::string objectBufferName = "_" + getUniqueName();
 
-    CSVGBuffer *buffer1 = svg_.getBuffer(objectBufferName + "_in1");
-    CSVGBuffer *buffer2 = svg_.getBuffer(objectBufferName + "_in2");
+    auto *buffer1 = svg_.getBuffer(objectBufferName + "_in1");
+    auto *buffer2 = svg_.getBuffer(objectBufferName + "_in2");
 
     buffer1->setImageBuffer(inBuffer1);
     buffer1->setBBox       (inBBox1);
@@ -122,7 +122,7 @@ drawElement()
   if (svg_.getDebugFilter()) {
     std::string objectBufferName = "_" + getUniqueName();
 
-    CSVGBuffer *buffer = svg_.getBuffer(objectBufferName + "_out");
+    auto *buffer = svg_.getBuffer(objectBufferName + "_out");
 
     buffer->setImageBuffer(outBuffer);
     buffer->setBBox       (inBBox);
@@ -160,7 +160,7 @@ printValues(std::ostream &os, bool flat) const
   CSVGFilterBase::printValues(os, flat);
 
   if (mode_.isValid()) {
-    CSVGBlendMode mode = getMode();
+    auto mode = getMode();
 
     if      (mode == CSVGBlendMode::NORMAL  ) os << " mode=\"normal\"";
     else if (mode == CSVGBlendMode::MULTIPLY) os << " mode=\"multiply\"";

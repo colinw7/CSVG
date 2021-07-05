@@ -81,7 +81,7 @@ void
 CSVGImageData::
 clear()
 {
-  image_->setRGBAData(CRGBA(0,0,0,0));
+  image_->setRGBAData(CRGBA(0, 0, 0, 0));
 }
 
 void
@@ -128,9 +128,9 @@ CSVGImageData *
 CSVGImageData::
 subImage(int x, int y, int w, int h)
 {
-  CImagePtr image = image_->subImage(x, y, w, h);
+  auto image = image_->subImage(x, y, w, h);
 
-  CSVGImageData *data = dup();
+  auto *data = dup();
 
   data->setImage(image);
 
@@ -260,9 +260,9 @@ CSVGImageData *
 CSVGImageData::
 displacementMap(CSVGImageData *in, CRGBAComponent xcolor, CRGBAComponent ycolor, double scale)
 {
-  CImagePtr image = image_->displacementMap(in->image_, xcolor, ycolor, scale);
+  auto image = image_->displacementMap(in->image_, xcolor, ycolor, scale);
 
-  CSVGImageData *data = dup();
+  auto *data = dup();
 
   data->setImage(image);
 
@@ -280,9 +280,9 @@ CSVGImageData *
 CSVGImageData::
 erode(int r, bool isAlpha)
 {
-  CImagePtr image = image_->erode(r, isAlpha);
+  auto image = image_->erode(r, isAlpha);
 
-  CSVGImageData *data = dup();
+  auto *data = dup();
 
   data->setImage(image);
 
@@ -293,9 +293,9 @@ CSVGImageData *
 CSVGImageData::
 dilate(int r, bool isAlpha)
 {
-  CImagePtr image = image_->dilate(r, isAlpha);
+  auto image = image_->dilate(r, isAlpha);
 
-  CSVGImageData *data = dup();
+  auto *data = dup();
 
   data->setImage(image);
 
@@ -306,9 +306,9 @@ CSVGImageData *
 CSVGImageData::
 tile(int w, int h, const CImageTileData &tile)
 {
-  CImagePtr image = image_->tile(w, h, tile);
+  auto image = image_->tile(w, h, tile);
 
-  CSVGImageData *data = dup();
+  auto *data = dup();
 
   data->setImage(image);
 
@@ -334,9 +334,9 @@ CSVGImageData *
 CSVGImageData::
 createRGBAMask()
 {
-  CImagePtr image = image_->createRGBAMask();
+  auto image = image_->createRGBAMask();
 
-  CSVGImageData *data = dup();
+  auto *data = dup();
 
   data->setImage(image);
 

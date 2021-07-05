@@ -5,8 +5,8 @@
 
 class CSVGCSSData {
  public:
-  typedef std::map<std::string, CSVGStyleData> StyleDataMap;
-  typedef std::map<std::string, StyleDataMap>  TypeStyleDataMap;
+  using StyleDataMap     = std::map<std::string, CSVGStyleData>;
+  using TypeStyleDataMap = std::map<std::string, StyleDataMap>;
 
  public:
   CSVGCSSData(CSVG &svg) :

@@ -22,7 +22,7 @@
 
 #include <list>
 
-#define CSVG_OBJECT_DEF(name,id) \
+#define CSVG_OBJECT_DEF(name, id) \
 const CObjType &getObjType() const override { \
   static CObjType objType(getTypeMgr(), name, uint(id)); \
   return objType; \
@@ -40,9 +40,9 @@ class CSVGPathPart;
 
 class CSVGObject {
  public:
-  typedef std::list<CSVGObject *>           ObjectList;
-  typedef std::vector<CSVGObject *>         ObjectArray;
-  typedef std::map<std::string,std::string> NameValues;
+  using ObjectList  = std::list<CSVGObject *>;
+  using ObjectArray = std::vector<CSVGObject *>;
+  using NameValues  = std::map<std::string, std::string>;
 
  protected:
   CObjTypeMgr &getTypeMgr() const {
@@ -696,12 +696,12 @@ class CSVGObject {
   CSVGObject &operator=(const CSVGObject &rhs);
 
  protected:
-  typedef std::vector<std::string> StringVector;
+  using StringVector = std::vector<std::string>;
 
   CSVG&                        svg_;
   COptString                   id_;
   COptValT<StringVector>       classes_;
-  CSVGObject*                  parent_ { 0 };
+  CSVGObject*                  parent_ { nullptr };
   uint                         ind_;
   COptReal                     opacity_;
   COptString                   text_;

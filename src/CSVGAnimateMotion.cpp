@@ -73,7 +73,7 @@ CSVGAnimateMotion::
 animate(double t)
 {
   //std::cerr << "CSVGAnimateMotion: " << t_ << ":" << t << std::endl;
-  CSVGObject *parent = getParent();
+  auto *parent = getParent();
 
   ObjectArray objects;
 
@@ -106,7 +106,7 @@ animate(double t)
     const auto *path = (mpath ? &mpath->getPartList() : nullptr);
 
     if (path_.empty()) {
-      CSVGObject *obj = mpath->xlink().getObject();
+      auto *obj = mpath->xlink().getObject();
 
       if (obj && obj->getObjTypeId() == CSVGObjTypeId::PATH)
         path = &dynamic_cast<CSVGPath *>(obj)->getPartList();
@@ -143,7 +143,7 @@ animate(double t)
     CPoint2D p1(fromValues[0], fromValues[1]);
     CPoint2D p2(toValues  [0], toValues  [1]);
 
-    CPoint2D p = p1 + (p2 - p1)*t;
+    auto p = p1 + (p2 - p1)*t;
 
     getParent()->moveTo(p);
 

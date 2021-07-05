@@ -42,7 +42,7 @@ class CSVGJElement : public CJObj {
   CJValueP    data_;
 };
 
-typedef std::shared_ptr<CSVGJElement> CSVGJElementP;
+using CSVGJElementP = std::shared_ptr<CSVGJElement>;
 
 #endif
 

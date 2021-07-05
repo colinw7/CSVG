@@ -7,7 +7,7 @@
 
 class CSVGStrokeDash {
  public:
-  typedef std::vector<CScreenUnits> Dashes;
+  using Dashes = std::vector<CScreenUnits>;
 
  public:
   CSVGStrokeDash(const Dashes &dashes=Dashes()) : dashes_(dashes) { }
