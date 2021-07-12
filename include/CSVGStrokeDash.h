@@ -21,7 +21,7 @@ class CSVGStrokeDash {
   bool isNone() const { return ! isSolid() && dashes_.empty(); }
 
   bool hasOffset() const { return offset_.isValid(); }
-  const CScreenUnits &offset() const { return offset_.getValue(CScreenUnits(0)); }
+  CScreenUnits offset() const { return offset_.getValue(CScreenUnits(0)); }
   void setOffset(const CScreenUnits &v) { offset_ = v; }
 
   void addDash(const CScreenUnits &dash) { dashes_.push_back(dash); }

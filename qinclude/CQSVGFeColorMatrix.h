@@ -16,6 +16,8 @@ class CQSVGFeColorMatrix : public CQSVGObject, public CSVGFeColorMatrix {
 
   CQSVGEnum::ColorMatrixType getType() const;
   void setType(const CQSVGEnum::ColorMatrixType &t);
+
+  void addProperties(CQPropertyTree *tree, const std::string &name) override;
 };
 
 #endif

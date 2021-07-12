@@ -212,7 +212,7 @@ class CSVGBuffer {
 
   void reset();
 
-  void clear();
+  void clear(const CRGBA &rgba=CRGBA());
 
   void setup(const CBBox2D &bbox);
 

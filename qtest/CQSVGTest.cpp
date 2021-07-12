@@ -2,6 +2,7 @@
 #include <CQSVG.h>
 #include <CQApp.h>
 #include <CQStyle.h>
+#include <CQUtil.h>
 
 #include <QTimer>
 
@@ -66,6 +67,10 @@ main(int argc, char **argv)
 
   if (dpi > 0)
     CScreenUnitsMgrInst->setDpi(dpi);
+
+  CQUtil::initProperties();
+
+  //---
 
   auto *window = new CQSVGWindow;
 

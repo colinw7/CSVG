@@ -22,6 +22,8 @@ class CQSVGFeImage : public CQSVGObject, public CSVGFeImage {
 
   double getWidth () const;
   double getHeight() const;
+
+  void addProperties(CQPropertyTree *tree, const std::string &name) override;
 };
 
 #endif

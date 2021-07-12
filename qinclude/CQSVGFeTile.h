@@ -11,6 +11,8 @@ class CQSVGFeTile : public CQSVGObject, public CSVGFeTile {
 
  public:
   CQSVGFeTile(CQSVG *svg);
+
+  void addProperties(CQPropertyTree *tree, const std::string &name) override;
 };
 
 #endif

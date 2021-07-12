@@ -27,9 +27,10 @@ bool
 CSVGStop::
 processOption(const std::string &opt_name, const std::string &opt_value)
 {
-  std::string  str;
   double       real;
   CScreenUnits length;
+  CSVGColor    color;
+  bool         inherit;
 
   if      (svg_.percentOption(opt_name, opt_value, "offset", length)) {
     if (length.ratioValue() < 0.0 || length.ratioValue() > 1)
@@ -37,15 +38,10 @@ processOption(const std::string &opt_name, const std::string &opt_value)
 
     offset_ = length;
   }
-  else if (svg_.stringOption(opt_name, opt_value, "stop-color", str)) {
-    CSVGColor color;
-
-    if (! svg_.decodeColorString(str, color))
-      return false;
-
+  else if (svg_.colorOption(opt_name, opt_value, "stop-color", color)) {
     color_ = color;
   }
-  else if (svg_.realOption(opt_name, opt_value, "stop-opacity", &real)) {
+  else if (svg_.opacityOption(opt_name, opt_value, "stop-opacity", real, inherit)) {
     opacity_ = real;
   }
   else

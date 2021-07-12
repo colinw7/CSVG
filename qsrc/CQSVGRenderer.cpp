@@ -272,12 +272,16 @@ CQSVGRenderer::
 clear(const CRGBA &bg)
 {
   if (drawing_) {
+    painter_->setWorldMatrixEnabled(false);
+
     QRect irect(0, 0, imageData_->getWidth(), imageData_->getHeight());
 
     if (bg.getAlphaI() > 0)
       painter_->fillRect(irect, QBrush(CQUtil::rgbaToColor(bg)));
     else
       painter_->fillRect(irect, Qt::transparent);
+
+    painter_->setWorldMatrixEnabled(true);
   }
   else {
     if (bg.getAlphaI() > 0)
@@ -593,7 +597,13 @@ setLineWidth(double w)
 
   //if (w <= 1.0) w = 1.0;
 
-  pen_.setWidthF(w);
+  CPoint2D p1, p2;
+
+  windowToPixel(CPoint2D(0.0, 0.0), p1);
+  windowToPixel(CPoint2D(  w,   w), p2);
+
+  pen_.setWidthF(std::abs(p2.x - p1.x));
+  pen_.setCosmetic(true);
 
   painter_->setPen(pen_);
 }

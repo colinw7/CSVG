@@ -9,6 +9,8 @@
 #include <CSVGObject.h>
 #include <CSVGFilter.h>
 
+#include <CQPropertyTree.h>
+#include <CQPropertyItem.h>
 #include <CQFontUtil.h>
 #include <CQUtil.h>
 #include <QPainter>
@@ -220,7 +222,9 @@ double
 CQSVGObject::
 strokeOffset() const
 {
-  return obj_->getFlatStrokeLineDash().getValue(CSVGStrokeDash()).offset().pxValue(1);
+  auto dash = obj_->getFlatStrokeLineDash().getValue(CSVGStrokeDash());
+
+  return dash.offset().pxValue(1);
 }
 
 void
@@ -426,6 +430,74 @@ setFont(QFont f)
 
 void
 CQSVGObject::
+addProperties(CQPropertyTree *propTree, const std::string &name)
+{
+  auto objName = QString::fromStdString(name);
+
+  propTree->addProperty(objName, this, "id");
+
+  //---
+
+  bool hasChildren = object()->hasChildren();
+
+  if (object()->isDrawable() || hasChildren)
+    propTree->addProperty(objName, this, "visible");
+
+  if (object()->getFilter())
+    propTree->addProperty(objName, this, "filtered");
+
+  if (object()->getClipPath())
+    propTree->addProperty(objName, this, "clipped");
+
+  if (object()->getMask())
+    propTree->addProperty(objName, this, "masked");
+
+  if (! object()->isAnimated()) {
+    if (object()->isDrawable() || hasChildren)
+      propTree->addProperty(objName, this, "transform");
+
+    if (object()->isDrawable() || hasChildren) {
+      propTree->addProperty(objName, this, "opacity");
+
+      //---
+
+      auto strokeName = objName + "/stroke";
+
+      propTree->addProperty(strokeName, this, "strokeNoColor"     )->setLabel("noColor"     );
+      propTree->addProperty(strokeName, this, "strokeCurrentColor")->setLabel("currentColor");
+      propTree->addProperty(strokeName, this, "strokeColor"       )->setLabel("color"       );
+      propTree->addProperty(strokeName, this, "strokeOpacity"     )->setLabel("opacity"     );
+      propTree->addProperty(strokeName, this, "strokeWidth"       )->setLabel("width"       );
+      propTree->addProperty(strokeName, this, "strokeDash"        )->setLabel("dash"        );
+      propTree->addProperty(strokeName, this, "strokeOffset"      )->setLabel("offset"      );
+      propTree->addProperty(strokeName, this, "strokeCap"         )->setLabel("cap"         );
+      propTree->addProperty(strokeName, this, "strokeJoin"        )->setLabel("join"        );
+
+      //---
+
+      auto fillName = objName + "/fill";
+
+      propTree->addProperty(fillName, this, "fillNoColor"     )->setLabel("noColor"     );
+      propTree->addProperty(fillName, this, "fillCurrentColor")->setLabel("currentColor");
+      propTree->addProperty(fillName, this, "fillColor"       )->setLabel("color"       );
+      propTree->addProperty(fillName, this, "fillOpacity"     )->setLabel("opacity"     );
+      propTree->addProperty(fillName, this, "fillRule"        )->setLabel("rule"        );
+      propTree->addProperty(fillName, this, "fillUrl"         )->setLabel("url"         );
+    }
+
+    if (object()->hasFont()) {
+      auto fontName = objName + "/font";
+
+      propTree->addProperty(fontName, this, "fontFamily")->setLabel("family");
+    //propTree->addProperty(fontName, this, "fontStyle" )->setLabel("style");
+      propTree->addProperty(fontName, this, "fontSize"  )->setLabel("size");
+      propTree->addProperty(fontName, this, "font"      )->setLabel("font");
+    }
+  }
+}
+
+void
+CQSVGObject::
 drawSelected()
 {
   if (! isSelected())
@@ -449,7 +521,7 @@ drawSelected()
     canvas->pixelToWindow(p1, w1);
     canvas->pixelToWindow(p2, w2);
 
-    canvas->drawRect(CBBox2D(w1, w2), Qt::red);
+    canvas->drawRect(CBBox2D(p1, p2), Qt::red);
   }
 
   //---

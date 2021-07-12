@@ -21,6 +21,8 @@ class CQSVGFilter : public CQSVGObject, public CSVGFilter {
   double getY() const;
   double getWidth() const;
   double getHeight() const;
+
+  void addProperties(CQPropertyTree *tree, const std::string &name) override;
 };
 
 #endif

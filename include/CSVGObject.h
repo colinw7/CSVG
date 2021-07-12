@@ -40,6 +40,7 @@ class CSVGPathPart;
 
 class CSVGObject {
  public:
+  using Classes     = std::vector<std::string>;
   using ObjectList  = std::list<CSVGObject *>;
   using ObjectArray = std::vector<CSVGObject *>;
   using NameValues  = std::map<std::string, std::string>;
@@ -61,36 +62,57 @@ class CSVGObject {
 
   CSVG &getSVG() const { return svg_; }
 
+  //---
+
+  //! get/set id
   std::string getId() const { return id_.getValue(""); }
   void setId(const std::string &id);
 
-  std::vector<std::string> getClasses() const {
-    return classes_.getValue(std::vector<std::string>()); }
-  void setClasses(const std::vector<std::string> &classes);
+  //! get/set classes
+  Classes getClasses() const { return classes_.getValue(Classes()); }
+  void setClasses(const Classes &classes);
 
+  //! get/set parent
   CSVGObject *getParent() const { return parent_; }
   void setParent(CSVGObject *parent);
+
+  //---
+
+  int getDepth() const;
 
   uint getInd() const { return ind_; }
 
   void autoName();
 
+  //---
+
+  //! get/set stroke
   bool hasStroke() const { return stroke_.isSet(); }
   const CSVGStroke &getStroke() const { return stroke_; }
   void setStroke(const CSVGStroke &s) { stroke_ = s; strokeChanged(); }
 
+  //! get/set fill
   bool hasFill() const { return fill_.isSet(); }
   const CSVGFill &getFill() const { return fill_; }
   void setFill(const CSVGFill &f) { fill_ = f; fillChanged(); }
 
+  //---
+
   const CSVGClip &getClip() const { return clip_; }
 
+  //---
+
+  //! get/set font def
   bool hasFontDef() const { return fontDef_.isSet(); }
   const CSVGFontDef &getFontDef() const { return fontDef_; }
   void setFontDef(const CSVGFontDef &f) { fontDef_ = f; }
 
+  //---
+
   void updateStroke(const CSVGStroke &stroke, bool recurse=false);
   void updateFill  (const CSVGFill   &fill  , bool recurse=false);
+
+  //---
 
   virtual const CObjType &getObjType() const = 0;
 
@@ -111,6 +133,8 @@ class CSVGObject {
 
   bool isObjType(const std::string &name) const { return (getObjName() == name); }
 
+  //---
+
   virtual bool canFlatten() const { return true; }
 
   virtual bool propagateFlat() const { return true; }
@@ -121,57 +145,70 @@ class CSVGObject {
 
   //---
 
+  //! get/set filter
   bool hasFilter() const { return filter_.isValid(); }
   CSVGFilter *getFilter() const { return filter_.getValue(0); }
   void setFilter(CSVGFilter *filter) { filter_ = filter; }
 
+  //! get/set filtered
   bool getFiltered() const { return filtered_; }
   void setFiltered(bool b) { filtered_ = b; }
 
   //---
 
+  //! get/set mask
   CSVGMask *getMask() const { return mask_; }
   void setMask(CSVGMask *m) { mask_ = m; }
 
+  //! get/set masked
   bool getMasked() const { return masked_; }
   void setMasked(bool b) { masked_ = b; }
 
   //---
 
+  //! get/set clip path
   CSVGClipPath *getClipPath() const { return clipPath_; }
   void setClipPath(CSVGClipPath *c) { clipPath_ = c; }
 
+  //! get/set clipped
   bool getClipped() const { return clipped_; }
   void setClipped(bool b) { clipped_ = b; }
 
   //---
 
+  //! get/set marker start
   CSVGObject *getMarkerStart() const { return marker_.getStart(); }
   void setMarkerStart(CSVGObject *m) { marker_.setStart(m); }
 
+  //! get/set marker mid
   CSVGObject *getMarkerMid() const { return marker_.getMid(); }
   void setMarkerMid(CSVGObject *m) { marker_.setMid(m); }
 
+  //! get/set marker end
   CSVGObject *getMarkerEnd() const { return marker_.getEnd(); }
   void setMarkerEnd(CSVGObject *m) { marker_.setEnd(m); }
 
   //---
 
+  //! get/set selected
   bool getSelected() const { return selected_; }
   void setSelected(bool selected, bool children=false);
 
   //---
 
+  //! get/set inside
   bool getInside() const { return inside_; }
   void setInside(bool inside) { inside_ = inside; }
 
   //---
 
+  //! get/set xml tag
   CXMLTag *getXMLTag() const { return xmlTag_; }
   void setXMLTag(CXMLTag *tag) { xmlTag_ = tag; }
 
   //---
 
+  //! get/set view box
   bool hasViewBox() const { return viewBox_.isValid(); }
   CBBox2D getViewBox() const { return viewBox_.getValue(CBBox2D()); }
   void setViewBox(const CBBox2D &box) { viewBox_ = box; }
@@ -303,11 +340,10 @@ class CSVGObject {
 
   //------
 
-  // opacity
-  void   setOpacity     (const std::string &opacityStr);
-  void   setOpacity     (double opacity) { opacity_.setValue(opacity); }
+  // get/set opacity
+  void   setOpacity(double opacity) { opacity_.setValue(opacity); }
   bool   getOpacityValid() const { return opacity_.isValid(); }
-  double getOpacity     () const { return opacity_.getValue(1.0); }
+  double getOpacity() const { return opacity_.getValue(1.0); }
 
   //------
 
@@ -423,30 +459,45 @@ class CSVGObject {
 
   //------
 
-  // overflow
+  //! get/set overflow
   void setOverflow(const std::string &str);
 
   bool hasOverflow() const { return overflow_.isValid(); }
   CSVGOverflowType getOverflow() const { return overflow_.getValue(CSVGOverflowType::VISIBLE); }
   void setOverflow(CSVGOverflowType o) { overflow_ = o; }
 
-  // visible
+  //! get/set visible
   bool hasVisibility() const { return visibility_.isValid(); }
   std::string getVisibility() const { return visibility_.getValue(""); }
   void setVisibility(const std::string &str) { visibility_ = str; }
 
-  // display
+  //! get/set display
   std::string getDisplay() const { return display_.getValue(""); }
   void setDisplay(const std::string &str) { display_ = str; }
 
-  // current color
+  //! get/set current color
   bool hasCurrentColor() const { return currentColor_.isValid(); }
   CSVGColor currentColor() const { return currentColor_.getValue(CSVGColor()); }
   void setCurrentColor(const CSVGColor &c) { currentColor_ = c; }
 
+  //---
+
+  //! get/set viewport fill
+  bool hasViewportFillColor() const { return viewportFill_.getColorValid(); }
+  CSVGColor viewportFillColor() const { return viewportFill_.getColor(); }
+  void setViewportFillColor(const CSVGColor &c) { viewportFill_.setColor(c); }
+
+  void setViewportFillOpacity(double r) { viewportFill_.setOpacity(r); }
+  double getViewportFillOpacity() const { return viewportFill_.getOpacity().getValue(); }
+  bool getViewportFillOpacityValid() const { return viewportFill_.getOpacityValid(); }
+
+  //---
+
   CRGBA colorToRGBA(const CSVGColor &color) const;
 
   CRGBA getFlatCurrentColor() const;
+
+  //---
 
   // clip
   void setClipRule(const std::string &rule) { clip_.setRule(rule); }
@@ -577,7 +628,7 @@ class CSVGObject {
   virtual void handleEvent(CSVGEventType type, const std::string &id="",
                            const std::string &data="", bool propagate=true);
 
-  void execEvent(CSVGEventType type);
+  virtual void execEvent(CSVGEventType type);
 
   //---
 
@@ -711,6 +762,7 @@ class CSVGObject {
   COptString                   visibility_;
   COptString                   display_;
   COptValT<CSVGColor>          currentColor_;
+  CSVGFill                     viewportFill_;
   CSVGClip                     clip_;
   CSVGFontDef                  fontDef_;
   COptValT<CHAlignType>        textAnchor_;

@@ -22,6 +22,8 @@ class CQSVGEllipse : public CQSVGObject, public CSVGEllipse {
   double getRadiusX() const;
   double getRadiusY() const;
 
+  void addProperties(CQPropertyTree *tree, const std::string &name) override;
+
   void drawTerm() override;
 };
 

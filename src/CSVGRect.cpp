@@ -113,8 +113,8 @@ updateBBox()
   double w = getWidth ().pxValue(dw);
   double h = getHeight().pxValue(dh);
 
-  CPoint2D p1(x     - lw, y     - lw);
-  CPoint2D p2(x + w + lw, y + h + lw);
+  CPoint2D p1(x     - lw/2.0, y     - lw/2.0);
+  CPoint2D p2(x + w + lw/2.0, y + h + lw/2.0);
 
   bbox_ = CBBox2D(p1, p2);
 
@@ -145,11 +145,14 @@ draw()
   double w = getWidth ().pxValue(dw);
   double h = getHeight().pxValue(dh);
 
-  // skip zero width/height
-  if (w <= 0 || h <= 0)
-    return false;
+  CPoint2D p1(x    , y    );
+  CPoint2D p2(x + w, y + h);
 
-  CBBox2D bbox(x, y, x + w, y + h);
+  CBBox2D bbox(p1, p2);
+
+  // skip zero width/height
+  if (bbox.getWidth() <= 0 || bbox.getHeight() <= 0)
+    return false;
 
   //---
 

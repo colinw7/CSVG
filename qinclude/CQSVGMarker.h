@@ -14,6 +14,8 @@ class CQSVGMarker : public CQSVGObject, public CSVGMarker {
 
  public:
   CQSVGMarker(CQSVG *svg);
+
+  void addProperties(CQPropertyTree *tree, const std::string &name) override;
 };
 
 #endif

@@ -22,6 +22,8 @@ class CQSVGLine : public CQSVGObject, public CSVGLine {
   double getX2() const;
   double getY2() const;
 
+  void addProperties(CQPropertyTree *tree, const std::string &name) override;
+
   void drawTerm() override;
 };
 

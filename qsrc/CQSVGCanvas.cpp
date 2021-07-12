@@ -2,10 +2,15 @@
 #include <CQSVG.h>
 #include <CQSVGWindow.h>
 #include <CQSVGObject.h>
+#include <CSVGTitle.h>
+#include <CSVGDesc.h>
 #include <CQSVGRenderer.h>
 #include <CQSVGUtil.h>
+
 #include <CQPropertyTree.h>
 #include <QMouseEvent>
+#include <QHelpEvent>
+#include <QToolTip>
 
 CQSVGCanvas::
 CQSVGCanvas(CQSVGWindow *window, CQSVG *svg) :
@@ -106,7 +111,7 @@ void
 CQSVGCanvas::
 mousePressEvent(QMouseEvent *e)
 {
-  CQPropertyTree *tree = window_->propertiesTree();
+  auto *tree = window_->propertiesTree();
 
   if (tree) {
     tree->blockSignals(true);
@@ -120,7 +125,7 @@ mousePressEvent(QMouseEvent *e)
 
   pixelToWindow(CPoint2D(e->pos().x(), e->pos().y()), w);
 
-  std::vector<CSVGObject *> objects;
+  CSVG::ObjectList objects;
 
   svg_->getObjectsAtPoint(w, objects);
 
@@ -163,6 +168,9 @@ mouseMoveEvent(QMouseEvent *e)
     auto *qobj = dynamic_cast<CQSVGObject *>(obj);
     if (! qobj) continue;
 
+    if (! obj->isDrawable())
+      continue;
+
     if (obj->inside(w)) {
       if (! obj->getInside()) {
         obj->setInside(true);
@@ -190,7 +198,7 @@ mouseReleaseEvent(QMouseEvent *e)
 
   pixelToWindow(CPoint2D(e->pos().x(), e->pos().y()), w);
 
-  std::vector<CSVGObject *> objects;
+  CSVG::ObjectList objects;
 
   svg_->getObjectsAtPoint(w, objects);
 
@@ -233,6 +241,65 @@ keyPressEvent(QKeyEvent *ke)
   redraw();
 
   update();
+}
+
+bool
+CQSVGCanvas::
+event(QEvent *e)
+{
+  if (e->type() == QEvent::ToolTip) {
+    bool shown = false;
+
+    auto *helpEvent = static_cast<QHelpEvent *>(e);
+
+    auto p = helpEvent->pos();
+
+    CPoint2D w;
+
+    pixelToWindow(CPoint2D(p.x(), p.y()), w);
+
+    CSVG::ObjectList objects;
+
+    svg_->getObjectsAtPoint(w, objects);
+
+    if (! objects.empty()) {
+      QString tip;
+
+      for (const auto &obj : objects) {
+        if (! obj->isDrawable())
+          continue;
+
+        for (const auto &c : obj->children()) {
+          auto *title = dynamic_cast<CSVGTitle *>(c);
+          auto *desc  = dynamic_cast<CSVGDesc  *>(c);
+
+          if      (title && title->hasText()) {
+            if (title->isToolTip() || ! tip.length())
+              tip = QString::fromStdString(title->getText());
+          }
+          else if (desc && desc->hasText()) {
+            if (desc->isToolTip() || ! tip.length())
+              tip = QString::fromStdString(desc->getText());
+          }
+        }
+      }
+
+      if (tip.length()) {
+        QToolTip::showText(helpEvent->globalPos(), tip);
+
+        shown = true;
+      }
+    }
+
+    if (! shown) {
+      QToolTip::hideText();
+      e->ignore();
+    }
+
+    return true;
+  }
+
+  return QWidget::event(e);
 }
 
 void

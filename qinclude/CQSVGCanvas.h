@@ -40,6 +40,8 @@ class CQSVGCanvas : public QWidget {
 
   void keyPressEvent(QKeyEvent *ke) override;
 
+  bool event(QEvent *e) override;
+
   void drawSelected();
 
   void drawRect(const CBBox2D &bbox, const QColor &c);
@@ -56,10 +58,10 @@ class CQSVGCanvas : public QWidget {
   void redraw();
 
  private:
-  CQSVGWindow   *window_    { 0 };
-  CQSVG         *svg_       { 0 };
-  CQSVGRenderer *renderer_  { 0 };
-  QPainter      *opainter_  { 0 };
+  CQSVGWindow   *window_    { nullptr };
+  CQSVG         *svg_       { nullptr };
+  CQSVGRenderer *renderer_  { nullptr };
+  QPainter      *opainter_  { nullptr };
   QImage         oimage_;
   CPoint2D       offset_    { 0, 0 };
   double         scale_     { 1 };

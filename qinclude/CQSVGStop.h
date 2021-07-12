@@ -16,6 +16,8 @@ class CQSVGStop : public CQSVGObject, public CSVGStop {
   CQSVGStop(CQSVG *svg);
 
   double getOffset() const;
+
+  void addProperties(CQPropertyTree *tree, const std::string &name) override;
 };
 
 #endif

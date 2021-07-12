@@ -14,6 +14,8 @@ class CQSVGFeDistantLight : public CQSVGObject, public CSVGFeDistantLight {
 
  public:
   CQSVGFeDistantLight(CQSVG *svg);
+
+  void addProperties(CQPropertyTree *tree, const std::string &name) override;
 };
 
 #endif

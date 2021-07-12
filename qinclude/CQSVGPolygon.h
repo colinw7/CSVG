@@ -12,6 +12,8 @@ class CQSVGPolygon : public CQSVGObject, public CSVGPolygon {
  public:
   CQSVGPolygon(CQSVG *svg);
 
+  void addProperties(CQPropertyTree *tree, const std::string &name) override;
+
   void drawTerm() override;
 };
 

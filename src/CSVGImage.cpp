@@ -86,6 +86,8 @@ processOption(const std::string &opt_name, const std::string &opt_value)
     preserveAspect_ = preserveAspect;
   else if (svg_.stringOption(opt_name, opt_value, "xlink:href", str))
     xlink_ = CSVGXLink(this, str);
+  // type = "<content-type>"
+  // focusable = "true" | "false" | "auto" 
   else if (svg_.stringOption(opt_name, opt_value, "color-profile", str))
     colorProfile_ = str;
   else

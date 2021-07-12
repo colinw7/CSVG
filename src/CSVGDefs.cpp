@@ -29,7 +29,6 @@ dup() const
     <GraphicalEvents>
     <External>
     transform <TransformList>
->
 */
 bool
 CSVGDefs::

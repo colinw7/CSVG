@@ -19,6 +19,8 @@ class CQSVGFeSpecularLighting : public CQSVGObject, public CSVGFeSpecularLightin
 
   QColor getLightingColor() const;
   void setLightingColor(const QColor &c);
+
+  void addProperties(CQPropertyTree *tree, const std::string &name) override;
 };
 
 #endif

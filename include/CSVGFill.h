@@ -2,6 +2,7 @@
 #define CSVG_FILL_H
 
 #include <CSVGColor.h>
+#include <CSVGInheritVal.h>
 #include <CFillType.h>
 #include <COptVal.h>
 
@@ -9,6 +10,9 @@ class CSVG;
 class CSVGObject;
 
 class CSVGFill {
+ public:
+  using Opacity = CSVGInheritValT<double>;
+
  public:
   CSVGFill(CSVG &svg) :
    svg_(svg) {
@@ -54,10 +58,11 @@ class CSVGFill {
 
   // opacity
   bool getOpacityValid() const { return opacity_.isValid(); }
-  double getOpacity() const { return opacity_.getValue(1.0); }
+  Opacity getOpacity() const { return opacity_.getValue(Opacity(1.0)); }
 
   void setOpacity(const std::string &opacity_str);
-  void setOpacity(double opacity) { opacity_ = opacity; }
+  void setOpacity(const Opacity &opacity) { opacity_ = opacity; }
+  void setOpacity(double opacity) { opacity_ = Opacity(opacity); }
 
   void resetOpacity() { opacity_.setInvalid(); }
 
@@ -104,7 +109,7 @@ class CSVGFill {
  private:
   CSVG &                 svg_;
   COptValT<CSVGColor>    color_;
-  COptReal               opacity_;
+  COptValT<Opacity>      opacity_;
   COptValT<CFillType>    rule_;
   COptString             url_;
   COptValT<CSVGObject *> fillObject_;

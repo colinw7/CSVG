@@ -45,6 +45,15 @@ class CSVGUse : public CSVGObject {
 
   bool draw() override;
 
+  //---
+
+  void handleEvent(CSVGEventType type, const std::string &id,
+                   const std::string &data, bool propagate) override;
+
+  void execEvent(CSVGEventType type) override;
+
+  //---
+
   void print(std::ostream &os, bool hier) const override;
 
   void printValues(std::ostream &os, bool flat=false) const override;

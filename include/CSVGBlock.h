@@ -20,25 +20,42 @@ class CSVGBlock : public CSVGObject {
 
   //---
 
-  // pixel bbox
+  virtual int getScreenWidth () const { return 400; }
+  virtual int getScreenHeight() const { return 400; }
+
+  //---
+
+  // pixel bbox (x, y, width, height)
+
+  //! get/set x
   double getX() const;
   void setX(double x) { x_ = x; }
 
+  //! get/set y
   double getY() const;
   void setY(double y) { y_ = y; }
 
+  //! get/set width
   double getWidth() const;
   void setWidth(double w) { width_ = CScreenUnits(w); }
 
+  //! get/set height
   double getHeight() const;
   void setHeight(double h) { height_ = CScreenUnits(h); }
 
-  // preserve aspect
+  //---
+
+  //! get/set preserve aspect
   bool hasPreserveAspect() const { return preserveAspect_.isValid(); }
   CSVGPreserveAspect preserveAspect(const CSVGPreserveAspect &a=CSVGPreserveAspect()) const {
     return preserveAspect_.getValue(a); }
   void setPreserveAspect(const CSVGPreserveAspect &a) { preserveAspect_ = a; }
 
+  //---
+
+  // align
+
+  //! get/set horizontal align
   CHAlignType getHAlign() const { return preserveAspect().getHAlign(); }
   void setHAlign(const CHAlignType &a) {
     CSVGPreserveAspect preserveAspect = this->preserveAspect();
@@ -46,6 +63,7 @@ class CSVGBlock : public CSVGObject {
     preserveAspect_ = preserveAspect;
   }
 
+  //! get/set vertical align
   CVAlignType getVAlign() const { return preserveAspect().getVAlign(); }
   void setVAlign(const CVAlignType &a) {
     CSVGPreserveAspect preserveAspect = this->preserveAspect();
@@ -53,12 +71,15 @@ class CSVGBlock : public CSVGObject {
     preserveAspect_ = preserveAspect;
   }
 
-  CSVGScale getScale () const { return preserveAspect().getScale (); }
+  //! get/set scale
+  CSVGScale getScale() const { return preserveAspect().getScale (); }
   void setScale(const CSVGScale &s) {
     CSVGPreserveAspect preserveAspect = this->preserveAspect();
     preserveAspect.setScale(s);
     preserveAspect_ = preserveAspect;
   }
+
+  //---
 
   // pixel and view box
   CBBox2D calcPixelBox() const;
@@ -76,11 +97,15 @@ class CSVGBlock : public CSVGObject {
 
   bool propagateFlat() const override { return false; }
 
+  //---
+
   void drawInit() override;
 
   bool draw() override;
 
   void drawTerm() override;
+
+  //---
 
   void printRoot(std::ostream &os, const std::vector<CCSS> &cssList, bool hier) const;
 
@@ -96,7 +121,7 @@ class CSVGBlock : public CSVGObject {
   COptValT<CScreenUnits>       width_;
   COptValT<CScreenUnits>       height_;
   COptValT<CSVGPreserveAspect> preserveAspect_;
-  mutable CSVGBuffer*          oldBuffer_ { 0 };
+  mutable CSVGBuffer*          oldBuffer_ { nullptr };
   mutable CSVGBlockData        blockData_;
 };
 

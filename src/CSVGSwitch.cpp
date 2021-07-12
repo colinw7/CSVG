@@ -8,8 +8,8 @@ CSVGSwitch(CSVG &svg) :
 }
 
 CSVGSwitch::
-CSVGSwitch(const CSVGSwitch &use) :
- CSVGObject(use)
+CSVGSwitch(const CSVGSwitch &s) :
+ CSVGObject(s)
 {
 }
 

@@ -12,6 +12,8 @@ class CQSVGPolyLine : public CQSVGObject, public CSVGPolyLine {
  public:
   CQSVGPolyLine(CQSVG *svg);
 
+  void addProperties(CQPropertyTree *tree, const std::string &name) override;
+
   void drawTerm() override;
 };
 

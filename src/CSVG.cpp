@@ -402,7 +402,7 @@ read(const std::string &filename)
 
 bool
 CSVG::
-read(const std::string &filename, CSVGObject *object)
+read(const std::string &filename, CSVGObject *rootBlock)
 {
   if (! CFile::exists(filename) || ! CFile::isRegular(filename))
     return false;
@@ -420,7 +420,7 @@ read(const std::string &filename, CSVGObject *object)
     if (token->isExecute()) {
       auto *exec = token->getExecute();
 
-      const std::string &id = exec->getId();
+      const auto &id = exec->getId();
 
       if (id == "xml-stylesheet") {
         CSVGXmlStyleSheet xmlStyleSheet;
@@ -448,33 +448,33 @@ read(const std::string &filename, CSVGObject *object)
 
   // Process svg options
   for (const auto &opt : xmlTag_->getOptions()) {
-    const std::string &opt_name  = opt->getName ();
-    const std::string &opt_value = opt->getValue();
+    const std::string &optName  = opt->getName ();
+    const std::string &optValue = opt->getValue();
 
-    if (! object->processOption(opt_name, opt_value)) {
+    if (! rootBlock->processOption(optName, optValue)) {
       if (! isQuiet())
-        CSVGLog() << "Invalid option '" << opt_name << "=" << opt_value <<
-                     " for " << object->getTagName();
+        CSVGLog() << "Invalid option '" << optName << "=" << optValue <<
+                     " for " << rootBlock->getTagName();
     }
   }
 
   //------
 
   // Process svg children
-  object->setXMLTag(xmlTag_);
+  rootBlock->setXMLTag(xmlTag_);
 
   for (const auto &token : xmlTag_->getChildren()) {
-    auto *object1 = tokenToObject(object, token);
+    auto *object = tokenToObject(rootBlock, token);
 
-    if (object1)
-      object->addChildObject(object1);
+    if (object)
+      rootBlock->addChildObject(object);
 
-    applyStyle(object1);
+    applyStyle(object);
   }
 
   //------
 
-  object->execEvent(CSVGEventType::LOAD);
+  rootBlock->execEvent(CSVGEventType::LOAD);
 
   return true;
 }
@@ -567,16 +567,16 @@ tokenToObject(CSVGObject *parent, const CXMLToken *token)
 
   // process tag options
   for (const auto &option : tag->getOptions()) {
-    const std::string &opt_name  = option->getName ();
-    const std::string &opt_value = option->getValue();
+    const std::string &optName  = option->getName ();
+    const std::string &optValue = option->getValue();
 
-    if (! object->processOption(opt_name, opt_value)) {
-      if (CRegExpUtil::parse(opt_name, "sodipodi:.*") ||
-          CRegExpUtil::parse(opt_name, "inkscape:.*"))
+    if (! object->processOption(optName, optValue)) {
+      if (CRegExpUtil::parse(optName, "sodipodi:.*") ||
+          CRegExpUtil::parse(optName, "inkscape:.*"))
         continue;
 
       if (! isQuiet())
-        CSVGLog() << "Unhandled tag option " << opt_name << "=" << opt_value <<
+        CSVGLog() << "Unhandled tag option " << optName << "=" << optValue <<
                      " for " << object->getTagName();
     }
   }
@@ -620,6 +620,10 @@ createObjectByName(const std::string &name)
     object = createBlock();
   else if (name == "a")
     object = createAnchor();
+//else if (name == "altGlyphDef")
+//  object = createAltGlyphDef();
+//else if (name == "animation")
+//  object = createAnimation();
   else if (name == "animate")
     object = createAnimate();
   else if (name == "animateColor")
@@ -628,16 +632,22 @@ createObjectByName(const std::string &name)
     object = createAnimateMotion();
   else if (name == "animateTransform")
     object = createAnimateTransform();
+//else if (name == "audio")
+//  object = createAudio();
   else if (name == "circle")
     object = createCircle();
   else if (name == "clipPath")
     object = createClipPath();
   else if (name == "color-profile")
     object = createColorProfile();
+//else if (name == "cursor")
+//  object = createCursor();
   else if (name == "defs")
     object = createDefs();
   else if (name == "desc")
     object = createDesc();
+//else if (name == "discard")
+//  object = createDiscard();
   else if (name == "ellipse")
     object = createEllipse();
   else if (name == "feBlend")
@@ -698,6 +708,8 @@ createObjectByName(const std::string &name)
     object = createFontFaceSrc();
   else if (name == "font-face-uri")
     object = createFontFaceUri();
+//else if (name == "foreignObject")
+//  object = createForeignObject();
   else if (name == "glyph")
     object = createGlyph();
   else if (name == "g")
@@ -728,6 +740,8 @@ createObjectByName(const std::string &name)
     object = createPolygon();
   else if (name == "polyline")
     object = createPolyLine();
+//else if (name == "prefetch")
+//  object = createPrefetch();
   else if (name == "radialGradient")
     object = createRadialGradient();
   else if (name == "rect")
@@ -736,6 +750,8 @@ createObjectByName(const std::string &name)
     object = createScript();
   else if (name == "set")
     object = createSet();
+//else if (name == "solidColor")
+//  object = createSolidColor();
   else if (name == "stop")
     object = createStop();
   else if (name == "symbol")
@@ -744,8 +760,12 @@ createObjectByName(const std::string &name)
     object = createStyle();
   else if (name == "switch")
     object = createSwitch();
+//else if (name == "tbreak")
+//  object = createTBreak();
   else if (name == "text")
     object = createText();
+//else if (name == "textArea")
+//  object = createTextArea();
   else if (name == "textPath")
     object = createTextPath();
   else if (name == "title")
@@ -754,6 +774,10 @@ createObjectByName(const std::string &name)
     object = createTSpan();
   else if (name == "use")
     object = createUse();
+//else if (name == "video")
+//  object = createVideo();
+//else if (name == "view")
+//  object = createView();
   else
     object = nullptr;
 
@@ -1682,6 +1706,15 @@ beginDrawBuffer(CSVGBuffer *buffer, const CPoint2D &offset, double xs, double ys
   auto viewBox  = block->calcViewBox ();
 
   beginDrawBuffer(buffer, pixelBox, viewBox, offset, xs, ys, blockPreserveAspect());
+
+  if (block->hasViewportFillColor()) {
+    auto c = block->viewportFillColor().rgba();
+
+    if (block->getViewportFillOpacityValid())
+      c.setAlpha(block->getViewportFillOpacity());
+
+    buffer->clear(c);
+  }
 }
 
 void
@@ -1718,8 +1751,10 @@ beginDrawBuffer(CSVGBuffer *buffer, const CBBox2D &pixelBox, const CBBox2D &view
 
   auto bbox1 = blockData_.viewBBox();
 
-  double w = bbox1.getWidth ();
-  double h = bbox1.getHeight();
+  //double w = bbox1.getWidth ();
+  //double h = bbox1.getHeight();
+  double w = pixelBox.getWidth ();
+  double h = pixelBox.getHeight();
 
   bbox1.moveBy(flatOffset());
 
@@ -2305,13 +2340,13 @@ fillText(double x, double y, const std::string &text, const CSVGFontDef &fontDef
 
 bool
 CSVG::
-pathOption(const std::string &opt_name, const std::string &opt_value,
+pathOption(const std::string &optName, const std::string &optValue,
            const std::string &name, CSVGPathPartList &parts)
 {
-  if (opt_name != name)
+  if (optName != name)
     return false;
 
-  if (! pathStringToParts(opt_value, parts))
+  if (! pathStringToParts(optValue, parts))
     return false;
 
   return true;
@@ -2590,13 +2625,13 @@ drawMarkers(const std::vector<CPoint2D> &points, const std::vector<double> &angl
 
 bool
 CSVG::
-coordListOption(const std::string &opt_name, const std::string &opt_value,
+coordListOption(const std::string &optName, const std::string &optValue,
                 const std::string &name, std::vector<CScreenUnits> &lengths)
 {
-  if (opt_name != name)
+  if (optName != name)
     return false;
 
-  CStrParse parse(opt_value);
+  CStrParse parse(optValue);
 
   parse.skipSpace();
 
@@ -2632,16 +2667,16 @@ coordListOption(const std::string &opt_name, const std::string &opt_value,
 
 bool
 CSVG::
-coordOption(const std::string &opt_name, const std::string &opt_value,
+coordOption(const std::string &optName, const std::string &optValue,
             const std::string &name, CScreenUnits &length)
 {
-  if (opt_name != name)
+  if (optName != name)
     return false;
 
   CScreenUnits length1;
 
-  if (! decodeCoordValue(opt_value, length1)) {
-    std::string msg = "Illegal coord value " + opt_value;
+  if (! decodeCoordValue(optValue, length1)) {
+    std::string msg = "Illegal coord value " + optValue;
     syntaxError(msg);
     return false;
   }
@@ -2653,12 +2688,12 @@ coordOption(const std::string &opt_name, const std::string &opt_value,
 
 bool
 CSVG::
-coordOption(const std::string &opt_name, const std::string &opt_value,
+coordOption(const std::string &optName, const std::string &optValue,
             const std::string &name, double *value)
 {
   CScreenUnits length;
 
-  if (! coordOption(opt_name, opt_value, name, length))
+  if (! coordOption(optName, optValue, name, length))
     return false;
 
   *value = length.pxValue();
@@ -2696,14 +2731,14 @@ decodeCoordValue(const std::string &str, CScreenUnits &length)
 
 bool
 CSVG::
-lengthListOption(const std::string &opt_name, const std::string &opt_value,
+lengthListOption(const std::string &optName, const std::string &optValue,
                  const std::string &name, std::vector<CScreenUnits> &lengths)
 {
-  if (opt_name != name)
+  if (optName != name)
     return false;
 
-  if (! decodeLengthListValue(opt_value, lengths)) {
-    std::string msg = "Illegal length list value " + opt_value;
+  if (! decodeLengthListValue(optValue, lengths)) {
+    std::string msg = "Illegal length list value " + optValue;
     syntaxError(msg);
     return false;
   }
@@ -2748,44 +2783,44 @@ decodeLengthListValue(const std::string &str, std::vector<CScreenUnits> &lengths
 
 bool
 CSVG::
-fontSizeOption(const std::string &opt_name, const std::string &opt_value,
+fontSizeOption(const std::string &optName, const std::string &optValue,
                const std::string &name, CScreenUnits &length)
 {
-  if (opt_name != name)
+  if (optName != name)
     return false;
 
-  if      (opt_value == "xx-small") {
+  if      (optValue == "xx-small") {
     length = CScreenUnits(CScreenUnits::Units::PX, 6); // TODO
   }
-  else if (opt_value == "x-small") {
+  else if (optValue == "x-small") {
     length = CScreenUnits(CScreenUnits::Units::PX, 8); // TODO
   }
-  else if (opt_value == "small") {
+  else if (optValue == "small") {
     length = CScreenUnits(CScreenUnits::Units::PX, 10); // TODO
   }
-  else if (opt_value == "medium") {
+  else if (optValue == "medium") {
     length = CScreenUnits(CScreenUnits::Units::PX, 12); // TODO
   }
-  else if (opt_value == "large") {
+  else if (optValue == "large") {
     length = CScreenUnits(CScreenUnits::Units::PX, 14); // TODO
   }
-  else if (opt_value == "x-large") {
+  else if (optValue == "x-large") {
     length = CScreenUnits(CScreenUnits::Units::PX, 16); // TODO
   }
-  else if (opt_value == "xx-large") {
+  else if (optValue == "xx-large") {
     length = CScreenUnits(CScreenUnits::Units::PX, 18); // TODO
   }
-  else if (opt_value == "larger") {
+  else if (optValue == "larger") {
     length = CScreenUnits(CScreenUnits::Units::PX, 14); // TODO
   }
-  else if (opt_value == "smaller") {
+  else if (optValue == "smaller") {
     length = CScreenUnits(CScreenUnits::Units::PX, 10); // TODO
   }
   else {
-    auto optLength = decodeLengthValue(opt_value);
+    auto optLength = decodeLengthValue(optValue);
 
     if (! optLength.isValid()) {
-      std::string msg = "Illegal font size value '" + opt_value + "' for " + name;
+      std::string msg = "Illegal font size value '" + optValue + "' for " + name;
       syntaxError(msg);
       return false;
     }
@@ -2798,23 +2833,23 @@ fontSizeOption(const std::string &opt_name, const std::string &opt_value,
 
 bool
 CSVG::
-letterSpacingOption(const std::string &opt_name, const std::string &opt_value,
+letterSpacingOption(const std::string &optName, const std::string &optValue,
                     const std::string &name, CScreenUnits &length)
 {
-  if (opt_name != name)
+  if (optName != name)
     return false;
 
-  if      (opt_value == "normal") {
+  if      (optValue == "normal") {
     // TODO
   }
-  else if (opt_value == "inherit") {
+  else if (optValue == "inherit") {
     // TODO
   }
   else {
-    auto optLength = decodeLengthValue(opt_value);
+    auto optLength = decodeLengthValue(optValue);
 
     if (! optLength.isValid()) {
-      std::string msg = "Illegal font size value '" + opt_value + "' for " + name;
+      std::string msg = "Illegal font size value '" + optValue + "' for " + name;
       syntaxError(msg);
       return false;
     }
@@ -2827,23 +2862,23 @@ letterSpacingOption(const std::string &opt_name, const std::string &opt_value,
 
 bool
 CSVG::
-wordSpacingOption(const std::string &opt_name, const std::string &opt_value,
+wordSpacingOption(const std::string &optName, const std::string &optValue,
                   const std::string &name, CScreenUnits &length)
 {
-  if (opt_name != name)
+  if (optName != name)
     return false;
 
-  if      (opt_value == "normal") {
+  if      (optValue == "normal") {
     // TODO
   }
-  else if (opt_value == "inherit") {
+  else if (optValue == "inherit") {
     // TODO
   }
   else {
-    auto optLength = decodeLengthValue(opt_value);
+    auto optLength = decodeLengthValue(optValue);
 
     if (! optLength.isValid()) {
-      std::string msg = "Illegal font size value '" + opt_value + "' for " + name;
+      std::string msg = "Illegal font size value '" + optValue + "' for " + name;
       syntaxError(msg);
       return false;
     }
@@ -2856,16 +2891,16 @@ wordSpacingOption(const std::string &opt_name, const std::string &opt_value,
 
 bool
 CSVG::
-lengthOption(const std::string &opt_name, const std::string &opt_value,
+lengthOption(const std::string &optName, const std::string &optValue,
              const std::string &name, CScreenUnits &length)
 {
-  if (opt_name != name)
+  if (optName != name)
     return false;
 
-  auto optLength = decodeLengthValue(opt_value);
+  auto optLength = decodeLengthValue(optValue);
 
   if (! optLength.isValid()) {
-    std::string msg = "Illegal length value '" + opt_value + "' for " + name;
+    std::string msg = "Illegal length value '" + optValue + "' for " + name;
     syntaxError(msg);
     return false;
   }
@@ -2985,14 +3020,14 @@ decodeLengthValue(const std::string &str)
 
 bool
 CSVG::
-realOption(const std::string &opt_name, const std::string &opt_value,
+realOption(const std::string &optName, const std::string &optValue,
            const std::string &name, double *value)
 {
-  if (opt_name != name)
+  if (optName != name)
     return false;
 
-  if (! CStrUtil::toReal(opt_value, value)) {
-    CSVGLog() << "Illegal real value '" << opt_value << "' for " << name;
+  if (! CStrUtil::toReal(optValue, value)) {
+    CSVGLog() << "Illegal real value '" << optValue << "' for " << name;
     return false;
   }
 
@@ -3001,14 +3036,14 @@ realOption(const std::string &opt_name, const std::string &opt_value,
 
 bool
 CSVG::
-integerOption(const std::string &opt_name, const std::string &opt_value,
+integerOption(const std::string &optName, const std::string &optValue,
               const std::string &name, long *value)
 {
-  if (opt_name != name)
+  if (optName != name)
     return false;
 
-  if (! CStrUtil::toInteger(opt_value, value)) {
-    CSVGLog() << "Illegal integer value '" << opt_value << "' for " << name;
+  if (! CStrUtil::toInteger(optValue, value)) {
+    CSVGLog() << "Illegal integer value '" << optValue << "' for " << name;
     return false;
   }
 
@@ -3017,13 +3052,13 @@ integerOption(const std::string &opt_name, const std::string &opt_value,
 
 bool
 CSVG::
-stringOption(const std::string &opt_name, const std::string &opt_value,
+stringOption(const std::string &optName, const std::string &optValue,
              const std::string &name, std::string &value)
 {
-  if (opt_name != name)
+  if (optName != name)
     return false;
 
-  value = opt_value;
+  value = optValue;
 
   return true;
 }
@@ -3032,16 +3067,16 @@ stringOption(const std::string &opt_name, const std::string &opt_value,
 
 bool
 CSVG::
-orientOption(const std::string &opt_name, const std::string &opt_value,
+orientOption(const std::string &optName, const std::string &optValue,
              const std::string &name, CSVGOrient &orient)
 {
-  if (opt_name != name)
+  if (optName != name)
     return false;
 
-  auto optOrient = decodeOrientString(opt_value);
+  auto optOrient = decodeOrientString(optValue);
 
   if (! optOrient.isValid()) {
-    std::string msg = "Illegal orient value '" + opt_value + "' for " + name;
+    std::string msg = "Illegal orient value '" + optValue + "' for " + name;
     syntaxError(msg);
     return false;
   }
@@ -3086,16 +3121,16 @@ encodeOrientString(const CSVGOrient &orient)
 
 bool
 CSVG::
-angleOption(const std::string &opt_name, const std::string &opt_value,
+angleOption(const std::string &optName, const std::string &optValue,
             const std::string &name, CAngle &angle)
 {
-  if (opt_name != name)
+  if (optName != name)
     return false;
 
-  auto optAngle = decodeAngleString(opt_value);
+  auto optAngle = decodeAngleString(optValue);
 
   if (! optAngle.isValid()) {
-    std::string msg = "Invalid angle value '" + opt_value + "' for " + name;
+    std::string msg = "Invalid angle value '" + optValue + "' for " + name;
     syntaxError(msg);
     return false;
   }
@@ -3105,6 +3140,12 @@ angleOption(const std::string &opt_name, const std::string &opt_value,
   return true;
 }
 
+// When an <angle> is used in a style sheet or with a property in a ‘style’ attribute,
+// the syntax must match the following pattern:
+//   angle ::= number (~"deg" | ~"grad" | ~"rad")?
+// When an <angle> is used in an SVG presentation attribute, the syntax must match
+// the following pattern:
+//   angle ::= number ("deg" | "grad" | "rad")?
 COptValT<CAngle>
 CSVG::
 decodeAngleString(const std::string &str)
@@ -3152,12 +3193,12 @@ encodeAngleString(const CAngle &angle)
 
 bool
 CSVG::
-percentOption(const std::string &opt_name, const std::string &opt_value,
+percentOption(const std::string &optName, const std::string &optValue,
               const std::string &name, CScreenUnits &length)
 {
   std::string str;
 
-  if (! stringOption(opt_name, opt_value, name, str))
+  if (! stringOption(optName, optValue, name, str))
     return false;
 
   if (! decodePercentString(str, length)) {
@@ -3197,12 +3238,12 @@ decodePercentString(const std::string &str, CScreenUnits &length)
 
 bool
 CSVG::
-coordUnitsOption(const std::string &opt_name, const std::string &opt_value,
+coordUnitsOption(const std::string &optName, const std::string &optValue,
                  const std::string &name, CSVGCoordUnits &units)
 {
   std::string str;
 
-  if (! stringOption(opt_name, opt_value, name, str))
+  if (! stringOption(optName, optValue, name, str))
     return false;
 
   if (! decodeUnitsString(str, units))
@@ -3245,14 +3286,14 @@ encodeUnitsString(const CSVGCoordUnits &units)
 
 bool
 CSVG::
-bboxOption(const std::string &opt_name, const std::string &opt_value,
+bboxOption(const std::string &optName, const std::string &optValue,
            const std::string &name, CBBox2D &bbox)
 {
-  if (opt_name != name)
+  if (optName != name)
     return false;
 
-  if (! decodeBBoxString(opt_value, bbox)) {
-    std::string msg = "Bad bbox " + opt_value;
+  if (! decodeBBoxString(optValue, bbox)) {
+    std::string msg = "Bad bbox " + optValue;
     syntaxError(msg);
     return false;
   }
@@ -3287,13 +3328,13 @@ decodeBBoxString(const std::string &name, CBBox2D &bbox)
 
 bool
 CSVG::
-preserveAspectOption(const std::string &opt_name, const std::string &opt_value,
+preserveAspectOption(const std::string &optName, const std::string &optValue,
                      const std::string &name, CSVGPreserveAspect &preserveAspect)
 {
-  if (opt_name != name)
+  if (optName != name)
     return false;
 
-  if (! decodePreserveAspectRatio(opt_value, preserveAspect))
+  if (! decodePreserveAspectRatio(optValue, preserveAspect))
     return false;
 
   return true;
@@ -3343,15 +3384,15 @@ decodePreserveAspectRatio(const std::string &str, CSVGPreserveAspect &preserveAs
 
 bool
 CSVG::
-pointListOption(const std::string &opt_name, const std::string &opt_value,
+pointListOption(const std::string &optName, const std::string &optValue,
                 const std::string &name, std::vector<CPoint2D> &points)
 {
-  if (opt_name != name)
+  if (optName != name)
     return false;
 
   std::vector<double> reals;
 
-  CStrParse parse(opt_value);
+  CStrParse parse(optValue);
 
   parse.skipSpace();
 
@@ -3359,7 +3400,7 @@ pointListOption(const std::string &opt_name, const std::string &opt_value,
     double r;
 
     if (! parse.readReal(&r)) {
-      std::string msg = "Bad point list value " + opt_value;
+      std::string msg = "Bad point list value " + optValue;
       syntaxError(msg);
       return false;
     }
@@ -3388,13 +3429,13 @@ pointListOption(const std::string &opt_name, const std::string &opt_value,
 
 bool
 CSVG::
-realListOption(const std::string &opt_name, const std::string &opt_value,
+realListOption(const std::string &optName, const std::string &optValue,
                const std::string &name, std::vector<double> &reals)
 {
-  if (opt_name != name)
+  if (optName != name)
     return false;
 
-  return stringToReals(opt_value, reals);
+  return stringToReals(optValue, reals);
 }
 
 bool
@@ -3423,19 +3464,19 @@ stringToReals(const std::string &str, std::vector<double> &reals)
 
 bool
 CSVG::
-eventValueOption(const std::string &opt_name, const std::string &opt_value,
+eventValueOption(const std::string &optName, const std::string &optValue,
                  const std::string &name, CSVGEventValue &event)
 {
-  if (opt_name != name)
+  if (optName != name)
     return false;
 
   uint   pos = 0;
   double r   = 0.0;
 
-  if (CStrUtil::readReal(opt_value, &pos, &r)) {
+  if (CStrUtil::readReal(optValue, &pos, &r)) {
     CSVGTimeValue time;
 
-    std::string units = opt_value.substr(pos);
+    std::string units = optValue.substr(pos);
 
     if      (units == "h")
       time = CSVGTimeValue(CSVGTimeValueType::HOURS, r);
@@ -3453,14 +3494,14 @@ eventValueOption(const std::string &opt_name, const std::string &opt_value,
   else {
     std::string id, eventName;
 
-    auto p = opt_value.find('.');
+    auto p = optValue.find('.');
 
     if (p != std::string::npos) {
-      id        = CStrUtil::stripSpaces(opt_value.substr(0, p));
-      eventName = CStrUtil::stripSpaces(opt_value.substr(p + 1));
+      id        = CStrUtil::stripSpaces(optValue.substr(0, p));
+      eventName = CStrUtil::stripSpaces(optValue.substr(p + 1));
     }
     else
-      eventName = opt_value;
+      eventName = optValue;
 
     auto p1 = eventName.find('+');
 
@@ -3517,13 +3558,13 @@ eventValueOption(const std::string &opt_name, const std::string &opt_value,
 
 bool
 CSVG::
-timeValueOption(const std::string &opt_name, const std::string &opt_value,
+timeValueOption(const std::string &optName, const std::string &optValue,
                 const std::string &name, CSVGTimeValue &time)
 {
-  if (opt_name != name)
+  if (optName != name)
     return false;
 
-  if (! stringToTime(opt_value, time))
+  if (! stringToTime(optValue, time))
     return false;
 
   return true;
@@ -3572,14 +3613,14 @@ stringToTime(const std::string &str, CSVGTimeValue &time) const
 
 bool
 CSVG::
-transformOption(const std::string &opt_name, const std::string &opt_value,
+transformOption(const std::string &optName, const std::string &optValue,
                 const std::string &name, CMatrixStack2D &matrixStack)
 {
-  if (opt_name != name)
+  if (optName != name)
     return false;
 
-  if (! decodeTransform(opt_value, matrixStack)) {
-    CSVGLog() << "Invalid transform " << opt_value;
+  if (! decodeTransform(optValue, matrixStack)) {
+    CSVGLog() << "Invalid transform " << optValue;
     return false;
   }
 
@@ -3887,18 +3928,47 @@ decodeWidthString(const std::string &width_str, double &width)
   return true;
 }
 
+// <opacity-value> | inherit
 bool
 CSVG::
-decodeOpacityString(const std::string &opacity_str, double &opacity)
+opacityOption(const std::string &optName, const std::string &optValue,
+              const std::string &name, double &value, bool &inherit)
 {
-  opacity = 1.0;
-
-  if (! CStrUtil::toReal(opacity_str, &opacity))
+  if (optName != name)
     return false;
+
+  std::string str;
+
+  if (! stringOption(optName, optValue, name, str))
+    return false;
+
+  if (! decodeOpacityString(str, value, inherit)) {
+    CLog() << "Invalid opacity '" << str << "'";
+    return false;
+  }
 
   return true;
 }
 
+// <opacity-value> | inherit
+bool
+CSVG::
+decodeOpacityString(const std::string &opacity_str, double &opacity, bool &inherit)
+{
+  opacity = 1.0;
+  inherit = false;
+
+  if (opacity_str == "inherit")
+    inherit = true;
+  else {
+    if (! CStrUtil::toReal(opacity_str, &opacity))
+      return false;
+  }
+
+  return true;
+}
+
+// nonzero | evenodd | inherit
 CFillType
 CSVG::
 decodeFillRuleString(const std::string &rule_str)
@@ -3927,6 +3997,7 @@ encodeFillRuleString(CFillType rule)
     return "inherit";
 }
 
+// none | <list-of-lengths> | inherit
 bool
 CSVG::
 decodeDashString(const std::string &dash_str, std::vector<CScreenUnits> &lengths, bool &solid)
@@ -3976,6 +4047,27 @@ decodeDashString(const std::string &dash_str, std::vector<CScreenUnits> &lengths
 
 bool
 CSVG::
+colorOption(const std::string &optName, const std::string &optValue,
+            const std::string &name, CSVGColor &color)
+{
+  if (optName != name)
+    return false;
+
+  std::string str;
+
+  if (! stringOption(optName, optValue, name, str))
+    return false;
+
+  if (! decodeColorString(str, color)) {
+    CLog() << "Invalid color '" << str << "'";
+    return false;
+  }
+
+  return true;
+}
+
+bool
+CSVG::
 decodeColorString(const std::string &colorStr, CSVGColor &color)
 {
   if      (colorStr == "none")
@@ -4004,6 +4096,8 @@ decodeRGBAString(const std::string &colorStr, CRGBA &rgba)
 {
   std::vector<std::string> match_strs;
 
+  // color ::= "rgb(" wsp* integer comma integer comma integer wsp* ")"
+  // color ::= "rgb(" wsp* integer "%" comma integer "%" comma integer "%" wsp* ")"
   if      (CRegExpUtil::parse(colorStr, "rgb(\\(.*\\))", match_strs)) {
     double rgb[3];
 
@@ -4033,6 +4127,7 @@ decodeRGBAString(const std::string &colorStr, CRGBA &rgba)
 
     rgba = CRGBA(rgb[0], rgb[1], rgb[2]);
   }
+  // color ::= "#" hexdigit hexdigit hexdigit
   else if (colorStr.size() == 4 &&
            CRegExpUtil::parse(colorStr, "#" RE_HEXDEC RE_HEXDEC RE_HEXDEC, match_strs)) {
     std::string color_str1 = "#";
@@ -4043,9 +4138,10 @@ decodeRGBAString(const std::string &colorStr, CRGBA &rgba)
 
     rgba = nameToRGBA(color_str1);
   }
+  // color ::= "#" hexdigit hexdigit hexdigit hexdigit hexdigit hexdigit
   else if (colorStr.size() == 7 &&
            CRegExpUtil::parse(colorStr, "#" RE_HEXDEC RE_HEXDEC RE_HEXDEC
-                       RE_HEXDEC RE_HEXDEC RE_HEXDEC, match_strs)) {
+                              RE_HEXDEC RE_HEXDEC RE_HEXDEC, match_strs)) {
     std::string color_str1 = "#";
 
     color_str1 += colorStr.substr(1, 2) +
@@ -4054,6 +4150,7 @@ decodeRGBAString(const std::string &colorStr, CRGBA &rgba)
 
     rgba = nameToRGBA(color_str1);
   }
+  // color ::= color-keyword
   else {
     if (colorStr == "none")
       rgba = CRGBA(0, 0, 0, 0);
@@ -4124,16 +4221,21 @@ nameToRGBA(const std::string &name)
   return CRGBA(0, 0, 0);
 }
 
+// Value: normal | bold | bolder | lighter | 100 | 200 | 300
+//        | 400 | 500 | 600 | 700 | 800 | 900 | inherit
 CFontStyle
 CSVG::
 decodeFontWeightString(const std::string &font_weight_str)
 {
-  if (font_weight_str == "bold")
+  if      (font_weight_str == "normal"|| font_weight_str == "400")
+    return CFONT_STYLE_NORMAL;
+  else if (font_weight_str == "bold"|| font_weight_str == "700")
     return CFONT_STYLE_BOLD;
   else
     return CFONT_STYLE_NORMAL;
 }
 
+// normal | italic | oblique | inherit
 CFontStyle
 CSVG::
 decodeFontStyleString(const std::string &font_style_str)
@@ -4180,21 +4282,21 @@ encodeGradientSpread(const CGradientSpreadType &spread)
 
 bool
 CSVG::
-urlOption(const std::string &opt_name, const std::string &opt_value,
+urlOption(const std::string &optName, const std::string &optValue,
           const std::string &name, CSVGObject **obj)
 {
-  if (opt_name != name)
+  if (optName != name)
     return false;
 
   *obj = nullptr;
 
-  if (opt_value == "none")
+  if (optValue == "none")
     return true;
 
   std::string  id;
   CSVGObject  *obj1;
 
-  if (! decodeUrlObject(opt_value, id, &obj1)) {
+  if (! decodeUrlObject(optValue, id, &obj1)) {
     CSVGLog() << "Illegal url value '" << id << "' for " << name;
     return true; // don't propagate waring
   }
@@ -4226,13 +4328,13 @@ decodeUrlObject(const std::string &str, std::string &id, CSVGObject **object) co
 
 bool
 CSVG::
-booleanOption(const std::string &opt_name, const std::string &opt_value,
+booleanOption(const std::string &optName, const std::string &optValue,
               const std::string &name, bool &b)
 {
-  if (opt_name != name)
+  if (optName != name)
     return false;
 
-  if (! decodeBoolean(opt_value, b))
+  if (! decodeBoolean(optValue, b))
     return false;
 
   return true;

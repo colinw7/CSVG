@@ -11,6 +11,8 @@ class CQSVGAnimateTransform : public CQSVGAnimateBase, public CSVGAnimateTransfo
 
  public:
   CQSVGAnimateTransform(CQSVG *svg);
+
+  void addProperties(CQPropertyTree *propTree, const std::string &name) override;
 };
 
 #endif

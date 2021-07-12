@@ -11,6 +11,8 @@ class CQSVGFeBlend : public CQSVGObject, public CSVGFeBlend {
 
  public:
   CQSVGFeBlend(CQSVG *svg);
+
+  void addProperties(CQPropertyTree *tree, const std::string &name) override;
 };
 
 #endif

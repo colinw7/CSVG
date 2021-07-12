@@ -45,7 +45,7 @@ class CSVGStyleData {
   bool        getFillColorValid      () const { return fill_.getColorValid(); }
   CSVGColor   getFillColor           () const { return fill_.getColor(); }
   bool        getFillOpacityValid    () const { return fill_.getOpacityValid(); }
-  double      getFillOpacity         () const { return fill_.getOpacity(); }
+  double      getFillOpacity         () const { return fill_.getOpacity().getValue(); }
   bool        getFillRuleValid       () const { return fill_.getRuleValid(); }
   CFillType   getFillRule            () const { return fill_.getRule(); }
   bool        getFillUrlValid        () const { return fill_.getUrlValid(); }

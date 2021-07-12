@@ -53,6 +53,8 @@ class CQSVGAnimateBase : public CQSVGObject {
   QString fill() const;
   void setFill(const QString &s);
 
+  void addProperties(CQPropertyTree *tree, const std::string &name) override;
+
  private:
   CSVGAnimateBase *base_ { 0 };
 };

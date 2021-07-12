@@ -17,6 +17,8 @@ class CQSVGFeTurbulence : public CQSVGObject, public CSVGFeTurbulence {
 
  public:
   CQSVGFeTurbulence(CQSVG *svg);
+
+  void addProperties(CQPropertyTree *tree, const std::string &name) override;
 };
 
 #endif

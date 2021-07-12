@@ -17,6 +17,8 @@ class CQSVGTitle : public CQSVGObject, public CSVGTitle {
   QString getQText() const { return CSVGTitle::getText().c_str(); }
   void setQText(const QString &s) { CSVGTitle::setText(s.toStdString()); }
 
+  void addProperties(CQPropertyTree *tree, const std::string &name) override;
+
   void drawTerm() override;
 };
 

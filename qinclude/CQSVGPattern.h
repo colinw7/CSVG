@@ -31,6 +31,8 @@ class CQSVGPattern : public CQSVGObject, public CSVGPattern {
 
   CQSVGEnum::CoordUnitsType getContentUnits() const;
   void setContentUnits(const CQSVGEnum::CoordUnitsType &u);
+
+  void addProperties(CQPropertyTree *tree, const std::string &name) override;
 };
 
 #endif

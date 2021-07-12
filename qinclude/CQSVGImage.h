@@ -21,6 +21,8 @@ class CQSVGImage : public CQSVGObject, public CSVGImage {
   QString getXLink() const;
   void setXLink(const QString &s);
 
+  void addProperties(CQPropertyTree *tree, const std::string &name) override;
+
   void drawTerm() override;
 };
 

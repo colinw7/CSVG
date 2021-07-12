@@ -13,6 +13,8 @@ class CQSVGFeDisplacementMap : public CQSVGObject, public CSVGFeDisplacementMap 
 
  public:
   CQSVGFeDisplacementMap(CQSVG *svg);
+
+  void addProperties(CQPropertyTree *tree, const std::string &name) override;
 };
 
 #endif

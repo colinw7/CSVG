@@ -16,6 +16,8 @@ class CQSVGAnchor : public CQSVGObject, public CSVGAnchor {
 
   QString getXLink() const;
   void setXLink(const QString &s);
+
+  void addProperties(CQPropertyTree *tree, const std::string &name) override;
 };
 
 #endif

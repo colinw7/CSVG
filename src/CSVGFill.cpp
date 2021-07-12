@@ -91,12 +91,18 @@ void
 CSVGFill::
 setOpacity(const std::string &opacity_def)
 {
-  double opacity;
+  double value;
+  bool   inherit;
 
-  if (! svg_.decodeOpacityString(opacity_def, opacity)) {
+  if (! svg_.decodeOpacityString(opacity_def, value, inherit)) {
     CSVGLog() << "Bad opacity value " << opacity_def;
     return;
   }
+
+  Opacity opacity(value);
+
+  if (inherit)
+    opacity.setInherit(true);
 
   setOpacity(opacity);
 }
@@ -201,7 +207,14 @@ print(std::ostream &os) const
   if (getOpacityValid()) {
     if (ss.str() != "") ss << " ";
 
-    ss << "fill-opacity: " << getOpacity() << ";";
+    ss << "fill-opacity: ";
+
+    if (! getOpacity().isInherit())
+      ss << getOpacity().getValue();
+    else
+      ss << "inherit";
+
+    ss << ";";
   }
 
   if (getRuleValid()) {

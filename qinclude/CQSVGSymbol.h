@@ -11,6 +11,8 @@ class CQSVGSymbol : public CQSVGObject, public CSVGSymbol {
 
  public:
   CQSVGSymbol(CQSVG *svg);
+
+  void addProperties(CQPropertyTree *tree, const std::string &name) override;
 };
 
 #endif

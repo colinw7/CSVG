@@ -14,6 +14,10 @@ class CSVGRect : public CSVGObject {
 
   const CBBox2D &getBBox() { return bbox_; }
 
+  //---
+
+  // bbox (x, y, width, height)
+
   bool hasX() const { return x_.isValid(); }
   CScreenUnits getX() const { return x_.getValue(CScreenUnits(0)); }
   void setX(const CScreenUnits &x) { x_ = x; updateBBox(); }
@@ -30,6 +34,8 @@ class CSVGRect : public CSVGObject {
   CScreenUnits getHeight() const { return height_ .getValue(CScreenUnits(0)); }
   void setHeight(const CScreenUnits &h) { height_ = h; updateBBox(); }
 
+  //---
+
   bool hasRX() const { return rx_.isValid(); }
   double getRX() { return rx_.getValue(0); }
   void setRX(double x) { rx_ = x; }
@@ -38,23 +44,35 @@ class CSVGRect : public CSVGObject {
   double getRY() { return ry_.getValue(0); }
   void setRY(double y) { ry_ = y; }
 
+  //---
+
   void setOrigin(const CPoint2D &point);
   void setSize  (const CSize2D  &size );
+
+  //---
 
   bool processOption(const std::string &name, const std::string &value) override;
 
   void strokeChanged() override;
 
+  //---
+
   bool draw() override;
+
+  //---
 
   bool getBBox(CBBox2D &bbox) const override;
 
   const CSVGPathPartList &getPartList() const override;
 
+  //---
+
   void moveTo(const CPoint2D &p) override;
   void moveBy(const CVector2D &delta) override;
 
   void resizeTo(const CSize2D &size) override;
+
+  //---
 
   void print(std::ostream &os, bool hier) const override;
 

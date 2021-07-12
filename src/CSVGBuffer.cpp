@@ -297,8 +297,8 @@ blendBuffers(CSVGBuffer *inBuffer1, CSVGBuffer *inBuffer2, const CBBox2D &bbox,
     std::cerr << "blendBuffers: " << bbox << "\n";
 
   // get image contents from buffer
-  CSVGImageDataP src_image1 = inBuffer1->subImage(bbox);
-  CSVGImageDataP src_image2 = inBuffer2->subImage(bbox);
+  auto src_image1 = inBuffer1->subImage(bbox);
+  auto src_image2 = inBuffer2->subImage(bbox);
 
   CSVGImageDataP dst_image(src_image1->dup());
 
@@ -330,7 +330,7 @@ colorMatrixBuffers(CSVGBuffer *inBuffer, const CBBox2D &bbox, CSVGColorMatrixTyp
     std::cerr << "colorMatrixBuffers: " << bbox << "\n";
 
   // get image contents from buffer
-  CSVGImageDataP dst_image = inBuffer->subImage(bbox);
+  auto dst_image = inBuffer->subImage(bbox);
 
   if (! dst_image.isValid())
     return;
@@ -403,7 +403,7 @@ componentTransferBuffers(CSVGBuffer *inBuffer, const CBBox2D &bbox,
     std::cerr << "componentTransferBuffers: " << bbox << "\n";
 
   // get image contents from buffer
-  CSVGImageDataP dst_image = inBuffer->subImage(bbox);
+  auto dst_image = inBuffer->subImage(bbox);
 
   if (! dst_image.isValid())
     return;
@@ -411,10 +411,10 @@ componentTransferBuffers(CSVGBuffer *inBuffer, const CBBox2D &bbox,
   //---
 
   for (const auto &func : funcs) {
-    CSVGFilterFuncType type      = func->getType();
-    CRGBAComponent     component = func->getComponent();
+    auto type      = func->getType();
+    auto component = func->getComponent();
 
-    //CSVGImageDataP dst_image = src_image->dup();
+    //auto dst_image = src_image->dup();
 
     if      (type == CSVGFilterFuncType::IDENTITY) {
     }
@@ -450,8 +450,8 @@ compositeBuffers(CSVGBuffer *inBuffer1, CSVGBuffer *inBuffer2, const CBBox2D &bb
     std::cerr << "compositeBuffers: " << bbox << "\n";
 
   // get image contents from buffer
-  CSVGImageDataP src_image1 = inBuffer1->subImage(bbox);
-  CSVGImageDataP src_image2 = inBuffer2->subImage(bbox);
+  auto src_image1 = inBuffer1->subImage(bbox);
+  auto src_image2 = inBuffer2->subImage(bbox);
 
   if (! src_image1.isValid() || ! src_image2.isValid())
     return;
@@ -486,7 +486,7 @@ convolveMatrixBuffers(CSVGBuffer *inBuffer, const CBBox2D &bbox, const CSVGConvo
     std::cerr << "convolveMatrixBuffers: " << bbox << "\n";
 
   // get image contents from buffer
-  CSVGImageDataP src_image = inBuffer->subImage(bbox);
+  auto src_image = inBuffer->subImage(bbox);
 
   if (! src_image.isValid())
     return;
@@ -522,8 +522,8 @@ displacementMapBuffers(CSVGBuffer *inBuffer1, CSVGBuffer *inBuffer2, const CBBox
     std::cerr << "displacementMapBuffers: " << bbox << "\n";
 
   // get image contents from buffer
-  CSVGImageDataP src_image1 = inBuffer1->subImage(bbox);
-  CSVGImageDataP src_image2 = inBuffer2->subImage(bbox);
+  auto src_image1 = inBuffer1->subImage(bbox);
+  auto src_image2 = inBuffer2->subImage(bbox);
 
   if (! src_image1.isValid() || ! src_image2.isValid())
     return;
@@ -582,7 +582,7 @@ floodBuffers(const CRGBA &c, const CBBox2D &bbox, CSVGBuffer *outBuffer)
   double h1 = fabs(p2.y - p1.y);
 
   // create image to flood
-  CSVGImageDataP dst_image = createImage(outBuffer->svg_, w1, h1);
+  auto dst_image = createImage(outBuffer->svg_, w1, h1);
 
   // flood
   dst_image->set(c);
@@ -606,7 +606,7 @@ gaussianBlurBuffers(CSVGBuffer *inBuffer, const CBBox2D &inBBox,
     std::cerr << "gaussianBlurBuffers: " << inBBox << "\n";
 
   // get image contents from buffer
-  CSVGImageDataP src_image = inBuffer->subImage(inBBox);
+  auto src_image = inBuffer->subImage(inBBox);
 
   if (! src_image.isValid())
     return;
@@ -748,7 +748,7 @@ maskBuffers(CSVGBuffer *oldBuffer, CSVGBuffer *buffer,
   CSVGImageDataP mask_image1(mask_image->createRGBAMask());
 
   if (oldBuffer->svg_.getDebugMask()) {
-    std::string maskBufferName = "rgb_mask_" + object->getUniqueName();
+    auto maskBufferName = "rgb_mask_" + object->getUniqueName();
 
     auto *maskBuffer = oldBuffer->svg_.getBuffer(maskBufferName);
 
@@ -763,7 +763,7 @@ maskBuffers(CSVGBuffer *oldBuffer, CSVGBuffer *buffer,
   dest_image->copyAlpha(mask_image1.getPtr(), x, y);
 
   if (oldBuffer->svg_.getDebugMask()) {
-    std::string maskBufferName = "alpha_mask_" + object->getUniqueName();
+    auto maskBufferName = "alpha_mask_" + object->getUniqueName();
 
     auto *maskBuffer = oldBuffer->svg_.getBuffer(maskBufferName);
 
@@ -795,7 +795,7 @@ mergeBuffers(const std::vector<CSVGFeMergeNode *> &nodes,
   auto *filterBase = dynamic_cast<CSVGFilterBase *>(outBuffer->svg_.currentDrawObject());
 
   // create image to merge into
-  CSVGImageDataP dst_image = createImage(outBuffer->svg_, w, h);
+  auto dst_image = createImage(outBuffer->svg_, w, h);
 
   //---
 
@@ -803,13 +803,13 @@ mergeBuffers(const std::vector<CSVGFeMergeNode *> &nodes,
   int i = 1;
 
   for (const auto &node : nodes) {
-    std::string filterIn = node->getFilterIn();
+    auto  filterIn = node->getFilterIn();
     auto *bufferIn = outBuffer->svg_.getBuffer(filterIn);
 
     if (outBuffer->svg_.getDebugFilter()) {
-      std::string objectBufferName = "_" + filterBase->getUniqueName();
+      auto objectBufferName = "_" + filterBase->getUniqueName();
 
-      CSVGBuffer *buffer =
+      auto *buffer =
         outBuffer->svg_.getBuffer(objectBufferName + "_node_" + std::to_string(i) + "_in");
 
       buffer->setImageBuffer(bufferIn);
@@ -824,9 +824,9 @@ mergeBuffers(const std::vector<CSVGFeMergeNode *> &nodes,
     //---
 
     if (outBuffer->svg_.getDebugFilter()) {
-      std::string objectBufferName = "_" + filterBase->getUniqueName();
+      auto objectBufferName = "_" + filterBase->getUniqueName();
 
-      CSVGBuffer *buffer =
+      auto *buffer =
         outBuffer->svg_.getBuffer(objectBufferName + "_node_" + std::to_string(i) + "_out");
 
       buffer->getRenderer()->setImage(dst_image.getPtr());
@@ -847,7 +847,7 @@ morphologyBuffers(CSVGBuffer *inBuffer, const CBBox2D &bbox,
     std::cerr << "morphologyBuffers: " << bbox << "\n";
 
   // get image contents from buffer
-  CSVGImageDataP src_image = inBuffer->subImage(bbox);
+  auto src_image = inBuffer->subImage(bbox);
 
   if (! src_image.isValid())
     return;
@@ -876,7 +876,7 @@ offsetBuffers(CSVGBuffer *inBuffer, const CBBox2D &bbox, double dx, double dy,
     std::cerr << "offsetBuffers: " << bbox << " (" << dx << "," << dy << ")\n";
 
   // get image contents from buffer
-  CSVGImageDataP src_image = inBuffer->subImage(bbox);
+  auto src_image = inBuffer->subImage(bbox);
 
   if (! src_image.isValid())
     return;
@@ -898,7 +898,7 @@ tileBuffers(CSVGBuffer *inBuffer, const CBBox2D &inBBox,
     std::cerr << "tileBuffers: " << inBBox << " to " << outBBox << "\n";
 
   // get image contents from buffer
-  CSVGImageDataP inImage = inBuffer->subImage(inBBox);
+  auto inImage = inBuffer->subImage(inBBox);
 
   if (! inImage.isValid())
     return;
@@ -955,7 +955,7 @@ turbulenceBuffers(CSVGBuffer *inBuffer, const CBBox2D &bbox, bool fractalNoise,
     std::cerr << "turbulenceBuffers: " << bbox << "\n";
 
   // get image contents from buffer
-  CSVGImageDataP dst_image = inBuffer->subImage(bbox);
+  auto dst_image = inBuffer->subImage(bbox);
 
   if (! dst_image.isValid())
     return;
@@ -980,7 +980,7 @@ lightBuffers(CSVGBuffer *inBuffer, const CBBox2D &bbox,
     std::cerr << "lightBuffers: " << bbox << "\n";
 
   // get image contents from buffer
-  CSVGImageDataP dst_image = inBuffer->subImage(bbox);
+  auto dst_image = inBuffer->subImage(bbox);
 
   if (! dst_image.isValid())
     return;
@@ -1157,7 +1157,7 @@ CSVGBuffer::
 subImage(const CBBox2D &bbox) const
 {
   // get image contents from buffer
-  CSVGImageDataP image = this->getImage();
+  auto image = this->getImage();
 
   if (! image.isValid())
     return CSVGImageDataP();
@@ -1268,7 +1268,7 @@ addClippedBuffer(CSVGBuffer *buffer, double x, double y,
   if (! buffer->isAlpha())
     getRenderer()->addClippedImage(buffer->getRenderer(), x, y, px1, py1, px2, py2);
   else {
-    CSVGImageDataP image = buffer->getImage();
+    auto image = buffer->getImage();
 
     image->clipOutside(px1, py1, px2, py2);
 
@@ -1329,7 +1329,7 @@ void
 CSVGBuffer::
 setImageFile(CFile &file)
 {
-  std::string filename = file.getName();
+  auto filename = file.getName();
 
   setImageFile(filename);
 }
@@ -1409,7 +1409,7 @@ addReshapeImage(CSVGBuffer *buffer, double x, double y, int pw, int ph)
   if (! buffer->isAlpha())
     getRenderer()->addResizedImage(buffer->getRenderer(), px, py, pw, ph);
   else {
-    CSVGImageDataP image = buffer->getImage();
+    auto image = buffer->getImage();
 
     image->reshape(pw, ph);
 
@@ -1472,7 +1472,7 @@ addImage(double x, double y, CSVGImageDataP &image2)
   int ix = CMathRound::RoundNearest(x);
   int iy = CMathRound::RoundNearest(y);
 
-  CSVGImageDataP image1 = getImage();
+  auto image1 = getImage();
 
   int iwidth1  = image1->getWidth ();
   int iheight1 = image1->getHeight();
@@ -1485,7 +1485,7 @@ addImage(double x, double y, CSVGImageDataP &image2)
   if (! drawing_ && (w > iwidth1 || h > iheight1)) {
     renderer_->setSize(w, h);
 
-    CSVGImageDataP image3 = getImage();
+    auto image3 = getImage();
 
     image3->combine( 0,  0, image1.getPtr());
     image3->combine(ix, iy, image2.getPtr());
@@ -1534,7 +1534,7 @@ reset()
 
 void
 CSVGBuffer::
-clear()
+clear(const CRGBA &rgba)
 {
   if (refBuffer_)
     return refBuffer_->clear();
@@ -1543,7 +1543,7 @@ clear()
 
   auto *renderer = getRenderer();
 
-  renderer->clear(CRGBA());
+  renderer->clear(rgba);
 }
 
 void
@@ -1911,7 +1911,7 @@ setStrokeFillBuffer(CSVGBuffer *buffer)
 
   //---
 
-  CSVGImageDataP image = buffer->getImage();
+  auto image = buffer->getImage();
 
   renderer_->setStrokeFillImage(image.getPtr());
 }
@@ -2008,7 +2008,7 @@ setFill(const CSVGFill &fill)
     COptReal opacity;
 
     if (fill.getOpacityValid())
-      opacity = fill.getOpacity();
+      opacity = fill.getOpacity().getValue();
 
     auto *lg = dynamic_cast<CSVGLinearGradient *>(fillObject);
     auto *rg = dynamic_cast<CSVGRadialGradient *>(fillObject);
@@ -2036,7 +2036,7 @@ setFill(const CSVGFill &fill)
       auto rgba = svg_.colorToRGBA(color);
 
       if (fill.getOpacityValid())
-        rgba.setAlpha(fill.getOpacity());
+        rgba.setAlpha(fill.getOpacity().getValue());
 
       setFillColor(rgba);
     }
@@ -2115,8 +2115,8 @@ setFillBuffer(double x, double y, CSVGBuffer *buffer)
 
   //---
 
-  CSVGImageDataP image = buffer->subImage(buffer->bbox());
-//CSVGImageDataP image = buffer->getImage();
+  auto image = buffer->subImage(buffer->bbox());
+//auto image = buffer->getImage();
 
   renderer_->setFillImage(x, y, image.getPtr());
 }
@@ -2148,7 +2148,7 @@ CSVGBuffer::
 getImage() const
 {
   if (refBuffer_) { // alpha
-    CSVGImageDataP image = refBuffer_->getImage();
+    auto image = refBuffer_->getImage();
 
     image->setAlphaGray(0);
 

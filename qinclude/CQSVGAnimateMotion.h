@@ -27,6 +27,8 @@ class CQSVGAnimateMotion : public CQSVGAnimateBase, public CSVGAnimateMotion {
 
   QString origin() const;
   void setOrigin(const QString &s);
+
+  void addProperties(CQPropertyTree *propTree, const std::string &name) override;
 };
 
 #endif

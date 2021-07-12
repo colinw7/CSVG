@@ -11,6 +11,8 @@ class CQSVGFeMerge : public CQSVGObject, public CSVGFeMerge {
 
  public:
   CQSVGFeMerge(CQSVG *svg);
+
+  void addProperties(CQPropertyTree *tree, const std::string &name) override;
 };
 
 #endif

@@ -9,6 +9,13 @@ CQSVGDefs(CQSVG *svg) :
 
 void
 CQSVGDefs::
+addProperties(CQPropertyTree *propTree, const std::string &name)
+{
+  CQSVGObject::addProperties(propTree, name);
+}
+
+void
+CQSVGDefs::
 drawTerm()
 {
   drawSelected();

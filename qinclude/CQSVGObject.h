@@ -11,6 +11,8 @@
 class CQSVG;
 class CSVGObject;
 
+class CQPropertyTree;
+
 class CQSVGObject : public QObject {
   Q_OBJECT
 
@@ -53,30 +55,48 @@ class CQSVGObject : public QObject {
  public:
   CQSVGObject(CQSVG *svg, CSVGObject *obj);
 
+  CQSVG *qsvg() const { return qsvg_; }
+
   CSVGObject *object() const { return obj_; }
 
+  //---
+
+  //! get/set id
   QString id() const;
   void setId(const QString &id);
 
+  //! get/set selected
   bool isSelected() const { return selected_; }
   void setSelected(bool b) { selected_ = b; }
 
+  //! get/set filtered
   bool isFiltered() const;
   void setFiltered(bool b);
 
+  //! get/set clipped
   bool isClipped() const;
   void setClipped(bool b);
 
+  //! get/set masked
   bool isMasked() const;
   void setMasked(bool b);
 
+  //! get/set visible
   bool isVisible() const;
   void setVisible(bool b);
 
+  //---
+
   QString transformStr() const;
+
+  //---
 
   double getDrawOpacity() const;
   void setDrawOpacity(double r);
+
+  //---
+
+  // stroke
 
   bool strokeIsNoColor() const;
   void setStrokeIsNoColor(bool b);
@@ -105,6 +125,10 @@ class CQSVGObject : public QObject {
   CQSVGEnum::LineJoinType strokeJoin() const;
   void setStrokeJoin(const CQSVGEnum::LineJoinType &a);
 
+  //---
+
+  // fill
+
   bool fillIsNoColor() const;
   void setFillIsNoColor(bool b);
 
@@ -123,6 +147,9 @@ class CQSVGObject : public QObject {
   QString fillUrl() const;
   void setFillUrl(const QString &str);
 
+  //---
+
+  // font
   QString getFontFamily() const;
   void setFontFamily(const QString &str);
 
@@ -132,11 +159,15 @@ class CQSVGObject : public QObject {
   QFont getFont() const;
   void setFont(QFont f);
 
+  //---
+
+  virtual void addProperties(CQPropertyTree *tree, const std::string &name);
+
   void drawSelected();
 
  protected:
-  CQSVG      *qsvg_     { 0 };
-  CSVGObject *obj_      { 0 };
+  CQSVG      *qsvg_     { nullptr };
+  CSVGObject *obj_      { nullptr };
   bool        selected_ { false };
 };
 

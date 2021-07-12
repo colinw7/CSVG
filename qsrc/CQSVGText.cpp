@@ -1,5 +1,6 @@
 #include <CQSVGText.h>
 #include <CQSVG.h>
+#include <CQPropertyTree.h>
 
 CQSVGText::
 CQSVGText(CQSVG *svg) :
@@ -116,6 +117,24 @@ CQSVGText::
 setLengthAdjust(const QString &s)
 {
   CSVGText::setLengthAdjust(s.toStdString());
+}
+
+void
+CQSVGText::
+addProperties(CQPropertyTree *propTree, const std::string &name)
+{
+  CQSVGObject::addProperties(propTree, name);
+
+  QString objName = name.c_str();
+
+  propTree->addProperty(objName, this, "x"           );
+  propTree->addProperty(objName, this, "y"           );
+  propTree->addProperty(objName, this, "dx"          );
+  propTree->addProperty(objName, this, "dy"          );
+  propTree->addProperty(objName, this, "text"        );
+  propTree->addProperty(objName, this, "rotate"      );
+  propTree->addProperty(objName, this, "textLength"  );
+  propTree->addProperty(objName, this, "lengthAdjust");
 }
 
 void

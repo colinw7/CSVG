@@ -12,6 +12,8 @@ class CQSVGDefs : public CQSVGObject, public CSVGDefs {
  public:
   CQSVGDefs(CQSVG *svg);
 
+  void addProperties(CQPropertyTree *tree, const std::string &name) override;
+
   void drawTerm() override;
 };
 

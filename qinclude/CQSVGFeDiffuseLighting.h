@@ -18,6 +18,8 @@ class CQSVGFeDiffuseLighting : public CQSVGObject, public CSVGFeDiffuseLighting 
 
   QColor getLightingColor() const;
   void setLightingColor(const QColor &c);
+
+  void addProperties(CQPropertyTree *tree, const std::string &name) override;
 };
 
 #endif

@@ -1,5 +1,6 @@
 #include <CQSVGFeColorMatrix.h>
 #include <CQSVG.h>
+#include <CQPropertyTree.h>
 
 CQSVGFeColorMatrix::
 CQSVGFeColorMatrix(CQSVG *svg) :
@@ -19,4 +20,15 @@ CQSVGFeColorMatrix::
 setType(const CQSVGEnum::ColorMatrixType &t)
 {
   CSVGFeColorMatrix::setType(CQSVGEnum::colorMatrixTypeConv(t));
+}
+
+void
+CQSVGFeColorMatrix::
+addProperties(CQPropertyTree *propTree, const std::string &name)
+{
+  CQSVGObject::addProperties(propTree, name);
+
+  QString objName = name.c_str();
+
+  propTree->addProperty(objName, this, "type");
 }

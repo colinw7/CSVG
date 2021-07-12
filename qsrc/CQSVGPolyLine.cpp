@@ -9,6 +9,13 @@ CQSVGPolyLine(CQSVG *svg) :
 
 void
 CQSVGPolyLine::
+addProperties(CQPropertyTree *propTree, const std::string &name)
+{
+  CQSVGObject::addProperties(propTree, name);
+}
+
+void
+CQSVGPolyLine::
 drawTerm()
 {
   drawSelected();

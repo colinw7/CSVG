@@ -36,6 +36,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
 {
   if (processPresentationOption(opt_name, opt_value))
     return true;
+  // "focusable" "true" | "false" | "auto"
   else
     return CSVGObject::processOption(opt_name, opt_value);
 }

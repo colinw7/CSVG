@@ -16,6 +16,8 @@ class CSVGDesc : public CSVGObject {
 
   bool isDrawable() const override { return false; }
 
+  bool isToolTip() const { return tooltip_; }
+
   bool draw() override;
 
   void print(std::ostream &os, bool hier) const override;
@@ -23,6 +25,9 @@ class CSVGDesc : public CSVGObject {
   void printValues(std::ostream &os, bool flat=false) const override;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGDesc &desc);
+
+ private:
+  bool tooltip_ { false };
 };
 
 #endif

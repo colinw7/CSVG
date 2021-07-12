@@ -12,6 +12,8 @@ class CQSVGClipPath : public CQSVGObject, public CSVGClipPath {
  public:
   CQSVGClipPath(CQSVG *svg);
 
+  void addProperties(CQPropertyTree *tree, const std::string &name) override;
+
   void drawTerm() override;
 };
 

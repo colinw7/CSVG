@@ -92,7 +92,7 @@ termParse()
     auto *glyph = dynamic_cast<CSVGGlyph *>(o);
     if (! glyph) continue;
 
-    std::string unicode = glyph->getUnicode();
+    auto unicode = glyph->getUnicode();
 
     unicode_glyph_map_[unicode] = glyph;
 

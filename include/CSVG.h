@@ -664,14 +664,22 @@ class CSVG {
   //---
 
   static bool decodeWidthString(const std::string &width_str, double &width);
-  static bool decodeOpacityString(const std::string &opacity_str, double &opacity);
+
+  bool opacityOption(const std::string &optName, const std::string &optValue,
+                     const std::string &name, double &opacity, bool &inherit);
+  static bool decodeOpacityString(const std::string &opacity_str,
+                                  double &opacity, bool &inherit);
 
   static CFillType decodeFillRuleString(const std::string &rule_str);
   static std::string encodeFillRuleString(CFillType rule);
 
   static bool decodeDashString(const std::string &dash_str,
                                std::vector<CScreenUnits> &lengths, bool &solid);
+
+  bool colorOption(const std::string &opt_name, const std::string &opt_value,
+                   const std::string &name, CSVGColor &color);
   static bool decodeColorString(const std::string &color_str, CSVGColor &color);
+
   static bool decodeRGBAString(const std::string &color_str, CRGBA &rgba);
 
   static CSVGColor nameToColor(const std::string &name);

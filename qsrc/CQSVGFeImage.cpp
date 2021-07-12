@@ -1,5 +1,6 @@
 #include <CQSVGFeImage.h>
 #include <CQSVG.h>
+#include <CQPropertyTree.h>
 
 CQSVGFeImage::
 CQSVGFeImage(CQSVG *svg) :
@@ -33,4 +34,16 @@ CQSVGFeImage::
 getHeight() const
 {
   return CSVGFeImage::getHeight().pxValue(1);
+}
+
+void
+CQSVGFeImage::
+addProperties(CQPropertyTree *propTree, const std::string &name)
+{
+  CQSVGObject::addProperties(propTree, name);
+
+  QString objName = name.c_str();
+
+  propTree->addProperty(objName, this, "width" );
+  propTree->addProperty(objName, this, "height");
 }

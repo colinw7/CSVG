@@ -426,6 +426,7 @@ compiler_clean: compiler_moc_predefs_clean
 		../../CUtil/include/CRGBA.h \
 		../../CUtil/include/CRGB.h \
 		../../CUtil/include/CRGBName.h \
+		../include/CSVGInheritVal.h \
 		../../CUtil/include/CFillType.h \
 		../../CUtil/include/COptVal.h \
 		../include/CSVGClip.h \
@@ -474,7 +475,13 @@ compiler_clean: compiler_moc_predefs_clean
 		../../CStrUtil/include/CStrUtil.h \
 		../../CQUtil/include/CQApp.h \
 		../../CQUtil/include/CQStyle.h \
-		../../CQUtil/include/CQStyleMgr.h
+		../../CQUtil/include/CQStyleMgr.h \
+		../../CQUtil/include/CQUtil.h \
+		../../CUtil/include/CEvent.h \
+		../../CUtil/include/CKeyType.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CQUtil/include/CQUtilMeta.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGTest.o CQSVGTest.cpp
 
 ####### Install

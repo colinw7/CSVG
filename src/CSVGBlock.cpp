@@ -71,6 +71,16 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   if      (svg_.stringOption(opt_name, opt_value, "xmlns", str)) {
     //notHandled(opt_name, opt_value);
   }
+  else if (svg_.stringOption(opt_name, opt_value, "version", str)) {
+    // specify SVG version - ignore
+    //  version = "1.0" | "1.1" | "1.2"
+    //notHandled(opt_name, opt_value);
+  }
+  else if (svg_.stringOption(opt_name, opt_value, "baseProfile", str)) {
+    // specify minimum SVG language profile - ignore
+    //  baseProfile = "none" | "full" | "basic" | "tiny"
+    //notHandled(opt_name, opt_value);
+  }
   else if (svg_.coordOption (opt_name, opt_value, "x", &real))
     x_.setValue(real);
   else if (svg_.coordOption (opt_name, opt_value, "y", &real))
@@ -83,22 +93,22 @@ processOption(const std::string &opt_name, const std::string &opt_value)
     viewBox_ = bbox;
   else if (svg_.preserveAspectOption(opt_name, opt_value, "preserveAspectRatio", preserveAspect))
     preserveAspect_ = preserveAspect;
+  // "snapshotTime" <clock-value> | "none"
+  // "timelineBegin" "onLoad" | "onStart"
+  // "playbackOrder" "forwardOnly" | "all"
+  else if (svg_.stringOption(opt_name, opt_value, "contentScriptType", str)) {
+    // <content-type>
+    notHandled(opt_name, opt_value);
+  }
   else if (svg_.stringOption(opt_name, opt_value, "zoomAndPan", str)) {
+    // "magnify" | "disable"
     // allow disabled zoom and pan - ignore
     //notHandled(opt_name, opt_value);
   }
-  else if (svg_.stringOption(opt_name, opt_value, "version", str)) {
-    // specify SVG version - ignore
-    //notHandled(opt_name, opt_value);
-  }
-  else if (svg_.stringOption(opt_name, opt_value, "baseProfile", str)) {
-    // specify minimum SVG language profile - ignore
-    //notHandled(opt_name, opt_value);
-  }
-  else if (svg_.stringOption(opt_name, opt_value, "contentScriptType", str))
+  // "focusable" "true" | "false" | "auto"
+  else if (svg_.stringOption(opt_name, opt_value, "contentStyleType", str)) {
     notHandled(opt_name, opt_value);
-  else if (svg_.stringOption(opt_name, opt_value, "contentStyleType", str))
-    notHandled(opt_name, opt_value);
+  }
   else if (CRegExpUtil::parse(opt_name, "xmlns:.*")) {
     //notHandled(opt_name, opt_value);
   }
@@ -147,12 +157,10 @@ double
 CSVGBlock::
 getWidth() const
 {
-  auto bbox = getViewBox();
+  double w = getScreenWidth();
 
-  double w = 400;
-
-  if (bbox.isSet())
-    w = bbox.getWidth();
+  // auto bbox = getViewBox();
+  //if (bbox.isSet()) w = bbox.getWidth();
 
   if      (width_.isValid())
     return width_.getValue().px(CScreenUnits(w)).value();
@@ -166,12 +174,10 @@ double
 CSVGBlock::
 getHeight() const
 {
-  auto bbox = getViewBox();
+  double h = getScreenHeight();
 
-  double h = 400;
-
-  if (bbox.isSet())
-    h = bbox.getHeight();
+  //auto bbox = getViewBox();
+  //if (bbox.isSet()) h = bbox.getHeight();
 
   if      (height_.isValid())
     return height_.getValue().px(CScreenUnits(h)).value();

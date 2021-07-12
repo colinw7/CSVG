@@ -6,3 +6,10 @@ CQSVGFeMergeNode(CQSVG *svg) :
  CQSVGObject(svg, this), CSVGFeMergeNode(*svg)
 {
 }
+
+void
+CQSVGFeMergeNode::
+addProperties(CQPropertyTree *propTree, const std::string &name)
+{
+  CQSVGObject::addProperties(propTree, name);
+}

@@ -1,5 +1,6 @@
 #include <CQSVGPattern.h>
 #include <CQSVG.h>
+#include <CQPropertyTree.h>
 
 CQSVGPattern::
 CQSVGPattern(CQSVG *svg) :
@@ -20,7 +21,6 @@ getY() const
 {
   return CSVGPattern::getY().pxValue(1);
 }
-
 
 double
 CQSVGPattern::
@@ -62,4 +62,20 @@ CQSVGPattern::
 setContentUnits(const CQSVGEnum::CoordUnitsType &u)
 {
   CSVGPattern::setContentUnits(CQSVGEnum::coordUnitsTypeConv(u));
+}
+
+void
+CQSVGPattern::
+addProperties(CQPropertyTree *propTree, const std::string &name)
+{
+  CQSVGObject::addProperties(propTree, name);
+
+  QString objName = name.c_str();
+
+  propTree->addProperty(objName, this, "x"           );
+  propTree->addProperty(objName, this, "y"           );
+  propTree->addProperty(objName, this, "width"       );
+  propTree->addProperty(objName, this, "height"      );
+  propTree->addProperty(objName, this, "units"       );
+  propTree->addProperty(objName, this, "contentUnits");
 }

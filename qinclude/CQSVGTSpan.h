@@ -19,6 +19,8 @@ class CQSVGTSpan : public CQSVGObject, public CSVGTSpan {
   QString getQText() const { return CSVGTSpan::getText().c_str(); }
   void setQText(const QString &s) { CSVGTSpan::setText(s.toStdString()); }
 
+  void addProperties(CQPropertyTree *tree, const std::string &name) override;
+
   void drawTerm() override;
 };
 

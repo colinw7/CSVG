@@ -24,6 +24,8 @@ class CQSVGRect : public CQSVGObject, public CSVGRect {
   double getWidth () const;
   double getHeight() const;
 
+  void addProperties(CQPropertyTree *tree, const std::string &name) override;
+
   void drawTerm() override;
 };
 

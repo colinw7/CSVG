@@ -82,6 +82,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
     height_ = length;
   else if (svg_.stringOption(opt_name, opt_value, "xlink:href", str))
     xlink_ = CSVGXLink(this, str);
+  //  focusable = "true" | "false" | "auto"
   else
     return CSVGObject::processOption(opt_name, opt_value);
 
@@ -176,6 +177,16 @@ getBBox(CBBox2D &bbox) const
 
       bbox.setSize(CSize2D(w, h));
     }
+
+    CPoint2D delta(0, 0);
+
+    if (x_.isValid())
+      delta.setX(x_.getValue());
+
+    if (y_.isValid())
+      delta.setY(y_.getValue());
+
+    bbox.moveBy(delta);
   }
   else
     bbox = getViewBox();
@@ -419,6 +430,32 @@ draw()
 
   return true;
 }
+
+void
+CSVGUse::
+handleEvent(CSVGEventType type, const std::string &id, const std::string &data, bool propagate)
+{
+  CSVGObject::handleEvent(type, id, data, propagate);
+
+  auto *object = getLinkObject();
+
+  if (object)
+    object->handleEvent(type, id, data, propagate);
+}
+
+void
+CSVGUse::
+execEvent(CSVGEventType type)
+{
+  CSVGObject::execEvent(type);
+
+  auto *object = getLinkObject();
+
+  if (object)
+    object->execEvent(type);
+}
+
+//---
 
 void
 CSVGUse::

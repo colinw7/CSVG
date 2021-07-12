@@ -14,6 +14,8 @@ class CQSVGFeGaussianBlur : public CQSVGObject, public CSVGFeGaussianBlur {
 
  public:
   CQSVGFeGaussianBlur(CQSVG *svg);
+
+  void addProperties(CQPropertyTree *tree, const std::string &name) override;
 };
 
 #endif

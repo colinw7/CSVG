@@ -28,12 +28,13 @@ uint nextInd() {
 
 CSVGObject::
 CSVGObject(CSVG &svg) :
- svg_    (svg),
- ind_    (nextInd()),
- stroke_ (svg),
- fill_   (svg),
- clip_   (svg),
- fontDef_(svg)
+ svg_         (svg),
+ ind_         (nextInd()),
+ stroke_      (svg),
+ fill_        (svg),
+ viewportFill_(svg),
+ clip_        (svg),
+ fontDef_     (svg)
 {
   animation_.setParent(const_cast<CSVGObject *>(this));
 
@@ -52,6 +53,8 @@ CSVGObject(const CSVGObject &obj) :
  stroke_        (obj.stroke_),
  fill_          (obj.fill_),
  visibility_    (obj.visibility_),
+ display_       (obj.display_),
+ viewportFill_  (obj.viewportFill_),
  clip_          (obj.clip_),
  fontDef_       (obj.fontDef_),
  textAnchor_    (obj.textAnchor_),
@@ -97,6 +100,13 @@ setParent(CSVGObject *parent)
   parent_ = parent;
 }
 
+int
+CSVGObject::
+getDepth() const
+{
+  return (parent_ ? parent_->getDepth() + 1 : 0);
+}
+
 void
 CSVGObject::
 autoName()
@@ -105,7 +115,7 @@ autoName()
 
   static IdMap idMap;
 
-  std::string typeName = getObjType().getName();
+  auto typeName = getObjType().getName();
 
   auto p = idMap.find(typeName);
 
@@ -138,19 +148,22 @@ setText(const std::string &str)
   text_ = str1;
 }
 
+#if 0
 void
 CSVGObject::
 setOpacity(const std::string &opacityDef)
 {
   double opacity;
+  bool   inherit;
 
-  if (! svg_.decodeOpacityString(opacityDef, opacity)) {
+  if (! svg_.decodeOpacityString(opacityDef, opacity, inherit)) {
     CSVGLog() << "Bad opacity value " << opacityDef;
     return;
   }
 
   setOpacity(opacity);
 }
+#endif
 
 void
 CSVGObject::
@@ -556,13 +569,13 @@ getFlatFillOpacity() const
 {
   // if opacity set use it
   if (fill_.getOpacityValid())
-    return COptReal(fill_.getOpacity());
+    return COptReal(fill_.getOpacity().getValue());
 
   auto *parent = getParent();
 
   while (parent) {
     if (parent->fill_.getOpacityValid())
-      return COptReal(parent->fill_.getOpacity());
+      return COptReal(parent->fill_.getOpacity().getValue());
 
     parent = parent->getParent();
   }
@@ -955,6 +968,8 @@ processCoreOption(const std::string &optName, const std::string &optValue)
     notHandled(optName, optValue);
   else if (svg_.stringOption(optName, optValue, "xml:space", str))
     /* default or preserve */;
+  else if (svg_.stringOption(optName, optValue, "xml:id", str))
+    setId(str);
   else
     return false;
 
@@ -972,6 +987,10 @@ processConditionalOption(const std::string &optName, const std::string &optValue
     setId(str);
   else if (svg_.stringOption(optName, optValue, "requiredExtensions", str))
     nameValues_["requiredExtensions"] = str;
+  else if (svg_.stringOption(optName, optValue, "requiredFonts", str))
+    nameValues_["requiredFonts"] = str;
+  else if (svg_.stringOption(optName, optValue, "requiredFormats", str))
+    nameValues_["requiredFormats"] = str;
   else if (svg_.stringOption(optName, optValue, "systemLanguage", str))
     nameValues_["systemLanguage"] = str;
   else
@@ -1029,9 +1048,9 @@ processPaintOption(const std::string &optName, const std::string &optValue)
     setStrokeWidth(str);
   else if (svg_.stringOption(optName, optValue, "overflow", str))
     setOverflow(str);
-  else if (svg_.stringOption(optName, optValue, "visibility", str))
+  else if (svg_.stringOption(optName, optValue, "visibility", str)) // TODO: duplicate
     setVisibility(str); // visible | hidden | collapse | inherit
-  else if (svg_.stringOption(optName, optValue, "display", str))
+  else if (svg_.stringOption(optName, optValue, "display", str)) // TODO: duplicate
     setDisplay(str); // inline | block | list-item| run-in | compact | marker
   else
     return false;
@@ -1044,20 +1063,21 @@ CSVGObject::
 processColorOption(const std::string &optName, const std::string &optValue)
 {
   std::string str;
+  CSVGColor   color;
 
   // Color Attributes
-  if      (svg_.stringOption(optName, optValue, "color", str)) {
-    CSVGColor color;
-
-    if (svg_.decodeColorString(str, color))
-      setCurrentColor(color);
-    else
-      CLog() << "Invalid color '" << str << "'";
+  if      (svg_.colorOption(optName, optValue, "color", color)) {
+    setCurrentColor(color);
   }
   else if (svg_.stringOption(optName, optValue, "color-interpolation", str))
     nameValues_["color-interpolation"] = str;
-  else if (svg_.stringOption(optName, optValue, "color-rendering", str))
+  else if (svg_.stringOption(optName, optValue, "color-rendering", str)) {
+    // auto | optimizeSpeed | optimizeQuality | inherit
     nameValues_["color-rendering"] = str;
+  }
+  else if (svg_.colorOption(optName, optValue, "solid-color", color)) {
+    notHandled(optName, optValue);
+  }
   else
     return false;
 
@@ -1099,14 +1119,18 @@ CSVGObject::
 processOpacityOption(const std::string &optName, const std::string &optValue)
 {
   std::string str;
+  double      real;
+  bool        inherit;
 
   // Opacity Attributes
-  if      (svg_.stringOption(optName, optValue, "opacity", str))
-    setOpacity(str);
+  if      (svg_.opacityOption(optName, optValue, "opacity", real, inherit))
+    setOpacity(real);
   else if (svg_.stringOption(optName, optValue, "fill-opacity", str))
     setFillOpacity(str);
   else if (svg_.stringOption(optName, optValue, "stroke-opacity", str))
     setStrokeOpacity(str);
+  else if (svg_.opacityOption(optName, optValue, "solid-opacity", real, inherit))
+    notHandled(optName, optValue);
   else
     return false;
 
@@ -1124,10 +1148,11 @@ processGraphicsOption(const std::string &optName, const std::string &optValue)
     // inline | block | list-item | run-in | compact | marker | table | inline-table |
     // table-row-group | table-header-group | table-footer-group | table-row |
     // table-column-group | table-column | table-cell | table-caption | none | inherit
-    notHandled(optName, optValue);
-  else if (svg_.stringOption(optName, optValue, "image-rendering", str))
+    setDisplay(str);
+  else if (svg_.stringOption(optName, optValue, "image-rendering", str)) {
     // auto | optimizeSpeed | optimizeQuality | inherit
     nameValues_["image-rendering"] = str;
+  }
   else if (svg_.stringOption(optName, optValue, "pointer-events", str))
     // visiblePainted | visibleFill | visibleStroke | visible | painted | fill |
     // stroke | all | none | inherit
@@ -1135,13 +1160,17 @@ processGraphicsOption(const std::string &optName, const std::string &optValue)
   else if (svg_.stringOption(optName, optValue, "shape-rendering", str))
     // auto | optimizeSpeed | crispEdges | geometricPrecision | inherit
     nameValues_["shape-rendering"] = str;
-  else if (svg_.stringOption(optName, optValue, "text-renderer", str))
+  else if (svg_.stringOption(optName, optValue, "text-rendering", str)) // TODO: duplicate
     // auto | optimizeSpeed | optimizeLegibility | geometricPrecision | inherit
-    nameValues_["text-renderer"] = str;
+    nameValues_["text-rendering"] = str;
+  else if (svg_.stringOption(optName, optValue, "buffered-rendering", str))
+    // auto | dynamic | static | inherit
+    nameValues_["buffered-rendering"] = str;
   else if (svg_.stringOption(optName, optValue, "visibility", str))
     setVisibility(str); // visible | hidden | collapse | inherit
-  else if (svg_.stringOption(optName, optValue, "display", str))
-    setDisplay(str); // inline | block | list-item| run-in | compact | marker
+  else if (svg_.stringOption(optName, optValue, "vector-effect", str))
+    // non-scaling-stroke | none | inherit
+    nameValues_["vector-effect"] = str;
   else
     return false;
 
@@ -1267,11 +1296,18 @@ CSVGObject::
 processViewportOption(const std::string &optName, const std::string &optValue)
 {
   std::string str;
+  CSVGColor   color;
+  double      real;
+  bool        inherit;
 
   if      (svg_.stringOption(optName, optValue, "clip", str))
     nameValues_["clip"] = str;
   else if (svg_.stringOption(optName, optValue, "overflow", str))
     setOverflow(str);
+  else if (svg_.colorOption(optName, optValue, "viewport-fill", color))
+    setViewportFillColor(color);
+  else if (svg_.opacityOption(optName, optValue, "viewport-fill-opacity", real, inherit))
+    setViewportFillOpacity(real);
   else
     return false;
 
@@ -1560,8 +1596,10 @@ processTextContentOption(const std::string &optName, const std::string &optValue
     letterSpacing_ = length;
   else if (svg_.stringOption(optName, optValue, "text-decoration", str))
     setTextDecoration(str);
-  else if (svg_.stringOption(optName, optValue, "text-rendering", str))
+  else if (svg_.stringOption(optName, optValue, "text-rendering", str)) {
+    // auto | optimizeSpeed | optimizeLegibility | geometricPrecision | inherit
     nameValues_["text-rendering"] = str;
+  }
   else if (svg_.stringOption(optName, optValue, "unicode-bidi", str))
     nameValues_["unicode-bidi"] = str;
   else if (svg_.wordSpacingOption(optName, optValue, "word-spacing", length))
@@ -3045,11 +3083,24 @@ bool
 CSVGObject::
 getObjectsAtPoint(const CPoint2D &p, ObjectArray &objects) const
 {
+  ObjectArray objects1;
+
   if (inside(p))
-    objects.push_back(const_cast<CSVGObject *>(this));
+    objects1.push_back(const_cast<CSVGObject *>(this));
 
   for (const auto &c : children())
-    c->getObjectsAtPoint(p, objects);
+    c->getObjectsAtPoint(p, objects1);
+
+  using DepthObjects = std::map<int, ObjectArray>;
+
+  DepthObjects depthObjects;
+
+  for (const auto &obj : objects1)
+    depthObjects[-obj->getDepth()].push_back(obj);
+
+  for (const auto &pd : depthObjects)
+    for (const auto &obj : pd.second)
+      objects.push_back(obj);
 
   return ! objects.empty();
 }
@@ -3060,6 +3111,11 @@ handleEvent(CSVGEventType type, const std::string &id, const std::string &data, 
 {
   if (id == "" || id == this->getId())
     execEvent(type);
+
+  if (type == CSVGEventType::MOUSE_OVER || type == CSVGEventType::MOUSE_OUT) {
+    if (! isHierDrawable())
+      propagate = false;
+  }
 
   if (propagate) {
     for (const auto &c : children())

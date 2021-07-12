@@ -21,6 +21,8 @@ class CQSVGUse : public CQSVGObject, public CSVGUse {
   QString getXLink() const;
   void setXLink(const QString &s);
 
+  void addProperties(CQPropertyTree *tree, const std::string &name) override;
+
   void drawTerm() override;
 };
 

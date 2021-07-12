@@ -18,6 +18,8 @@ class CQSVGPath : public CQSVGObject, public CSVGPath {
   QString getPathString() const;
   void setPathString(const QString &s);
 
+  void addProperties(CQPropertyTree *tree, const std::string &name) override;
+
   void drawTerm() override;
 };
 

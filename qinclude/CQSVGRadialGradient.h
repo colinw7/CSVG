@@ -21,6 +21,8 @@ class CQSVGRadialGradient : public CQSVGObject, public CSVGRadialGradient {
   double getCenterX() const;
   double getCenterY() const;
   double getRadius () const;
+
+  void addProperties(CQPropertyTree *tree, const std::string &name) override;
 };
 
 #endif

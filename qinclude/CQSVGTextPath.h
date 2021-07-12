@@ -25,6 +25,8 @@ class CQSVGTextPath : public CQSVGObject, public CSVGTextPath {
   double getStartOffset() const;
   void setStartOffset(double r);
 
+  void addProperties(CQPropertyTree *tree, const std::string &name) override;
+
   void drawTerm() override;
 };
 

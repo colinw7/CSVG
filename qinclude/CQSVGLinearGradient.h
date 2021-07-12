@@ -21,6 +21,8 @@ class CQSVGLinearGradient : public CQSVGObject, public CSVGLinearGradient {
   double getY1() const;
   double getX2() const;
   double getY2() const;
+
+  void addProperties(CQPropertyTree *tree, const std::string &name) override;
 };
 
 #endif

@@ -6,3 +6,10 @@ CQSVGSymbol(CQSVG *svg) :
  CQSVGObject(svg, this), CSVGSymbol(*svg)
 {
 }
+
+void
+CQSVGSymbol::
+addProperties(CQPropertyTree *propTree, const std::string &name)
+{
+  CQSVGObject::addProperties(propTree, name);
+}

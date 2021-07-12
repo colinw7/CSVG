@@ -1,5 +1,6 @@
 #include <CQSVGAnimateColor.h>
 #include <CQSVG.h>
+#include <CQPropertyTree.h>
 
 CQSVGAnimateColor::
 CQSVGAnimateColor(CQSVG *svg) :
@@ -19,4 +20,16 @@ CQSVGAnimateColor::
 additive() const
 {
   return CSVGAnimateColor::getAdditive().c_str();
+}
+
+void
+CQSVGAnimateColor::
+addProperties(CQPropertyTree *propTree, const std::string &name)
+{
+  CQSVGAnimateBase::addProperties(propTree, name);
+
+  QString objName = name.c_str();
+
+  propTree->addProperty(objName, this, "type");
+  propTree->addProperty(objName, this, "additive");
 }

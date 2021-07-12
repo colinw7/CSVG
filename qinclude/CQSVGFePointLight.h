@@ -15,6 +15,8 @@ class CQSVGFePointLight : public CQSVGObject, public CSVGFePointLight {
 
  public:
   CQSVGFePointLight(CQSVG *svg);
+
+  void addProperties(CQPropertyTree *tree, const std::string &name) override;
 };
 
 #endif

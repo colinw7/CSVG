@@ -11,6 +11,8 @@ class CQSVGFeMorphology : public CQSVGObject, public CSVGFeMorphology {
 
  public:
   CQSVGFeMorphology(CQSVG *svg);
+
+  void addProperties(CQPropertyTree *tree, const std::string &name) override;
 };
 
 #endif

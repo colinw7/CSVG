@@ -45,6 +45,8 @@ class CQSVGText : public CQSVGObject, public CSVGText {
   QString getLengthAdjust() const;
   void setLengthAdjust(const QString &s);
 
+  void addProperties(CQPropertyTree *tree, const std::string &name) override;
+
   void drawTerm() override;
 };
 

@@ -32,6 +32,7 @@ class CSVGAnchor : public CSVGObject {
 
  private:
   COptValT<CSVGXLink> xlink_;
+  std::string         title_;
 };
 
 #endif

@@ -21,3 +21,5 @@
    + Support click
  + Javascript
    + Support scripting
+ + Inherit support using CSVGInherit for all values supporting it
+ + Image opacity ?

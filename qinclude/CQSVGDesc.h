@@ -17,6 +17,8 @@ class CQSVGDesc : public CQSVGObject, public CSVGDesc {
   QString getQText() const { return CSVGDesc::getText().c_str(); }
   void setQText(const QString &s) { CSVGDesc::setText(s.toStdString()); }
 
+  void addProperties(CQPropertyTree *tree, const std::string &name) override;
+
   void drawTerm() override;
 };
 

@@ -13,6 +13,8 @@ class CQSVGFeFlood : public CQSVGObject, public CSVGFeFlood {
 
  public:
   CQSVGFeFlood(CQSVG *svg);
+
+  void addProperties(CQPropertyTree *tree, const std::string &name) override;
 };
 
 #endif

@@ -1,5 +1,6 @@
 #include <CQSVGAnimateMotion.h>
 #include <CQSVG.h>
+#include <CQPropertyTree.h>
 
 CQSVGAnimateMotion::
 CQSVGAnimateMotion(CQSVG *svg) :
@@ -58,4 +59,18 @@ CQSVGAnimateMotion::
 setOrigin(const QString &s)
 {
   CSVGAnimateMotion::setOrigin(s.toStdString());
+}
+
+void
+CQSVGAnimateMotion::
+addProperties(CQPropertyTree *propTree, const std::string &name)
+{
+  CQSVGAnimateBase::addProperties(propTree, name);
+
+  QString objName = name.c_str();
+
+  propTree->addProperty(objName, this, "pathStr");
+  propTree->addProperty(objName, this, "keyPoints");
+  propTree->addProperty(objName, this, "rotate");
+  propTree->addProperty(objName, this, "origin");
 }

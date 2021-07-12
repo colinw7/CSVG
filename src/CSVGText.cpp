@@ -89,8 +89,10 @@ processOption(const std::string &opt_name, const std::string &opt_value)
     dx_ = lengths;
   else if (svg_.lengthListOption(opt_name, opt_value, "dy", lengths))
     dy_ = lengths;
+  // editable = "none" | "simple"
   else if (svg_.realListOption(opt_name, opt_value, "rotate", reals))
     rotate_ = reals;
+  // focusable = "true" | "false" | "auto"
   else if (svg_.stringOption(opt_name, opt_value, "textLength", str))
     textLength_ = str;
   else if (svg_.stringOption(opt_name, opt_value, "lengthAdjust", str))
@@ -336,7 +338,7 @@ draw()
     //---
 
     for (uint i = 0; i < text.size(); ++i) {
-      std::string text1 = text.substr(i, 1);
+      auto text1 = text.substr(i, 1);
 
       //---
 
@@ -356,7 +358,7 @@ draw()
       //---
 
       if (i < text.size() - 1) {
-        std::string text2 = text.substr(i + 1, 1);
+        auto text2 = text.substr(i + 1, 1);
 
         x += w1;
       }
@@ -380,7 +382,7 @@ draw()
     //---
 
     for (uint i = 0; i < text.size(); ++i) {
-      std::string text1 = text.substr(i, 1);
+      auto text1 = text.substr(i, 1);
 
       //---
 
@@ -397,10 +399,10 @@ draw()
       x += w1;
 
       if (i < text.size() - 1) {
-        std::string text3 = text.substr(i + 1, 1);
+        auto text3 = text.substr(i + 1, 1);
 
 #if 0
-        std::string text2 = text.substr(i, 2);
+        auto text2 = text.substr(i, 2);
 
         double w2, a2, d2;
         double w3, a3, d3;
@@ -442,7 +444,7 @@ draw()
     }
 
     for (uint i = 0; i < text.size(); ++i) {
-      std::string text1 = text.substr(i, 1);
+      auto text1 = text.substr(i, 1);
 
       //---
 

@@ -1,5 +1,6 @@
 #include <CQSVGLine.h>
 #include <CQSVG.h>
+#include <CQPropertyTree.h>
 
 CQSVGLine::
 CQSVGLine(CQSVG *svg) :
@@ -33,6 +34,20 @@ CQSVGLine::
 getY2() const
 {
   return CSVGLine::getY2().pxValue(1);
+}
+
+void
+CQSVGLine::
+addProperties(CQPropertyTree *propTree, const std::string &name)
+{
+  CQSVGObject::addProperties(propTree, name);
+
+  QString objName = name.c_str();
+
+  propTree->addProperty(objName, this, "x1");
+  propTree->addProperty(objName, this, "y1");
+  propTree->addProperty(objName, this, "x2");
+  propTree->addProperty(objName, this, "y2");
 }
 
 void

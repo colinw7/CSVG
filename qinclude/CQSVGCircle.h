@@ -20,6 +20,8 @@ class CQSVGCircle : public CQSVGObject, public CSVGCircle {
   double getCenterY() const;
   double getRadius () const;
 
+  void addProperties(CQPropertyTree *tree, const std::string &name) override;
+
   void drawTerm() override;
 };
 

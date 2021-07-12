@@ -11,6 +11,8 @@ class CQSVGMPath : public CQSVGObject, public CSVGMPath {
 
  public:
   CQSVGMPath(CQSVG *svg);
+
+  void addProperties(CQPropertyTree *tree, const std::string &name) override;
 };
 
 #endif

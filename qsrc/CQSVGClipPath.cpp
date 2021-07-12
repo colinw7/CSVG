@@ -9,6 +9,13 @@ CQSVGClipPath(CQSVG *svg) :
 
 void
 CQSVGClipPath::
+addProperties(CQPropertyTree *propTree, const std::string &name)
+{
+  CQSVGObject::addProperties(propTree, name);
+}
+
+void
+CQSVGClipPath::
 drawTerm()
 {
   drawSelected();

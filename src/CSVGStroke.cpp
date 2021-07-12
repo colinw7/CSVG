@@ -93,8 +93,9 @@ CSVGStroke::
 setOpacity(const std::string &opacity_def)
 {
   double opacity;
+  bool   inherit;
 
-  if (! svg_.decodeOpacityString(opacity_def, opacity)) {
+  if (! svg_.decodeOpacityString(opacity_def, opacity, inherit)) {
     CSVGLog() << "Bad opacity value " << opacity_def;
     return;
   }
@@ -188,6 +189,7 @@ setDashOffset(const CScreenUnits &offset)
   dash_.getValue().setOffset(offset);
 }
 
+// butt | round | square | inherit
 void
 CSVGStroke::
 setLineCap(const std::string &cap_str)
@@ -210,6 +212,7 @@ setLineCap(const std::string &cap_str)
   setLineCap(cap);
 }
 
+// miter | round | bevel | inherit
 void
 CSVGStroke::
 setLineJoin(const std::string &join_str)
@@ -232,6 +235,7 @@ setLineJoin(const std::string &join_str)
   setLineJoin(join);
 }
 
+// <miterlimit> | inherit
 void
 CSVGStroke::
 setMitreLimit(const std::string &limit_str)

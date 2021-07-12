@@ -58,7 +58,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
     begin_ = event;
 
     if (begin_.isValid()) {
-      if (begin_.getValue().isTimeout()) {
+      if      (begin_.getValue().isTimeout()) {
         startTime_ = begin_.getValue().time().getSeconds();
 
         if (dur_.isValid())
@@ -219,14 +219,18 @@ handleEvent(CSVGEventType type, const std::string &id, const std::string &data,
             bool /*propagate*/)
 {
   if (begin_.isValid() && begin_.getValue().isMatch(type, id, data)) {
-    startTime_ = currentTime_ + begin_.getValue().time().getSeconds();
+    if (begin_.getValue().isTimeout()) {
+      startTime_ = currentTime_ + begin_.getValue().time().getSeconds();
 
-    if      (end_.isValid() && end_.getValue().isTimeout())
-      endTime_ = end_.getValue().time().getSeconds();
-    else if (dur_.isValid())
-      endTime_ = getStartTime() + dur_.getValue().getSeconds();
+      if      (end_.isValid() && end_.getValue().isTimeout())
+        endTime_ = end_.getValue().time().getSeconds();
+      else if (dur_.isValid())
+        endTime_ = getStartTime() + dur_.getValue().getSeconds();
 
-    if (currentTime_ >= getStartTime() && currentTime_ <= getEndTime())
+      if (currentTime_ >= getStartTime() && currentTime_ <= getEndTime())
+        setAnimating(true);
+    }
+    else
       setAnimating(true);
   }
 

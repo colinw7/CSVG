@@ -18,6 +18,8 @@ class CQSVGAnimateColor : public CQSVGAnimateBase, public CSVGAnimateColor {
   QString type() const;
 
   QString additive() const;
+
+  void addProperties(CQPropertyTree *propTree, const std::string &name) override;
 };
 
 #endif

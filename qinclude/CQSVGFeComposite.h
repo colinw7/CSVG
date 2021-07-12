@@ -16,6 +16,8 @@ class CQSVGFeComposite : public CQSVGObject, public CSVGFeComposite {
 
  public:
   CQSVGFeComposite(CQSVG *svg);
+
+  void addProperties(CQPropertyTree *tree, const std::string &name) override;
 };
 
 #endif

@@ -211,7 +211,7 @@ subCopyTo(CSVGImageData *dst, int src_x, int src_y, int width, int height, int d
       if (validPixel(xs, ys))
         rgba = getPixel(xs, ys);
       else
-        rgba = CRGBA(0,0,0,0);
+        rgba = CRGBA(0, 0, 0, 0);
 
       if (qdst->validPixel(xd, yd))
         qdst->setPixel(xd, yd, rgba);
@@ -563,7 +563,7 @@ void
 CQSVGImageData::
 clipOutside(int x1, int y1, int x2, int y2)
 {
-  CRGBA a(0,0,0,0);
+  CRGBA a(0, 0, 0, 0);
 
   for (int y = 0; y < getHeight(); ++y) {
     for (int x = 0; x < getWidth(); ++x) {
@@ -781,7 +781,7 @@ applyColorMatrix(const std::vector<double> &m)
         setPixel(x, y, rgba1);
       }
       else
-        setPixel(x, y, CRGBA(0,0,0,0));
+        setPixel(x, y, CRGBA(0, 0, 0, 0));
     }
   }
 }
@@ -1022,7 +1022,7 @@ displacementMap(CSVGImageData *in, CRGBAComponent xcolor, CRGBAComponent ycolor,
 
   for (int y = wy1; y <= wy2; ++y) {
     for (int x = wx1; x <= wx2; ++x) {
-      CRGBA rgba1(0,0,0,0);
+      CRGBA rgba1(0, 0, 0, 0);
 
       // get displacement from dispImage color components
       if (dispImage->validPixel(x, y)) {

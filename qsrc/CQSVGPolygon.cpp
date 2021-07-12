@@ -9,6 +9,13 @@ CQSVGPolygon(CQSVG *svg) :
 
 void
 CQSVGPolygon::
+addProperties(CQPropertyTree *propTree, const std::string &name)
+{
+  CQSVGObject::addProperties(propTree, name);
+}
+
+void
+CQSVGPolygon::
 drawTerm()
 {
   drawSelected();

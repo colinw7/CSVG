@@ -16,6 +16,8 @@ class CQSVGMask : public CQSVGObject, public CSVGMask {
 
  public:
   CQSVGMask(CQSVG *svg);
+
+  void addProperties(CQPropertyTree *tree, const std::string &name) override;
 };
 
 #endif

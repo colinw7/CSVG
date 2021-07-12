@@ -50,8 +50,10 @@ processOption(const std::string &opt_name, const std::string &opt_value)
 {
   std::string str;
 
-  if (svg_.stringOption(opt_name, opt_value, "xlink:href", str))
+  if      (svg_.stringOption(opt_name, opt_value, "xlink:href", str))
     xlink_ = CSVGXLink(this, str);
+  else if (svg_.stringOption(opt_name, opt_value, "xlink:title", str))
+    title_ = str;
   else
     return CSVGObject::processOption(opt_name, opt_value);
 

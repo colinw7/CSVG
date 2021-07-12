@@ -18,7 +18,7 @@ drawCheckerboard(QPainter *painter, int cs)
       int x = c*cs;
 
       if ((r + c) & 1)
-        painter->fillRect(QRect(x, y, cs, cs), QColor(200,200,200));
+        painter->fillRect(QRect(x, y, cs, cs), QColor(200, 200, 200));
       else
         painter->fillRect(QRect(x, y, cs, cs), Qt::white);
     }

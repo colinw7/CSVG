@@ -69,8 +69,8 @@ animate(double t)
     if (words.size() >= 2) {
       std::string ystr;
 
-      std::string from = CStrUtil::stripSpaces(words[0]);
-      std::string to   = CStrUtil::stripSpaces(words[1]);
+      auto from = CStrUtil::stripSpaces(words[0]);
+      auto to   = CStrUtil::stripSpaces(words[1]);
 
       if (getParent()->interpValue(getAttributeName(), from, to, t, ystr)) {
         getParent()->processOption(getAttributeName(), ystr);

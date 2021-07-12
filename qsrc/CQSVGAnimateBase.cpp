@@ -1,6 +1,7 @@
 #include <CQSVGAnimateBase.h>
 #include <CQSVG.h>
 #include <CSVGAnimateBase.h>
+#include <CQPropertyTree.h>
 
 CQSVGAnimateBase::
 CQSVGAnimateBase(CQSVG *svg, CSVGAnimateBase *base) :
@@ -152,4 +153,24 @@ repearDur() const
   ss << base_->getRepeatDur();
 
   return ss.str().c_str();
+}
+
+void
+CQSVGAnimateBase::
+addProperties(CQPropertyTree *propTree, const std::string &name)
+{
+  CQSVGObject::addProperties(propTree, name);
+
+  QString objName = name.c_str();
+
+  propTree->addProperty(objName, this, "attributeName");
+  propTree->addProperty(objName, this, "attributeType");
+  propTree->addProperty(objName, this, "begin");
+  propTree->addProperty(objName, this, "end");
+  propTree->addProperty(objName, this, "dur");
+  propTree->addProperty(objName, this, "from");
+  propTree->addProperty(objName, this, "to");
+  propTree->addProperty(objName, this, "repeatCount");
+  propTree->addProperty(objName, this, "repeatDur");
+  propTree->addProperty(objName, this, "fill");
 }
