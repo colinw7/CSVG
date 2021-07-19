@@ -52,7 +52,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   else if (svg_.stringOption(opt_name, opt_value, "result", str))
     filterOut_ = str;
   else if (svg_.stringOption(opt_name, opt_value, "flood-color", str))
-    color_ = svg_.nameToColor(str);
+    color_ = Color(svg_.nameToColor(str));
   else if (svg_.realOption(opt_name, opt_value, "flood-opacity", &real))
     opacity_ = real;
   else
@@ -87,7 +87,7 @@ drawElement()
   CRGBA c(0, 0, 0, 0);
 
   if (color_.isValid())
-    c = color_.getValue().rgba();
+    c = color_.getValue().getValue().rgba();
 
   if (opacity_.isValid())
     c.setAlpha(opacity_.getValue());
@@ -137,7 +137,7 @@ printValues(std::ostream &os, bool flat) const
   printNameValue(os, "result", filterOut_);
 
   if (color_.isValid())
-    os << " flood-color=\"" << color_.getValue() << "\"";
+    os << " flood-color=\"" << color_.getValue().getValue() << "\"";
 
   printNameValue(os, "flood-opacity", opacity_);
 }

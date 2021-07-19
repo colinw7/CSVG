@@ -61,25 +61,27 @@ animate(double t)
 {
   if      (getAttributeName() == "fill") {
     CSVGColor fromColor, toColor;
+    bool      fromInherit, toInherit;
 
-    svg_.decodeColorString(getFrom(), fromColor);
-    svg_.decodeColorString(getTo  (), toColor  );
+    svg_.decodeColorString(getFrom(), fromColor, fromInherit);
+    svg_.decodeColorString(getTo  (), toColor  , toInherit);
 
     CRGBA c = fromColor.rgba()*(1 - t) + toColor.rgba()*t;
 
-    getParent()->setFillColor(c);
+    getParent()->setFillColor(Color(c));
 
     svg_.redraw();
   }
   else if (getAttributeName() == "stroke") {
     CSVGColor fromColor, toColor;
+    bool      fromInherit, toInherit;
 
-    svg_.decodeColorString(getFrom(), fromColor);
-    svg_.decodeColorString(getTo  (), toColor  );
+    svg_.decodeColorString(getFrom(), fromColor, fromInherit);
+    svg_.decodeColorString(getTo  (), toColor  , toInherit);
 
     CRGBA c = fromColor.rgba()*(1 - t) + toColor.rgba()*t;
 
-    getParent()->setStrokeColor(c);
+    getParent()->setStrokeColor(Color(c));
 
     svg_.redraw();
   }

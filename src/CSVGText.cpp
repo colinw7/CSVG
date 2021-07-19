@@ -323,9 +323,9 @@ draw()
         fs = tl.getValue()/w;
 
         fontDef1.setFamily   (fontDef.getFamily());
-        fontDef1.setStyle    (fontDef.getStyle ());
-        fontDef1.setSize     (fontDef.getSize  ()*fs),
-        fontDef1.setAngle    (fontDef.getAngle ()),
+        fontDef1.setStyle    (fontDef.getStyle());
+        fontDef1.setSize     (CSVGFontDef::FontSize(fontDef.getSize().getValue()*fs)),
+        fontDef1.setAngle    (fontDef.getAngle()),
       //fontDef1.setCharAngle(fontDef.getCharAngle());
 
         fontDef1.textSize(text, &w, &a, &d);

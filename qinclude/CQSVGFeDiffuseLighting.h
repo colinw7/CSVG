@@ -14,6 +14,9 @@ class CQSVGFeDiffuseLighting : public CQSVGObject, public CSVGFeDiffuseLighting 
   Q_PROPERTY(double diffuseConstant READ getDiffuseConstant WRITE setDiffuseConstant)
 
  public:
+  using Color = CSVGInheritValT<CSVGColor>;
+
+ public:
   CQSVGFeDiffuseLighting(CQSVG *svg);
 
   QColor getLightingColor() const;

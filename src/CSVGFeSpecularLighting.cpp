@@ -36,7 +36,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   else if (svg_.stringOption(opt_name, opt_value, "result", str))
     filterOut_ = str;
   else if (svg_.stringOption(opt_name, opt_value, "lighting-color", str))
-    lightingColor_ = svg_.nameToColor(str);
+    lightingColor_ = Color(svg_.nameToColor(str));
   else if (svg_.realOption(opt_name, opt_value, "specularConstant", &r))
     specularConstant_ = r;
   else if (svg_.realOption(opt_name, opt_value, "specularExponent", &r))

@@ -13,6 +13,16 @@ class CSVG;
 
 class CSVGStroke {
  public:
+  using Color      = CSVGInheritValT<CSVGColor>;
+  using Opacity    = CSVGInheritValT<double>;
+  using FillType   = CSVGInheritValT<CFillType>;
+  using Width      = CSVGInheritValT<double>;
+  using LineDash   = CSVGInheritValT<CSVGStrokeDash>;
+  using LineCap    = CSVGInheritValT<CLineCapType>;
+  using LineJoin   = CSVGInheritValT<CLineJoinType>;
+  using MiterLimit = CSVGInheritValT<double>;
+
+ public:
   CSVGStroke(CSVG &svg) :
    svg_(svg) {
   }
@@ -63,28 +73,28 @@ class CSVGStroke {
 
   // color
   bool getColorValid() const { return color_.isValid(); }
-  CSVGColor getColor() const { return color_.getValue(CSVGColor()); }
+  Color getColor() const { return color_.getValue(Color()); }
 
-  void setColor(const std::string &color_str);
-  void setColor(const CSVGColor &c) { color_ = c; }
+  void setColor(const std::string &colorStr);
+  void setColor(const Color &c) { color_ = c; }
 
   void resetColor() { color_.setInvalid(); }
 
   // opacity
   bool getOpacityValid() const { return opacity_.isValid(); }
-  double getOpacity() const { return opacity_.getValue(1.0); }
+  Opacity getOpacity() const { return opacity_.getValue(Opacity(1.0)); }
 
-  void setOpacity(const std::string &opacity_str);
-  void setOpacity(double opacity) { opacity_ = opacity; }
+  void setOpacity(const std::string &opacityStr);
+  void setOpacity(const Opacity &opacity) { opacity_ = opacity; }
 
   void resetOpacity() { opacity_.setInvalid(); }
 
   // rule
   bool getRuleValid() const { return rule_.isValid(); }
-  CFillType getRule() const { return rule_.getValue(FILL_TYPE_EVEN_ODD); }
+  FillType getRule() const { return rule_.getValue(FillType(FILL_TYPE_EVEN_ODD)); }
 
-  void setRule(const std::string &rule_str);
-  void setRule(CFillType rule) { rule_ = rule; }
+  void setRule(const std::string &ruleStr);
+  void setRule(const FillType &rule) { rule_ = rule; }
 
   void resetRule() { rule_.setInvalid(); }
 
@@ -106,53 +116,53 @@ class CSVGStroke {
 
   // width
   bool getWidthValid() const { return width_.isValid(); }
-  double getWidth() const { return width_.getValue(1.0); }
+  Width getWidth() const { return width_.getValue(Width(1.0)); }
 
-  void setWidth(const std::string &width_str);
-  void setWidth(double width) { width_ = width; }
+  void setWidth(const std::string &widthStr);
+  void setWidth(const Width &width) { width_ = width; }
 
   void resetWidth() { width_.setInvalid(); }
 
   // dash
   bool getDashValid() const { return dash_.isValid(); }
-  CSVGStrokeDash getDash() const { return dash_.getValue(CSVGStrokeDash()); }
+  LineDash getDash() const { return dash_.getValue(LineDash(CSVGStrokeDash())); }
 
-  void setDash(const CSVGStrokeDash &dash) { dash_ = dash; }
+  void setDash(const LineDash &dash) { dash_ = dash; }
 
   void resetDash() { dash_.setInvalid(); }
 
-  void setDashArray(const std::string &dash_str);
+  void setDashArray(const std::string &dashStr);
   void setDashArray(const std::vector<CScreenUnits> &array);
 
-  void setDashOffset(const std::string &offset_str);
+  void setDashOffset(const std::string &offsetStr);
   void setDashOffset(const CScreenUnits &offset);
 
   // line cap
   bool getLineCapValid() const { return cap_.isValid(); }
-  CLineCapType getLineCap() const { return cap_.getValue(LINE_CAP_TYPE_BUTT); }
+  LineCap getLineCap() const { return cap_.getValue(LineCap(LINE_CAP_TYPE_BUTT)); }
 
-  void setLineCap(const std::string &cap_str);
-  void setLineCap(const CLineCapType &cap) { cap_ = cap; }
+  void setLineCap(const std::string &capStr);
+  void setLineCap(const LineCap &cap) { cap_ = cap; }
 
   void resetLineCap() { cap_.setInvalid(); }
 
   // line join
   bool getLineJoinValid() const { return join_.isValid(); }
-  CLineJoinType getLineJoin() const { return join_.getValue(LINE_JOIN_TYPE_MITRE); }
+  LineJoin getLineJoin() const { return join_.getValue(LineJoin(LINE_JOIN_TYPE_MITRE)); }
 
-  void setLineJoin(const std::string &join_str);
-  void setLineJoin(const CLineJoinType &join) { join_ = join; }
+  void setLineJoin(const std::string &joinStr);
+  void setLineJoin(const LineJoin &join) { join_ = join; }
 
   void resetLineJoin() { join_.setInvalid(); }
 
-  // mitre limit
-  bool getMitreLimitValid() const { return mlimit_.isValid(); }
-  double getMitreLimit() const { return mlimit_.getValue(0.0); }
+  // miter limit
+  bool getMiterLimitValid() const { return mlimit_.isValid(); }
+  MiterLimit getMiterLimit() const { return mlimit_.getValue(MiterLimit(0.0)); }
 
-  void setMitreLimit(const std::string &limit_str);
-  void setMitreLimit(double mlimit) { mlimit_ = mlimit; }
+  void setMiterLimit(const std::string &limitStr);
+  void setMiterLimit(const MiterLimit &mlimit) { mlimit_ = mlimit; }
 
-  void resetMitreLimit() { mlimit_.setInvalid(); }
+  void resetMiterLimit() { mlimit_.setInvalid(); }
 
   //---
 
@@ -170,17 +180,24 @@ class CSVGStroke {
   void print(std::ostream &os) const;
 
  private:
+  void printLineCap(std::ostream &ss, const LineCap &lineCap) const;
+  void printLineCapType(std::ostream &ss, const CLineCapType &lineCap) const;
+
+  void printLineJoin(std::ostream &ss, const LineJoin &lineJoin) const;
+  void printLineJoinType(std::ostream &ss, const CLineJoinType &lineJoin) const;
+
+ private:
   CSVG&                    svg_;
-  COptValT<CSVGColor>      color_;
-  COptReal                 opacity_;
-  COptValT<CFillType>      rule_;
+  COptValT<Color>          color_;
+  COptValT<Opacity>        opacity_;
+  COptValT<FillType>       rule_;
   COptString               url_;
   COptValT<CSVGObject *>   fillObject_;
-  COptReal                 width_;
-  COptValT<CSVGStrokeDash> dash_;
-  COptValT<CLineCapType>   cap_;
-  COptValT<CLineJoinType>  join_;
-  COptReal                 mlimit_;
+  COptValT<Width>          width_;
+  COptValT<LineDash>       dash_;
+  COptValT<LineCap>        cap_;
+  COptValT<LineJoin>       join_;
+  COptValT<MiterLimit>     mlimit_;
 };
 
 #endif

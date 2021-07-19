@@ -42,8 +42,27 @@ class CSVGStrokeDash {
   }
 
   void print(std::ostream &os) const {
-    printDashes(os);
+    if      (isSolid())
+      os << "solid";
+    else if (isNone())
+      os << "none";
+    else {
+      printDashes(os);
 
+      os << offset_;
+    }
+  }
+
+  void printType(std::ostream &os) const {
+    if      (isSolid())
+      os << "solid";
+    else if (isNone())
+      os << "none";
+    else
+      printDashes(os);
+  }
+
+  void printOffset(std::ostream &os) const {
     os << offset_;
   }
 

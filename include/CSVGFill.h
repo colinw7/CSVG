@@ -11,7 +11,9 @@ class CSVGObject;
 
 class CSVGFill {
  public:
-  using Opacity = CSVGInheritValT<double>;
+  using Color    = CSVGInheritValT<CSVGColor>;
+  using Opacity  = CSVGInheritValT<double>;
+  using FillType = CSVGInheritValT<CFillType>;
 
  public:
   CSVGFill(CSVG &svg) :
@@ -49,10 +51,10 @@ class CSVGFill {
 
   // color
   bool getColorValid() const { return color_.isValid(); }
-  CSVGColor getColor() const { return color_.getValue(CSVGColor()); }
+  Color getColor() const { return color_.getValue(Color()); }
 
-  void setColor(const std::string &color_str);
-  void setColor(const CSVGColor &c) { color_ = c; }
+  void setColor(const std::string &colorStr);
+  void setColor(const Color &c) { color_ = c; }
 
   void resetColor() { color_.setInvalid(); }
 
@@ -62,16 +64,15 @@ class CSVGFill {
 
   void setOpacity(const std::string &opacity_str);
   void setOpacity(const Opacity &opacity) { opacity_ = opacity; }
-  void setOpacity(double opacity) { opacity_ = Opacity(opacity); }
 
   void resetOpacity() { opacity_.setInvalid(); }
 
   // rule
   bool getRuleValid() const { return rule_.isValid(); }
-  CFillType getRule() const { return rule_.getValue(FILL_TYPE_EVEN_ODD); }
+  FillType getRule() const { return rule_.getValue(FillType(FILL_TYPE_EVEN_ODD)); }
 
   void setRule(const std::string &rule_str);
-  void setRule(CFillType rule) { rule_ = rule; }
+  void setRule(const FillType &rule) { rule_ = rule; }
 
   void resetRule() { rule_.setInvalid(); }
 
@@ -108,9 +109,9 @@ class CSVGFill {
 
  private:
   CSVG &                 svg_;
-  COptValT<CSVGColor>    color_;
+  COptValT<Color>        color_;
   COptValT<Opacity>      opacity_;
-  COptValT<CFillType>    rule_;
+  COptValT<FillType>     rule_;
   COptString             url_;
   COptValT<CSVGObject *> fillObject_;
 };

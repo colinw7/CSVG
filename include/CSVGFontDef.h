@@ -1,6 +1,7 @@
 #ifndef CSVGFontDef_H
 #define CSVGFontDef_H
 
+#include <CSVGInheritVal.h>
 #include <CScreenUnits.h>
 #include <CFontStyle.h>
 #include <COptVal.h>
@@ -9,6 +10,10 @@ class CSVG;
 class CSVGFontObj;
 
 class CSVGFontDef {
+ public:
+  using Family   = CSVGInheritValT<std::string>;
+  using FontSize = CSVGInheritValT<CScreenUnits>;
+
  public:
   CSVGFontDef(CSVG &svg);
   CSVGFontDef(const CSVGFontDef &font_def);
@@ -22,12 +27,12 @@ class CSVGFontDef {
   void reset();
 
   bool hasFamily() const { return family_.isValid(); }
-  std::string getFamily() const { return family_.getValue("serif"); }
-  void setFamily(const std::string &family);
+  Family getFamily() const { return family_.getValue(Family("serif")); }
+  void setFamily(const Family &family);
 
   bool hasSize() const { return size_.isValid(); }
-  CScreenUnits getSize() const { return size_.getValue(CScreenUnits(12)); }
-  void setSize(const CScreenUnits &lvalue);
+  FontSize getSize() const { return size_.getValue(FontSize(CScreenUnits(12))); }
+  void setSize(const FontSize &lvalue);
 
   bool hasStyle() const { return style_.isValid(); }
   CFontStyles getStyle() const { return style_.getValue(CFontStyles(CFONT_STYLE_NORMAL)); }
@@ -37,8 +42,8 @@ class CSVGFontDef {
   double getAngle() const { return angle_.getValue(0); }
   void setAngle(double a);
 
-  void setStyle (const std::string &style_def );
-  void setWeight(const std::string &weight_def);
+  void setStyle (const std::string &styleDef);
+  void setWeight(const std::string &weightDef);
 
   bool isUnderline() const;
   void setUnderline(bool b=true);
@@ -65,12 +70,12 @@ class CSVGFontDef {
   void resetObj();
 
  private:
-  CSVG&                  svg_;
-  COptString             family_;
-  COptValT<CScreenUnits> size_;
-  COptValT<CFontStyles>  style_;
-  COptReal               angle_;
-  mutable CSVGFontObj*   obj_ { 0 };
+  CSVG&                 svg_;
+  COptValT<Family>      family_;
+  COptValT<FontSize>    size_;
+  COptValT<CFontStyles> style_;
+  COptReal              angle_;
+  mutable CSVGFontObj*  obj_ { nullptr };
 };
 
 #endif

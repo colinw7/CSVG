@@ -15,10 +15,11 @@ dirs:
 	@if [ ! -e ../lib ]; then mkdir ../lib; fi
 
 SRC = \
+CSVG.cpp \
 CSVGAnchor.cpp \
+CSVGAnimate.cpp \
 CSVGAnimateBase.cpp \
 CSVGAnimateColor.cpp \
-CSVGAnimate.cpp \
 CSVGAnimateMotion.cpp \
 CSVGAnimateTransform.cpp \
 CSVGAnimation.cpp \
@@ -28,7 +29,6 @@ CSVGCircle.cpp \
 CSVGClip.cpp \
 CSVGClipPath.cpp \
 CSVGColorProfile.cpp \
-CSVG.cpp \
 CSVGDefs.cpp \
 CSVGDesc.cpp \
 CSVGEllipse.cpp \
@@ -44,6 +44,7 @@ CSVGFeFlood.cpp \
 CSVGFeFunc.cpp \
 CSVGFeGaussianBlur.cpp \
 CSVGFeImage.cpp \
+CSVGFeLighting.cpp \
 CSVGFeMerge.cpp \
 CSVGFeMergeNode.cpp \
 CSVGFeMorphology.cpp \
@@ -54,8 +55,8 @@ CSVGFeSpotLight.cpp \
 CSVGFeTile.cpp \
 CSVGFeTurbulence.cpp \
 CSVGFill.cpp \
-CSVGFilterBase.cpp \
 CSVGFilter.cpp \
+CSVGFilterBase.cpp \
 CSVGFont.cpp \
 CSVGFontDef.cpp \
 CSVGFontFace.cpp \
@@ -67,9 +68,8 @@ CSVGGroup.cpp \
 CSVGHKern.cpp \
 CSVGImage.cpp \
 CSVGImageData.cpp \
-CSVGFeLighting.cpp \
-CSVGLinearGradient.cpp \
 CSVGLine.cpp \
+CSVGLinearGradient.cpp \
 CSVGMarker.cpp \
 CSVGMask.cpp \
 CSVGMetaData.cpp \
@@ -97,8 +97,9 @@ CSVGTextPath.cpp \
 CSVGTitle.cpp \
 CSVGTSpan.cpp \
 CSVGUse.cpp \
-CSVGUtil.cpp \
 CSVGXLink.cpp \
+\
+CSVGUtil.cpp \
 \
 CSVGJavaScript.cpp \
 CSVGJAnimated.cpp \

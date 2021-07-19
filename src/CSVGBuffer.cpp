@@ -1780,8 +1780,8 @@ setStroke(const CSVGStroke &stroke)
 
     COptReal opacity;
 
-    if (stroke.getOpacityValid())
-      opacity = stroke.getOpacity();
+    if (stroke.getOpacityValid() && ! stroke.getOpacity().isInherit())
+      opacity = stroke.getOpacity().getValue();
 
     auto *lg = dynamic_cast<CSVGLinearGradient *>(fillObject);
     auto *rg = dynamic_cast<CSVGRadialGradient *>(fillObject);
@@ -1810,8 +1810,8 @@ setStroke(const CSVGStroke &stroke)
 
       auto rgba = svg_.colorToRGBA(color);
 
-      if (stroke.getOpacityValid())
-        rgba.setAlpha(stroke.getOpacity());
+      if (stroke.getOpacityValid() && ! stroke.getOpacity().isInherit())
+        rgba.setAlpha(stroke.getOpacity().getValue());
 
       setStrokeColor(rgba);
     }
@@ -1821,37 +1821,37 @@ setStroke(const CSVGStroke &stroke)
 
   //---
 
-  if (stroke.getRuleValid())
-    setStrokeFillType(stroke.getRule());
+  if (stroke.getRuleValid() && ! stroke.getRule().isInherit())
+    setStrokeFillType(stroke.getRule().getValue());
   else
     setStrokeFillType(FILL_TYPE_WINDING);
 
   //---
 
-  if (stroke.getWidthValid())
-    setLineWidth(stroke.getWidth());
+  if (stroke.getWidthValid() && ! stroke.getWidth().isInherit())
+    setLineWidth(stroke.getWidth().getValue());
   else
     setLineWidth(1);
 
-  if (stroke.getDashValid())
-    setLineDash(stroke.getDash().getLineDash());
+  if (stroke.getDashValid() && ! stroke.getDash().isInherit())
+    setLineDash(stroke.getDash().getValue().getLineDash());
   else
     setLineDash(CLineDash());
 
-  if (stroke.getLineCapValid())
-    setLineCap(stroke.getLineCap());
+  if (stroke.getLineCapValid() && ! stroke.getLineCap().isInherit())
+    setLineCap(stroke.getLineCap().getValue());
   else
     setLineCap(LINE_CAP_TYPE_BUTT);
 
-  if (stroke.getLineJoinValid())
-    setLineJoin(stroke.getLineJoin());
+  if (stroke.getLineJoinValid() && ! stroke.getLineJoin().isInherit())
+    setLineJoin(stroke.getLineJoin().getValue());
   else
     setLineJoin(LINE_JOIN_TYPE_MITRE);
 
-  if (stroke.getMitreLimitValid())
-    setLineMitreLimit(stroke.getMitreLimitValid());
+  if (stroke.getMiterLimitValid())
+    setLineMiterLimit(stroke.getMiterLimitValid());
   else
-    setLineMitreLimit(4.0);
+    setLineMiterLimit(4.0);
 }
 
 void
@@ -1982,10 +1982,10 @@ setLineJoin(CLineJoinType line_join)
 
 void
 CSVGBuffer::
-setLineMitreLimit(double limit)
+setLineMiterLimit(double limit)
 {
   if (refBuffer_)
-    return refBuffer_->setLineMitreLimit(limit);
+    return refBuffer_->setLineMiterLimit(limit);
 
   //---
 
@@ -2046,8 +2046,8 @@ setFill(const CSVGFill &fill)
 
   //---
 
-  if (fill.getRuleValid())
-    setFillType(fill.getRule());
+  if (fill.getRuleValid() && ! fill.getRule().isInherit())
+    setFillType(fill.getRule().getValue());
   else
     setFillType(FILL_TYPE_WINDING);
 }

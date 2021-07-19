@@ -166,8 +166,8 @@ drawMarker(double x, double y, double autoAngle)
       if (svg_.currentDrawObject()) {
         auto lw1 = svg_.currentDrawObject()->getFlatStrokeWidth();
 
-        if (lw1.isValid())
-          lw = lw1.getValue();
+        if (lw1.isValid() && ! lw1.getValue().isInherit())
+          lw = lw1.getValue().getValue();
       }
 
       xs = markerWidth*lw/w1;

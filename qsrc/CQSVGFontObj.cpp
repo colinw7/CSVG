@@ -6,7 +6,7 @@ CQSVGFontObj::
 CQSVGFontObj(const CSVGFontDef &def) :
  CSVGFontObj(def)
 {
-  qfont_ = QFont(def.getFamily().c_str());
+  qfont_ = QFont(def.getFamily().getValue().c_str());
 
   CFontStyles styles = def.getStyle();
 
@@ -47,11 +47,11 @@ initPointSize(const CSVGFontDef &def)
 
   CScreenUnitsMgrInst->setDpi(100);
 
-  size_ = def.getSize().ptValue();
+  size_ = def.getSize().getValue().ptValue();
 
   scale_ = 1;
 
-  double h1 = def.getSize().pxValue();
+  double h1 = def.getSize().getValue().pxValue();
 
   for (int i = 0; i < 8; ++i) {
     qfont_.setPointSizeF(scale_*size_);

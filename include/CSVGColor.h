@@ -8,8 +8,7 @@ class CSVGColor {
   enum class Type {
     NONE,
     CURRENT,
-    RGBA,
-    INHERIT
+    RGBA
   };
 
  public:
@@ -30,7 +29,6 @@ class CSVGColor {
   bool isNone   () const { return type_ == Type::NONE;    }
   bool isCurrent() const { return type_ == Type::CURRENT; }
   bool isRGBA   () const { return type_ == Type::RGBA;    }
-  bool isInherit() const { return type_ == Type::INHERIT; }
 
   friend bool operator==(const CSVGColor &lhs, const CSVGColor &rhs) {
     return lhs.rgba() == rhs.rgba();
@@ -39,7 +37,6 @@ class CSVGColor {
   void print(std::ostream &os) const {
     if      (type_ == Type::NONE   ) os << "none";
     else if (type_ == Type::CURRENT) os << "currentColor";
-    else if (type_ == Type::INHERIT) os << "inherit";
     else                             os << rgba_.getRGB().stringEncode();
   }
 

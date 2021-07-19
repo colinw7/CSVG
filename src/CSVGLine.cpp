@@ -169,7 +169,7 @@ inside(const CPoint2D &pos) const
   if (! CMathGeom2D::PointLineDistance(pos, CLine2D(p1, p2), &d))
     return false;
 
-  return (d <= getFlatStrokeWidth());
+  return (d <= getFlatStrokeWidth().getValue().getValue());
 }
 
 void

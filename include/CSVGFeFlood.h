@@ -34,10 +34,10 @@ class CSVGFeFlood : public CSVGFilterBase {
   friend std::ostream &operator<<(std::ostream &os, const CSVGFeFlood &fe);
 
  private:
-  COptString          filterIn_;
-  COptString          filterOut_;
-  COptValT<CSVGColor> color_;
-  COptReal            opacity_;
+  COptString      filterIn_;
+  COptString      filterOut_;
+  COptValT<Color> color_;
+  COptReal        opacity_;
 };
 
 #endif

@@ -1582,9 +1582,13 @@ getColor() const
   if (obj_) {
     COptString value = obj_->getNameValue(name_);
 
-    COptValT<CColor> color = CSVG::decodeColorString(value.getValue(""));
+    CSVGColor color;
+    bool      inherit;
 
-    return color.getValue(CColor());
+    if (! CSVG::decodeColorString(value.getValue(""), color, inherit))
+      return CSVGColor();
+
+    return color;
   }
   else
 #endif

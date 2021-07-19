@@ -44,6 +44,17 @@ class CSVGObject {
   using ObjectList  = std::list<CSVGObject *>;
   using ObjectArray = std::vector<CSVGObject *>;
   using NameValues  = std::map<std::string, std::string>;
+  using Color       = CSVGInheritValT<CSVGColor>;
+  using Opacity     = CSVGInheritValT<double>;
+  using Width       = CSVGInheritValT<double>;
+  using Overflow    = CSVGInheritValT<CSVGOverflowType>;
+  using FillType    = CSVGInheritValT<CFillType>;
+  using LineCap     = CSVGInheritValT<CLineCapType>;
+  using LineJoin    = CSVGInheritValT<CLineJoinType>;
+  using MiterLimit  = CSVGInheritValT<double>;
+  using LineDash    = CSVGInheritValT<CSVGStrokeDash>;
+  using FontFamily  = CSVGInheritValT<std::string>;
+  using FontSize    = CSVGInheritValT<CScreenUnits>;
 
  protected:
   CObjTypeMgr &getTypeMgr() const {
@@ -147,7 +158,7 @@ class CSVGObject {
 
   //! get/set filter
   bool hasFilter() const { return filter_.isValid(); }
-  CSVGFilter *getFilter() const { return filter_.getValue(0); }
+  CSVGFilter *getFilter() const { return filter_.getValue(nullptr); }
   void setFilter(CSVGFilter *filter) { filter_ = filter; }
 
   //! get/set filtered
@@ -341,23 +352,25 @@ class CSVGObject {
   //------
 
   // get/set opacity
-  void   setOpacity(double opacity) { opacity_.setValue(opacity); }
-  bool   getOpacityValid() const { return opacity_.isValid(); }
-  double getOpacity() const { return opacity_.getValue(1.0); }
+  void setOpacity(const Opacity opacity) { opacity_ = opacity; }
+  bool getOpacityValid() const { return opacity_.isValid(); }
+  Opacity getOpacity() const { return opacity_.getValue(Opacity(1.0)); }
 
   //------
 
   // stroke
   void setStrokeColor(const std::string &color) { stroke_.setColor(color); strokeChanged(); }
-  void setStrokeColor(const CSVGColor &color) { stroke_.setColor(color); strokeChanged(); }
+  void setStrokeColor(const Color &color) { stroke_.setColor(color); strokeChanged(); }
   bool getStrokeColorValid() const { return stroke_.getColorValid(); }
+  Color getStrokeColor() const { return stroke_.getColor(); }
 
   void setStrokeOpacity(const std::string &s) { stroke_.setOpacity(s); strokeChanged(); }
-  void setStrokeOpacity(double t) { stroke_.setOpacity(t); strokeChanged(); }
+  void setStrokeOpacity(const Opacity &t) { stroke_.setOpacity(t); strokeChanged(); }
   bool getStrokeOpacityValid() const { return stroke_.getOpacityValid(); }
+  Opacity getStrokeOpacity() const { return stroke_.getOpacity(); }
 
   void setStrokeRule(const std::string &s) { stroke_.setRule(s); strokeChanged(); }
-  void setStrokeRule(const CFillType &rule) { stroke_.setRule(rule); strokeChanged(); }
+  void setStrokeRule(const FillType &rule) { stroke_.setRule(rule); strokeChanged(); }
   bool getStrokeRuleValid() const { return stroke_.getRuleValid(); }
 
   void setStrokeUrl(const std::string &url) { stroke_.setUrl(url); strokeChanged(); }
@@ -367,58 +380,60 @@ class CSVGObject {
   bool getStrokeFillObjectValid() const { return stroke_.getFillObjectValid(); }
 
   void setStrokeWidth(const std::string &s) { stroke_.setWidth(s); strokeChanged(); }
-  void setStrokeWidth(double width) { stroke_.setWidth(width); strokeChanged(); }
+  void setStrokeWidth(const Width &width) { stroke_.setWidth(width); strokeChanged(); }
   bool getStrokeWidthValid() const { return stroke_.getWidthValid(); }
 
   void setStrokeDashArray(const std::string &s) { stroke_.setDashArray(s); strokeChanged(); }
   void setStrokeDashOffset(const std::string &s) { stroke_.setDashOffset(s); strokeChanged(); }
 
-  void setStrokeDash(const CSVGStrokeDash &dash) { stroke_.setDash(dash); strokeChanged(); }
-  CSVGStrokeDash getStrokeDash() const { return stroke_.getDash(); }
+  void setStrokeDash(const LineDash &dash) { stroke_.setDash(dash); strokeChanged(); }
+  LineDash getStrokeDash() const { return stroke_.getDash(); }
   bool getStrokeDashValid() const { return stroke_.getDashValid(); }
 
   void setStrokeLineCap(const std::string &s) { stroke_.setLineCap(s); strokeChanged(); }
-  void setStrokeLineCap(const CLineCapType &cap) { stroke_.setLineCap(cap); strokeChanged(); }
-  CLineCapType getStrokeLineCap() { return stroke_.getLineCap(); }
+  void setStrokeLineCap(const LineCap &cap) { stroke_.setLineCap(cap); strokeChanged(); }
+  LineCap getStrokeLineCap() { return stroke_.getLineCap(); }
   bool getStrokeLineCapValid() const { return stroke_.getLineCapValid(); }
 
   void setStrokeLineJoin(const std::string &s) { stroke_.setLineJoin(s); strokeChanged(); }
-  void setStrokeLineJoin(const CLineJoinType &join) { stroke_.setLineJoin(join); strokeChanged(); }
-  CLineJoinType getStrokeLineJoin() { return stroke_.getLineJoin(); }
+  void setStrokeLineJoin(const LineJoin &join) { stroke_.setLineJoin(join); strokeChanged(); }
+  LineJoin getStrokeLineJoin() { return stroke_.getLineJoin(); }
   bool getStrokeLineJoinValid() const { return stroke_.getLineJoinValid(); }
 
-  void setStrokeMitreLimit(const std::string &s) { stroke_.setMitreLimit(s); strokeChanged(); }
-  bool getStrokeMitreLimitValid() const { return stroke_.getMitreLimitValid(); }
+  void setStrokeMiterLimit(const std::string &s) { stroke_.setMiterLimit(s); strokeChanged(); }
+  bool getStrokeMiterLimitValid() const { return stroke_.getMiterLimitValid(); }
 
   virtual void strokeChanged() { }
 
   //---
 
   CSVGStroke               getFlatStroke          () const;
-  COptValT<CSVGColor>      getFlatStrokeColor     () const;
-  COptReal                 getFlatStrokeOpacity   () const;
-  COptValT<CFillType>      getFlatStrokeRule      () const;
+  COptValT<Color>          getFlatStrokeColor     () const;
+  COptValT<Opacity>        getFlatStrokeOpacity   () const;
+  COptValT<FillType>       getFlatStrokeRule      () const;
   COptString               getFlatStrokeUrl       () const;
   COptValT<CSVGObject*>    getFlatStrokeFillObject() const;
-  COptReal                 getFlatStrokeWidth     () const;
-  COptValT<CSVGStrokeDash> getFlatStrokeLineDash  () const;
-  COptValT<CLineCapType>   getFlatStrokeLineCap   () const;
-  COptValT<CLineJoinType>  getFlatStrokeLineJoin  () const;
-  COptReal                 getFlatStrokeMitreLimit() const;
+  COptValT<Width>          getFlatStrokeWidth     () const;
+  COptValT<LineDash>       getFlatStrokeLineDash  () const;
+  COptValT<LineCap>        getFlatStrokeLineCap   () const;
+  COptValT<LineJoin>       getFlatStrokeLineJoin  () const;
+  COptValT<MiterLimit>     getFlatStrokeMiterLimit() const;
 
   //------
 
   // fill
   void setFillColor(const std::string &s) { fill_.setColor(s); fillChanged(); }
-  void setFillColor(const CSVGColor &color) { fill_.setColor(color); fillChanged(); }
+  void setFillColor(const Color &color) { fill_.setColor(color); fillChanged(); }
   bool getFillColorValid() const { return fill_.getColorValid(); }
+  Color getFillColor() const { return fill_.getColor(); }
 
   void setFillOpacity(const std::string &s) { fill_.setOpacity(s); fillChanged(); }
-  void setFillOpacity(double r) { fill_.setOpacity(r); fillChanged(); }
+  void setFillOpacity(const Opacity &r) { fill_.setOpacity(r); fillChanged(); }
   bool getFillOpacityValid() const { return fill_.getOpacityValid(); }
+  Opacity getFillOpacity() const { return fill_.getOpacity(); }
 
   void setFillRule(const std::string &s) { fill_.setRule(s); fillChanged(); }
-  CFillType getFillRule() const { return fill_.getRule(); }
+  FillType getFillRule() const { return fill_.getRule(); }
   bool getFillRuleValid() const { return fill_.getRuleValid(); }
 
   void setFillUrl(const std::string &s) { fill_.setUrl(s); fillChanged(); }
@@ -435,27 +450,26 @@ class CSVGObject {
 
   CSVGFill getFlatFill() const;
 
-  COptValT<CSVGColor>    getFlatFillColor     () const;
-  COptReal               getFlatFillOpacity   () const;
-  COptValT<CFillType>    getFlatFillRule      () const;
+  COptValT<Color>        getFlatFillColor     () const;
+  COptValT<Opacity>      getFlatFillOpacity   () const;
+  COptValT<FillType>     getFlatFillRule      () const;
   COptString             getFlatFillUrl       () const;
   COptValT<CSVGObject *> getFlatFillFillObject() const;
 
   //------
 
   // font
-  void setFontFamily(const std::string &family);
-  void setFontSize  (double size);
-  void setFontSize  (const CScreenUnits &lvalue);
+  void setFontFamily(const FontFamily &family);
+  void setFontSize  (const FontSize &size);
   void setFontWeight(const std::string &weight);
   void setFontStyle (const std::string &style );
   void setFontStyle (CFontStyle s);
 
   CSVGFontDef getFlatFontDef() const;
 
-  std::string  getFlatFontFamily() const;
-  CFontStyles  getFlatFontStyle() const;
-  CScreenUnits getFlatFontSize() const;
+  COptValT<FontFamily> getFlatFontFamily() const;
+  CFontStyles          getFlatFontStyle() const;
+  COptValT<FontSize>   getFlatFontSize() const;
 
   //------
 
@@ -463,8 +477,9 @@ class CSVGObject {
   void setOverflow(const std::string &str);
 
   bool hasOverflow() const { return overflow_.isValid(); }
-  CSVGOverflowType getOverflow() const { return overflow_.getValue(CSVGOverflowType::VISIBLE); }
-  void setOverflow(CSVGOverflowType o) { overflow_ = o; }
+  CSVGOverflowType getOverflow() const {
+    return overflow_.getValue(Overflow(CSVGOverflowType::VISIBLE)).getValue(); }
+  void setOverflow(CSVGOverflowType o) { overflow_ = Overflow(o); }
 
   //! get/set visible
   bool hasVisibility() const { return visibility_.isValid(); }
@@ -484,16 +499,16 @@ class CSVGObject {
 
   //! get/set viewport fill
   bool hasViewportFillColor() const { return viewportFill_.getColorValid(); }
-  CSVGColor viewportFillColor() const { return viewportFill_.getColor(); }
-  void setViewportFillColor(const CSVGColor &c) { viewportFill_.setColor(c); }
+  Color viewportFillColor() const { return viewportFill_.getColor(); }
+  void setViewportFillColor(const Color &c) { viewportFill_.setColor(c); }
 
-  void setViewportFillOpacity(double r) { viewportFill_.setOpacity(r); }
-  double getViewportFillOpacity() const { return viewportFill_.getOpacity().getValue(); }
+  void setViewportFillOpacity(const Opacity &r) { viewportFill_.setOpacity(r); }
+  Opacity getViewportFillOpacity() const { return viewportFill_.getOpacity(); }
   bool getViewportFillOpacityValid() const { return viewportFill_.getOpacityValid(); }
 
   //---
 
-  CRGBA colorToRGBA(const CSVGColor &color) const;
+  CRGBA colorToRGBA(const Color &color) const;
 
   CRGBA getFlatCurrentColor() const;
 
@@ -609,7 +624,8 @@ class CSVGObject {
 
   void setShapeRendering(const std::string &rendering);
 
-  bool decodeXLink(const std::string &str, CSVGObject **object=0, CSVGBuffer **buffer=0);
+  bool decodeXLink(const std::string &str, CSVGObject **object=nullptr,
+                   CSVGBuffer **buffer=nullptr);
 
   bool decodeStringToFile(const std::string &str, const std::string &filename);
 
@@ -748,24 +764,25 @@ class CSVGObject {
 
  protected:
   using StringVector = std::vector<std::string>;
+  using TextAnchor   = CSVGInheritValT<CHAlignType>;
 
   CSVG&                        svg_;
   COptString                   id_;
   COptValT<StringVector>       classes_;
   CSVGObject*                  parent_ { nullptr };
   uint                         ind_;
-  COptReal                     opacity_;
+  COptValT<Opacity>            opacity_;
   COptString                   text_;
   CSVGStroke                   stroke_;
   CSVGFill                     fill_;
-  COptValT<CSVGOverflowType>   overflow_;
+  COptValT<Overflow>           overflow_;
   COptString                   visibility_;
   COptString                   display_;
   COptValT<CSVGColor>          currentColor_;
   CSVGFill                     viewportFill_;
   CSVGClip                     clip_;
   CSVGFontDef                  fontDef_;
-  COptValT<CHAlignType>        textAnchor_;
+  COptValT<TextAnchor>         textAnchor_;
   COptValT<CSVGTextDecoration> textDecoration_;
   COptValT<CScreenUnits>       letterSpacing_;
   COptValT<CScreenUnits>       wordSpacing_;
@@ -779,16 +796,16 @@ class CSVGObject {
   CSVGAnimation                animation_;
   COptValT<CSVGFilter*>        filter_;
   bool                         filtered_ { true };
-  CSVGMask*                    mask_     { 0 };
+  CSVGMask*                    mask_     { nullptr };
   bool                         masked_   { true };
-  CSVGClipPath*                clipPath_ { 0 };
+  CSVGClipPath*                clipPath_ { nullptr };
   bool                         clipped_  { true };
   CSVGObjectMarker             marker_;
   COptValT<CBBox2D>            viewBox_;
   mutable COptValT<CBBox2D>    bbox_;
   bool                         selected_ { false };
   bool                         inside_   { false };
-  CXMLTag*                     xmlTag_   { 0 };
+  CXMLTag*                     xmlTag_   { nullptr };
   COptString                   outBuffer_;
 };
 

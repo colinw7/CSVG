@@ -53,6 +53,9 @@ class CQSVGObject : public QObject {
   Q_PROPERTY(QFont                font       READ getFont       WRITE setFont      )
 
  public:
+  using Color = CSVGInheritValT<CSVGColor>;
+
+ public:
   CQSVGObject(CQSVG *svg, CSVGObject *obj);
 
   CQSVG *qsvg() const { return qsvg_; }

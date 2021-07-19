@@ -96,7 +96,7 @@ drawZeroLength()
     drawCap = false;
 
   auto   c = getFlatStrokeColor();
-  double r = getFlatStrokeWidth().getValue(1)/2;
+  double r = getFlatStrokeWidth().getValue(Width(1)).getValue()/2;
 
   auto *buffer = svg_.getCurrentBuffer();
 
@@ -122,15 +122,16 @@ drawZeroLength()
   buffer->resetFill();
 
   if (c.isValid())
-    buffer->setFillColor(c.getValue().rgba());
+    buffer->setFillColor(c.getValue().getValue().rgba());
 
-  if (stroke_.getLineCap() != LINE_CAP_TYPE_SQUARE &&
-      stroke_.getLineCap() != LINE_CAP_TYPE_ROUND)
+  auto lineCap = stroke_.getLineCap().getValue();
+
+  if (lineCap != LINE_CAP_TYPE_SQUARE && lineCap != LINE_CAP_TYPE_ROUND)
     return false;
 
   buffer->pathInit();
 
-  if (stroke_.getLineCap() == LINE_CAP_TYPE_SQUARE) {
+  if (lineCap == LINE_CAP_TYPE_SQUARE) {
     CBBox2D bbox(p.x - r, p.y - r, p.x + r, p.y + r);
 
     buffer->pathMoveTo(bbox.getXMin(), bbox.getYMin());
@@ -200,7 +201,7 @@ getBBox(CBBox2D &bbox) const
       rc = parts_.getBBox(currentBuffer, bbox);
     }
 
-    double lw = getFlatStrokeWidth().getValue(1);
+    double lw = getFlatStrokeWidth().getValue(Width(1)).getValue();
 
     bbox.expand(lw);
 

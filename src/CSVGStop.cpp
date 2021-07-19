@@ -38,8 +38,8 @@ processOption(const std::string &opt_name, const std::string &opt_value)
 
     offset_ = length;
   }
-  else if (svg_.colorOption(opt_name, opt_value, "stop-color", color)) {
-    color_ = color;
+  else if (svg_.colorOption(opt_name, opt_value, "stop-color", color, inherit)) {
+    color_ = (! inherit ? Color(color) : Color::inherit());
   }
   else if (svg_.opacityOption(opt_name, opt_value, "stop-opacity", real, inherit)) {
     opacity_ = real;

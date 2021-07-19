@@ -333,8 +333,8 @@ draw()
     if (! symbol)
       currentBuffer->setTransform(transform1);
 
-    if (object->getOpacityValid())
-      currentBuffer->setOpacity(object->getOpacity());
+    if (object->getOpacityValid() && ! object->getOpacity().isInherit())
+      currentBuffer->setOpacity(object->getOpacity().getValue());
 
     //------
 

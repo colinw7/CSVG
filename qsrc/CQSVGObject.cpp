@@ -102,21 +102,21 @@ double
 CQSVGObject::
 getDrawOpacity() const
 {
-  return obj_->getOpacity();
+  return obj_->getOpacity().getValue();
 }
 
 void
 CQSVGObject::
 setDrawOpacity(double r)
 {
-  obj_->setOpacity(r);
+  obj_->setOpacity(CSVGObject::Opacity(r));
 }
 
 bool
 CQSVGObject::
 strokeIsNoColor() const
 {
-  return obj_->getStroke().getColor().isNone();
+  return obj_->getStroke().getColor().getValue().isNone();
 }
 
 void
@@ -126,7 +126,7 @@ setStrokeIsNoColor(bool b)
   auto stroke = obj_->getStroke();
 
   if (b)
-    stroke.setColor(CSVGColor(CSVGColor::Type::NONE));
+    stroke.setColor(Color(CSVGColor(CSVGColor::Type::NONE)));
 
   obj_->setStroke(stroke);
 }
@@ -135,7 +135,7 @@ bool
 CQSVGObject::
 strokeIsCurrentColor() const
 {
-  return obj_->getStroke().getColor().isCurrent();
+  return obj_->getStroke().getColor().getValue().isCurrent();
 }
 
 void
@@ -145,7 +145,7 @@ setStrokeIsCurrentColor(bool b)
   auto stroke = obj_->getStroke();
 
   if (b)
-    stroke.setColor(CSVGColor(CSVGColor::Type::CURRENT));
+    stroke.setColor(Color(CSVGColor(CSVGColor::Type::CURRENT)));
 
   obj_->setStroke(stroke);
 }
@@ -154,8 +154,8 @@ QColor
 CQSVGObject::
 strokeColor() const
 {
-  if (obj_->getStroke().getColor().isRGBA())
-    return CQUtil::rgbaToColor(obj_->getStroke().getColor().rgba());
+  if (obj_->getStroke().getColor().getValue().isRGBA())
+    return CQUtil::rgbaToColor(obj_->getStroke().getColor().getValue().rgba());
   else
     return QColor();
 }
@@ -164,49 +164,49 @@ void
 CQSVGObject::
 setStrokeColor(const QColor &c)
 {
-  obj_->setStrokeColor(CQUtil::colorToRGBA(c));
+  obj_->setStrokeColor(Color(CQUtil::colorToRGBA(c)));
 }
 
 double
 CQSVGObject::
 strokeOpacity() const
 {
-  return obj_->getFlatStrokeOpacity().getValue(1);
+  return obj_->getFlatStrokeOpacity().getValue(CSVGObject::Opacity(1)).getValue();
 }
 
 void
 CQSVGObject::
 setStrokeOpacity(double r)
 {
-  obj_->setStrokeOpacity(r);
+  obj_->setStrokeOpacity(CSVGObject::Opacity(r));
 }
 
 double
 CQSVGObject::
 strokeWidth() const
 {
-  return obj_->getFlatStrokeWidth().getValue(1);
+  return obj_->getFlatStrokeWidth().getValue(CSVGObject::Width(1)).getValue();
 }
 
 void
 CQSVGObject::
 setStrokeWidth(double r)
 {
-  obj_->setStrokeWidth(r);
+  obj_->setStrokeWidth(CSVGObject::Width(r));
 }
 
 CLineDash
 CQSVGObject::
 strokeDash() const
 {
-  return obj_->getFlatStrokeLineDash().getValue(CSVGStrokeDash()).getLineDash();
+  return obj_->getFlatStrokeLineDash().getValue(CSVGObject::LineDash()).getValue().getLineDash();
 }
 
 void
 CQSVGObject::
 setStrokeDash(const CLineDash &dash)
 {
-  auto sdash = obj_->getStrokeDash();
+  auto sdash = obj_->getStrokeDash().getValue();
 
   CSVGStrokeDash::Dashes dashes;
 
@@ -215,14 +215,14 @@ setStrokeDash(const CLineDash &dash)
 
   sdash.setDashes(dashes);
 
-  obj_->setStrokeDash(sdash);
+  obj_->setStrokeDash(CSVGObject::LineDash(sdash));
 }
 
 double
 CQSVGObject::
 strokeOffset() const
 {
-  auto dash = obj_->getFlatStrokeLineDash().getValue(CSVGStrokeDash());
+  auto dash = obj_->getFlatStrokeLineDash().getValue(CSVGObject::LineDash()).getValue();
 
   return dash.offset().pxValue(1);
 }
@@ -231,46 +231,46 @@ void
 CQSVGObject::
 setStrokeOffset(double o)
 {
-  auto sdash = obj_->getStrokeDash();
+  auto sdash = obj_->getStrokeDash().getValue();
 
   sdash.setOffset(o);
 
-  obj_->setStrokeDash(sdash);
+  obj_->setStrokeDash(CSVGObject::LineDash(sdash));
 }
 
 CQSVGEnum::LineCapType
 CQSVGObject::
 strokeCap() const
 {
-  return CQSVGEnum::lineCapConv(obj_->getStrokeLineCap());
+  return CQSVGEnum::lineCapConv(obj_->getStrokeLineCap().getValue());
 }
 
 void
 CQSVGObject::
 setStrokeCap(const CQSVGEnum::LineCapType &a)
 {
-  obj_->setStrokeLineCap(CQSVGEnum::lineCapConv(a));
+  obj_->setStrokeLineCap(CSVGObject::LineCap(CQSVGEnum::lineCapConv(a)));
 }
 
 CQSVGEnum::LineJoinType
 CQSVGObject::
 strokeJoin() const
 {
-  return CQSVGEnum::lineJoinConv(obj_->getStrokeLineJoin());
+  return CQSVGEnum::lineJoinConv(obj_->getStrokeLineJoin().getValue());
 }
 
 void
 CQSVGObject::
 setStrokeJoin(const CQSVGEnum::LineJoinType &a)
 {
-  obj_->setStrokeLineJoin(CQSVGEnum::lineJoinConv(a));
+  obj_->setStrokeLineJoin(CSVGObject::LineJoin(CQSVGEnum::lineJoinConv(a)));
 }
 
 bool
 CQSVGObject::
 fillIsNoColor() const
 {
-  return obj_->getFill().getColor().isNone();
+  return obj_->getFill().getColor().getValue().isNone();
 }
 
 void
@@ -280,7 +280,7 @@ setFillIsNoColor(bool b)
   auto fill = obj_->getFill();
 
   if (b)
-    fill.setColor(CSVGColor(CSVGColor::Type::NONE));
+    fill.setColor(Color(CSVGColor(CSVGColor::Type::NONE)));
 
   obj_->setFill(fill);
 }
@@ -289,7 +289,7 @@ bool
 CQSVGObject::
 fillIsCurrentColor() const
 {
-  return obj_->getFill().getColor().isCurrent();
+  return obj_->getFill().getColor().getValue().isCurrent();
 }
 
 void
@@ -299,7 +299,7 @@ setFillIsCurrentColor(bool b)
   auto fill = obj_->getFill();
 
   if (b)
-    fill.setColor(CSVGColor(CSVGColor::Type::CURRENT));
+    fill.setColor(Color(CSVGColor(CSVGColor::Type::CURRENT)));
 
   obj_->setFill(fill);
 }
@@ -308,8 +308,8 @@ QColor
 CQSVGObject::
 fillColor() const
 {
-  if (obj_->getFill().getColor().isRGBA())
-    return CQUtil::rgbaToColor(obj_->getFill().getColor().rgba());
+  if (obj_->getFill().getColor().getValue().isRGBA())
+    return CQUtil::rgbaToColor(obj_->getFill().getColor().getValue().rgba());
   else
     return QColor();
 }
@@ -320,7 +320,7 @@ setFillColor(const QColor &c)
 {
   auto fill = obj_->getFill();
 
-  fill.setColor(CQUtil::colorToRGBA(c));
+  fill.setColor(Color(CQUtil::colorToRGBA(c)));
 
   obj_->setFill(fill);
 }
@@ -329,21 +329,21 @@ double
 CQSVGObject::
 fillOpacity() const
 {
-  return obj_->getFlatFillOpacity().getValue(1);
+  return obj_->getFlatFillOpacity().getValue(CSVGObject::Opacity(1)).getValue();
 }
 
 void
 CQSVGObject::
 setFillOpacity(double r)
 {
-  obj_->setFillOpacity(r);
+  obj_->setFillOpacity(CSVGObject::Opacity(r));
 }
 
 CQSVGEnum::FillType
 CQSVGObject::
 fillRule() const
 {
-  return CQSVGEnum::fillTypeConv(obj_->getFill().getRule());
+  return CQSVGEnum::fillTypeConv(obj_->getFill().getRule().getValue());
 }
 
 void
@@ -352,7 +352,7 @@ setFillRule(const CQSVGEnum::FillType &r)
 {
   auto fill = obj_->getFill();
 
-  fill.setRule(CQSVGEnum::fillTypeConv(r));
+  fill.setRule(CSVGFill::FillType(CQSVGEnum::fillTypeConv(r)));
 
   obj_->setFill(fill);
 }
@@ -382,28 +382,28 @@ QString
 CQSVGObject::
 getFontFamily() const
 {
-  return obj_->getFlatFontFamily().c_str();
+  return obj_->getFlatFontFamily().getValue().getValue().c_str();
 }
 
 void
 CQSVGObject::
 setFontFamily(const QString &str)
 {
-  obj_->setFontFamily(str.toStdString());
+  obj_->setFontFamily(CSVGObject::FontFamily(str.toStdString()));
 }
 
 double
 CQSVGObject::
 getFontSize() const
 {
-  return obj_->getFlatFontSize().px().value();
+  return obj_->getFlatFontSize().getValue().getValue().px().value();
 }
 
 void
 CQSVGObject::
 setFontSize(double s)
 {
-  obj_->setFontSize(s);
+  obj_->setFontSize(CSVGObject::FontSize(CScreenUnits(s)));
 }
 
 QFont

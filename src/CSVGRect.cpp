@@ -101,7 +101,7 @@ void
 CSVGRect::
 updateBBox()
 {
-  double lw = getFlatStrokeWidth().getValue(1);
+  double lw = getFlatStrokeWidth().getValue(Width(1)).getValue();
 
   auto drawBox = getDrawBBox();
 

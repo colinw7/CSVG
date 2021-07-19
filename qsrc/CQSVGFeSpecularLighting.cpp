@@ -13,7 +13,7 @@ QColor
 CQSVGFeSpecularLighting::
 getLightingColor() const
 {
-  return CQUtil::toQColor(CSVGFeSpecularLighting::getLightingColor().rgba());
+  return CQUtil::toQColor(CSVGFeSpecularLighting::getLightingColor().getValue().rgba());
 }
 
 void
@@ -22,7 +22,7 @@ setLightingColor(const QColor &c)
 {
   CSVGColor color(CQUtil::colorToRGBA(c));
 
-  CSVGFeSpecularLighting::setLightingColor(color);
+  CSVGFeSpecularLighting::setLightingColor(Color(color));
 }
 
 void

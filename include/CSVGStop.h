@@ -18,8 +18,8 @@ class CSVGStop : public CSVGObject {
   void setOffset(double offset) { offset_ = CScreenUnits(offset); }
 
   bool hasColor() const { return color_.isValid(); }
-  CSVGColor getColor() const { return color_.getValue(CSVGColor()); }
-  void setColor(const CSVGColor &color) { color_ = color; }
+  Color getColor() const { return color_.getValue(Color()); }
+  void setColor(const Color &color) { color_ = color; }
 
   bool hasOpacity() const { return opacity_.isValid(); }
   double getOpacity() const { return opacity_.getValue(1); }
@@ -39,7 +39,7 @@ class CSVGStop : public CSVGObject {
 
  private:
   COptValT<CScreenUnits> offset_;
-  COptValT<CSVGColor>    color_;
+  COptValT<Color>        color_;
   COptReal               opacity_;
 };
 

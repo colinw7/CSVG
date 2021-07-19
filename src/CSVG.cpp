@@ -84,7 +84,7 @@
 #include <CStrParse.h>
 #include <CRGBName.h>
 
-CSVG::Colors CSVG::colors_;
+CSVG::NameToRGBA CSVG::colors_;
 
 CSVG::
 CSVG(CSVGRenderer *renderer) :
@@ -1708,10 +1708,10 @@ beginDrawBuffer(CSVGBuffer *buffer, const CPoint2D &offset, double xs, double ys
   beginDrawBuffer(buffer, pixelBox, viewBox, offset, xs, ys, blockPreserveAspect());
 
   if (block->hasViewportFillColor()) {
-    auto c = block->viewportFillColor().rgba();
+    auto c = block->viewportFillColor().getValue().rgba();
 
-    if (block->getViewportFillOpacityValid())
-      c.setAlpha(block->getViewportFillOpacity());
+    if (block->getViewportFillOpacityValid() && ! block->getViewportFillOpacity().isInherit())
+      c.setAlpha(block->getViewportFillOpacity().getValue());
 
     buffer->clear(c);
   }
@@ -1836,7 +1836,7 @@ pushStyle(CSVGObject *object)
   else
     resetFontDef();
 
-  CScreenUnitsMgrInst->setEmSize(styleData_.fontDef.getSize().pxValue(1));
+  CScreenUnitsMgrInst->setEmSize(styleData_.fontDef.getSize().getValue().pxValue(1));
 
   double xSize;
 
@@ -1855,7 +1855,7 @@ popStyle()
 
   styleDataStack_.pop_back();
 
-  CScreenUnitsMgrInst->setEmSize(styleData_.fontDef.getSize().pxValue(1));
+  CScreenUnitsMgrInst->setEmSize(styleData_.fontDef.getSize().getValue().pxValue(1));
 
   double xSize;
 
@@ -1882,9 +1882,11 @@ void
 CSVG::
 setSelectedStroke()
 {
-  styleData_.stroke.setColor    (CSVGColor(CRGB(1, 0, 0)));
-  styleData_.stroke.setWidth    (2);
-  styleData_.stroke.setOpacity  (1);
+  auto c = CRGB(1, 0, 0);
+
+  styleData_.stroke.setColor    (Color(CSVGColor(c)));
+  styleData_.stroke.setWidth    (Width(2));
+  styleData_.stroke.setOpacity  (Opacity(1));
   styleData_.stroke.setDashArray("solid");
 }
 
@@ -1934,10 +1936,15 @@ setFillBuffer(CSVGBuffer *buffer)
 
 CRGBA
 CSVG::
-colorToRGBA(const CSVGColor &color) const
+colorToRGBA(const Color &color) const
 {
-  if (color.isRGBA())
-    return color.rgba();
+  CSVGColor c;
+
+  if (! color.isInherit())
+    c = color.getValue();
+
+  if (c.isRGBA())
+    return c.rgba();
 
   auto *drawObject = currentDrawObject();
 
@@ -2707,10 +2714,10 @@ decodeCoordValue(const std::string &str, CScreenUnits &length)
 {
   double value;
 
-  std::vector<std::string> match_strs;
+  std::vector<std::string> matchStrs;
 
-  if (CRegExpUtil::parse(str, "\\(.*\\)%", match_strs)) {
-    if (! CStrUtil::toReal(match_strs[0], &value))
+  if (CRegExpUtil::parse(str, "\\(.*\\)%", matchStrs)) {
+    if (! CStrUtil::toReal(matchStrs[0], &value))
       return false;
 
     length = CScreenUnits(CScreenUnits::Units::PERCENT, value);
@@ -2783,39 +2790,52 @@ decodeLengthListValue(const std::string &str, std::vector<CScreenUnits> &lengths
 
 bool
 CSVG::
-fontSizeOption(const std::string &optName, const std::string &optValue,
-               const std::string &name, CScreenUnits &length)
+fontFamilyOption(const std::string &optName, const std::string &optValue,
+                 const std::string &name, std::string &family, bool &inherit)
 {
+  inherit = false;
+
   if (optName != name)
     return false;
 
-  if      (optValue == "xx-small") {
+  if (optValue == "inherit")
+    inherit = true;
+  else
+    family = optValue;
+
+  return true;
+}
+
+bool
+CSVG::
+fontSizeOption(const std::string &optName, const std::string &optValue,
+               const std::string &name, CScreenUnits &length, bool &inherit)
+{
+  inherit = false;
+
+  if (optName != name)
+    return false;
+
+  if      (optValue == "xx-small")
     length = CScreenUnits(CScreenUnits::Units::PX, 6); // TODO
-  }
-  else if (optValue == "x-small") {
+  else if (optValue == "x-small")
     length = CScreenUnits(CScreenUnits::Units::PX, 8); // TODO
-  }
-  else if (optValue == "small") {
+  else if (optValue == "small")
     length = CScreenUnits(CScreenUnits::Units::PX, 10); // TODO
-  }
-  else if (optValue == "medium") {
+  else if (optValue == "medium")
     length = CScreenUnits(CScreenUnits::Units::PX, 12); // TODO
-  }
-  else if (optValue == "large") {
+  else if (optValue == "large")
     length = CScreenUnits(CScreenUnits::Units::PX, 14); // TODO
-  }
-  else if (optValue == "x-large") {
+  else if (optValue == "x-large")
     length = CScreenUnits(CScreenUnits::Units::PX, 16); // TODO
-  }
-  else if (optValue == "xx-large") {
+  else if (optValue == "xx-large")
     length = CScreenUnits(CScreenUnits::Units::PX, 18); // TODO
-  }
-  else if (optValue == "larger") {
+  else if (optValue == "larger")
     length = CScreenUnits(CScreenUnits::Units::PX, 14); // TODO
-  }
-  else if (optValue == "smaller") {
+  else if (optValue == "smaller")
     length = CScreenUnits(CScreenUnits::Units::PX, 10); // TODO
-  }
+  else if (optValue == "inherit")
+    inherit = true;
   else {
     auto optLength = decodeLengthValue(optValue);
 
@@ -2928,26 +2948,26 @@ decodeLengthValue(const std::string &str)
 
   double value;
 
-  std::vector<std::string> match_strs;
+  std::vector<std::string> matchStrs;
 
-  if      (CRegExpUtil::parse(str, em_pattern, match_strs)) {
-    if (! CStrUtil::toReal(match_strs[0], &value))
+  if      (CRegExpUtil::parse(str, em_pattern, matchStrs)) {
+    if (! CStrUtil::toReal(matchStrs[0], &value))
       return COptValT<CScreenUnits>();
 
     lvalue = CScreenUnits(CScreenUnits::Units::EM, value);
 
     //CSVGLog() << "em conversion not handled";
   }
-  else if (CRegExpUtil::parse(str, ex_pattern, match_strs)) {
-    if (! CStrUtil::toReal(match_strs[0], &value))
+  else if (CRegExpUtil::parse(str, ex_pattern, matchStrs)) {
+    if (! CStrUtil::toReal(matchStrs[0], &value))
       return COptValT<CScreenUnits>();
 
     lvalue = CScreenUnits(CScreenUnits::Units::EX, value);
 
     //CSVGLog() << "ex conversion not handled";
   }
-  else if (CRegExpUtil::parse(str, pt_pattern, match_strs)) {
-    if (! CStrUtil::toReal(match_strs[0], &value))
+  else if (CRegExpUtil::parse(str, pt_pattern, matchStrs)) {
+    if (! CStrUtil::toReal(matchStrs[0], &value))
       return COptValT<CScreenUnits>();
 
     //double ivalue = value;
@@ -2955,8 +2975,8 @@ decodeLengthValue(const std::string &str)
 
     lvalue = CScreenUnits(CScreenUnits::Units::PT, value);
   }
-  else if (CRegExpUtil::parse(str, pc_pattern, match_strs)) {
-    if (! CStrUtil::toReal(match_strs[0], &value))
+  else if (CRegExpUtil::parse(str, pc_pattern, matchStrs)) {
+    if (! CStrUtil::toReal(matchStrs[0], &value))
       return COptValT<CScreenUnits>();
 
     //double ivalue = value;
@@ -2964,8 +2984,8 @@ decodeLengthValue(const std::string &str)
 
     lvalue = CScreenUnits(CScreenUnits::Units::PC, value);
   }
-  else if (CRegExpUtil::parse(str, cm_pattern, match_strs)) {
-    if (! CStrUtil::toReal(match_strs[0], &value))
+  else if (CRegExpUtil::parse(str, cm_pattern, matchStrs)) {
+    if (! CStrUtil::toReal(matchStrs[0], &value))
       return COptValT<CScreenUnits>();
 
     //double ivalue = value;
@@ -2973,8 +2993,8 @@ decodeLengthValue(const std::string &str)
 
     lvalue = CScreenUnits(CScreenUnits::Units::CM, value);
   }
-  else if (CRegExpUtil::parse(str, mm_pattern, match_strs)) {
-    if (! CStrUtil::toReal(match_strs[0], &value))
+  else if (CRegExpUtil::parse(str, mm_pattern, matchStrs)) {
+    if (! CStrUtil::toReal(matchStrs[0], &value))
       return COptValT<CScreenUnits>();
 
     //double ivalue = value;
@@ -2982,8 +3002,8 @@ decodeLengthValue(const std::string &str)
 
     lvalue = CScreenUnits(CScreenUnits::Units::MM, value);
   }
-  else if (CRegExpUtil::parse(str, in_pattern, match_strs)) {
-    if (! CStrUtil::toReal(match_strs[0], &value))
+  else if (CRegExpUtil::parse(str, in_pattern, matchStrs)) {
+    if (! CStrUtil::toReal(matchStrs[0], &value))
       return COptValT<CScreenUnits>();
 
     //double ivalue = value;
@@ -2991,14 +3011,14 @@ decodeLengthValue(const std::string &str)
 
     lvalue = CScreenUnits(CScreenUnits::Units::IN, value);
   }
-  else if (CRegExpUtil::parse(str, px_pattern, match_strs)) {
-    if (! CStrUtil::toReal(match_strs[0], &value))
+  else if (CRegExpUtil::parse(str, px_pattern, matchStrs)) {
+    if (! CStrUtil::toReal(matchStrs[0], &value))
       return COptValT<CScreenUnits>();
 
     lvalue = CScreenUnits(CScreenUnits::Units::PX, value);
   }
-  else if (CRegExpUtil::parse(str, ph_pattern, match_strs)) {
-    if (! CStrUtil::toReal(match_strs[0], &value))
+  else if (CRegExpUtil::parse(str, ph_pattern, matchStrs)) {
+    if (! CStrUtil::toReal(matchStrs[0], &value))
       return COptValT<CScreenUnits>();
 
     lvalue = CScreenUnits(CScreenUnits::Units::PERCENT, value);
@@ -3216,10 +3236,10 @@ decodePercentString(const std::string &str, CScreenUnits &length)
 {
   double value;
 
-  std::vector<std::string> match_strs;
+  std::vector<std::string> matchStrs;
 
-  if (CRegExpUtil::parse(str, "\\(.*\\)%", match_strs)) {
-    if (! CStrUtil::toReal(match_strs[0], &value))
+  if (CRegExpUtil::parse(str, "\\(.*\\)%", matchStrs)) {
+    if (! CStrUtil::toReal(matchStrs[0], &value))
       return false;
 
     length = CScreenUnits(CScreenUnits::Units::PERCENT, value);
@@ -3901,14 +3921,20 @@ decodeTransform(const std::string &str, CMatrixStack2D &matrix)
 /*TODO*/
 bool
 CSVG::
-decodeWidthString(const std::string &width_str, double &width)
+decodeWidthString(const std::string &widthStr, double &width, bool &inherit)
 {
-  width = 1.0;
+  width   = 1.0;
+  inherit = false;
 
-  std::vector<std::string> match_strs;
+  if (widthStr == "inherit") {
+    inherit = true;
+    return true;
+  }
 
-  if      (CRegExpUtil::parse(width_str, "\\(.*\\)pt", match_strs)) {
-    if (! CStrUtil::toReal(match_strs[0], &width))
+  std::vector<std::string> matchStrs;
+
+  if      (CRegExpUtil::parse(widthStr, "\\(.*\\)pt", matchStrs)) {
+    if (! CStrUtil::toReal(matchStrs[0], &width))
       return false;
 
     CScreenUnits units(width, CScreenUnits::Units::PT);
@@ -3916,12 +3942,12 @@ decodeWidthString(const std::string &width_str, double &width)
     width = units.pxValue();
     //mmToPixel(25.4*width/72.0, &width);
   }
-  else if (CRegExpUtil::parse(width_str, "\\(.*\\)px", match_strs)) {
-    if (! CStrUtil::toReal(match_strs[0], &width))
+  else if (CRegExpUtil::parse(widthStr, "\\(.*\\)px", matchStrs)) {
+    if (! CStrUtil::toReal(matchStrs[0], &width))
       return false;
   }
   else {
-    if (! CStrUtil::toReal(width_str, &width))
+    if (! CStrUtil::toReal(widthStr, &width))
       return false;
   }
 
@@ -3953,15 +3979,15 @@ opacityOption(const std::string &optName, const std::string &optValue,
 // <opacity-value> | inherit
 bool
 CSVG::
-decodeOpacityString(const std::string &opacity_str, double &opacity, bool &inherit)
+decodeOpacityString(const std::string &opacityStr, double &opacity, bool &inherit)
 {
   opacity = 1.0;
   inherit = false;
 
-  if (opacity_str == "inherit")
+  if (opacityStr == "inherit")
     inherit = true;
   else {
-    if (! CStrUtil::toReal(opacity_str, &opacity))
+    if (! CStrUtil::toReal(opacityStr, &opacity))
       return false;
   }
 
@@ -3969,48 +3995,53 @@ decodeOpacityString(const std::string &opacity_str, double &opacity, bool &inher
 }
 
 // nonzero | evenodd | inherit
-CFillType
+CSVG::FillType
 CSVG::
-decodeFillRuleString(const std::string &rule_str)
+decodeFillRuleString(const std::string &ruleStr)
 {
-  if      (rule_str == "nonzero")
-    return FILL_TYPE_WINDING;
-  else if (rule_str == "evenodd")
-    return FILL_TYPE_EVEN_ODD;
-  else if (rule_str == "inherit")
-    return FILL_TYPE_NONE;
+  if      (ruleStr == "nonzero")
+    return FillType(FILL_TYPE_WINDING);
+  else if (ruleStr == "evenodd")
+    return FillType(FILL_TYPE_EVEN_ODD);
+  else if (ruleStr == "inherit")
+    return FillType::inherit();
   else
-    return FILL_TYPE_NONE;
+    return FillType(FILL_TYPE_NONE);
 }
 
 std::string
 CSVG::
-encodeFillRuleString(CFillType rule)
+encodeFillRuleString(const FillType &rule)
 {
-  if      (rule == FILL_TYPE_WINDING)
+  if (rule.isInherit())
+    return "inherit";
+
+  auto fillType = rule.getValue();
+
+  if      (fillType == FILL_TYPE_WINDING)
     return "nonzero";
-  else if (rule == FILL_TYPE_EVEN_ODD)
+  else if (fillType == FILL_TYPE_EVEN_ODD)
     return "evenodd";
-  else if (rule == FILL_TYPE_NONE)
-    return "inherit";
-  else
-    return "inherit";
+  else if (fillType == FILL_TYPE_NONE)
+    return "none";
+
+  return "none";
 }
 
 // none | <list-of-lengths> | inherit
 bool
 CSVG::
-decodeDashString(const std::string &dash_str, std::vector<CScreenUnits> &lengths, bool &solid)
+decodeDashString(const std::string &dashStr, std::vector<CScreenUnits> &lengths, bool &solid)
 {
   solid = false;
 
   // solid, empty length list
-  if (dash_str == "solid") {
+  if (dashStr == "solid") {
     solid = true;
     return true;
   }
 
-  if (dash_str == "none") {
+  if (dashStr == "none") {
     return true;
   }
 
@@ -4018,7 +4049,7 @@ decodeDashString(const std::string &dash_str, std::vector<CScreenUnits> &lengths
 
   std::vector<std::string> words;
 
-  CStrUtil::addWords(dash_str, words, " ,");
+  CStrUtil::addWords(dashStr, words, " ,");
 
   uint num_words = words.size();
 
@@ -4048,7 +4079,7 @@ decodeDashString(const std::string &dash_str, std::vector<CScreenUnits> &lengths
 bool
 CSVG::
 colorOption(const std::string &optName, const std::string &optValue,
-            const std::string &name, CSVGColor &color)
+            const std::string &name, CSVGColor &color, bool &inherit)
 {
   if (optName != name)
     return false;
@@ -4058,7 +4089,7 @@ colorOption(const std::string &optName, const std::string &optValue,
   if (! stringOption(optName, optValue, name, str))
     return false;
 
-  if (! decodeColorString(str, color)) {
+  if (! decodeColorString(str, color, inherit)) {
     CLog() << "Invalid color '" << str << "'";
     return false;
   }
@@ -4066,16 +4097,21 @@ colorOption(const std::string &optName, const std::string &optValue,
   return true;
 }
 
+// none | currentColor | <color> |
+// <FuncIRI> [ none | currentColor | <color>] |
+// <system paint> | inherit
 bool
 CSVG::
-decodeColorString(const std::string &colorStr, CSVGColor &color)
+decodeColorString(const std::string &colorStr, CSVGColor &color, bool &inherit)
 {
+  inherit = false;
+
   if      (colorStr == "none")
     color = CSVGColor(CSVGColor::Type::NONE);
   else if (colorStr == "currentColor")
     color = CSVGColor(CSVGColor::Type::CURRENT);
   else if (colorStr == "inherit")
-    color = CSVGColor(CSVGColor::Type::INHERIT);
+    inherit = true;
   else {
     CRGBA rgba;
 
@@ -4094,25 +4130,25 @@ bool
 CSVG::
 decodeRGBAString(const std::string &colorStr, CRGBA &rgba)
 {
-  std::vector<std::string> match_strs;
+  std::vector<std::string> matchStrs;
 
   // color ::= "rgb(" wsp* integer comma integer comma integer wsp* ")"
   // color ::= "rgb(" wsp* integer "%" comma integer "%" comma integer "%" wsp* ")"
-  if      (CRegExpUtil::parse(colorStr, "rgb(\\(.*\\))", match_strs)) {
+  if      (CRegExpUtil::parse(colorStr, "rgb(\\(.*\\))", matchStrs)) {
     double rgb[3];
 
     std::vector<std::string> words;
 
-    CStrUtil::addWords(match_strs[0], words, " ,");
+    CStrUtil::addWords(matchStrs[0], words, " ,");
 
     while (words.size() < 3)
       words.push_back("0");
 
     for (uint i = 0; i < 3; ++i) {
-      std::vector<std::string> match_strs1;
+      std::vector<std::string> matchStrs1;
 
-      if (CRegExpUtil::parse(words[i], "\\(.*\\)%", match_strs1)) {
-        if (! CStrUtil::toReal(match_strs1[0], &rgb[i]))
+      if (CRegExpUtil::parse(words[i], "\\(.*\\)%", matchStrs1)) {
+        if (! CStrUtil::toReal(matchStrs1[0], &rgb[i]))
           rgb[i] = 0;
 
         rgb[i] /= 100;
@@ -4129,26 +4165,26 @@ decodeRGBAString(const std::string &colorStr, CRGBA &rgba)
   }
   // color ::= "#" hexdigit hexdigit hexdigit
   else if (colorStr.size() == 4 &&
-           CRegExpUtil::parse(colorStr, "#" RE_HEXDEC RE_HEXDEC RE_HEXDEC, match_strs)) {
-    std::string color_str1 = "#";
+           CRegExpUtil::parse(colorStr, "#" RE_HEXDEC RE_HEXDEC RE_HEXDEC, matchStrs)) {
+    std::string colorStr1 = "#";
 
-    color_str1 += colorStr.substr(1, 1) + colorStr.substr(1, 1) +
-                  colorStr.substr(2, 1) + colorStr.substr(2, 1) +
-                  colorStr.substr(3, 1) + colorStr.substr(3, 1);
+    colorStr1 += colorStr.substr(1, 1) + colorStr.substr(1, 1) +
+                 colorStr.substr(2, 1) + colorStr.substr(2, 1) +
+                 colorStr.substr(3, 1) + colorStr.substr(3, 1);
 
-    rgba = nameToRGBA(color_str1);
+    rgba = nameToRGBA(colorStr1);
   }
   // color ::= "#" hexdigit hexdigit hexdigit hexdigit hexdigit hexdigit
   else if (colorStr.size() == 7 &&
            CRegExpUtil::parse(colorStr, "#" RE_HEXDEC RE_HEXDEC RE_HEXDEC
-                              RE_HEXDEC RE_HEXDEC RE_HEXDEC, match_strs)) {
-    std::string color_str1 = "#";
+                              RE_HEXDEC RE_HEXDEC RE_HEXDEC, matchStrs)) {
+    std::string colorStr1 = "#";
 
-    color_str1 += colorStr.substr(1, 2) +
-                  colorStr.substr(3, 2) +
-                  colorStr.substr(5, 2);
+    colorStr1 += colorStr.substr(1, 2) +
+                 colorStr.substr(3, 2) +
+                 colorStr.substr(5, 2);
 
-    rgba = nameToRGBA(color_str1);
+    rgba = nameToRGBA(colorStr1);
   }
   // color ::= color-keyword
   else {
@@ -4225,27 +4261,41 @@ nameToRGBA(const std::string &name)
 //        | 400 | 500 | 600 | 700 | 800 | 900 | inherit
 CFontStyle
 CSVG::
-decodeFontWeightString(const std::string &font_weight_str)
+decodeFontWeightString(const std::string &fontWeightStr, bool &inherit)
 {
-  if      (font_weight_str == "normal"|| font_weight_str == "400")
-    return CFONT_STYLE_NORMAL;
-  else if (font_weight_str == "bold"|| font_weight_str == "700")
-    return CFONT_STYLE_BOLD;
+  inherit = false;
+
+  CFontStyle fontStyle = CFONT_STYLE_NORMAL;
+
+  if      (fontWeightStr == "normal"|| fontWeightStr == "400")
+    fontStyle = CFONT_STYLE_NORMAL;
+  else if (fontWeightStr == "bold"|| fontWeightStr == "700")
+    fontStyle = CFONT_STYLE_BOLD;
   else
-    return CFONT_STYLE_NORMAL;
+    fontStyle = CFONT_STYLE_NORMAL;
+
+  return fontStyle;
 }
 
 // normal | italic | oblique | inherit
 CFontStyle
 CSVG::
-decodeFontStyleString(const std::string &font_style_str)
+decodeFontStyleString(const std::string &fontStyleStr, bool &inherit)
 {
-  if      (font_style_str == "oblique")
-    return CFONT_STYLE_ITALIC;
-  else if (font_style_str == "italic")
-    return CFONT_STYLE_ITALIC;
-  else
-    return CFONT_STYLE_NORMAL;
+  inherit = false;
+
+  CFontStyle fontStyle = CFONT_STYLE_NORMAL;
+
+  if      (fontStyleStr == "normal")
+    fontStyle = CFONT_STYLE_ITALIC;
+  else if (fontStyleStr == "italic")
+    fontStyle = CFONT_STYLE_ITALIC;
+  else if (fontStyleStr == "oblique")
+    fontStyle = CFONT_STYLE_ITALIC;
+  else if (fontStyleStr == "inherit")
+    inherit = true;
+
+  return fontStyle;
 }
 
 bool
@@ -4310,10 +4360,10 @@ bool
 CSVG::
 decodeUrlObject(const std::string &str, std::string &id, CSVGObject **object) const
 {
-  std::vector<std::string> match_strs;
+  std::vector<std::string> matchStrs;
 
-  if      (CRegExpUtil::parse(str, "url(#\\(.*\\))", match_strs))
-    id = match_strs[0];
+  if      (CRegExpUtil::parse(str, "url(#\\(.*\\))", matchStrs))
+    id = matchStrs[0];
   else if (str.size() > 0 && str[0] == '#')
     id = str.substr(1);
   else

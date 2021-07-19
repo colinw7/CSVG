@@ -24,8 +24,8 @@ class CSVGFeLighting : public CSVGFilterBase {
   std::string getFilterOut() const;
   void setFilterOut(const std::string &s) { filterOut_ = s; }
 
-  CSVGColor getLightingColor() const { return lightingColor_.getValue(CSVGColor()); }
-  void setLightingColor(const CSVGColor &c) { lightingColor_ = c; }
+  Color getLightingColor() const { return lightingColor_.getValue(Color()); }
+  void setLightingColor(const Color &c) { lightingColor_ = c; }
 
   double getDiffuseConstant() const { return diffuseConstant_.getValue(1); }
   void setDiffuseConstant(double r) { diffuseConstant_ = r; }
@@ -42,13 +42,13 @@ class CSVGFeLighting : public CSVGFilterBase {
   void filterImage(CSVGBuffer *inBuffer, const CBBox2D &bbox, CSVGBuffer *outBuffer);
 
  protected:
-  COptString          filterIn_;
-  COptString          filterOut_;
-  COptValT<CSVGColor> lightingColor_;
-  COptReal            diffuseConstant_;
-  COptReal            specularConstant_;
-  COptReal            specularExponent_;
-  COptReal            surfaceScale_;
+  COptString      filterIn_;
+  COptString      filterOut_;
+  COptValT<Color> lightingColor_;
+  COptReal        diffuseConstant_;
+  COptReal        specularConstant_;
+  COptReal        specularExponent_;
+  COptReal        surfaceScale_;
 };
 
 #endif

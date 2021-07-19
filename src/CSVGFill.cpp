@@ -14,20 +14,21 @@ isFilled() const
   if (getFillObjectValid())
     return true;
 
-  if (! getColorValid())
+  if (! getColorValid() || getColor().isInherit())
     return true;
 
-  if (getColor().type() == CSVGColor::Type::NONE)
+  if (getColor().getValue().isNone())
     return false;
 
   return true;
 }
 
+// <paint> | inherit
 void
 CSVGFill::
-setColor(const std::string &color_def)
+setColor(const std::string &colorDef)
 {
-  CStrParse parse(color_def);
+  CStrParse parse(colorDef);
 
   parse.skipSpace();
 
@@ -76,9 +77,10 @@ setColor(const std::string &color_def)
     }
     else {
       CSVGColor color;
+      bool      inherit;
 
-      if (svg_.decodeColorString(word, color))
-        setColor(color);
+      if (svg_.decodeColorString(word, color, inherit))
+        setColor(! inherit ? Color(color) : Color::inherit());
     }
 
     //------
@@ -87,31 +89,30 @@ setColor(const std::string &color_def)
   }
 }
 
+// <opacity-value> | inherit
 void
 CSVGFill::
-setOpacity(const std::string &opacity_def)
+setOpacity(const std::string &opacityDef)
 {
   double value;
   bool   inherit;
 
-  if (! svg_.decodeOpacityString(opacity_def, value, inherit)) {
-    CSVGLog() << "Bad opacity value " << opacity_def;
+  if (! svg_.decodeOpacityString(opacityDef, value, inherit)) {
+    CSVGLog() << "Bad opacity value " << opacityDef;
     return;
   }
 
-  Opacity opacity(value);
-
-  if (inherit)
-    opacity.setInherit(true);
+  auto opacity = (! inherit ? Opacity(value) : Opacity::inherit());
 
   setOpacity(opacity);
 }
 
+// <fill-rule> | inherit
 void
 CSVGFill::
-setRule(const std::string &rule_def)
+setRule(const std::string &ruleDef)
 {
-  CFillType rule = svg_.decodeFillRuleString(rule_def);
+  auto rule = svg_.decodeFillRuleString(ruleDef);
 
   setRule(rule);
 }
@@ -143,52 +144,54 @@ void
 CSVGFill::
 update(const CSVGFill &fill)
 {
+  auto *styleObject = svg_.styleObject();
+
   // color
-  if      (fill.getColorValid())
+  if      (fill.getColorValid() && ! fill.getColor().isInherit())
     setColor(fill.getColor());
-  else if (svg_.styleObject()) {
-    if (svg_.styleObject()->getFillColorValid())
-      setColor(svg_.styleObject()->getFlatFillColor().getValue());
+  else if (styleObject) {
+    if (styleObject->getFillColorValid() && ! styleObject->getFillColor().isInherit())
+      setColor(styleObject->getFlatFillColor().getValue());
   }
 
   // opacity
   if      (fill.getOpacityValid())
     setOpacity(fill.getOpacity());
-  else if (svg_.styleObject()) {
-    if (svg_.styleObject()->getFillOpacityValid())
-      setOpacity(svg_.styleObject()->getFlatFillOpacity().getValue());
+  else if (styleObject) {
+    if (styleObject->getFillOpacityValid() && ! styleObject->getFillOpacity().isInherit())
+      setOpacity(styleObject->getFlatFillOpacity().getValue());
   }
 
   // rule
   if      (fill.getRuleValid())
     setRule(fill.getRule());
-  else if (svg_.styleObject()) {
-    if (svg_.styleObject()->getFillRuleValid())
-      setRule(svg_.styleObject()->getFlatFillRule().getValue());
+  else if (styleObject) {
+    if (styleObject->getFillRuleValid())
+      setRule(styleObject->getFlatFillRule().getValue());
   }
 
   // url
   if      (fill.getUrlValid())
     setUrl(fill.getUrl());
-  else if (svg_.styleObject()) {
-    if (svg_.styleObject()->getFillUrlValid())
-      setUrl(svg_.styleObject()->getFlatFillUrl().getValue());
+  else if (styleObject) {
+    if (styleObject->getFillUrlValid())
+      setUrl(styleObject->getFlatFillUrl().getValue());
   }
 
   // fill object
   if      (fill.getFillObjectValid())
     setFillObject(fill.getFillObject());
-  else if (svg_.styleObject()) {
-    if (svg_.styleObject()->getFillFillObjectValid())
-      setFillObject(svg_.styleObject()->getFlatFillFillObject().getValue());
+  else if (styleObject) {
+    if (styleObject->getFillFillObjectValid())
+      setFillObject(styleObject->getFlatFillFillObject().getValue());
   }
 
   //---
 
   if (getenv("CSVG_DEBUG_FILL")) {
     std::cerr << "Update Fill";
-    if (svg_.styleObject() && svg_.styleObject()->getId() != "")
-      std::cerr << "(" << svg_.styleObject()->getId() << ")";
+    if (styleObject && styleObject->getId() != "")
+      std::cerr << "(" << styleObject->getId() << ")";
     std::cerr << ":";
     print(std::cerr);
     std::cerr << std::endl;
@@ -207,14 +210,7 @@ print(std::ostream &os) const
   if (getOpacityValid()) {
     if (ss.str() != "") ss << " ";
 
-    ss << "fill-opacity: ";
-
-    if (! getOpacity().isInherit())
-      ss << getOpacity().getValue();
-    else
-      ss << "inherit";
-
-    ss << ";";
+    ss << "fill-opacity: " << getOpacity() << ";";
   }
 
   if (getRuleValid()) {

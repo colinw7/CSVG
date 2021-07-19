@@ -247,7 +247,7 @@ class CSVGBuffer {
   void setLineDashOffset(double offset);
   void setLineCap(CLineCapType line_cap);
   void setLineJoin(CLineJoinType line_join);
-  void setLineMitreLimit(double limit);
+  void setLineMiterLimit(double limit);
 
   void setFill(const CSVGFill &fill);
 

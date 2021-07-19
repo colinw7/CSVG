@@ -1,12 +1,16 @@
 #ifndef CSVGClip_H
 #define CSVGClip_H
 
+#include <CSVGInheritVal.h>
 #include <COptVal.h>
 #include <CFillType.h>
 
 class CSVG;
 
 class CSVGClip {
+ public:
+  using FillType = CSVGInheritValT<CFillType>;
+
  public:
   CSVGClip(CSVG &svg) :
    svg_(svg), rule_() {
@@ -23,18 +27,17 @@ class CSVGClip {
   }
 
   void setRule(const std::string &rule_str);
-
-  void setRule(CFillType rule) { rule_.setValue(rule); }
+  void setRule(const FillType &rule) { rule_.setValue(rule); }
 
   bool getRuleValid() const {
     return rule_.isValid();
   }
 
-  CFillType getRule() const {
+  FillType getRule() const {
     if (rule_.isValid())
       return rule_.getValue();
     else
-      return FILL_TYPE_EVEN_ODD;
+      return FillType(FILL_TYPE_EVEN_ODD);
   }
 
   void reset() {
@@ -42,8 +45,8 @@ class CSVGClip {
   }
 
  private:
-  CSVG                &svg_;
-  COptValT<CFillType>  rule_;
+  CSVG&              svg_;
+  COptValT<FillType> rule_;
 };
 
 #endif

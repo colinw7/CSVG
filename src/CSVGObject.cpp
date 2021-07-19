@@ -287,73 +287,73 @@ getFlatStroke() const
 
   //---
 
-  auto mlimit = getFlatStrokeMitreLimit();
+  auto mlimit = getFlatStrokeMiterLimit();
 
   if (mlimit.isValid())
-    stroke.setMitreLimit(mlimit.getValue());
+    stroke.setMiterLimit(mlimit.getValue());
   else
-    stroke.resetMitreLimit();
+    stroke.resetMiterLimit();
 
   return stroke;
 }
 
-COptValT<CSVGColor>
+COptValT<CSVGObject::Color>
 CSVGObject::
 getFlatStrokeColor() const
 {
   // if color set use it
   if (stroke_.getColorValid())
-    return COptValT<CSVGColor>(stroke_.getColor());
+    return COptValT<Color>(stroke_.getColor());
 
   auto *parent = getParent();
 
   while (parent) {
     if (parent->stroke_.getColorValid())
-      return COptValT<CSVGColor>(parent->stroke_.getColor());
+      return COptValT<Color>(parent->stroke_.getColor());
 
     parent = parent->getParent();
   }
 
-  return COptValT<CSVGColor>();
+  return COptValT<Color>();
 }
 
-COptReal
+COptValT<CSVGObject::Opacity>
 CSVGObject::
 getFlatStrokeOpacity() const
 {
   // if opacity set use it
   if (stroke_.getOpacityValid())
-    return COptReal(stroke_.getOpacity());
+    return COptValT<Opacity>(stroke_.getOpacity());
 
   auto *parent = getParent();
 
   while (parent) {
     if (parent->stroke_.getOpacityValid())
-      return COptReal(parent->stroke_.getOpacity());
+      return COptValT<Opacity>(parent->stroke_.getOpacity());
 
     parent = parent->getParent();
   }
 
-  return COptReal();
+  return COptValT<Opacity>();
 }
 
-COptValT<CFillType>
+COptValT<CSVGObject::FillType>
 CSVGObject::
 getFlatStrokeRule() const
 {
   if (stroke_.getRuleValid())
-    return COptValT<CFillType>(stroke_.getRule());
+    return COptValT<FillType>(stroke_.getRule());
 
   auto *parent = getParent();
 
   while (parent) {
     if (parent->stroke_.getRuleValid())
-      return COptValT<CFillType>(parent->getFlatStrokeRule());
+      return COptValT<FillType>(parent->getFlatStrokeRule());
 
     parent = parent->getParent();
   }
 
-  return COptValT<CFillType>();
+  return COptValT<FillType>();
 }
 
 COptString
@@ -394,99 +394,99 @@ getFlatStrokeFillObject() const
   return COptValT<CSVGObject*>();
 }
 
-COptReal
+COptValT<CSVGObject::Width>
 CSVGObject::
 getFlatStrokeWidth() const
 {
   if (stroke_.getWidthValid())
-    return COptReal(stroke_.getWidth());
+    return COptValT<Width>(stroke_.getWidth());
 
   auto *parent = getParent();
 
   while (parent) {
     if (parent->stroke_.getWidthValid())
-      return COptReal(parent->getFlatStrokeWidth());
+      return COptValT<Width>(parent->getFlatStrokeWidth());
 
     parent = parent->getParent();
   }
 
-  return COptReal();
+  return COptValT<Width>();
 }
 
-COptValT<CSVGStrokeDash>
+COptValT<CSVGObject::LineDash>
 CSVGObject::
 getFlatStrokeLineDash() const
 {
   if (stroke_.getDashValid())
-    return COptValT<CSVGStrokeDash>(stroke_.getDash());
+    return COptValT<LineDash>(stroke_.getDash());
 
   auto *parent = getParent();
 
   while (parent) {
     if (parent->stroke_.getDashValid())
-      return COptValT<CSVGStrokeDash>(parent->getFlatStrokeLineDash());
+      return COptValT<LineDash>(parent->getFlatStrokeLineDash());
 
     parent = parent->getParent();
   }
 
-  return COptValT<CSVGStrokeDash>();
+  return COptValT<LineDash>();
 }
 
-COptValT<CLineCapType>
+COptValT<CSVGObject::LineCap>
 CSVGObject::
 getFlatStrokeLineCap() const
 {
   if (stroke_.getLineCapValid())
-    return COptValT<CLineCapType>(stroke_.getLineCap());
+    return COptValT<LineCap>(stroke_.getLineCap());
 
   auto *parent = getParent();
 
   while (parent) {
     if (parent->stroke_.getLineCapValid())
-      return COptValT<CLineCapType>(parent->getFlatStrokeLineCap());
+      return COptValT<LineCap>(parent->getFlatStrokeLineCap());
 
     parent = parent->getParent();
   }
 
-  return COptValT<CLineCapType>();
+  return COptValT<LineCap>();
 }
 
-COptValT<CLineJoinType>
+COptValT<CSVGObject::LineJoin>
 CSVGObject::
 getFlatStrokeLineJoin() const
 {
   if (stroke_.getLineJoinValid())
-    return COptValT<CLineJoinType>(stroke_.getLineJoin());
+    return COptValT<LineJoin>(stroke_.getLineJoin());
 
   auto *parent = getParent();
 
   while (parent) {
     if (parent->stroke_.getLineJoinValid())
-      return COptValT<CLineJoinType>(parent->getFlatStrokeLineJoin());
+      return COptValT<LineJoin>(parent->getFlatStrokeLineJoin());
 
     parent = parent->getParent();
   }
 
-  return COptValT<CLineJoinType>();
+  return COptValT<LineJoin>();
 }
 
-COptReal
+COptValT<CSVGObject::MiterLimit>
 CSVGObject::
-getFlatStrokeMitreLimit() const
+getFlatStrokeMiterLimit() const
 {
-  if (stroke_.getMitreLimitValid())
-    return COptReal(stroke_.getMitreLimit());
+  if (stroke_.getMiterLimitValid())
+    return COptValT<MiterLimit>(stroke_.getMiterLimit());
 
   auto *parent = getParent();
 
   while (parent) {
-    if (parent->stroke_.getMitreLimitValid())
-      return COptReal(parent->getFlatStrokeMitreLimit());
+    if (parent->stroke_.getMiterLimitValid())
+      return COptValT<MiterLimit>(parent->getFlatStrokeMiterLimit());
 
     parent = parent->getParent();
   }
 
-  return COptReal();
+  return COptValT<MiterLimit>();
 }
 
 //------
@@ -543,64 +543,64 @@ getFlatFill() const
   return fill;
 }
 
-COptValT<CSVGColor>
+COptValT<CSVGObject::Color>
 CSVGObject::
 getFlatFillColor() const
 {
   // if color set use it
-  if (fill_.getColorValid())
-    return COptValT<CSVGColor>(fill_.getColor());
+  if (fill_.getColorValid() && ! fill_.getColor().isInherit())
+    return COptValT<Color>(fill_.getColor());
 
   auto *parent = getParent();
 
   while (parent) {
     if (parent->fill_.getColorValid())
-      return COptValT<CSVGColor>(parent->fill_.getColor());
+      return COptValT<Color>(parent->fill_.getColor());
 
     parent = parent->getParent();
   }
 
-  return COptValT<CSVGColor>();
+  return COptValT<Color>();
 }
 
-COptReal
+COptValT<CSVGObject::Opacity>
 CSVGObject::
 getFlatFillOpacity() const
 {
   // if opacity set use it
-  if (fill_.getOpacityValid())
-    return COptReal(fill_.getOpacity().getValue());
+  if (fill_.getOpacityValid() && ! fill_.getOpacity().isInherit())
+    return COptValT<Opacity>(fill_.getOpacity());
 
   auto *parent = getParent();
 
   while (parent) {
     if (parent->fill_.getOpacityValid())
-      return COptReal(parent->fill_.getOpacity().getValue());
+      return COptValT<Opacity>(parent->fill_.getOpacity());
 
     parent = parent->getParent();
   }
 
-  return COptReal();
+  return COptValT<Opacity>();
 }
 
-COptValT<CFillType>
+COptValT<CSVGObject::FillType>
 CSVGObject::
 getFlatFillRule() const
 {
   // if opacity set use it
-  if (fill_.getRuleValid())
-    return COptValT<CFillType>(fill_.getRule());
+  if (fill_.getRuleValid() && ! fill_.getRule().isInherit())
+    return COptValT<FillType>(fill_.getRule());
 
   auto *parent = getParent();
 
   while (parent) {
     if (parent->fill_.getRuleValid())
-      return COptValT<CFillType>(parent->fill_.getRule());
+      return COptValT<FillType>(parent->fill_.getRule());
 
     parent = parent->getParent();
   }
 
-  return COptValT<CFillType>();
+  return COptValT<FillType>();
 }
 
 COptString
@@ -653,19 +653,23 @@ getFlatFontDef() const
 
   CSVGFontDef fontDef(svg_);
 
-  fontDef.setFamily(fontFamily);
-  fontDef.setSize  (fontSize);
+  if (fontFamily.isValid())
+    fontDef.setFamily(fontFamily.getValue());
+
+  if (fontSize.isValid())
+    fontDef.setSize(fontSize.getValue());
+
   fontDef.setStyle (fontStyles);
 
   return fontDef;
 }
 
-std::string
+COptValT<CSVGObject::FontFamily>
 CSVGObject::
 getFlatFontFamily() const
 {
   if (fontDef_.hasFamily())
-    return fontDef_.getFamily();
+    return COptValT<FontFamily>(fontDef_.getFamily());
 
   auto *parent = getParent();
 
@@ -676,7 +680,7 @@ getFlatFontFamily() const
     parent = parent->getParent();
   }
 
-  return "serif";
+  return COptValT<FontFamily>(FontFamily("serif"));
 }
 
 CFontStyles
@@ -698,12 +702,12 @@ getFlatFontStyle() const
   return CFontStyles(CFONT_STYLE_NORMAL);
 }
 
-CScreenUnits
+COptValT<CSVGObject::FontSize>
 CSVGObject::
 getFlatFontSize() const
 {
   if (fontDef_.hasSize())
-    return fontDef_.getSize();
+    return COptValT<FontSize>(fontDef_.getSize());
 
   auto *parent = getParent();
 
@@ -714,30 +718,25 @@ getFlatFontSize() const
     parent = parent->getParent();
   }
 
-  return CScreenUnits(12);
+  return COptValT<FontSize>(FontSize(CScreenUnits(12)));
 }
 
+// [[ <family-name> | <generic-family> ],]* [<family-name> | <generic-family>] | inherit
 void
 CSVGObject::
-setFontFamily(const std::string &family)
+setFontFamily(const FontFamily &family)
 {
   fontDef_.setFamily(family);
 }
 
 void
 CSVGObject::
-setFontSize(double size)
+setFontSize(const FontSize &size)
 {
   fontDef_.setSize(size);
 }
 
-void
-CSVGObject::
-setFontSize(const CScreenUnits &size)
-{
-  fontDef_.setSize(size);
-}
-
+// normal | bold | bolder | lighter | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 | inherit
 void
 CSVGObject::
 setFontWeight(const std::string &weight)
@@ -745,6 +744,7 @@ setFontWeight(const std::string &weight)
   fontDef_.setWeight(weight);
 }
 
+// normal | italic | oblique | inherit
 void
 CSVGObject::
 setFontStyle(const std::string &style)
@@ -761,21 +761,26 @@ setFontStyle(CFontStyle s)
 
 CRGBA
 CSVGObject::
-colorToRGBA(const CSVGColor &color) const
+colorToRGBA(const Color &color) const
 {
-  if (color.isRGBA())
-    return color.rgba();
+  CSVGColor c;
 
-  if (color.isCurrent())
-    return getFlatCurrentColor();
+  if (! color.isInherit())
+    c = color.getValue();
 
   // inherit, none
-  if (color.isInherit()) {
+  if (color.isInherit() || c.isNone()) {
     if (parent_)
       return parent_->colorToRGBA(color);
     else
       return CRGBA(0, 0, 0);
   }
+
+  if (c.isRGBA())
+    return c.rgba();
+
+  if (c.isCurrent())
+    return getFlatCurrentColor();
 
   return CRGBA(0, 0, 0, 0);
 }
@@ -1043,7 +1048,7 @@ processPaintOption(const std::string &optName, const std::string &optValue)
   else if (svg_.stringOption(optName, optValue, "stroke-linejoin", str))
     setStrokeLineJoin(str);
   else if (svg_.stringOption(optName, optValue, "stroke-miterlimit", str))
-    setStrokeMitreLimit(str);
+    setStrokeMiterLimit(str);
   else if (svg_.stringOption(optName, optValue, "stroke-width", str))
     setStrokeWidth(str);
   else if (svg_.stringOption(optName, optValue, "overflow", str))
@@ -1064,9 +1069,10 @@ processColorOption(const std::string &optName, const std::string &optValue)
 {
   std::string str;
   CSVGColor   color;
+  bool        inherit;
 
   // Color Attributes
-  if      (svg_.colorOption(optName, optValue, "color", color)) {
+  if      (svg_.colorOption(optName, optValue, "color", color, inherit)) {
     setCurrentColor(color);
   }
   else if (svg_.stringOption(optName, optValue, "color-interpolation", str))
@@ -1075,7 +1081,7 @@ processColorOption(const std::string &optName, const std::string &optValue)
     // auto | optimizeSpeed | optimizeQuality | inherit
     nameValues_["color-rendering"] = str;
   }
-  else if (svg_.colorOption(optName, optValue, "solid-color", color)) {
+  else if (svg_.colorOption(optName, optValue, "solid-color", color, inherit)) {
     notHandled(optName, optValue);
   }
   else
@@ -1124,7 +1130,7 @@ processOpacityOption(const std::string &optName, const std::string &optValue)
 
   // Opacity Attributes
   if      (svg_.opacityOption(optName, optValue, "opacity", real, inherit))
-    setOpacity(real);
+    setOpacity(! inherit ? Opacity(real) : Opacity::inherit());
   else if (svg_.stringOption(optName, optValue, "fill-opacity", str))
     setFillOpacity(str);
   else if (svg_.stringOption(optName, optValue, "stroke-opacity", str))
@@ -1304,10 +1310,10 @@ processViewportOption(const std::string &optName, const std::string &optValue)
     nameValues_["clip"] = str;
   else if (svg_.stringOption(optName, optValue, "overflow", str))
     setOverflow(str);
-  else if (svg_.colorOption(optName, optValue, "viewport-fill", color))
-    setViewportFillColor(color);
+  else if (svg_.colorOption(optName, optValue, "viewport-fill", color, inherit))
+    setViewportFillColor(! inherit ? Color(color) : Color::inherit());
   else if (svg_.opacityOption(optName, optValue, "viewport-fill-opacity", real, inherit))
-    setViewportFillOpacity(real);
+    setViewportFillOpacity(! inherit ? Opacity(real) : Opacity::inherit());
   else
     return false;
 
@@ -1487,20 +1493,22 @@ processFontOption(const std::string &optName, const std::string &optValue)
 {
   std::string  str;
   CScreenUnits length;
+  bool         inherit;
 
   // Font properties
   if      (svg_.stringOption(optName, optValue, "font", str))
     parseFont(str);
-  else if (svg_.stringOption(optName, optValue, "font-family", str))
-    setFontFamily(str);
-  else if (svg_.fontSizeOption(optName, optValue, "font-size", length))
-    setFontSize(length);
+  else if (svg_.fontFamilyOption(optName, optValue, "font-family", str, inherit))
+    setFontFamily(! inherit ? FontFamily(str) : FontFamily::inherit());
+  else if (svg_.fontSizeOption(optName, optValue, "font-size", length, inherit))
+    setFontSize(! inherit ? FontSize(length) : FontSize::inherit());
   else if (svg_.stringOption(optName, optValue, "font-size-adjust", str))
     nameValues_["font-size-adjust"] = str;
   else if (svg_.stringOption(optName, optValue, "font-stretch", str))
     nameValues_["font-stretch"] = str;
   else if (svg_.stringOption(optName, optValue, "font-style", str))
     setFontStyle(str);
+  // normal | small-caps | inherit
   else if (svg_.stringOption(optName, optValue, "font-variant", str))
     nameValues_["font-variant"] = str;
   else if (svg_.stringOption(optName, optValue, "font-weight", str))
@@ -1542,7 +1550,7 @@ parseFont(const std::string &str)
     CStrUtil::addFields(word, words, ",");
 
     if (! words.empty())
-      setFontFamily(words[0]);
+      setFontFamily(FontFamily(words[0]));
   }
   else {
     CSVGLog() << "Invalid font string '" << str << "'";
@@ -1589,9 +1597,10 @@ processTextContentOption(const std::string &optName, const std::string &optValue
     nameValues_["kerning"] = str;
   else if (svg_.stringOption(optName, optValue, "text-anchor", str))
     setTextAnchor(str);
-
-  else if (svg_.stringOption(optName, optValue, "direction", str))
+  else if (svg_.stringOption(optName, optValue, "direction", str)) {
+    // ltr | rtl | inherit
     nameValues_["direction"] = str;
+  }
   else if (svg_.letterSpacingOption(optName, optValue, "letter-spacing", length))
     letterSpacing_ = length;
   else if (svg_.stringOption(optName, optValue, "text-decoration", str))
@@ -1600,6 +1609,7 @@ processTextContentOption(const std::string &optName, const std::string &optValue
     // auto | optimizeSpeed | optimizeLegibility | geometricPrecision | inherit
     nameValues_["text-rendering"] = str;
   }
+  // normal | embed | bidi-override | inherit
   else if (svg_.stringOption(optName, optValue, "unicode-bidi", str))
     nameValues_["unicode-bidi"] = str;
   else if (svg_.wordSpacingOption(optName, optValue, "word-spacing", length))
@@ -1792,13 +1802,15 @@ interpValue(const std::string &name, const std::string &from, const std::string 
 {
   if (name == "fill") {
     CSVGColor fromColor;
+    bool      fromInherit;
 
-    if (! svg_.decodeColorString(from, fromColor))
+    if (! svg_.decodeColorString(from, fromColor, fromInherit))
       return false;
 
     CSVGColor toColor;
+    bool      toInherit;
 
-    if (! svg_.decodeColorString(to, toColor)) {
+    if (! svg_.decodeColorString(to, toColor, toInherit)) {
       CSVGLog() << "Invalid color '" << to << "'";
       return false;
     }
@@ -1864,12 +1876,18 @@ void
 CSVGObject::
 setOverflow(const std::string &str)
 {
-  if      (str == "visible") overflow_ = CSVGOverflowType::VISIBLE;
-  else if (str == "hidden" ) overflow_ = CSVGOverflowType::HIDDEN;
-  else if (str == "scroll" ) overflow_ = CSVGOverflowType::SCROLL;
-  else if (str == "auto"   ) overflow_ = CSVGOverflowType::AUTO;
-  else if (str == "inherit") overflow_ = CSVGOverflowType::INHERIT;
-  else                       notHandled("overflow", str);
+  bool inherit = false;
+
+  CSVGOverflowType overflow = CSVGOverflowType::VISIBLE;
+
+  if      (str == "visible") overflow = CSVGOverflowType::VISIBLE;
+  else if (str == "hidden" ) overflow = CSVGOverflowType::HIDDEN;
+  else if (str == "scroll" ) overflow = CSVGOverflowType::SCROLL;
+  else if (str == "auto"   ) overflow = CSVGOverflowType::AUTO;
+  else if (str == "inherit") inherit = true;
+  else notHandled("overflow", str);
+
+  overflow_ = (! inherit ? Overflow(overflow) : Overflow::inherit());
 }
 
 void
@@ -1880,17 +1898,19 @@ setTextBaselineShift(const std::string &str)
 
   if      (str == "super") fontDef_.setSuperscript(true);
   else if (str == "sub"  ) fontDef_.setSubscript(true);
-  else                     notHandled("baseline-shift", str);
+  else notHandled("baseline-shift", str);
 }
 
+// start | middle | end | inherit
 void
 CSVGObject::
 setTextAnchor(const std::string &str)
 {
-  if      (str == "start" ) textAnchor_ = CHALIGN_TYPE_LEFT;
-  else if (str == "middle") textAnchor_ = CHALIGN_TYPE_CENTER;
-  else if (str == "end"   ) textAnchor_ = CHALIGN_TYPE_RIGHT;
-  else                      notHandled("text-anchor", str);
+  if      (str == "start"  ) textAnchor_ = TextAnchor(CHALIGN_TYPE_LEFT);
+  else if (str == "middle" ) textAnchor_ = TextAnchor(CHALIGN_TYPE_CENTER);
+  else if (str == "end"    ) textAnchor_ = TextAnchor(CHALIGN_TYPE_RIGHT);
+  else if (str == "inherit") textAnchor_ = TextAnchor::inherit();
+  else                       notHandled("text-anchor", str);
 }
 
 CHAlignType
@@ -1898,7 +1918,7 @@ CSVGObject::
 getFlatTextAnchor() const
 {
   if (textAnchor_.isValid())
-    return textAnchor_.getValue();
+    return textAnchor_.getValue().getValue();
 
   auto *parent = getParent();
 
@@ -2209,8 +2229,8 @@ drawObject()
   //if (! isFiltered)
     currentBuffer->setTransform(transform1);
 
-  if (getOpacityValid())
-    currentBuffer->setOpacity(getOpacity());
+  if (getOpacityValid() && ! getOpacity().isInherit())
+    currentBuffer->setOpacity(getOpacity().getValue());
 
   //------
 
@@ -3524,9 +3544,16 @@ printTextContent(std::ostream &os) const
   if (textAnchor_.isValid()) {
     os << " text-anchor=\"";
 
-    if      (textAnchor_.getValue() == CHALIGN_TYPE_LEFT  ) os << "start";
-    else if (textAnchor_.getValue() == CHALIGN_TYPE_CENTER) os << "middle";
-    else if (textAnchor_.getValue() == CHALIGN_TYPE_RIGHT ) os << "end";
+    if (textAnchor_.getValue().isInherit())
+      os << "inherit";
+    else {
+      auto value = textAnchor_.getValue().getValue();
+
+      if      (value == CHALIGN_TYPE_LEFT  ) os << "start";
+      else if (value == CHALIGN_TYPE_CENTER) os << "middle";
+      else if (value == CHALIGN_TYPE_RIGHT ) os << "end";
+      else assert(false);
+    }
 
     os << "\"";
   }

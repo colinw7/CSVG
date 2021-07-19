@@ -110,7 +110,7 @@ drawPath(CSVGObject* obj)
   //---
 
   // take path from buffer and set as clip in oldBuffer
-  if (clip_.getRule() == FILL_TYPE_EVEN_ODD)
+  if (! clip_.getRule().isInherit() && clip_.getRule().getValue() == FILL_TYPE_EVEN_ODD)
     oldBuffer->pathEoClip(buffer);
   else
     oldBuffer->pathClip(buffer);

@@ -200,8 +200,7 @@ enum class CSVGOverflowType {
   VISIBLE,
   HIDDEN,
   SCROLL,
-  AUTO,
-  INHERIT
+  AUTO
 };
 
 enum class CSVGAngleType {

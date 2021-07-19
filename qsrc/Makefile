@@ -8758,6 +8758,7 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../qinclude/CQSVGFontObj.h \
 		../include/CSVGFontObj.h \
 		../include/CSVGFontDef.h \
+		../include/CSVGInheritVal.h \
 		../../CQUtil/include/CQUtil.h \
 		../../CUtil/include/CEvent.h \
 		../../CUtil/include/CKeyType.h \
@@ -8828,6 +8829,7 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../../CUtil/include/CFlags.h \
 		../../CImageLib/include/CImagePtr.h \
 		../include/CSVGFontDef.h \
+		../include/CSVGInheritVal.h \
 		../../CUtil/include/CScreenUnits.h \
 		../../CUtil/include/COptVal.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQSVGFontObj.o CQSVGFontObj.cpp

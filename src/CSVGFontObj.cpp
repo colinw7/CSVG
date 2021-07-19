@@ -5,10 +5,10 @@
 CSVGFontObj::
 CSVGFontObj(const CSVGFontDef &fontDef)
 {
-  std::string family = fontDef.getFamily();
+  std::string family = fontDef.getFamily().getValue();
   CFontStyles styles = fontDef.getStyle();
   CFontStyle  style  = (styles | CFONT_STYLE_FULL_SIZE).value();
-  double      size   = fontDef.getSize().px().value();
+  double      size   = fontDef.getSize().getValue().px().value();
   double      angle  = fontDef.getAngle();
 
   font_ = CFontMgrInst->lookupFont(family, style, size, angle);

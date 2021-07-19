@@ -115,7 +115,11 @@ struct CSVGXmlStyleSheet {
 class CSVG {
  public:
   using ObjectList = std::vector<CSVGObject *>;
-  using Colors     = std::map<std::string, CRGBA>;
+  using NameToRGBA = std::map<std::string, CRGBA>;
+  using Color      = CSVGInheritValT<CSVGColor>;
+  using Opacity    = CSVGInheritValT<double>;
+  using FillType   = CSVGInheritValT<CFillType>;
+  using Width      = CSVGInheritValT<double>;
 
  public:
   struct DebugData {
@@ -421,11 +425,11 @@ class CSVG {
   CSVGObject *styleObject() const { return styleData_.object; }
   void setStyleObject(CSVGObject *o) { styleData_.object = o; }
 
-  CRGBA colorToRGBA(const CSVGColor &color) const;
+  CRGBA colorToRGBA(const Color &color) const;
 
   //---
 
-  static const Colors &getColors() { return colors_; }
+  static const NameToRGBA &getColors() { return colors_; }
 
   //---
 
@@ -535,14 +539,19 @@ class CSVG {
 
   //---
 
-  // font size args
-  bool fontSizeOption(const std::string &opt_name, const std::string &opt_value,
-                      const std::string &name, CScreenUnits &length);
+  // font family option
+  bool fontFamilyOption(const std::string &optName, const std::string &optValue,
+                        const std::string &name, std::string &family, bool &inherit);
 
-  // spacing args
+  // font size option
+  bool fontSizeOption(const std::string &opt_name, const std::string &opt_value,
+                      const std::string &name, CScreenUnits &length, bool &inherit);
+
+  // letter spacing option
   bool letterSpacingOption(const std::string &opt_name, const std::string &opt_value,
                            const std::string &name, CScreenUnits &length);
 
+  // word spacing option
   bool wordSpacingOption(const std::string &opt_name, const std::string &opt_value,
                          const std::string &name, CScreenUnits &length);
 
@@ -663,22 +672,22 @@ class CSVG {
 
   //---
 
-  static bool decodeWidthString(const std::string &width_str, double &width);
+  static bool decodeWidthString(const std::string &width_str, double &width, bool &inherit);
 
   bool opacityOption(const std::string &optName, const std::string &optValue,
                      const std::string &name, double &opacity, bool &inherit);
   static bool decodeOpacityString(const std::string &opacity_str,
                                   double &opacity, bool &inherit);
 
-  static CFillType decodeFillRuleString(const std::string &rule_str);
-  static std::string encodeFillRuleString(CFillType rule);
+  static FillType decodeFillRuleString(const std::string &rule_str);
+  static std::string encodeFillRuleString(const FillType &rule);
 
   static bool decodeDashString(const std::string &dash_str,
                                std::vector<CScreenUnits> &lengths, bool &solid);
 
   bool colorOption(const std::string &opt_name, const std::string &opt_value,
-                   const std::string &name, CSVGColor &color);
-  static bool decodeColorString(const std::string &color_str, CSVGColor &color);
+                   const std::string &name, CSVGColor &color, bool &inherit);
+  static bool decodeColorString(const std::string &color_str, CSVGColor &color, bool &inherit);
 
   static bool decodeRGBAString(const std::string &color_str, CRGBA &rgba);
 
@@ -686,8 +695,8 @@ class CSVG {
 
   static CRGBA nameToRGBA(const std::string &name);
 
-  static CFontStyle decodeFontWeightString(const std::string &weight_str);
-  static CFontStyle decodeFontStyleString(const std::string &style_str);
+  static CFontStyle decodeFontWeightString(const std::string &weightStr, bool &inherit);
+  static CFontStyle decodeFontStyleString(const std::string &styleStr, bool &inherit);
 
   //---
 
@@ -797,7 +806,7 @@ class CSVG {
   using OptXmlStyleSheet = COptValT<CSVGXmlStyleSheet>;
   using CSSList          = std::vector<CCSS>;
 
-  static Colors colors_;
+  static NameToRGBA colors_;
 
   CSVGRenderer*    renderer_      { nullptr };
   BufferMgrP       bufferMgr_;

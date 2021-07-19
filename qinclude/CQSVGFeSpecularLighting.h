@@ -15,6 +15,9 @@ class CQSVGFeSpecularLighting : public CQSVGObject, public CSVGFeSpecularLightin
   Q_PROPERTY(double surfaceScale     READ getSurfaceScale     WRITE setSurfaceScale    )
 
  public:
+  using Color = CSVGInheritValT<CSVGColor>;
+
+ public:
   CQSVGFeSpecularLighting(CQSVG *svg);
 
   QColor getLightingColor() const;
