@@ -99,11 +99,3 @@ printValues(std::ostream &os, bool flat) const
 
   printNamePreserveAspect(os, "preserveAspectRatio", preserveAspect_);
 }
-
-std::ostream &
-operator<<(std::ostream &os, const CSVGSymbol &group)
-{
-  group.print(os, false);
-
-  return os;
-}

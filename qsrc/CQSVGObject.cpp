@@ -185,7 +185,7 @@ double
 CQSVGObject::
 strokeWidth() const
 {
-  return obj_->getFlatStrokeWidth().getValue(CSVGObject::Width(1)).getValue();
+  return obj_->getFlatStrokeWidth().getValue(CSVGObject::Width(1)).getValue(0);
 }
 
 void
@@ -199,43 +199,52 @@ CLineDash
 CQSVGObject::
 strokeDash() const
 {
-  return obj_->getFlatStrokeLineDash().getValue(CSVGObject::LineDash()).getValue().getLineDash();
+  auto sdash = obj_->getFlatStrokeDashArray().getValue(CSVGObject::DashArray()).getValue();
+
+  CLineDash dash;
+
+  if (sdash.isDashed()) {
+    std::vector<double> lengths;
+
+    for (int i = 0; i < sdash.numDashes(); ++i)
+      lengths.push_back(sdash.dash(i).pxValue());
+
+    dash = CLineDash(lengths);
+  }
+
+  return dash;
 }
 
 void
 CQSVGObject::
 setStrokeDash(const CLineDash &dash)
 {
-  auto sdash = obj_->getStrokeDash().getValue();
+  auto sdash = obj_->getStrokeDashArray().getValue();
 
-  CSVGStrokeDash::Dashes dashes;
+  CSVGLineDash::Dashes dashes;
 
   for (uint i = 0; i < dash.getNumLengths(); ++i)
     dashes.push_back(dash.getLength(i));
 
   sdash.setDashes(dashes);
 
-  obj_->setStrokeDash(CSVGObject::LineDash(sdash));
+  obj_->setStrokeDashArray(CSVGObject::DashArray(sdash));
 }
 
 double
 CQSVGObject::
 strokeOffset() const
 {
-  auto dash = obj_->getFlatStrokeLineDash().getValue(CSVGObject::LineDash()).getValue();
+  auto dash = obj_->getFlatStrokeDashOffset().getValue(CSVGObject::DashOffset(0)).getValue();
 
-  return dash.offset().pxValue(1);
+  return dash.pxValue(0);
 }
 
 void
 CQSVGObject::
 setStrokeOffset(double o)
 {
-  auto sdash = obj_->getStrokeDash().getValue();
-
-  sdash.setOffset(o);
-
-  obj_->setStrokeDash(CSVGObject::LineDash(sdash));
+  obj_->setStrokeDashOffset(CSVGObject::DashOffset(CScreenUnits(o)));
 }
 
 CQSVGEnum::LineCapType
@@ -516,12 +525,10 @@ drawSelected()
     CPoint2D p1(xscale*bbox.getXMin(), yscale*bbox.getYMin());
     CPoint2D p2(xscale*bbox.getXMax(), yscale*bbox.getYMax());
 
-    CPoint2D w1, w2;
+    auto w1 = canvas->pixelToWindow(p1);
+    auto w2 = canvas->pixelToWindow(p2);
 
-    canvas->pixelToWindow(p1, w1);
-    canvas->pixelToWindow(p2, w2);
-
-    canvas->drawRect(CBBox2D(p1, p2), Qt::red);
+    canvas->drawRect(CBBox2D(w1, w2), Qt::red);
   }
 
   //---
@@ -538,10 +545,8 @@ drawSelected()
       CPoint2D p1(xscale*bbox.getXMin(), yscale*bbox.getYMin());
       CPoint2D p2(xscale*bbox.getXMax(), yscale*bbox.getYMax());
 
-      CPoint2D w1, w2;
-
-      canvas->pixelToWindow(p1, w1);
-      canvas->pixelToWindow(p2, w2);
+      auto w1 = canvas->pixelToWindow(p1);
+      auto w2 = canvas->pixelToWindow(p2);
 
       canvas->drawRect(CBBox2D(w1, w2), Qt::red);
     }

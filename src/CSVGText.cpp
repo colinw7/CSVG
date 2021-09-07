@@ -32,6 +32,7 @@ CSVGText::
 CSVGText(CSVG &svg) :
  CSVGObject(svg)
 {
+  init();
 }
 
 CSVGText::
@@ -45,6 +46,22 @@ CSVGText(const CSVGText &text) :
  textLength_  (text.textLength_),
  lengthAdjust_(text.lengthAdjust_)
 {
+  init();
+}
+
+void
+CSVGText::
+init()
+{
+  skipNames_.insert("x");
+  skipNames_.insert("y");
+  skipNames_.insert("dx");
+  skipNames_.insert("dy");
+
+  skipNames_.insert("rotate");
+
+  skipNames_.insert("textLength");
+  skipNames_.insert("lengthAdjust");
 }
 
 CSVGText *
@@ -526,12 +543,4 @@ printValues(std::ostream &os, bool flat) const
 
   printNameValue(os, "textLength"  , textLength_  );
   printNameValue(os, "lengthAdjust", lengthAdjust_);
-}
-
-std::ostream &
-operator<<(std::ostream &os, const CSVGText &text)
-{
-  text.print(os, false);
-
-  return os;
 }

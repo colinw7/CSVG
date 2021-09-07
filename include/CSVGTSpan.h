@@ -5,7 +5,7 @@
 
 class CSVGText;
 
-class CSVGTSpan : public CSVGObject {
+class CSVGTSpan : public CSVGObject, public CSVGPrintBase<CSVGTSpan> {
  public:
   using Reals = std::vector<double>;
 
@@ -42,11 +42,11 @@ class CSVGTSpan : public CSVGObject {
   void moveTo(const CPoint2D &p) override;
   void moveBy(const CVector2D &delta) override;
 
-  void print(std::ostream &os, bool hier) const override;
+  void print(std::ostream &os, bool hier=false) const override;
 
   void printValues(std::ostream &os, bool flat=false) const override;
 
-  friend std::ostream &operator<<(std::ostream &os, const CSVGTSpan &tspan);
+  void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
   void getDrawPos(double &x, double &y, int i) const;

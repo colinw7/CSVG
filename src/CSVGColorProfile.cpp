@@ -88,11 +88,3 @@ printValues(std::ostream &os, bool flat) const
 
   CSVGObject::printValues(os, flat);
 }
-
-std::ostream &
-operator<<(std::ostream &os, const CSVGColorProfile &c)
-{
-  c.print(os, false);
-
-  return os;
-}

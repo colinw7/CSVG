@@ -339,11 +339,3 @@ printValues(std::ostream &os, bool flat) const
   if (! xlink_.getValue().isNull())
     printNameXLink(os, "xlink:href", xlink_);
 }
-
-std::ostream &
-operator<<(std::ostream &os, const CSVGFilter &filter)
-{
-  filter.print(os, false);
-
-  return os;
-}

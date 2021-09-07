@@ -3,7 +3,7 @@
 
 #include <CSVGObject.h>
 
-class CSVGText : public CSVGObject {
+class CSVGText : public CSVGObject, public CSVGPrintBase<CSVGText> {
  public:
   using Reals   = std::vector<double>;
   using Coords  = std::vector<CScreenUnits>;
@@ -77,11 +77,14 @@ class CSVGText : public CSVGObject {
   const CPoint2D &lastPos() const { return lastPos_; }
   void setLastPos(const CPoint2D &p) { lastPos_ = p; }
 
-  void print(std::ostream &os, bool hier) const override;
+  void print(std::ostream &os, bool hier=false) const override;
 
   void printValues(std::ostream &os, bool flat=false) const override;
 
-  friend std::ostream &operator<<(std::ostream &os, const CSVGText &text);
+  void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
+
+ private:
+  void init();
 
  private:
   OptCoords  x_;

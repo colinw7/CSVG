@@ -98,7 +98,8 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   // "playbackOrder" "forwardOnly" | "all"
   else if (svg_.stringOption(opt_name, opt_value, "contentScriptType", str)) {
     // <content-type>
-    notHandled(opt_name, opt_value);
+    //setNameValue("contentScriptType", str);
+    //notHandled(opt_name, opt_value);
   }
   else if (svg_.stringOption(opt_name, opt_value, "zoomAndPan", str)) {
     // "magnify" | "disable"
@@ -510,12 +511,4 @@ printValues(std::ostream &os, bool flat) const
   printNameLength(os, "height", height_);
 
   printNamePreserveAspect(os, "preserveAspectRatio", preserveAspect_);
-}
-
-std::ostream &
-operator<<(std::ostream &os, const CSVGBlock &block)
-{
-  block.print(os, false);
-
-  return os;
 }

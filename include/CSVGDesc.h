@@ -3,7 +3,7 @@
 
 #include <CSVGObject.h>
 
-class CSVGDesc : public CSVGObject {
+class CSVGDesc : public CSVGObject, public CSVGPrintBase<CSVGDesc> {
  public:
   CSVG_OBJECT_DEF("desc", CSVGObjTypeId::DESC)
 
@@ -20,11 +20,11 @@ class CSVGDesc : public CSVGObject {
 
   bool draw() override;
 
-  void print(std::ostream &os, bool hier) const override;
+  void print(std::ostream &os, bool hier=false) const override;
 
   void printValues(std::ostream &os, bool flat=false) const override;
 
-  friend std::ostream &operator<<(std::ostream &os, const CSVGDesc &desc);
+  void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
   bool tooltip_ { false };

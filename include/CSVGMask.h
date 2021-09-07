@@ -4,7 +4,7 @@
 #include <CSVGObject.h>
 #include <CSVGTypes.h>
 
-class CSVGMask : public CSVGObject {
+class CSVGMask : public CSVGObject, public CSVGPrintBase<CSVGMask> {
  public:
   CSVG_OBJECT_DEF("mask", CSVGObjTypeId::MASK)
 
@@ -43,17 +43,17 @@ class CSVGMask : public CSVGObject {
 
   void drawMask(const CSVGObject *object);
 
-  void print(std::ostream &os, bool hier) const override;
+  void print(std::ostream &os, bool hier=false) const override;
 
   void printValues(std::ostream &os, bool flat=false) const override;
 
-  friend std::ostream &operator<<(std::ostream &os, const CSVGMask &mask);
+  void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
   CSVGMask &operator=(const CSVGMask &rhs);
 
  private:
-  CSVGObject *             object_ { 0 };
+  CSVGObject *             object_ { nullptr };
   COptReal                 x_;
   COptReal                 y_;
   COptValT<CScreenUnits>   width_;

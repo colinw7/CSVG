@@ -5,7 +5,7 @@
 
 class CSVGBuffer;
 
-class CSVGFeTile : public CSVGFilterBase {
+class CSVGFeTile : public CSVGFilterBase, public CSVGPrintBase<CSVGFeTile> {
  public:
   CSVG_OBJECT_DEF("feTile", CSVGObjTypeId::FE_TILE)
 
@@ -24,11 +24,11 @@ class CSVGFeTile : public CSVGFilterBase {
 
   bool drawElement() override;
 
-  void print(std::ostream &os, bool hier) const override;
+  void print(std::ostream &os, bool hier=false) const override;
 
   void printValues(std::ostream &os, bool flat=false) const override;
 
-  friend std::ostream &operator<<(std::ostream &os, const CSVGFeTile &fe);
+  void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
   COptString filterIn_;

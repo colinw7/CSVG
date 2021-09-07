@@ -18,12 +18,12 @@ CQSVGJSDialog(CQSVGWindow *window) :
 {
   setWindowTitle("JavaScript");
 
-  QVBoxLayout *layout = new QVBoxLayout(this);
+  auto *layout = new QVBoxLayout(this);
   layout->setMargin(0); layout->setSpacing(2);
 
   //---
 
-  QTabWidget *tab = new QTabWidget;
+  auto *tab = new QTabWidget;
 
   log_ = new QTextEdit;
 
@@ -40,16 +40,16 @@ CQSVGJSDialog(CQSVGWindow *window) :
 
   //----
 
-  QFrame *variables = new QFrame;
+  auto *variables = new QFrame;
 
-  QVBoxLayout *variablesLayout = new QVBoxLayout(variables);
+  auto *variablesLayout = new QVBoxLayout(variables);
   variablesLayout->setMargin(0); variablesLayout->setSpacing(2);
 
   variablesList_ = new QListWidget;
 
   variablesLayout->addWidget(variablesList_);
 
-  QPushButton *variablesLoad = new QPushButton("Load");
+  auto *variablesLoad = new QPushButton("Load");
 
   connect(variablesLoad, SIGNAL(clicked()), this, SLOT(loadVariables()));
 
@@ -59,16 +59,16 @@ CQSVGJSDialog(CQSVGWindow *window) :
 
   //----
 
-  QFrame *functions = new QFrame;
+  auto *functions = new QFrame;
 
-  QVBoxLayout *functionsLayout = new QVBoxLayout(functions);
+  auto *functionsLayout = new QVBoxLayout(functions);
   functionsLayout->setMargin(0); functionsLayout->setSpacing(2);
 
   functionsList_ = new QListWidget;
 
   functionsLayout->addWidget(functionsList_);
 
-  QPushButton *functionsLoad = new QPushButton("Load");
+  auto *functionsLoad = new QPushButton("Load");
 
   connect(functionsLoad, SIGNAL(clicked()), this, SLOT(loadFunctions()));
 
@@ -82,11 +82,11 @@ CQSVGJSDialog(CQSVGWindow *window) :
 
   //---
 
-  QFrame *entryFrame = new QFrame;
+  auto *entryFrame = new QFrame;
 
   layout->addWidget(entryFrame);
 
-  QHBoxLayout *entryLayout = new QHBoxLayout(entryFrame);
+  auto *entryLayout = new QHBoxLayout(entryFrame);
   entryLayout->setMargin(0); entryLayout->setSpacing(2);
 
   input_ = new CQHistoryLineEdit;
@@ -95,7 +95,7 @@ CQSVGJSDialog(CQSVGWindow *window) :
 
   connect(input_, SIGNAL(exec(const QString &)), this, SLOT(execCmd(const QString &)));
 
-  QPushButton *load = new QPushButton("Load");
+  auto *load = new QPushButton("Load");
 
   entryLayout->addWidget(load);
 
@@ -130,7 +130,7 @@ execCmd(const QString &cmd)
   if (value) {
     std::string str = value->toString();
 
-    QTextCursor cursor = log_->textCursor();
+    auto cursor = log_->textCursor();
 
     cursor.insertText(str.c_str());
     cursor.insertText("\n");
@@ -142,11 +142,11 @@ void
 CQSVGJSDialog::
 loadFile()
 {
-  QString title  = "Load File";
-  QString cwd    = QDir::currentPath();
-  QString filter = "JavaScript Files (*.js)";
+  auto title  = QString("Load File");
+  auto cwd    = QDir::currentPath();
+  auto filter = QString("JavaScript Files (*.js)");
 
-  QString filename = QFileDialog::getOpenFileName(this, title, cwd, filter);
+  auto filename = QFileDialog::getOpenFileName(this, title, cwd, filter);
 
   if (filename == "")
     return;

@@ -353,11 +353,3 @@ getObject()
 
   return xlink_.getValue().getObject();
 }
-
-std::ostream &
-operator<<(std::ostream &os, const CSVGPattern &pattern)
-{
-  pattern.print(os, false);
-
-  return os;
-}

@@ -1,5 +1,6 @@
 #include <CQSVGFontObj.h>
 #include <CSVGFontDef.h>
+#include <CQSVG.h>
 #include <QFontMetricsF>
 
 CQSVGFontObj::
@@ -45,7 +46,7 @@ initPointSize(const CSVGFontDef &def)
 {
   double dpi = CScreenUnitsMgrInst->dpi();
 
-  CScreenUnitsMgrInst->setDpi(100);
+  CScreenUnitsMgrInst->setDpi(fontDef().svg().fontDpi()); // 100.0
 
   size_ = def.getSize().getValue().ptValue();
 

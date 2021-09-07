@@ -6,7 +6,7 @@
 
 class CSVGFilterBase;
 
-class CSVGFilter : public CSVGObject {
+class CSVGFilter : public CSVGObject, public CSVGPrintBase<CSVGFilter> {
  public:
   CSVG_OBJECT_DEF("filter", CSVGObjTypeId::FILTER)
 
@@ -76,17 +76,17 @@ class CSVGFilter : public CSVGObject {
 
   bool draw() override;
 
-  void print(std::ostream &os, bool hier) const override;
+  void print(std::ostream &os, bool hier=false) const override;
 
   void printValues(std::ostream &os, bool flat=false) const override;
 
-  friend std::ostream &operator<<(std::ostream &os, const CSVGFilter &filter);
+  void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
   CSVGFilter &operator=(const CSVGFilter &rhs);
 
  private:
-  CSVGObject*              object_ { 0 };
+  CSVGObject*              object_ { nullptr };
   COptValT<CSVGCoordUnits> filterUnits_;
   COptValT<CSVGCoordUnits> primitiveUnits_;
   COptValT<CScreenUnits>   x_;
@@ -98,7 +98,7 @@ class CSVGFilter : public CSVGObject {
   CBBox2D                  contentsBBox_;
   bool                     oldDrawing_ { false };
   std::string              lastFilterName_;
-  CSVGFilterBase*          lastElement_ { 0 };
+  CSVGFilterBase*          lastElement_ { nullptr };
   CPoint2D                 offset_;
 };
 

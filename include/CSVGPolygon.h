@@ -3,7 +3,7 @@
 
 #include <CSVGObject.h>
 
-class CSVGPolygon : public CSVGObject {
+class CSVGPolygon : public CSVGObject, public CSVGPrintBase<CSVGPolygon> {
  public:
   using PointList = std::vector<CPoint2D>;
 
@@ -31,11 +31,14 @@ class CSVGPolygon : public CSVGObject {
 
   void rotateBy(double da, const CPoint2D &point) override;
 
-  void print(std::ostream &os, bool hier) const override;
+  void print(std::ostream &os, bool hier=false) const override;
 
   void printValues(std::ostream &os, bool flat=false) const override;
 
-  friend std::ostream &operator<<(std::ostream &os, const CSVGPolygon &polygon);
+  void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
+
+ private:
+  void init();
 
  private:
   PointList points_;

@@ -97,6 +97,7 @@ class CSVGLogRenderer : public CSVGRenderer {
 
   void setStrokeColor(const CRGBA &) override { logNL("setStrokeColor"); }
 
+  void resetStroke() override { logNL("resetStroke"); }
   void setLineWidth(double) override { logNL("setLineWidth"); }
   void setLineDash(const CLineDash &) override { logNL("setLineDash"); }
   void setLineCap(const CLineCapType &) override { logNL("setLineCap"); }

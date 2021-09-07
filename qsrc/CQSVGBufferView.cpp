@@ -14,35 +14,32 @@
 #include <QMouseEvent>
 
 CQSVGBufferView::
-CQSVGBufferView(CQSVG *qsvg) :
- qsvg_(qsvg)
+CQSVGBufferView(CSVG *svg) :
+ svg_(svg)
 {
   setObjectName("bufferView");
 
   setWindowTitle("Buffer View");
 
-  QVBoxLayout *layout = new QVBoxLayout(this);
-  layout->setMargin(0); layout->setSpacing(2);
+  auto *layout = CQUtil::makeLayout<QVBoxLayout>(this, 0, 2);
 
   //---
 
-  QFrame *controlFrame = new QFrame;
-  controlFrame->setObjectName("control");
+  auto *controlFrame = CQUtil::makeWidget<QFrame>("control");
 
   controlFrame->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
   layout->addWidget(controlFrame);
 
-  QHBoxLayout *controlLayout = new QHBoxLayout(controlFrame);
-  controlLayout->setMargin(0); controlLayout->setSpacing(2);
+  auto *controlLayout = CQUtil::makeLayout<QHBoxLayout>(controlFrame, 0, 2);
 
-  bgCheck_ = new QCheckBox("Checkerboard");
+  bgCheck_ = CQUtil::makeLabelWidget<QCheckBox>("Checkerboard", "checkerboard");
 
   connect(bgCheck_, SIGNAL(stateChanged(int)), this, SLOT(updateBuffer()));
 
   controlLayout->addWidget(bgCheck_);
 
-  combo_ = new QComboBox;
+  combo_ = CQUtil::makeWidget<QComboBox>("combo");
 
   connect(combo_, SIGNAL(currentIndexChanged(int)), this, SLOT(updateBuffer()));
 
@@ -56,14 +53,14 @@ CQSVGBufferView(CQSVG *qsvg) :
 
   //---
 
-  QFrame *status = new QFrame;
+  auto *status = new QFrame;
   status->setObjectName("status");
 
   status->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
   layout->addWidget(status);
 
-  QHBoxLayout *statusLayout = new QHBoxLayout(status);
+  auto *statusLayout = new QHBoxLayout(status);
   statusLayout->setMargin(0); statusLayout->setSpacing(2);
 
   statusLabel_ = new QLabel;
@@ -93,7 +90,7 @@ updateState()
 
   std::vector<std::string> names;
 
-  qsvg_->getBufferNames(names);
+  svg_->getBufferNames(names);
 
   for (const auto &n : names)
     combo_->addItem(n.c_str());
@@ -105,7 +102,7 @@ updateBuffer()
 {
   QString text;
 
-  auto *buffer = qsvg_->getBuffer(bufferName().toStdString());
+  auto *buffer = svg_->getBuffer(bufferName().toStdString());
 
   if (buffer) {
     text += QString("Opacity: %1").arg(buffer->opacity());
@@ -133,7 +130,7 @@ QImage
 CQSVGBufferView::
 bufferImage() const
 {
-  auto *buffer = qsvg_->getBuffer(bufferName().toStdString());
+  auto *buffer = svg_->getBuffer(bufferName().toStdString());
 
   auto *renderer = dynamic_cast<CQSVGRenderer *>(buffer->getRenderer());
   if (! renderer) return QImage();
@@ -145,21 +142,21 @@ CBBox2D
 CQSVGBufferView::
 bufferBBox() const
 {
-  return qsvg_->getBuffer(bufferName().toStdString())->bbox();
+  return svg_->getBuffer(bufferName().toStdString())->bbox();
 }
 
 CPoint2D
 CQSVGBufferView::
 bufferOrigin() const
 {
-  return qsvg_->getBuffer(bufferName().toStdString())->origin();
+  return svg_->getBuffer(bufferName().toStdString())->origin();
 }
 
 void
 CQSVGBufferView::
 showPos(const QPoint &ppos)
 {
-  QString ptext = QString("%1,%2").arg(ppos.x()).arg(ppos.y());
+  auto ptext = QString("%1,%2").arg(ppos.x()).arg(ppos.y());
 
   posLabel_->setText(QString("(%1)").arg(ptext));
 }

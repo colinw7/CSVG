@@ -168,11 +168,3 @@ printValues(std::ostream &os, bool flat) const
   printNameValue(os, "vert-origin-x" , vxo_);
   printNameValue(os, "vert-origin-y" , vyo_);
 }
-
-std::ostream &
-operator<<(std::ostream &os, const CSVGFont &font)
-{
-  font.print(os, false);
-
-  return os;
-}

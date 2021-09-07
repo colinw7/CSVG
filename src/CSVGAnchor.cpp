@@ -102,11 +102,3 @@ printValues(std::ostream &os, bool flat) const
   if (! xlink_.getValue().isNull())
     printNameXLink(os, "xlink:href", xlink_);
 }
-
-std::ostream &
-operator<<(std::ostream &os, const CSVGAnchor &use)
-{
-  use.print(os, false);
-
-  return os;
-}

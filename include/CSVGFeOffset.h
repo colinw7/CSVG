@@ -5,7 +5,7 @@
 
 class CSVGBuffer;
 
-class CSVGFeOffset : public CSVGFilterBase {
+class CSVGFeOffset : public CSVGFilterBase, public CSVGPrintBase<CSVGFeOffset> {
  public:
   CSVG_OBJECT_DEF("feOffset", CSVGObjTypeId::FE_OFFSET)
 
@@ -36,11 +36,11 @@ class CSVGFeOffset : public CSVGFilterBase {
 
   void calcDelta(double &dx, double &dy) const;
 
-  void print(std::ostream &os, bool hier) const override;
+  void print(std::ostream &os, bool hier=false) const override;
 
   void printValues(std::ostream &os, bool flat=false) const override;
 
-  friend std::ostream &operator<<(std::ostream &os, const CSVGFeOffset &filter);
+  void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
   COptString filterIn_;

@@ -162,11 +162,3 @@ printValues(std::ostream &os, bool flat) const
 
   printNameValue(os, "type", type_);
 }
-
-std::ostream &
-operator<<(std::ostream &os, const CSVGScript &use)
-{
-  use.print(os, false);
-
-  return os;
-}

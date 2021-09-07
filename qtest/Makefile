@@ -423,6 +423,7 @@ compiler_clean: compiler_moc_predefs_clean
 		../include/CSVGStroke.h \
 		../include/CSVGFill.h \
 		../include/CSVGColor.h \
+		../include/CSVGTmpl.h \
 		../../CUtil/include/CRGBA.h \
 		../../CUtil/include/CRGB.h \
 		../../CUtil/include/CRGBName.h \
@@ -430,10 +431,8 @@ compiler_clean: compiler_moc_predefs_clean
 		../../CUtil/include/CFillType.h \
 		../../CUtil/include/COptVal.h \
 		../include/CSVGClip.h \
-		../include/CSVGStrokeDash.h \
+		../include/CSVGLineDash.h \
 		../../CUtil/include/CScreenUnits.h \
-		../../CUtil/include/CLineDash.h \
-		../../CUtil/include/CILineDash.h \
 		../../CUtil/include/CLineCapType.h \
 		../../CUtil/include/CLineJoinType.h \
 		../include/CSVGFontDef.h \
@@ -461,6 +460,7 @@ compiler_clean: compiler_moc_predefs_clean
 		../../CMath/include/CSize2D.h \
 		../../CMath/include/CISize2D.h \
 		../include/CSVGObjectMarker.h \
+		../include/CSVGVisitor.h \
 		../include/CObjTypeOld.h \
 		../../CMath/include/CAngle.h \
 		../include/CSVGBlockData.h \
@@ -479,6 +479,8 @@ compiler_clean: compiler_moc_predefs_clean
 		../../CQUtil/include/CQUtil.h \
 		../../CUtil/include/CEvent.h \
 		../../CUtil/include/CKeyType.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
 		../../CMath/include/CIBBox2D.h \
 		../../CMath/include/CIVector2D.h \
 		../../CQUtil/include/CQUtilMeta.h

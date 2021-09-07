@@ -4,7 +4,7 @@
 #include <CSVGObject.h>
 #include <CSVGXLink.h>
 
-class CSVGUse : public CSVGObject {
+class CSVGUse : public CSVGObject, public CSVGPrintBase<CSVGUse> {
  public:
   CSVG_OBJECT_DEF("use", CSVGObjTypeId::USE)
 
@@ -54,11 +54,11 @@ class CSVGUse : public CSVGObject {
 
   //---
 
-  void print(std::ostream &os, bool hier) const override;
+  void print(std::ostream &os, bool hier=false) const override;
 
   void printValues(std::ostream &os, bool flat=false) const override;
 
-  friend std::ostream &operator<<(std::ostream &os, const CSVGUse &use);
+  void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
   COptValT<CSVGXLink>    xlink_;

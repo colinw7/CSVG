@@ -131,11 +131,3 @@ printValues(std::ostream &os, bool flat) const
     os << "\"";
   }
 }
-
-std::ostream &
-operator<<(std::ostream &os, const CSVGFeFunc &filter)
-{
-  filter.print(os, false);
-
-  return os;
-}

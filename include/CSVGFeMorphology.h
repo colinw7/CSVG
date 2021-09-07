@@ -5,7 +5,7 @@
 
 class CSVGBuffer;
 
-class CSVGFeMorphology : public CSVGFilterBase {
+class CSVGFeMorphology : public CSVGFilterBase, public CSVGPrintBase<CSVGFeMorphology> {
  public:
   CSVG_OBJECT_DEF("feMorphology", CSVGObjTypeId::FE_MORPHOLOGY)
 
@@ -25,11 +25,11 @@ class CSVGFeMorphology : public CSVGFilterBase {
 
   bool drawElement() override;
 
-  void print(std::ostream &os, bool hier) const override;
+  void print(std::ostream &os, bool hier=false) const override;
 
   void printValues(std::ostream &os, bool flat=false) const override;
 
-  friend std::ostream &operator<<(std::ostream &os, const CSVGFeMorphology &filter);
+  void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
   COptString                       filterIn_;

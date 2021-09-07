@@ -3,7 +3,7 @@
 
 #include <CSVGObject.h>
 
-class CSVGRect : public CSVGObject {
+class CSVGRect : public CSVGObject, public CSVGPrintBase<CSVGRect> {
  public:
   CSVG_OBJECT_DEF("rect", CSVGObjTypeId::RECT)
 
@@ -38,11 +38,11 @@ class CSVGRect : public CSVGObject {
 
   bool hasRX() const { return rx_.isValid(); }
   double getRX() { return rx_.getValue(0); }
-  void setRX(double x) { rx_ = x; }
+  void setRX(double x) { rx_ = x; } // no bbox change
 
   bool hasRY() const { return ry_.isValid(); }
   double getRY() { return ry_.getValue(0); }
-  void setRY(double y) { ry_ = y; }
+  void setRY(double y) { ry_ = y; } // no bbox change
 
   //---
 
@@ -74,22 +74,25 @@ class CSVGRect : public CSVGObject {
 
   //---
 
-  void print(std::ostream &os, bool hier) const override;
+  void print(std::ostream &os, bool hier=false) const override;
 
   void printValues(std::ostream &os, bool flat=false) const override;
 
-  friend std::ostream &operator<<(std::ostream &os, const CSVGRect &rect);
+  void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
+  void init();
+
   void updateBBox();
 
  private:
-  COptValT<CScreenUnits>   x_;
-  COptValT<CScreenUnits>   y_;
-  COptValT<CScreenUnits>   width_;
-  COptValT<CScreenUnits>   height_;
-  COptReal                 rx_;
-  COptReal                 ry_;
+  COptValT<CScreenUnits> x_;
+  COptValT<CScreenUnits> y_;
+  COptValT<CScreenUnits> width_;
+  COptValT<CScreenUnits> height_;
+  COptReal               rx_;
+  COptReal               ry_;
+
   mutable CBBox2D          bbox_;
   mutable CSVGPathPartList parts_;
 };

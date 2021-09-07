@@ -5,7 +5,7 @@
 
 class CSVGBuffer;
 
-class CSVGFeTurbulence : public CSVGFilterBase {
+class CSVGFeTurbulence : public CSVGFilterBase, public CSVGPrintBase<CSVGFeTurbulence> {
  public:
   CSVG_OBJECT_DEF("feTurbulence", CSVGObjTypeId::FE_TURBULENCE)
 
@@ -47,11 +47,11 @@ class CSVGFeTurbulence : public CSVGFilterBase {
 
   bool drawElement() override;
 
-  void print(std::ostream &os, bool hier) const override;
+  void print(std::ostream &os, bool hier=false) const override;
 
   void printValues(std::ostream &os, bool flat=false) const override;
 
-  friend std::ostream &operator<<(std::ostream &os, const CSVGFeTurbulence &filter);
+  void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
   COptString type_;

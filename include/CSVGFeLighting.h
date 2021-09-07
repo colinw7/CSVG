@@ -8,7 +8,7 @@ class CSVGFeDistantLight;
 class CSVGFePointLight;
 class CSVGFeSpotLight;
 
-class CSVGFeLighting : public CSVGFilterBase {
+class CSVGFeLighting : public CSVGFilterBase, public CSVGPrintBase<CSVGFeLighting> {
  public:
   CSVG_OBJECT_DEF("feLighting", CSVGObjTypeId::FE_SPECULAR_LIGHTING)
 
@@ -40,6 +40,8 @@ class CSVGFeLighting : public CSVGFilterBase {
   void setSurfaceScale(double r) { surfaceScale_ = r; }
 
   void filterImage(CSVGBuffer *inBuffer, const CBBox2D &bbox, CSVGBuffer *outBuffer);
+
+  void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  protected:
   COptString      filterIn_;

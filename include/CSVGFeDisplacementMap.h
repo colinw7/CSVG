@@ -5,7 +5,7 @@
 
 class CSVGBuffer;
 
-class CSVGFeDisplacementMap : public CSVGFilterBase {
+class CSVGFeDisplacementMap : public CSVGFilterBase, public CSVGPrintBase<CSVGFeDisplacementMap> {
  public:
   using Reals = std::vector<double>;
 
@@ -39,11 +39,11 @@ class CSVGFeDisplacementMap : public CSVGFilterBase {
 
   bool drawElement() override;
 
-  void print(std::ostream &os, bool hier) const override;
+  void print(std::ostream &os, bool hier=false) const override;
 
   void printValues(std::ostream &os, bool flat=false) const override;
 
-  friend std::ostream &operator<<(std::ostream &os, const CSVGFeDisplacementMap &filter);
+  void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
   COptString filterIn1_;

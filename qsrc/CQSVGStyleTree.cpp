@@ -22,7 +22,7 @@ load()
 
   //---
 
-  QTreeWidgetItem *globalItem = new QTreeWidgetItem(QStringList() << "Global");
+  auto *globalItem = new QTreeWidgetItem(QStringList() << "Global");
 
   addStyleData(globalItem, cssData.globalStyle());
 
@@ -30,7 +30,7 @@ load()
 
   //---
 
-  QTreeWidgetItem *nameItem = new QTreeWidgetItem(QStringList() << "Name");
+  auto *nameItem = new QTreeWidgetItem(QStringList() << "Name");
 
   addStyleData(nameItem, cssData.nameStyle());
 
@@ -38,7 +38,7 @@ load()
 
   //---
 
-  QTreeWidgetItem *typeItem = new QTreeWidgetItem(QStringList() << "Type");
+  auto *typeItem = new QTreeWidgetItem(QStringList() << "Type");
 
   addStyleData(typeItem, cssData.typeStyle());
 
@@ -46,7 +46,7 @@ load()
 
   //---
 
-  QTreeWidgetItem *classItem = new QTreeWidgetItem(QStringList() << "Class");
+  auto *classItem = new QTreeWidgetItem(QStringList() << "Class");
 
   addStyleData(classItem, cssData.classStyle());
 
@@ -54,7 +54,7 @@ load()
 
   //---
 
-  QTreeWidgetItem *typeClassItem = new QTreeWidgetItem(QStringList() << "Type/Class");
+  auto *typeClassItem = new QTreeWidgetItem(QStringList() << "Type/Class");
 
   addStyleData(typeClassItem, cssData.typeClassStyle());
 
@@ -68,7 +68,7 @@ CQSVGStyleTree::
 addStyleData(QTreeWidgetItem *item, const CSVGCSSData::TypeStyleDataMap &styleData)
 {
   for (const auto &s : styleData) {
-    QTreeWidgetItem *childItem = new QTreeWidgetItem(QStringList() << s.first.c_str());
+    auto *childItem = new QTreeWidgetItem(QStringList() << s.first.c_str());
 
     addStyleData(childItem, s.second);
 
@@ -81,7 +81,7 @@ CQSVGStyleTree::
 addStyleData(QTreeWidgetItem *item, const CSVGCSSData::StyleDataMap &styleData)
 {
   for (const auto &s : styleData) {
-    QTreeWidgetItem *childItem = new QTreeWidgetItem(QStringList() << s.first.c_str());
+    auto *childItem = new QTreeWidgetItem(QStringList() << s.first.c_str());
 
     addStyleData(childItem, s.second);
 
@@ -94,9 +94,9 @@ CQSVGStyleTree::
 addStyleData(QTreeWidgetItem *item, const CSVGStyleData &styleData)
 {
   for (const auto &s : styleData.nameValues()) {
-    QStringList strs = QStringList() << s.first.c_str() << s.second.c_str();
+    auto strs = QStringList() << s.first.c_str() << s.second.c_str();
 
-    QTreeWidgetItem *childItem = new QTreeWidgetItem(strs);
+    auto *childItem = new QTreeWidgetItem(strs);
 
     item->addChild(childItem);
   }

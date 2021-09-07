@@ -127,7 +127,7 @@ isNull() const
   return (str_.empty() && ! object_);
 }
 
-void
+bool
 CSVGXLink::
 resolve() const
 {
@@ -139,12 +139,13 @@ resolve() const
   double yscale = svg.flatYScale();
 
   if (resolved_ && xscale_ == xscale && yscale_ == yscale)
-    return;
+    return true;
 
   if (str_ != "") {
     CSVGBuffer *buffer;
 
-    parent_->decodeXLink(str_, &th->object_, &buffer);
+    if (! parent_->decodeXLink(str_, &th->object_, &buffer))
+      return false;
 
     if (buffer) {
       th->initImageBuffer();
@@ -159,6 +160,8 @@ resolve() const
   th->xscale_   = xscale;
   th->yscale_   = yscale;
   th->resolved_ = true;
+
+  return true;
 }
 
 void

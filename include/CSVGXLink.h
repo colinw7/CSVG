@@ -27,7 +27,7 @@ class CSVGXLink {
 
   //---
 
-  std::string str() const { return str_; }
+  const std::string &str() const { return str_; }
 
   //---
 
@@ -51,17 +51,17 @@ class CSVGXLink {
   //---
 
  private:
-  void resolve() const;
+  bool resolve() const;
 
   void initImageBuffer();
 
  private:
-  CSVGObject  *parent_      { 0 };
+  CSVGObject  *parent_      { nullptr };
   bool         resolved_    { false };
   std::string  str_;
-  CSVGObject  *object_      { 0 };
+  CSVGObject  *object_      { nullptr };
   bool         isImage_     { false };
-  CSVGBuffer*  imageBuffer_ { 0 };
+  CSVGBuffer*  imageBuffer_ { nullptr };
   double       xscale_      { 0 };
   double       yscale_      { 0 };
 };

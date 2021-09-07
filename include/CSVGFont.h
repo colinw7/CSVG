@@ -7,7 +7,7 @@ class CSVGFontFace;
 class CSVGMissingGlyph;
 class CSVGGlyph;
 
-class CSVGFont : public CSVGObject {
+class CSVGFont : public CSVGObject, public CSVGPrintBase<CSVGFont> {
  public:
   using CharGlyphMap    = std::map<char       , CSVGGlyph *>;
   using UnicodeGlyphMap = std::map<std::string, CSVGGlyph *>;
@@ -31,11 +31,11 @@ class CSVGFont : public CSVGObject {
   CSVGGlyph *getCharGlyph(char c) const;
   CSVGGlyph *getUnicodeGlyph(const std::string &unicode) const;
 
-  void print(std::ostream &os, bool hier) const override;
+  void print(std::ostream &os, bool hier=false) const override;
 
   void printValues(std::ostream &os, bool flat=false) const override;
 
-  friend std::ostream &operator<<(std::ostream &os, const CSVGFont &font);
+  void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
   CSVGFont &operator=(const CSVGFont &rhs);

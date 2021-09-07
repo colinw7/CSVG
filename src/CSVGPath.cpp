@@ -201,7 +201,7 @@ getBBox(CBBox2D &bbox) const
       rc = parts_.getBBox(currentBuffer, bbox);
     }
 
-    double lw = getFlatStrokeWidth().getValue(Width(1)).getValue();
+    double lw = getFlatStrokeWidth().getValue(Width(1)).getValue(1);
 
     bbox.expand(lw);
 
@@ -211,12 +211,4 @@ getBBox(CBBox2D &bbox) const
     bbox = bbox_.getValue();
 
   return rc;
-}
-
-std::ostream &
-operator<<(std::ostream &os, const CSVGPath &path)
-{
-  path.print(os, false);
-
-  return os;
 }

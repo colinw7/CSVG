@@ -268,11 +268,3 @@ printValues(std::ostream &os, bool flat) const
   printNameValues(os, "dx", dx_);
   printNameValues(os, "dy", dy_);
 }
-
-std::ostream &
-operator<<(std::ostream &os, const CSVGTSpan &tspan)
-{
-  tspan.print(os, false);
-
-  return os;
-}

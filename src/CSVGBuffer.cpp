@@ -8,6 +8,10 @@
 #include <CSVGLinearGradient.h>
 #include <CSVGRadialGradient.h>
 #include <CSVGPattern.h>
+#include <CSVGMarker.h>
+#include <CSVGFont.h>
+#include <CSVGGlyph.h>
+#include <CSVGFontFace.h>
 #include <CSVG.h>
 #include <CSVGRenderer.h>
 
@@ -269,7 +273,9 @@ isAntiAlias() const
 
   //---
 
-  return getRenderer()->isAntiAlias();
+  auto *renderer = getRenderer();
+
+  return (renderer ? renderer->isAntiAlias() : false);
 }
 
 void
@@ -281,7 +287,10 @@ setAntiAlias(bool flag)
 
   //---
 
-  getRenderer()->setAntiAlias(flag);
+  auto *renderer = getRenderer();
+
+  if (renderer)
+    renderer->setAntiAlias(flag);
 }
 
 //------
@@ -590,11 +599,13 @@ floodBuffers(const CRGBA &c, const CBBox2D &bbox, CSVGBuffer *outBuffer)
   // draw in renderer
   auto *outRenderer = outBuffer->getRenderer();
 
-  outRenderer->setSize(p1.x + w1, p1.y + h1);
+  if (outRenderer) {
+    outRenderer->setSize(p1.x + w1, p1.y + h1);
 
-  outRenderer->clear(CRGBA(0, 0, 0, 0));
+    outRenderer->clear(CRGBA(0, 0, 0, 0));
 
-  outRenderer->addImage(p1.x, p1.y, dst_image.getPtr());
+    outRenderer->addImage(p1.x, p1.y, dst_image.getPtr());
+  }
 }
 
 void
@@ -651,8 +662,10 @@ imageBuffers(CSVGBuffer *inBuffer, const CBBox2D &bbox, CSVGPreserveAspect prese
 
   CPoint2D p1, p2;
 
-  irenderer->windowToPixel(CPoint2D(x1, y1), p1);
-  irenderer->windowToPixel(CPoint2D(x2, y2), p2);
+  if (irenderer) {
+    irenderer->windowToPixel(CPoint2D(x1, y1), p1);
+    irenderer->windowToPixel(CPoint2D(x2, y2), p2);
+  }
 
   //---
 
@@ -701,8 +714,10 @@ imageBuffers(CSVGBuffer *inBuffer, const CBBox2D &bbox, CSVGPreserveAspect prese
     // to image pixel
     CPoint2D pp1, pp2;
 
-    irenderer->windowToPixel(CPoint2D(px1, py1), pp1);
-    irenderer->windowToPixel(CPoint2D(px2, py2), pp2);
+    if (irenderer) {
+      irenderer->windowToPixel(CPoint2D(px1, py1), pp1);
+      irenderer->windowToPixel(CPoint2D(px2, py2), pp2);
+    }
 
     //---
 
@@ -730,7 +745,11 @@ imageBuffers(CSVGBuffer *inBuffer, const CBBox2D &bbox, CSVGPreserveAspect prese
     src_image->subCopyTo(dst_image.getPtr(), 0, 0, -1, -1, x1, y1);
   }
 
-  outBuffer->getRenderer()->setImage(dst_image.getPtr());
+  auto *orenderer = outBuffer->getRenderer();
+
+  if (orenderer)
+    orenderer->setImage(dst_image.getPtr());
+
   outBuffer->setBBox(bbox);
 }
 
@@ -752,7 +771,10 @@ maskBuffers(CSVGBuffer *oldBuffer, CSVGBuffer *buffer,
 
     auto *maskBuffer = oldBuffer->svg_.getBuffer(maskBufferName);
 
-    maskBuffer->getRenderer()->setImage(mask_image1.getPtr());
+    auto *mrenderer = maskBuffer->getRenderer();
+
+    if (mrenderer)
+      mrenderer->setImage(mask_image1.getPtr());
   }
 
   //---
@@ -767,7 +789,10 @@ maskBuffers(CSVGBuffer *oldBuffer, CSVGBuffer *buffer,
 
     auto *maskBuffer = oldBuffer->svg_.getBuffer(maskBufferName);
 
-    maskBuffer->getRenderer()->setImage(dest_image.getPtr());
+    auto *mrenderer = maskBuffer->getRenderer();
+
+    if (mrenderer)
+      mrenderer->setImage(dest_image.getPtr());
   }
 
   //---
@@ -778,7 +803,10 @@ maskBuffers(CSVGBuffer *oldBuffer, CSVGBuffer *buffer,
   if (oldDrawing)
     oldBuffer->stopDraw();
 
-  oldBuffer->getRenderer()->setImage(dest_image.getPtr());
+  auto *orenderer = oldBuffer->getRenderer();
+
+  if (orenderer)
+    orenderer->setImage(dest_image.getPtr());
 
   if (oldDrawing)
     oldBuffer->startDraw();
@@ -829,13 +857,18 @@ mergeBuffers(const std::vector<CSVGFeMergeNode *> &nodes,
       auto *buffer =
         outBuffer->svg_.getBuffer(objectBufferName + "_node_" + std::to_string(i) + "_out");
 
-      buffer->getRenderer()->setImage(dst_image.getPtr());
+      auto *brenderer = buffer->getRenderer();
+
+      brenderer->setImage(dst_image.getPtr());
     }
 
     ++i;
   }
 
-  outBuffer->getRenderer()->setImage(dst_image.getPtr());
+  auto *orenderer = outBuffer->getRenderer();
+
+  if (orenderer)
+    orenderer->setImage(dst_image.getPtr());
 }
 
 void
@@ -918,8 +951,10 @@ tileBuffers(CSVGBuffer *inBuffer, const CBBox2D &inBBox,
 
   CPoint2D p1, p2;
 
-  irenderer->windowToPixel(CPoint2D(x1, y1), p1);
-  irenderer->windowToPixel(CPoint2D(x2, y2), p2);
+  if (irenderer) {
+    irenderer->windowToPixel(CPoint2D(x1, y1), p1);
+    irenderer->windowToPixel(CPoint2D(x2, y2), p2);
+  }
 
   //---
 
@@ -942,7 +977,10 @@ tileBuffers(CSVGBuffer *inBuffer, const CBBox2D &inBBox,
   // place in output buffer
   tiledImage->subCopyTo(outImage.getPtr(), 0, 0, -1, -1, ix, iy);
 
-  outBuffer->getRenderer()->setImage(outImage.getPtr());
+  auto *orenderer = outBuffer->getRenderer();
+
+  if (orenderer)
+    orenderer->setImage(outImage.getPtr());
 }
 
 void
@@ -1207,12 +1245,16 @@ putImage(const CBBox2D &bbox, const CSVGImageDataP &image)
   int iw = CMathRound::RoundNearest(p2.x - p1.x + 0.499);
   int ih = CMathRound::RoundNearest(p2.y - p1.y + 0.499);
 
-  getRenderer()->setSize(ix + iw, iy + ih);
+  auto *renderer = getRenderer();
 
-  getRenderer()->clear(CRGBA(0, 0, 0, 0));
+  if (renderer) {
+    renderer->setSize(ix + iw, iy + ih);
 
-  getRenderer()->addImage(ix, iy, image.getPtr());
-//getRenderer()->setImage(image.getPtr())
+    renderer->clear(CRGBA(0, 0, 0, 0));
+
+    renderer->addImage(ix, iy, image.getPtr());
+  //renderer->setImage(image.getPtr())
+  }
 }
 
 void
@@ -1265,8 +1307,12 @@ CSVGBuffer::
 addClippedBuffer(CSVGBuffer *buffer, double x, double y,
                  double px1, double py1, double px2, double py2)
 {
-  if (! buffer->isAlpha())
-    getRenderer()->addClippedImage(buffer->getRenderer(), x, y, px1, py1, px2, py2);
+  if (! buffer->isAlpha()) {
+    auto *renderer = getRenderer();
+
+    if (renderer)
+      renderer->addClippedImage(buffer->getRenderer(), x, y, px1, py1, px2, py2);
+  }
   else {
     auto image = buffer->getImage();
 
@@ -1280,14 +1326,25 @@ void
 CSVGBuffer::
 setClippedBuffer(CSVGBuffer *buffer, double px1, double py1, double px2, double py2)
 {
-  if (! buffer->isAlpha())
-    getRenderer()->setClippedImage(buffer->getRenderer(), px1, py1, px2, py2);
+  auto *renderer = getRenderer();
+
+  if (! buffer->isAlpha()) {
+    if (renderer)
+      renderer->setClippedImage(buffer->getRenderer(), px1, py1, px2, py2);
+  }
   else {
-    CSVGImageDataP image(buffer->getRenderer()->getImage());
+    CSVGImageDataP image;
 
-    image->clipOutside(px1, py1, px2, py2);
+    auto *brenderer = buffer->getRenderer();
 
-    getRenderer()->setImage(image.getPtr());
+    if (brenderer) {
+      image = CSVGImageDataP(brenderer->getImage());
+
+      image->clipOutside(px1, py1, px2, py2);
+    }
+
+    if (renderer)
+      renderer->setImage(image.getPtr());
   }
 }
 
@@ -1307,7 +1364,9 @@ getImageSize() const
 
   //---
 
-  return getRenderer()->getImageSize();
+  auto *renderer = getRenderer();
+
+  return (renderer ? renderer->getImageSize() : CISize2D());
 }
 
 void
@@ -1321,7 +1380,10 @@ setImageFile(const std::string &filename)
     return;
   }
 
-  getRenderer()->setImage(image.getPtr());
+  auto *renderer = getRenderer();
+
+  if (renderer)
+    renderer->setImage(image.getPtr());
 }
 
 #if 0
@@ -1388,10 +1450,14 @@ setImageBuffer(CSVGBuffer *buffer)
 
   //---
 
-  if (! buffer->isAlpha())
-    getRenderer()->setImage(buffer->getRenderer());
-  else
-    getRenderer()->setImage(buffer->getImage().getPtr());
+  auto *renderer = getRenderer();
+
+  if (renderer) {
+    if (! buffer->isAlpha())
+      renderer->setImage(buffer->getRenderer());
+    else
+      renderer->setImage(buffer->getImage().getPtr());
+  }
 }
 
 void
@@ -1406,8 +1472,12 @@ addReshapeImage(CSVGBuffer *buffer, double x, double y, int pw, int ph)
   int px = CMathRound::RoundNearest(x);
   int py = CMathRound::RoundNearest(y);
 
-  if (! buffer->isAlpha())
-    getRenderer()->addResizedImage(buffer->getRenderer(), px, py, pw, ph);
+  if (! buffer->isAlpha()) {
+    auto *renderer = getRenderer();
+
+    if (renderer)
+      renderer->addResizedImage(buffer->getRenderer(), px, py, pw, ph);
+  }
   else {
     auto image = buffer->getImage();
 
@@ -1441,22 +1511,28 @@ addImageBuffer(double x, double y, CSVGBuffer *buffer)
   int ix = CMathRound::RoundNearest(x);
   int iy = CMathRound::RoundNearest(y);
 
+  auto *renderer = getRenderer();
+
   if (! buffer->isAlpha()) {
-    if (drawing_)
-      getRenderer()->stopDraw();
+    if (renderer) {
+      if (drawing_)
+        renderer->stopDraw();
 
-    if (getenv("CSVG_NO_QT_RENDERER"))
-      getRenderer()->CSVGRenderer::combine(ix, iy, buffer->getRenderer());
-    else
-      getRenderer()->combine(ix, iy, buffer->getRenderer());
+      if (getenv("CSVG_NO_QT_RENDERER"))
+        renderer->CSVGRenderer::combine(ix, iy, buffer->getRenderer());
+      else
+        renderer->combine(ix, iy, buffer->getRenderer());
 
-    if (drawing_)
-      getRenderer()->startDraw();
+      if (drawing_)
+        renderer->startDraw();
+    }
   }
   else {
-    CSVGImageDataP image1(getRenderer()->getImage());
+    if (renderer) {
+      CSVGImageDataP image1(renderer->getImage());
 
-    addImage(x, y, image1);
+      addImage(x, y, image1);
+    }
   }
 }
 
@@ -1482,6 +1558,8 @@ addImage(double x, double y, CSVGImageDataP &image2)
   int w = std::max(iwidth1 , ix + iwidth2 );
   int h = std::max(iheight1, iy + iheight2);
 
+  auto *renderer = getRenderer();
+
   if (! drawing_ && (w > iwidth1 || h > iheight1)) {
     renderer_->setSize(w, h);
 
@@ -1490,18 +1568,21 @@ addImage(double x, double y, CSVGImageDataP &image2)
     image3->combine( 0,  0, image1.getPtr());
     image3->combine(ix, iy, image2.getPtr());
 
-    getRenderer()->setImage(image3.getPtr());
+    if (renderer)
+      renderer->setImage(image3.getPtr());
   }
   else {
     image1->combine(ix, iy, image2.getPtr());
 
-    if (drawing_)
-      getRenderer()->stopDraw();
+    if (renderer) {
+      if (drawing_)
+        renderer->stopDraw();
 
-    getRenderer()->setImage(image1.getPtr());
+      renderer->setImage(image1.getPtr());
 
-    if (drawing_)
-      getRenderer()->startDraw();
+      if (drawing_)
+        renderer->startDraw();
+    }
   }
 }
 
@@ -1767,6 +1848,16 @@ setViewMatrix(const CMatrixStack2D &matrix)
 
 void
 CSVGBuffer::
+updateStrokedFilled()
+{
+  isStroked_ = svg_.isStroked();
+  isFilled_  = svg_.isFilled();
+}
+
+//---
+
+void
+CSVGBuffer::
 setStroke(const CSVGStroke &stroke)
 {
   resetStroke();
@@ -1833,10 +1924,15 @@ setStroke(const CSVGStroke &stroke)
   else
     setLineWidth(1);
 
-  if (stroke.getDashValid() && ! stroke.getDash().isInherit())
-    setLineDash(stroke.getDash().getValue().getLineDash());
+  if (stroke.getDashArrayValid() && ! stroke.getDashArray().isInherit())
+    setLineDashArray(stroke.getDashArray().getValue());
   else
-    setLineDash(CLineDash());
+    setLineDashArray(CSVGLineDash());
+
+  if (stroke.getDashOffsetValid() && ! stroke.getDashOffset().isInherit())
+    setLineDashOffset(stroke.getDashOffset().getValue());
+  else
+    setLineDashOffset(CScreenUnits());
 
   if (stroke.getLineCapValid() && ! stroke.getLineCap().isInherit())
     setLineCap(stroke.getLineCap().getValue());
@@ -1930,28 +2026,39 @@ setLineWidth(double width)
 
 void
 CSVGBuffer::
-setLineDash(const CLineDash &dash)
+setLineDashArray(const CSVGLineDash &dash)
 {
   if (refBuffer_)
-    return refBuffer_->setLineDash(dash);
+    return refBuffer_->setLineDashArray(dash);
 
   //---
 
-  lineDash_ = dash;
+  std::vector<double> dashes;
+
+  if (dash.isDashed()) {
+    int n = dash.numDashes();
+
+    for (int i = 0; i < n; ++i)
+      dashes.push_back(dash.dash(i).pxValue(0.0));
+  }
+
+  lineDash_.setDashes(dashes, lineDash_.getOffset());
 
   renderer_->setLineDash(lineDash_);
 }
 
 void
 CSVGBuffer::
-setLineDashOffset(double offset)
+setLineDashOffset(const CScreenUnits &offset)
 {
   if (refBuffer_)
     return refBuffer_->setLineDashOffset(offset);
 
   //---
 
-  lineDash_.setOffset(offset);
+  auto poffset = (offset.isValid() ? offset.pxValue(0.0) : 0.0);
+
+  lineDash_.setOffset(poffset);
 
   renderer_->setLineDash(lineDash_);
 }
@@ -2068,6 +2175,12 @@ void
 CSVGBuffer::
 resetStroke()
 {
+  if (refBuffer_)
+    return refBuffer_->resetStroke();
+
+  //---
+
+  renderer_->resetStroke();
 }
 
 void
@@ -2133,6 +2246,8 @@ setFillMatrix(const CMatrix2D &m)
   renderer_->setFillMatrix(m);
 }
 
+//---
+
 void
 CSVGBuffer::
 drawImage(double x, double y, CSVGBuffer *buffer)
@@ -2155,7 +2270,9 @@ getImage() const
     return image;
   }
 
-  return CSVGImageDataP(getRenderer()->getImage());
+  auto *renderer = getRenderer();
+
+  return (renderer ? CSVGImageDataP(renderer->getImage()) : CSVGImageDataP());
 }
 
 void
@@ -2692,6 +2809,485 @@ pathMirrorPoint(const CPoint2D &p) const
 
   return CPoint2D(x1, y1);
 }
+
+//---
+
+void
+CSVGBuffer::
+drawLine(double x1, double y1, double x2, double y2)
+{
+  svg_.setStrokeBuffer(this);
+
+  pathInit();
+
+  pathMoveTo(x1, y1);
+  pathLineTo(x2, y2);
+
+  pathStroke();
+}
+
+void
+CSVGBuffer::
+drawCircle(double x, double y, double r)
+{
+  updateStrokedFilled();
+
+  pathInit();
+
+  pathMoveTo(x + r, y);
+  pathArcTo (x, y, r, r, 0   ,   M_PI);
+  pathArcTo (x, y, r, r, M_PI, 2*M_PI);
+
+  pathClose();
+
+  if (isFilled() || isStroked()) {
+    if (isFilled()) {
+      svg_.setFillBuffer(this);
+
+      pathFill();
+    }
+
+    if (isStroked()) {
+      svg_.setStrokeBuffer(this);
+
+      pathStroke();
+    }
+  }
+  else {
+    svg_.setFillBuffer(this);
+
+    pathFill();
+  }
+}
+
+void
+CSVGBuffer::
+drawEllipse(double x, double y, double rx, double ry)
+{
+  updateStrokedFilled();
+
+  pathInit();
+
+  pathMoveTo(x + rx, y);
+  pathArcTo(x, y, rx, ry, 0,  M_PI);
+  pathArcTo(x, y, rx, ry, M_PI, 2*M_PI);
+
+  pathClose();
+
+  if (isFilled() || isStroked()) {
+    if (isFilled()) {
+      svg_.setFillBuffer(this);
+
+      pathFill();
+    }
+
+    if (isStroked()) {
+      svg_.setStrokeBuffer(this);
+
+      pathStroke();
+    }
+  }
+  else {
+    svg_.setFillBuffer(this);
+
+    pathFill();
+  }
+}
+
+void
+CSVGBuffer::
+drawArc(double xc, double yc, double xr, double yr, double angle1, double angle2)
+{
+  svg_.setStrokeBuffer(this);
+
+  pathInit();
+
+  pathArcTo(xc, yc, xr, yr, angle1, angle2);
+
+  pathStroke();
+}
+
+void
+CSVGBuffer::
+fillArc(double xc, double yc, double xr, double yr, double angle1, double angle2)
+{
+  svg_.setFillBuffer(this);
+
+  pathInit();
+
+  pathArcTo(xc, yc, xr, yr, angle1, angle2);
+
+  pathFill();
+}
+
+void
+CSVGBuffer::
+drawPolygon(const std::vector<CPoint2D> &points)
+{
+  int num_points = points.size();
+
+  if (! num_points)
+    return;
+
+  svg_.setStrokeBuffer(this);
+
+  pathInit();
+
+  pathMoveTo(points[0].x, points[0].y);
+
+  for (int i = 1; i < num_points; ++i)
+    pathLineTo(points[i].x, points[i].y);
+
+  pathClose();
+
+  pathStroke();
+
+  //---
+
+  std::vector<double> angles;
+
+  for (int i1 = num_points - 1, i2 = 0; i2 < num_points; i1 = i2++) {
+    double a = atan2(points[i2].y - points[i1].y, points[i2].x - points[i1].x);
+
+    angles.push_back(a);
+  }
+
+  drawMarkers(points, angles);
+}
+
+void
+CSVGBuffer::
+fillPolygon(const std::vector<CPoint2D> &points)
+{
+  uint num_points = points.size();
+
+  if (! num_points)
+    return;
+
+  svg_.setFillBuffer(this);
+
+  pathInit();
+
+  pathMoveTo(points[0].x, points[0].y);
+
+  for (uint i = 1; i < num_points; ++i)
+    pathLineTo(points[i].x, points[i].y);
+
+  pathClose();
+
+  pathFill();
+}
+
+
+//---
+void
+CSVGBuffer::
+drawText(double x, double y, const std::string &text, const CSVGFontDef &fontDef,
+         CHAlignType align)
+{
+  svg_.setStrokeBuffer(this);
+
+  auto *svg_font = svg_.getFont();
+
+  if (svg_font) {
+    auto *font_face = svg_font->getFontFace();
+
+    double units = 1000;
+
+    if (font_face)
+      units = font_face->getUnits();
+
+    //-----
+
+    auto transform = this->transform();
+
+    double font_size = 10.0;
+
+    transform.scale    (font_size/units, font_size/units);
+    transform.translate(x, y);
+
+    uint len = text.size();
+
+    for (uint i = 0; i < len; ++i) {
+      auto *glyph = svg_.getCharGlyph(text[i]);
+
+      if (glyph) {
+        setTransform(transform);
+
+        // TODO: handle display "none"
+        glyph->drawSubObject();
+
+        x += font_size;
+
+        transform.translate(x, y);
+      }
+    }
+
+    setTransform(transform);
+  }
+  else {
+    auto transform = this->transform();
+
+    auto transform1 = transform;
+
+    if (fontDef.getAngle()) {
+      transform1.rotate(fontDef.getAngle(), CPoint2D(x, y));
+
+      setTransform(transform1);
+    }
+
+    //---
+
+    pathInit();
+
+    pathMoveTo(x, y);
+
+    pathText(text, fontDef, align);
+
+    pathClose();
+
+    pathStroke();
+
+    //---
+
+    setTransform(transform);
+  }
+}
+
+void
+CSVGBuffer::
+fillText(double x, double y, const std::string &text, const CSVGFontDef &fontDef,
+         CHAlignType align)
+{
+  svg_.setFillBuffer(this);
+
+  auto *svg_font = svg_.getFont();
+
+  if (svg_font) {
+    auto *font_face = svg_font->getFontFace();
+
+    double units = 1000;
+
+    if (font_face)
+      units = font_face->getUnits();
+
+    //-----
+
+    auto transform = this->transform();
+
+    double font_size = 10.0;
+
+    transform.scale    (font_size/units, font_size/units);
+    transform.translate(x, y);
+
+    uint len = text.size();
+
+    for (uint i = 0; i < len; ++i) {
+      auto *glyph = svg_.getCharGlyph(text[i]);
+
+      if (glyph) {
+        setTransform(transform);
+
+        // TODO: handle display "none"
+        glyph->drawSubObject();
+
+        x += font_size;
+
+        transform.translate(x, y);
+      }
+    }
+
+    setTransform(transform);
+  }
+  else {
+    auto transform = this->transform();
+
+    auto transform1 = transform;
+
+    if (fontDef.getAngle()) {
+      transform1.rotate(fontDef.getAngle(), CPoint2D(x, y));
+
+      setTransform(transform1);
+    }
+
+    //---
+
+    pathInit();
+
+    pathMoveTo(x, y);
+
+    pathText(text, fontDef, align);
+
+    pathClose();
+
+    pathFill();
+
+    //---
+
+    setTransform(transform);
+  }
+}
+
+//---
+
+void
+CSVGBuffer::
+drawParts(const CSVGPathPartList &parts)
+{
+  updateStrokedFilled();
+
+  std::vector<CPoint2D> points;
+  std::vector<double>   angles;
+
+  // add path parts and same path part points for markers (if any)
+  pathInit();
+
+  parts.draw(this, points, angles);
+
+  // fill and/or stroke path
+  if (isFilled() || isStroked()) {
+    if (isFilled()) {
+      svg_.setFillBuffer(this);
+
+      pathFill();
+    }
+
+    if (isStroked()) {
+      svg_.setStrokeBuffer(this);
+
+      pathStroke();
+    }
+  }
+  else {
+    svg_.setFillBuffer(this);
+
+    pathFill();
+  }
+
+  //------
+
+  drawMarkers(points, angles);
+}
+
+void
+CSVGBuffer::
+drawMarkers(const std::vector<CPoint2D> &points, const std::vector<double> &angles)
+{
+  auto *drawObject = svg_.currentDrawObject();
+
+  // get markers
+  CSVGObject *startMarker = nullptr, *midMarker = nullptr, *endMarker = nullptr;
+
+  if (drawObject) {
+    startMarker = drawObject->getFlatMarkerStart();
+    midMarker   = drawObject->getFlatMarkerMid  ();
+    endMarker   = drawObject->getFlatMarkerEnd  ();
+  }
+
+  //------
+
+  // draw markers
+  if (startMarker || midMarker || endMarker) {
+    uint num = points.size();
+
+    if (num <= 0)
+      return;
+
+#if 0
+    double x1 = points[0].x;
+    double y1 = points[0].y;
+
+    double x2 = x1;
+    double y2 = y1;
+
+    if (num > 1) {
+      x2 = points[1].x; y2 = points[1].y;
+    }
+
+    double x3 = x2;
+    double y3 = y2;
+
+    if (num > 2) {
+      x3 = points[2].x; y3 = points[2].y;
+    }
+
+    double g1 = atan2(y2 - y1, x2 - x1);
+    double g2 = atan2(y3 - y2, x3 - x2);
+
+    double gg = (g1 + g2)/2;
+
+    if (startMarker) {
+      auto *marker = dynamic_cast<CSVGMarker *>(startMarker);
+
+      if (marker)
+        marker->drawMarker(x1, y1, gg);
+    }
+
+    for (uint i = 1; i < num; ++i) {
+      x2 = points[i].x; y2 = points[i].y;
+
+      if (i != num - 1) {
+        x3 = points[i + 1].x; y3 = points[i + 1].y;
+      }
+      else {
+        x3 = x2; y3 = y2;
+      }
+
+      g1 = atan2(y2 - y1, x2 - x1);
+      g2 = atan2(y3 - y2, x3 - x2);
+
+      double gg = (g1 + g2)/2;
+
+      if (i != num - 1) {
+        if (midMarker) {
+          auto *marker = dynamic_cast<CSVGMarker *>(midMarker);
+
+          if (marker)
+            marker->drawMarker(x2, y2, gg);
+        }
+      }
+      else {
+        if (endMarker) {
+          auto *marker = dynamic_cast<CSVGMarker *>(endMarker);
+
+          if (marker)
+            marker->drawMarker(x2, y2, g1);
+        }
+      }
+
+      g1 = g2;
+
+      x1 = x2; y1 = y2;
+      x2 = x3; y2 = y3;
+    }
+#else
+    if (startMarker) {
+      auto *marker = dynamic_cast<CSVGMarker *>(startMarker);
+
+      if (marker)
+        marker->drawMarker(points[0].x, points[0].y, angles[0]);
+    }
+
+    if (midMarker) {
+      auto *marker = dynamic_cast<CSVGMarker *>(midMarker);
+
+      if (marker) {
+        for (uint i = 1; i < num - 1; ++i)
+          marker->drawMarker(points[i].x, points[i].y, angles[i]);
+      }
+    }
+
+    if (endMarker) {
+      auto *marker = dynamic_cast<CSVGMarker *>(endMarker);
+
+      if (marker)
+        marker->drawMarker(points[num - 1].x, points[num - 1].y, angles[num - 1]);
+    }
+#endif
+  }
+}
+
+//---
 
 #if 0
 void

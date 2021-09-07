@@ -92,8 +92,8 @@ class CSVGJTransformList : public CJObj {
   void print(std::ostream &os) const override { os << "SVGTransformList: " << matrixStack(); }
 
  private:
-  CSVG*          svg_ { 0 };
-  CSVGObject*    obj_ { 0 };
+  CSVG*          svg_ { nullptr };
+  CSVGObject*    obj_ { nullptr };
   CMatrixStack2D stack_;
 };
 
@@ -145,8 +145,8 @@ class CSVGJTransform : public CJObj {
   void print(std::ostream &os) const override { os << "SVGTransform: " << transform(); }
 
  private:
-  CSVG*        svg_ { 0 };
-  CSVGObject*  obj_ { 0 };
+  CSVG*        svg_ { nullptr };
+  CSVGObject*  obj_ { nullptr };
   int          ind_ { 0 };
   CSVGJMatrixP matrix_;
 };
@@ -202,8 +202,8 @@ class CSVGJMatrix : public CJObj {
   void print(std::ostream &os) const override;
 
  private:
-  CSVG*               svg_ { 0 };
-  CSVGObject*         obj_ { 0 };
+  CSVG*               svg_ { nullptr };
+  CSVGObject*         obj_ { nullptr };
   int                 ind_ { 0 };
   CSVGJTransformListP stack_;
   CMatrix2D           m_;
@@ -255,7 +255,7 @@ class CSVGJRect : public CJObj {
   void print(std::ostream &os) const override;
 
  private:
-  CSVG*   svg_ { 0 };
+  CSVG*   svg_ { nullptr };
   CBBox2D rect_;
 };
 
@@ -308,7 +308,7 @@ class CSVGJNumberList : public CJObj {
   void print(std::ostream &os) const override;
 
  private:
-  CSVG* svg_ { 0 };
+  CSVG* svg_ { nullptr };
   Reals reals_;
 };
 
@@ -356,7 +356,7 @@ class CSVGJNumber : public CJObj {
   void print(std::ostream &os) const override;
 
  private:
-  CSVG*  svg_ { 0 };
+  CSVG*  svg_ { nullptr };
   double r_ { 0.0 };
 };
 
@@ -409,7 +409,7 @@ class CSVGJLengthList : public CJObj {
   void print(std::ostream &os) const override;
 
  private:
-  CSVG*   svg_ { 0 };
+  CSVG*   svg_ { nullptr };
   Lengths lengths_;
 };
 
@@ -462,8 +462,8 @@ class CSVGJLength : public CJObj {
   void print(std::ostream &os) const override;
 
  private:
-  CSVG*        svg_ { 0 };
-  CSVGObject*  obj_ { 0 };
+  CSVG*        svg_ { nullptr };
+  CSVGObject*  obj_ { nullptr };
   CScreenUnits length_;
   std::string  name_;
 };
@@ -517,7 +517,7 @@ class CSVGJStringList : public CJObj {
   void print(std::ostream &os) const override;
 
  private:
-  CSVG*   svg_ { 0 };
+  CSVG*   svg_ { nullptr };
   Strings strings_;
 };
 
@@ -586,8 +586,8 @@ class CSVGJAngle : public CJObj {
   void print(std::ostream &os) const override;
 
  private:
-  CSVG*       svg_ { 0 };
-  CSVGObject* obj_ { 0 };
+  CSVG*       svg_ { nullptr };
+  CSVGObject* obj_ { nullptr };
   CAngle      angle_;
   std::string name_;
 };
@@ -642,8 +642,8 @@ class CSVGJColor : public CJObj {
   void print(std::ostream &os) const override;
 
  private:
-  CSVG*       svg_ { 0 };
-  CSVGObject* obj_ { 0 };
+  CSVG*       svg_ { nullptr };
+  CSVGObject* obj_ { nullptr };
   CSVGColor   color_;
   std::string name_;
 };

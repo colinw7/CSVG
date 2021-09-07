@@ -8,7 +8,7 @@
 class CStrParse;
 class CSVGPathPart;
 
-class CSVGClipPath : public CSVGObject {
+class CSVGClipPath : public CSVGObject, public CSVGPrintBase<CSVGClipPath> {
  public:
   CSVG_OBJECT_DEF("clipPath", CSVGObjTypeId::CLIP_PATH)
 
@@ -32,11 +32,11 @@ class CSVGClipPath : public CSVGObject {
 
   void drawPath(CSVGObject* obj);
 
-  void print(std::ostream &os, bool hier) const override;
+  void print(std::ostream &os, bool hier=false) const override;
 
   void printValues(std::ostream &os, bool flat=false) const override;
 
-  friend std::ostream &operator<<(std::ostream &os, const CSVGClipPath &path);
+  void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
   CSVGPathPartList         parts_;

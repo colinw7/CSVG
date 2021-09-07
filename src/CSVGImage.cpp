@@ -8,6 +8,7 @@ CSVGImage(CSVG &svg) :
  CSVGObject(svg),
  xlink_    (this)
 {
+  init();
 }
 
 CSVGImage::
@@ -21,11 +22,28 @@ CSVGImage(const CSVGImage &image) :
  preserveAspect_(image.preserveAspect_),
  colorProfile_  (image.colorProfile_)
 {
+  init();
 }
 
 CSVGImage::
 ~CSVGImage()
 {
+}
+
+void
+CSVGImage::
+init()
+{
+  skipNames_.insert("x");
+  skipNames_.insert("y");
+  skipNames_.insert("width");
+  skipNames_.insert("height");
+
+  skipNames_.insert("preserveAspectRatio");
+
+  skipNames_.insert("xlink:href");
+
+  skipNames_.insert("color-profile");
 }
 
 CSVGImage *
@@ -279,12 +297,4 @@ printValues(std::ostream &os, bool flat) const
     printNameXLink(os, "xlink:href", xlink_);
 
   printNameValue(os, "color-profile", colorProfile_);
-}
-
-std::ostream &
-operator<<(std::ostream &os, const CSVGImage &image)
-{
-  image.print(os, false);
-
-  return os;
 }

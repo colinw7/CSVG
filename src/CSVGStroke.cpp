@@ -141,7 +141,7 @@ setWidth(const std::string &widthDef)
     return;
   }
 
-  setWidth( inherit ? Width(width) : Width::inherit());
+  setWidth(! inherit ? Width(width) : Width::inherit());
 }
 
 // none | <list-of-lengths> | inherit
@@ -150,41 +150,24 @@ CSVGStroke::
 setDashArray(const std::string &dashStr)
 {
   if (dashStr == "inherit") {
-    dash_ = LineDash::inherit();
+    lineDash_ = DashArray::inherit();
   }
   else {
-    CSVGStrokeDash::Dashes dashes;
-    bool                   solid;
+    CSVGLineDash::Dashes dashes;
+    bool                 solid;
 
     if (! svg_.decodeDashString(dashStr, dashes, solid)) {
       CSVGLog() << "Bad dash string " << dashStr;
       return;
     }
 
-    CSVGStrokeDash dash;
-
-    if (getDashValid())
-      dash = getDash().getValue();
-
-    dash.setDashes(dashes);
-    dash.setSolid (solid);
-
-    dash_ = LineDash(dash);
+    if      (solid)
+      lineDash_ = DashArray(CSVGLineDash::makeSolid());
+    else if (dashes.empty())
+      lineDash_ = DashArray(CSVGLineDash::makeNone());
+    else
+      lineDash_ = DashArray(CSVGLineDash(dashes));
   }
-}
-
-void
-CSVGStroke::
-setDashArray(const std::vector<CScreenUnits> &array)
-{
-  CSVGStrokeDash dash;
-
-  if (getDashValid())
-    dash = getDash().getValue();
-
-  dash.setDashes(array);
-
-  dash_ = LineDash(dash);
 }
 
 // <length> | inherit
@@ -193,30 +176,16 @@ CSVGStroke::
 setDashOffset(const std::string &offsetStr)
 {
   if (offsetStr == "inherit") {
-    // TODO
+    lineOffset_ = DashOffset::inherit();
   }
   else {
-    COptValT<CScreenUnits> lvalue = svg_.decodeLengthValue(offsetStr);
+    auto lvalue = svg_.decodeLengthValue(offsetStr);
 
     if (! lvalue.isValid())
       return;
 
-    setDashOffset(lvalue.getValue());
+    lineOffset_ = DashOffset(lvalue.getValue());
   }
-}
-
-void
-CSVGStroke::
-setDashOffset(const CScreenUnits &offset)
-{
-  CSVGStrokeDash dash;
-
-  if (getDashValid())
-    dash = getDash().getValue();
-
-  dash.setOffset(offset);
-
-  dash_ = LineDash(dash);
 }
 
 // butt | round | square | inherit
@@ -303,9 +272,10 @@ reset()
   url_       .setInvalid();
   fillObject_.setInvalid();
   width_     .setInvalid();
-  dash_      .setInvalid();
-  cap_       .setInvalid();
-  join_      .setInvalid();
+  lineDash_  .setInvalid();
+  lineOffset_.setInvalid();
+  lineCap_   .setInvalid();
+  lineJoin_  .setInvalid();
   mlimit_    .setInvalid();
 }
 
@@ -363,12 +333,20 @@ update(const CSVGStroke &stroke)
       setWidth(styleObject->getFlatStrokeWidth().getValue());
   }
 
-  // dash
-  if      (stroke.getDashValid())
-    setDash(stroke.getDash());
+  // dash array
+  if      (stroke.getDashArrayValid())
+    setDashArray(stroke.getDashArray());
   else if (styleObject) {
-    if (styleObject->getStrokeDashValid())
-      setDash(styleObject->getFlatStrokeLineDash().getValue());
+    if (styleObject->getStrokeDashArrayValid())
+      setDashArray(styleObject->getFlatStrokeDashArray().getValue());
+  }
+
+  // dash offset
+  if      (stroke.getDashOffsetValid())
+    setDashOffset(stroke.getDashOffset());
+  else if (styleObject) {
+    if (styleObject->getStrokeDashOffsetValid())
+      setDashOffset(styleObject->getFlatStrokeDashOffset().getValue());
   }
 
   // line cap
@@ -434,27 +412,30 @@ print(std::ostream &os) const
     ss << "stroke-width: " << getWidth() << ";";
   }
 
-  if (getDashValid()) {
+  if (getDashArrayValid()) {
     if (ss.str() != "") ss << " ";
 
     ss << "stroke-dasharray: ";
 
-    if (getDash().isInherit())
+    if (getDashArray().isInherit())
       ss << "inherit";
     else
-      getDash().getValue().printType(ss);
+      getDashArray().getValue().print(ss);
 
     ss << ";";
+  }
 
-    if (! getDash().isInherit()) {
-      if (getDash().getValue().hasOffset()) {
-        ss << " stroke-dashoffset: ";
+  if (getDashOffsetValid()) {
+    if (ss.str() != "") ss << " ";
 
-        getDash().getValue().printOffset(ss);
+    ss << " stroke-dashoffset: ";
 
-        ss << ";";
-      }
-    }
+    if (getDashOffset().isInherit())
+      ss << "inherit";
+    else
+      getDashOffset().getValue().print(ss);
+
+    ss << ";";
   }
 
   if (getLineCapValid()) {

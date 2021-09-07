@@ -1,7 +1,9 @@
 #ifndef CSVGTimeValue_H
 #define CSVGTimeValue_H
 
-class CSVGTimeValue {
+#include <CSVGTmpl.h>
+
+class CSVGTimeValue : public CSVGPrintBase<CSVGTimeValue> {
  public:
   CSVGTimeValue(double value=0) :
    type_(CSVGTimeValueType::NONE), value_(value) {
@@ -34,12 +36,6 @@ class CSVGTimeValue {
       os << value() << "ms";
     else
       os << value();
-  }
-
-  friend std::ostream &operator<<(std::ostream &os, const CSVGTimeValue &v) {
-    v.print(os);
-
-    return os;
   }
 
  public:

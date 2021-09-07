@@ -3,7 +3,7 @@
 
 #include <CSVGObject.h>
 
-class CSVGLine : public CSVGObject {
+class CSVGLine : public CSVGObject, public CSVGPrintBase<CSVGLine> {
  public:
   CSVG_OBJECT_DEF("line", CSVGObjTypeId::LINE)
 
@@ -47,11 +47,11 @@ class CSVGLine : public CSVGObject {
   void moveBy(const CVector2D &delta) override;
   void resizeTo(const CSize2D &size) override;
 
-  void print(std::ostream &os, bool hier) const override;
+  void print(std::ostream &os, bool hier=false) const override;
 
   void printValues(std::ostream &os, bool flat=false) const override;
 
-  friend std::ostream &operator<<(std::ostream &os, const CSVGLine &line);
+  void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
   COptValT<CScreenUnits> x1_;

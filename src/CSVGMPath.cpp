@@ -110,11 +110,3 @@ getBBox(CBBox2D &bbox) const
     return true;
   }
 }
-
-std::ostream &
-operator<<(std::ostream &os, const CSVGMPath &path)
-{
-  path.print(os, false);
-
-  return os;
-}

@@ -3,7 +3,7 @@
 
 #include <CSVGObject.h>
 
-class CSVGFontFace : public CSVGObject {
+class CSVGFontFace : public CSVGObject, public CSVGPrintBase<CSVGFontFace> {
  public:
   CSVG_OBJECT_DEF("font-face", CSVGObjTypeId::FONT_FACE)
 
@@ -18,11 +18,11 @@ class CSVGFontFace : public CSVGObject {
 
   bool draw() override;
 
-  void print(std::ostream &os, bool hier) const override;
+  void print(std::ostream &os, bool hier=false) const override;
 
   void printValues(std::ostream &os, bool flat=false) const override;
 
-  friend std::ostream &operator<<(std::ostream &os, const CSVGFontFace &face);
+  void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
   COptString fontFamily_;

@@ -3,7 +3,7 @@
 
 #include <CSVGObject.h>
 
-class CSVGFeFunc : public CSVGObject {
+class CSVGFeFunc : public CSVGObject, public CSVGPrintBase<CSVGFeFunc> {
  public:
   using ValueTable = std::vector<double>;
 
@@ -44,11 +44,11 @@ class CSVGFeFunc : public CSVGObject {
 
   bool isDrawable() const override { return false; }
 
-  void print(std::ostream &os, bool hier) const override;
+  void print(std::ostream &os, bool hier=false) const override;
 
   void printValues(std::ostream &os, bool flat=false) const override;
 
-  friend std::ostream &operator<<(std::ostream &os, const CSVGFeFunc &filter);
+  void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
   CRGBAComponent               component_;

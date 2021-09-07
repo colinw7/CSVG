@@ -24,6 +24,8 @@ class CSVGFontDef {
     return (family_.isValid() || size_.isValid() || style_.isValid());
   }
 
+  const CSVG &svg() const { return svg_; }
+
   void reset();
 
   bool hasFamily() const { return family_.isValid(); }

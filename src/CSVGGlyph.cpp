@@ -110,11 +110,3 @@ printValues(std::ostream &os, bool flat) const
   printNameValue(os, "vert-origin-x", vertOriginX_);
   printNameValue(os, "vert-origin-y", vertOriginY_);
 }
-
-std::ostream &
-operator<<(std::ostream &os, const CSVGGlyph &glyph)
-{
-  glyph.print(os, false);
-
-  return os;
-}

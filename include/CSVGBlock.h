@@ -7,7 +7,7 @@
 
 class CCSS;
 
-class CSVGBlock : public CSVGObject {
+class CSVGBlock : public CSVGObject, public CSVGPrintBase<CSVGBlock> {
  public:
   CSVG_OBJECT_DEF("block", CSVGObjTypeId::BLOCK)
 
@@ -109,11 +109,11 @@ class CSVGBlock : public CSVGObject {
 
   void printRoot(std::ostream &os, const std::vector<CCSS> &cssList, bool hier) const;
 
-  void print(std::ostream &os, bool hier) const override;
+  void print(std::ostream &os, bool hier=false) const override;
 
   void printValues(std::ostream &os, bool flat=false) const override;
 
-  friend std::ostream &operator<<(std::ostream &os, const CSVGBlock &block);
+  void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
   COptReal                     x_;

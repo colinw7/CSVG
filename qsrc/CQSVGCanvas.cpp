@@ -13,20 +13,32 @@
 #include <QToolTip>
 
 CQSVGCanvas::
-CQSVGCanvas(CQSVGWindow *window, CQSVG *svg) :
- QWidget(window), window_(window), svg_(svg)
+CQSVGCanvas(CQSVGWindow *window) :
+ QFrame(window), window_(window)
 {
   setObjectName("canvas");
+
+  //---
+
+  svg_ = new CQSVG(this);
 
   renderer_ = new CQSVGRenderer;
 
   svg_->setRenderer(renderer_);
+
+  //---
 
   opainter_ = new QPainter;
 
   setFocusPolicy(Qt::StrongFocus);
 
   setMouseTracking(true);
+}
+
+CQSVGCanvas::
+~CQSVGCanvas()
+{
+  delete svg_;
 }
 
 void
@@ -121,9 +133,7 @@ mousePressEvent(QMouseEvent *e)
 
   window_->deselectAllObjects();
 
-  CPoint2D w;
-
-  pixelToWindow(CPoint2D(e->pos().x(), e->pos().y()), w);
+  auto w = pixelToWindow(CPoint2D(e->pos().x(), e->pos().y()));
 
   CSVG::ObjectList objects;
 
@@ -156,9 +166,7 @@ void
 CQSVGCanvas::
 mouseMoveEvent(QMouseEvent *e)
 {
-  CPoint2D w;
-
-  pixelToWindow(CPoint2D(e->pos().x(), e->pos().y()), w);
+  auto w = pixelToWindow(CPoint2D(e->pos().x(), e->pos().y()));
 
   std::vector<CSVGObject *> objects;
 
@@ -194,9 +202,7 @@ void
 CQSVGCanvas::
 mouseReleaseEvent(QMouseEvent *e)
 {
-  CPoint2D w;
-
-  pixelToWindow(CPoint2D(e->pos().x(), e->pos().y()), w);
+  auto w = pixelToWindow(CPoint2D(e->pos().x(), e->pos().y()));
 
   CSVG::ObjectList objects;
 
@@ -254,9 +260,7 @@ event(QEvent *e)
 
     auto p = helpEvent->pos();
 
-    CPoint2D w;
-
-    pixelToWindow(CPoint2D(p.x(), p.y()), w);
+    auto w = pixelToWindow(CPoint2D(p.x(), p.y()));
 
     CSVG::ObjectList objects;
 
@@ -388,12 +392,16 @@ drawPoint(const CPoint2D &p, Shape /*shape*/, int s, const QColor &bg, const QCo
   opainter_->drawEllipse(QRectF(QPointF(p.x - w/2, p.y - h/2), QSizeF(w, h)));
 }
 
-void
+CPoint2D
 CQSVGCanvas::
-pixelToWindow(const CPoint2D &p, CPoint2D &w)
+pixelToWindow(const CPoint2D &p) const
 {
+  CPoint2D w;
+
   renderer_->pixelToWindow(p, w);
 
   w.x /= scale_;
   w.y /= scale_;
+
+  return w;
 }

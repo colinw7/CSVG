@@ -11,6 +11,7 @@
 #include <CSVGFontDef.h>
 #include <CSVGPathPart.h>
 #include <CSVGObjectMarker.h>
+#include <CSVGVisitor.h>
 
 #include <CScreenUnits.h>
 #include <CBBox2D.h>
@@ -21,6 +22,7 @@
 #include <CAngle.h>
 
 #include <list>
+#include <set>
 
 #define CSVG_OBJECT_DEF(name, id) \
 const CObjType &getObjType() const override { \
@@ -35,6 +37,7 @@ class CSVGFilter;
 class CSVGMask;
 class CSVGClipPath;
 class CSVGPathPart;
+class CSVGVisitor;
 
 //---
 
@@ -44,15 +47,19 @@ class CSVGObject {
   using ObjectList  = std::list<CSVGObject *>;
   using ObjectArray = std::vector<CSVGObject *>;
   using NameValues  = std::map<std::string, std::string>;
+  using SkipNames   = std::set<std::string>;
+
+  // fill/stroke
   using Color       = CSVGInheritValT<CSVGColor>;
   using Opacity     = CSVGInheritValT<double>;
   using Width       = CSVGInheritValT<double>;
   using Overflow    = CSVGInheritValT<CSVGOverflowType>;
   using FillType    = CSVGInheritValT<CFillType>;
+  using DashArray   = CSVGInheritValT<CSVGLineDash>;
+  using DashOffset  = CSVGInheritValT<CScreenUnits>;
   using LineCap     = CSVGInheritValT<CLineCapType>;
   using LineJoin    = CSVGInheritValT<CLineJoinType>;
   using MiterLimit  = CSVGInheritValT<double>;
-  using LineDash    = CSVGInheritValT<CSVGStrokeDash>;
   using FontFamily  = CSVGInheritValT<std::string>;
   using FontSize    = CSVGInheritValT<CScreenUnits>;
 
@@ -76,6 +83,7 @@ class CSVGObject {
   //---
 
   //! get/set id
+  bool hasId() const { return (id_.isValid() && id_.getValue().size()); }
   std::string getId() const { return id_.getValue(""); }
   void setId(const std::string &id);
 
@@ -89,11 +97,14 @@ class CSVGObject {
 
   //---
 
+  //! get depth
   int getDepth() const;
 
+  //! get index
   uint getInd() const { return ind_; }
 
-  void autoName();
+  //! auto name object and return new id
+  std::string autoName();
 
   //---
 
@@ -109,6 +120,7 @@ class CSVGObject {
 
   //---
 
+  //! get clip
   const CSVGClip &getClip() const { return clip_; }
 
   //---
@@ -134,8 +146,8 @@ class CSVGObject {
   virtual std::string getTagName() const { return getObjName(); }
 
   virtual std::string getUniqueName() const {
-    if (id_.isValid() && id_.getValue().size())
-      return id_.getValue();
+    if (hasId())
+      return getId();
     else
       return getObjName() + std::to_string(getInd());
   }
@@ -143,6 +155,8 @@ class CSVGObject {
   bool isObjType(CSVGObjTypeId id) const { return (getObjType().getId() == uint(id)); }
 
   bool isObjType(const std::string &name) const { return (getObjName() == name); }
+
+  std::string getHierId(bool autoName=false) const;
 
   //---
 
@@ -152,6 +166,7 @@ class CSVGObject {
 
   //---
 
+  //! get animation data
   const CSVGAnimation &getAnimation() const { return animation_; }
 
   //---
@@ -229,7 +244,11 @@ class CSVGObject {
   virtual void initParse() { }
   virtual void termParse() { }
 
+  bool handleOption(const std::string &name, const std::string &value);
+
   virtual bool processOption(const std::string &name, const std::string &value);
+
+  bool processSubOption(const std::string &name, const std::string &value);
 
   bool processCoreOption           (const std::string &name, const std::string &value);
   bool processConditionalOption    (const std::string &name, const std::string &value);
@@ -271,8 +290,9 @@ class CSVGObject {
   bool getAllChildrenOfType(CSVGObjTypeId id, ObjectArray &objects);
   bool getChildrenOfType   (CSVGObjTypeId id, ObjectArray &objects);
 
-  bool getAllChildrenOfId(const std::string &id, ObjectArray &objects);
-  bool getChildrenOfId   (const std::string &id, ObjectArray &objects);
+  bool getAllChildrenOfId (const std::string &id, ObjectArray &objects);
+  bool getHierChildrenOfId(const std::string &id, ObjectArray &objects);
+  bool getChildrenOfId    (const std::string &id, ObjectArray &objects);
 
   bool hasChildren(bool includeAnimated=true) const;
 
@@ -384,11 +404,14 @@ class CSVGObject {
   bool getStrokeWidthValid() const { return stroke_.getWidthValid(); }
 
   void setStrokeDashArray(const std::string &s) { stroke_.setDashArray(s); strokeChanged(); }
-  void setStrokeDashOffset(const std::string &s) { stroke_.setDashOffset(s); strokeChanged(); }
+  void setStrokeDashArray(const DashArray &d) { stroke_.setDashArray(d); strokeChanged(); }
+  DashArray getStrokeDashArray() const { return stroke_.getDashArray(); }
+  bool getStrokeDashArrayValid() const { return stroke_.getDashArrayValid(); }
 
-  void setStrokeDash(const LineDash &dash) { stroke_.setDash(dash); strokeChanged(); }
-  LineDash getStrokeDash() const { return stroke_.getDash(); }
-  bool getStrokeDashValid() const { return stroke_.getDashValid(); }
+  void setStrokeDashOffset(const std::string &s) { stroke_.setDashOffset(s); strokeChanged(); }
+  void setStrokeDashOffset(const DashOffset &o) { stroke_.setDashOffset(o); strokeChanged(); }
+  DashOffset getStrokeDashOffset() const { return stroke_.getDashOffset(); }
+  bool getStrokeDashOffsetValid() const { return stroke_.getDashOffsetValid(); }
 
   void setStrokeLineCap(const std::string &s) { stroke_.setLineCap(s); strokeChanged(); }
   void setStrokeLineCap(const LineCap &cap) { stroke_.setLineCap(cap); strokeChanged(); }
@@ -407,17 +430,18 @@ class CSVGObject {
 
   //---
 
-  CSVGStroke               getFlatStroke          () const;
-  COptValT<Color>          getFlatStrokeColor     () const;
-  COptValT<Opacity>        getFlatStrokeOpacity   () const;
-  COptValT<FillType>       getFlatStrokeRule      () const;
-  COptString               getFlatStrokeUrl       () const;
-  COptValT<CSVGObject*>    getFlatStrokeFillObject() const;
-  COptValT<Width>          getFlatStrokeWidth     () const;
-  COptValT<LineDash>       getFlatStrokeLineDash  () const;
-  COptValT<LineCap>        getFlatStrokeLineCap   () const;
-  COptValT<LineJoin>       getFlatStrokeLineJoin  () const;
-  COptValT<MiterLimit>     getFlatStrokeMiterLimit() const;
+  CSVGStroke            getFlatStroke          () const;
+  COptValT<Color>       getFlatStrokeColor     () const;
+  COptValT<Opacity>     getFlatStrokeOpacity   () const;
+  COptValT<FillType>    getFlatStrokeRule      () const;
+  COptString            getFlatStrokeUrl       () const;
+  COptValT<CSVGObject*> getFlatStrokeFillObject() const;
+  COptValT<Width>       getFlatStrokeWidth     () const;
+  COptValT<DashArray>   getFlatStrokeDashArray () const;
+  COptValT<DashOffset>  getFlatStrokeDashOffset() const;
+  COptValT<LineCap>     getFlatStrokeLineCap   () const;
+  COptValT<LineJoin>    getFlatStrokeLineJoin  () const;
+  COptValT<MiterLimit>  getFlatStrokeMiterLimit() const;
 
   //------
 
@@ -528,11 +552,23 @@ class CSVGObject {
 
   void setNameValue(const std::string &name, const std::string &value);
 
-  void setStyleValue(const std::string &name, const std::string &value);
+  bool hasNameValue(const std::string &name) const;
 
   virtual COptString getNameValue       (const std::string &name) const;
   virtual COptReal   getRealNameValue   (const std::string &name) const;
   virtual COptInt    getIntegerNameValue(const std::string &name) const;
+
+  const NameValues &nameValues() const { return nameValues_; }
+
+  //----
+
+  void setStyleValue(const std::string &name, const std::string &value);
+
+  bool hasStyleValue(const std::string &name) const;
+
+  COptString getStyleValue(const std::string &name) const;
+
+  const NameValues &styleValues() const { return styleValues_; }
 
   //---
 
@@ -553,6 +589,8 @@ class CSVGObject {
   //---
 
   void setStyle(const std::string &style);
+
+  std::string styleString(bool flat=false) const;
 
   //---
 
@@ -606,11 +644,6 @@ class CSVGObject {
 
   //---
 
-  const NameValues &nameValues() const { return nameValues_; }
-  const NameValues &styleValues() const { return styleValues_; }
-
-  //---
-
   const CSVGEnableBackground &enableBackground() const { return enableBackground_; }
   void setEnableBackground(const CSVGEnableBackground &v) { enableBackground_ = v; }
 
@@ -649,15 +682,11 @@ class CSVGObject {
   //---
 
   // print
+  std::string toString(bool hier=false) const;
+
   virtual void print(std::ostream &os, bool hier=false) const;
 
   virtual void printFlat(std::ostream &os, bool force=false, int depth=0) const;
-
-  friend std::ostream &operator<<(std::ostream &os, const CSVGObject &object) {
-    object.print(os);
-
-    return os;
-  }
 
   virtual void printValues(std::ostream &os, bool flat=false) const;
 
@@ -759,8 +788,16 @@ class CSVGObject {
   void printNamePercent(std::ostream &os, const std::string &name,
                         const COptValT<CScreenUnits> &units) const;
 
+  //------
+
+  virtual void accept(CSVGVisitor *visitor) = 0;
+
  private:
   CSVGObject &operator=(const CSVGObject &rhs);
+
+  void init();
+
+  void processStyleNameValue(const std::string &name, const std::string &value);
 
  protected:
   using StringVector = std::vector<std::string>;
@@ -788,6 +825,7 @@ class CSVGObject {
   COptValT<CScreenUnits>       wordSpacing_;
   NameValues                   nameValues_;
   NameValues                   styleValues_;
+  SkipNames                    skipNames_;
   CMatrixStack2D               transform_;
   CSVGEnableBackground         enableBackground_ { CSVGEnableBackground::ACCUMULATE };
   CBBox2D                      enableBackgroundRect_;

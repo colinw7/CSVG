@@ -4,7 +4,7 @@
 #include <CSVGObject.h>
 #include <CSVGXLink.h>
 
-class CSVGFontFaceUri : public CSVGObject {
+class CSVGFontFaceUri : public CSVGObject, public CSVGPrintBase<CSVGFontFaceUri> {
  public:
   CSVG_OBJECT_DEF("font-face-uri", CSVGObjTypeId::FONT_FACE_URI)
 
@@ -22,11 +22,11 @@ class CSVGFontFaceUri : public CSVGObject {
 
   bool draw() override;
 
-  void print(std::ostream &os, bool hier) const override;
+  void print(std::ostream &os, bool hier=false) const override;
 
   void printValues(std::ostream &os, bool flat=false) const override;
 
-  friend std::ostream &operator<<(std::ostream &os, const CSVGFontFaceUri &face);
+  void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
   COptValT<CSVGXLink> xlink_;

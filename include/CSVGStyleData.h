@@ -9,14 +9,17 @@
 class CSVGStyleData {
  public:
   using NameValues = std::map<std::string, std::string>;
+
+  // fill/stroke
   using Color      = CSVGInheritValT<CSVGColor>;
   using Opacity    = CSVGInheritValT<double>;
   using FillType   = CSVGInheritValT<CFillType>;
   using Width      = CSVGInheritValT<double>;
+  using DashArray  = CSVGInheritValT<CSVGLineDash>;
+  using DashOffset = CSVGInheritValT<CScreenUnits>;
   using LineCap    = CSVGInheritValT<CLineCapType>;
   using LineJoin   = CSVGInheritValT<CLineJoinType>;
   using MiterLimit = CSVGInheritValT<double>;
-  using LineDash   = CSVGInheritValT<CSVGStrokeDash>;
 
  public:
   CSVGStyleData(CSVG &svg, const std::string &id) :
@@ -40,8 +43,10 @@ class CSVGStyleData {
   CSVGObject*    getStrokeFillObject     () const { return stroke_.getFillObject(); }
   bool           getStrokeWidthValid     () const { return stroke_.getWidthValid(); }
   Width          getStrokeWidth          () const { return stroke_.getWidth(); }
-  bool           getStrokeDashValid      () const { return stroke_.getDashValid(); }
-  LineDash       getStrokeDash           () const { return stroke_.getDash(); }
+  bool           getStrokeDashValid      () const { return stroke_.getDashArrayValid(); }
+  DashArray      getStrokeDash           () const { return stroke_.getDashArray(); }
+  bool           getStrokeOffsetValid    () const { return stroke_.getDashOffsetValid(); }
+  DashOffset     getStrokeOffset         () const { return stroke_.getDashOffset(); }
   bool           getStrokeLineCapValid   () const { return stroke_.getLineCapValid(); }
   LineCap        getStrokeLineCap        () const { return stroke_.getLineCap(); }
   bool           getStrokeLineJoinValid  () const { return stroke_.getLineJoinValid(); }

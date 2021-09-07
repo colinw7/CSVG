@@ -62,6 +62,8 @@ class CSVGAnimateBase : public CSVGObject {
 
   void printValues(std::ostream &os, bool flat=false) const override;
 
+  void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
+
  protected:
   COptString               attributeName_;
   COptString               attributeType_;

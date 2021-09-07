@@ -5,7 +5,7 @@
 #include <iostream>
 
 // block offset and scale
-class CSVGBlockData {
+class CSVGBlockData : public CSVGPrintBase<CSVGBlockData> {
  public:
   CSVGBlockData() {
     updateViewMatrix();
@@ -65,12 +65,6 @@ class CSVGBlockData {
     os << "Offset    : " << offset_ << std::endl;
     os << "Scale     : " << xscale_ << " " << yscale_ << std::endl;
     os << "Aspect    : " << preserveAspect_ << std::endl;
-  }
-
-  friend std::ostream &operator<<(std::ostream &os, const CSVGBlockData &d) {
-    d.print(os);
-
-    return os;
   }
 
  private:

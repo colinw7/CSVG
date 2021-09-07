@@ -3,7 +3,7 @@
 
 #include <CSVGAnimateBase.h>
 
-class CSVGSet : public CSVGAnimateBase {
+class CSVGSet : public CSVGAnimateBase, public CSVGPrintBase<CSVGSet> {
  public:
   CSVG_OBJECT_DEF("set", CSVGObjTypeId::SET)
 
@@ -16,9 +16,9 @@ class CSVGSet : public CSVGAnimateBase {
 
   void animate(double t) override;
 
-  void print(std::ostream &os, bool hier) const override;
+  void print(std::ostream &os, bool hier=false) const override;
 
-  friend std::ostream &operator<<(std::ostream &os, const CSVGSet &set);
+  void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 };
 
 #endif

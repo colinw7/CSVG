@@ -6,7 +6,7 @@
 
 class CSVGText;
 
-class CSVGTextPath : public CSVGObject {
+class CSVGTextPath : public CSVGObject, public CSVGPrintBase<CSVGTextPath> {
  public:
   CSVG_OBJECT_DEF("textPath", CSVGObjTypeId::TEXT_PATH)
 
@@ -27,11 +27,11 @@ class CSVGTextPath : public CSVGObject {
 
   bool draw() override;
 
-  void print(std::ostream &os, bool hier) const override;
+  void print(std::ostream &os, bool hier=false) const override;
 
   void printValues(std::ostream &os, bool flat=false) const override;
 
-  friend std::ostream &operator<<(std::ostream &os, const CSVGTextPath &text);
+  void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
   CSVGText *getParentText() const;

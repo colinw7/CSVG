@@ -3,7 +3,7 @@
 
 #include <CSVGObject.h>
 
-class CSVGColorProfile : public CSVGObject {
+class CSVGColorProfile : public CSVGObject, public CSVGPrintBase<CSVGColorProfile> {
  public:
   CSVG_OBJECT_DEF("color-profile", CSVGObjTypeId::COLOR_PROFILE)
 
@@ -16,11 +16,11 @@ class CSVGColorProfile : public CSVGObject {
 
   bool draw() override;
 
-  void print(std::ostream &os, bool hier) const override;
+  void print(std::ostream &os, bool hier=false) const override;
 
   void printValues(std::ostream &os, bool flat=false) const override;
 
-  friend std::ostream &operator<<(std::ostream &os, const CSVGColorProfile &face);
+  void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
   COptString          local_;

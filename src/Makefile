@@ -23,6 +23,7 @@ CSVGAnimateColor.cpp \
 CSVGAnimateMotion.cpp \
 CSVGAnimateTransform.cpp \
 CSVGAnimation.cpp \
+CSVGAudio.cpp \
 CSVGBlock.cpp \
 CSVGBuffer.cpp \
 CSVGCircle.cpp \
@@ -92,11 +93,14 @@ CSVGStyle.cpp \
 CSVGStyleData.cpp \
 CSVGSwitch.cpp \
 CSVGSymbol.cpp \
+CSVGTBreak.cpp \
 CSVGText.cpp \
 CSVGTextPath.cpp \
 CSVGTitle.cpp \
 CSVGTSpan.cpp \
 CSVGUse.cpp \
+CSVGVisitor.cpp \
+CSVGWrite.cpp \
 CSVGXLink.cpp \
 \
 CSVGUtil.cpp \

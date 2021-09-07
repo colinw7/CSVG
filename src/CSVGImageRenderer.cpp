@@ -302,6 +302,12 @@ setFont(const CSVGFontDef &fontDef)
 
 void
 CSVGImageRenderer::
+resetStroke()
+{
+}
+
+void
+CSVGImageRenderer::
 setStrokeColor(const CRGBA &c)
 {
   renderer_->setForeground(c);

@@ -310,11 +310,3 @@ getControlPoints(CSVGObject *obj, double *xc, double *yc, double *r, double *xf,
     *r  = CMathUtil::map(*r , 0, 1, 0, bbox.getWidth()); // w or h or both
   }
 }
-
-std::ostream &
-operator<<(std::ostream &os, const CSVGRadialGradient &gradient)
-{
-  gradient.print(os, false);
-
-  return os;
-}

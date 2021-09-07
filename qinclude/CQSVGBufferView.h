@@ -4,8 +4,9 @@
 #include <CBBox2D.h>
 #include <QFrame>
 
-class CQSVG;
 class CQSVGBufferCanvas;
+class CSVG;
+
 class QComboBox;
 class QCheckBox;
 class QLabel;
@@ -14,7 +15,7 @@ class CQSVGBufferView : public QFrame {
   Q_OBJECT
 
  public:
-  CQSVGBufferView(CQSVG *qsvg);
+  CQSVGBufferView(CSVG *svg);
 
   void updateState();
 
@@ -34,7 +35,7 @@ class CQSVGBufferView : public QFrame {
   void updateBuffer();
 
  private:
-  CQSVG*             qsvg_        { nullptr };
+  CSVG*              svg_         { nullptr };
   QComboBox*         combo_       { nullptr };
   QCheckBox*         bgCheck_     { nullptr };
   CQSVGBufferCanvas* canvas_      { nullptr };

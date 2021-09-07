@@ -5,6 +5,7 @@
 #include <CQSVGAnimateMotion.h>
 #include <CQSVGAnimateTransform.h>
 #include <CQSVGBlock.h>
+#include <CQSVGCanvas.h>
 #include <CQSVGCircle.h>
 #include <CQSVGClipPath.h>
 #include <CQSVGDefs.h>
@@ -57,8 +58,8 @@
 #include <QTimer>
 
 CQSVG::
-CQSVG(CQSVGWindow *window) :
- window_(window)
+CQSVG(CQSVGCanvas *canvas) :
+ canvas_(canvas)
 {
   timer_ = new QTimer;
 
@@ -75,7 +76,14 @@ CSVG *
 CQSVG::
 dup() const
 {
-  return new CQSVG(window_);
+  return new CQSVG(canvas_);
+}
+
+CQSVGWindow *
+CQSVG::
+window() const
+{
+  return (canvas_ ? canvas_->window() : nullptr);
 }
 
 QColor
@@ -103,8 +111,10 @@ void
 CQSVG::
 updateBusy()
 {
-  if (window_)
-    window_->updateBusy();
+  auto *window = this->window();
+
+  if (window)
+    window->updateBusy();
 }
 
 CSVGBlock *
@@ -668,8 +678,10 @@ setTime(double t)
 
   getRoot()->setTime(t_);
 
-  if (window_)
-    window_->setTime(t_);
+  auto *window = this->window();
+
+  if (window)
+    window->setTime(t_);
 }
 
 void
@@ -682,14 +694,18 @@ tickStep(int n)
 
   getRoot()->tick(dt);
 
-  if (window_)
-    window_->setTime(t_);
+  auto *window = this->window();
+
+  if (window)
+    window->setTime(t_);
 }
 
 void
 CQSVG::
 redraw()
 {
-  if (window_)
-    window_->redraw();
+  auto *window = this->window();
+
+  if (window)
+    window->redraw();
 }

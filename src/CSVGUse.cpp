@@ -83,8 +83,11 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   else if (svg_.stringOption(opt_name, opt_value, "xlink:href", str))
     xlink_ = CSVGXLink(this, str);
   //  focusable = "true" | "false" | "auto"
-  else
-    return CSVGObject::processOption(opt_name, opt_value);
+  else {
+    if (! CSVGObject::processSubOption(opt_name, opt_value)) {
+      //setNameValue(opt_name, opt_value);
+    }
+  }
 
   return true;
 }
@@ -485,12 +488,4 @@ printValues(std::ostream &os, bool flat) const
     printNameXLink(os, "xlink:href", xlink_);
 
   CSVGObject::printValues(os, flat);
-}
-
-std::ostream &
-operator<<(std::ostream &os, const CSVGUse &use)
-{
-  use.print(os, false);
-
-  return os;
 }

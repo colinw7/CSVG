@@ -699,7 +699,7 @@ CSVGPathVLineTo::
 moveBy(const CVector2D &d)
 {
   // TODO: change to line to
-  y_ += d.getX();
+  y_ += d.getY();
 
   assert(false);
 }

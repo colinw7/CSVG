@@ -11,18 +11,18 @@ CQSVGPropertiesDlg(CQSVGWindow *window) :
 {
   setWindowTitle("Properties");
 
-  QVBoxLayout *layout = new QVBoxLayout(this);
+  auto *layout = new QVBoxLayout(this);
   layout->setMargin(0); layout->setSpacing(2);
 
-  QTabWidget *tab = new QTabWidget;
+  auto *tab = new QTabWidget;
 
   layout->addWidget(tab);
 
   //---
 
-  QFrame *propertiesFrame = new QFrame;
+  auto *propertiesFrame = new QFrame;
 
-  QVBoxLayout *propertiesLayout = new QVBoxLayout(propertiesFrame);
+  auto *propertiesLayout = new QVBoxLayout(propertiesFrame);
   propertiesLayout->setMargin(0); propertiesLayout->setSpacing(2);
 
   propertiesTree_ = new CQPropertyTree;
@@ -37,9 +37,9 @@ CQSVGPropertiesDlg(CQSVGWindow *window) :
 
   //---
 
-  QFrame *cssFrame = new QFrame;
+  auto *cssFrame = new QFrame;
 
-  QVBoxLayout *cssLayout = new QVBoxLayout(cssFrame);
+  auto *cssLayout = new QVBoxLayout(cssFrame);
   cssLayout->setMargin(0); cssLayout->setSpacing(2);
 
   cssTree_ = new CQSVGStyleTree(window->svg());

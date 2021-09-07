@@ -4,7 +4,7 @@
 #include <CSVGObject.h>
 #include <CSVGTypes.h>
 
-class CSVGPattern : public CSVGObject {
+class CSVGPattern : public CSVGObject, public CSVGPrintBase<CSVGPattern> {
  public:
   CSVG_OBJECT_DEF("pattern", CSVGObjTypeId::PATTERN)
 
@@ -49,11 +49,11 @@ class CSVGPattern : public CSVGObject {
 
   bool isDrawable() const override { return false; }
 
-  void print(std::ostream &os, bool hier) const override;
+  void print(std::ostream &os, bool hier=false) const override;
 
   void printValues(std::ostream &os, bool flat=false) const override;
 
-  friend std::ostream &operator<<(std::ostream &os, const CSVGPattern &pattern);
+  void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
   CSVGObject *getObject();
 

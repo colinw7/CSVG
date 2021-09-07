@@ -109,6 +109,8 @@ class CSVGRenderer {
 
   //--- stroke APIS
 
+  virtual void resetStroke() = 0;
+
   virtual void setStrokeColor(const CRGBA &fg) = 0;
 
   virtual void setLineWidth(double w) = 0;

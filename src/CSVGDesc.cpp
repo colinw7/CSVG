@@ -74,11 +74,3 @@ printValues(std::ostream &os, bool flat) const
 {
   CSVGObject::printValues(os, flat);
 }
-
-std::ostream &
-operator<<(std::ostream &os, const CSVGDesc &desc)
-{
-  desc.print(os, false);
-
-  return os;
-}

@@ -130,11 +130,3 @@ printValues(std::ostream &os, bool flat) const
   if (type_ == CSVGStyleType::TEXT_CSS)
     os << " type=\"text/css\"";
 }
-
-std::ostream &
-operator<<(std::ostream &os, const CSVGStyle &style)
-{
-  style.print(os, false);
-
-  return os;
-}

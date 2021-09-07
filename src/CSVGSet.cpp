@@ -67,11 +67,3 @@ print(std::ostream &os, bool hier) const
   else
     os << "set ";
 }
-
-std::ostream &
-operator<<(std::ostream &os, const CSVGSet &set)
-{
-  set.print(os, false);
-
-  return os;
-}

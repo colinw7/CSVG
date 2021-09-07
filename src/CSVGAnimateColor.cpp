@@ -111,11 +111,3 @@ printValues(std::ostream &os, bool flat) const
   printNameValue(os, "type"    , type_    );
   printNameValue(os, "additive", additive_);
 }
-
-std::ostream &
-operator<<(std::ostream &os, const CSVGAnimateColor &animateColor)
-{
-  animateColor.print(os, false);
-
-  return os;
-}

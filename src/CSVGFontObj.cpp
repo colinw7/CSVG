@@ -3,7 +3,8 @@
 #include <CFontMgr.h>
 
 CSVGFontObj::
-CSVGFontObj(const CSVGFontDef &fontDef)
+CSVGFontObj(const CSVGFontDef &fontDef) :
+ fontDef_(fontDef)
 {
   std::string family = fontDef.getFamily().getValue();
   CFontStyles styles = fontDef.getStyle();

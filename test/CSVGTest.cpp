@@ -2,6 +2,8 @@
 #include <CSVGImageRenderer.h>
 #include <CSVGLogRenderer.h>
 #include <CSVGImageData.h>
+#include <CSVGWrite.h>
+
 #include <CImageRenderer2D.h>
 #include <CImageLib.h>
 
@@ -14,6 +16,7 @@ main(int argc, char **argv)
   bool print         = false;
   bool flat          = false;
   bool log           = false;
+  bool write         = false;
   bool colors        = false;
 
   std::vector<std::string> files;
@@ -34,6 +37,8 @@ main(int argc, char **argv)
         flat = true;
       else if (arg == "log")
         log = true;
+      else if (arg == "write")
+        write = true;
       else if (arg == "colors")
         colors = true;
       else
@@ -93,6 +98,13 @@ main(int argc, char **argv)
       svg.setRenderer(&lrenderer);
 
       svg.draw();
+    }
+    else if (write) {
+      CSVGWriteVisitor writer(std::cout);
+
+      auto *obj = svg.getRootBlock();
+
+      writer.exec(obj);
     }
     else if (colors) {
       const auto &colors1 = svg.getColors();

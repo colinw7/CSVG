@@ -3,7 +3,7 @@
 
 #include <CSVGObject.h>
 
-class CSVGGroup : public CSVGObject {
+class CSVGGroup : public CSVGObject, public CSVGPrintBase<CSVGGroup> {
  public:
   CSVG_OBJECT_DEF("group", CSVGObjTypeId::GROUP)
 
@@ -24,11 +24,11 @@ class CSVGGroup : public CSVGObject {
 
   //bool isDrawable() const override { return false; }
 
-  void print(std::ostream &os, bool hier) const override;
+  void print(std::ostream &os, bool hier=false) const override;
 
   void printValues(std::ostream &os, bool flat=false) const override;
 
-  friend std::ostream &operator<<(std::ostream &os, const CSVGGroup &group);
+  void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 };
 
 #endif

@@ -300,11 +300,3 @@ getEndPoints(CSVGObject *obj, double *x1, double *y1, double *x2, double *y2) co
     getGTransform().multiplyPoint(p2.x, p2.y, x2, y2);
   }
 }
-
-std::ostream &
-operator<<(std::ostream &os, const CSVGLinearGradient &gradient)
-{
-  gradient.print(os, false);
-
-  return os;
-}

@@ -4,7 +4,7 @@
 #include <CSVGObject.h>
 #include <CSVGXLink.h>
 
-class CSVGImage : public CSVGObject {
+class CSVGImage : public CSVGObject, public CSVGPrintBase<CSVGImage> {
  public:
   CSVG_OBJECT_DEF("image", CSVGObjTypeId::IMAGE)
 
@@ -58,13 +58,15 @@ class CSVGImage : public CSVGObject {
 
   CSVGBuffer *getImageBuffer() const;
 
-  void print(std::ostream &os, bool hier) const override;
+  void print(std::ostream &os, bool hier=false) const override;
 
   void printValues(std::ostream &os, bool flat=false) const override;
 
-  friend std::ostream &operator<<(std::ostream &os, const CSVGImage &image);
+  void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
+  void init();
+
   CSize2D getSizeInternal() const { return CSize2D(getWidth(), getHeight()); }
 
  private:

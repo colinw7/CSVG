@@ -8,7 +8,7 @@
 
 namespace {
   CRGBA getPixel(const QImage &image, int x, int y) {
-    QRgb rgb = image.pixel(x, y);
+    auto rgb = image.pixel(x, y);
 
     double r = qRed  (rgb)/255.0;
     double g = qGreen(rgb)/255.0;
@@ -19,13 +19,13 @@ namespace {
   }
 
   void setPixel(QImage &image, int x, int y, const CRGBA &rgba) {
-    QRgb rgb = qRgba(rgba.getRedI(), rgba.getGreenI(), rgba.getBlueI(), rgba.getAlphaI());
+    auto rgb = qRgba(rgba.getRedI(), rgba.getGreenI(), rgba.getBlueI(), rgba.getAlphaI());
 
     image.setPixel(x, y, rgb);
   }
 
   void clipOutside(QImage &image, int x1, int y1, int x2, int y2) {
-    QRgb rgb = qRgba(0, 0, 0, 0);
+    auto rgb = qRgba(0, 0, 0, 0);
 
     for (int y = 0; y < image.height(); ++y) {
       for (int x = 0; x < image.width(); ++x) {
@@ -38,7 +38,7 @@ namespace {
   }
 
   QImage createImage(int w, int h) {
-    QImage image = QImage(QSize(w, h), QImage::Format_ARGB32);
+    auto image = QImage(QSize(w, h), QImage::Format_ARGB32);
 
     image.fill(0);
 
@@ -47,11 +47,11 @@ namespace {
 
 #if 0
   QImage alphaImage(const QImage &image, int gray=0) {
-    QImage image1 = createImage(image.width(), image.height());
+    auto image1 = createImage(image.width(), image.height());
 
     for (int y = 0; y < image.height(); ++y) {
       for (int x = 0; x < image.width(); ++x) {
-        QRgb rgb = image.pixel(x, y);
+        auto rgb = image.pixel(x, y);
 
         int a = qAlpha(rgb);
 
@@ -64,11 +64,11 @@ namespace {
 #endif
 
   QImage opacityImage(const QImage &image, double opacity) {
-    QImage image1 = createImage(image.width(), image.height());
+    auto image1 = createImage(image.width(), image.height());
 
     for (int y = 0; y < image.height(); ++y) {
       for (int x = 0; x < image.width(); ++x) {
-        QRgb rgb = image.pixel(x, y);
+        auto rgb = image.pixel(x, y);
 
         int r = qRed  (rgb);
         int g = qGreen(rgb);
@@ -89,6 +89,22 @@ namespace {
 CQSVGRenderer::
 CQSVGRenderer()
 {
+  init();
+}
+
+CQSVGRenderer::
+~CQSVGRenderer()
+{
+  delete imageData_;
+
+  delete path_;
+  delete savePath_;
+}
+
+void
+CQSVGRenderer::
+init()
+{
   imageData_ = new CQSVGImageData;
 
   painter_ = new QPainter;
@@ -108,20 +124,16 @@ CQSVGRenderer()
   range_.setScaleMin  (false);
 }
 
-CQSVGRenderer::
-~CQSVGRenderer()
-{
-  delete imageData_;
-
-  delete path_;
-  delete savePath_;
-}
-
 CQSVGRenderer *
 CQSVGRenderer::
 dup() const
 {
-  return new CQSVGRenderer;
+  auto *renderer = new CQSVGRenderer;
+
+  renderer->iwidth_  = iwidth_;
+  renderer->iheight_ = iheight_;
+
+  return renderer;
 }
 
 void
@@ -130,7 +142,7 @@ setSize(int width, int height)
 {
   assert(! drawing_);
 
-  imageData_->setSize(width, height);
+  imageData_->setSize(std::max(iwidth_, width), std::max(iheight_, height));
 
   imageData_->clear();
 }
@@ -163,6 +175,10 @@ setDataRange(double xmin, double ymin, double xmax, double ymax)
     painter_->setWorldMatrix(CQUtil::toQMatrix(range_.getMatrix()*viewMatrix_));
 
     transform_  = painter_->worldTransform();
+    itransform_ = transform_.inverted();
+  }
+  else {
+    transform_  = CQUtil::toQTransform(range_.getMatrix());
     itransform_ = transform_.inverted();
   }
 }
@@ -226,7 +242,7 @@ startDraw()
 {
   assert(! drawing_);
 
-  QImage *qimage = imageData_->lockImage();
+  auto *qimage = imageData_->lockImage();
 
   painter_->begin(qimage);
 
@@ -402,9 +418,9 @@ void
 CQSVGRenderer::
 pathText(const std::string &str)
 {
-  QString qstr = QString::fromUtf8(str.c_str());
+  auto qstr = QString::fromStdString(str);
 
-  QPointF c = path_->currentPosition();
+  auto c = path_->currentPosition();
 
   path_->addText(c, qfont_, qstr);
 
@@ -470,9 +486,9 @@ void
 CQSVGRenderer::
 savePath(const CMatrix2D &m)
 {
-  QTransform matrix = CQUtil::toQTransform(m);
+  auto matrix = CQUtil::toQTransform(m);
 
-  QList<QPolygonF> polygons = path_->toSubpathPolygons(matrix);
+  auto polygons = path_->toSubpathPolygons(matrix);
 
   delete savePath_;
 
@@ -486,7 +502,7 @@ void
 CQSVGRenderer::
 pathClip(CSVGRenderer *renderer)
 {
-  CQSVGRenderer *qrenderer = dynamic_cast<CQSVGRenderer *>(renderer);
+  auto *qrenderer = dynamic_cast<CQSVGRenderer *>(renderer);
 
   if (qrenderer) {
     if (! qrenderer->savePath_)
@@ -503,7 +519,7 @@ CQSVGRenderer::
 pathEoclip(CSVGRenderer *renderer)
 {
   // TODO: even odd ?
-  CQSVGRenderer *qrenderer = dynamic_cast<CQSVGRenderer *>(renderer);
+  auto *qrenderer = dynamic_cast<CQSVGRenderer *>(renderer);
 
   if (qrenderer) {
     if (! qrenderer->savePath_)
@@ -542,9 +558,9 @@ drawImage(const CPoint2D &p, CSVGImageData *image)
 {
   assert(drawing_);
 
-  QTransform transform = painter_->worldTransform();
+  auto transform = painter_->worldTransform();
 
-  QPointF p1 = transform.map(CQUtil::toQPoint(p));
+  auto p1 = transform.map(CQUtil::toQPoint(p));
 
   painter_->setWorldMatrixEnabled(false);
 
@@ -569,13 +585,25 @@ setFont(const CSVGFontDef &fontDef)
 
   //qfont_ = CQUtil::toQFont(font);
 
-  CQSVGFontObj *fontObj = dynamic_cast<CQSVGFontObj *>(fontDef.getObj());
+  auto *fontObj = dynamic_cast<CQSVGFontObj *>(fontDef.getObj());
 
   if (fontObj) {
     qfont_ = fontObj->qfont();
 
     painter_->setFont(qfont_);
   }
+}
+
+//---
+
+void
+CQSVGRenderer::
+resetStroke()
+{
+  pen_         = QPen();
+  strokeBrush_ = QBrush();
+
+  painter_->setPen(pen_);
 }
 
 void
@@ -597,12 +625,7 @@ setLineWidth(double w)
 
   //if (w <= 1.0) w = 1.0;
 
-  CPoint2D p1, p2;
-
-  windowToPixel(CPoint2D(0.0, 0.0), p1);
-  windowToPixel(CPoint2D(  w,   w), p2);
-
-  pen_.setWidthF(std::abs(p2.x - p1.x));
+  pen_.setWidthF(windowToPixelWidth(w));
   pen_.setCosmetic(true);
 
   painter_->setPen(pen_);
@@ -619,15 +642,23 @@ setLineDash(const CLineDash &dash)
   if (num > 0) {
     pen_.setStyle(Qt::CustomDashLine);
 
-    pen_.setDashOffset(dash.getOffset()/pen_.widthF());
+    double o = windowToPixelWidth(dash.getOffset());
+
+    pen_.setDashOffset(o/pen_.widthF());
 
     QVector<qreal> dashes;
 
-    for (int i = 0; i < num; ++i)
-      dashes << dash.getLength(i)/pen_.widthF();
+    for (int i = 0; i < num; ++i) {
+      double d = windowToPixelWidth(dash.getLength(i));
 
-    if (num & 1)
-      dashes << dash.getLength(0)/pen_.widthF();
+      dashes << d/pen_.widthF();
+    }
+
+    if (num & 1) {
+      double d = windowToPixelWidth(dash.getLength(0));
+
+      dashes << d/pen_.widthF();
+    }
 
     pen_.setDashPattern(dashes);
   }
@@ -693,6 +724,8 @@ setMitreLimit(double limit)
 
   painter_->setPen(pen_);
 }
+
+//---
 
 void
 CQSVGRenderer::
@@ -767,6 +800,8 @@ setFillMatrix(const CMatrix2D &m)
 
   painter_->setBrush(fillBrush_);
 }
+
+//---
 
 void
 CQSVGRenderer::
@@ -843,6 +878,18 @@ setAlign(CHAlignType halign, CVAlignType valign)
   range_.setAlign(rhalign, rvalign);
 }
 
+double
+CQSVGRenderer::
+windowToPixelWidth(double w)
+{
+  CPoint2D p1, p2;
+
+  windowToPixel(CPoint2D(0.0, 0.0), p1);
+  windowToPixel(CPoint2D(  w,   w), p2);
+
+  return std::abs(p2.x - p1.x);
+}
+
 void
 CQSVGRenderer::
 windowToPixel(const CPoint2D &w, CPoint2D &p)
@@ -861,7 +908,7 @@ void
 CQSVGRenderer::
 textBounds(const std::string &str, CBBox2D &bbox)
 {
-  QString qstr = QString::fromUtf8(str.c_str());
+  auto qstr = QString::fromStdString(str);
 
   QFontMetrics fm(qfont_);
 
@@ -869,6 +916,14 @@ textBounds(const std::string &str, CBBox2D &bbox)
   int h = fm.height();
 
   bbox = CBBox2D(CPoint2D(0, 0), CPoint2D(w, h));
+}
+
+void
+CQSVGRenderer::
+setImageSize(int width, int height)
+{
+  iwidth_  = width;
+  iheight_ = height;
 }
 
 CISize2D
@@ -889,7 +944,7 @@ void
 CQSVGRenderer::
 setImage(CSVGRenderer *renderer)
 {
-  CQSVGRenderer *qrenderer = dynamic_cast<CQSVGRenderer *>(renderer);
+  auto *qrenderer = dynamic_cast<CQSVGRenderer *>(renderer);
   assert(qrenderer);
 
   imageData_->setQImage(qrenderer->imageData_->qimage());
@@ -899,7 +954,7 @@ void
 CQSVGRenderer::
 setImage(CSVGImageData *image)
 {
-  CQSVGImageData *imageData = dynamic_cast<CQSVGImageData *>(image);
+  auto *imageData = dynamic_cast<CQSVGImageData *>(image);
   assert(imageData);
 
   setQImage(imageData->qimage());
@@ -909,12 +964,12 @@ void
 CQSVGRenderer::
 addImage(int x, int y, CSVGImageData *image)
 {
-  CQSVGImageData *imageData = dynamic_cast<CQSVGImageData *>(image);
+  auto *imageData = dynamic_cast<CQSVGImageData *>(image);
   assert(imageData);
 
-  QImage *qimage = imageData_->lockImage();
+  auto *qimage = imageData_->lockImage();
 
-  QImage qimage1 = imageData->qimage();
+  auto qimage1 = imageData->qimage();
 
   combineImage(*qimage, x, y, qimage1);
 
@@ -925,7 +980,7 @@ void
 CQSVGRenderer::
 combine(int ix, int iy, CSVGRenderer *r)
 {
-  CQSVGRenderer *qr = dynamic_cast<CQSVGRenderer *>(r);
+  auto *qr = dynamic_cast<CQSVGRenderer *>(r);
   assert(qr);
 
   int iwidth1, iheight1, iwidth2, iheight2;
@@ -936,14 +991,14 @@ combine(int ix, int iy, CSVGRenderer *r)
   int w = std::max(iwidth1 , ix + iwidth2 );
   int h = std::max(iheight1, iy + iheight2);
 
-  QImage image2 = qr->qimage();
+  auto image2 = qr->qimage();
 
   if (qr->opacity() < 1)
     image2 = opacityImage(image2, qr->opacity());
 
   if (w > iwidth1 || h > iheight1) {
-    QImage image1 = imageData_->qimage();
-    QImage image3 = createImage(w, h);
+    auto image1 = imageData_->qimage();
+    auto image3 = createImage(w, h);
 
     image3.fill(0);
 
@@ -953,7 +1008,7 @@ combine(int ix, int iy, CSVGRenderer *r)
     setQImage(image3);
   }
   else {
-    QImage *qimage = imageData_->lockImage();
+    auto *qimage = imageData_->lockImage();
 
     combineImage(*qimage, ix, iy, image2);
 
@@ -1010,21 +1065,21 @@ void
 CQSVGRenderer::
 addResizedImage(CSVGRenderer *src, double x, double y, double w, double h)
 {
-  CQSVGRenderer *qsrc = dynamic_cast<CQSVGRenderer *>(src);
+  auto *qsrc = dynamic_cast<CQSVGRenderer *>(src);
   assert(qsrc);
 
   CPoint2D p;
 
   lengthToPixel(CPoint2D(w, h), p);
 
-  QImage qimage1 = qsrc->imageData_->qimage();
+  auto qimage1 = qsrc->imageData_->qimage();
 
-  QImage qimage2 = qimage1.scaled(QSize(p.x, p.y), Qt::IgnoreAspectRatio, Qt::FastTransformation);
+  auto qimage2 = qimage1.scaled(QSize(p.x, p.y), Qt::IgnoreAspectRatio, Qt::FastTransformation);
 
   windowToPixel(CPoint2D(x, y), p);
 
   // TODO: handle out of bounds
-  QImage *qimage = imageData_->lockImage();
+  auto *qimage = imageData_->lockImage();
 
   combineImage(*qimage, p.x, p.y, qimage2);
 
@@ -1035,14 +1090,14 @@ void
 CQSVGRenderer::
 addClippedImage(CSVGRenderer *src, int x, int y, int px1, int py1, int px2, int py2)
 {
-  CQSVGRenderer *qsrc = dynamic_cast<CQSVGRenderer *>(src);
+  auto *qsrc = dynamic_cast<CQSVGRenderer *>(src);
   assert(qsrc);
 
-  QImage qimage1 = qsrc->qimage();
+  auto qimage1 = qsrc->qimage();
 
   clipOutside(qimage1, px1, py1, px2, py2);
 
-  QImage *qimage = imageData_->lockImage();
+  auto *qimage = imageData_->lockImage();
 
   combineImage(*qimage, x - px1, y - py1, qimage1);
 
@@ -1053,10 +1108,10 @@ void
 CQSVGRenderer::
 setClippedImage(CSVGRenderer *src, int px1, int py1, int px2, int py2)
 {
-  CQSVGRenderer *qsrc = dynamic_cast<CQSVGRenderer *>(src);
+  auto *qsrc = dynamic_cast<CQSVGRenderer *>(src);
   assert(qsrc);
 
-  QImage qimage1 = qsrc->qimage();
+  auto qimage1 = qsrc->qimage();
 
   clipOutside(qimage1, px1, py1, px2, py2);
 
@@ -1067,15 +1122,15 @@ void
 CQSVGRenderer::
 setOffsetImage(CSVGRenderer *src, int dx, int dy)
 {
-  CQSVGRenderer *qsrc = dynamic_cast<CQSVGRenderer *>(src);
+  auto *qsrc = dynamic_cast<CQSVGRenderer *>(src);
   assert(qsrc);
 
-  QImage src_image = qsrc->qimage();
+  auto src_image = qsrc->qimage();
 
   int w = src_image.width () + dx;
   int h = src_image.height() + dy;
 
-  QImage dst_image = createImage(w, h);
+  auto dst_image = createImage(w, h);
 
   QPainter painter(&dst_image);
 
@@ -1124,7 +1179,7 @@ paint(QPainter *painter)
 {
   painter->setWorldMatrixEnabled(false);
 
-  QImage qimage = imageData_->qimage();
+  auto qimage = imageData_->qimage();
 
   painter->drawImage(QPointF(0,0), qimage);
 

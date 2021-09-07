@@ -22,8 +22,8 @@ class CSVGJObjValue : public CJObj {
   bool toBoolean() const override { return false; }
 
  protected:
-  CSVG*       svg_ { 0 };
-  CSVGObject* obj_ { 0 };
+  CSVG*       svg_ { nullptr };
+  CSVGObject* obj_ { nullptr };
   std::string name_;
 };
 
@@ -384,7 +384,7 @@ class CSVGJPreserveAspectRatio : public CJObj {
   void print(std::ostream &os) const override { os << "SVGPreserveAspectRatio"; }
 
  protected:
-  CSVG*              svg_ { 0 };
+  CSVG*              svg_ { nullptr };
   CSVGPreserveAspect preserveAspect_;
 };
 

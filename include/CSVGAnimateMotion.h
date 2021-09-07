@@ -4,7 +4,7 @@
 #include <CSVGAnimateBase.h>
 #include <CSVGPathPart.h>
 
-class CSVGAnimateMotion : public CSVGAnimateBase {
+class CSVGAnimateMotion : public CSVGAnimateBase, public CSVGPrintBase<CSVGAnimateMotion> {
  public:
   CSVG_OBJECT_DEF("animateMotion", CSVGObjTypeId::ANIMATE_MOTION)
 
@@ -29,9 +29,9 @@ class CSVGAnimateMotion : public CSVGAnimateBase {
 
   void animate(double t) override;
 
-  void print(std::ostream &os, bool hier) const override;
+  void print(std::ostream &os, bool hier=false) const override;
 
-  friend std::ostream &operator<<(std::ostream &os, const CSVGAnimateMotion &animateMotion);
+  void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
   CSVGPathPartList path_;

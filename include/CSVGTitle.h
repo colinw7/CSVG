@@ -3,7 +3,7 @@
 
 #include <CSVGObject.h>
 
-class CSVGTitle : public CSVGObject {
+class CSVGTitle : public CSVGObject, public CSVGPrintBase<CSVGTitle> {
  public:
   CSVG_OBJECT_DEF("title", CSVGObjTypeId::TITLE)
 
@@ -19,6 +19,8 @@ class CSVGTitle : public CSVGObject {
   bool isDrawable() const override { return false; }
 
   bool isToolTip() const { return tooltip_; }
+
+  void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
   bool tooltip_ { false };

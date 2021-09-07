@@ -1,11 +1,13 @@
 #ifndef CSVG_STROKE_DASH_H
 #define CSVG_STROKE_DASH_H
 
+#include <CSVGTmpl.h>
+
 #include <CScreenUnits.h>
 #include <CLineDash.h>
 #include <COptVal.h>
 
-class CSVGStrokeDash {
+class CSVGStrokeDash : public CSVGPrintBase<CSVGStrokeDash> {
  public:
   using Dashes = std::vector<CScreenUnits>;
 
@@ -64,12 +66,6 @@ class CSVGStrokeDash {
 
   void printOffset(std::ostream &os) const {
     os << offset_;
-  }
-
-  friend std::ostream &operator<<(std::ostream &os, const CSVGStrokeDash &dash) {
-    dash.print(os);
-
-    return os;
   }
 
  private:

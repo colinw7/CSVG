@@ -2,14 +2,14 @@
 #define CQSVGCanvas_H
 
 #include <CBBox2D.h>
-#include <QWidget>
+#include <QFrame>
 
 class CQSVG;
 class CQSVGWindow;
 class CQSVGRenderer;
 class CSVGObject;
 
-class CQSVGCanvas : public QWidget {
+class CQSVGCanvas : public QFrame {
   Q_OBJECT
 
  public:
@@ -20,9 +20,18 @@ class CQSVGCanvas : public QWidget {
   };
 
  public:
-  CQSVGCanvas(CQSVGWindow *window, CQSVG *svg);
+  CQSVGCanvas(CQSVGWindow *window);
+ ~CQSVGCanvas();
+
+  //---
+
+  CQSVGWindow *window() const { return window_; }
+
+  CQSVG *svg() const { return svg_; }
 
   CQSVGRenderer *renderer() const { return renderer_; }
+
+  //---
 
   const CPoint2D &offset() const { return offset_; }
   void setOffset(const CPoint2D &o) { offset_ = o; }
@@ -52,16 +61,16 @@ class CQSVGCanvas : public QWidget {
 
   void drawPoint(const CPoint2D &p, Shape shape, int size, const QColor &bg, const QColor &fg);
 
-  void pixelToWindow(const CPoint2D &p, CPoint2D &w);
+  CPoint2D pixelToWindow(const CPoint2D &p) const;
 
  public slots:
   void redraw();
 
  private:
-  CQSVGWindow   *window_    { nullptr };
-  CQSVG         *svg_       { nullptr };
-  CQSVGRenderer *renderer_  { nullptr };
-  QPainter      *opainter_  { nullptr };
+  CQSVGWindow*   window_    { nullptr };
+  CQSVG*         svg_       { nullptr };
+  CQSVGRenderer* renderer_  { nullptr };
+  QPainter*      opainter_  { nullptr };
   QImage         oimage_;
   CPoint2D       offset_    { 0, 0 };
   double         scale_     { 1 };

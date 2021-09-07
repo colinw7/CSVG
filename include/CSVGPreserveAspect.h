@@ -2,10 +2,12 @@
 #define CSVGPreserveAspect_H
 
 #include <CSVGTypes.h>
+#include <CSVGTmpl.h>
+
 #include <CAlignType.h>
 #include <sstream>
 
-class CSVGPreserveAspect {
+class CSVGPreserveAspect : public CSVGPrintBase<CSVGPreserveAspect> {
  public:
   CSVGPreserveAspect(const CHAlignType &halign=CHALIGN_TYPE_CENTER,
                      const CVAlignType &valign=CVALIGN_TYPE_CENTER,
@@ -84,12 +86,6 @@ class CSVGPreserveAspect {
 
     if      (getScale() == CSVGScale::FIXED_MEET ) os << "meet";
     else if (getScale() == CSVGScale::FIXED_SLICE) os << "slice";
-  }
-
-  friend std::ostream &operator<<(std::ostream &os, const CSVGPreserveAspect &v) {
-    v.print(os);
-
-    return os;
   }
 
  public:

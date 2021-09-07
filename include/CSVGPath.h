@@ -6,7 +6,7 @@
 class CStrParse;
 class CSVGPathPart;
 
-class CSVGPath : public CSVGObject {
+class CSVGPath : public CSVGObject, public CSVGPrintBase<CSVGPath> {
  public:
   CSVG_OBJECT_DEF("path", CSVGObjTypeId::PATH)
 
@@ -31,11 +31,11 @@ class CSVGPath : public CSVGObject {
 
   bool getBBox(CBBox2D &bbox) const override;
 
-  void print(std::ostream &os, bool hier) const override;
+  void print(std::ostream &os, bool hier=false) const override;
 
   void printValues(std::ostream &os, bool flat=false) const override;
 
-  friend std::ostream &operator<<(std::ostream &os, const CSVGPath &path);
+  void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  protected:
   bool drawZeroLength();

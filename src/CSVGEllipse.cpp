@@ -27,6 +27,7 @@ CSVGEllipse::
 CSVGEllipse(CSVG &svg) :
  CSVGObject(svg)
 {
+  init();
 }
 
 CSVGEllipse::
@@ -37,6 +38,19 @@ CSVGEllipse(const CSVGEllipse &ellipse) :
  rx_       (ellipse.rx_),
  ry_       (ellipse.ry_)
 {
+  init();
+}
+
+void
+CSVGEllipse::
+init()
+{
+  skipNames_.insert("cx");
+  skipNames_.insert("cy");
+  skipNames_.insert("rx");
+  skipNames_.insert("ry");
+
+  updateBBox();
 }
 
 CSVGEllipse *
@@ -60,7 +74,7 @@ void
 CSVGEllipse::
 setCenter(const CPoint2D &center)
 {
-  setCenterX(CScreenUnits(center.x));
+  setCenterX(CScreenUnits(center.x), /*update*/false);
   setCenterY(CScreenUnits(center.y));
 }
 
@@ -99,7 +113,24 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   else
     return false;
 
+  updateBBox();
+
   return true;
+}
+
+void
+CSVGEllipse::
+updateBBox()
+{
+  // stroke width ?
+  double xc = getCenterX().pxValue(CScreenUnits(1));
+  double yc = getCenterY().pxValue(CScreenUnits(1));
+  double xr = getRadiusX().pxValue(CScreenUnits(1));
+  double yr = getRadiusY().pxValue(CScreenUnits(1));
+
+  bbox_ = CBBox2D(xc - xr, yc - yr, xc + xr, yc + yr);
+
+  parts_ = CSVGPathPartList();
 }
 
 bool
@@ -111,14 +142,15 @@ draw()
 
   auto drawBox = getDrawBBox();
 
-  double w = drawBox.getWidth ();
-  double h = drawBox.getHeight();
+  double dw = drawBox.getWidth ();
+  double dh = drawBox.getHeight();
 
-  double xc = getCenterX().pxValue(CScreenUnits(w));
-  double yc = getCenterY().pxValue(CScreenUnits(h));
-  double xr = getRadiusX().pxValue(CScreenUnits(w));
-  double yr = getRadiusY().pxValue(CScreenUnits(h));
+  double xc = getCenterX().pxValue(CScreenUnits(dw));
+  double yc = getCenterY().pxValue(CScreenUnits(dh));
+  double xr = getRadiusX().pxValue(CScreenUnits(dw));
+  double yr = getRadiusY().pxValue(CScreenUnits(dh));
 
+  // skip zero radius
   if (xr <= 0 || yr <= 0)
     return false;
 
@@ -144,18 +176,40 @@ bool
 CSVGEllipse::
 getBBox(CBBox2D &bbox) const
 {
-  if (! hasViewBox()) {
-    double xc = getCenterX().pxValue(CScreenUnits(1));
-    double yc = getCenterY().pxValue(CScreenUnits(1));
-    double xr = getRadiusX().pxValue(CScreenUnits(1));
-    double yr = getRadiusY().pxValue(CScreenUnits(1));
-
-    bbox = CBBox2D(xc - xr, yc - yr, xc + xr, yc + yr);
-  }
+  if (! hasViewBox())
+    bbox = bbox_;
   else
     bbox = getViewBox();
 
   return true;
+}
+
+const CSVGPathPartList &
+CSVGEllipse::
+getPartList() const
+{
+  if (parts_.empty()) {
+    auto drawBox = getDrawBBox();
+
+    auto dc = drawBox.getCenter();
+    auto dw = drawBox.getWidth ();
+    auto dh = drawBox.getHeight();
+
+    double x  = getCenterX().pxValue(dc.x);
+    double y  = getCenterY().pxValue(dc.y);
+    double rx = getRadiusX().pxValue(dw/2.0);
+    double ry = getRadiusY().pxValue(dh/2.0);
+
+    double fa = 1;
+    double fs = 0;
+
+    parts_.push_back(svg_.createPathMoveTo(x + rx, y));
+    parts_.push_back(svg_.createPathArcTo (rx, ry, M_PI, fa, fs, x - rx, y));
+    parts_.push_back(svg_.createPathArcTo (rx, ry, M_PI, fa, fs, x + rx, y));
+    parts_.push_back(svg_.createPathClosePath());
+  }
+
+  return parts_;
 }
 
 void
@@ -180,9 +234,8 @@ void
 CSVGEllipse::
 print(std::ostream &os, bool hier) const
 {
-  if (hier) {
+  if (hier)
     CSVGObject::print(os, hier);
-  }
   else
     os << "ellipse (" << getId() << ") center " <<
           getCenter() << " radius " << getRadiusX() << " " << getRadiusY();
@@ -198,12 +251,4 @@ printValues(std::ostream &os, bool flat) const
   printNameValue(os, "cy", cy_);
   printNameValue(os, "rx", rx_);
   printNameValue(os, "ry", ry_);
-}
-
-std::ostream &
-operator<<(std::ostream &os, const CSVGEllipse &ellipse)
-{
-  ellipse.print(os, false);
-
-  return os;
 }

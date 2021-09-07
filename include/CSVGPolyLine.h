@@ -3,7 +3,7 @@
 
 #include <CSVGObject.h>
 
-class CSVGPolyLine : public CSVGObject {
+class CSVGPolyLine : public CSVGObject, public CSVGPrintBase<CSVGPolyLine> {
  public:
   using PointList = std::vector<CPoint2D>;
 
@@ -30,11 +30,11 @@ class CSVGPolyLine : public CSVGObject {
 
   void rotateBy(double da, const CPoint2D &point) override;
 
-  void print(std::ostream &os, bool hier) const override;
+  void print(std::ostream &os, bool hier=false) const override;
 
   void printValues(std::ostream &os, bool flat=false) const override;
 
-  friend std::ostream &operator<<(std::ostream &os, const CSVGPolyLine &polyline);
+  void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
   PointList points_;

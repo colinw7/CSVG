@@ -8,7 +8,7 @@
 class CSVGStop;
 class CLinearGradient;
 
-class CSVGLinearGradient : public CSVGObject {
+class CSVGLinearGradient : public CSVGObject, public CSVGPrintBase<CSVGLinearGradient> {
  public:
   using StopList = std::vector<CSVGStop *>;
 
@@ -81,9 +81,11 @@ class CSVGLinearGradient : public CSVGObject {
 
   void addLinkStops();
 
-  void print(std::ostream &os, bool hier) const override;
+  void print(std::ostream &os, bool hier=false) const override;
 
   void printValues(std::ostream &os, bool flat=false) const override;
+
+  void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
   void setFillBuffer  (CSVGBuffer *buffer, CSVGObject *obj, const COptReal &opacity);
   void setStrokeBuffer(CSVGBuffer *buffer, CSVGObject *obj, const COptReal &opacity);
@@ -91,8 +93,6 @@ class CSVGLinearGradient : public CSVGObject {
   CLinearGradient *createGradient(CSVGObject *obj, const COptReal &opacity);
 
   void getEndPoints(CSVGObject *obj, double *x1, double *y1, double *x2, double *y2) const;
-
-  friend std::ostream &operator<<(std::ostream &os, const CSVGLinearGradient &gradient);
 
  private:
   COptValT<CScreenUnits>        x1_;

@@ -17,9 +17,9 @@ class CSVGObjectMarker {
   void setEnd(CSVGObject *m) { end_ = m; }
 
  private:
-  CSVGObject *start_ { 0 };
-  CSVGObject *mid_   { 0 };
-  CSVGObject *end_   { 0 };
+  CSVGObject *start_ { nullptr };
+  CSVGObject *mid_   { nullptr };
+  CSVGObject *end_   { nullptr };
 };
 
 #endif

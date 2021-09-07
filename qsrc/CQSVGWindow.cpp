@@ -96,29 +96,24 @@ CQSVGWindow() :
 {
   setObjectName("window");
 
-  svg_ = new CQSVG(this);
+  //---
+
+  auto *frame  = CQUtil::makeWidget<QFrame>("frame");
+  auto *layout = CQUtil::makeLayout<QHBoxLayout>(frame, 2, 2);
 
   //---
 
-  QWidget *frame = new QWidget;
-  frame->setObjectName("frame");
+  canvas_ = new CQSVGCanvas(this);
 
-  QHBoxLayout *layout = new QHBoxLayout(frame);
-  layout->setMargin(2); layout->setSpacing(2);
-
-  canvas_ = new CQSVGCanvas(this, svg_);
+  //---
 
 #if 0
-  QSplitter *splitter = new QSplitter;
-  splitter->setObjectName("splitter");
+  auto *splitter = CQWidgetUtil::makeWidget<QSplitter>("spliiter");
 
   splitter->addWidget(canvas_);
 
-  QFrame *rframe = new QFrame;
-  rframe->setObjectName("rframe");
-
-  QVBoxLayout *rlayout = new QVBoxLayout(rframe);
-  rlayout->setMargin(2); rlayout->setSpacing(2);
+  auto *rframe  = CQWidgetUtil::makeWidget<QFrame>("rframe");
+  aito *rlayout = CQWidgetUtil::makeLayout<QVBoxLayout>(rframe, 2, 2);
 
   propTree_ = new CQPropertyTree;
 
@@ -144,13 +139,75 @@ CQSVGWindow() :
 
   setCentralWidget(frame);
 
-  //------
+  //---
 
-  QMenu *fileMenu = menuBar()->addMenu("&File");
+  // add menus
+  addMenus();
 
   //---
 
-  QAction *printAction = new QAction("&Print", this);
+  // add status bar widgets
+  posLabel_ = new QLabel;
+  posLabel_->setObjectName("posLabel");
+
+  statusBar()->addPermanentWidget(posLabel_);
+
+  zoomLabel_ = new QLabel;
+  zoomLabel_->setObjectName("zoomLabel");
+
+  statusBar()->addPermanentWidget(zoomLabel_);
+
+  busyButton_ = new QToolButton;
+
+  busyButton_->setIcon(CQPixmapCacheInst->getIcon("READY"));
+
+  statusBar()->addPermanentWidget(busyButton_);
+
+  showPos(QPoint(0, 0), QPointF(0, 0));
+
+  //---
+
+  // add toolbars
+  auto *viewToolBar = new QToolBar(this);
+
+  viewToolBar->addAction(prevAction_);
+  viewToolBar->addAction(nextAction_);
+  viewToolBar->addAction(propertiesAction_);
+  viewToolBar->addAction(buffersAction_);
+  viewToolBar->addAction(jsAction_);
+
+  addToolBar(viewToolBar);
+
+  //---
+
+  timeEdit_ = new QLineEdit;
+
+  connect(timeEdit_, SIGNAL(editingFinished()), this, SLOT(timeSlot()));
+
+  animateToolBar_ = new QToolBar(this);
+
+  animateToolBar_->addAction(playAction_);
+  animateToolBar_->addAction(pauseAction_);
+  animateToolBar_->addAction(stepAction_);
+  animateToolBar_->addAction(bstepAction_);
+  animateToolBar_->addWidget(timeEdit_);
+
+  addToolBar(animateToolBar_);
+
+  //---
+
+  updateState();
+}
+
+void
+CQSVGWindow::
+addMenus()
+{
+  auto *fileMenu = menuBar()->addMenu("&File");
+
+  //---
+
+  auto *printAction = new QAction("&Print", this);
 
   connect(printAction, SIGNAL(triggered()), this, SLOT(print()));
 
@@ -158,7 +215,7 @@ CQSVGWindow() :
 
   //---
 
-  QAction *printFlatAction = new QAction("Print &Flat", this);
+  auto *printFlatAction = new QAction("Print &Flat", this);
 
   connect(printFlatAction, SIGNAL(triggered()), this, SLOT(printFlat()));
 
@@ -166,7 +223,7 @@ CQSVGWindow() :
 
   //---
 
-  QAction *exitAction = new QAction("&Exit", this);
+  auto *exitAction = new QAction("&Exit", this);
 
   connect(exitAction, SIGNAL(triggered()), this, SLOT(close()));
 
@@ -174,7 +231,7 @@ CQSVGWindow() :
 
   //------
 
-  QMenu *viewMenu = menuBar()->addMenu("&View");
+  auto *viewMenu = menuBar()->addMenu("&View");
 
   //---
 
@@ -196,30 +253,30 @@ CQSVGWindow() :
 
   //---
 
-  QAction *propertiesAction = new QAction("&Properties", this);
-  propertiesAction->setIcon(CQPixmapCacheInst->getIcon("PROPERTIES"));
+  propertiesAction_ = new QAction("&Properties", this);
+  propertiesAction_->setIcon(CQPixmapCacheInst->getIcon("PROPERTIES"));
 
-  connect(propertiesAction, SIGNAL(triggered()), this, SLOT(showProperties()));
+  connect(propertiesAction_, SIGNAL(triggered()), this, SLOT(showProperties()));
 
-  viewMenu->addAction(propertiesAction);
-
-  //---
-
-  QAction *buffersAction = new QAction("&Buffers", this);
-  buffersAction->setIcon(CQPixmapCacheInst->getIcon("BUFFERS"));
-
-  connect(buffersAction, SIGNAL(triggered()), this, SLOT(showBuffers()));
-
-  viewMenu->addAction(buffersAction);
+  viewMenu->addAction(propertiesAction_);
 
   //---
 
-  QAction *jsAction = new QAction("&JavaScript", this);
-  jsAction->setIcon(CQPixmapCacheInst->getIcon("JAVASCRIPT"));
+  buffersAction_ = new QAction("&Buffers", this);
+  buffersAction_->setIcon(CQPixmapCacheInst->getIcon("BUFFERS"));
 
-  connect(jsAction, SIGNAL(triggered()), this, SLOT(showJSDialog()));
+  connect(buffersAction_, SIGNAL(triggered()), this, SLOT(showBuffers()));
 
-  viewMenu->addAction(jsAction);
+  viewMenu->addAction(buffersAction_);
+
+  //---
+
+  jsAction_ = new QAction("&JavaScript", this);
+  jsAction_->setIcon(CQPixmapCacheInst->getIcon("JAVASCRIPT"));
+
+  connect(jsAction_, SIGNAL(triggered()), this, SLOT(showJSDialog()));
+
+  viewMenu->addAction(jsAction_);
 
   //---
 
@@ -252,64 +309,18 @@ CQSVGWindow() :
   connect(bstepAction_, SIGNAL(triggered()), this, SLOT(bstepSlot()));
 
   animateMenu_->addAction(bstepAction_);
-
-  //---
-
-  posLabel_ = new QLabel;
-  posLabel_->setObjectName("posLabel");
-
-  statusBar()->addPermanentWidget(posLabel_);
-
-  zoomLabel_ = new QLabel;
-  zoomLabel_->setObjectName("zoomLabel");
-
-  statusBar()->addPermanentWidget(zoomLabel_);
-
-  busyButton_ = new QToolButton;
-
-  busyButton_->setIcon(CQPixmapCacheInst->getIcon("READY"));
-
-  statusBar()->addPermanentWidget(busyButton_);
-
-  showPos(QPoint(0, 0), QPointF(0, 0));
-
-  //---
-
-  QToolBar *viewToolBar = new QToolBar(this);
-
-  viewToolBar->addAction(prevAction_);
-  viewToolBar->addAction(nextAction_);
-  viewToolBar->addAction(propertiesAction);
-  viewToolBar->addAction(buffersAction);
-  viewToolBar->addAction(jsAction);
-
-  addToolBar(viewToolBar);
-
-  //---
-
-  timeEdit_ = new QLineEdit;
-
-  connect(timeEdit_, SIGNAL(editingFinished()), this, SLOT(timeSlot()));
-
-  animateToolBar_ = new QToolBar(this);
-
-  animateToolBar_->addAction(playAction_);
-  animateToolBar_->addAction(pauseAction_);
-  animateToolBar_->addAction(stepAction_);
-  animateToolBar_->addAction(bstepAction_);
-  animateToolBar_->addWidget(timeEdit_);
-
-  addToolBar(animateToolBar_);
-
-  //---
-
-  updateState();
 }
 
 CQSVGWindow::
 ~CQSVGWindow()
 {
-  delete svg_;
+}
+
+CQSVG *
+CQSVGWindow::
+svg() const
+{
+  return canvas()->svg();
 }
 
 void
@@ -445,20 +456,22 @@ loadFile()
   if (fileInd_ < 0 || fileInd_ >= int(files_.size()))
     return;
 
-  std::string filename = files_[fileInd_].toStdString();
+  auto *svg = this->svg();
+
+  auto filename = files_[fileInd_].toStdString();
 
   if      (isImage()) {
-    svg_->read(filename);
+    svg->read(filename);
 
     auto *renderer = new CQSVGRenderer;
 
-    renderer->setSize(svg_->getIWidth(), svg_->getIHeight());
+    renderer->setSize(svg->getIWidth(), svg->getIHeight());
 
-    svg_->setRenderer(renderer);
+    svg->setRenderer(renderer);
 
     //---
 
-    svg_->draw();
+    svg->draw();
 
     //---
 
@@ -477,17 +490,17 @@ loadFile()
 
     delete renderer;
 
-    svg_->setRenderer(0);
+    svg->setRenderer(0);
   }
   else if (isPrint()) {
-    svg_->print(std::cout, true);
+    svg->print(std::cout, true);
   }
   else {
-    svg_->stopTimer();
+    svg->stopTimer();
 
-    svg_->setTime(0);
+    svg->setTime(0);
 
-    svg_->read(filename);
+    svg->read(filename);
 
     updateAltRoot();
 
@@ -495,8 +508,8 @@ loadFile()
 
     loadCSS();
 
-    if (svg_->hasAnimation())
-      svg_->startTimer();
+    if (svg->hasAnimation())
+      svg->startTimer();
 
     updateState();
   }
@@ -513,7 +526,7 @@ updateTitle()
 
   auto filename = files_[fileInd_];
 
-  QString title = filename;
+  auto title = filename;
 
   if (rootId() != "")
     title += " (" + rootId() + ")";
@@ -526,11 +539,13 @@ CQSVGWindow::
 updateAltRoot()
 {
   if (rootId() != "") {
-    svg_->setAltRoot(0);
+    auto *svg = this->svg();
+
+    svg->setAltRoot(nullptr);
 
     CSVGObject::ObjectArray objects;
 
-    svg_->getChildrenOfId(rootId().toStdString(), objects);
+    svg->getChildrenOfId(rootId().toStdString(), objects);
 
     if      (objects.empty())
       std::cerr << "No objects of id '" << rootId().toStdString() << "'\n";
@@ -538,7 +553,7 @@ updateAltRoot()
       if (objects.size() > 1)
         std::cerr << "Multiple objects match id '" << rootId().toStdString() << "'\n";
 
-      svg_->setAltRoot(objects[0]);
+      svg->setAltRoot(objects[0]);
     }
   }
 }
@@ -556,14 +571,16 @@ updateState()
     nextAction_->setEnabled(rootInd_ < int(rootIds_.size()) - 1);
   }
 
-  if (svg_->hasAnimation()) {
+  auto *svg = this->svg();
+
+  if (svg->hasAnimation()) {
     animateMenu_   ->menuAction()->setVisible(true);
     animateToolBar_->setVisible(true);
 
-    playAction_ ->setEnabled(! svg_->isAnimating());
-    pauseAction_->setEnabled(svg_->isAnimating());
-    stepAction_ ->setEnabled(! svg_->isAnimating());
-    bstepAction_->setEnabled(! svg_->isAnimating());
+    playAction_ ->setEnabled(! svg->isAnimating());
+    pauseAction_->setEnabled(svg->isAnimating());
+    stepAction_ ->setEnabled(! svg->isAnimating());
+    bstepAction_->setEnabled(! svg->isAnimating());
   }
   else {
     animateMenu_   ->menuAction()->setVisible(false);
@@ -589,16 +606,18 @@ addProperties()
   if (! propTree_)
     return;
 
+  auto *svg = this->svg();
+
   propTree_->clear();
 
-  propTree_->addProperty("", svg_, "background");
-  propTree_->addProperty("", svg_, "animating");
-  propTree_->addProperty("", svg_, "checkerboard");
-  propTree_->addProperty("", svg_, "showGradient");
-  propTree_->addProperty("", svg_, "showFilterBox");
-  propTree_->addProperty("", svg_, "ignoreFilter");
+  propTree_->addProperty("", svg, "background");
+  propTree_->addProperty("", svg, "animating");
+  propTree_->addProperty("", svg, "checkerboard");
+  propTree_->addProperty("", svg, "showGradient");
+  propTree_->addProperty("", svg, "showFilterBox");
+  propTree_->addProperty("", svg, "ignoreFilter");
 
-  auto *block = svg_->getRoot();
+  auto *block = svg->getRoot();
 
   std::string id = block->getId();
 
@@ -614,7 +633,7 @@ void
 CQSVGWindow::
 addObjectToTree(const std::string &name, CSVGObject *obj)
 {
-  //QObject *qobj = dynamic_cast<QObject *>(obj);
+  //auto *qobj = dynamic_cast<QObject *>(obj);
 
   auto *qobj = dynamic_cast<CQSVGObject *>(obj);
 
@@ -678,8 +697,8 @@ void
 CQSVGWindow::
 showPos(const QPoint &ppos, const QPointF &wpos)
 {
-  QString ptext = QString("%1,%2").arg(ppos.x()).arg(ppos.y());
-  QString wtext = QString("%1,%2").arg(wpos.x()).arg(wpos.y());
+  auto ptext = QString("%1,%2").arg(ppos.x()).arg(ppos.y());
+  auto wtext = QString("%1,%2").arg(wpos.x()).arg(wpos.y());
 
   posLabel_->setText(QString("P(%1) W(%2)").arg(ptext).arg(wtext));
 
@@ -690,7 +709,9 @@ void
 CQSVGWindow::
 deselectAllObjects()
 {
-  auto *block = svg_->getRoot();
+  auto *svg = this->svg();
+
+  auto *block = svg->getRoot();
 
   deselectObjects(block);
 }
@@ -721,26 +742,30 @@ void
 CQSVGWindow::
 print()
 {
-  QString cdir = QDir::currentPath();
+  auto *svg = this->svg();
 
-  QString file = QFileDialog::getSaveFileName(this, "Specify Output File", cdir, "*.svg");
+  auto cdir = QDir::currentPath();
+
+  auto file = QFileDialog::getSaveFileName(this, "Specify Output File", cdir, "*.svg");
 
   std::ofstream os(file.toStdString());
 
-  svg_->print(os, true);
+  svg->print(os, true);
 }
 
 void
 CQSVGWindow::
 printFlat()
 {
-  QString cdir = QDir::currentPath();
+  auto *svg = this->svg();
 
-  QString file = QFileDialog::getSaveFileName(this, "Specify Output File", cdir, "*.svg");
+  auto cdir = QDir::currentPath();
+
+  auto file = QFileDialog::getSaveFileName(this, "Specify Output File", cdir, "*.svg");
 
   std::ofstream os(file.toStdString());
 
-  svg_->printFlat(os, /*force*/true);
+  svg->printFlat(os, /*force*/true);
 }
 
 void
@@ -771,8 +796,10 @@ void
 CQSVGWindow::
 showBuffers()
 {
+  auto *svg = this->svg();
+
   if (! bufferView_)
-    bufferView_ = new CQSVGBufferView(svg_);
+    bufferView_ = new CQSVGBufferView(svg);
 
   bufferView_->show();
 
@@ -796,7 +823,9 @@ void
 CQSVGWindow::
 playSlot()
 {
-  svg_->startTimer();
+  auto *svg = this->svg();
+
+  svg->startTimer();
 
   updateState();
 }
@@ -805,7 +834,9 @@ void
 CQSVGWindow::
 pauseSlot()
 {
-  svg_->stopTimer();
+  auto *svg = this->svg();
+
+  svg->stopTimer();
 
   updateState();
 }
@@ -814,26 +845,32 @@ void
 CQSVGWindow::
 stepSlot()
 {
-  svg_->stepTimer();
+  auto *svg = this->svg();
+
+  svg->stepTimer();
 }
 
 void
 CQSVGWindow::
 bstepSlot()
 {
-  svg_->bstepTimer();
+  auto *svg = this->svg();
+
+  svg->bstepTimer();
 }
 
 void
 CQSVGWindow::
 timeSlot()
 {
+  auto *svg = this->svg();
+
   bool ok;
 
   double t = timeEdit_->text().toDouble(&ok);
 
   if (ok)
-    svg_->setTime(t);
+    svg->setTime(t);
 }
 
 void

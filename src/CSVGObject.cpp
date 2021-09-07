@@ -36,6 +36,8 @@ CSVGObject(CSVG &svg) :
  clip_        (svg),
  fontDef_     (svg)
 {
+  init();
+
   animation_.setParent(const_cast<CSVGObject *>(this));
 
   transform_.reset();
@@ -43,42 +45,53 @@ CSVGObject(CSVG &svg) :
 
 CSVGObject::
 CSVGObject(const CSVGObject &obj) :
- svg_           (obj.svg_),
- id_            (obj.id_),
- classes_       (obj.classes_),
- parent_        (obj.parent_),
- ind_           (nextInd()),
- opacity_       (obj.opacity_),
- text_          (obj.text_),
- stroke_        (obj.stroke_),
- fill_          (obj.fill_),
- visibility_    (obj.visibility_),
- display_       (obj.display_),
- viewportFill_  (obj.viewportFill_),
- clip_          (obj.clip_),
- fontDef_       (obj.fontDef_),
- textAnchor_    (obj.textAnchor_),
- textDecoration_(obj.textDecoration_),
- letterSpacing_ (obj.letterSpacing_),
- wordSpacing_   (obj.wordSpacing_),
- nameValues_    (obj.nameValues_),
- transform_     (obj.transform_),
- objects_       (),
- animation_     (),
- filter_        (obj.filter_),
- filtered_      (obj.filtered_),
- mask_          (obj.mask_),
- masked_        (obj.masked_),
- clipPath_      (obj.clipPath_),
- clipped_       (obj.clipped_),
- marker_        (obj.marker_),
- viewBox_       (obj.viewBox_),
- selected_      (obj.selected_),
- inside_        (obj.inside_),
- xmlTag_        (obj.xmlTag_)
+ svg_                      (obj.svg_),
+ id_                       (obj.id_),
+ classes_                  (obj.classes_),
+ parent_                   (obj.parent_),
+ ind_                      (nextInd()),
+ opacity_                  (obj.opacity_),
+ text_                     (obj.text_),
+ stroke_                   (obj.stroke_),
+ fill_                     (obj.fill_),
+ overflow_                 (obj.overflow_),
+ visibility_               (obj.visibility_),
+ display_                  (obj.display_),
+ currentColor_             (obj.currentColor_),
+ viewportFill_             (obj.viewportFill_),
+ clip_                     (obj.clip_),
+ fontDef_                  (obj.fontDef_),
+ textAnchor_               (obj.textAnchor_),
+ textDecoration_           (obj.textDecoration_),
+ letterSpacing_            (obj.letterSpacing_),
+ wordSpacing_              (obj.wordSpacing_),
+ nameValues_               (obj.nameValues_),
+ styleValues_              (obj.styleValues_),
+ transform_                (obj.transform_),
+ enableBackground_         (obj.enableBackground_),
+ enableBackgroundRect_     (obj.enableBackgroundRect_),
+ externalResourcesRequired_(obj.externalResourcesRequired_),
+ objects_                  (),
+ animation_                (),
+ filter_                   (obj.filter_),
+ filtered_                 (obj.filtered_),
+ mask_                     (obj.mask_),
+ masked_                   (obj.masked_),
+ clipPath_                 (obj.clipPath_),
+ clipped_                  (obj.clipped_),
+ marker_                   (obj.marker_),
+ viewBox_                  (obj.viewBox_),
+ bbox_                     (obj.bbox_),
+ selected_                 (obj.selected_),
+ inside_                   (obj.inside_),
+ xmlTag_                   (obj.xmlTag_),
+ outBuffer_                (obj.outBuffer_)
 {
+  init();
+
   animation_.setParent(const_cast<CSVGObject *>(this));
 
+  // add children
   for (const auto &o : obj.children()) {
     auto *child = o->dup();
 
@@ -95,6 +108,15 @@ CSVGObject::
 
 void
 CSVGObject::
+init()
+{
+  skipNames_.insert("id");
+  skipNames_.insert("viewBox");
+  skipNames_.insert("transform");
+}
+
+void
+CSVGObject::
 setParent(CSVGObject *parent)
 {
   parent_ = parent;
@@ -104,13 +126,14 @@ int
 CSVGObject::
 getDepth() const
 {
-  return (parent_ ? parent_->getDepth() + 1 : 0);
+  return (getParent() ? getParent()->getDepth() + 1 : 0);
 }
 
-void
+std::string
 CSVGObject::
 autoName()
 {
+  // TODO: Move to SVG, name per depth
   using IdMap = std::map<std::string, int>;
 
   static IdMap idMap;
@@ -125,6 +148,29 @@ autoName()
   setId(CStrUtil::strprintf("%s%d", typeName.c_str(), (*p).second));
 
   ++(*p).second;
+
+  return getId();
+}
+
+std::string
+CSVGObject::
+getHierId(bool autoName) const
+{
+  std::string id;
+
+  if (getParent() && getParent() != svg_.getRoot()) {
+    if (autoName && getParent()->getId() == "")
+      getParent()->autoName();
+
+    id = getParent()->getHierId();
+  }
+
+  if (id != "")
+    id += "/";
+
+  id += getId();
+
+  return id;
 }
 
 std::string
@@ -260,12 +306,21 @@ getFlatStroke() const
 
   //---
 
-  auto dash = getFlatStrokeLineDash();
+  auto dash = getFlatStrokeDashArray();
 
   if (dash.isValid())
-    stroke.setDash(dash.getValue());
+    stroke.setDashArray(dash.getValue());
   else
-    stroke.resetDash();
+    stroke.resetDashArray();
+
+  //---
+
+  auto offset = getFlatStrokeDashOffset();
+
+  if (offset.isValid())
+    stroke.setDashOffset(offset.getValue());
+  else
+    stroke.resetDashOffset();
 
   //---
 
@@ -413,23 +468,42 @@ getFlatStrokeWidth() const
   return COptValT<Width>();
 }
 
-COptValT<CSVGObject::LineDash>
+COptValT<CSVGObject::DashArray>
 CSVGObject::
-getFlatStrokeLineDash() const
+getFlatStrokeDashArray() const
 {
-  if (stroke_.getDashValid())
-    return COptValT<LineDash>(stroke_.getDash());
+  if (stroke_.getDashArrayValid())
+    return COptValT<DashArray>(stroke_.getDashArray());
 
   auto *parent = getParent();
 
   while (parent) {
-    if (parent->stroke_.getDashValid())
-      return COptValT<LineDash>(parent->getFlatStrokeLineDash());
+    if (parent->stroke_.getDashArrayValid())
+      return COptValT<DashArray>(parent->getFlatStrokeDashArray());
 
     parent = parent->getParent();
   }
 
-  return COptValT<LineDash>();
+  return COptValT<DashArray>();
+}
+
+COptValT<CSVGObject::DashOffset>
+CSVGObject::
+getFlatStrokeDashOffset() const
+{
+  if (stroke_.getDashOffsetValid())
+    return COptValT<DashOffset>(stroke_.getDashOffset());
+
+  auto *parent = getParent();
+
+  while (parent) {
+    if (parent->stroke_.getDashOffsetValid())
+      return COptValT<DashOffset>(parent->getFlatStrokeDashOffset());
+
+    parent = parent->getParent();
+  }
+
+  return COptValT<DashOffset>();
 }
 
 COptValT<CSVGObject::LineCap>
@@ -659,7 +733,7 @@ getFlatFontDef() const
   if (fontSize.isValid())
     fontDef.setSize(fontSize.getValue());
 
-  fontDef.setStyle (fontStyles);
+  fontDef.setStyle(fontStyles);
 
   return fontDef;
 }
@@ -770,8 +844,8 @@ colorToRGBA(const Color &color) const
 
   // inherit, none
   if (color.isInherit() || c.isNone()) {
-    if (parent_)
-      return parent_->colorToRGBA(color);
+    if (getParent())
+      return getParent()->colorToRGBA(color);
     else
       return CRGBA(0, 0, 0);
   }
@@ -796,8 +870,8 @@ getFlatCurrentColor() const
       return color.rgba();
   }
 
-  if (parent_)
-    return parent_->getFlatCurrentColor();
+  if (getParent())
+    return getParent()->getFlatCurrentColor();
 
   return CRGBA(0, 0, 0);
 }
@@ -838,6 +912,57 @@ void
 CSVGObject::
 setStyle(const std::string &style)
 {
+  // Syntax:
+  //  name_value = <name> ':' <value>
+  //  name_value_list = <name_value> | <name_value> ';' <name_value_list>
+  CStrParse parse(style);
+
+  while (! parse.eof()) {
+    parse.skipSpace();
+
+    if (parse.isChar(';')) {
+      parse.skipChar();
+      continue;
+    }
+
+    //---
+
+    // get name (non-space) to next colon (TODO: quoted ?)
+    std::string name;
+
+    while (! parse.eof() && ! parse.isSpace() && ! parse.isChar(':'))
+      name += parse.readChar();
+
+    parse.skipSpace();
+
+    //---
+
+    // get value
+    std::string value;
+
+    if (parse.isChar(':')) {
+      parse.skipChar();
+
+      parse.skipSpace();
+
+      if (parse.isChar('\'') || parse.isChar('"')) {
+        // get quoted value (TODO: escaping ok ?)
+        (void) parse.readString(value, /*strip_quotes*/true);
+      }
+      else {
+        // get non-quoted value (non-space) to next semi colon
+        while (! parse.eof() && ! parse.isSpace() && ! parse.isChar(';'))
+          value += parse.readChar();
+      }
+    }
+
+    if (name != "")
+      processStyleNameValue(name, value);
+    else
+      CSVGLog() << "Missing name for style value '" << value << "' for " << getTagName();
+  }
+
+#if 0
   std::vector<std::string> words;
 
   CStrUtil::addFields(style, words, ";");
@@ -848,40 +973,45 @@ setStyle(const std::string &style)
     std::vector<std::string> words1;
 
     words[i] = CStrUtil::stripSpaces(words[i]);
-
-    if (words[i] == "")
-      continue;
+    if (words[i] == "") continue;
 
     CStrUtil::addFields(words[i], words1, ":");
 
     uint num_words1 = words1.size();
 
-    if (num_words1 >= 2) {
-      words1[0] = CStrUtil::stripSpaces(words1[num_words1 - 2]);
-      words1[1] = CStrUtil::stripSpaces(words1[num_words1 - 1]);
+    if (num_words1 != 2) {
+      CSVGLog() << "Invalid style name/value format '" << words[i] << "' for " << getTagName();
+      continue;
+    }
 
-      if (! processPaintOption      (words1[0], words1[1]) &&
-          ! processColorOption      (words1[0], words1[1]) &&
-          ! processFontOption       (words1[0], words1[1]) &&
-          ! processTextContentOption(words1[0], words1[1]) &&
-          ! processOpacityOption    (words1[0], words1[1]) &&
-          ! processMarkerOption     (words1[0], words1[1]) &&
-          ! processGradientOption   (words1[0], words1[1]) &&
-          ! processGraphicsOption   (words1[0], words1[1]) &&
-          ! processClipOption       (words1[0], words1[1]) &&
-          ! processMaskOption       (words1[0], words1[1]) &&
-          ! processTextOption       (words1[0], words1[1]) &&
-          ! processFilterOption     (words1[0], words1[1]) &&
-          ! processCSSOption        (words1[0], words1[1]) &&
-          ! processContainerOption  (words1[0], words1[1])) {
-        if (! svg_.isQuiet())
-          CSVGLog() << "Invalid style option " << words1[0] << ":" << words1[1] <<
-                       " for " << getTagName();
-      }
-    }
-    else {
-      CSVGLog() << "Invalid style option format " << words1[0] << " for " << getTagName();
-    }
+    auto name  = CStrUtil::stripSpaces(words1[0]);
+    auto value = CStrUtil::stripSpaces(words1[1]);
+
+    processStyleNameValue(name, value);
+  }
+#endif
+}
+
+void
+CSVGObject::
+processStyleNameValue(const std::string &name, const std::string &value)
+{
+  if (! processPaintOption      (name, value) &&
+      ! processColorOption      (name, value) &&
+      ! processFontOption       (name, value) &&
+      ! processTextContentOption(name, value) &&
+      ! processOpacityOption    (name, value) &&
+      ! processMarkerOption     (name, value) &&
+      ! processGradientOption   (name, value) &&
+      ! processGraphicsOption   (name, value) &&
+      ! processClipOption       (name, value) &&
+      ! processMaskOption       (name, value) &&
+      ! processTextOption       (name, value) &&
+      ! processFilterOption     (name, value) &&
+      ! processCSSOption        (name, value) &&
+      ! processContainerOption  (name, value)) {
+    if (! svg_.isQuiet())
+      CSVGLog() << "Invalid style option " << name << ":" << value << " for " << getTagName();
   }
 }
 
@@ -897,9 +1027,33 @@ setSelected(bool selected, bool hier)
   }
 }
 
+//---
+
+bool
+CSVGObject::
+handleOption(const std::string &name, const std::string &value)
+{
+  setNameValue(name, value);
+
+  return processOption(name, value);
+}
+
 bool
 CSVGObject::
 processOption(const std::string &optName, const std::string &optValue)
+{
+  if (! processSubOption(optName, optValue)) {
+    if (! svg_.isQuiet())
+      CSVGLog() << "Unhandled option " << optName << " for " << getTagName();
+    return true; // don't propagate warning
+  }
+
+  return true;
+}
+
+bool
+CSVGObject::
+processSubOption(const std::string &optName, const std::string &optValue)
 {
   if (processCoreOption           (optName, optValue)) return true;
   if (processConditionalOption    (optName, optValue)) return true;
@@ -943,9 +1097,7 @@ processOption(const std::string &optName, const std::string &optValue)
   }
 
   else {
-    if (! svg_.isQuiet())
-      CSVGLog() << "Unhandled option " << optName << " for " << getTagName();
-    return true; // don't propagate warning
+    return false;
   }
 
   return true;
@@ -988,16 +1140,21 @@ processConditionalOption(const std::string &optName, const std::string &optValue
   std::string str;
 
   // Conditional Attributes
-  if      (svg_.stringOption(optName, optValue, "requiredFeatures", str))
+  if      (svg_.stringOption(optName, optValue, "requiredFeatures", str)) {
     setId(str);
-  else if (svg_.stringOption(optName, optValue, "requiredExtensions", str))
-    nameValues_["requiredExtensions"] = str;
-  else if (svg_.stringOption(optName, optValue, "requiredFonts", str))
-    nameValues_["requiredFonts"] = str;
-  else if (svg_.stringOption(optName, optValue, "requiredFormats", str))
-    nameValues_["requiredFormats"] = str;
-  else if (svg_.stringOption(optName, optValue, "systemLanguage", str))
-    nameValues_["systemLanguage"] = str;
+  }
+  else if (svg_.stringOption(optName, optValue, "requiredExtensions", str)) {
+    //setNameValue("requiredExtensions", str);
+  }
+  else if (svg_.stringOption(optName, optValue, "requiredFonts", str)) {
+    //setNameValue("requiredFonts", str);
+  }
+  else if (svg_.stringOption(optName, optValue, "requiredFormats", str)) {
+    //setNameValue("requiredFormats", str);
+  }
+  else if (svg_.stringOption(optName, optValue, "systemLanguage", str)) {
+    //setNameValue("systemLanguage", str);
+  }
   else
     return false;
 
@@ -1075,11 +1232,12 @@ processColorOption(const std::string &optName, const std::string &optValue)
   if      (svg_.colorOption(optName, optValue, "color", color, inherit)) {
     setCurrentColor(color);
   }
-  else if (svg_.stringOption(optName, optValue, "color-interpolation", str))
-    nameValues_["color-interpolation"] = str;
+  else if (svg_.stringOption(optName, optValue, "color-interpolation", str)) {
+    //setNameValue("color-interpolation", str);
+  }
   else if (svg_.stringOption(optName, optValue, "color-rendering", str)) {
     // auto | optimizeSpeed | optimizeQuality | inherit
-    nameValues_["color-rendering"] = str;
+    //setNameValue("color-rendering", str);
   }
   else if (svg_.colorOption(optName, optValue, "solid-color", color, inherit)) {
     notHandled(optName, optValue);
@@ -1097,8 +1255,9 @@ processColorProfileOption(const std::string &optName, const std::string &optValu
   std::string str;
 
   // Color Profile
-  if (svg_.stringOption(optName, optValue, "color-profile", str))
-    nameValues_["color-profile"] = str;
+  if (svg_.stringOption(optName, optValue, "color-profile", str)) {
+    //setNameValue("color-profile", str);
+  }
   else
     return false;
 
@@ -1112,8 +1271,9 @@ processFilterColorOption(const std::string &optName, const std::string &optValue
   std::string str;
 
   // Filter Color
-  if (svg_.stringOption(optName, optValue, "color-interpolation-filters", str))
-    nameValues_["color-interpolation-filters"] = str;
+  if (svg_.stringOption(optName, optValue, "color-interpolation-filters", str)) {
+    //setNameValue("color-interpolation-filters", str);
+  }
   else
     return false;
 
@@ -1157,26 +1317,32 @@ processGraphicsOption(const std::string &optName, const std::string &optValue)
     setDisplay(str);
   else if (svg_.stringOption(optName, optValue, "image-rendering", str)) {
     // auto | optimizeSpeed | optimizeQuality | inherit
-    nameValues_["image-rendering"] = str;
+    //setNameValue("image-rendering", str);
   }
-  else if (svg_.stringOption(optName, optValue, "pointer-events", str))
+  else if (svg_.stringOption(optName, optValue, "pointer-events", str)) {
     // visiblePainted | visibleFill | visibleStroke | visible | painted | fill |
     // stroke | all | none | inherit
-    nameValues_["pointer-events"] = str;
-  else if (svg_.stringOption(optName, optValue, "shape-rendering", str))
+    //setNameValue("pointer-events", str);
+  }
+  else if (svg_.stringOption(optName, optValue, "shape-rendering", str)) {
     // auto | optimizeSpeed | crispEdges | geometricPrecision | inherit
-    nameValues_["shape-rendering"] = str;
-  else if (svg_.stringOption(optName, optValue, "text-rendering", str)) // TODO: duplicate
+    //setNameValue("shape-rendering", str);
+  }
+  else if (svg_.stringOption(optName, optValue, "text-rendering", str)) { // TODO: duplicate
     // auto | optimizeSpeed | optimizeLegibility | geometricPrecision | inherit
-    nameValues_["text-rendering"] = str;
-  else if (svg_.stringOption(optName, optValue, "buffered-rendering", str))
+    //setNameValue("text-rendering", str);
+  }
+  else if (svg_.stringOption(optName, optValue, "buffered-rendering", str)) {
     // auto | dynamic | static | inherit
-    nameValues_["buffered-rendering"] = str;
-  else if (svg_.stringOption(optName, optValue, "visibility", str))
+    //setNameValue("buffered-rendering", str);
+  }
+  else if (svg_.stringOption(optName, optValue, "visibility", str)) {
     setVisibility(str); // visible | hidden | collapse | inherit
-  else if (svg_.stringOption(optName, optValue, "vector-effect", str))
+  }
+  else if (svg_.stringOption(optName, optValue, "vector-effect", str)) {
     // non-scaling-stroke | none | inherit
-    nameValues_["vector-effect"] = str;
+    //setNameValue("vector-effect", str);
+  }
   else
     return false;
 
@@ -1256,12 +1422,15 @@ processPresentationOption(const std::string &optName, const std::string &optValu
   if (processCursorOption      (optName, optValue)) return true;
 
   // Presentation
-  if      (svg_.stringOption(optName, optValue, "flood-color", str))
-    nameValues_["flood-color"] = str;
-  else if (svg_.stringOption(optName, optValue, "flood-opacity", str))
-    nameValues_["flood-opacity"] = str;
-  else if (svg_.stringOption(optName, optValue, "lighting-color", str))
-    nameValues_["lighting-color"] = str;
+  if      (svg_.stringOption(optName, optValue, "flood-color", str)) {
+    //setNameValue("flood-color", str);
+  }
+  else if (svg_.stringOption(optName, optValue, "flood-opacity", str)) {
+    //setNameValue("flood-opacity", str);
+  }
+  else if (svg_.stringOption(optName, optValue, "lighting-color", str)) {
+    //setNameValue("lighting-color", str);
+  }
   else
     return false;
 
@@ -1306,8 +1475,9 @@ processViewportOption(const std::string &optName, const std::string &optValue)
   double      real;
   bool        inherit;
 
-  if      (svg_.stringOption(optName, optValue, "clip", str))
-    nameValues_["clip"] = str;
+  if      (svg_.stringOption(optName, optValue, "clip", str)) {
+    //setNameValue("clip", str);
+  }
   else if (svg_.stringOption(optName, optValue, "overflow", str))
     setOverflow(str);
   else if (svg_.colorOption(optName, optValue, "viewport-fill", color, inherit))
@@ -1389,26 +1559,36 @@ processGraphicalEventsOption(const std::string &optName, const std::string &optV
 {
   std::string str;
 
-  if      (svg_.stringOption(optName, optValue, "onfocusin"  , str))
-    nameValues_["onfocusin"] = str;
-  else if (svg_.stringOption(optName, optValue, "onfocusout" , str))
-    nameValues_["onfocusout"] = str;
-  else if (svg_.stringOption(optName, optValue, "onactivate" , str))
-    nameValues_["onactivate"] = str;
-  else if (svg_.stringOption(optName, optValue, "onclick"    , str))
-    nameValues_["onclick"] = str;
-  else if (svg_.stringOption(optName, optValue, "onmousedown", str))
-    nameValues_["onmousedown"] = str;
-  else if (svg_.stringOption(optName, optValue, "onmouseup"  , str))
-    nameValues_["onmouseup"] = str;
-  else if (svg_.stringOption(optName, optValue, "onmouseover", str))
-    nameValues_["onmouseover"] = str;
-  else if (svg_.stringOption(optName, optValue, "onmousemove", str))
-    nameValues_["onmousemove"] = str;
-  else if (svg_.stringOption(optName, optValue, "onmouseout" , str))
-    nameValues_["onmouseout"] = str;
-  else if (svg_.stringOption(optName, optValue, "onload"     , str))
-    nameValues_["onload"] = str;
+  if      (svg_.stringOption(optName, optValue, "onfocusin"  , str)) {
+    //setNameValue("onfocusin", str);
+  }
+  else if (svg_.stringOption(optName, optValue, "onfocusout" , str)) {
+    //setNameValue("onfocusout", str);
+  }
+  else if (svg_.stringOption(optName, optValue, "onactivate" , str)) {
+    //setNameValue("onactivate", str);
+  }
+  else if (svg_.stringOption(optName, optValue, "onclick"    , str)) {
+    //setNameValue("onclick", str);
+  }
+  else if (svg_.stringOption(optName, optValue, "onmousedown", str)) {
+    //setNameValue("onmousedown", str);
+  }
+  else if (svg_.stringOption(optName, optValue, "onmouseup"  , str)) {
+    //setNameValue("onmouseup", str);
+  }
+  else if (svg_.stringOption(optName, optValue, "onmouseover", str)) {
+    //setNameValue("onmouseover", str);
+  }
+  else if (svg_.stringOption(optName, optValue, "onmousemove", str)) {
+    //setNameValue("onmousemove", str);
+  }
+  else if (svg_.stringOption(optName, optValue, "onmouseout" , str)) {
+    //setNameValue("onmouseout", str);
+  }
+  else if (svg_.stringOption(optName, optValue, "onload"     , str)) {
+    //setNameValue("onload", str);
+  }
   else
     return false;
 
@@ -1445,14 +1625,18 @@ processAnimationEventsOption(const std::string &optName, const std::string &optV
 {
   std::string str;
 
-  if      (svg_.stringOption(optName, optValue, "onbegin", str))
-    nameValues_["onbegin"] = str;
-  else if (svg_.stringOption(optName, optValue, "onend", str))
-    nameValues_["onend"] = str;
-  else if (svg_.stringOption(optName, optValue, "onrepeat", str))
-    nameValues_["onrepeat"] = str;
-  else if (svg_.stringOption(optName, optValue, "onload", str))
-    nameValues_["onload"] = str;
+  if      (svg_.stringOption(optName, optValue, "onbegin", str)) {
+    //setNameValue("onbegin", str);
+  }
+  else if (svg_.stringOption(optName, optValue, "onend", str)) {
+    //setNameValue("onend", str);
+  }
+  else if (svg_.stringOption(optName, optValue, "onrepeat", str)) {
+    //setNameValue("onrepeat", str);
+  }
+  else if (svg_.stringOption(optName, optValue, "onload", str)) {
+    //setNameValue("onload", str);
+  }
   else
     return false;
 
@@ -1502,19 +1686,37 @@ processFontOption(const std::string &optName, const std::string &optValue)
     setFontFamily(! inherit ? FontFamily(str) : FontFamily::inherit());
   else if (svg_.fontSizeOption(optName, optValue, "font-size", length, inherit))
     setFontSize(! inherit ? FontSize(length) : FontSize::inherit());
-  else if (svg_.stringOption(optName, optValue, "font-size-adjust", str))
-    nameValues_["font-size-adjust"] = str;
-  else if (svg_.stringOption(optName, optValue, "font-stretch", str))
-    nameValues_["font-stretch"] = str;
-  else if (svg_.stringOption(optName, optValue, "font-style", str))
+  else if (svg_.stringOption(optName, optValue, "font-size-adjust", str)) {
+    //setNameValue("font-size-adjust", str);
+  }
+  else if (svg_.stringOption(optName, optValue, "font-stretch", str)) {
+    //setNameValue("font-stretch", str);
+  }
+  else if (svg_.stringOption(optName, optValue, "font-style", str)) {
     setFontStyle(str);
+  }
   // normal | small-caps | inherit
-  else if (svg_.stringOption(optName, optValue, "font-variant", str))
-    nameValues_["font-variant"] = str;
-  else if (svg_.stringOption(optName, optValue, "font-weight", str))
+  else if (svg_.stringOption(optName, optValue, "font-variant", str)) {
+    //setNameValue("font-variant", str);
+  }
+  else if (svg_.stringOption(optName, optValue, "font-weight", str)) {
     setFontWeight(str);
-  else if (svg_.stringOption(optName, optValue, "-inkscape-font-specification", str))
-   nameValues_["-inkscape-font-specification"] = str;
+  }
+  else if (svg_.stringOption(optName, optValue, "line-increment", str)) {
+    //setNameValue("line-increment", str);
+  }
+  else if (svg_.stringOption(optName, optValue, "text-align", str)) {
+    //setNameValue("text-align", str);
+  }
+  else if (svg_.stringOption(optName, optValue, "display-align", str)) {
+    //setNameValue("display-align", str);
+  }
+  else if (svg_.stringOption(optName, optValue, "line-height", str)) {
+    //setNameValue("line-height", str);
+  }
+  else if (svg_.stringOption(optName, optValue, "-inkscape-font-specification", str)) {
+    //setNameValue("-inkscape-font-specification", str);
+  }
   else
     return false;
 
@@ -1553,8 +1755,10 @@ parseFont(const std::string &str)
       setFontFamily(FontFamily(words[0]));
   }
   else {
-    CSVGLog() << "Invalid font string '" << str << "'";
-    return false;
+    //CSVGLog() << "Invalid font string '" << str << "'";
+    //return false;
+
+    setFontFamily(FontFamily(str));
   }
 
   return true;
@@ -1583,37 +1787,48 @@ processTextContentOption(const std::string &optName, const std::string &optValue
   CScreenUnits length;
 
   // Text content propeties
-  if      (svg_.stringOption(optName, optValue, "alignment-baseline", str))
-    nameValues_["alignment-baseline"] = str;
-  else if (svg_.stringOption(optName, optValue, "baseline-shift", str))
+  if      (svg_.stringOption(optName, optValue, "alignment-baseline", str)) {
+    //setNameValue("alignment-baseline", str);
+  }
+  else if (svg_.stringOption(optName, optValue, "baseline-shift", str)) {
     setTextBaselineShift(str);
-  else if (svg_.stringOption(optName, optValue, "dominant-baseline", str))
-    nameValues_["dominant-baseline"] = str;
-  else if (svg_.stringOption(optName, optValue, "glyph-orientation-horizontal", str))
+  }
+  else if (svg_.stringOption(optName, optValue, "dominant-baseline", str)) {
+    //setNameValue("dominant-baseline", str);
+  }
+  else if (svg_.stringOption(optName, optValue, "glyph-orientation-horizontal", str)) {
     setHGlyphOrient(str);
-  else if (svg_.stringOption(optName, optValue, "glyph-orientation-vertical", str))
+  }
+  else if (svg_.stringOption(optName, optValue, "glyph-orientation-vertical", str)) {
     setVGlyphOrient(str);
-  else if (svg_.stringOption(optName, optValue, "kerning", str))
-    nameValues_["kerning"] = str;
-  else if (svg_.stringOption(optName, optValue, "text-anchor", str))
+  }
+  else if (svg_.stringOption(optName, optValue, "kerning", str)) {
+    //setNameValue("kerning", str);
+  }
+  else if (svg_.stringOption(optName, optValue, "text-anchor", str)) {
     setTextAnchor(str);
+  }
   else if (svg_.stringOption(optName, optValue, "direction", str)) {
     // ltr | rtl | inherit
-    nameValues_["direction"] = str;
+    //setNameValue("direction", str);
   }
-  else if (svg_.letterSpacingOption(optName, optValue, "letter-spacing", length))
+  else if (svg_.letterSpacingOption(optName, optValue, "letter-spacing", length)) {
     letterSpacing_ = length;
-  else if (svg_.stringOption(optName, optValue, "text-decoration", str))
+  }
+  else if (svg_.stringOption(optName, optValue, "text-decoration", str)) {
     setTextDecoration(str);
+  }
   else if (svg_.stringOption(optName, optValue, "text-rendering", str)) {
     // auto | optimizeSpeed | optimizeLegibility | geometricPrecision | inherit
-    nameValues_["text-rendering"] = str;
+    //setNameValue("text-rendering", str);
   }
   // normal | embed | bidi-override | inherit
-  else if (svg_.stringOption(optName, optValue, "unicode-bidi", str))
-    nameValues_["unicode-bidi"] = str;
-  else if (svg_.wordSpacingOption(optName, optValue, "word-spacing", length))
+  else if (svg_.stringOption(optName, optValue, "unicode-bidi", str)) {
+    //setNameValue("unicode-bidi", str);
+  }
+  else if (svg_.wordSpacingOption(optName, optValue, "word-spacing", length)) {
     wordSpacing_ = length;
+  }
   else
     return false;
 
@@ -1626,8 +1841,15 @@ processCSSOption(const std::string &optName, const std::string &optValue)
 {
   std::string str;
 
-  if (svg_.stringOption(optName, optValue, "background-color", str))
-    nameValues_["background-color"] = str;
+  if      (svg_.stringOption(optName, optValue, "background-color", str)) {
+    //setNameValue("background-color", str);
+  }
+  else if (svg_.stringOption(optName, optValue, "mix-blend-mode", str)) {
+    //setNameValue("mix-blend-mode", str);
+  }
+  else if (svg_.stringOption(optName, optValue, "isolation", str)) {
+    //setNameValue("isolation", str);
+  }
   else
     return false;
 
@@ -1641,6 +1863,24 @@ notHandled(const std::string &optName, const std::string &optValue)
   if (! svg_.isQuiet())
     CSVGLog() << "Option " << optName << ":" << optValue << " not handled " <<
                  "for " << getTagName();
+}
+
+//---
+
+void
+CSVGObject::
+setNameValue(const std::string &name, const std::string &value)
+{
+  nameValues_[name] = value;
+}
+
+bool
+CSVGObject::
+hasNameValue(const std::string &name) const
+{
+  auto p = nameValues_.find(name);
+
+  return (p != nameValues_.end());
 }
 
 COptString
@@ -1660,8 +1900,8 @@ getNameValue(const std::string &name) const
 
     str = CStrUtil::toString(bbox.getXMin()) + ", " +
           CStrUtil::toString(bbox.getYMin()) + ", " +
-          CStrUtil::toString(bbox.getXMax()) + ", " +
-          CStrUtil::toString(bbox.getYMax());
+          CStrUtil::toString(bbox.getWidth()) + ", " +
+          CStrUtil::toString(bbox.getHeight());
   }
   else if (name == "transform") {
     str = getTransform().toString();
@@ -1711,18 +1951,15 @@ getIntegerNameValue(const std::string &name) const
   return COptInt(i);
 }
 
-void
-CSVGObject::
-setNameValue(const std::string &name, const std::string &value)
-{
-  nameValues_[name] = value;
-}
+//---
 
 void
 CSVGObject::
 setStyleValue(const std::string &name, const std::string &value)
 {
   styleValues_[name] = value;
+
+  //---
 
   std::string lname = CStrUtil::toLower(name);
 
@@ -1794,6 +2031,31 @@ setStyleValue(const std::string &name, const std::string &value)
   else
     CSVGLog() << "Unhandled style name: " << name << ":" << value;
 }
+
+bool
+CSVGObject::
+hasStyleValue(const std::string &name) const
+{
+  auto p = styleValues_.find(name);
+
+  return (p != styleValues_.end());
+}
+
+COptString
+CSVGObject::
+getStyleValue(const std::string &name) const
+{
+  COptString str;
+
+  auto p = nameValues_.find(name);
+
+  if (p != nameValues_.end())
+    str = (*p).second;
+
+  return str;
+}
+
+//---
 
 bool
 CSVGObject::
@@ -1894,7 +2156,7 @@ void
 CSVGObject::
 setTextBaselineShift(const std::string &str)
 {
-  nameValues_["baseline-shift"] = str;
+  //setNameValue("baseline-shift", str);
 
   if      (str == "super") fontDef_.setSuperscript(true);
   else if (str == "sub"  ) fontDef_.setSubscript(true);
@@ -1953,8 +2215,8 @@ getFlatMarkerMid() const
   if (marker)
     return marker;
 
-  if (parent_)
-    return parent_->getFlatMarkerMid();
+  if (getParent())
+    return getParent()->getFlatMarkerMid();
 
   return nullptr;
 }
@@ -1968,8 +2230,8 @@ getFlatMarkerEnd() const
   if (marker)
     return marker;
 
-  if (parent_)
-    return parent_->getFlatMarkerEnd();
+  if (getParent())
+    return getParent()->getFlatMarkerEnd();
 
   return nullptr;
 }
@@ -2081,6 +2343,33 @@ getAllChildrenOfId(const std::string &id, ObjectArray &objects)
 
   for (const auto &c : children())
     c->getAllChildrenOfId(id, objects);
+
+  return ! objects.empty();
+}
+
+bool
+CSVGObject::
+getHierChildrenOfId(const std::string &id, ObjectArray &objects)
+{
+  if (id == "")
+    return false;
+
+  std::vector<std::string> words;
+
+  CStrUtil::addFields(id, words, "/");
+
+  if (words.size() == 1)
+    getChildrenOfId(id, objects);
+  else {
+    ObjectArray parentObjects;
+
+    getChildrenOfId(words[0], parentObjects);
+
+    auto childId = CStrUtil::toString(words, 1, -1, "/");
+
+    for (const auto &parentObj : parentObjects)
+      parentObj->getHierChildrenOfId(childId, objects);
+  }
 
   return ! objects.empty();
 }
@@ -2458,8 +2747,8 @@ CSVGObject::
 isHierVisible(bool defValue) const
 {
   if (! hasVisibility()) {
-    if (parent_)
-      return parent_->isHierVisible();
+    if (getParent())
+      return getParent()->isHierVisible();
 
     return defValue;
   }
@@ -2659,10 +2948,10 @@ getParentViewBox(CBBox2D &bbox) const
     return true;
   }
 
-  if (! parent_)
+  if (! getParent())
     return false;
 
-  return parent_->getParentViewBox(bbox);
+  return getParent()->getParentViewBox(bbox);
 }
 
 bool
@@ -2717,6 +3006,9 @@ bool
 CSVGObject::
 inside(const CPoint2D &pos) const
 {
+  if (! isHierDrawable())
+    return false;
+
   CBBox2D bbox;
 
   if (! getFlatTransformedBBox(bbox))
@@ -2989,8 +3281,9 @@ decodeXLink(const std::string &str, CSVGObject **object, CSVGBuffer **buffer)
     }
 
     if (! object1) {
-      CSVGLog() << "Object '" << rhs << "' does not exist";
-      return true; // don't propagate warning
+      //CSVGLog() << "Object '" << rhs << "' does not exist";
+      //return true; // don't propagate warning
+      return false;
     }
 
     if (object)
@@ -3150,48 +3443,34 @@ void
 CSVGObject::
 execEvent(CSVGEventType type)
 {
-  if      (type == CSVGEventType::LOAD) {
-    auto p = nameValues_.find("onload");
+  auto execNamedEvent = [&](const std::string &name) {
+    if (hasNameValue(name))
+      svg_.execJsEvent(this, getNameValue(name).getValue());
+  };
 
-    if (p != nameValues_.end()) {
-      svg_.execJsEvent(this, (*p).second);
-    }
-  }
-  else if (type == CSVGEventType::MOUSE_OVER) {
-    auto p = nameValues_.find("onmouseover");
+  if      (type == CSVGEventType::LOAD)
+    execNamedEvent("onload");
+  else if (type == CSVGEventType::MOUSE_OVER)
+    execNamedEvent("onmouseover");
+  else if (type == CSVGEventType::MOUSE_OUT)
+    execNamedEvent("onmouseout");
+  else if (type == CSVGEventType::CLICK)
+    execNamedEvent("onclick");
+  else if (type == CSVGEventType::BEGIN)
+    execNamedEvent("onbegin");
+  else if (type == CSVGEventType::END)
+    execNamedEvent("onend");
+}
 
-    if (p != nameValues_.end()) {
-      svg_.execJsEvent(this, (*p).second);
-    }
-  }
-  else if (type == CSVGEventType::MOUSE_OUT) {
-    auto p = nameValues_.find("onmouseout");
+std::string
+CSVGObject::
+toString(bool hier) const
+{
+  std::stringstream ss;
 
-    if (p != nameValues_.end()) {
-      svg_.execJsEvent(this, (*p).second);
-    }
-  }
-  else if (type == CSVGEventType::CLICK) {
-    auto p = nameValues_.find("onclick");
+  print(ss, hier);
 
-    if (p != nameValues_.end()) {
-      svg_.execJsEvent(this, (*p).second);
-    }
-  }
-  else if (type == CSVGEventType::BEGIN) {
-    auto p = nameValues_.find("onbegin");
-
-    if (p != nameValues_.end()) {
-      svg_.execJsEvent(this, (*p).second);
-    }
-  }
-  else if (type == CSVGEventType::END) {
-    auto p = nameValues_.find("onend");
-
-    if (p != nameValues_.end()) {
-      svg_.execJsEvent(this, (*p).second);
-    }
-  }
+  return ss.str();
 }
 
 void
@@ -3199,7 +3478,7 @@ CSVGObject::
 print(std::ostream &os, bool hier) const
 {
   if (hier) {
-    std::string s = getText();
+    auto s = getText();
 
     os << "<" << getTagName();
 
@@ -3322,7 +3601,7 @@ printValues(std::ostream &os, bool flat) const
     auto viewBox = getViewBox();
 
     os << " viewBox=\"" << viewBox.getXMin() << " " << viewBox.getYMin() <<
-                    " " << viewBox.getXMax() << " " << viewBox.getYMax() << "\"";
+                    " " << viewBox.getWidth() << " " << viewBox.getHeight() << "\"";
   }
 
   printTransform(os, flat);
@@ -3333,8 +3612,14 @@ printValues(std::ostream &os, bool flat) const
 
   printTextContent(os);
 
-  for (const auto &nv : nameValues_)
-    os << " " << nv.first << "=\"" << nv.second << "\"";
+  for (const auto &nv : nameValues_) {
+    auto &name = nv.first;
+
+    auto pn = skipNames_.find(name);
+    if (pn != skipNames_.end()) continue;
+
+    os << " " << name << "=\"" << nv.second << "\"";
+  }
 }
 
 bool
@@ -3389,6 +3674,16 @@ printFilter(std::ostream &os) const
 void
 CSVGObject::
 printStyle(std::ostream &os, bool flat) const
+{
+  auto str = styleString(flat);
+
+  if (str.length())
+    os << " style=\"" << str << "\"";
+}
+
+std::string
+CSVGObject::
+styleString(bool flat) const
 {
   std::stringstream ss;
 
@@ -3500,9 +3795,7 @@ printStyle(std::ostream &os, bool flat) const
     output = true;
   }
 
-  if (output) {
-    os << " style=\"" << ss.str() << "\"";
-  }
+  return ss.str();
 }
 
 void
@@ -3715,4 +4008,11 @@ printNamePercent(std::ostream &os, const std::string &name,
     else
       os << " " << name << "=\"" << units.getValue() << "\"";
   }
+}
+
+void
+CSVGObject::
+accept(CSVGVisitor *visitor)
+{
+  visitor->visit(this);
 }

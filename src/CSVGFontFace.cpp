@@ -152,11 +152,3 @@ printValues(std::ostream &os, bool flat) const
 
   CSVGObject::printValues(os, flat);
 }
-
-std::ostream &
-operator<<(std::ostream &os, const CSVGFontFace &face)
-{
-  face.print(os, false);
-
-  return os;
-}

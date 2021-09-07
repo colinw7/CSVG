@@ -178,7 +178,7 @@ void
 CQSVGImageData::
 subCopyTo(CSVGImageData *dst, int src_x, int src_y, int width, int height, int dst_x, int dst_y)
 {
-  CQSVGImageData *qdst = dynamic_cast<CQSVGImageData *>(dst);
+  auto *qdst = dynamic_cast<CQSVGImageData *>(dst);
   assert(qdst);
 
   int src_width  = getWidth ();
@@ -242,7 +242,7 @@ void
 CQSVGImageData::
 copyAlpha(CSVGImageData *dst, int x, int y)
 {
-  CQSVGImageData *qdst = dynamic_cast<CQSVGImageData *>(dst);
+  auto *qdst = dynamic_cast<CQSVGImageData *>(dst);
   assert(qdst);
 
   int iwidth  = getWidth ();
@@ -313,7 +313,7 @@ reshape(int width, int height)
 
   assert(! locked_);
 
-  CQSVGImageData *qdata = dynamic_cast<CQSVGImageData *>(image);
+  auto *qdata = dynamic_cast<CQSVGImageData *>(image);
   assert(qdata);
 
   qimage_ = qdata->qimage_;
@@ -579,7 +579,7 @@ void
 CQSVGImageData::
 combine(CSVGImageData *in, CRGBABlendMode mode)
 {
-  CQSVGImageData *image = dynamic_cast<CQSVGImageData *>(in);
+  auto *image = dynamic_cast<CQSVGImageData *>(in);
   assert(image);
 
   int w = std::min(getWidth (), image->getWidth ());
@@ -601,7 +601,7 @@ void
 CQSVGImageData::
 combine(CSVGImageData *in, const CRGBACombineDef &def)
 {
-  CQSVGImageData *image = dynamic_cast<CQSVGImageData *>(in);
+  auto *image = dynamic_cast<CQSVGImageData *>(in);
   assert(image);
 
   int w = std::min(getWidth (), image->getWidth ());
@@ -623,7 +623,7 @@ void
 CQSVGImageData::
 combine(int x, int y, CSVGImageData *in)
 {
-  CQSVGImageData *image = dynamic_cast<CQSVGImageData *>(in);
+  auto *image = dynamic_cast<CQSVGImageData *>(in);
   assert(image);
 
   int w = std::min(getWidth (), image->getWidth ());
@@ -649,7 +649,7 @@ void
 CQSVGImageData::
 convolve(CSVGImageData *in, const CImageConvolveData &data)
 {
-  CQSVGImageData *dst = dynamic_cast<CQSVGImageData *>(in);
+  auto *dst = dynamic_cast<CQSVGImageData *>(in);
   assert(dst);
 
   int xsize = data.xsize;
@@ -1011,7 +1011,7 @@ CSVGImageData *
 CQSVGImageData::
 displacementMap(CSVGImageData *in, CRGBAComponent xcolor, CRGBAComponent ycolor, double scale)
 {
-  CQSVGImageData *dispImage = dynamic_cast<CQSVGImageData *>(in);
+  auto *dispImage = dynamic_cast<CQSVGImageData *>(in);
   assert(dispImage);
 
   CSVGImageData *dst = dup();
@@ -1095,7 +1095,7 @@ gaussianBlur(CSVGImageData *in, double stdDevX, double stdDevY)
 
   //---
 
-  CQSVGImageData *qin = dynamic_cast<CQSVGImageData *>(in);
+  auto *qin = dynamic_cast<CQSVGImageData *>(in);
   assert(qin);
 
   CGaussianBlur<CImageWrapper> blur;

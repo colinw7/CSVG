@@ -105,11 +105,3 @@ printValues(std::ostream &os, bool flat) const
   if (filterOut_.isValid())
     os << " result=\"" << filterOut_.getValue() << "\"";
 }
-
-std::ostream &
-operator<<(std::ostream &os, const CSVGFeMergeNode &filter)
-{
-  filter.print(os, false);
-
-  return os;
-}

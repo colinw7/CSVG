@@ -4,7 +4,7 @@
 #include <CSVGObject.h>
 #include <CSVGXLink.h>
 
-class CSVGSwitch : public CSVGObject {
+class CSVGSwitch : public CSVGObject, public CSVGPrintBase<CSVGSwitch> {
  public:
   CSVG_OBJECT_DEF("switch", CSVGObjTypeId::SWITCH)
 
@@ -19,11 +19,11 @@ class CSVGSwitch : public CSVGObject {
 
   bool draw() override;
 
-  void print(std::ostream &os, bool hier) const override;
+  void print(std::ostream &os, bool hier=false) const override;
 
   void printValues(std::ostream &os, bool flat=false) const override;
 
-  friend std::ostream &operator<<(std::ostream &os, const CSVGSwitch &swtch);
+  void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 };
 
 #endif

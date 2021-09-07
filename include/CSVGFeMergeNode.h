@@ -3,7 +3,7 @@
 
 #include <CSVGObject.h>
 
-class CSVGFeMergeNode : public CSVGObject {
+class CSVGFeMergeNode : public CSVGObject, public CSVGPrintBase<CSVGFeMergeNode> {
  public:
   CSVG_OBJECT_DEF("feMergeNode", CSVGObjTypeId::FE_MERGE_NODE)
 
@@ -24,11 +24,11 @@ class CSVGFeMergeNode : public CSVGObject {
 
   CSVGFilter *getParentFilter() const;
 
-  void print(std::ostream &os, bool hier) const override;
+  void print(std::ostream &os, bool hier=false) const override;
 
   void printValues(std::ostream &os, bool flat=false) const override;
 
-  friend std::ostream &operator<<(std::ostream &os, const CSVGFeMergeNode &filter);
+  void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
   COptString filterIn_;

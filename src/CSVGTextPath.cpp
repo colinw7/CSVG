@@ -269,11 +269,3 @@ printValues(std::ostream &os, bool flat) const
 
   CSVGObject::printValues(os, flat);
 }
-
-std::ostream &
-operator<<(std::ostream &os, const CSVGTextPath &text)
-{
-  text.print(os, false);
-
-  return os;
-}

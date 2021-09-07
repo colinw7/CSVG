@@ -42,6 +42,8 @@ class CSVGInheritValT {
   bool isInherit() const { return inherit_; }
   void setInherit(bool b) { inherit_ = b; }
 
+  const T &getValue(const T &def) const { return (! isInherit() ? value_ : def); }
+
   friend std::ostream &operator<<(std::ostream &os, const CSVGInheritValT &v) {
     if (v.isInherit())
       os << "inherit";

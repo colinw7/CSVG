@@ -5,7 +5,7 @@
 
 class CSVGBuffer;
 
-class CSVGFeMerge : public CSVGFilterBase {
+class CSVGFeMerge : public CSVGFilterBase, public CSVGPrintBase<CSVGFeMerge> {
  public:
   CSVG_OBJECT_DEF("feMerge", CSVGObjTypeId::FE_MERGE)
 
@@ -24,11 +24,11 @@ class CSVGFeMerge : public CSVGFilterBase {
 
   bool drawElement() override;
 
-  void print(std::ostream &os, bool hier) const override;
+  void print(std::ostream &os, bool hier=false) const override;
 
   void printValues(std::ostream &os, bool flat=false) const override;
 
-  friend std::ostream &operator<<(std::ostream &os, const CSVGFeMerge &filter);
+  void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
   COptString filterIn_;

@@ -100,11 +100,3 @@ printValues(std::ostream &os, bool flat) const
 {
   CSVGObject::printValues(os, flat);
 }
-
-std::ostream &
-operator<<(std::ostream &os, const CSVGGroup &group)
-{
-  group.print(os, false);
-
-  return os;
-}

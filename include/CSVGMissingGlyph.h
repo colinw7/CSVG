@@ -13,7 +13,7 @@ class CSVGMissingGlyph : public CSVGGlyph {
 
   bool draw() override;
 
-  void print(std::ostream &os, bool hier) const override;
+  void print(std::ostream &os, bool hier=false) const override;
 
   friend std::ostream &operator<<(std::ostream &os, const CSVGMissingGlyph &glyph);
 

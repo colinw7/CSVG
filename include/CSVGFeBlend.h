@@ -5,7 +5,7 @@
 
 class CSVGBuffer;
 
-class CSVGFeBlend : public CSVGFilterBase {
+class CSVGFeBlend : public CSVGFilterBase, public CSVGPrintBase<CSVGFeBlend> {
  public:
   CSVG_OBJECT_DEF("feBlend", CSVGObjTypeId::FE_BLEND)
 
@@ -30,11 +30,11 @@ class CSVGFeBlend : public CSVGFilterBase {
 
   bool drawElement() override;
 
-  void print(std::ostream &os, bool hier) const override;
+  void print(std::ostream &os, bool hier=false) const override;
 
   void printValues(std::ostream &os, bool flat=false) const override;
 
-  friend std::ostream &operator<<(std::ostream &os, const CSVGFeBlend &fe);
+  void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
   COptValT<CSVGBlendMode> mode_;

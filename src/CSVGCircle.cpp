@@ -26,6 +26,7 @@ CSVGCircle::
 CSVGCircle(CSVG &svg) :
  CSVGObject(svg)
 {
+  init();
 }
 
 CSVGCircle::
@@ -35,6 +36,18 @@ CSVGCircle(const CSVGCircle &circle) :
  cy_       (circle.cy_),
  radius_   (circle.radius_)
 {
+  init();
+}
+
+void
+CSVGCircle::
+init()
+{
+  skipNames_.insert("cx");
+  skipNames_.insert("cy");
+  skipNames_.insert("r");
+
+  updateBBox();
 }
 
 CSVGCircle *
@@ -58,7 +71,7 @@ void
 CSVGCircle::
 setCenter(const CPoint2D &center)
 {
-  setCenterX(CScreenUnits(center.x));
+  setCenterX(CScreenUnits(center.x), /*update*/false);
   setCenterY(CScreenUnits(center.y));
 }
 
@@ -95,7 +108,24 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   else
     return false;
 
+  updateBBox();
+
   return true;
+}
+
+void
+CSVGCircle::
+updateBBox()
+{
+  // stroke width ?
+
+  double xc = getCenterX().pxValue(CScreenUnits(1));
+  double yc = getCenterY().pxValue(CScreenUnits(1));
+  double r  = getRadius ().pxValue(CScreenUnits(1));
+
+  bbox_ = CBBox2D(xc - r, yc - r, xc + r, yc + r);
+
+  parts_ = CSVGPathPartList();
 }
 
 COptString
@@ -130,15 +160,18 @@ draw()
 
   auto drawBox = getDrawBBox();
 
-  double w = drawBox.getWidth ();
-  double h = drawBox.getHeight();
+  double dw = drawBox.getWidth ();
+  double dh = drawBox.getHeight();
 
-  double xc = getCenterX().pxValue(CScreenUnits(w));
-  double yc = getCenterY().pxValue(CScreenUnits(h));
-  double r  = getRadius ().pxValue(CScreenUnits(w));
+  double xc = getCenterX().pxValue(CScreenUnits(dw));
+  double yc = getCenterY().pxValue(CScreenUnits(dh));
+  double r  = getRadius ().pxValue(CScreenUnits(dw));
 
+  // skip zero radius
   if (r <= 0)
     return false;
+
+  //---
 
   if (svg_.isCheckViewBox()) {
     CBBox2D fbbox;
@@ -149,6 +182,8 @@ draw()
       CSVGLog() << "Outside viewbox : " << *this;
   }
 
+  //---
+
   svg_.drawCircle(xc, yc, r);
 
   return true;
@@ -158,17 +193,38 @@ bool
 CSVGCircle::
 getBBox(CBBox2D &bbox) const
 {
-  if (! hasViewBox()) {
-    double xc = getCenterX().pxValue(CScreenUnits(1));
-    double yc = getCenterY().pxValue(CScreenUnits(1));
-    double r  = getRadius ().pxValue(CScreenUnits(1));
-
-    bbox = CBBox2D(xc - r, yc - r, xc + r, yc + r);
-  }
+  if (! hasViewBox())
+    bbox = bbox_;
   else
     bbox = getViewBox();
 
   return true;
+}
+
+const CSVGPathPartList &
+CSVGCircle::
+getPartList() const
+{
+  if (parts_.empty()) {
+    auto drawBox = getDrawBBox();
+
+    auto dc = drawBox.getCenter();
+    auto dw = drawBox.getWidth ();
+
+    double x = getCenterX().pxValue(dc.x);
+    double y = getCenterY().pxValue(dc.y);
+    double r = getRadius ().pxValue(dw/2.0);
+
+    double fa = 1;
+    double fs = 0;
+
+    parts_.push_back(svg_.createPathMoveTo(x + r, y));
+    parts_.push_back(svg_.createPathArcTo (r, r, M_PI, fa, fs, x - r, y));
+    parts_.push_back(svg_.createPathArcTo (r, r, M_PI, fa, fs, x + r, y));
+    parts_.push_back(svg_.createPathClosePath());
+  }
+
+  return parts_;
 }
 
 void
@@ -212,12 +268,4 @@ printValues(std::ostream &os, bool flat) const
   printNameValue(os, "cx", cx_);
   printNameValue(os, "cy", cy_);
   printNameValue(os, "r" , radius_);
-}
-
-std::ostream &
-operator<<(std::ostream &os, const CSVGCircle &circle)
-{
-  circle.print(os, false);
-
-  return os;
 }

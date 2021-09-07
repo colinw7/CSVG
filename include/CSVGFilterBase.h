@@ -6,6 +6,8 @@
 
 class CSVGFilterBase : public CSVGObject {
  public:
+  CSVG_OBJECT_DEF("filterBase", CSVGObjTypeId::FILTER_BASE)
+
   CSVGFilterBase(CSVG &svg);
   CSVGFilterBase(const CSVGFilterBase &filter);
 
@@ -75,8 +77,10 @@ class CSVGFilterBase : public CSVGObject {
 
   void printValues(std::ostream &os, bool flat=false) const override;
 
+  void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
+
  protected:
-  CSVGObject*              object_ { 0 };
+  CSVGObject*              object_ { nullptr };
   COptValT<CSVGCoordUnits> filterUnits_;
   COptValT<CSVGCoordUnits> primitiveUnits_;
   COptValT<CScreenUnits>   x_;

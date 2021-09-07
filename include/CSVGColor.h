@@ -1,9 +1,10 @@
 #ifndef CSVGColor_H
 #define CSVGColor_H
 
+#include <CSVGTmpl.h>
 #include <CRGBA.h>
 
-class CSVGColor {
+class CSVGColor : public CSVGEqBase<CSVGColor>, public CSVGPrintBase<CSVGColor> {
  public:
   enum class Type {
     NONE,
@@ -38,12 +39,6 @@ class CSVGColor {
     if      (type_ == Type::NONE   ) os << "none";
     else if (type_ == Type::CURRENT) os << "currentColor";
     else                             os << rgba_.getRGB().stringEncode();
-  }
-
-  friend std::ostream &operator<<(std::ostream &os, const CSVGColor &color) {
-    color.print(os);
-
-    return os;
   }
 
  private:

@@ -3,7 +3,7 @@
 
 #include <CSVGObject.h>
 
-class CSVGHKern : public CSVGObject {
+class CSVGHKern : public CSVGObject, public CSVGPrintBase<CSVGHKern> {
  public:
   CSVG_OBJECT_DEF("hkern", CSVGObjTypeId::HKERN)
 
@@ -18,11 +18,11 @@ class CSVGHKern : public CSVGObject {
 
   bool draw() override;
 
-  void print(std::ostream &os, bool hier) const override;
+  void print(std::ostream &os, bool hier=false) const override;
 
   void printValues(std::ostream &os, bool flat=false) const override;
 
-  friend std::ostream &operator<<(std::ostream &os, const CSVGHKern &hkern);
+  void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
   COptString glyph1_;

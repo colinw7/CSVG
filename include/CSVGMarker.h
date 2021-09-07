@@ -4,7 +4,7 @@
 #include <CSVGObject.h>
 #include <CSVGOrient.h>
 
-class CSVGMarker : public CSVGObject {
+class CSVGMarker : public CSVGObject, public CSVGPrintBase<CSVGMarker> {
  public:
   CSVG_OBJECT_DEF("marker", CSVGObjTypeId::MARKER)
 
@@ -63,11 +63,11 @@ class CSVGMarker : public CSVGObject {
 
   void drawMarker(double x, double y, double angle);
 
-  void print(std::ostream &os, bool hier) const override;
+  void print(std::ostream &os, bool hier=false) const override;
 
   void printValues(std::ostream &os, bool flat=false) const override;
 
-  friend std::ostream &operator<<(std::ostream &os, const CSVGMarker &marker);
+  void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
   COptReal                     refX_;

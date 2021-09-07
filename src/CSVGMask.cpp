@@ -180,11 +180,3 @@ printValues(std::ostream &os, bool flat) const
   if (getContentUnitsValid())
     os << " maskContentUnits=\"" << CSVG::encodeUnitsString(getContentUnits()) << "\"";
 }
-
-std::ostream &
-operator<<(std::ostream &os, const CSVGMask &mask)
-{
-  mask.print(os, false);
-
-  return os;
-}

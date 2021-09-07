@@ -5,7 +5,7 @@
 
 class CSVGStyleData;
 
-class CSVGStyle : public CSVGObject {
+class CSVGStyle : public CSVGObject, public CSVGPrintBase<CSVGStyle> {
  public:
   CSVG_OBJECT_DEF("style", CSVGObjTypeId::STYLE)
 
@@ -20,11 +20,11 @@ class CSVGStyle : public CSVGObject {
 
   bool draw() override;
 
-  void print(std::ostream &os, bool hier) const override;
+  void print(std::ostream &os, bool hier=false) const override;
 
   void printValues(std::ostream &os, bool flat=false) const override;
 
-  friend std::ostream &operator<<(std::ostream &os, const CSVGStyle &style);
+  void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
   bool parseCSS(const std::string &str);

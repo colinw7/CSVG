@@ -4,11 +4,12 @@
 #include <QMainWindow>
 #include <CHRTimer.h>
 
-class CQSVG;
 class CQSVGCanvas;
+class CQSVG;
 class CQSVGPropertiesDlg;
 class CQSVGBufferView;
 class CQSVGJSDialog;
+
 class CQPropertyTree;
 class CSVGObject;
 class QLabel;
@@ -18,11 +19,10 @@ class QLineEdit;
 class CQSVGWindow : public QMainWindow {
   Q_OBJECT
 
-  Q_PROPERTY(CQSVG*   svg      READ svg)
-  Q_PROPERTY(bool     isImage  READ isImage  WRITE setIsImage )
-  Q_PROPERTY(QString  imageDir READ imageDir WRITE setImageDir)
-  Q_PROPERTY(QString  rootId   READ rootId   WRITE setRootId  )
-  Q_PROPERTY(bool     print    READ isPrint  WRITE setPrint   )
+  Q_PROPERTY(bool    isImage  READ isImage  WRITE setIsImage )
+  Q_PROPERTY(QString imageDir READ imageDir WRITE setImageDir)
+  Q_PROPERTY(QString rootId   READ rootId   WRITE setRootId  )
+  Q_PROPERTY(bool    print    READ isPrint  WRITE setPrint   )
 
  public:
   using Files = std::vector<QString>;
@@ -30,14 +30,19 @@ class CQSVGWindow : public QMainWindow {
 
  public:
   CQSVGWindow();
-
  ~CQSVGWindow();
 
-  CQSVG *svg() const { return svg_; }
+  //---
 
   CQSVGCanvas *canvas() const { return canvas_; }
 
   CQPropertyTree *propertiesTree() const { return propTree_; }
+
+  //---
+
+  CQSVG *svg() const;
+
+  //---
 
   bool isImage() const { return image_; }
   void setIsImage(bool b) { image_ = b; }
@@ -73,6 +78,8 @@ class CQSVGWindow : public QMainWindow {
   QSize sizeHint() const override;
 
  private:
+  void addMenus();
+
   void updateAltRoot();
 
   void updateTitle();
@@ -113,36 +120,43 @@ class CQSVGWindow : public QMainWindow {
   void timeSlot();
 
  private:
-  CQSVG*              svg_            { 0 };
-  CQSVGCanvas*        canvas_         { 0 };
-  CQPropertyTree*     propTree_       { 0 };
-  QLabel*             posLabel_       { 0 };
-  QLabel*             zoomLabel_      { 0 };
-  QToolButton*        busyButton_     { 0 };
-  CQSVGPropertiesDlg* propertiesDlg_  { 0 };
-  CQSVGBufferView*    bufferView_     { 0 };
-  CQSVGJSDialog*      jsDlg_          { 0 };
-  QAction*            nextAction_     { 0 };
-  QAction*            prevAction_     { 0 };
-  QMenu*              animateMenu_    { 0 };
-  QAction*            playAction_     { 0 };
-  QAction*            pauseAction_    { 0 };
-  QAction*            stepAction_     { 0 };
-  QAction*            bstepAction_    { 0 };
-  QToolBar*           animateToolBar_ { 0 };
-  QLineEdit*          timeEdit_       { 0 };
-  bool                image_          { false };
-  QString             imageDir_;
-  QString             rootId_;
-  bool                print_          { false };
-  Files               files_;
-  int                 fileInd_        { -1 };
-  Ids                 rootIds_;
-  int                 rootInd_        { -1 };
-  bool                initialized_    { false };
-  CHRTime             startTime_;
-  CHRTime             busyTime_;
-  CHRTime             endTime_;
+  CQSVGCanvas*        canvas_        { nullptr };
+  CQPropertyTree*     propTree_      { nullptr };
+  QLabel*             posLabel_      { nullptr };
+  QLabel*             zoomLabel_     { nullptr };
+  QToolButton*        busyButton_    { nullptr };
+  CQSVGPropertiesDlg* propertiesDlg_ { nullptr };
+  CQSVGBufferView*    bufferView_    { nullptr };
+  CQSVGJSDialog*      jsDlg_         { nullptr };
+
+  QAction*  nextAction_       { nullptr };
+  QAction*  prevAction_       { nullptr };
+  QMenu*    animateMenu_      { nullptr };
+  QAction*  playAction_       { nullptr };
+  QAction*  pauseAction_      { nullptr };
+  QAction*  stepAction_       { nullptr };
+  QAction*  bstepAction_      { nullptr };
+  QAction*  propertiesAction_ { nullptr };
+  QAction*  buffersAction_    { nullptr };
+  QAction*  jsAction_         { nullptr };
+  QToolBar* animateToolBar_   { nullptr };
+
+  QLineEdit* timeEdit_ { nullptr };
+
+  bool    image_ { false };
+  QString imageDir_;
+
+  QString rootId_;
+  bool    print_          { false };
+  Files   files_;
+  int     fileInd_        { -1 };
+  Ids     rootIds_;
+  int     rootInd_        { -1 };
+  bool    initialized_    { false };
+
+  CHRTime startTime_;
+  CHRTime busyTime_;
+  CHRTime endTime_;
 };
 
 #endif

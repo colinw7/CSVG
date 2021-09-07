@@ -85,11 +85,3 @@ printValues(std::ostream &os, bool flat) const
 
   printNameValue(os, "stop-opacity", opacity_);
 }
-
-std::ostream &
-operator<<(std::ostream &os, const CSVGStop &stop)
-{
-  stop.print(os, false);
-
-  return os;
-}

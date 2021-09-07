@@ -3,7 +3,7 @@
 
 #include <CSVGObject.h>
 
-class CSVGMetaData : public CSVGObject {
+class CSVGMetaData : public CSVGObject, public CSVGPrintBase<CSVGMetaData> {
  public:
   CSVG_OBJECT_DEF("metadata", CSVGObjTypeId::METADATA)
 
@@ -13,11 +13,15 @@ class CSVGMetaData : public CSVGObject {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  bool draw() override;
+  bool isHierDrawable() const override { return false; }
 
-  void print(std::ostream &os, bool hier) const override;
+  bool getBBox(CBBox2D &) const override { return false; }
 
-  friend std::ostream &operator<<(std::ostream &os, const CSVGMetaData &glyph);
+  bool draw() override { return false; }
+
+  void print(std::ostream &os, bool hier=false) const override;
+
+  void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 };
 
 #endif

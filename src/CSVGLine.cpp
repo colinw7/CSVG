@@ -169,7 +169,7 @@ inside(const CPoint2D &pos) const
   if (! CMathGeom2D::PointLineDistance(pos, CLine2D(p1, p2), &d))
     return false;
 
-  return (d <= getFlatStrokeWidth().getValue().getValue());
+  return (d <= getFlatStrokeWidth().getValue(Width(0.0)).getValue());
 }
 
 void
@@ -219,12 +219,4 @@ printValues(std::ostream &os, bool flat) const
   printNameLength(os, "y1", y1_);
   printNameLength(os, "x2", x2_);
   printNameLength(os, "y2", y2_);
-}
-
-std::ostream &
-operator<<(std::ostream &os, const CSVGLine &line)
-{
-  line.print(os, false);
-
-  return os;
 }

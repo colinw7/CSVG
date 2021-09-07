@@ -88,6 +88,7 @@ class CSVGStop;
 class CSVGStyle;
 class CSVGSymbol;
 class CSVGSwitch;
+class CSVGTBreak;
 class CSVGText;
 class CSVGTextPath;
 class CSVGTitle;
@@ -132,13 +133,15 @@ class CSVG {
   };
 
  public:
-  CSVG(CSVGRenderer *renderer=0);
+  CSVG(CSVGRenderer *renderer=nullptr);
 
   virtual ~CSVG();
 
   virtual CSVG *dup() const;
 
-  void          setRenderer(CSVGRenderer *renderer);
+  //---
+
+  void setRenderer(CSVGRenderer *renderer);
   CSVGRenderer *getRenderer() const { return renderer_; }
 
   //---
@@ -162,16 +165,16 @@ class CSVG {
   const CSVGBlockData &blockData() { return blockData_; }
 
   const CPoint2D &offset() const { return blockData_.offset(); }
-  //void setOffset(const CPoint2D &o) { blockData_.setOffset(o); }
+//void setOffset(const CPoint2D &o) { blockData_.setOffset(o); }
 
   double xscale() const { return blockData_.xscale(); }
-  //void setXScale(double s) { blockData_.setXScale(s); }
+//void setXScale(double s) { blockData_.setXScale(s); }
 
   double yscale() const { return blockData_.yscale(); }
-  //void setYScale(double s) { blockData_.setYScale(s); }
+//void setYScale(double s) { blockData_.setYScale(s); }
 
   const CSVGPreserveAspect &preserveAspect() const { return blockData_.preserveAspect(); }
-  //void setPreserveAspect(const CSVGPreserveAspect &a) { blockData_.setPreserveAspect(a); }
+//void setPreserveAspect(const CSVGPreserveAspect &a) { blockData_.setPreserveAspect(a); }
 
   //---
 
@@ -289,6 +292,8 @@ class CSVG {
   bool read(const std::string &filename);
   bool read(const std::string &filename, CSVGObject *object);
 
+  //---
+
   virtual CSVGObject *createObjectByName(const std::string &name);
 
 #ifdef CSVG_JAVASCRIPT
@@ -300,6 +305,7 @@ class CSVG {
   virtual CSVGAnimateColor        *createAnimateColor();
   virtual CSVGAnimateMotion       *createAnimateMotion();
   virtual CSVGAnimateTransform    *createAnimateTransform();
+  virtual CSVGAudio               *createAudio();
   virtual CSVGCircle              *createCircle();
   virtual CSVGClipPath            *createClipPath();
   virtual CSVGColorProfile        *createColorProfile();
@@ -355,6 +361,7 @@ class CSVG {
   virtual CSVGSymbol              *createSymbol();
   virtual CSVGStyle               *createStyle();
   virtual CSVGSwitch              *createSwitch();
+  virtual CSVGTBreak              *createTBreak();
   virtual CSVGText                *createText();
   virtual CSVGTextPath            *createTextPath();
   virtual CSVGTitle               *createTitle();
@@ -394,7 +401,11 @@ class CSVG {
 
   virtual CSVGPathClosePath *createPathClosePath(bool relative=false);
 
+  //---
+
   virtual void redraw() { }
+
+  //---
 
   double getXMin() const;
   double getYMin() const;
@@ -405,8 +416,10 @@ class CSVG {
   int getIWidth () const { return int(getWidth ()); }
   int getIHeight() const { return int(getHeight()); }
 
+  //---
+
   const CRGBA &background() const { return background_; }
-  void setBackground(const CRGBA &v) { background_ = v; }
+  void setBackground(const CRGBA &c) { background_ = c; }
 
   //---
 
@@ -446,12 +459,21 @@ class CSVG {
 
   //bool processOption(const std::string &opt_name, const std::string &opt_value);
 
+  //---
+
+  double fontDpi() const { return fontDpi_; }
+  void setFontDpi(double r) { fontDpi_ = r; }
+
+  //---
+
   void addFont(CSVGFont *font);
 
   CSVGFont *getFont() const;
 
   CSVGGlyph *getCharGlyph(char c) const;
   CSVGGlyph *getUnicodeGlyph(const std::string &unicode) const;
+
+  //---
 
   void drawToBuffer(CSVGBuffer *buffer, int w, int h, const CPoint2D &offset=CPoint2D(0, 0),
                     double xscale=1, double yscale=1);
@@ -468,6 +490,9 @@ class CSVG {
   void drawRoot(CSVGBlock *block, const CPoint2D &offset=CPoint2D(0, 0),
                 double xscale=1, double yscale=1,
                 const CSVGPreserveAspect &preserveAspect=CSVGPreserveAspect());
+
+  virtual void drawBackground() { }
+  virtual void drawForeground() { }
 
   //---
 
@@ -740,6 +765,8 @@ class CSVG {
 
   void getChildrenOfId(const std::string &id, ObjectList &objects) const;
 
+  void getSelectedObjects(ObjectList &objects) const;
+
   //--
 
   void sendEvent(CSVGEventType type, const std::string &id="", const std::string &data="");
@@ -778,7 +805,7 @@ class CSVG {
     CSVGFill    fill;
     CSVGClip    clip;
     CSVGFontDef fontDef;
-    CSVGObject* object { 0 };
+    CSVGObject* object { nullptr };
   };
 
   struct AltData {
@@ -821,6 +848,7 @@ class CSVG {
   CRGBA            background_    { 1, 1, 1};
   StyleData        styleData_;
   StyleDataStack   styleDataStack_;
+  double           fontDpi_       { 100.0 };
   FontList         fontList_;
   NameObjectMap    idObjectMap_;
   CSSList          cssList_;

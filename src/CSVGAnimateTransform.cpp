@@ -171,11 +171,3 @@ print(std::ostream &os, bool hier) const
   else
     os << "animateTransform ";
 }
-
-std::ostream &
-operator<<(std::ostream &os, const CSVGAnimateTransform &animateTransform)
-{
-  animateTransform.print(os, false);
-
-  return os;
-}

@@ -290,11 +290,3 @@ printValues(std::ostream &os, bool flat) const
 
   printNamePreserveAspect(os, "preserveAspectRatio", preserveAspect_);
 }
-
-std::ostream &
-operator<<(std::ostream &os, const CSVGMarker &marker)
-{
-  marker.print(os, false);
-
-  return os;
-}

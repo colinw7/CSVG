@@ -21,7 +21,11 @@ class CQSVGRenderer : public CSVGRenderer {
   CQSVGRenderer(const CQSVGRenderer &) = delete;
   CQSVGRenderer &operator=(const CQSVGRenderer &) = delete;
 
+  //---
+
   QPainter *painter() const { return painter_; }
+
+  //---
 
   const CRGBA &background() const { return background_; }
   void setBackground(const CRGBA &v) override { background_ = v; }
@@ -53,6 +57,8 @@ class CQSVGRenderer : public CSVGRenderer {
 
   void clear(const CRGBA &bg) override;
 
+  //---
+
   void pathInit() override;
   void pathMoveTo  (const CPoint2D &p) override;
   void pathRMoveTo (const CPoint2D &p) override;
@@ -82,9 +88,17 @@ class CQSVGRenderer : public CSVGRenderer {
 
   void pathBBox(CBBox2D &bbox) override;
 
+  //---
+
   void drawImage(const CPoint2D &p, CSVGImageData *image) override;
 
+  //---
+
   void setFont(const CSVGFontDef &fontDef) override;
+
+  //---
+
+  void resetStroke() override;
 
   void setStrokeColor(const CRGBA &fg) override;
 
@@ -106,12 +120,22 @@ class CQSVGRenderer : public CSVGRenderer {
   void setStrokeFillGradient(CGenGradient *g) override;
   void setStrokeFillImage   (CSVGImageData *image) override;
 
+  //---
+
   void setAlign(CHAlignType halign, CVAlignType valign) override;
+
+  //---
 
   void windowToPixel(const CPoint2D &w, CPoint2D &p) override;
   void pixelToWindow(const CPoint2D &p, CPoint2D &w) override;
 
+  double windowToPixelWidth(double w);
+
+  //---
+
   void textBounds(const std::string &str, CBBox2D &bbox) override;
+
+  //---
 
   CISize2D getImageSize() const override;
 
@@ -121,6 +145,8 @@ class CQSVGRenderer : public CSVGRenderer {
   void setImage(CSVGImageData *image) override;
 
   void addImage(int x, int y, CSVGImageData *image) override;
+
+  //---
 
   void combine(int x, int y, CSVGRenderer *r) override;
 
@@ -135,6 +161,8 @@ class CQSVGRenderer : public CSVGRenderer {
 
   //---
 
+  void setImageSize(int width, int height);
+
   const QImage &qimage() const;
   void setQImage(const QImage &image);
 
@@ -146,10 +174,15 @@ class CQSVGRenderer : public CSVGRenderer {
   void paint(QPainter *painter);
 
  private:
+  void init();
+
   static void combineImage(QImage &image1, int x, int y, const QImage &image2);
 
  private:
   CQSVGImageData* imageData_;
+  int             iwidth_  { -1 };
+  int             iheight_ { -1 };
+
   QPainter*       painter_    { nullptr };
   QPainterPath*   path_       { nullptr };
   bool            pathEmpty_  { true };

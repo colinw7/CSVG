@@ -3,7 +3,7 @@
 
 #include <CSVGObject.h>
 
-class CSVGSymbol : public CSVGObject {
+class CSVGSymbol : public CSVGObject, public CSVGPrintBase<CSVGSymbol> {
  public:
   CSVG_OBJECT_DEF("symbol", CSVGObjTypeId::SYMBOL)
 
@@ -26,11 +26,11 @@ class CSVGSymbol : public CSVGObject {
 
   bool isDrawable() const override { return false; }
 
-  void print(std::ostream &os, bool hier) const override;
+  void print(std::ostream &os, bool hier=false) const override;
 
   void printValues(std::ostream &os, bool flat=false) const override;
 
-  friend std::ostream &operator<<(std::ostream &os, const CSVGSymbol &group);
+  void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
   COptValT<CSVGPreserveAspect> preserveAspect_;

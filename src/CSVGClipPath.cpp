@@ -164,11 +164,3 @@ printValues(std::ostream &os, bool flat) const
 
   printNameValue(os, "marker-end", markerEnd_);
 }
-
-std::ostream &
-operator<<(std::ostream &os, const CSVGClipPath &path)
-{
-  path.print(os, false);
-
-  return os;
-}

@@ -3,7 +3,7 @@
 
 #include <CSVGTimeValue.h>
 
-class CSVGEventValue {
+class CSVGEventValue : public CSVGPrintBase<CSVGEventValue> {
  public:
   CSVGEventValue(const CSVGTimeValue &time=CSVGTimeValue()) :
    type_(CSVGEventType::TIMEOUT), time_(time) {
@@ -58,12 +58,6 @@ class CSVGEventValue {
         os << time();
       }
     }
-  }
-
-  friend std::ostream &operator<<(std::ostream &os, const CSVGEventValue &v) {
-    v.print(os);
-
-    return os;
   }
 
  public:

@@ -4,7 +4,7 @@
 #include <CSVGFilterBase.h>
 #include <CPoint3D.h>
 
-class CSVGFeSpotLight : public CSVGFilterBase {
+class CSVGFeSpotLight : public CSVGFilterBase, public CSVGPrintBase<CSVGFeSpotLight> {
  public:
   CSVG_OBJECT_DEF("feSpotLight", CSVGObjTypeId::FE_SPOT_LIGHT)
 
@@ -46,11 +46,11 @@ class CSVGFeSpotLight : public CSVGFilterBase {
 
   bool drawElement() override;
 
-  void print(std::ostream &os, bool hier) const override;
+  void print(std::ostream &os, bool hier=false) const override;
 
   void printValues(std::ostream &os, bool flat=false) const override;
 
-  friend std::ostream &operator<<(std::ostream &os, const CSVGFeSpotLight &fe);
+  void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
   COptReal x_;

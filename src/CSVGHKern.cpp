@@ -83,11 +83,3 @@ printValues(std::ostream &os, bool flat) const
   printNameValue(os, "g2", glyph2_);
   printNameValue(os, "k" , k_);
 }
-
-std::ostream &
-operator<<(std::ostream &os, const CSVGHKern &glyph)
-{
-  glyph.print(os, false);
-
-  return os;
-}

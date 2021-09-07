@@ -5,7 +5,7 @@
 
 class CSVGBuffer;
 
-class CSVGFeGaussianBlur : public CSVGFilterBase {
+class CSVGFeGaussianBlur : public CSVGFilterBase, public CSVGPrintBase<CSVGFeGaussianBlur> {
  public:
   CSVG_OBJECT_DEF("feGaussianBlur", CSVGObjTypeId::FE_GAUSSIAN_BLUR)
 
@@ -30,11 +30,11 @@ class CSVGFeGaussianBlur : public CSVGFilterBase {
 
   bool drawElement() override;
 
-  void print(std::ostream &os, bool hier) const override;
+  void print(std::ostream &os, bool hier=false) const override;
 
   void printValues(std::ostream &os, bool flat=false) const override;
 
-  friend std::ostream &operator<<(std::ostream &os, const CSVGFeGaussianBlur &filter);
+  void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
   COptString filterIn_;

@@ -4,7 +4,7 @@
 #include <CSVGObject.h>
 #include <CSVGXLink.h>
 
-class CSVGAnchor : public CSVGObject {
+class CSVGAnchor : public CSVGObject, public CSVGPrintBase<CSVGAnchor> {
  public:
   CSVG_OBJECT_DEF("a", CSVGObjTypeId::ANCHOR)
 
@@ -24,11 +24,11 @@ class CSVGAnchor : public CSVGObject {
 
   bool draw() override;
 
-  void print(std::ostream &os, bool hier) const override;
+  void print(std::ostream &os, bool hier=false) const override;
 
   void printValues(std::ostream &os, bool flat=false) const override;
 
-  friend std::ostream &operator<<(std::ostream &os, const CSVGAnchor &use);
+  void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
   COptValT<CSVGXLink> xlink_;

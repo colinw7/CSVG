@@ -3,7 +3,7 @@
 
 #include <CSVGAnimateBase.h>
 
-class CSVGAnimateTransform : public CSVGAnimateBase {
+class CSVGAnimateTransform : public CSVGAnimateBase, public CSVGPrintBase<CSVGAnimateTransform> {
  public:
   CSVG_OBJECT_DEF("animateTransform", CSVGObjTypeId::ANIMATE_TRANSFORM)
 
@@ -25,9 +25,9 @@ class CSVGAnimateTransform : public CSVGAnimateBase {
 
   void animate(double t) override;
 
-  void print(std::ostream &os, bool hier) const override;
+  void print(std::ostream &os, bool hier=false) const override;
 
-  friend std::ostream &operator<<(std::ostream &os, const CSVGAnimateTransform &animateTransform);
+  void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
   COptString type_;

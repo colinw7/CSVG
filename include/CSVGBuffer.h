@@ -8,6 +8,7 @@
 #include <CSVGFill.h>
 #include <CSVGStroke.h>
 #include <CSVGImageData.h>
+#include <CSVGPath.h>
 
 #include <CBBox2D.h>
 #include <CMatrixStack2D.h>
@@ -243,8 +244,8 @@ class CSVGBuffer {
   void setStrokeFillGradient(CGenGradient *g);
   void setStrokeFillBuffer(CSVGBuffer *buffer);
   void setLineWidth(double width);
-  void setLineDash(const CLineDash &dash);
-  void setLineDashOffset(double offset);
+  void setLineDashArray(const CSVGLineDash &dash);
+  void setLineDashOffset(const CScreenUnits &offset);
   void setLineCap(CLineCapType line_cap);
   void setLineJoin(CLineJoinType line_join);
   void setLineMiterLimit(double limit);
@@ -294,8 +295,8 @@ class CSVGBuffer {
   void pathStroke();
   void pathFill();
 
-  void pathClip  (CSVGBuffer *buffer=0);
-  void pathEoClip(CSVGBuffer *buffer=0);
+  void pathClip  (CSVGBuffer *buffer=nullptr);
+  void pathEoClip(CSVGBuffer *buffer=nullptr);
 
   void addClipPath(CSVGBuffer *buffer);
 
@@ -304,6 +305,37 @@ class CSVGBuffer {
   void initClip();
 
   CPoint2D pathMirrorPoint(const CPoint2D &p) const;
+
+  //---
+
+  void updateStrokedFilled();
+
+  bool isStroked() const { return isStroked_; }
+  bool isFilled () const { return isFilled_; }
+
+  //---
+
+  void drawLine(double x1, double y1, double x2, double y2);
+
+  void drawCircle (double x, double y, double r);
+  void drawEllipse(double x, double y, double rx, double ry);
+
+  void drawArc(double xc, double yc, double xr, double yr, double angle1, double angle2);
+  void fillArc(double xc, double yc, double xr, double yr, double angle1, double angle2);
+
+  void drawPolygon(const std::vector<CPoint2D> &points);
+  void fillPolygon(const std::vector<CPoint2D> &points);
+
+  void drawText(double x, double y, const std::string &text, const CSVGFontDef &fontDef,
+                CHAlignType align);
+  void fillText(double x, double y, const std::string &text, const CSVGFontDef &fontDef,
+                CHAlignType align);
+
+  //---
+
+  void drawParts(const CSVGPathPartList &parts);
+
+  void drawMarkers(const std::vector<CPoint2D> &points, const std::vector<double> &angles);
 
  private:
   static void distantLight(CSVGImageDataP &image, CSVGFeDistantLight *pl,
@@ -344,6 +376,8 @@ class CSVGBuffer {
   OptPoint2D     pathLastControlPoint2_;
   bool           clip_         { false };
   bool           hasClipPath_  { false };
+  bool           isStroked_    { true };
+  bool           isFilled_     { true };
   bool           drawing_      { false };
 };
 

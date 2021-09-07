@@ -26,6 +26,7 @@ CSVGPolygon(CSVG &svg) :
  CSVGObject(svg),
  points_   ()
 {
+  init();
 }
 
 CSVGPolygon::
@@ -33,6 +34,14 @@ CSVGPolygon(const CSVGPolygon &poly) :
  CSVGObject(poly),
  points_   (poly.points_)
 {
+  init();
+}
+
+void
+CSVGPolygon::
+init()
+{
+  skipNames_.insert("points");
 }
 
 CSVGPolygon *
@@ -225,12 +234,4 @@ printValues(std::ostream &os, bool flat) const
   }
 
   os << "\"";
-}
-
-std::ostream &
-operator<<(std::ostream &os, const CSVGPolygon &polygon)
-{
-  polygon.print(os, false);
-
-  return os;
 }

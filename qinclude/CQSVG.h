@@ -5,6 +5,7 @@
 #include <QColor>
 #include <CSVG.h>
 
+class CQSVGCanvas;
 class CQSVGWindow;
 class QTimer;
 
@@ -19,7 +20,7 @@ class CQSVG : public QObject, public CSVG {
   Q_PROPERTY(bool   ignoreFilter  READ getIgnoreFilter WRITE setIgnoreFilter)
 
  public:
-  CQSVG(CQSVGWindow *w=nullptr);
+  CQSVG(CQSVGCanvas *canvs=nullptr);
 
  ~CQSVG();
 
@@ -27,7 +28,11 @@ class CQSVG : public QObject, public CSVG {
 
   //---
 
-  CQSVGWindow *window() const { return window_; }
+  CQSVGCanvas *canvas() const { return canvas_; }
+
+  CQSVGWindow *window() const;
+
+  //---
 
   QColor background() const;
   void setBackground(const QColor &v);
@@ -147,8 +152,8 @@ class CQSVG : public QObject, public CSVG {
   void tickSlot();
 
  private:
-  CQSVGWindow *window_        { 0 };
-  QTimer      *timer_         { 0 };
+  CQSVGCanvas *canvas_        { nullptr };
+  QTimer      *timer_         { nullptr };
   double       t_             { 0 };
   int          dt_            { 100 };
   bool         animating_     { false };

@@ -76,6 +76,10 @@ class CSVGImageRenderer : public CSVGRenderer {
 
   void setFont(const CSVGFontDef &fontDef) override;
 
+  //---
+
+  void resetStroke() override;
+
   void setStrokeColor(const CRGBA &c) override;
 
   void setLineWidth(double w) override;
@@ -84,6 +88,8 @@ class CSVGImageRenderer : public CSVGRenderer {
   void setLineJoin(const CLineJoinType &j) override;
   void setMitreLimit(double l) override;
 
+  //---
+
   void resetFill() override;
   void setFillType(CFillType t) override;
   void setFillColor(const CRGBA &c) override;
@@ -91,10 +97,14 @@ class CSVGImageRenderer : public CSVGRenderer {
   void setFillImage(double, double, CSVGImageData *) override;
   void setFillMatrix(const CMatrix2D &) override;
 
+  //---
+
   void setStrokeFilled(bool) override;
   void setStrokeFillType(CFillType) override;
   void setStrokeFillGradient(CGenGradient *) override;
   void setStrokeFillImage(CSVGImageData *) override;
+
+  //---
 
   void setAlign(CHAlignType halign, CVAlignType valign) override;
 

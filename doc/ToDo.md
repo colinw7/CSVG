@@ -1,11 +1,13 @@
 ## TODO
  + General
+   + Resolve unfound ids at end of file (forward declare)
  + Pattern
    + Image Size (off by one)
  + Filter
    + Filter area
    + Only filter bbox
-   + FeConvolveMatrix (order, divisor, bias, targetX, targetY, edgeMode, kernelUnitLength, preserveAlpha)
+   + FeConvolveMatrix (order, divisor, bias, targetX, targetY, edgeMode,
+                       kernelUnitLength, preserveAlpha)
    + FeTile leaving gaps
    + FeTurbulence bounds
  + Text

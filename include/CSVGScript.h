@@ -4,7 +4,7 @@
 #include <CSVGObject.h>
 #include <CSVGXLink.h>
 
-class CSVGScript : public CSVGObject {
+class CSVGScript : public CSVGObject, public CSVGPrintBase<CSVGScript> {
  public:
   CSVG_OBJECT_DEF("script", CSVGObjTypeId::SCRIPT)
 
@@ -25,11 +25,11 @@ class CSVGScript : public CSVGObject {
 
   bool draw() override;
 
-  void print(std::ostream &os, bool hier) const override;
+  void print(std::ostream &os, bool hier=false) const override;
 
   void printValues(std::ostream &os, bool flat=false) const override;
 
-  friend std::ostream &operator<<(std::ostream &os, const CSVGScript &use);
+  void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
   COptString          type_;

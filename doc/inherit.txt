@@ -1,0 +1,3 @@
+stroke/fill uses stack.
+
+If child fill not set (or inherit) then associated value is not updated

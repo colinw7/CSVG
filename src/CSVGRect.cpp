@@ -30,7 +30,7 @@ CSVGRect::
 CSVGRect(CSVG &svg) :
  CSVGObject(svg)
 {
-  updateBBox();
+  init();
 }
 
 CSVGRect::
@@ -44,6 +44,21 @@ CSVGRect(const CSVGRect &rect) :
  ry_       (rect.ry_),
  bbox_     (rect.bbox_)
 {
+  init();
+}
+
+void
+CSVGRect::
+init()
+{
+  skipNames_.insert("x");
+  skipNames_.insert("y");
+  skipNames_.insert("width");
+  skipNames_.insert("height");
+  skipNames_.insert("rx");
+  skipNames_.insert("ry");
+
+  updateBBox();
 }
 
 CSVGRect *
@@ -101,7 +116,7 @@ void
 CSVGRect::
 updateBBox()
 {
-  double lw = getFlatStrokeWidth().getValue(Width(1)).getValue();
+  double lw = getFlatStrokeWidth().getValue(Width(1)).getValue(1);
 
   auto drawBox = getDrawBBox();
 
@@ -233,11 +248,12 @@ getPartList() const
     // TODO: rounded rect
     auto drawBox = getDrawBBox();
 
+    auto   dc = drawBox.getLL    ();
     double dw = drawBox.getWidth ();
     double dh = drawBox.getHeight();
 
-    double x = getX     ().pxValue(dw);
-    double y = getY     ().pxValue(dh);
+    double x = getX     ().pxValue(dc.x);
+    double y = getY     ().pxValue(dc.y);
     double w = getWidth ().pxValue(dw);
     double h = getHeight().pxValue(dh);
 
@@ -346,12 +362,4 @@ printValues(std::ostream &os, bool flat) const
   printNameValue(os, "ry", ry_);
 
   CSVGObject::printValues(os, flat);
-}
-
-std::ostream &
-operator<<(std::ostream &os, const CSVGRect &rect)
-{
-  rect.print(os, false);
-
-  return os;
 }

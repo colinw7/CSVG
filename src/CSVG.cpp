@@ -4,6 +4,7 @@
 #include <CSVGAnimateColor.h>
 #include <CSVGAnimateMotion.h>
 #include <CSVGAnimateTransform.h>
+#include <CSVGAudio.h>
 #include <CSVGBuffer.h>
 #include <CSVGCircle.h>
 #include <CSVGClipPath.h>
@@ -62,6 +63,7 @@
 #include <CSVGStyle.h>
 #include <CSVGSwitch.h>
 #include <CSVGSymbol.h>
+#include <CSVGTBreak.h>
 #include <CSVGText.h>
 #include <CSVGTextPath.h>
 #include <CSVGTitle.h>
@@ -448,10 +450,10 @@ read(const std::string &filename, CSVGObject *rootBlock)
 
   // Process svg options
   for (const auto &opt : xmlTag_->getOptions()) {
-    const std::string &optName  = opt->getName ();
-    const std::string &optValue = opt->getValue();
+    const auto &optName  = opt->getName ();
+    const auto &optValue = opt->getValue();
 
-    if (! rootBlock->processOption(optName, optValue)) {
+    if (! rootBlock->handleOption(optName, optValue)) {
       if (! isQuiet())
         CSVGLog() << "Invalid option '" << optName << "=" << optValue <<
                      " for " << rootBlock->getTagName();
@@ -565,12 +567,12 @@ tokenToObject(CSVGObject *parent, const CXMLToken *token)
 
   //-----
 
-  // process tag options
+  // Process tag options
   for (const auto &option : tag->getOptions()) {
-    const std::string &optName  = option->getName ();
-    const std::string &optValue = option->getValue();
+    const auto &optName  = option->getName ();
+    const auto &optValue = option->getValue();
 
-    if (! object->processOption(optName, optValue)) {
+    if (! object->handleOption(optName, optValue)) {
       if (CRegExpUtil::parse(optName, "sodipodi:.*") ||
           CRegExpUtil::parse(optName, "inkscape:.*"))
         continue;
@@ -632,8 +634,8 @@ createObjectByName(const std::string &name)
     object = createAnimateMotion();
   else if (name == "animateTransform")
     object = createAnimateTransform();
-//else if (name == "audio")
-//  object = createAudio();
+  else if (name == "audio")
+    object = createAudio();
   else if (name == "circle")
     object = createCircle();
   else if (name == "clipPath")
@@ -754,14 +756,14 @@ createObjectByName(const std::string &name)
 //  object = createSolidColor();
   else if (name == "stop")
     object = createStop();
-  else if (name == "symbol")
-    object = createSymbol();
   else if (name == "style")
     object = createStyle();
   else if (name == "switch")
     object = createSwitch();
-//else if (name == "tbreak")
-//  object = createTBreak();
+  else if (name == "symbol")
+    object = createSymbol();
+  else if (name == "tbreak")
+    object = createTBreak();
   else if (name == "text")
     object = createText();
 //else if (name == "textArea")
@@ -840,6 +842,13 @@ CSVG::
 createAnimateTransform()
 {
   return new CSVGAnimateTransform(*this);
+}
+
+CSVGAudio *
+CSVG::
+createAudio()
+{
+  return new CSVGAudio(*this);
 }
 
 CSVGCircle *
@@ -1227,6 +1236,13 @@ createSwitch()
   return new CSVGSwitch(*this);
 }
 
+CSVGTBreak *
+CSVG::
+createTBreak()
+{
+  return new CSVGTBreak(*this);
+}
+
 CSVGText *
 CSVG::
 createText()
@@ -1600,7 +1616,11 @@ drawRoot(CSVGBlock *block, const CPoint2D &offset, double xscale, double yscale,
 
   //------
 
+  drawBackground();
+
   block->drawObject();
+
+  drawForeground();
 
   //------
 
@@ -2014,169 +2034,71 @@ void
 CSVG::
 setTransform(const CMatrixStack2D &matrix)
 {
-  buffer_->setTransform(matrix);
+  if (buffer_)
+    buffer_->setTransform(matrix);
 }
 
 void
 CSVG::
 drawLine(double x1, double y1, double x2, double y2)
 {
-  setStrokeBuffer(buffer_);
+  auto *buffer = getCurrentBuffer();
 
-  buffer_->pathInit();
-
-  buffer_->pathMoveTo(x1, y1);
-  buffer_->pathLineTo(x2, y2);
-
-  buffer_->pathStroke();
+  buffer->drawLine(x1, y1, x2, y2);
 }
 
 void
 CSVG::
 drawCircle(double x, double y, double r)
 {
-  buffer_->pathInit();
+  auto *buffer = getCurrentBuffer();
 
-  buffer_->pathMoveTo(x + r, y);
-  buffer_->pathArcTo (x, y, r, r, 0,  M_PI);
-  buffer_->pathArcTo (x, y, r, r, M_PI, 2*M_PI);
-
-  buffer_->pathClose();
-
-  if (isFilled() || isStroked()) {
-    if (isFilled()) {
-      setFillBuffer(buffer_);
-
-      buffer_->pathFill();
-    }
-
-    if (isStroked()) {
-      setStrokeBuffer(buffer_);
-
-      buffer_->pathStroke();
-    }
-  }
-  else {
-    setFillBuffer(buffer_);
-
-    buffer_->pathFill();
-  }
+  buffer->drawCircle(x, y, r);
 }
 
 void
 CSVG::
 drawEllipse(double x, double y, double rx, double ry)
 {
-  buffer_->pathInit();
+  auto *buffer = getCurrentBuffer();
 
-  buffer_->pathMoveTo(x + rx, y);
-  buffer_->pathArcTo(x, y, rx, ry, 0,  M_PI);
-  buffer_->pathArcTo(x, y, rx, ry, M_PI, 2*M_PI);
-
-  buffer_->pathClose();
-
-  if (isFilled() || isStroked()) {
-    if (isFilled()) {
-      setFillBuffer(buffer_);
-
-      buffer_->pathFill();
-    }
-
-    if (isStroked()) {
-      setStrokeBuffer(buffer_);
-
-      buffer_->pathStroke();
-    }
-  }
-  else {
-    setFillBuffer(buffer_);
-
-    buffer_->pathFill();
-  }
+  buffer->drawEllipse(x, y, rx, ry);
 }
 
 void
 CSVG::
 drawArc(double xc, double yc, double xr, double yr, double angle1, double angle2)
 {
-  setStrokeBuffer(buffer_);
+  auto *buffer = getCurrentBuffer();
 
-  buffer_->pathInit();
-
-  buffer_->pathArcTo(xc, yc, xr, yr, angle1, angle2);
-
-  buffer_->pathStroke();
+  buffer->drawArc(xc, yc, xr, yr, angle1, angle2);
 }
 
 void
 CSVG::
 fillArc(double xc, double yc, double xr, double yr, double angle1, double angle2)
 {
-  setFillBuffer(buffer_);
+  auto *buffer = getCurrentBuffer();
 
-  buffer_->pathInit();
-
-  buffer_->pathArcTo(xc, yc, xr, yr, angle1, angle2);
-
-  buffer_->pathFill();
+  buffer->fillArc(xc, yc, xr, yr, angle1, angle2);
 }
 
 void
 CSVG::
 drawPolygon(const std::vector<CPoint2D> &points)
 {
-  int num_points = points.size();
+  auto *buffer = getCurrentBuffer();
 
-  if (! num_points)
-    return;
-
-  setStrokeBuffer(buffer_);
-
-  buffer_->pathInit();
-
-  buffer_->pathMoveTo(points[0].x, points[0].y);
-
-  for (int i = 1; i < num_points; ++i)
-    buffer_->pathLineTo(points[i].x, points[i].y);
-
-  buffer_->pathClose();
-
-  buffer_->pathStroke();
-
-  //---
-
-  std::vector<double> angles;
-
-  for (int i1 = num_points - 1, i2 = 0; i2 < num_points; i1 = i2++) {
-    double a = atan2(points[i2].y - points[i1].y, points[i2].x - points[i1].x);
-
-    angles.push_back(a);
-  }
-
-  drawMarkers(points, angles);
+  buffer->drawPolygon(points);
 }
 
 void
 CSVG::
 fillPolygon(const std::vector<CPoint2D> &points)
 {
-  uint num_points = points.size();
+  auto *buffer = getCurrentBuffer();
 
-  if (! num_points)
-    return;
-
-  setFillBuffer(buffer_);
-
-  buffer_->pathInit();
-
-  buffer_->pathMoveTo(points[0].x, points[0].y);
-
-  for (uint i = 1; i < num_points; ++i)
-    buffer_->pathLineTo(points[i].x, points[i].y);
-
-  buffer_->pathClose();
-
-  buffer_->pathFill();
+  buffer->fillPolygon(points);
 }
 
 void
@@ -2200,73 +2122,9 @@ CSVG::
 drawText(double x, double y, const std::string &text, const CSVGFontDef &fontDef,
          CHAlignType align)
 {
-  setStrokeBuffer(buffer_);
+  auto *buffer = getCurrentBuffer();
 
-  auto *svg_font = getFont();
-
-  if (svg_font) {
-    auto *font_face = svg_font->getFontFace();
-
-    double units = 1000;
-
-    if (font_face)
-      units = font_face->getUnits();
-
-    //-----
-
-    auto transform = buffer_->transform();
-
-    double font_size = 10.0;
-
-    transform.scale    (font_size/units, font_size/units);
-    transform.translate(x, y);
-
-    uint len = text.size();
-
-    for (uint i = 0; i < len; ++i) {
-      auto *glyph = getCharGlyph(text[i]);
-
-      if (glyph) {
-        setTransform(transform);
-
-        // TODO: handle display "none"
-        glyph->drawSubObject();
-
-        x += font_size;
-
-        transform.translate(x, y);
-      }
-    }
-
-    setTransform(transform);
-  }
-  else {
-    auto transform = buffer_->transform();
-
-    auto transform1 = transform;
-
-    if (fontDef.getAngle()) {
-      transform1.rotate(fontDef.getAngle(), CPoint2D(x, y));
-
-      setTransform(transform1);
-    }
-
-    //---
-
-    buffer_->pathInit();
-
-    buffer_->pathMoveTo(x, y);
-
-    buffer_->pathText(text, fontDef, align);
-
-    buffer_->pathClose();
-
-    buffer_->pathStroke();
-
-    //---
-
-    setTransform(transform);
-  }
+  buffer->drawText(x, y, text, fontDef, align);
 }
 
 void
@@ -2274,73 +2132,9 @@ CSVG::
 fillText(double x, double y, const std::string &text, const CSVGFontDef &fontDef,
          CHAlignType align)
 {
-  setFillBuffer(buffer_);
+  auto *buffer = getCurrentBuffer();
 
-  auto *svg_font = getFont();
-
-  if (svg_font) {
-    auto *font_face = svg_font->getFontFace();
-
-    double units = 1000;
-
-    if (font_face)
-      units = font_face->getUnits();
-
-    //-----
-
-    auto transform = buffer_->transform();
-
-    double font_size = 10.0;
-
-    transform.scale    (font_size/units, font_size/units);
-    transform.translate(x, y);
-
-    uint len = text.size();
-
-    for (uint i = 0; i < len; ++i) {
-      auto *glyph = getCharGlyph(text[i]);
-
-      if (glyph) {
-        setTransform(transform);
-
-        // TODO: handle display "none"
-        glyph->drawSubObject();
-
-        x += font_size;
-
-        transform.translate(x, y);
-      }
-    }
-
-    setTransform(transform);
-  }
-  else {
-    auto transform = buffer_->transform();
-
-    auto transform1 = transform;
-
-    if (fontDef.getAngle()) {
-      transform1.rotate(fontDef.getAngle(), CPoint2D(x, y));
-
-      setTransform(transform1);
-    }
-
-    //---
-
-    buffer_->pathInit();
-
-    buffer_->pathMoveTo(x, y);
-
-    buffer_->pathText(text, fontDef, align);
-
-    buffer_->pathClose();
-
-    buffer_->pathFill();
-
-    //---
-
-    setTransform(transform);
-  }
+  buffer->fillText(x, y, text, fontDef, align);
 }
 
 //--------------
@@ -2477,155 +2271,18 @@ void
 CSVG::
 drawParts(const CSVGPathPartList &parts)
 {
-  std::vector<CPoint2D> points;
-  std::vector<double>   angles;
+  auto *buffer = getCurrentBuffer();
 
-  // add path parts and same path part points for markers (if any)
-  buffer_->pathInit();
-
-  parts.draw(buffer_, points, angles);
-
-  // fill and/or stroke path
-  if (isFilled() || isStroked()) {
-    if (isFilled()) {
-      setFillBuffer(buffer_);
-
-      buffer_->pathFill();
-    }
-
-    if (isStroked()) {
-      setStrokeBuffer(buffer_);
-
-      buffer_->pathStroke();
-    }
-  }
-  else {
-    setFillBuffer(buffer_);
-
-    buffer_->pathFill();
-  }
-
-  //------
-
-  drawMarkers(points, angles);
+  buffer->drawParts(parts);
 }
 
 void
 CSVG::
 drawMarkers(const std::vector<CPoint2D> &points, const std::vector<double> &angles)
 {
-  auto *drawObject = currentDrawObject();
+  auto *buffer = getCurrentBuffer();
 
-  // get markers
-  CSVGObject *startMarker = nullptr, *midMarker = nullptr, *endMarker = nullptr;
-
-  if (drawObject) {
-    startMarker = drawObject->getFlatMarkerStart();
-    midMarker   = drawObject->getFlatMarkerMid  ();
-    endMarker   = drawObject->getFlatMarkerEnd  ();
-  }
-
-  //------
-
-  // draw markers
-  if (startMarker || midMarker || endMarker) {
-    uint num = points.size();
-
-    if (num <= 0)
-      return;
-
-#if 0
-    double x1 = points[0].x;
-    double y1 = points[0].y;
-
-    double x2 = x1;
-    double y2 = y1;
-
-    if (num > 1) {
-      x2 = points[1].x; y2 = points[1].y;
-    }
-
-    double x3 = x2;
-    double y3 = y2;
-
-    if (num > 2) {
-      x3 = points[2].x; y3 = points[2].y;
-    }
-
-    double g1 = atan2(y2 - y1, x2 - x1);
-    double g2 = atan2(y3 - y2, x3 - x2);
-
-    double gg = (g1 + g2)/2;
-
-    if (startMarker) {
-      auto *marker = dynamic_cast<CSVGMarker *>(startMarker);
-
-      if (marker)
-        marker->drawMarker(x1, y1, gg);
-    }
-
-    for (uint i = 1; i < num; ++i) {
-      x2 = points[i].x; y2 = points[i].y;
-
-      if (i != num - 1) {
-        x3 = points[i + 1].x; y3 = points[i + 1].y;
-      }
-      else {
-        x3 = x2; y3 = y2;
-      }
-
-      g1 = atan2(y2 - y1, x2 - x1);
-      g2 = atan2(y3 - y2, x3 - x2);
-
-      double gg = (g1 + g2)/2;
-
-      if (i != num - 1) {
-        if (midMarker) {
-          auto *marker = dynamic_cast<CSVGMarker *>(midMarker);
-
-          if (marker)
-            marker->drawMarker(x2, y2, gg);
-        }
-      }
-      else {
-        if (endMarker) {
-          auto *marker = dynamic_cast<CSVGMarker *>(endMarker);
-
-          if (marker)
-            marker->drawMarker(x2, y2, g1);
-        }
-      }
-
-      g1 = g2;
-
-      x1 = x2; y1 = y2;
-      x2 = x3; y2 = y3;
-    }
-#else
-    if (startMarker) {
-      auto *marker = dynamic_cast<CSVGMarker *>(startMarker);
-
-      if (marker)
-        marker->drawMarker(points[0].x, points[0].y, angles[0]);
-    }
-
-    if (midMarker) {
-      auto *marker = dynamic_cast<CSVGMarker *>(midMarker);
-
-      if (marker) {
-        for (uint i = 1; i < num - 1; ++i)
-          marker->drawMarker(points[i].x, points[i].y, angles[i]);
-      }
-    }
-
-    if (endMarker) {
-      auto *marker = dynamic_cast<CSVGMarker *>(endMarker);
-
-      if (marker)
-        marker->drawMarker(points[num - 1].x, points[num - 1].y, angles[num - 1]);
-    }
-#endif
-  }
+  buffer->drawMarkers(points, angles);
 }
 
 //--------------
@@ -2936,6 +2593,8 @@ decodeLengthValue(const std::string &str)
 {
   CScreenUnits lvalue;
 
+  // TODO:  ch, rem, vw, vh, vmin, vmax
+
   static CRegExp em_pattern("\\(.*\\)em");
   static CRegExp ex_pattern("\\(.*\\)ex");
   static CRegExp pt_pattern("\\(.*\\)pt");
@@ -2950,6 +2609,7 @@ decodeLengthValue(const std::string &str)
 
   std::vector<std::string> matchStrs;
 
+  // em, font size of the element
   if      (CRegExpUtil::parse(str, em_pattern, matchStrs)) {
     if (! CStrUtil::toReal(matchStrs[0], &value))
       return COptValT<CScreenUnits>();
@@ -2958,6 +2618,7 @@ decodeLengthValue(const std::string &str)
 
     //CSVGLog() << "em conversion not handled";
   }
+  // ex, x-height of the element’s font
   else if (CRegExpUtil::parse(str, ex_pattern, matchStrs)) {
     if (! CStrUtil::toReal(matchStrs[0], &value))
       return COptValT<CScreenUnits>();
@@ -2966,6 +2627,7 @@ decodeLengthValue(const std::string &str)
 
     //CSVGLog() << "ex conversion not handled";
   }
+  // pt, points, 1pt = 1/72th of 1in
   else if (CRegExpUtil::parse(str, pt_pattern, matchStrs)) {
     if (! CStrUtil::toReal(matchStrs[0], &value))
       return COptValT<CScreenUnits>();
@@ -2975,6 +2637,7 @@ decodeLengthValue(const std::string &str)
 
     lvalue = CScreenUnits(CScreenUnits::Units::PT, value);
   }
+  // pc, picas, 1pc = 1/6th of 1in
   else if (CRegExpUtil::parse(str, pc_pattern, matchStrs)) {
     if (! CStrUtil::toReal(matchStrs[0], &value))
       return COptValT<CScreenUnits>();
@@ -2984,6 +2647,7 @@ decodeLengthValue(const std::string &str)
 
     lvalue = CScreenUnits(CScreenUnits::Units::PC, value);
   }
+  // cm, centimeters, 1cm = 96px/2.54
   else if (CRegExpUtil::parse(str, cm_pattern, matchStrs)) {
     if (! CStrUtil::toReal(matchStrs[0], &value))
       return COptValT<CScreenUnits>();
@@ -2993,6 +2657,7 @@ decodeLengthValue(const std::string &str)
 
     lvalue = CScreenUnits(CScreenUnits::Units::CM, value);
   }
+  // mm, millimeters, 1mm = 1/10th of 1cm
   else if (CRegExpUtil::parse(str, mm_pattern, matchStrs)) {
     if (! CStrUtil::toReal(matchStrs[0], &value))
       return COptValT<CScreenUnits>();
@@ -3002,6 +2667,7 @@ decodeLengthValue(const std::string &str)
 
     lvalue = CScreenUnits(CScreenUnits::Units::MM, value);
   }
+  // in, inches, 1in = 2.54cm = 96px
   else if (CRegExpUtil::parse(str, in_pattern, matchStrs)) {
     if (! CStrUtil::toReal(matchStrs[0], &value))
       return COptValT<CScreenUnits>();
@@ -3011,18 +2677,22 @@ decodeLengthValue(const std::string &str)
 
     lvalue = CScreenUnits(CScreenUnits::Units::IN, value);
   }
+  // px, pixels, 1px = 1/96th of 1in
   else if (CRegExpUtil::parse(str, px_pattern, matchStrs)) {
     if (! CStrUtil::toReal(matchStrs[0], &value))
       return COptValT<CScreenUnits>();
 
-    lvalue = CScreenUnits(CScreenUnits::Units::PX, value);
+    //lvalue = CScreenUnits(CScreenUnits::Units::PX, value);
+    lvalue = CScreenUnits(CScreenUnits::Units::IN, value/96.0);
   }
+  // %
   else if (CRegExpUtil::parse(str, ph_pattern, matchStrs)) {
     if (! CStrUtil::toReal(matchStrs[0], &value))
       return COptValT<CScreenUnits>();
 
     lvalue = CScreenUnits(CScreenUnits::Units::PERCENT, value);
   }
+  // default (document units) pixels
   else {
     if (! CStrUtil::toReal(str, &value))
       return COptValT<CScreenUnits>();
@@ -4287,7 +3957,7 @@ decodeFontStyleString(const std::string &fontStyleStr, bool &inherit)
   CFontStyle fontStyle = CFONT_STYLE_NORMAL;
 
   if      (fontStyleStr == "normal")
-    fontStyle = CFONT_STYLE_ITALIC;
+    fontStyle = CFONT_STYLE_NORMAL;
   else if (fontStyleStr == "italic")
     fontStyle = CFONT_STYLE_ITALIC;
   else if (fontStyleStr == "oblique")
@@ -4642,6 +4312,21 @@ CSVG::
 getChildrenOfId(const std::string &id, ObjectList &objects) const
 {
   getRoot()->getChildrenOfId(id, objects);
+}
+
+void
+CSVG::
+getSelectedObjects(ObjectList &objects) const
+{
+  // TODO: cache ?
+  ObjectList children;
+
+  getAllChildren(children);
+
+  for (const auto &child : children) {
+    if (child->getSelected())
+      objects.push_back(child);
+  }
 }
 
 //---

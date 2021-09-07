@@ -250,11 +250,3 @@ printValues(std::ostream &os, bool flat) const
 
   os << "\"";
 }
-
-std::ostream &
-operator<<(std::ostream &os, const CSVGPolyLine &polyline)
-{
-  polyline.print(os, false);
-
-  return os;
-}
