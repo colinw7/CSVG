@@ -18,9 +18,9 @@ class CSVGGroup : public CSVGObject, public CSVGPrintBase<CSVGGroup> {
 
   bool draw() override;
 
-  void moveBy(const CVector2D &delta) override;
   void resizeTo(const CSize2D &size) override;
-  void rotateBy(double da, const CPoint2D &c) override;
+
+  void rotateBy(double da) override;
 
   //bool isDrawable() const override { return false; }
 
@@ -29,6 +29,9 @@ class CSVGGroup : public CSVGObject, public CSVGPrintBase<CSVGGroup> {
   void printValues(std::ostream &os, bool flat=false) const override;
 
   void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
+
+ protected:
+  void moveDelta(const CVector2D &delta) override;
 };
 
 #endif

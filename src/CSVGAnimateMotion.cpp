@@ -92,10 +92,10 @@ animate(double t)
     parent->moveTo(p);
 
     if (rotate_.getValue("") == "auto")
-      parent->rotateTo(a, p);
+      parent->rotateAt(a, p);
     else {
       if (CStrUtil::toReal(rotate_.getValue(""), &a))
-        parent->rotateTo(a, p);
+        parent->rotateAt(a, p);
     }
 
     svg_.redraw();
@@ -122,10 +122,10 @@ animate(double t)
       parent->moveTo(p);
 
       if (rotate_.getValue("") == "auto")
-        parent->rotateTo(a, p);
+        parent->rotateAt(a, p);
       else {
         if (CStrUtil::toReal(rotate_.getValue(""), &a))
-          parent->rotateTo(a, p);
+          parent->rotateAt(a, p);
       }
 
       svg_.redraw();

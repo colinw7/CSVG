@@ -149,7 +149,7 @@ getBBox(CBBox2D &bbox) const
 
 void
 CSVGPolygon::
-moveBy(const CVector2D &delta)
+moveDelta(const CVector2D &delta)
 {
   uint num_points = points_.size();
 
@@ -187,8 +187,14 @@ resizeTo(const CSize2D &size)
 
 void
 CSVGPolygon::
-rotateBy(double da, const CPoint2D &c)
+rotateBy(double da)
 {
+  CBBox2D bbox;
+
+  getBBox(bbox);
+
+  auto c = bbox.getCenter();
+
   uint num_points = points_.size();
 
   for (uint i = 0; i < num_points; ++i)

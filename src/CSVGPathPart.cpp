@@ -121,13 +121,13 @@ draw(CSVGBuffer *buffer, std::vector<CPoint2D> &points, std::vector<double> &ang
 
     if (! CMathUtil::realEq(x1, x2) || ! CMathUtil::realEq(y1, y2)) {
       if (points.size() == 1) {
-        double g = atan2(y2 - y1, x2 - x1);
+        double g = std::atan2(y2 - y1, x2 - x1);
 
         angles.back() = g;
       }
       else {
-        double g1 = atan2(y1 - y0, x1 - x0);
-        double g2 = atan2(y2 - y1, x2 - x1);
+        double g1 = std::atan2(y1 - y0, x1 - x0);
+        double g2 = std::atan2(y2 - y1, x2 - x1);
 
         double gg = (g1 + g2)/2;
 
@@ -145,7 +145,7 @@ draw(CSVGBuffer *buffer, std::vector<CPoint2D> &points, std::vector<double> &ang
   }
 
   if (points.size() > 1) {
-    double g = atan2(y1 - y0, x1 - x0);
+    double g = std::atan2(y1 - y0, x1 - x0);
 
     angles.back() = g;
   }
@@ -572,7 +572,7 @@ moveBy(const CVector2D &d)
   // TODO: change to line to
   x_ += d.getX();
 
-  assert(false);
+  //assert(false);
 }
 
 void
@@ -701,7 +701,7 @@ moveBy(const CVector2D &d)
   // TODO: change to line to
   y_ += d.getY();
 
-  assert(false);
+  //assert(false);
 }
 
 void

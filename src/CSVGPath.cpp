@@ -43,7 +43,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
 
 void
 CSVGPath::
-moveBy(const CVector2D &d)
+moveDelta(const CVector2D &d)
 {
   parts_.moveBy(d);
 }

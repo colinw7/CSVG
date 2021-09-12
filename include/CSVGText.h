@@ -71,9 +71,6 @@ class CSVGText : public CSVGObject, public CSVGPrintBase<CSVGText> {
 
   bool getBBox(CBBox2D &bbox) const override;
 
-  void moveTo(const CPoint2D &p) override;
-  void moveBy(const CVector2D &delta) override;
-
   const CPoint2D &lastPos() const { return lastPos_; }
   void setLastPos(const CPoint2D &p) { lastPos_ = p; }
 
@@ -83,8 +80,10 @@ class CSVGText : public CSVGObject, public CSVGPrintBase<CSVGText> {
 
   void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
- private:
+ protected:
   void init();
+
+  void moveDelta(const CVector2D &delta) override;
 
  private:
   OptCoords  x_;

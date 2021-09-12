@@ -96,15 +96,7 @@ getBBox(CBBox2D &bbox) const
 
 void
 CSVGTSpan::
-moveTo(const CPoint2D &p)
-{
-  x_ = p.x;
-  y_ = p.y;
-}
-
-void
-CSVGTSpan::
-moveBy(const CVector2D &delta)
+moveDelta(const CVector2D &delta)
 {
   x_ = getX() + delta.x();
   y_ = getY() + delta.y();

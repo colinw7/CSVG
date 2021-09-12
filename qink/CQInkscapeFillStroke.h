@@ -2,6 +2,8 @@
 #define CQInkscapeFillStroke_H
 
 #include <CQInkscapePalette.h>
+#include <CLineJoinType.h>
+#include <CLineCapType.h>
 
 class CSVGObject;
 
@@ -11,10 +13,12 @@ class CQRealSpin;
 class CQLineDash;
 class CQLineCap;
 class CQLineJoin;
+class CLineDash;
 
 class QStackedWidget;
 class QCheckBox;
 class QComboBox;
+class QGridLayout;
 
 namespace CQInkscape {
 
@@ -46,21 +50,48 @@ class Fill : public QFrame {
 
   void setObject(CSVGObject *obj);
 
+ public slots:
+  void noneSlot();
+  void solidSlot();
+  void currentSlot();
+  void inheritSlot();
+  void lgradSlot();
+  void rgradSlot();
+  void imageSlot();
+
+  void colorSlot(const QColor &c);
+  void opacitySlot(double o);
+  void fillRuleSlot(const QString &);
+  void clipSlot();
+
+ private:
+  struct ModeData {
+    CQImageButton* button { nullptr };
+    int            ind    { -1 };
+    QFrame*        panel  { nullptr };
+    QGridLayout*   layout { nullptr };
+  };
+
+  using ModeDatas = std::vector<ModeData *>;
+
  private:
   Window* window_ { nullptr };
 
-  // Mode Buttons
-  CQImageButton *noneButton_    { nullptr };
-  CQImageButton *solidButton_   { nullptr };
-  CQImageButton *currentButton_ { nullptr };
-  CQImageButton *inheritButton_ { nullptr };
-  CQImageButton *lgradButton_   { nullptr };
-  CQImageButton *rgradButton_   { nullptr };
-  CQImageButton *imageButton_   { nullptr };
+  CSVGObject *obj_ { nullptr };
 
   QStackedWidget *stack_ { nullptr };
 
-  // Flat Widgets
+  // Mode Data
+  ModeData  noneData_;
+  ModeData  solidData_;
+  ModeData  currentData_;
+  ModeData  inheritData_;
+  ModeData  lgradData_;
+  ModeData  rgradData_;
+  ModeData  imageData_;
+  ModeDatas modeDatas_;
+
+  // Solid Widgets
   CQColorChooser* colorChooser_ { nullptr };
   CQRealSpin*     opacityEdit_  { nullptr };
   QComboBox*      fillRule_     { nullptr };
@@ -77,11 +108,46 @@ class StrokePaint : public QFrame {
 
   void setObject(CSVGObject *obj);
 
+ public slots:
+  void noneSlot();
+  void solidSlot();
+  void currentSlot();
+  void inheritSlot();
+  void lgradSlot();
+  void rgradSlot();
+  void imageSlot();
+
+  void colorSlot(const QColor &c);
+  void opacitySlot(double o);
+
+ private:
+  struct ModeData {
+    CQImageButton* button { nullptr };
+    int            ind    { -1 };
+    QFrame*        panel  { nullptr };
+    QGridLayout*   layout { nullptr };
+  };
+
+  using ModeDatas = std::vector<ModeData *>;
+
  private:
   Window* window_ { nullptr };
 
-  // Stroke Paint Widgets
-  QCheckBox*      shownCheck_   { nullptr };
+  CSVGObject *obj_ { nullptr };
+
+  QStackedWidget *stack_ { nullptr };
+
+  // Mode Data
+  ModeData  noneData_;
+  ModeData  solidData_;
+  ModeData  currentData_;
+  ModeData  inheritData_;
+  ModeData  lgradData_;
+  ModeData  rgradData_;
+  ModeData  imageData_;
+  ModeDatas modeDatas_;
+
+  // Solid Widgets
   CQColorChooser* colorChooser_ { nullptr };
   CQRealSpin*     opacityEdit_  { nullptr };
 };
@@ -96,8 +162,17 @@ class StrokeStyle : public QFrame {
 
   void setObject(CSVGObject *obj);
 
+ private slots:
+  void widthSlot(double);
+  void dashSlot(const CLineDash &);
+  void capSlot(CLineCapType);
+  void joinSlot(CLineJoinType);
+  void mitreSlot(double);
+
  private:
   Window* window_ { nullptr };
+
+  CSVGObject *obj_ { nullptr };
 
   // Stroke Style Widgets
   CQRealSpin* widthEdit_ { nullptr };

@@ -124,9 +124,9 @@ draw()
     double a = 0;
 
     if      (i > 0)
-      a = atan2(points_[i].y - points_[i - 1].y, points_[i].x - points_[i - 1].x);
+      a = std::atan2(points_[i].y - points_[i - 1].y, points_[i].x - points_[i - 1].x);
     else if (i < num_points - 1)
-      a = atan2(points_[i + 1].y - points_[i].y, points_[i + 1].x - points_[i].x);
+      a = std::atan2(points_[i + 1].y - points_[i].y, points_[i + 1].x - points_[i].x);
 
     angles.push_back(a);
   }
@@ -158,7 +158,7 @@ getBBox(CBBox2D &bbox) const
 
 void
 CSVGPolyLine::
-moveBy(const CVector2D &delta)
+moveDelta(const CVector2D &delta)
 {
   uint num_points = points_.size();
 
@@ -196,8 +196,14 @@ resizeTo(const CSize2D &size)
 
 void
 CSVGPolyLine::
-rotateBy(double da, const CPoint2D &c)
+rotateBy(double da)
 {
+  CBBox2D bbox;
+
+  getBBox(bbox);
+
+  auto c = bbox.getCenter();
+
   uint num_points = points_.size();
 
   for (uint i = 0; i < num_points; ++i)

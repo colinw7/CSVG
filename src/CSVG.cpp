@@ -1833,10 +1833,10 @@ pushStyle(CSVGObject *object)
   setStyleObject(object);
 
   if (object) {
-    if (! object->getSelected())
+    if (! object->getSelected() || ! hasSelectedStroke())
       updateStroke(object->getStroke());
     else
-      setSelectedStroke();
+      updatedSelectedStroke();
   }
   else
     resetStroke();
@@ -1900,7 +1900,7 @@ updateStroke(const CSVGStroke &stroke)
 
 void
 CSVG::
-setSelectedStroke()
+updatedSelectedStroke()
 {
   auto c = CRGB(1, 0, 0);
 
@@ -1914,14 +1914,14 @@ bool
 CSVG::
 isStroked() const
 {
-  return (styleData_.stroke.isStroked());
+  return getStroke().isStroked();
 }
 
 void
 CSVG::
 setStrokeBuffer(CSVGBuffer *buffer)
 {
-  buffer->setStroke(styleData_.stroke);
+  buffer->setStroke(getStroke());
 }
 
 //------
@@ -1944,14 +1944,14 @@ bool
 CSVG::
 isFilled() const
 {
-  return styleData_.fill.isFilled();
+  return getFill().isFilled();
 }
 
 void
 CSVG::
 setFillBuffer(CSVGBuffer *buffer)
 {
-  buffer->setFill(styleData_.fill);
+  buffer->setFill(getFill());
 }
 
 CRGBA
@@ -2030,6 +2030,8 @@ updateFontDef(const CSVGFontDef &fontDef)
   CScreenUnitsMgrInst->setExSize(w);
 }
 
+//---
+
 void
 CSVG::
 setTransform(const CMatrixStack2D &matrix)
@@ -2037,6 +2039,8 @@ setTransform(const CMatrixStack2D &matrix)
   if (buffer_)
     buffer_->setTransform(matrix);
 }
+
+//---
 
 void
 CSVG::
@@ -3674,7 +3678,7 @@ decodeFillRuleString(const std::string &ruleStr)
   else if (ruleStr == "evenodd")
     return FillType(FILL_TYPE_EVEN_ODD);
   else if (ruleStr == "inherit")
-    return FillType::inherit();
+    return FillType::makeInherit();
   else
     return FillType(FILL_TYPE_NONE);
 }
@@ -4124,6 +4128,31 @@ transformBBox(const CMatrixStack2D &m, const CBBox2D &bbox) const
     m.multiplyPoint(bbox.getLR(), p2);
     m.multiplyPoint(bbox.getUL(), p3);
     m.multiplyPoint(bbox.getUR(), p4);
+
+    CBBox2D bbox1(p1, p2);
+
+    bbox1 += p3;
+    bbox1 += p4;
+
+    return bbox1;
+  }
+  else
+    return bbox;
+}
+
+CBBox2D
+CSVG::
+untransformBBox(const CMatrixStack2D &m, const CBBox2D &bbox) const
+{
+  if (bbox.isSet()) {
+    auto im = m.getIMatrix();
+
+    CPoint2D p1, p2, p3, p4;
+
+    im.multiplyPoint(bbox.getLL(), p1);
+    im.multiplyPoint(bbox.getLR(), p2);
+    im.multiplyPoint(bbox.getUL(), p3);
+    im.multiplyPoint(bbox.getUR(), p4);
 
     CBBox2D bbox1(p1, p2);
 

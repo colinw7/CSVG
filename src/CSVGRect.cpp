@@ -289,17 +289,7 @@ setSize(const CSize2D &size)
 
 void
 CSVGRect::
-moveTo(const CPoint2D &p)
-{
-  x_ = p.x;
-  y_ = p.y;
-
-  updateBBox();
-}
-
-void
-CSVGRect::
-moveBy(const CVector2D &delta)
+moveDelta(const CVector2D &delta)
 {
   auto drawBox = getDrawBBox();
 

@@ -25,8 +25,6 @@ class CSVGPath : public CSVGObject, public CSVGPrintBase<CSVGPath> {
   double getPathLength() const { return pathLength_.getValue(0); }
   void setPathLength(double r) { pathLength_ = r; }
 
-  void moveBy(const CVector2D &d) override;
-
   bool draw() override;
 
   bool getBBox(CBBox2D &bbox) const override;
@@ -39,6 +37,8 @@ class CSVGPath : public CSVGObject, public CSVGPrintBase<CSVGPath> {
 
  protected:
   bool drawZeroLength();
+
+  void moveDelta(const CVector2D &d) override;
 
  protected:
   CSVGPathPartList parts_;

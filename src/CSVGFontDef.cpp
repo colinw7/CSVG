@@ -215,7 +215,7 @@ print(std::ostream &os) const
   bool output = false;
 
   if (family_.isValid()) {
-    os << "font-family: ";
+    os << "font-family:";
 
     if (family_.getValue().isInherit())
       os << "inherit";
@@ -230,7 +230,7 @@ print(std::ostream &os) const
   if (size_.isValid()) {
     if (output) os << " ";
 
-    os << "font-size: ";
+    os << "font-size:";
 
     if (size_.getValue().isInherit())
       os << "inherit";
@@ -248,7 +248,7 @@ print(std::ostream &os) const
     if (styles & CFONT_STYLE_BOLD) {
       if (output) os << " ";
 
-      os << "font-weight: bold;";
+      os << "font-weight:bold;";
 
       output = true;
     }
@@ -256,7 +256,7 @@ print(std::ostream &os) const
     if (styles & CFONT_STYLE_ITALIC) {
       if (output) os << " ";
 
-      os << "font-style: italic;";
+      os << "font-style:italic;";
 
       output = true;
     }

@@ -89,7 +89,7 @@ draw()
   points.push_back(CPoint2D(x1, y1));
   points.push_back(CPoint2D(x2, y2));
 
-  double a = atan2(points[1].y - points[0].y, points[1].x - points[0].x);
+  double a = std::atan2(points[1].y - points[0].y, points[1].x - points[0].x);
 
   angles.push_back(a);
   angles.push_back(a); // dup
@@ -174,7 +174,7 @@ inside(const CPoint2D &pos) const
 
 void
 CSVGLine::
-moveBy(const CVector2D &delta)
+moveDelta(const CVector2D &delta)
 {
   setStart(getStart() + delta);
   setEnd  (getEnd  () + delta);

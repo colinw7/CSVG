@@ -53,7 +53,6 @@ class CSVGImage : public CSVGObject, public CSVGPrintBase<CSVGImage> {
 
   bool getBBox(CBBox2D &bbox) const override;
 
-  void moveBy(const CVector2D &delta) override;
   void resizeTo(const CSize2D &size) override;
 
   CSVGBuffer *getImageBuffer() const;
@@ -68,6 +67,8 @@ class CSVGImage : public CSVGObject, public CSVGPrintBase<CSVGImage> {
   void init();
 
   CSize2D getSizeInternal() const { return CSize2D(getWidth(), getHeight()); }
+
+  void moveDelta(const CVector2D &delta) override;
 
  private:
   COptValT<CSVGXLink>          xlink_;

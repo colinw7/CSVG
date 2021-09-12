@@ -38,8 +38,12 @@ class CSVGLineDash : public CSVGEqBase<CSVGLineDash>, public CSVGPrintBase<CSVGL
   const Dashes &dashes() const { assert(type_ == Type::DASHED); return dashes_; }
   void setDashes(const Dashes &d) { type_ = Type::DASHED; dashes_ = d; }
 
-  bool isNone  () const { return type_ == Type::NONE;   }
-  bool isSolid () const { return type_ == Type::SOLID;  }
+  bool isNone() const { return type_ == Type::NONE; }
+  void setNone() { type_ = Type::NONE; }
+
+  bool isSolid() const { return type_ == Type::SOLID; }
+  void setSolid() { type_ = Type::SOLID; }
+
   bool isDashed() const { return type_ == Type::DASHED; }
 
   int numDashes() const { return dashes_.size(); }

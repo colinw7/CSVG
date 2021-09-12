@@ -25,6 +25,7 @@ class SVG : public CSVG {
  public:
   SVG(Canvas *canvas) :
    CSVG(), canvas_(canvas) {
+    setSelectedStroke(false);
   }
 
   Canvas *canvas() const { return canvas_; }
@@ -330,15 +331,16 @@ void
 Canvas::
 keyPressEvent(QKeyEvent *ke)
 {
+  // zoom
   if      (ke->key() == Qt::Key_Plus)
-    scale_ *= 1.20;
+    return zoomIn();
   else if (ke->key() == Qt::Key_Minus)
-    scale_ /= 1.20;
-  else if (ke->key() == Qt::Key_Home) {
-    offset_ = CPoint2D(0, 0);
-    scale_  = 1;
-  }
-  else if (ke->key() == Qt::Key_Left)
+    return zoomOut();
+  else if (ke->key() == Qt::Key_Home)
+    return zoomReset();
+
+  // pan
+  if      (ke->key() == Qt::Key_Left)
     offset_.x -= 4;
   else if (ke->key() == Qt::Key_Right)
     offset_.x += 4;
@@ -348,6 +350,40 @@ keyPressEvent(QKeyEvent *ke)
     offset_.y += 4;
   else
     return;
+
+  updateMatrix();
+
+  redraw(/*update*/true);
+}
+
+void
+Canvas::
+zoomIn()
+{
+  scale_ *= 1.20;
+
+  updateMatrix();
+
+  redraw(/*update*/true);
+}
+
+void
+Canvas::
+zoomOut()
+{
+  scale_ /= 1.20;
+
+  updateMatrix();
+
+  redraw(/*update*/true);
+}
+
+void
+Canvas::
+zoomReset()
+{
+  offset_ = CPoint2D(0, 0);
+  scale_  = 1;
 
   updateMatrix();
 

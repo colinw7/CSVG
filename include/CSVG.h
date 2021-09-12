@@ -501,8 +501,12 @@ class CSVG {
 
   void resetStroke();
   void updateStroke(const CSVGStroke &stroke);
-  void setSelectedStroke();
   bool isStroked() const;
+
+  void updatedSelectedStroke();
+
+  bool hasSelectedStroke() const { return selectedStroke_; }
+  void setSelectedStroke(bool b) { selectedStroke_ = b; }
 
   void resetFill();
   void updateFill(const CSVGFill &fill);
@@ -735,6 +739,7 @@ class CSVG {
   bool getTitle(std::string &str);
 
   CBBox2D transformBBox(const CMatrixStack2D &m, const CBBox2D &bbox) const;
+  CBBox2D untransformBBox(const CMatrixStack2D &m, const CBBox2D &bbox) const;
 
   void lengthToPixel(double xi, double yi, double *xo, double *yo);
   void windowToPixel(double xi, double yi, double *xo, double *yo);
@@ -835,38 +840,39 @@ class CSVG {
 
   static NameToRGBA colors_;
 
-  CSVGRenderer*    renderer_      { nullptr };
+  CSVGRenderer*    renderer_       { nullptr };
   BufferMgrP       bufferMgr_;
-  CSVGBuffer*      buffer_        { nullptr };
+  CSVGBuffer*      buffer_         { nullptr };
   BufferStack      bufferStack_;
   CSVGBlockData    rootBlockData_;
   CSVGBlockData    blockData_;
   BlockDataStack   blockDataStack_;
   BlockP           block_;
   XMLP             xml_;
-  CXMLTag*         xmlTag_        { nullptr };
-  CRGBA            background_    { 1, 1, 1};
+  CXMLTag*         xmlTag_         { nullptr };
+  CRGBA            background_     { 1, 1, 1};
   StyleData        styleData_;
   StyleDataStack   styleDataStack_;
-  double           fontDpi_       { 100.0 };
+  bool             selectedStroke_ { true };
+  double           fontDpi_        { 100.0 };
   FontList         fontList_;
   NameObjectMap    idObjectMap_;
   CSSList          cssList_;
 #ifdef CSVG_JAVASCRIPT
-  CSVGJavaScript*  js_            { nullptr };
+  CSVGJavaScript*  js_             { nullptr };
 #endif
-  CSVGObject*      eventObject_   { nullptr };
+  CSVGObject*      eventObject_    { nullptr };
   ObjectList       drawObjects_;
   OptXmlStyleSheet xmlStyleSheet_;
-  bool             uniquify_      { false };
-  bool             autoName_      { false };
-  bool             ignoreFilter_  { false };
+  bool             uniquify_       { false };
+  bool             autoName_       { false };
+  bool             ignoreFilter_   { false };
   CSize2D          altSize_;
-  CSVGObject*      altRoot_       { nullptr };
+  CSVGObject*      altRoot_        { nullptr };
   AltData          altData_;
   DebugData        debugData_;
-  bool             quiet_         { false };
-  bool             checkViewBox_  { false };
+  bool             quiet_          { false };
+  bool             checkViewBox_   { false };
 };
 
 #endif

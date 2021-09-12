@@ -60,8 +60,6 @@ class CSVGEllipse : public CSVGObject, public CSVGPrintBase<CSVGEllipse> {
 
   //---
 
-  void moveBy(const CVector2D &delta) override;
-
   void resizeTo(const CSize2D &size) override;
 
   //---
@@ -72,10 +70,12 @@ class CSVGEllipse : public CSVGObject, public CSVGPrintBase<CSVGEllipse> {
 
   void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
- private:
+ protected:
   void init();
 
   void updateBBox();
+
+  void moveDelta(const CVector2D &delta) override;
 
  private:
   COptScreenUnits cx_;

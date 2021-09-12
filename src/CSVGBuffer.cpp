@@ -1089,7 +1089,8 @@ spotLight(CSVGImageDataP &image, CSVGFeSpotLight *light, CSVGLightData &lightDat
   lightData.lpoint    = light->getPoint();
   lightData.lpointsAt = light->getPointsAt();
   lightData.lexponent = light->getSpecularExponent();
-  lightData.lcone     = (light->hasLimitingConeAngle() ? cos(light->getLimitingConeAngle()) : 0);
+  lightData.lcone     = (light->hasLimitingConeAngle() ?
+                           std::cos(light->getLimitingConeAngle()) : 0);
 
   int w = image->getWidth ();
   int h = image->getHeight();
@@ -1111,9 +1112,9 @@ lightPoint(CSVGImageDataP &image, int x, int y, const CSVGLightData &lightData)
   double lx, ly, lz;
 
   if (lightData.ltype == CSVGObjTypeId::FE_DISTANT_LIGHT) {
-    lx = cos(lightData.lazimuth)*cos(lightData.lelevation);
-    ly = sin(lightData.lazimuth)*cos(lightData.lelevation);
-    lz = sin(lightData.lelevation);
+    lx = std::cos(lightData.lazimuth)*std::cos(lightData.lelevation);
+    ly = std::sin(lightData.lazimuth)*std::cos(lightData.lelevation);
+    lz = std::sin(lightData.lelevation);
   }
   else {
     auto rgba1 = image->getPixel(x, y);
@@ -2312,7 +2313,7 @@ void
 CSVGBuffer::
 drawRoundedRectangle(const CBBox2D &bbox, double rx, double ry)
 {
-  svg_.setStrokeBuffer(this);
+  setStroke(svg_.getStroke());
 
   const auto &ll = bbox.getLL();
   const auto &ur = bbox.getUR();
@@ -2338,7 +2339,7 @@ void
 CSVGBuffer::
 fillRoundedRectangle(const CBBox2D &bbox, double rx, double ry)
 {
-  svg_.setFillBuffer(this);
+  setFill(svg_.getFill());
 
   const auto &ll = bbox.getLL();
   const auto &ur = bbox.getUR();
@@ -2364,7 +2365,7 @@ void
 CSVGBuffer::
 drawRectangle(const CBBox2D &bbox)
 {
-  svg_.setStrokeBuffer(this);
+  setStroke(svg_.getStroke());
 
   pathInit();
 
@@ -2382,7 +2383,7 @@ void
 CSVGBuffer::
 fillRectangle(const CBBox2D &bbox)
 {
-  svg_.setFillBuffer(this);
+  setFill(svg_.getFill());
 
   pathInit();
 
@@ -2480,12 +2481,12 @@ pathArcSegment(double xc, double yc, double angle1, double angle2,
   angle2 = CMathGen::DegToRad(angle2);
   phi    = CMathGen::DegToRad(phi);
 
-  double sin_a1  = sin(angle1);
-  double cos_a1  = cos(angle1);
-  double sin_a2  = sin(angle2);
-  double cos_a2  = cos(angle2);
-  double sin_phi = sin(phi);
-  double cos_phi = cos(phi);
+  double sin_a1  = std::sin(angle1);
+  double cos_a1  = std::cos(angle1);
+  double sin_a2  = std::sin(angle2);
+  double cos_a2  = std::cos(angle2);
+  double sin_phi = std::sin(phi);
+  double cos_phi = std::cos(phi);
 
   double a00 =  cos_phi*rx;
   double a01 = -sin_phi*ry;
@@ -2494,7 +2495,7 @@ pathArcSegment(double xc, double yc, double angle1, double angle2,
 
   double da2 = 0.5*(angle2 - angle1);
 
-  double t = (8.0/3.0)*sin(da2*0.5)*sin(da2*0.5)/sin(da2);
+  double t = (8.0/3.0)*std::sin(da2*0.5)*std::sin(da2*0.5)/std::sin(da2);
 
   double x1 = xc + cos_a1 - t*sin_a1;
   double y1 = yc + sin_a1 + t*cos_a1;
@@ -2816,7 +2817,7 @@ void
 CSVGBuffer::
 drawLine(double x1, double y1, double x2, double y2)
 {
-  svg_.setStrokeBuffer(this);
+  setStroke(svg_.getStroke());
 
   pathInit();
 
@@ -2842,19 +2843,19 @@ drawCircle(double x, double y, double r)
 
   if (isFilled() || isStroked()) {
     if (isFilled()) {
-      svg_.setFillBuffer(this);
+      setFill(svg_.getFill());
 
       pathFill();
     }
 
     if (isStroked()) {
-      svg_.setStrokeBuffer(this);
+      setStroke(svg_.getStroke());
 
       pathStroke();
     }
   }
   else {
-    svg_.setFillBuffer(this);
+    setFill(svg_.getFill());
 
     pathFill();
   }
@@ -2876,19 +2877,19 @@ drawEllipse(double x, double y, double rx, double ry)
 
   if (isFilled() || isStroked()) {
     if (isFilled()) {
-      svg_.setFillBuffer(this);
+      setFill(svg_.getFill());
 
       pathFill();
     }
 
     if (isStroked()) {
-      svg_.setStrokeBuffer(this);
+      setStroke(svg_.getStroke());
 
       pathStroke();
     }
   }
   else {
-    svg_.setFillBuffer(this);
+    setFill(svg_.getFill());
 
     pathFill();
   }
@@ -2898,7 +2899,7 @@ void
 CSVGBuffer::
 drawArc(double xc, double yc, double xr, double yr, double angle1, double angle2)
 {
-  svg_.setStrokeBuffer(this);
+  setStroke(svg_.getStroke());
 
   pathInit();
 
@@ -2911,7 +2912,7 @@ void
 CSVGBuffer::
 fillArc(double xc, double yc, double xr, double yr, double angle1, double angle2)
 {
-  svg_.setFillBuffer(this);
+  setFill(svg_.getFill());
 
   pathInit();
 
@@ -2929,7 +2930,7 @@ drawPolygon(const std::vector<CPoint2D> &points)
   if (! num_points)
     return;
 
-  svg_.setStrokeBuffer(this);
+  setStroke(svg_.getStroke());
 
   pathInit();
 
@@ -2947,7 +2948,7 @@ drawPolygon(const std::vector<CPoint2D> &points)
   std::vector<double> angles;
 
   for (int i1 = num_points - 1, i2 = 0; i2 < num_points; i1 = i2++) {
-    double a = atan2(points[i2].y - points[i1].y, points[i2].x - points[i1].x);
+    double a = std::atan2(points[i2].y - points[i1].y, points[i2].x - points[i1].x);
 
     angles.push_back(a);
   }
@@ -2964,7 +2965,7 @@ fillPolygon(const std::vector<CPoint2D> &points)
   if (! num_points)
     return;
 
-  svg_.setFillBuffer(this);
+  setFill(svg_.getFill());
 
   pathInit();
 
@@ -2985,7 +2986,7 @@ CSVGBuffer::
 drawText(double x, double y, const std::string &text, const CSVGFontDef &fontDef,
          CHAlignType align)
 {
-  svg_.setStrokeBuffer(this);
+  setStroke(svg_.getStroke());
 
   auto *svg_font = svg_.getFont();
 
@@ -3059,7 +3060,7 @@ CSVGBuffer::
 fillText(double x, double y, const std::string &text, const CSVGFontDef &fontDef,
          CHAlignType align)
 {
-  svg_.setFillBuffer(this);
+  setFill(svg_.getFill());
 
   auto *svg_font = svg_.getFont();
 
@@ -3147,19 +3148,19 @@ drawParts(const CSVGPathPartList &parts)
   // fill and/or stroke path
   if (isFilled() || isStroked()) {
     if (isFilled()) {
-      svg_.setFillBuffer(this);
+      setFill(svg_.getFill());
 
       pathFill();
     }
 
     if (isStroked()) {
-      svg_.setStrokeBuffer(this);
+      setStroke(svg_.getStroke());
 
       pathStroke();
     }
   }
   else {
-    svg_.setFillBuffer(this);
+    setFill(svg_.getFill());
 
     pathFill();
   }
@@ -3211,8 +3212,8 @@ drawMarkers(const std::vector<CPoint2D> &points, const std::vector<double> &angl
       x3 = points[2].x; y3 = points[2].y;
     }
 
-    double g1 = atan2(y2 - y1, x2 - x1);
-    double g2 = atan2(y3 - y2, x3 - x2);
+    double g1 = std::atan2(y2 - y1, x2 - x1);
+    double g2 = std::atan2(y3 - y2, x3 - x2);
 
     double gg = (g1 + g2)/2;
 
@@ -3233,8 +3234,8 @@ drawMarkers(const std::vector<CPoint2D> &points, const std::vector<double> &angl
         x3 = x2; y3 = y2;
       }
 
-      g1 = atan2(y2 - y1, x2 - x1);
-      g2 = atan2(y3 - y2, x3 - x2);
+      g1 = std::atan2(y2 - y1, x2 - x1);
+      g2 = std::atan2(y3 - y2, x3 - x2);
 
       double gg = (g1 + g2)/2;
 

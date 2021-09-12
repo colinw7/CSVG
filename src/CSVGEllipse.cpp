@@ -214,7 +214,7 @@ getPartList() const
 
 void
 CSVGEllipse::
-moveBy(const CVector2D &delta)
+moveDelta(const CVector2D &delta)
 {
   auto c = getCenter();
 

@@ -1,6 +1,8 @@
 #include <CQInkscapeWindow.h>
 #include <CQInkscapeCanvas.h>
+#include <CQInkscapeMouseToolBar.h>
 #include <CQInkscapeModeToolBar.h>
+#include <CQInkscapePaletteArea.h>
 #include <CQInkscapeStatusBar.h>
 #include <CQInkscapeColorBar.h>
 #include <CQInkscapeFillStroke.h>
@@ -19,6 +21,8 @@
 #include <QLabel>
 #include <QFileDialog>
 
+#include <fstream>
+
 #include <svg/fill_current_svg.h>
 #include <svg/fill_image_svg.h>
 #include <svg/fill_inherit_svg.h>
@@ -26,13 +30,17 @@
 #include <svg/fill_none_svg.h>
 #include <svg/fill_rgradient_svg.h>
 #include <svg/fill_solid_svg.h>
-#include <svg/flat_svg.h>
-#include <svg/path_svg.h>
-#include <svg/point_select_svg.h>
-#include <svg/rect_svg.h>
-#include <svg/select_svg.h>
-#include <svg/text_svg.h>
-#include <svg/zoom_svg.h>
+
+#include <svg/select_mode_svg.h>
+#include <svg/point_select_mode_svg.h>
+#include <svg/zoom_mode_svg.h>
+#include <svg/rect_mode_svg.h>
+#include <svg/path_mode_svg.h>
+#include <svg/text_mode_svg.h>
+
+#include <svg/mouse_zoom_in_svg.h>
+#include <svg/mouse_zoom_out_svg.h>
+#include <svg/mouse_zoom_fit_svg.h>
 
 namespace CQInkscape {
 
@@ -48,10 +56,11 @@ Window()
 
   //---
 
-  auto addAction = [&](QMenu *menu, const QString &name, const char *slotName) {
+  auto addAction = [&](QMenu *menu, const QString &name, const char *slotName=nullptr) {
     auto *action = new QAction(name, menu);
 
-    connect(action, SIGNAL(triggered()), this, slotName);
+    if (slotName)
+      connect(action, SIGNAL(triggered()), this, slotName);
 
     menu->addAction(action);
 
@@ -59,21 +68,37 @@ Window()
   };
 
   auto *fileMenu   = menuBar_->addMenu("File");
-  auto *selectMenu = menuBar_->addMenu("Select");
+  auto *editMenu   = menuBar_->addMenu("Edit");
+  auto *objectMenu = menuBar_->addMenu("Object");
+  auto *viewMenu   = menuBar_->addMenu("View");
   auto *helpMenu   = menuBar_->addMenu("Help");
 
-  addAction(fileMenu, "Load"    , SLOT(loadSlot()));
-  addAction(fileMenu, "Settings", SLOT(settingsSlot()));
-  addAction(fileMenu, "Quit"    , SLOT(quitSlot()));
+  addAction(fileMenu, "Load...", SLOT(loadSlot()));
+  addAction(fileMenu, "Save As...", SLOT(saveAsSlot()));
+  addAction(fileMenu, "Quit", SLOT(quitSlot()));
 
-  addAction(selectMenu, "Select None", SLOT(selectNoneSlot()));
+  addAction(editMenu, "Delete");
+  addAction(editMenu, "Select All", SLOT(selectAllSlot()));
+  addAction(editMenu, "Select None", SLOT(selectNoneSlot()));
+  addAction(editMenu, "Select Parent", SLOT(selectParentSlot()));
+
+  addAction(objectMenu, "Ungroup", SLOT(ungroupSlot()));
+
+  auto *viewZoomMenu = viewMenu->addMenu("Zoom");
+
+  addAction(viewZoomMenu, "Zoom In"   , SLOT(zoomInSlot()));
+  addAction(viewZoomMenu, "Zoom Out"  , SLOT(zoomOutSlot()));
+  addAction(viewZoomMenu, "Zoom Reset", SLOT(zoomResetSlot()));
+
+  addAction(viewMenu, "Settings", SLOT(settingsSlot()));
+  addAction(viewMenu, "Console" , SLOT(consoleSlot()));
 
   addAction(helpMenu, "Help", SLOT(helpSlot()));
 
   //---
 
   // top mouse toolbar
-  mouseToolBar_ = CQUtil::makeWidget<QFrame>(this, "mouseToolBar");
+  mouseToolBar_ = new MouseToolBar(this);
 
   // left mode toolbar
   modeToolBar_ = new ModeToolBar(this);
@@ -92,17 +117,13 @@ Window()
   //---
 
   // palettes
-  palettesArea_   = CQUtil::makeWidget<QFrame>(this, "palettesArea");
-  palettesLayout_ = CQUtil::makeLayout<QVBoxLayout>(palettesArea_);
+  paletteArea_ = new PaletteArea(this);
 
   fillStrokePalette_       = new FillStroke(this);
   objectPropertiesPalette_ = new ObjectProperties(this);
 
-  palettes_.push_back(fillStrokePalette_);
-  palettes_.push_back(objectPropertiesPalette_);
-
-  palettesLayout_->addWidget(fillStrokePalette_);
-  palettesLayout_->addWidget(objectPropertiesPalette_);
+  paletteArea_->addPalette(fillStrokePalette_);
+  paletteArea_->addPalette(objectPropertiesPalette_);
 }
 
 void
@@ -121,10 +142,7 @@ updatePlacement()
   //---
 
   // get width of palettes (TODO: palette sides)
-  int palettesWidth = 0;
-
-  for (const auto &palette : palettes_)
-    palettesWidth += palette->sizeHint().width();
+  int palettesWidth = paletteArea_->sizeHint().width();
 
   //---
 
@@ -197,12 +215,11 @@ updatePlacement()
 
   auto paletteSize = QSize(palettesWidth, centerHeight);
 
-  palettesArea_->move(canvasWidth, topHeight);
+  paletteArea_->move(canvasWidth + modeToolBarWidth, topHeight);
 
-  palettesArea_->resize(paletteSize);
+  paletteArea_->resize(paletteSize);
 
-  for (const auto &palette : palettes_)
-    palette->show();
+  paletteArea_->showPalettes();
 }
 
 CSVG *
@@ -263,19 +280,54 @@ void
 Window::
 loadSlot()
 {
-  QString title  = "Load SVG File";
-  QString cwd    = QString(COSFile::getCurrentDir().c_str());
-  QString filter = "SVG, (*.svg)";
+  auto title  = QString("Load SVG File");
+  auto cwd    = QString(COSFile::getCurrentDir().c_str());
+  auto filter = QString("SVG, (*.svg)");
 
   auto filenames = QFileDialog::getOpenFileNames(this, title, cwd, filter);
-
-  if (filenames.size() == 0)
-    return;
+  if (filenames.size() == 0) return;
 
   QStringListIterator fi(filenames);
 
   while (fi.hasNext())
     svg()->read(fi.next().toStdString());
+}
+
+void
+Window::
+saveAsSlot()
+{
+  auto title  = QString("Load SVG File");
+  auto cwd    = QString(COSFile::getCurrentDir().c_str());
+  auto filter = QString("SVG, (*.svg)");
+
+  auto filename = QFileDialog::getSaveFileName(this, title, cwd, filter);
+  if (filename == "") return;
+
+  std::ofstream os(filename.toStdString());
+
+  svg()->print(os, /*hier*/true);
+}
+
+void
+Window::
+zoomInSlot()
+{
+  canvas_->zoomIn();
+}
+
+void
+Window::
+zoomOutSlot()
+{
+  canvas_->zoomOut();
+}
+
+void
+Window::
+zoomResetSlot()
+{
+  canvas_->zoomReset();
 }
 
 void
@@ -292,9 +344,37 @@ settingsSlot()
 
 void
 Window::
+consoleSlot()
+{
+  setConsoleVisible(true);
+}
+
+void
+Window::
 quitSlot()
 {
   exit(0);
+}
+
+void
+Window::
+selectAllSlot()
+{
+  selectAll();
+}
+
+void
+Window::
+selectAll()
+{
+  CSVG::ObjectList objects;
+
+  svg()->getAllChildren(objects);
+
+  for (auto &obj : objects)
+    obj->setSelected(true);
+
+  redraw(true);
 }
 
 void
@@ -314,6 +394,50 @@ selectNone()
 
   for (auto &obj : objects)
     obj->setSelected(false);
+
+  redraw(true);
+}
+
+void
+Window::
+selectParentSlot()
+{
+  selectParent();
+}
+
+void
+Window::
+selectParent()
+{
+  CSVG::ObjectList objects;
+
+  svg()->getSelectedObjects(objects);
+
+  CSVG::ObjectList parentObjects;
+
+  for (auto &obj : objects) {
+    if (obj->getParent())
+      parentObjects.push_back(obj->getParent());
+
+    obj->setSelected(false);
+  }
+
+  for (auto &obj : parentObjects)
+    obj->setSelected(true);
+
+  redraw(true);
+}
+
+void
+Window::
+ungroupSlot()
+{
+  CSVG::ObjectList objects;
+
+  svg()->getSelectedObjects(objects);
+
+  for (auto &obj : objects)
+    obj->ungroupObject();
 
   redraw(true);
 }
@@ -340,6 +464,15 @@ setShowViewBox(bool b)
   showViewBox_ = b;
 
   redraw(/*update*/true);
+}
+
+void
+Window::
+setMode(const Mode &v)
+{
+  mode_ = v;
+
+  mouseToolBar_->updateState();
 }
 
 //---

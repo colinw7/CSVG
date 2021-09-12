@@ -14,6 +14,24 @@ dirs:
 	@if [ ! -e ../obj ]; then mkdir ../obj; fi
 	@if [ ! -e ../lib ]; then mkdir ../lib; fi
 
+ifeq ($(CSVG_JAVASCRIPT),1)
+JAVASCRIPT_SRC = \
+CSVGJavaScript.cpp \
+CSVGJAnimated.cpp \
+CSVGJDocument.cpp \
+CSVGJElement.cpp \
+CSVGJEvent.cpp \
+CSVGJTypes.cpp \
+
+JAVASCRIPT_CFLAGS = \
+-I../../CJavaScript/include \
+-DCSVG_JAVASCRIPT
+else
+JAVASCRIPT_SRC =
+
+JAVASCRIPT_CFLAGS =
+endif
+
 SRC = \
 CSVG.cpp \
 CSVGAnchor.cpp \
@@ -105,12 +123,7 @@ CSVGXLink.cpp \
 \
 CSVGUtil.cpp \
 \
-CSVGJavaScript.cpp \
-CSVGJAnimated.cpp \
-CSVGJDocument.cpp \
-CSVGJElement.cpp \
-CSVGJEvent.cpp \
-CSVGJTypes.cpp \
+$(JAVASCRIPT_SRC) \
 \
 CSVGRenderer.cpp \
 CSVGImageRenderer.cpp \
@@ -126,7 +139,6 @@ $(CDEBUG) \
 -I. \
 -I$(INC_DIR) \
 -I../../CXML/include \
--I../../CJavaScript/include \
 -I../../CRenderer/include \
 -I../../CCSS/include \
 -I../../CConfig/include \
@@ -140,6 +152,8 @@ $(CDEBUG) \
 -I../../CMath/include \
 -I../../CUtil/include \
 -I../../CRGBName/include \
+\
+$(JAVASCRIPT_CFLAGS) \
 
 clean:
 	$(RM) -f $(OBJ_DIR)/*.o

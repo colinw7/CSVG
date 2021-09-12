@@ -44,7 +44,6 @@ class CSVGLine : public CSVGObject, public CSVGPrintBase<CSVGLine> {
 
   bool inside(const CPoint2D &pos) const override;
 
-  void moveBy(const CVector2D &delta) override;
   void resizeTo(const CSize2D &size) override;
 
   void print(std::ostream &os, bool hier=false) const override;
@@ -52,6 +51,9 @@ class CSVGLine : public CSVGObject, public CSVGPrintBase<CSVGLine> {
   void printValues(std::ostream &os, bool flat=false) const override;
 
   void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
+
+ protected:
+  void moveDelta(const CVector2D &delta) override;
 
  private:
   COptValT<CScreenUnits> x1_;

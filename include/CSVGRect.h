@@ -67,9 +67,6 @@ class CSVGRect : public CSVGObject, public CSVGPrintBase<CSVGRect> {
 
   //---
 
-  void moveTo(const CPoint2D &p) override;
-  void moveBy(const CVector2D &delta) override;
-
   void resizeTo(const CSize2D &size) override;
 
   //---
@@ -80,10 +77,12 @@ class CSVGRect : public CSVGObject, public CSVGPrintBase<CSVGRect> {
 
   void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
- private:
+ protected:
   void init();
 
   void updateBBox();
+
+  void moveDelta(const CVector2D &delta) override;
 
  private:
   COptValT<CScreenUnits> x_;

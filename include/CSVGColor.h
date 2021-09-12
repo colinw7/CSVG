@@ -13,6 +13,11 @@ class CSVGColor : public CSVGEqBase<CSVGColor>, public CSVGPrintBase<CSVGColor> 
   };
 
  public:
+  static CSVGColor makeNone   () { return CSVGColor(Type::NONE); }
+  static CSVGColor makeCurrent() { return CSVGColor(Type::CURRENT); }
+
+  static CSVGColor makeRGBA(const CRGBA &rgba) { return CSVGColor(rgba); }
+
   CSVGColor(Type type=Type::NONE) :
    type_(type) {
   }

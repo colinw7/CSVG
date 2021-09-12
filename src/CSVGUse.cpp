@@ -113,7 +113,7 @@ termParse()
         if (x_.isValid()) delta.setX(x_.getValue());
         if (y_.isValid()) delta.setY(y_.getValue());
 
-        object1->moveBy(delta);
+        object1->moveDelta(delta);
       }
 
       if (width_.isValid() || height_.isValid()) {
@@ -232,15 +232,15 @@ adjustedTransform(const CMatrixStack2D &transform) const
 
 void
 CSVGUse::
-moveBy(const CVector2D &delta)
+moveDelta(const CVector2D &delta)
 {
   auto *object = getLinkObject();
 
   if (object)
-    object->moveBy(delta);
+    object->moveDelta(delta);
 
   for (auto &c : children())
-    c->moveBy(delta);
+    c->moveDelta(delta);
 }
 
 bool

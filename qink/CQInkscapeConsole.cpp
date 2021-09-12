@@ -72,11 +72,16 @@ Console(Window *window) :
 
   mgr_->addCommand("help", new HelpTclCmd(this));
 
-  mgr_->addCommand("get_svg_children", new GetSVGObjectsTclCmd(this));
-  mgr_->addCommand("get_svg_data"    , new GetSVGDataTclCmd   (this));
-  mgr_->addCommand("set_svg_data"    , new SetSVGDataTclCmd   (this));
-  mgr_->addCommand("add_svg_child"   , new AddSVGChildTclCmd  (this));
-  mgr_->addCommand("write_svg"       , new WriteSVGTclCmd     (this));
+  mgr_->addCommand("get_svg_children" , new GetSVGChildrenTclCmd (this));
+  mgr_->addCommand("get_svg_data"     , new GetSVGDataTclCmd     (this));
+  mgr_->addCommand("set_svg_data"     , new SetSVGDataTclCmd     (this));
+  mgr_->addCommand("add_svg_object"   , new AddSVGObjectTclCmd   (this));
+  mgr_->addCommand("remove_svg_object", new RemoveSVGObjectTclCmd(this));
+  mgr_->addCommand("get_svg_selection", new GetSVGSelectionTclCmd(this));
+  mgr_->addCommand("move_svg_object"  , new MoveSVGObjectTclCmd  (this));
+  mgr_->addCommand("scale_svg_object" , new ScaleSVGObjectTclCmd (this));
+  mgr_->addCommand("rotate_svg_object", new RotateSVGObjectTclCmd(this));
+  mgr_->addCommand("write_svg_file"   , new WriteSVGFileTclCmd   (this));
 
   //---
 
@@ -165,20 +170,27 @@ complete(ConsoleCommandWidget *widget, const QString &text, int pos,
     QString matchStr;
     bool    exact = false;
 
-    if (interactive && matchCmds.size() > 1) {
-      matchStr = widget->showCompletionChooser(matchCmds);
+    if      (matchCmds.size() == 1) {
+       matchStr = matchCmds[0];
+       exact    = true;
+    }
+    else if (matchCmds.size() > 1) {
+      if (interactive) {
+        matchStr = widget->showCompletionChooser(matchCmds);
 
-      if (matchStr != "")
-        exact = true;
+        if (matchStr != "")
+          exact = true;
+      }
+      else {
+        matchStr = CQStrUtil::longestMatch(matchCmds, exact);
+      }
     }
 
     //---
 
     command = lhs;
 
-    if (matchStr == "")
-      command += CQStrUtil::longestMatch(matchCmds, exact);
-    else
+    if (matchStr != "")
       command += matchStr;
 
     if (exact)
@@ -187,6 +199,44 @@ complete(ConsoleCommandWidget *widget, const QString &text, int pos,
     command += rhs;
 
     return (command.length() > text.length());
+  };
+
+  auto completeOption = [&](const QString &cmdName, const QString &lhs, const QString &str,
+                            const QString &rhs, QString &option) {
+    auto *cmd = tclCmdMgr()->getCommand(cmdName);
+    if (! cmd) return false;
+
+    CQTclCmd::Mgr::Vars vars;
+
+    auto *args = tclCmdMgr()->createArgs(cmdName, vars);
+
+    cmd->addArgs(*args);
+
+    QStringList names;
+
+    for (const auto &arg : args->cmdArgs()) {
+      names.push_back(arg.name());
+    }
+
+    delete args;
+
+    auto matchNames = CQStrUtil::matchStrs(str, names);
+
+    bool exact;
+
+    auto matchStr = CQStrUtil::longestMatch(matchNames, exact);
+
+    option = lhs;
+
+    if (matchStr != "")
+      option += "-" + matchStr;
+
+    if (exact)
+      option += " ";
+
+    option += rhs;
+
+    return (option.length() > text.length());
   };
 
   //---
@@ -212,6 +262,7 @@ complete(ConsoleCommandWidget *widget, const QString &text, int pos,
     std::string  command;
     int          commandPos { -1 };
     std::string  option;
+    int          optionPos { -1 };
     OptionValues optionValues;
 
     for (int pos1 = pos - 1; pos1 >= 0; --pos1) {
@@ -227,18 +278,29 @@ complete(ConsoleCommandWidget *widget, const QString &text, int pos,
         break;
       }
       else if (str[0] == '-') {
-        if (option.empty())
-          option = str.substr(1);
+        if (option.empty()) {
+          option    = str.substr(1);
+          optionPos = token1->pos();
+        }
 
         if (pos1 > token1->pos())
           pos1 = token1->pos(); // move to start
       }
     }
 
-    if (command != "" && option == "")
-      return completeCommand("", QString::fromStdString(command), "", newText);
-    else
+    if (command == "")
       return false;
+
+    if (option == "") {
+      auto lhs = text.mid(0, commandPos);
+
+      return completeCommand(lhs, QString::fromStdString(command), "", newText);
+    }
+
+    auto lhs = text.mid(0, optionPos);
+
+    return completeOption(QString::fromStdString(command), lhs, QString::fromStdString(option), "",
+                          newText);
   }
 }
 
@@ -304,7 +366,7 @@ exec(CQTclCmd::CmdArgs &argv)
 //---
 
 void
-GetSVGObjectsTclCmd::
+GetSVGChildrenTclCmd::
 addArgs(CQTclCmd::CmdArgs &argv)
 {
   addArg(argv, "-parent", ArgType::String , "parent");
@@ -313,14 +375,14 @@ addArgs(CQTclCmd::CmdArgs &argv)
 }
 
 QStringList
-GetSVGObjectsTclCmd::
+GetSVGChildrenTclCmd::
 getArgValues(const QString &, const NameValueMap &)
 {
   return QStringList();
 }
 
 bool
-GetSVGObjectsTclCmd::
+GetSVGChildrenTclCmd::
 exec(CQTclCmd::CmdArgs &argv)
 {
   addArgs(argv);
@@ -367,12 +429,7 @@ exec(CQTclCmd::CmdArgs &argv)
       if (tag != "" && child->getTagName() != tag)
         continue;
 
-      auto id = child->getId();
-
-      if (id == "")
-        (void) child->autoName();
-
-      id = child->getHierId(/*autoName*/true);
+      auto id = child->getHierId(/*autoName*/true);
 
       names.push_back(QString::fromStdString(id));
     }
@@ -425,14 +482,48 @@ exec(CQTclCmd::CmdArgs &argv)
   else
     objects.push_back(svg->getRoot());
 
+  //---
+
+  if (name == "?") {
+    auto names = QStringList() <<
+     "@id" << "@parent" << "@depth" << "@tag_name" << "@selected" << "@viewBox" <<
+     "@style" << "@text" << "@string";
+    mgr_->qtcl()->setResult(names);
+    return true;
+  }
+
+  //---
+
   QVariantList values;
 
   for (const auto &obj : objects) {
-    if      (name == "@tag_name") {
+    if      (name == "@id") {
+      values.push_back(QString::fromStdString(obj->getId()));
+    }
+    else if (name == "@parent") {
+      auto *parent = obj->getParent();
+
+      std::string id;
+
+      if (parent)
+        id = parent->getHierId(/*autoName*/true);
+
+      values.push_back(QString::fromStdString(id));
+    }
+    else if (name == "@depth") {
+      values.push_back(obj->getDepth());
+    }
+    else if (name == "@tag_name") {
       values.push_back(QString::fromStdString(obj->getTagName()));
     }
+    else if (name == "@selected") {
+      values.push_back(obj->getSelected());
+    }
+    else if (name == "@viewBox") {
+      values.push_back(QString::fromStdString(obj->getViewBox().toString()));
+    }
     else if (name == "@style") {
-      values.push_back(QString::fromStdString(obj->styleString()));
+      values.push_back(QString::fromStdString(obj->styleString(/*flat*/true)));
     }
     else if (name == "@text") {
       values.push_back(QString::fromStdString(obj->getText()));
@@ -509,9 +600,9 @@ exec(CQTclCmd::CmdArgs &argv)
       obj->handleOption(name.toStdString(), value.toStdString());
   }
 
-  console_->window()->canvas()->redraw(/*update*/true);
-
   mgr_->qtcl()->setResult(values);
+
+  console_->window()->redraw(/*update*/true);
 
   return true;
 }
@@ -519,7 +610,7 @@ exec(CQTclCmd::CmdArgs &argv)
 //---
 
 void
-AddSVGChildTclCmd::
+AddSVGObjectTclCmd::
 addArgs(CQTclCmd::CmdArgs &argv)
 {
   addArg(argv, "-parent", ArgType::String, "parent id");
@@ -528,14 +619,14 @@ addArgs(CQTclCmd::CmdArgs &argv)
 }
 
 QStringList
-AddSVGChildTclCmd::
+AddSVGObjectTclCmd::
 getArgValues(const QString &, const NameValueMap &)
 {
   return QStringList();
 }
 
 bool
-AddSVGChildTclCmd::
+AddSVGObjectTclCmd::
 exec(CQTclCmd::CmdArgs &argv)
 {
   addArgs(argv);
@@ -571,12 +662,14 @@ exec(CQTclCmd::CmdArgs &argv)
 
   if (id != "")
     child->setId(id.toStdString());
-  else
-    (void) child->autoName();
 
   parentObj->addChildObject(child);
 
-  mgr_->qtcl()->setResult(QString::fromStdString(child->getHierId()));
+  auto id1 = child->getHierId(/*autoName*/true);
+
+  mgr_->qtcl()->setResult(QString::fromStdString(id1));
+
+  console_->window()->redraw(/*update*/true);
 
   return true;
 }
@@ -584,21 +677,332 @@ exec(CQTclCmd::CmdArgs &argv)
 //---
 
 void
-WriteSVGTclCmd::
+RemoveSVGObjectTclCmd::
 addArgs(CQTclCmd::CmdArgs &argv)
 {
-  addArg(argv, "-file", ArgType::String, "filename");
+  addArg(argv, "-id", ArgType::String, "object id");
 }
 
 QStringList
-WriteSVGTclCmd::
+RemoveSVGObjectTclCmd::
 getArgValues(const QString &, const NameValueMap &)
 {
   return QStringList();
 }
 
 bool
-WriteSVGTclCmd::
+RemoveSVGObjectTclCmd::
+exec(CQTclCmd::CmdArgs &argv)
+{
+  addArgs(argv);
+
+  bool rc;
+
+  if (! argv.parse(rc))
+    return rc;
+
+  auto id = argv.getParseStr("id");
+
+  auto *svg = console_->window()->svg();
+
+  CSVGObject::ObjectArray objects;
+
+  svg->getRoot()->getHierChildrenOfId(id.toStdString(), objects);
+
+  for (auto *obj : objects)
+    obj->ungroupObject();
+
+  console_->window()->redraw(/*update*/true);
+
+  return true;
+}
+
+//---
+
+void
+GetSVGSelectionTclCmd::
+addArgs(CQTclCmd::CmdArgs &)
+{
+}
+
+QStringList
+GetSVGSelectionTclCmd::
+getArgValues(const QString &, const NameValueMap &)
+{
+  return QStringList();
+}
+
+bool
+GetSVGSelectionTclCmd::
+exec(CQTclCmd::CmdArgs &argv)
+{
+  addArgs(argv);
+
+  bool rc;
+
+  if (! argv.parse(rc))
+    return rc;
+
+  auto *svg = console_->window()->svg();
+
+  CSVG::ObjectList objects;
+
+  svg->getSelectedObjects(objects);
+
+  QStringList names;
+
+  for (const auto &obj : objects) {
+    auto id = obj->getHierId(/*autoName*/true);
+
+    names.push_back(QString::fromStdString(id));
+  }
+
+  mgr_->qtcl()->setResult(names);
+
+  return true;
+}
+
+//---
+
+void
+MoveSVGObjectTclCmd::
+addArgs(CQTclCmd::CmdArgs &argv)
+{
+  addArg(argv, "-id", ArgType::String, "object id");
+  addArg(argv, "-to", ArgType::String, "new position");
+  addArg(argv, "-by", ArgType::String, "delta position");
+}
+
+QStringList
+MoveSVGObjectTclCmd::
+getArgValues(const QString &, const NameValueMap &)
+{
+  return QStringList();
+}
+
+bool
+MoveSVGObjectTclCmd::
+exec(CQTclCmd::CmdArgs &argv)
+{
+  addArgs(argv);
+
+  bool rc;
+
+  if (! argv.parse(rc))
+    return rc;
+
+  auto id = argv.getParseStr("id");
+  auto to = argv.getParseStr("to");
+  auto by = argv.getParseStr("by");
+
+  auto *svg = console_->window()->svg();
+
+  CSVGObject::ObjectArray objects;
+
+  if (id != "")
+    svg->getRoot()->getHierChildrenOfId(id.toStdString(), objects);
+
+  if (objects.empty()) {
+    std::cerr << "Invalid object '" << id.toStdString() << "'\n";
+    return false;
+  }
+
+  bool ok;
+
+  if      (to != "") {
+    QStringList strs;
+
+    CQTclUtil::splitList(to, strs);
+
+    if (strs.size() == 2) {
+      double x = strs[0].toDouble(&ok);
+      double y = strs[1].toDouble(&ok);
+
+      for (const auto &obj : objects)
+        obj->moveTo(CPoint2D(x, y));
+    }
+    else {
+      std::cerr << "Invalid point '" << to.toStdString() << "'\n";
+      return false;
+    }
+  }
+  else if (by != "") {
+    QStringList strs;
+
+    CQTclUtil::splitList(by, strs);
+
+    if (strs.size() == 2) {
+      double x = strs[0].toDouble(&ok);
+      double y = strs[1].toDouble(&ok);
+
+      for (const auto &obj : objects)
+        obj->moveBy(CVector2D(x, y));
+    }
+    else {
+      std::cerr << "Invalid point '" << by.toStdString() << "'\n";
+      return false;
+    }
+  }
+
+  console_->window()->redraw(/*update*/true);
+
+  return true;
+}
+
+//---
+
+void
+ScaleSVGObjectTclCmd::
+addArgs(CQTclCmd::CmdArgs &argv)
+{
+  addArg(argv, "-id", ArgType::String, "object id");
+  addArg(argv, "-by", ArgType::String, "scale factor");
+}
+
+QStringList
+ScaleSVGObjectTclCmd::
+getArgValues(const QString &, const NameValueMap &)
+{
+  return QStringList();
+}
+
+bool
+ScaleSVGObjectTclCmd::
+exec(CQTclCmd::CmdArgs &argv)
+{
+  addArgs(argv);
+
+  bool rc;
+
+  if (! argv.parse(rc))
+    return rc;
+
+  auto id = argv.getParseStr("id");
+  auto by = argv.getParseStr("by");
+
+  auto *svg = console_->window()->svg();
+
+  CSVGObject::ObjectArray objects;
+
+  if (id != "")
+    svg->getRoot()->getHierChildrenOfId(id.toStdString(), objects);
+
+  if (objects.empty()) {
+    std::cerr << "Invalid object '" << id.toStdString() << "'\n";
+    return false;
+  }
+
+  bool ok;
+
+  if (by != "") {
+    double s = by.toDouble(&ok);
+
+    for (const auto &obj : objects)
+      obj->scaleBy(s);
+  }
+
+  console_->window()->redraw(/*update*/true);
+
+  return true;
+}
+
+//---
+
+void
+RotateSVGObjectTclCmd::
+addArgs(CQTclCmd::CmdArgs &argv)
+{
+  addArg(argv, "-id", ArgType::String, "object id");
+  addArg(argv, "-by", ArgType::String, "delta angle");
+  addArg(argv, "-at", ArgType::String, "rotation center");
+}
+
+QStringList
+RotateSVGObjectTclCmd::
+getArgValues(const QString &, const NameValueMap &)
+{
+  return QStringList();
+}
+
+bool
+RotateSVGObjectTclCmd::
+exec(CQTclCmd::CmdArgs &argv)
+{
+  addArgs(argv);
+
+  bool rc;
+
+  if (! argv.parse(rc))
+    return rc;
+
+  auto id = argv.getParseStr("id");
+  auto by = argv.getParseStr("by");
+  auto at = argv.getParseStr("at");
+
+  auto *svg = console_->window()->svg();
+
+  CSVGObject::ObjectArray objects;
+
+  if (id != "")
+    svg->getRoot()->getHierChildrenOfId(id.toStdString(), objects);
+
+  if (objects.empty()) {
+    std::cerr << "Invalid object '" << id.toStdString() << "'\n";
+    return false;
+  }
+
+  bool ok;
+
+  if (by != "") {
+    double a = M_PI*by.toDouble(&ok)/180.0;
+
+     if      (at != "") {
+      QStringList strs;
+
+      CQTclUtil::splitList(at, strs);
+
+      if (strs.size() == 2) {
+        double x = strs[0].toDouble(&ok);
+        double y = strs[1].toDouble(&ok);
+
+        for (const auto &obj : objects)
+          obj->rotateAt(a, CPoint2D(x, y));
+      }
+      else {
+        std::cerr << "Invalid point '" << at.toStdString() << "'\n";
+        return false;
+      }
+    }
+    else {
+      for (const auto &obj : objects)
+        obj->rotateBy(a);
+    }
+  }
+
+  console_->window()->redraw(/*update*/true);
+
+  return true;
+}
+
+//---
+//---
+
+void
+WriteSVGFileTclCmd::
+addArgs(CQTclCmd::CmdArgs &argv)
+{
+  addArg(argv, "-file", ArgType::String, "filename");
+}
+
+QStringList
+WriteSVGFileTclCmd::
+getArgValues(const QString &, const NameValueMap &)
+{
+  return QStringList();
+}
+
+bool
+WriteSVGFileTclCmd::
 exec(CQTclCmd::CmdArgs &argv)
 {
   addArgs(argv);

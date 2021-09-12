@@ -41,8 +41,6 @@ class CSVGUse : public CSVGObject, public CSVGPrintBase<CSVGUse> {
   CMatrixStack2D adjustedTransform() const;
   CMatrixStack2D adjustedTransform(const CMatrixStack2D &transform) const;
 
-  void moveBy(const CVector2D &delta) override;
-
   bool draw() override;
 
   //---
@@ -59,6 +57,9 @@ class CSVGUse : public CSVGObject, public CSVGPrintBase<CSVGUse> {
   void printValues(std::ostream &os, bool flat=false) const override;
 
   void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
+
+ protected:
+  void moveDelta(const CVector2D &delta) override;
 
  private:
   COptValT<CSVGXLink>    xlink_;

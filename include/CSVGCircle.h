@@ -53,8 +53,6 @@ class CSVGCircle : public CSVGObject, public CSVGPrintBase<CSVGCircle> {
 
   //---
 
-  void moveBy(const CVector2D &delta) override;
-
   void resizeTo(const CSize2D &size) override;
 
   //---
@@ -65,10 +63,12 @@ class CSVGCircle : public CSVGObject, public CSVGPrintBase<CSVGCircle> {
 
   void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
- private:
+ protected:
   void init();
 
   void updateBBox();
+
+  void moveDelta(const CVector2D &delta) override;
 
  private:
   COptScreenUnits cx_;

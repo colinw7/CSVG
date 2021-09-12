@@ -793,7 +793,7 @@ writeStyle(CSVGObject *object) const
   auto   join     = stroke.getLineJoin().getValue();
 
   if (sopacity > 0.0) {
-    str += "stroke: ";
+    str += "stroke:";
 
     if      (scolor.isNone())
       str += "none";
@@ -806,26 +806,26 @@ writeStyle(CSVGObject *object) const
     str += ";";
 
     if (sopacity < 1.0)
-      str += CStrUtil::strprintf(" stroke-opacity: %g;", sopacity);
+      str += CStrUtil::strprintf(" stroke-opacity:%g;", sopacity);
   }
   else
-    str += "stroke: none;";
+    str += "stroke:none;";
 
   if (width != 1.0)
-    str += CStrUtil::strprintf(" stroke-width: %g;", width);
+    str += CStrUtil::strprintf(" stroke-width:%g;", width);
 
   if (! dash.isSolid())
-    str += CStrUtil::strprintf(" stroke-dasharray: %s;", dash.toString().c_str());
+    str += CStrUtil::strprintf(" stroke-dasharray:%s;", dash.toString().c_str());
 
   if      (cap == LINE_CAP_TYPE_ROUND)
-    str += CStrUtil::strprintf(" stroke-linecap: round;");
+    str += CStrUtil::strprintf(" stroke-linecap:round;");
   else if (cap == LINE_CAP_TYPE_SQUARE)
-    str += CStrUtil::strprintf(" stroke-linecap: square;");
+    str += CStrUtil::strprintf(" stroke-linecap:square;");
 
   if      (join == LINE_JOIN_TYPE_ROUND)
-    str += CStrUtil::strprintf(" stroke-linejoin: round;");
+    str += CStrUtil::strprintf(" stroke-linejoin:round;");
   else if (join == LINE_JOIN_TYPE_BEVEL)
-    str += CStrUtil::strprintf(" stroke-linejoin: bevel;");
+    str += CStrUtil::strprintf(" stroke-linejoin:bevel;");
 
   const auto &fill = object->getFill();
 
@@ -855,13 +855,13 @@ writeStyle(CSVGObject *object) const
         str += ";";
 
         if (fopacity < 1.0)
-          str += CStrUtil::strprintf(" fill-opacity: %g;", fopacity);
+          str += CStrUtil::strprintf(" fill-opacity:%g;", fopacity);
       }
       else
-        str += " fill: none;";
+        str += " fill:none;";
     }
     else
-      str += " fill: none;";
+      str += " fill:none;";
   }
 
   str += "\"";

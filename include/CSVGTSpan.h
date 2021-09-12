@@ -39,19 +39,18 @@ class CSVGTSpan : public CSVGObject, public CSVGPrintBase<CSVGTSpan> {
 
   bool getBBox(CBBox2D &bbox) const override;
 
-  void moveTo(const CPoint2D &p) override;
-  void moveBy(const CVector2D &delta) override;
-
   void print(std::ostream &os, bool hier=false) const override;
 
   void printValues(std::ostream &os, bool flat=false) const override;
 
   void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
- private:
+ protected:
   void getDrawPos(double &x, double &y, int i) const;
 
   CSVGText *getParentText() const;
+
+  void moveDelta(const CVector2D &delta) override;
 
  private:
   CSVGTSpan &operator=(const CSVGTSpan &rhs);

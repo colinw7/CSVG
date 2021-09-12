@@ -236,15 +236,7 @@ getBBox(CBBox2D &bbox) const
 
 void
 CSVGText::
-moveTo(const CPoint2D &p)
-{
-  setX(p.x);
-  setY(p.y);
-}
-
-void
-CSVGText::
-moveBy(const CVector2D &delta)
+moveDelta(const CVector2D &delta)
 {
   double x = getX().pxValue(1);
   double y = getY().pxValue(1);
@@ -475,7 +467,7 @@ draw()
 
       //---
 
-      double dy = w1*sin(fa.getValue()) + (a1 + d1)*cos(fa.getValue());
+      double dy = w1*sin(fa.getValue()) + (a1 + d1)*std::cos(fa.getValue());
 
       y += dy;
 

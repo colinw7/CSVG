@@ -24,6 +24,10 @@ class Canvas : public QFrame {
 
   void redraw(bool update);
 
+  void zoomIn();
+  void zoomOut();
+  void zoomReset();
+
   void resizeEvent(QResizeEvent *) override;
 
   void paintEvent(QPaintEvent *) override;

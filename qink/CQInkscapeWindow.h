@@ -17,11 +17,13 @@ class QVBoxLayout;
 namespace CQInkscape {
 
 class Canvas;
+class MouseToolBar;
 class ModeToolBar;
 class ColorBar;
 class StatusBar;
 class FillStroke;
 class ObjectProperties;
+class PaletteArea;
 class Palette;
 class Console;
 class Settings;
@@ -64,7 +66,7 @@ class Window : public QFrame {
   void setShowViewBox(bool b);
 
   const Mode &mode() const { return mode_; }
-  void setMode(const Mode &v) { mode_ = v; }
+  void setMode(const Mode &v);
 
   bool isConsoleVisible() const;
   void setConsoleVisible(bool show);
@@ -74,42 +76,53 @@ class Window : public QFrame {
 
   void loadTclFile(const QString &file);
 
+  void selectAll();
   void selectNone();
+  void selectParent();
 
   void resizeEvent(QResizeEvent *) override;
 
   QSize sizeHint() const override { return QSize(1600, 1600); }
 
- private:
   void updatePlacement();
 
+ private:
   void updateStatus();
 
  private slots:
   void loadSlot();
-  void settingsSlot();
+  void saveAsSlot();
   void quitSlot();
 
+  void zoomInSlot();
+  void zoomOutSlot();
+  void zoomResetSlot();
+
+  void settingsSlot();
+  void consoleSlot();
+
+  void selectAllSlot();
   void selectNoneSlot();
+  void selectParentSlot();
+
+  void ungroupSlot();
 
   void helpSlot();
 
  private:
-  QMenuBar*    menuBar_      { nullptr };
-  QFrame*      mouseToolBar_ { nullptr };
-  ModeToolBar* modeToolBar_  { nullptr };
-  ColorBar*    colorBar_     { nullptr };
-  StatusBar*   statusBar_    { nullptr };
-  Canvas*      canvas_      { nullptr };
+  QMenuBar*     menuBar_      { nullptr };
+  MouseToolBar* mouseToolBar_ { nullptr };
+  ModeToolBar*  modeToolBar_  { nullptr };
+  ColorBar*     colorBar_     { nullptr };
+  StatusBar*    statusBar_    { nullptr };
+  Canvas*       canvas_       { nullptr };
 
   using Palettes = std::vector<Palette *>;
 
-  QFrame*      palettesArea_   { nullptr };
-  QVBoxLayout* palettesLayout_ { nullptr };
+  PaletteArea* paletteArea_ { nullptr };
 
   FillStroke*       fillStrokePalette_       { nullptr };
   ObjectProperties* objectPropertiesPalette_ { nullptr };
-  Palettes          palettes_;
 
   Console*  console_  { nullptr };
   Settings* settings_ { nullptr };

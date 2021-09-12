@@ -80,7 +80,7 @@ setColor(const std::string &colorDef)
       bool      inherit;
 
       if (svg_.decodeColorString(word, color, inherit))
-        setColor(! inherit ? Color(color) : Color::inherit());
+        setColor(! inherit ? Color(color) : Color::makeInherit());
     }
 
     //------
@@ -102,7 +102,7 @@ setOpacity(const std::string &opacityDef)
     return;
   }
 
-  auto opacity = (! inherit ? Opacity(value) : Opacity::inherit());
+  auto opacity = (! inherit ? Opacity(value) : Opacity::makeInherit());
 
   setOpacity(opacity);
 }
@@ -205,24 +205,24 @@ print(std::ostream &os) const
   std::stringstream ss;
 
   if (getColorValid())
-    ss << "fill: " << getColor() << ";";
+    ss << "fill:" << getColor() << ";";
 
   if (getOpacityValid()) {
     if (ss.str() != "") ss << " ";
 
-    ss << "fill-opacity: " << getOpacity() << ";";
+    ss << "fill-opacity:" << getOpacity() << ";";
   }
 
   if (getRuleValid()) {
     if (ss.str() != "") ss << " ";
 
-    ss << "fill-rule: " << svg_.encodeFillRuleString(getRule()) << ";";
+    ss << "fill-rule:" << svg_.encodeFillRuleString(getRule()) << ";";
   }
 
   if (getUrlValid()) {
     if (ss.str() != "") ss << " ";
 
-    ss << "fill: url(#" << getUrl() << ");";
+    ss << "fill:url(#" << getUrl() << ");";
   }
 
   os << ss.str();

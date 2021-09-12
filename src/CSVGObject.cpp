@@ -158,17 +158,13 @@ getHierId(bool autoName) const
 {
   std::string id;
 
-  if (getParent() && getParent() != svg_.getRoot()) {
-    if (autoName && getParent()->getId() == "")
-      getParent()->autoName();
-
-    id = getParent()->getHierId();
-  }
+  if (getParent() && getParent() != svg_.getRoot())
+    id = getParent()->getHierId(autoName);
 
   if (id != "")
     id += "/";
 
-  id += getId();
+  id += getId(autoName);
 
   return id;
 }
@@ -876,12 +872,14 @@ getFlatCurrentColor() const
   return CRGBA(0, 0, 0);
 }
 
+//---
+
 CMatrixStack2D
 CSVGObject::
 getFlatTransform() const
 {
   if (getParent()) {
-    CMatrixStack2D matrix(getParent()->getFlatTransform());
+    auto matrix = getParent()->getFlatTransform();
 
     matrix.append(getTransform());
 
@@ -898,7 +896,7 @@ getTransformTo(CSVGObject *parent) const
   auto *parent1 = getParent();
 
   if (parent1 && parent != parent1) {
-    CMatrixStack2D matrix(parent1->getTransformTo(parent));
+    auto matrix = parent1->getTransformTo(parent);
 
     matrix.append(getTransform());
 
@@ -907,6 +905,27 @@ getTransformTo(CSVGObject *parent) const
   else
     return getTransform();
 }
+
+void
+CSVGObject::
+untransform()
+{
+  if (hasChildren()) {
+    auto t = getTransform();
+
+    for (auto &c : children()) {
+      auto t1 = c->getTransform();
+
+      t1.append(t);
+
+      c->setTransform(t1);
+    }
+
+    setTransform(CMatrixStack2D());
+  }
+}
+
+//---
 
 void
 CSVGObject::
@@ -1290,7 +1309,7 @@ processOpacityOption(const std::string &optName, const std::string &optValue)
 
   // Opacity Attributes
   if      (svg_.opacityOption(optName, optValue, "opacity", real, inherit))
-    setOpacity(! inherit ? Opacity(real) : Opacity::inherit());
+    setOpacity(! inherit ? Opacity(real) : Opacity::makeInherit());
   else if (svg_.stringOption(optName, optValue, "fill-opacity", str))
     setFillOpacity(str);
   else if (svg_.stringOption(optName, optValue, "stroke-opacity", str))
@@ -1481,9 +1500,9 @@ processViewportOption(const std::string &optName, const std::string &optValue)
   else if (svg_.stringOption(optName, optValue, "overflow", str))
     setOverflow(str);
   else if (svg_.colorOption(optName, optValue, "viewport-fill", color, inherit))
-    setViewportFillColor(! inherit ? Color(color) : Color::inherit());
+    setViewportFillColor(! inherit ? Color(color) : Color::makeInherit());
   else if (svg_.opacityOption(optName, optValue, "viewport-fill-opacity", real, inherit))
-    setViewportFillOpacity(! inherit ? Opacity(real) : Opacity::inherit());
+    setViewportFillOpacity(! inherit ? Opacity(real) : Opacity::makeInherit());
   else
     return false;
 
@@ -1683,9 +1702,9 @@ processFontOption(const std::string &optName, const std::string &optValue)
   if      (svg_.stringOption(optName, optValue, "font", str))
     parseFont(str);
   else if (svg_.fontFamilyOption(optName, optValue, "font-family", str, inherit))
-    setFontFamily(! inherit ? FontFamily(str) : FontFamily::inherit());
+    setFontFamily(! inherit ? FontFamily(str) : FontFamily::makeInherit());
   else if (svg_.fontSizeOption(optName, optValue, "font-size", length, inherit))
-    setFontSize(! inherit ? FontSize(length) : FontSize::inherit());
+    setFontSize(! inherit ? FontSize(length) : FontSize::makeInherit());
   else if (svg_.stringOption(optName, optValue, "font-size-adjust", str)) {
     //setNameValue("font-size-adjust", str);
   }
@@ -1890,7 +1909,7 @@ getNameValue(const std::string &name) const
   COptString str;
 
   if      (name == "className") {
-    std::vector<std::string> classes = getClasses();
+    auto classes = getClasses();
 
     if (! classes.empty())
       str = classes.front();
@@ -2149,7 +2168,7 @@ setOverflow(const std::string &str)
   else if (str == "inherit") inherit = true;
   else notHandled("overflow", str);
 
-  overflow_ = (! inherit ? Overflow(overflow) : Overflow::inherit());
+  overflow_ = (! inherit ? Overflow(overflow) : Overflow::makeInherit());
 }
 
 void
@@ -2171,7 +2190,7 @@ setTextAnchor(const std::string &str)
   if      (str == "start"  ) textAnchor_ = TextAnchor(CHALIGN_TYPE_LEFT);
   else if (str == "middle" ) textAnchor_ = TextAnchor(CHALIGN_TYPE_CENTER);
   else if (str == "end"    ) textAnchor_ = TextAnchor(CHALIGN_TYPE_RIGHT);
-  else if (str == "inherit") textAnchor_ = TextAnchor::inherit();
+  else if (str == "inherit") textAnchor_ = TextAnchor::makeInherit();
   else                       notHandled("text-anchor", str);
 }
 
@@ -2257,6 +2276,30 @@ setTextDecoration(const std::string &str)
   }
   else
     notHandled("text-decoration", str);
+}
+
+//---
+
+void
+CSVGObject::
+ungroupObject()
+{
+  auto *parent = getParent();
+  if (! parent) return;
+
+  auto transform = getTransform();
+
+  parent->deleteChildObject(this);
+
+  for (const auto &c : children()) {
+    auto transform1 = c->getTransform();
+
+    transform1.prepend(transform);
+
+    c->setTransform(transform1);
+
+    parent->addChildObject(c);
+  }
 }
 
 void
@@ -2865,15 +2908,45 @@ moveTo(const CPoint2D &point)
   if (! getBBox(bbox))
     return;
 
-  moveBy(CVector2D(bbox.getMin(), point));
+  auto m = getFlatTransform();
+
+  auto bbox1 = svg_.transformBBox(m, bbox);
+
+  bbox1.moveTo(point);
+
+  auto bbox2 = svg_.untransformBBox(m, bbox1);
+
+  auto d = CVector2D(bbox.getMin(), bbox2.getMin());
+
+  moveDelta(d);
 }
 
 void
 CSVGObject::
-moveBy(const CVector2D &)
+moveBy(const CVector2D &delta)
 {
-  if (isDrawable())
-    CSVGLog() << "moveBy: not implemented";
+  CBBox2D bbox;
+
+  if (! getBBox(bbox))
+    return;
+
+  auto m = getFlatTransform();
+
+  auto bbox1 = svg_.transformBBox(m, bbox);
+
+  bbox1.moveBy(delta);
+
+  auto bbox2 = svg_.untransformBBox(m, bbox1);
+
+  auto d = CVector2D(bbox.getMin(), bbox2.getMin());
+
+  moveDelta(d);
+}
+
+void
+CSVGObject::
+moveDelta(const CVector2D &)
+{
 }
 
 void
@@ -2886,7 +2959,7 @@ resizeTo(const CSize2D &)
 
 void
 CSVGObject::
-rotateBy(double da, const CPoint2D &)
+rotateBy(double da)
 {
   CMatrixStack2D m;
 
@@ -2899,7 +2972,7 @@ rotateBy(double da, const CPoint2D &)
 
 void
 CSVGObject::
-rotateTo(double a, const CPoint2D &c)
+rotateAt(double a, const CPoint2D &c)
 {
   CMatrixStack2D m;
 
@@ -2912,11 +2985,26 @@ rotateTo(double a, const CPoint2D &c)
 
 void
 CSVGObject::
-scaleTo(double xs, double ys)
+scaleBy(double s)
+{
+  CMatrixStack2D m;
+
+  m.scale(s, s);
+
+  m.append(getTransform());
+
+  setTransform(m);
+}
+
+void
+CSVGObject::
+scaleBy(double xs, double ys)
 {
   CMatrixStack2D m;
 
   m.scale(xs, ys);
+
+  m.append(getTransform());
 
   setTransform(m);
 }
@@ -3109,6 +3197,18 @@ setTime(double t)
     c->setTime(t);
 
   animation_.setTime(t);
+}
+
+std::string
+CSVGObject::
+getId(bool autoName) const
+{
+  auto id = id_.getValue("");
+
+  if (id == "" && autoName)
+    id = const_cast<CSVGObject *>(this)->autoName();
+
+  return id;
 }
 
 void
@@ -3704,7 +3804,7 @@ styleString(bool flat) const
   if (getOpacityValid()) {
     if (output) ss << " ";
 
-    ss << "opacity: " << getOpacity() << ";";
+    ss << "opacity:" << getOpacity() << ";";
 
     output = true;
   }
@@ -3740,25 +3840,25 @@ styleString(bool flat) const
   if (getMarkerStart()) {
     if (output) ss << " ";
 
-    ss << "marker-start: url(#" << getMarkerStart()->getId() << ");";
+    ss << "marker-start:url(#" << getMarkerStart()->getId() << ");";
   }
 
   if (getMarkerMid()) {
     if (output) ss << " ";
 
-    ss << "marker-mid: url(#" << getMarkerMid()->getId() << ");";
+    ss << "marker-mid:url(#" << getMarkerMid()->getId() << ");";
   }
 
   if (getMarkerEnd()) {
     if (output) ss << " ";
 
-    ss << "marker-end: url(#" << getMarkerEnd()->getId() << ");";
+    ss << "marker-end:url(#" << getMarkerEnd()->getId() << ");";
   }
 
   if (hasLetterSpacing()) {
     if (output) ss << " ";
 
-    ss << "letter-spacing: " << getLetterSpacing() << ";";
+    ss << "letter-spacing:" << getLetterSpacing() << ";";
 
     output = true;
   }
@@ -3766,7 +3866,7 @@ styleString(bool flat) const
   if (hasWordSpacing()) {
     if (output) ss << " ";
 
-    ss << "word-spacing: " << getWordSpacing() << ";";
+    ss << "word-spacing:" << getWordSpacing() << ";";
 
     output = true;
   }
@@ -3774,7 +3874,7 @@ styleString(bool flat) const
   if (getClipPath()) {
     if (output) ss << " ";
 
-    ss << "clip-path: url(#" << getClipPath()->getId() << ");";
+    ss << "clip-path:url(#" << getClipPath()->getId() << ");";
 
     output = true;
   }
@@ -3782,7 +3882,7 @@ styleString(bool flat) const
   if (getMask()) {
     if (output) ss << " ";
 
-    ss << "mask: url(#" << getMask()->getId() << ");";
+    ss << "mask:url(#" << getMask()->getId() << ");";
 
     output = true;
   }
@@ -3790,7 +3890,7 @@ styleString(bool flat) const
   if (hasVisibility()) {
     if (output) ss << " ";
 
-    ss << "visibility: " << getVisibility() << ";";
+    ss << "visibility:" << getVisibility() << ";";
 
     output = true;
   }

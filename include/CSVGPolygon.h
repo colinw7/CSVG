@@ -26,10 +26,9 @@ class CSVGPolygon : public CSVGObject, public CSVGPrintBase<CSVGPolygon> {
 
   bool getBBox(CBBox2D &bbox) const override;
 
-  void moveBy(const CVector2D &delta) override;
   void resizeTo(const CSize2D &size) override;
 
-  void rotateBy(double da, const CPoint2D &point) override;
+  void rotateBy(double da) override;
 
   void print(std::ostream &os, bool hier=false) const override;
 
@@ -37,8 +36,10 @@ class CSVGPolygon : public CSVGObject, public CSVGPrintBase<CSVGPolygon> {
 
   void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
- private:
+ protected:
   void init();
+
+  void moveDelta(const CVector2D &delta) override;
 
  private:
   PointList points_;

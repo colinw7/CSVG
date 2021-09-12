@@ -14,8 +14,29 @@ all: dirs $(BIN_DIR)/CSVGTest
 dirs:
 	@if [ ! -e ../bin ]; then mkdir ../bin; fi
 
+CSVG_JAVASCRIPT = 0
+
 SRC = \
 CSVGTest.cpp \
+
+ifeq ($(CSVG_JAVASCRIPT),1)
+JAVASCRIPT_CFLAGS = \
+-I../../include/CJavaScript \
+-DCSVG_JAVASCRIPT
+
+JAVASCRIPT_LFLAGS = \
+-L../../CJson/lib \
+-L../../CJavaScript/lib \
+
+JAVASCRIPT_LIBS = \
+-lCJavaScript -lCJson
+else
+JAVASCRIPT_CFLAGS =
+
+JAVASCRIPT_LFLAGS =
+
+JAVASCRIPT_LIBS =
+endif
 
 OBJS = $(patsubst %.cpp,$(OBJ_DIR)/%.o,$(SRC))
 
@@ -36,15 +57,15 @@ $(CDEBUG) \
 -I../../CMath/include \
 -I../../COS/include \
 -I/usr/include/freetype2 \
+\
+$(JAVASCRIPT_CFLAGS) \
 
 LFLAGS = \
 $(LDEBUG) \
 -L$(LIB_DIR) \
 -L../../CSVG/lib \
 -L../../CCSS/lib \
--L../../CJson/lib \
 -L../../CXML/lib \
--L../../CJavaScript/lib \
 -L../../CRenderer/lib \
 -L../../CImageLib/lib \
 -L../../CRGBName/lib \
@@ -57,9 +78,11 @@ $(LDEBUG) \
 -L../../CRegExp/lib \
 -L../../CStrUtil/lib \
 -L../../CUtil/lib \
+\
+$(JAVASCRIPT_LFLAGS) \
 
 LIBS = \
--lCSVG -lCCSS -lCXML -lCJavaScript -lCJson \
+-lCSVG -lCCSS -lCXML $(JAVASCRIPT_LIBS) \
 -lCRenderer -lCImageLib -lCFont -lCConfig -lCFileUtil -lCFile \
 -lCUtil -lCMath -lCOS -lCRGBName -lCRegExp -lCStrUtil \
 -ltre -lpng -ljpeg -lfreetype

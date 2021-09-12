@@ -7,7 +7,7 @@
 template<typename T>
 class CSVGInheritValT {
  public:
-  static CSVGInheritValT inherit() {
+  static CSVGInheritValT makeInherit() {
     CSVGInheritValT val; val.setInherit(true); return val;
   }
 

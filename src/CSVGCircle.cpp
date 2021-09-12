@@ -229,7 +229,7 @@ getPartList() const
 
 void
 CSVGCircle::
-moveBy(const CVector2D &delta)
+moveDelta(const CVector2D &delta)
 {
   auto c = getCenter();
 

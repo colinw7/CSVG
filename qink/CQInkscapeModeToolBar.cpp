@@ -15,6 +15,8 @@ ModeToolBar(Window *window) :
 {
   setObjectName("modelToolBar");
 
+  setFrameShape(QFrame::StyledPanel);
+
   auto *layout = CQUtil::makeLayout<QVBoxLayout>(this);
 
   auto makeButton = [&](const QString &icon, const QString &desc, const char *slotName) {
@@ -29,12 +31,12 @@ ModeToolBar(Window *window) :
     return button;
   };
 
-  makeButton("SELECT"      , "Select Object", SLOT(selectSlot()));
-  makeButton("POINT_SELECT", "Select Point" , SLOT(pointSelectSlot()));
-  makeButton("ZOOM"        , "Zoom"         , SLOT(zoomSlot()));
-  makeButton("RECT"        , "Create Rect"  , SLOT(createRectSlot()));
-  makeButton("PATH"        , "Create Path"  , SLOT(createPathSlot()));
-  makeButton("TEXT"        , "Create Text"  , SLOT(createTextSlot()));
+  makeButton("SELECT_MODE"      , "Select Object", SLOT(selectSlot()));
+  makeButton("POINT_SELECT_MODE", "Select Point" , SLOT(pointSelectSlot()));
+  makeButton("ZOOM_MODE"        , "Zoom"         , SLOT(zoomSlot()));
+  makeButton("RECT_MODE"        , "Create Rect"  , SLOT(createRectSlot()));
+  makeButton("PATH_MODE"        , "Create Path"  , SLOT(createPathSlot()));
+  makeButton("TEXT_MODE"        , "Create Text"  , SLOT(createTextSlot()));
 
   layout->addStretch(1);
 }

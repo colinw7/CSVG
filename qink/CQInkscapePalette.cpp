@@ -1,8 +1,6 @@
 #include <CQInkscapePalette.h>
 #include <CQInkscapeWindow.h>
 
-#include <QPainter>
-
 namespace CQInkscape {
 
 Palette::

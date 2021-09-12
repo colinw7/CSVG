@@ -248,7 +248,7 @@ getBBox(CBBox2D &bbox) const
 
 void
 CSVGImage::
-moveBy(const CVector2D &delta)
+moveDelta(const CVector2D &delta)
 {
   auto p = getPosition();
 

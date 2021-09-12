@@ -84,12 +84,13 @@ class CSVGObject {
 
   //! get/set id
   bool hasId() const { return (id_.isValid() && id_.getValue().size()); }
-  std::string getId() const { return id_.getValue(""); }
+  std::string getId(bool autoName=false) const;
   void setId(const std::string &id);
 
-  //! get/set classes
-  Classes getClasses() const { return classes_.getValue(Classes()); }
-  void setClasses(const Classes &classes);
+  //! auto name object and return new id
+  std::string autoName();
+
+  //---
 
   //! get/set parent
   CSVGObject *getParent() const { return parent_; }
@@ -97,25 +98,32 @@ class CSVGObject {
 
   //---
 
+  //! get/set classes (class property)
+  Classes getClasses() const { return classes_.getValue(Classes()); }
+  void setClasses(const Classes &classes);
+
+  //---
+
   //! get depth
   int getDepth() const;
 
+  //---
+
   //! get index
   uint getInd() const { return ind_; }
-
-  //! auto name object and return new id
-  std::string autoName();
 
   //---
 
   //! get/set stroke
   bool hasStroke() const { return stroke_.isSet(); }
   const CSVGStroke &getStroke() const { return stroke_; }
+  CSVGStroke &getStroke() { return stroke_; }
   void setStroke(const CSVGStroke &s) { stroke_ = s; strokeChanged(); }
 
   //! get/set fill
   bool hasFill() const { return fill_.isSet(); }
   const CSVGFill &getFill() const { return fill_; }
+  CSVGFill &getFill() { return fill_; }
   void setFill(const CSVGFill &f) { fill_ = f; fillChanged(); }
 
   //---
@@ -234,7 +242,7 @@ class CSVGObject {
 
   //---
 
-  //! get/set view box
+  //! get/set view box (viewBox property)
   bool hasViewBox() const { return viewBox_.isValid(); }
   CBBox2D getViewBox() const { return viewBox_.getValue(CBBox2D()); }
   void setViewBox(const CBBox2D &box) { viewBox_ = box; }
@@ -281,6 +289,10 @@ class CSVGObject {
 
   void notHandled(const std::string &name, const std::string &value);
 
+  //---
+
+  void ungroupObject();
+
   void addChildObject(CSVGObject *object);
 
   void deleteChildObject(CSVGObject *object);
@@ -303,6 +315,8 @@ class CSVGObject {
   const ObjectList &children() const { return objects_; }
   CSVGObject *child(int i) const;
 
+  //---
+
   virtual bool isHierDrawable() const { return true; }
 
   virtual bool isDrawable() const { return true; }
@@ -313,17 +327,23 @@ class CSVGObject {
 
   virtual bool isAnimated() const { return false; }
 
+  //---
+
   virtual void drawInit() { }
 
   virtual bool draw() { assert(! isDrawable()); return false; }
 
   virtual void drawTerm() { }
 
+  //---
+
   bool isHierVisible  (bool defValue=true) const;
   bool anyChildVisible(bool defValue=true) const;
 
   bool isVisible(bool defValue=true) const;
   void setVisible(bool b);
+
+  //---
 
   virtual bool getBBox(CBBox2D &bbox) const;
 
@@ -335,7 +355,11 @@ class CSVGObject {
 
   CMatrixStack2D getTransformTo(CSVGObject *parent) const;
 
+  void untransform();
+
   CBBox2D getDrawBBox() const;
+
+  //---
 
   virtual bool inside(const CPoint2D &pos) const;
 
@@ -344,12 +368,20 @@ class CSVGObject {
   CSVGBuffer *toBufferImage();
   CSVGBuffer *toNamedBufferImage(const std::string &bufferName);
 
-  virtual void moveTo  (const CPoint2D &point);
-  virtual void moveBy  (const CVector2D &delta);
+  //---
+
+  void moveTo(const CPoint2D &point);
+  void moveBy(const CVector2D &delta);
+
   virtual void resizeTo(const CSize2D &size);
-  virtual void rotateBy(double da, const CPoint2D &c);
-  virtual void rotateTo(double a, const CPoint2D &c);
-  virtual void scaleTo (double xs, double ys);
+
+  virtual void rotateBy(double da);
+  virtual void rotateAt(double a, const CPoint2D &c);
+
+  virtual void scaleBy(double s);
+  virtual void scaleBy(double xs, double ys);
+
+  //---
 
   double getXMin() const;
   double getYMin() const;
@@ -357,6 +389,8 @@ class CSVGObject {
   double getYMax() const;
 
   bool getChildrenBBox(CBBox2D &bbox) const;
+
+  //---
 
   bool drawObject();
 
@@ -505,6 +539,8 @@ class CSVGObject {
     return overflow_.getValue(Overflow(CSVGOverflowType::VISIBLE)).getValue(); }
   void setOverflow(CSVGOverflowType o) { overflow_ = Overflow(o); }
 
+  //---
+
   //! get/set visible
   bool hasVisibility() const { return visibility_.isValid(); }
   std::string getVisibility() const { return visibility_.getValue(""); }
@@ -514,10 +550,14 @@ class CSVGObject {
   std::string getDisplay() const { return display_.getValue(""); }
   void setDisplay(const std::string &str) { display_ = str; }
 
+  //---
+
   //! get/set current color
   bool hasCurrentColor() const { return currentColor_.isValid(); }
   CSVGColor currentColor() const { return currentColor_.getValue(CSVGColor()); }
   void setCurrentColor(const CSVGColor &c) { currentColor_ = c; }
+
+  CRGBA getFlatCurrentColor() const;
 
   //---
 
@@ -532,21 +572,18 @@ class CSVGObject {
 
   //---
 
-  CRGBA colorToRGBA(const Color &color) const;
-
-  CRGBA getFlatCurrentColor() const;
-
-  //---
-
   // clip
   void setClipRule(const std::string &rule) { clip_.setRule(rule); }
 
   // transform
   const CMatrixStack2D &getTransform() const { return transform_; }
-
   void setTransform(const CMatrixStack2D &transform) { transform_ = transform; }
 
   CMatrixStack2D getFlatTransform() const;
+
+  //---
+
+  CRGBA colorToRGBA(const Color &color) const;
 
   //---
 
@@ -792,12 +829,18 @@ class CSVGObject {
 
   virtual void accept(CSVGVisitor *visitor) = 0;
 
- private:
+ protected:
+  friend class CSVGGroup;
+  friend class CSVGSymbol;
+  friend class CSVGUse;
+
   CSVGObject &operator=(const CSVGObject &rhs);
 
   void init();
 
   void processStyleNameValue(const std::string &name, const std::string &value);
+
+  virtual void moveDelta(const CVector2D &delta);
 
  protected:
   using StringVector = std::vector<std::string>;

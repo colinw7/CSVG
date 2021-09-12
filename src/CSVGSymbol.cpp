@@ -46,10 +46,10 @@ processOption(const std::string &opt_name, const std::string &opt_value)
 
 void
 CSVGSymbol::
-moveBy(const CVector2D &delta)
+moveDelta(const CVector2D &delta)
 {
   for (auto &c : children())
-    c->moveBy(delta);
+    c->moveDelta(delta);
 }
 
 void
@@ -62,10 +62,10 @@ resizeTo(const CSize2D &size)
 
 void
 CSVGSymbol::
-rotateBy(double da, const CPoint2D &origin)
+rotateBy(double da)
 {
   for (auto &c : children())
-    c->rotateBy(da, origin);
+    c->rotateBy(da);
 }
 
 void

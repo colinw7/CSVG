@@ -18,9 +18,9 @@ class CSVGSymbol : public CSVGObject, public CSVGPrintBase<CSVGSymbol> {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  void moveBy(const CVector2D &delta) override;
   void resizeTo(const CSize2D &size) override;
-  void rotateBy(double da, const CPoint2D &c) override;
+
+  void rotateBy(double da) override;
 
   bool canFlatten() const override { return false; }
 
@@ -31,6 +31,9 @@ class CSVGSymbol : public CSVGObject, public CSVGPrintBase<CSVGSymbol> {
   void printValues(std::ostream &os, bool flat=false) const override;
 
   void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
+
+ protected:
+  void moveDelta(const CVector2D &delta) override;
 
  private:
   COptValT<CSVGPreserveAspect> preserveAspect_;

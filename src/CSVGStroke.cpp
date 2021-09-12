@@ -81,7 +81,7 @@ setColor(const std::string &colorDef)
       bool      inherit;
 
       if (svg_.decodeColorString(word, color, inherit))
-        setColor(! inherit ? Color(color) : Color::inherit());
+        setColor(! inherit ? Color(color) : Color::makeInherit());
     }
 
     //------
@@ -103,7 +103,7 @@ setOpacity(const std::string &opacityDef)
     return;
   }
 
-  setOpacity(! inherit ? Opacity(opacity) : Opacity::inherit());
+  setOpacity(! inherit ? Opacity(opacity) : Opacity::makeInherit());
 }
 
 // <fill-rule> | inherit
@@ -141,7 +141,7 @@ setWidth(const std::string &widthDef)
     return;
   }
 
-  setWidth(! inherit ? Width(width) : Width::inherit());
+  setWidth(! inherit ? Width(width) : Width::makeInherit());
 }
 
 // none | <list-of-lengths> | inherit
@@ -150,7 +150,7 @@ CSVGStroke::
 setDashArray(const std::string &dashStr)
 {
   if (dashStr == "inherit") {
-    lineDash_ = DashArray::inherit();
+    lineDash_ = DashArray::makeInherit();
   }
   else {
     CSVGLineDash::Dashes dashes;
@@ -176,7 +176,7 @@ CSVGStroke::
 setDashOffset(const std::string &offsetStr)
 {
   if (offsetStr == "inherit") {
-    lineOffset_ = DashOffset::inherit();
+    lineOffset_ = DashOffset::makeInherit();
   }
   else {
     auto lvalue = svg_.decodeLengthValue(offsetStr);
@@ -211,7 +211,7 @@ setLineCap(const std::string &capStr)
     return;
   }
 
-  setLineCap(! inherit ? LineCap(cap) : LineCap::inherit());
+  setLineCap(! inherit ? LineCap(cap) : LineCap::makeInherit());
 }
 
 // miter | round | bevel | inherit
@@ -237,7 +237,7 @@ setLineJoin(const std::string &joinStr)
     return;
   }
 
-  setLineJoin(! inherit ? LineJoin(join) : LineJoin::inherit());
+  setLineJoin(! inherit ? LineJoin(join) : LineJoin::makeInherit());
 }
 
 // <miterlimit> | inherit
@@ -259,7 +259,7 @@ setMiterLimit(const std::string &limitStr)
     miterlimit = lvalue.getValue().pxValue(1);
   }
 
-  setMiterLimit(! inherit ? MiterLimit(miterlimit) : MiterLimit::inherit());
+  setMiterLimit(! inherit ? MiterLimit(miterlimit) : MiterLimit::makeInherit());
 }
 
 void
@@ -392,30 +392,30 @@ print(std::ostream &os) const
   std::stringstream ss;
 
   if (getColorValid())
-    ss << "stroke: " << getColor() << ";";
+    ss << "stroke:" << getColor() << ";";
 
   if (getOpacityValid()) {
     if (ss.str() != "") ss << " ";
 
-    ss << "stroke-opacity: " << getOpacity() << ";";
+    ss << "stroke-opacity:" << getOpacity() << ";";
   }
 
   if (getUrlValid()) {
     if (ss.str() != "") ss << " ";
 
-    ss << "stroke: url(#" << getUrl() << ");";
+    ss << "stroke:url(#" << getUrl() << ");";
   }
 
   if (getWidthValid()) {
     if (ss.str() != "") ss << " ";
 
-    ss << "stroke-width: " << getWidth() << ";";
+    ss << "stroke-width:" << getWidth() << ";";
   }
 
   if (getDashArrayValid()) {
     if (ss.str() != "") ss << " ";
 
-    ss << "stroke-dasharray: ";
+    ss << "stroke-dasharray:";
 
     if (getDashArray().isInherit())
       ss << "inherit";
@@ -428,7 +428,7 @@ print(std::ostream &os) const
   if (getDashOffsetValid()) {
     if (ss.str() != "") ss << " ";
 
-    ss << " stroke-dashoffset: ";
+    ss << "stroke-dashoffset:";
 
     if (getDashOffset().isInherit())
       ss << "inherit";
@@ -441,7 +441,7 @@ print(std::ostream &os) const
   if (getLineCapValid()) {
     if (ss.str() != "") ss << " ";
 
-    ss << "stroke-linecap: ";
+    ss << "stroke-linecap:";
 
     printLineCap(ss, getLineCap());
 
@@ -451,7 +451,7 @@ print(std::ostream &os) const
   if (getLineJoinValid()) {
     if (ss.str() != "") ss << " ";
 
-    ss << "stroke-linejoin: ";
+    ss << "stroke-linejoin:";
 
     printLineJoin(ss, getLineJoin());
 
@@ -461,7 +461,7 @@ print(std::ostream &os) const
   if (getMiterLimitValid()) {
     if (ss.str() != "") ss << " ";
 
-    ss << "stroke-miterlimit: " << getMiterLimit() << ";";
+    ss << "stroke-miterlimit:" << getMiterLimit() << ";";
   }
 
   os << ss.str();
