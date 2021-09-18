@@ -186,6 +186,13 @@ Canvas(Window *window) :
 
 void
 Canvas::
+print(const QString &filename)
+{
+  renderer_->getImage()->write(filename.toStdString(), CFILE_TYPE_IMAGE_PNG);
+}
+
+void
+Canvas::
 resizeEvent(QResizeEvent *)
 {
   renderer_->setSize(width(), height());

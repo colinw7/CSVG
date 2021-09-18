@@ -72,7 +72,10 @@
 #include <CSVGFontObj.h>
 #include <CSVGObjectCSSTagData.h>
 
+#ifdef CSVG_JAVASCRIPT
 #include <CSVGJavaScript.h>
+#endif
+
 #include <CSVGUtil.h>
 
 #include <CRadialGradient.h>

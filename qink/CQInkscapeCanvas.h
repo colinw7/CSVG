@@ -28,6 +28,8 @@ class Canvas : public QFrame {
   void zoomOut();
   void zoomReset();
 
+  void print(const QString &filename);
+
   void resizeEvent(QResizeEvent *) override;
 
   void paintEvent(QPaintEvent *) override;

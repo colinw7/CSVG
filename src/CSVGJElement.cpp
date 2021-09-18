@@ -409,7 +409,9 @@ void
 CSVGJElement::
 print(std::ostream &os) const
 {
-  os << "SVGElement" << *obj_;
+  os << "SVGElement ";
+
+  CJObj::print(os);
 }
 
 #endif

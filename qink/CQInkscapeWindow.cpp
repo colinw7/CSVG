@@ -75,6 +75,7 @@ Window()
 
   addAction(fileMenu, "Load...", SLOT(loadSlot()));
   addAction(fileMenu, "Save As...", SLOT(saveAsSlot()));
+  addAction(fileMenu, "Print...", SLOT(printSlot()));
   addAction(fileMenu, "Quit", SLOT(quitSlot()));
 
   addAction(editMenu, "Delete");
@@ -307,6 +308,20 @@ saveAsSlot()
   std::ofstream os(filename.toStdString());
 
   svg()->print(os, /*hier*/true);
+}
+
+void
+Window::
+printSlot()
+{
+  auto title  = QString("Print Image");
+  auto cwd    = QString(COSFile::getCurrentDir().c_str());
+  auto filter = QString("PNG, (*.png)");
+
+  auto filename = QFileDialog::getSaveFileName(this, title, cwd, filter);
+  if (filename == "") return;
+
+  canvas_->print(filename);
 }
 
 void

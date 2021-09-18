@@ -92,6 +92,7 @@ class Window : public QFrame {
  private slots:
   void loadSlot();
   void saveAsSlot();
+  void printSlot();
   void quitSlot();
 
   void zoomInSlot();
