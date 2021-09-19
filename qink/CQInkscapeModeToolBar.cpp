@@ -31,12 +31,13 @@ ModeToolBar(Window *window) :
     return button;
   };
 
-  makeButton("SELECT_MODE"      , "Select Object", SLOT(selectSlot()));
-  makeButton("POINT_SELECT_MODE", "Select Point" , SLOT(pointSelectSlot()));
-  makeButton("ZOOM_MODE"        , "Zoom"         , SLOT(zoomSlot()));
-  makeButton("RECT_MODE"        , "Create Rect"  , SLOT(createRectSlot()));
-  makeButton("PATH_MODE"        , "Create Path"  , SLOT(createPathSlot()));
-  makeButton("TEXT_MODE"        , "Create Text"  , SLOT(createTextSlot()));
+  makeButton("SELECT_MODE"      , "Select Object" , SLOT(selectSlot()));
+  makeButton("POINT_SELECT_MODE", "Select Point"  , SLOT(pointSelectSlot()));
+  makeButton("ZOOM_MODE"        , "Zoom"          , SLOT(zoomSlot()));
+  makeButton("RECT_MODE"        , "Create Rect"   , SLOT(createRectSlot()));
+  makeButton("ELLIPSE_MODE"     , "Create Ellipse", SLOT(createEllipseSlot()));
+  makeButton("PATH_MODE"        , "Create Path"   , SLOT(createPathSlot()));
+  makeButton("TEXT_MODE"        , "Create Text"   , SLOT(createTextSlot()));
 
   layout->addStretch(1);
 }
@@ -67,6 +68,13 @@ ModeToolBar::
 createRectSlot()
 {
   window_->setMode(Window::Mode::CREATE_RECT);
+}
+
+void
+ModeToolBar::
+createEllipseSlot()
+{
+  window_->setMode(Window::Mode::CREATE_ELLIPSE);
 }
 
 void

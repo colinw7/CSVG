@@ -7,6 +7,7 @@
 
 class CQSVGRenderer;
 class CSVG;
+class CQRubberBand;
 
 namespace CQInkscape {
 
@@ -34,8 +35,9 @@ class Canvas : public QFrame {
 
   void paintEvent(QPaintEvent *) override;
 
-  void mousePressEvent(QMouseEvent *me) override;
-  void mouseMoveEvent (QMouseEvent *me) override;
+  void mousePressEvent  (QMouseEvent *me) override;
+  void mouseMoveEvent   (QMouseEvent *me) override;
+  void mouseReleaseEvent(QMouseEvent *me) override;
 
   void keyPressEvent(QKeyEvent *ke) override;
 
@@ -54,6 +56,13 @@ class Canvas : public QFrame {
   QPainter*      opainter_ { nullptr };
   CPoint2D       offset_   { 0.0, 0.0 };
   double         scale_    { 1.0 };
+
+  CQRubberBand *rubberBand_ { nullptr };
+  QPoint        pressPixel_;
+  CPoint2D      pressPoint_;
+  QPoint        movePixel_;
+  CPoint2D      movePoint_;
+  bool          pressed_ { false };
 
   mutable CMatrix2D       matrix_;
   mutable CMatrix2D       imatrix_;

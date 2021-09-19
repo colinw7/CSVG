@@ -621,170 +621,88 @@ createObjectByName(const std::string &name)
 
   CSVGObject *object;
 
-  if      (name == "svg")
-    object = createBlock();
-  else if (name == "a")
-    object = createAnchor();
-//else if (name == "altGlyphDef")
-//  object = createAltGlyphDef();
-//else if (name == "animation")
-//  object = createAnimation();
-  else if (name == "animate")
-    object = createAnimate();
-  else if (name == "animateColor")
-    object = createAnimateColor();
-  else if (name == "animateMotion")
-    object = createAnimateMotion();
-  else if (name == "animateTransform")
-    object = createAnimateTransform();
-  else if (name == "audio")
-    object = createAudio();
-  else if (name == "circle")
-    object = createCircle();
-  else if (name == "clipPath")
-    object = createClipPath();
-  else if (name == "color-profile")
-    object = createColorProfile();
-//else if (name == "cursor")
-//  object = createCursor();
-  else if (name == "defs")
-    object = createDefs();
-  else if (name == "desc")
-    object = createDesc();
-//else if (name == "discard")
-//  object = createDiscard();
-  else if (name == "ellipse")
-    object = createEllipse();
-  else if (name == "feBlend")
-    object = createFeBlend();
-  else if (name == "feColorMatrix")
-    object = createFeColorMatrix();
-  else if (name == "feComponentTransfer")
-    object = createFeComponentTransfer();
-  else if (name == "feComposite")
-    object = createFeComposite();
-  else if (name == "feConvolveMatrix")
-    object = createFeConvolveMatrix();
-  else if (name == "feDiffuseLighting")
-    object = createFeDiffuseLighting();
-  else if (name == "feDisplacementMap")
-    object = createFeDisplacementMap();
-  else if (name == "feDistantLight")
-    object = createFeDistantLight();
-  else if (name == "feFlood")
-    object = createFeFlood();
-  else if (name == "feFuncR")
-    object = createFeFunc(CRGBA_COMPONENT_RED);
-  else if (name == "feFuncG")
-    object = createFeFunc(CRGBA_COMPONENT_GREEN);
-  else if (name == "feFuncB")
-    object = createFeFunc(CRGBA_COMPONENT_BLUE);
-  else if (name == "feFuncA")
-    object = createFeFunc(CRGBA_COMPONENT_ALPHA);
-  else if (name == "feGaussianBlur")
-    object = createFeGaussianBlur();
-  else if (name == "feImage")
-    object = createFeImage();
-  else if (name == "feMerge")
-    object = createFeMerge();
-  else if (name == "feMergeNode")
-    object = createFeMergeNode();
-  else if (name == "feMorphology")
-    object = createFeMorphology();
-  else if (name == "feOffset")
-    object = createFeOffset();
-  else if (name == "fePointLight")
-    object = createFePointLight();
-  else if (name == "feSpecularLighting")
-    object = createFeSpecularLighting();
-  else if (name == "feSpotLight")
-    object = createFeSpotLight();
-  else if (name == "feTile")
-    object = createFeTile();
-  else if (name == "feTurbulence")
-    object = createFeTurbulence();
-  else if (name == "filter")
-    object = createFilter();
-  else if (name == "font")
-    object = createFont();
-  else if (name == "font-face")
-    object = createFontFace();
-  else if (name == "font-face-src")
-    object = createFontFaceSrc();
-  else if (name == "font-face-uri")
-    object = createFontFaceUri();
-//else if (name == "foreignObject")
-//  object = createForeignObject();
-  else if (name == "glyph")
-    object = createGlyph();
-  else if (name == "g")
-    object = createGroup();
-  else if (name == "hkern")
-    object = createHKern();
-  else if (name == "image")
-    object = createImage();
-  else if (name == "line")
-    object = createLine();
-  else if (name == "linearGradient")
-    object = createLinearGradient();
-  else if (name == "marker")
-    object = createMarker();
-  else if (name == "mask")
-    object = createMask();
-  else if (name == "metadata")
-    object = createMetaData();
-  else if (name == "missing-glyph")
-    object = createMissingGlyph();
-  else if (name == "mpath")
-    object = createMPath();
-  else if (name == "path")
-    object = createPath();
-  else if (name == "pattern")
-    object = createPattern();
-  else if (name == "polygon")
-    object = createPolygon();
-  else if (name == "polyline")
-    object = createPolyLine();
-//else if (name == "prefetch")
-//  object = createPrefetch();
-  else if (name == "radialGradient")
-    object = createRadialGradient();
-  else if (name == "rect")
-    object = createRect();
-  else if (name == "script")
-    object = createScript();
-  else if (name == "set")
-    object = createSet();
-//else if (name == "solidColor")
-//  object = createSolidColor();
-  else if (name == "stop")
-    object = createStop();
-  else if (name == "style")
-    object = createStyle();
-  else if (name == "switch")
-    object = createSwitch();
-  else if (name == "symbol")
-    object = createSymbol();
-  else if (name == "tbreak")
-    object = createTBreak();
-  else if (name == "text")
-    object = createText();
-//else if (name == "textArea")
-//  object = createTextArea();
-  else if (name == "textPath")
-    object = createTextPath();
-  else if (name == "title")
-    object = createTitle();
-  else if (name == "tspan")
-    object = createTSpan();
-  else if (name == "use")
-    object = createUse();
-//else if (name == "video")
-//  object = createVideo();
-//else if (name == "view")
-//  object = createView();
-  else
-    object = nullptr;
+  if      (name == "svg"                ) object = createBlock();
+  else if (name == "a"                  ) object = createAnchor();
+//else if (name == "altGlyphDef"        ) object = createAltGlyphDef();
+//else if (name == "animation"          ) object = createAnimation();
+  else if (name == "animate"            ) object = createAnimate();
+  else if (name == "animateColor"       ) object = createAnimateColor();
+  else if (name == "animateMotion"      ) object = createAnimateMotion();
+  else if (name == "animateTransform"   ) object = createAnimateTransform();
+  else if (name == "audio"              ) object = createAudio();
+  else if (name == "circle"             ) object = createCircle();
+  else if (name == "clipPath"           ) object = createClipPath();
+  else if (name == "color-profile"      ) object = createColorProfile();
+//else if (name == "cursor"             ) object = createCursor();
+  else if (name == "defs"               ) object = createDefs();
+  else if (name == "desc"               ) object = createDesc();
+//else if (name == "discard"            ) object = createDiscard();
+  else if (name == "ellipse"            ) object = createEllipse();
+  else if (name == "feBlend"            ) object = createFeBlend();
+  else if (name == "feColorMatrix"      ) object = createFeColorMatrix();
+  else if (name == "feComponentTransfer") object = createFeComponentTransfer();
+  else if (name == "feComposite"        ) object = createFeComposite();
+  else if (name == "feConvolveMatrix"   ) object = createFeConvolveMatrix();
+  else if (name == "feDiffuseLighting"  ) object = createFeDiffuseLighting();
+  else if (name == "feDisplacementMap"  ) object = createFeDisplacementMap();
+  else if (name == "feDistantLight"     ) object = createFeDistantLight();
+  else if (name == "feFlood"            ) object = createFeFlood();
+  else if (name == "feFuncR"            ) object = createFeFunc(CRGBA_COMPONENT_RED);
+  else if (name == "feFuncG"            ) object = createFeFunc(CRGBA_COMPONENT_GREEN);
+  else if (name == "feFuncB"            ) object = createFeFunc(CRGBA_COMPONENT_BLUE);
+  else if (name == "feFuncA"            ) object = createFeFunc(CRGBA_COMPONENT_ALPHA);
+  else if (name == "feGaussianBlur"     ) object = createFeGaussianBlur();
+  else if (name == "feImage"            ) object = createFeImage();
+  else if (name == "feMerge"            ) object = createFeMerge();
+  else if (name == "feMergeNode"        ) object = createFeMergeNode();
+  else if (name == "feMorphology"       ) object = createFeMorphology();
+  else if (name == "feOffset"           ) object = createFeOffset();
+  else if (name == "fePointLight"       ) object = createFePointLight();
+  else if (name == "feSpecularLighting" ) object = createFeSpecularLighting();
+  else if (name == "feSpotLight"        ) object = createFeSpotLight();
+  else if (name == "feTile"             ) object = createFeTile();
+  else if (name == "feTurbulence"       ) object = createFeTurbulence();
+  else if (name == "filter"             ) object = createFilter();
+  else if (name == "font"               ) object = createFont();
+  else if (name == "font-face"          ) object = createFontFace();
+  else if (name == "font-face-src"      ) object = createFontFaceSrc();
+  else if (name == "font-face-uri"      ) object = createFontFaceUri();
+//else if (name == "foreignObject"      ) object = createForeignObject();
+  else if (name == "glyph"              ) object = createGlyph();
+  else if (name == "g"                  ) object = createGroup();
+  else if (name == "hkern"              ) object = createHKern();
+  else if (name == "image"              ) object = createImage();
+  else if (name == "line"               ) object = createLine();
+  else if (name == "linearGradient"     ) object = createLinearGradient();
+  else if (name == "marker"             ) object = createMarker();
+  else if (name == "mask"               ) object = createMask();
+  else if (name == "metadata"           ) object = createMetaData();
+  else if (name == "missing-glyph"      ) object = createMissingGlyph();
+  else if (name == "mpath"              ) object = createMPath();
+  else if (name == "path"               ) object = createPath();
+  else if (name == "pattern"            ) object = createPattern();
+  else if (name == "polygon"            ) object = createPolygon();
+  else if (name == "polyline"           ) object = createPolyLine();
+//else if (name == "prefetch"           ) object = createPrefetch();
+  else if (name == "radialGradient"     ) object = createRadialGradient();
+  else if (name == "rect"               ) object = createRect();
+  else if (name == "script"             ) object = createScript();
+  else if (name == "set"                ) object = createSet();
+//else if (name == "solidColor"         ) object = createSolidColor();
+  else if (name == "stop"               ) object = createStop();
+  else if (name == "style"              ) object = createStyle();
+  else if (name == "switch"             ) object = createSwitch();
+  else if (name == "symbol"             ) object = createSymbol();
+  else if (name == "tbreak"             ) object = createTBreak();
+  else if (name == "text"               ) object = createText();
+//else if (name == "textArea"           ) object = createTextArea();
+  else if (name == "textPath"           ) object = createTextPath();
+  else if (name == "title"              ) object = createTitle();
+  else if (name == "tspan"              ) object = createTSpan();
+  else if (name == "use"                ) object = createUse();
+//else if (name == "video"              ) object = createVideo();
+//else if (name == "view"               ) object = createView();
+  else                                    object = nullptr;
 
   //------
 

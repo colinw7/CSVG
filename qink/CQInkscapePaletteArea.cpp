@@ -23,7 +23,7 @@ PaletteArea(Window *window) :
 
   slayout->addWidget(handle_);
 
-  layout_ = CQUtil::makeLayout<QVBoxLayout>(this, 0, 0);
+  layout_ = CQUtil::makeLayout<QVBoxLayout>(0, 0);
 
   slayout->addLayout(layout_);
 }

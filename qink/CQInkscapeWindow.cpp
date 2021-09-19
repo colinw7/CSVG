@@ -35,8 +35,12 @@
 #include <svg/point_select_mode_svg.h>
 #include <svg/zoom_mode_svg.h>
 #include <svg/rect_mode_svg.h>
+#include <svg/ellipse_mode_svg.h>
 #include <svg/path_mode_svg.h>
 #include <svg/text_mode_svg.h>
+
+#include <svg/select_mode_point_svg.h>
+#include <svg/select_mode_rect_svg.h>
 
 #include <svg/mouse_zoom_in_svg.h>
 #include <svg/mouse_zoom_out_svg.h>
@@ -56,45 +60,34 @@ Window()
 
   //---
 
-  auto addAction = [&](QMenu *menu, const QString &name, const char *slotName=nullptr) {
-    auto *action = new QAction(name, menu);
-
-    if (slotName)
-      connect(action, SIGNAL(triggered()), this, slotName);
-
-    menu->addAction(action);
-
-    return action;
-  };
-
   auto *fileMenu   = menuBar_->addMenu("File");
   auto *editMenu   = menuBar_->addMenu("Edit");
   auto *objectMenu = menuBar_->addMenu("Object");
   auto *viewMenu   = menuBar_->addMenu("View");
   auto *helpMenu   = menuBar_->addMenu("Help");
 
-  addAction(fileMenu, "Load...", SLOT(loadSlot()));
-  addAction(fileMenu, "Save As...", SLOT(saveAsSlot()));
-  addAction(fileMenu, "Print...", SLOT(printSlot()));
-  addAction(fileMenu, "Quit", SLOT(quitSlot()));
+  CQUtil::addAction(fileMenu, "Load...", this, SLOT(loadSlot()));
+  CQUtil::addAction(fileMenu, "Save As...", this, SLOT(saveAsSlot()));
+  CQUtil::addAction(fileMenu, "Print...", this, SLOT(printSlot()));
+  CQUtil::addAction(fileMenu, "Quit", this, SLOT(quitSlot()));
 
-  addAction(editMenu, "Delete");
-  addAction(editMenu, "Select All", SLOT(selectAllSlot()));
-  addAction(editMenu, "Select None", SLOT(selectNoneSlot()));
-  addAction(editMenu, "Select Parent", SLOT(selectParentSlot()));
+  CQUtil::addAction(editMenu, "Delete");
+  CQUtil::addAction(editMenu, "Select All", this, SLOT(selectAllSlot()));
+  CQUtil::addAction(editMenu, "Select None", this, SLOT(selectNoneSlot()));
+  CQUtil::addAction(editMenu, "Select Parent", this, SLOT(selectParentSlot()));
 
-  addAction(objectMenu, "Ungroup", SLOT(ungroupSlot()));
+  CQUtil::addAction(objectMenu, "Ungroup", this, SLOT(ungroupSlot()));
 
   auto *viewZoomMenu = viewMenu->addMenu("Zoom");
 
-  addAction(viewZoomMenu, "Zoom In"   , SLOT(zoomInSlot()));
-  addAction(viewZoomMenu, "Zoom Out"  , SLOT(zoomOutSlot()));
-  addAction(viewZoomMenu, "Zoom Reset", SLOT(zoomResetSlot()));
+  CQUtil::addAction(viewZoomMenu, "Zoom In"   , this, SLOT(zoomInSlot()));
+  CQUtil::addAction(viewZoomMenu, "Zoom Out"  , this, SLOT(zoomOutSlot()));
+  CQUtil::addAction(viewZoomMenu, "Zoom Reset", this, SLOT(zoomResetSlot()));
 
-  addAction(viewMenu, "Settings", SLOT(settingsSlot()));
-  addAction(viewMenu, "Console" , SLOT(consoleSlot()));
+  CQUtil::addAction(viewMenu, "Settings", this, SLOT(settingsSlot()));
+  CQUtil::addAction(viewMenu, "Console" , this, SLOT(consoleSlot()));
 
-  addAction(helpMenu, "Help", SLOT(helpSlot()));
+  CQUtil::addAction(helpMenu, "Help", this, SLOT(helpSlot()));
 
   //---
 
@@ -158,7 +151,7 @@ updatePlacement()
   //---
 
   // place top mouse toolbar underneath menu bar
-  int mouseToolBarHeight = fm.height() + 8;
+  int mouseToolBarHeight = fm.height() + 24;
 
   mouseToolBar_->move(0, menuBarHeight);
   mouseToolBar_->resize(width(), mouseToolBarHeight);
@@ -250,6 +243,8 @@ Window::
 setCurrentObject(CSVGObject *obj)
 {
   currentObj_ = obj;
+
+  mouseToolBar_->updateState();
 
   fillStrokePalette_->setObject(currentObj_);
 

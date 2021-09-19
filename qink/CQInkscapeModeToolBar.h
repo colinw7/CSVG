@@ -18,6 +18,7 @@ class ModeToolBar : public QFrame {
   void pointSelectSlot();
   void zoomSlot();
   void createRectSlot();
+  void createEllipseSlot();
   void createPathSlot();
   void createTextSlot();
 

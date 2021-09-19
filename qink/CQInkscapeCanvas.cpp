@@ -9,8 +9,11 @@
 #include <CSVGBuffer.h>
 #include <CSVGTitle.h>
 #include <CSVGDesc.h>
+#include <CSVGRect.h>
+#include <CSVGEllipse.h>
 
 #include <CQUtil.h>
+#include <CQRubberBand.h>
 
 #include <QMouseEvent>
 #include <QToolTip>
@@ -260,68 +263,87 @@ Canvas::
 mousePressEvent(QMouseEvent *me)
 {
   if (me->button() == Qt::LeftButton) {
+    pressed_ = true;
+
     bool isShift   = (me->modifiers() & Qt::ShiftModifier);
     bool isControl = (me->modifiers() & Qt::ControlModifier);
 
-    auto w = pixelToWindow(CPoint2D(me->x(), me->y()));
+    pressPixel_ = me->pos();
+    pressPoint_ = pixelToWindow(CPoint2D(pressPixel_.x(), pressPixel_.y()));
+    movePixel_  = pressPixel_;
+    movePoint_  = pressPoint_;
 
-    CSVG::ObjectList objects;
+    //---
 
-    svg_->getObjectsAtPoint(w, objects);
+    auto mode = window()->mode();
 
-    if (! objects.empty()) {
-      using AreaObjects  = std::map<double, CSVG::ObjectList>;
-      using DepthObjects = std::map<int, AreaObjects>;
+    if (mode == Window::Mode::SELECT_OBJECT || mode == Window::Mode::SELECT_POINT) {
+      CSVG::ObjectList objects;
 
-      DepthObjects depthObjects;
+      svg_->getObjectsAtPoint(pressPoint_, objects);
 
-      for (const auto &obj : objects) {
-        if (obj == svg_->getRoot())
-          continue;
+      if (! objects.empty()) {
+        using AreaObjects  = std::map<double, CSVG::ObjectList>;
+        using DepthObjects = std::map<int, AreaObjects>;
 
-        CBBox2D bbox;
+        DepthObjects depthObjects;
 
-        if (! obj->getFlatTransformedBBox(bbox))
-          continue;
-
-        if (window()->mode() == Window::Mode::SELECT_POINT) {
-          auto parts = obj->getPartList();
-
-          if (parts.empty())
+        for (const auto &obj : objects) {
+          if (obj == svg_->getRoot())
             continue;
+
+          CBBox2D bbox;
+
+          if (! obj->getFlatTransformedBBox(bbox))
+            continue;
+
+          if (mode == Window::Mode::SELECT_POINT) {
+            auto parts = obj->getPartList();
+
+            if (parts.empty())
+              continue;
+          }
+
+          double area = bbox.area();
+
+          depthObjects[obj->getDepth()][area].push_back(obj);
         }
 
-        double area = bbox.area();
+        if (! depthObjects.empty()) {
+          AreaObjects areaObjects;
 
-        depthObjects[obj->getDepth()][area].push_back(obj);
-      }
+          if (! isControl)
+            areaObjects = depthObjects.begin()->second;
+          else
+            areaObjects = depthObjects.rbegin()->second;
 
-      if (! depthObjects.empty()) {
-        AreaObjects areaObjects;
+          auto *obj = areaObjects.begin()->second.front();
 
-        if (! isControl)
-          areaObjects = depthObjects.begin()->second;
+          window_->setCurrentObject(obj);
+
+          if (! isShift)
+            window_->selectNone();
+
+          if (! obj->getSelected()) {
+            obj->setSelected(true);
+
+            window_->redraw(true);
+          }
+        }
         else
-          areaObjects = depthObjects.rbegin()->second;
-
-        auto *obj = areaObjects.begin()->second.front();
-
-        window_->setCurrentObject(obj);
-
-        if (! isShift)
           window_->selectNone();
-
-        if (! obj->getSelected()) {
-          obj->setSelected(true);
-
-          window_->redraw(true);
-        }
       }
       else
         window_->selectNone();
     }
-    else
-      window_->selectNone();
+    else {
+      if (! rubberBand_)
+        rubberBand_ = new CQRubberBand(this);
+
+      rubberBand_->setBounds(pressPixel_, movePixel_);
+
+      rubberBand_->show();
+    }
   }
 }
 
@@ -329,9 +351,71 @@ void
 Canvas::
 mouseMoveEvent(QMouseEvent *me)
 {
-  auto w = pixelToWindow(CPoint2D(me->x(), me->y()));
+  movePixel_ = me->pos();
+  movePoint_ = pixelToWindow(CPoint2D(movePixel_.x(), movePixel_.y()));
 
-  window_->setMousePos(w);
+  if (pressed_) {
+    auto mode = window()->mode();
+
+    if (mode == Window::Mode::SELECT_OBJECT || mode == Window::Mode::SELECT_POINT) {
+    }
+    else {
+      if (rubberBand_)
+        rubberBand_->setBounds(pressPixel_, movePixel_);
+    }
+  }
+
+  window_->setMousePos(movePoint_);
+}
+
+void
+Canvas::
+mouseReleaseEvent(QMouseEvent *me)
+{
+  movePoint_ = pixelToWindow(CPoint2D(me->x(), me->y()));
+
+  if (rubberBand_)
+    rubberBand_->hide();
+
+  if (pressed_) {
+    auto mode = window()->mode();
+
+    if      (mode == Window::Mode::CREATE_RECT) {
+      auto *svg = window()->svg();
+
+      auto *rect = dynamic_cast<CSVGRect *>(svg->createObjectByName("rect"));
+
+      rect->setX(CScreenUnits::makePixel(std::min(pressPoint_.x, movePoint_.x)));
+      rect->setY(CScreenUnits::makePixel(std::min(pressPoint_.y, movePoint_.y)));
+
+      rect->setWidth (CScreenUnits::makePixel(std::abs(pressPoint_.x - movePoint_.x)));
+      rect->setHeight(CScreenUnits::makePixel(std::abs(pressPoint_.y - movePoint_.y)));
+
+      svg->getRoot()->addChildObject(rect);
+
+      window()->redraw(/*update*/true);
+    }
+    else if (mode == Window::Mode::CREATE_ELLIPSE) {
+      auto *svg = window()->svg();
+
+      auto *ellipse = dynamic_cast<CSVGEllipse *>(svg->createObjectByName("ellipse"));
+
+      double cx = (pressPoint_.x + movePoint_.x)/2.0;
+      double cy = (pressPoint_.y + movePoint_.y)/2.0;
+
+      ellipse->setCenterX(CScreenUnits::makePixel(cx));
+      ellipse->setCenterY(CScreenUnits::makePixel(cy));
+
+      ellipse->setRadiusX(CScreenUnits::makePixel(std::abs(pressPoint_.x - movePoint_.x)/2.0));
+      ellipse->setRadiusY(CScreenUnits::makePixel(std::abs(pressPoint_.y - movePoint_.y)/2.0));
+
+      svg->getRoot()->addChildObject(ellipse);
+
+      window()->redraw(/*update*/true);
+    }
+  }
+
+  pressed_ = false;
 }
 
 void

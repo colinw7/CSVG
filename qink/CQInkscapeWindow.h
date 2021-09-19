@@ -37,6 +37,7 @@ class Window : public QFrame {
     SELECT_POINT,
     ZOOM,
     CREATE_RECT,
+    CREATE_ELLIPSE,
     CREATE_PATH,
     CREATE_TEXT
   };
