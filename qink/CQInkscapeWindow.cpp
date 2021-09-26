@@ -5,8 +5,9 @@
 #include <CQInkscapePaletteArea.h>
 #include <CQInkscapeStatusBar.h>
 #include <CQInkscapeColorBar.h>
-#include <CQInkscapeFillStroke.h>
+#include <CQInkscapeFillStrokePalette.h>
 #include <CQInkscapeObjectProperties.h>
+#include <CQInkscapeTransformPalette.h>
 #include <CQInkscapeConsole.h>
 #include <CQInkscapeSettings.h>
 
@@ -113,11 +114,13 @@ Window()
   // palettes
   paletteArea_ = new PaletteArea(this);
 
-  fillStrokePalette_       = new FillStroke(this);
+  fillStrokePalette_       = new FillStrokePalette(this);
   objectPropertiesPalette_ = new ObjectProperties(this);
+  transformPalette_        = new TransformPalette(this);
 
   paletteArea_->addPalette(fillStrokePalette_);
   paletteArea_->addPalette(objectPropertiesPalette_);
+  paletteArea_->addPalette(transformPalette_);
 }
 
 void
@@ -247,6 +250,7 @@ setCurrentObject(CSVGObject *obj)
   mouseToolBar_->updateState();
 
   fillStrokePalette_->setObject(currentObj_);
+  transformPalette_ ->setObject(currentObj_);
 
   updateStatus();
 }

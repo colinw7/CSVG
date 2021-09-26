@@ -40,7 +40,7 @@ MouseToolBar(Window *window) :
   selectFrame_       = makeFrame("select");
   pointSelectFrame_  = makeFrame("pointSelect");
   zoomFrame_         = makeFrame("zoom");
-  rectFrame_         = makeFrame("rect");
+  rectData_.frame    = makeFrame("rect");
   ellipseData_.frame = makeFrame("ellipse");
   pathFrame_         = makeFrame("path");
   textFrame_         = makeFrame("text");
@@ -124,17 +124,23 @@ MouseToolBar(Window *window) :
   addStretch(zoomFrame_);
 
   // rect
-  makeRealEdit(rectFrame_, "W" , "Width");
-  makeRealEdit(rectFrame_, "H" , "Height");
-  makeRealEdit(rectFrame_, "Rx", "Horizontal Corner Radius");
-  makeRealEdit(rectFrame_, "Ry", "Vertical Corner Radius");
-  addStretch(rectFrame_);
+  rectData_.wEdit  = makeRealEdit(rectData_.frame, "W" , "Width" , SLOT(rectWidthSlot()));
+  rectData_.hEdit  = makeRealEdit(rectData_.frame, "H" , "Height", SLOT(rectHeightSlot()));
+  rectData_.rxEdit = makeRealEdit(rectData_.frame, "Rx", "Horizontal Corner Radius",
+                                  SLOT(rectXRadiusSlot()));
+  rectData_.ryEdit = makeRealEdit(rectData_.frame, "Ry", "Vertical Corner Radius",
+                                  SLOT(rectYRadiusSlot()));
+  addStretch(rectData_.frame);
 
   // ellipse
-  ellipseData_.rxEdit    = makeRealEdit(ellipseData_.frame, "Rx"   , "Horizontal Radius");
-  ellipseData_.ryEdit    = makeRealEdit(ellipseData_.frame, "Ry"   , "Vertical Radius");
-  ellipseData_.startEdit = makeRealEdit(ellipseData_.frame, "Start", "Start Angle");
-  ellipseData_.endEdit   = makeRealEdit(ellipseData_.frame, "End"  , "End Angle");
+  ellipseData_.rxEdit    = makeRealEdit(ellipseData_.frame, "Rx", "Horizontal Radius",
+                                        SLOT(ellipseXRadiusSlot()));
+  ellipseData_.ryEdit    = makeRealEdit(ellipseData_.frame, "Ry", "Vertical Radius",
+                                        SLOT(ellipseYRadiusSlot()));
+  ellipseData_.startEdit = makeRealEdit(ellipseData_.frame, "Start", "Start Angle",
+                                        SLOT(ellipseStartAngleSlot()));
+  ellipseData_.endEdit   = makeRealEdit(ellipseData_.frame, "End"  , "End Angle",
+                                        SLOT(ellipseEndAngleSlot()));
   addStretch(ellipseData_.frame);
 
   // path
@@ -176,6 +182,11 @@ updateState()
   if      (mode == Window::Mode::CREATE_RECT) {
     auto *rect = dynamic_cast<CSVGRect *>(object);
     if (! rect) return;
+
+    rectData_.wEdit ->setValue(rect->getWidth ().pxValue());
+    rectData_.hEdit ->setValue(rect->getHeight().pxValue());
+    rectData_.rxEdit->setValue(rect->getRX());
+    rectData_.ryEdit->setValue(rect->getRY());
   }
   else if (mode == Window::Mode::CREATE_ELLIPSE) {
     auto *ellipse = dynamic_cast<CSVGEllipse *>(object);
@@ -201,6 +212,102 @@ zoomOutSlot()
 void
 MouseToolBar::
 zoomFitSlot()
+{
+}
+
+void
+MouseToolBar::
+rectWidthSlot()
+{
+  auto *object = window()->currentObject();
+
+  auto *rect = dynamic_cast<CSVGRect *>(object);
+  if (! rect) return;
+
+  rect->setWidth(rectData_.wEdit->value());
+
+  window()->redraw(/*update*/true);
+}
+
+void
+MouseToolBar::
+rectHeightSlot()
+{
+  auto *object = window()->currentObject();
+
+  auto *rect = dynamic_cast<CSVGRect *>(object);
+  if (! rect) return;
+
+  rect->setHeight(rectData_.hEdit->value());
+
+  window()->redraw(/*update*/true);
+}
+
+void
+MouseToolBar::
+rectXRadiusSlot()
+{
+  auto *object = window()->currentObject();
+
+  auto *rect = dynamic_cast<CSVGRect *>(object);
+  if (! rect) return;
+
+  rect->setRX(rectData_.rxEdit->value());
+
+  window()->redraw(/*update*/true);
+}
+
+void
+MouseToolBar::
+rectYRadiusSlot()
+{
+  auto *object = window()->currentObject();
+
+  auto *rect = dynamic_cast<CSVGRect *>(object);
+  if (! rect) return;
+
+  rect->setRY(rectData_.ryEdit->value());
+
+  window()->redraw(/*update*/true);
+}
+
+void
+MouseToolBar::
+ellipseXRadiusSlot()
+{
+  auto *object = window()->currentObject();
+
+  auto *ellipse = dynamic_cast<CSVGEllipse *>(object);
+  if (! ellipse) return;
+
+  ellipse->setRadiusX(ellipseData_.rxEdit->value());
+
+  window()->redraw(/*update*/true);
+}
+
+void
+MouseToolBar::
+ellipseYRadiusSlot()
+{
+  auto *object = window()->currentObject();
+
+  auto *ellipse = dynamic_cast<CSVGEllipse *>(object);
+  if (! ellipse) return;
+
+  ellipse->setRadiusY(ellipseData_.ryEdit->value());
+
+  window()->redraw(/*update*/true);
+}
+
+void
+MouseToolBar::
+ellipseStartAngleSlot()
+{
+}
+
+void
+MouseToolBar::
+ellipseEndAngleSlot()
 {
 }
 

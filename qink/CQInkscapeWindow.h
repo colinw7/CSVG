@@ -21,8 +21,9 @@ class MouseToolBar;
 class ModeToolBar;
 class ColorBar;
 class StatusBar;
-class FillStroke;
+class FillStrokePalette;
 class ObjectProperties;
+class TransformPalette;
 class PaletteArea;
 class Palette;
 class Console;
@@ -123,8 +124,9 @@ class Window : public QFrame {
 
   PaletteArea* paletteArea_ { nullptr };
 
-  FillStroke*       fillStrokePalette_       { nullptr };
-  ObjectProperties* objectPropertiesPalette_ { nullptr };
+  FillStrokePalette* fillStrokePalette_       { nullptr };
+  ObjectProperties*  objectPropertiesPalette_ { nullptr };
+  TransformPalette*  transformPalette_        { nullptr };
 
   Console*  console_  { nullptr };
   Settings* settings_ { nullptr };

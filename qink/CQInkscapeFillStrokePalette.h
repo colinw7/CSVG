@@ -1,5 +1,5 @@
-#ifndef CQInkscapeFillStroke_H
-#define CQInkscapeFillStroke_H
+#ifndef CQInkscapeFillStrokePalette_H
+#define CQInkscapeFillStrokePalette_H
 
 #include <CQInkscapePalette.h>
 #include <CLineJoinType.h>
@@ -26,11 +26,11 @@ class Fill;
 class StrokePaint;
 class StrokeStyle;
 
-class FillStroke : public Palette {
+class FillStrokePalette : public Palette {
   Q_OBJECT
 
  public:
-  FillStroke(Window *window);
+  FillStrokePalette(Window *window);
 
   void setObject(CSVGObject *obj);
 

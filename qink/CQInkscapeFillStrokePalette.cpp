@@ -1,4 +1,4 @@
-#include <CQInkscapeFillStroke.h>
+#include <CQInkscapeFillStrokePalette.h>
 #include <CQInkscapeWindow.h>
 
 #include <CSVGObject.h>
@@ -25,8 +25,8 @@
 
 namespace CQInkscape {
 
-FillStroke::
-FillStroke(Window *window) :
+FillStrokePalette::
+FillStrokePalette(Window *window) :
  Palette(window, "Fill/Stroke")
 {
   auto *layout = CQUtil::makeLayout<QVBoxLayout>(this, 2, 2);
@@ -45,7 +45,7 @@ FillStroke(Window *window) :
 }
 
 void
-FillStroke::
+FillStrokePalette::
 setObject(CSVGObject *obj)
 {
   fill_       ->setObject(obj);

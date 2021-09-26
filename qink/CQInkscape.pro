@@ -17,7 +17,7 @@ SOURCES += \
 CQInkscapeCanvas.cpp \
 CQInkscapeColorBar.cpp \
 CQInkscapeConsole.cpp \
-CQInkscapeFillStroke.cpp \
+CQInkscapeFillStrokePalette.cpp \
 CQInkscapeMain.cpp \
 CQInkscapeModeToolBar.cpp \
 CQInkscapeMouseToolBar.cpp \
@@ -27,6 +27,8 @@ CQInkscapePalette.cpp \
 CQInkscapeSettings.cpp \
 CQInkscapeStatusBar.cpp \
 CQInkscapeTclCmd.cpp \
+CQInkscapeTransformPalette.cpp \
+CQInkscapeUnitsEdit.cpp \
 CQInkscapeWindow.cpp \
 \
 CQCommand.cpp \
@@ -42,7 +44,7 @@ HEADERS += \
 CQInkscapeCanvas.h \
 CQInkscapeColorBar.h \
 CQInkscapeConsole.h \
-CQInkscapeFillStroke.h \
+CQInkscapeFillStrokePalette.h \
 CQInkscapeModeToolBar.h \
 CQInkscapeMouseToolBar.h \
 CQInkscapeObjectProperties.h \
@@ -50,7 +52,9 @@ CQInkscapePaletteArea.h \
 CQInkscapePalette.h \
 CQInkscapeSettings.h \
 CQInkscapeStatusBar.h \
+CQInkscapeTransformPalette.h \
 CQInkscapeTclCmd.h \
+CQInkscapeUnitsEdit.h \
 CQInkscapeWindow.h \
 \
 CQCommand.h \

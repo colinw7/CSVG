@@ -55,7 +55,7 @@ OBJECTS_DIR   = ../obj/
 SOURCES       = CQInkscapeCanvas.cpp \
 		CQInkscapeColorBar.cpp \
 		CQInkscapeConsole.cpp \
-		CQInkscapeFillStroke.cpp \
+		CQInkscapeFillStrokePalette.cpp \
 		CQInkscapeMain.cpp \
 		CQInkscapeModeToolBar.cpp \
 		CQInkscapeMouseToolBar.cpp \
@@ -65,6 +65,8 @@ SOURCES       = CQInkscapeCanvas.cpp \
 		CQInkscapeSettings.cpp \
 		CQInkscapeStatusBar.cpp \
 		CQInkscapeTclCmd.cpp \
+		CQInkscapeTransformPalette.cpp \
+		CQInkscapeUnitsEdit.cpp \
 		CQInkscapeWindow.cpp \
 		CQCommand.cpp \
 		CQLineCap.cpp \
@@ -76,7 +78,7 @@ SOURCES       = CQInkscapeCanvas.cpp \
 		CTclParse.cpp .moc/moc_CQInkscapeCanvas.cpp \
 		.moc/moc_CQInkscapeColorBar.cpp \
 		.moc/moc_CQInkscapeConsole.cpp \
-		.moc/moc_CQInkscapeFillStroke.cpp \
+		.moc/moc_CQInkscapeFillStrokePalette.cpp \
 		.moc/moc_CQInkscapeModeToolBar.cpp \
 		.moc/moc_CQInkscapeMouseToolBar.cpp \
 		.moc/moc_CQInkscapeObjectProperties.cpp \
@@ -84,6 +86,8 @@ SOURCES       = CQInkscapeCanvas.cpp \
 		.moc/moc_CQInkscapePalette.cpp \
 		.moc/moc_CQInkscapeSettings.cpp \
 		.moc/moc_CQInkscapeStatusBar.cpp \
+		.moc/moc_CQInkscapeTransformPalette.cpp \
+		.moc/moc_CQInkscapeUnitsEdit.cpp \
 		.moc/moc_CQInkscapeWindow.cpp \
 		.moc/moc_CQCommand.cpp \
 		.moc/moc_CQLineCap.cpp \
@@ -93,7 +97,7 @@ SOURCES       = CQInkscapeCanvas.cpp \
 OBJECTS       = ../obj/CQInkscapeCanvas.o \
 		../obj/CQInkscapeColorBar.o \
 		../obj/CQInkscapeConsole.o \
-		../obj/CQInkscapeFillStroke.o \
+		../obj/CQInkscapeFillStrokePalette.o \
 		../obj/CQInkscapeMain.o \
 		../obj/CQInkscapeModeToolBar.o \
 		../obj/CQInkscapeMouseToolBar.o \
@@ -103,6 +107,8 @@ OBJECTS       = ../obj/CQInkscapeCanvas.o \
 		../obj/CQInkscapeSettings.o \
 		../obj/CQInkscapeStatusBar.o \
 		../obj/CQInkscapeTclCmd.o \
+		../obj/CQInkscapeTransformPalette.o \
+		../obj/CQInkscapeUnitsEdit.o \
 		../obj/CQInkscapeWindow.o \
 		../obj/CQCommand.o \
 		../obj/CQLineCap.o \
@@ -115,7 +121,7 @@ OBJECTS       = ../obj/CQInkscapeCanvas.o \
 		../obj/moc_CQInkscapeCanvas.o \
 		../obj/moc_CQInkscapeColorBar.o \
 		../obj/moc_CQInkscapeConsole.o \
-		../obj/moc_CQInkscapeFillStroke.o \
+		../obj/moc_CQInkscapeFillStrokePalette.o \
 		../obj/moc_CQInkscapeModeToolBar.o \
 		../obj/moc_CQInkscapeMouseToolBar.o \
 		../obj/moc_CQInkscapeObjectProperties.o \
@@ -123,6 +129,8 @@ OBJECTS       = ../obj/CQInkscapeCanvas.o \
 		../obj/moc_CQInkscapePalette.o \
 		../obj/moc_CQInkscapeSettings.o \
 		../obj/moc_CQInkscapeStatusBar.o \
+		../obj/moc_CQInkscapeTransformPalette.o \
+		../obj/moc_CQInkscapeUnitsEdit.o \
 		../obj/moc_CQInkscapeWindow.o \
 		../obj/moc_CQCommand.o \
 		../obj/moc_CQLineCap.o \
@@ -225,7 +233,7 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		CQInkscape.pro CQInkscapeCanvas.h \
 		CQInkscapeColorBar.h \
 		CQInkscapeConsole.h \
-		CQInkscapeFillStroke.h \
+		CQInkscapeFillStrokePalette.h \
 		CQInkscapeModeToolBar.h \
 		CQInkscapeMouseToolBar.h \
 		CQInkscapeObjectProperties.h \
@@ -233,7 +241,9 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		CQInkscapePalette.h \
 		CQInkscapeSettings.h \
 		CQInkscapeStatusBar.h \
+		CQInkscapeTransformPalette.h \
 		CQInkscapeTclCmd.h \
+		CQInkscapeUnitsEdit.h \
 		CQInkscapeWindow.h \
 		CQCommand.h \
 		CQLineCap.h \
@@ -246,7 +256,7 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		CTclUtil.h CQInkscapeCanvas.cpp \
 		CQInkscapeColorBar.cpp \
 		CQInkscapeConsole.cpp \
-		CQInkscapeFillStroke.cpp \
+		CQInkscapeFillStrokePalette.cpp \
 		CQInkscapeMain.cpp \
 		CQInkscapeModeToolBar.cpp \
 		CQInkscapeMouseToolBar.cpp \
@@ -256,6 +266,8 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		CQInkscapeSettings.cpp \
 		CQInkscapeStatusBar.cpp \
 		CQInkscapeTclCmd.cpp \
+		CQInkscapeTransformPalette.cpp \
+		CQInkscapeUnitsEdit.cpp \
 		CQInkscapeWindow.cpp \
 		CQCommand.cpp \
 		CQLineCap.cpp \
@@ -481,8 +493,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents CQInkscapeCanvas.h CQInkscapeColorBar.h CQInkscapeConsole.h CQInkscapeFillStroke.h CQInkscapeModeToolBar.h CQInkscapeMouseToolBar.h CQInkscapeObjectProperties.h CQInkscapePaletteArea.h CQInkscapePalette.h CQInkscapeSettings.h CQInkscapeStatusBar.h CQInkscapeTclCmd.h CQInkscapeWindow.h CQCommand.h CQLineCap.h CQLineJoin.h CQRubberBand.h CQTclCmd.h CQTclCommand.h CQTclUtil.h CTclParse.h CTclUtil.h $(DISTDIR)/
-	$(COPY_FILE) --parents CQInkscapeCanvas.cpp CQInkscapeColorBar.cpp CQInkscapeConsole.cpp CQInkscapeFillStroke.cpp CQInkscapeMain.cpp CQInkscapeModeToolBar.cpp CQInkscapeMouseToolBar.cpp CQInkscapeObjectProperties.cpp CQInkscapePaletteArea.cpp CQInkscapePalette.cpp CQInkscapeSettings.cpp CQInkscapeStatusBar.cpp CQInkscapeTclCmd.cpp CQInkscapeWindow.cpp CQCommand.cpp CQLineCap.cpp CQLineJoin.cpp CQRubberBand.cpp CQTclCmd.cpp CQTclCommand.cpp CQTclUtil.cpp CTclParse.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents CQInkscapeCanvas.h CQInkscapeColorBar.h CQInkscapeConsole.h CQInkscapeFillStrokePalette.h CQInkscapeModeToolBar.h CQInkscapeMouseToolBar.h CQInkscapeObjectProperties.h CQInkscapePaletteArea.h CQInkscapePalette.h CQInkscapeSettings.h CQInkscapeStatusBar.h CQInkscapeTransformPalette.h CQInkscapeTclCmd.h CQInkscapeUnitsEdit.h CQInkscapeWindow.h CQCommand.h CQLineCap.h CQLineJoin.h CQRubberBand.h CQTclCmd.h CQTclCommand.h CQTclUtil.h CTclParse.h CTclUtil.h $(DISTDIR)/
+	$(COPY_FILE) --parents CQInkscapeCanvas.cpp CQInkscapeColorBar.cpp CQInkscapeConsole.cpp CQInkscapeFillStrokePalette.cpp CQInkscapeMain.cpp CQInkscapeModeToolBar.cpp CQInkscapeMouseToolBar.cpp CQInkscapeObjectProperties.cpp CQInkscapePaletteArea.cpp CQInkscapePalette.cpp CQInkscapeSettings.cpp CQInkscapeStatusBar.cpp CQInkscapeTclCmd.cpp CQInkscapeTransformPalette.cpp CQInkscapeUnitsEdit.cpp CQInkscapeWindow.cpp CQCommand.cpp CQLineCap.cpp CQLineJoin.cpp CQRubberBand.cpp CQTclCmd.cpp CQTclCommand.cpp CQTclUtil.cpp CTclParse.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -515,9 +527,9 @@ compiler_moc_predefs_clean:
 	@echo generating .moc/moc_predefs.h
 	@g++ -pipe -std=c++14 -g -Wall -W -dM -E -o .moc/moc_predefs.h /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp
 
-compiler_moc_header_make_all: .moc/moc_CQInkscapeCanvas.cpp .moc/moc_CQInkscapeColorBar.cpp .moc/moc_CQInkscapeConsole.cpp .moc/moc_CQInkscapeFillStroke.cpp .moc/moc_CQInkscapeModeToolBar.cpp .moc/moc_CQInkscapeMouseToolBar.cpp .moc/moc_CQInkscapeObjectProperties.cpp .moc/moc_CQInkscapePaletteArea.cpp .moc/moc_CQInkscapePalette.cpp .moc/moc_CQInkscapeSettings.cpp .moc/moc_CQInkscapeStatusBar.cpp .moc/moc_CQInkscapeWindow.cpp .moc/moc_CQCommand.cpp .moc/moc_CQLineCap.cpp .moc/moc_CQLineJoin.cpp .moc/moc_CQRubberBand.cpp .moc/moc_CQTclUtil.cpp
+compiler_moc_header_make_all: .moc/moc_CQInkscapeCanvas.cpp .moc/moc_CQInkscapeColorBar.cpp .moc/moc_CQInkscapeConsole.cpp .moc/moc_CQInkscapeFillStrokePalette.cpp .moc/moc_CQInkscapeModeToolBar.cpp .moc/moc_CQInkscapeMouseToolBar.cpp .moc/moc_CQInkscapeObjectProperties.cpp .moc/moc_CQInkscapePaletteArea.cpp .moc/moc_CQInkscapePalette.cpp .moc/moc_CQInkscapeSettings.cpp .moc/moc_CQInkscapeStatusBar.cpp .moc/moc_CQInkscapeTransformPalette.cpp .moc/moc_CQInkscapeUnitsEdit.cpp .moc/moc_CQInkscapeWindow.cpp .moc/moc_CQCommand.cpp .moc/moc_CQLineCap.cpp .moc/moc_CQLineJoin.cpp .moc/moc_CQRubberBand.cpp .moc/moc_CQTclUtil.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) .moc/moc_CQInkscapeCanvas.cpp .moc/moc_CQInkscapeColorBar.cpp .moc/moc_CQInkscapeConsole.cpp .moc/moc_CQInkscapeFillStroke.cpp .moc/moc_CQInkscapeModeToolBar.cpp .moc/moc_CQInkscapeMouseToolBar.cpp .moc/moc_CQInkscapeObjectProperties.cpp .moc/moc_CQInkscapePaletteArea.cpp .moc/moc_CQInkscapePalette.cpp .moc/moc_CQInkscapeSettings.cpp .moc/moc_CQInkscapeStatusBar.cpp .moc/moc_CQInkscapeWindow.cpp .moc/moc_CQCommand.cpp .moc/moc_CQLineCap.cpp .moc/moc_CQLineJoin.cpp .moc/moc_CQRubberBand.cpp .moc/moc_CQTclUtil.cpp
+	-$(DEL_FILE) .moc/moc_CQInkscapeCanvas.cpp .moc/moc_CQInkscapeColorBar.cpp .moc/moc_CQInkscapeConsole.cpp .moc/moc_CQInkscapeFillStrokePalette.cpp .moc/moc_CQInkscapeModeToolBar.cpp .moc/moc_CQInkscapeMouseToolBar.cpp .moc/moc_CQInkscapeObjectProperties.cpp .moc/moc_CQInkscapePaletteArea.cpp .moc/moc_CQInkscapePalette.cpp .moc/moc_CQInkscapeSettings.cpp .moc/moc_CQInkscapeStatusBar.cpp .moc/moc_CQInkscapeTransformPalette.cpp .moc/moc_CQInkscapeUnitsEdit.cpp .moc/moc_CQInkscapeWindow.cpp .moc/moc_CQCommand.cpp .moc/moc_CQLineCap.cpp .moc/moc_CQLineJoin.cpp .moc/moc_CQRubberBand.cpp .moc/moc_CQTclUtil.cpp
 .moc/moc_CQInkscapeCanvas.cpp: CQInkscapeCanvas.h \
 		../../CUtil/include/CDisplayRange2D.h \
 		../../CMath/include/CMathRound.h \
@@ -549,13 +561,13 @@ compiler_moc_header_clean:
 		/usr/lib/qt5/bin/moc
 	@echo moc CQInkscapeConsole.h && /usr/lib/qt5/bin/moc $(DEFINES) --include /home/colinw/git/CSVG/qink/.moc/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/colinw/git/CSVG/qink -I/home/colinw/git/CSVG/qink -I/home/colinw/git/CSVG/qinclude -I/home/colinw/git/CSVG/include -I/home/colinw/git/CSVG/include -I/home/colinw/git/CQApp/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CQPropertyTree/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/CFile/include -I/home/colinw/git/COS/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CRGBName/include -I/home/colinw/git/CCSS/include -I/home/colinw/git/CXML/include -I/home/colinw/git/CJavaScript/include -I/usr/include/tcl -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/9 -I/usr/include/x86_64-linux-gnu/c++/9 -I/usr/include/c++/9/backward -I/usr/lib/gcc/x86_64-linux-gnu/9/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include CQInkscapeConsole.h -o .moc/moc_CQInkscapeConsole.cpp
 
-.moc/moc_CQInkscapeFillStroke.cpp: CQInkscapeFillStroke.h \
+.moc/moc_CQInkscapeFillStrokePalette.cpp: CQInkscapeFillStrokePalette.h \
 		CQInkscapePalette.h \
 		../../CUtil/include/CLineJoinType.h \
 		../../CUtil/include/CLineCapType.h \
 		.moc/moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	@echo moc CQInkscapeFillStroke.h && /usr/lib/qt5/bin/moc $(DEFINES) --include /home/colinw/git/CSVG/qink/.moc/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/colinw/git/CSVG/qink -I/home/colinw/git/CSVG/qink -I/home/colinw/git/CSVG/qinclude -I/home/colinw/git/CSVG/include -I/home/colinw/git/CSVG/include -I/home/colinw/git/CQApp/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CQPropertyTree/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/CFile/include -I/home/colinw/git/COS/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CRGBName/include -I/home/colinw/git/CCSS/include -I/home/colinw/git/CXML/include -I/home/colinw/git/CJavaScript/include -I/usr/include/tcl -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/9 -I/usr/include/x86_64-linux-gnu/c++/9 -I/usr/include/c++/9/backward -I/usr/lib/gcc/x86_64-linux-gnu/9/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include CQInkscapeFillStroke.h -o .moc/moc_CQInkscapeFillStroke.cpp
+	@echo moc CQInkscapeFillStrokePalette.h && /usr/lib/qt5/bin/moc $(DEFINES) --include /home/colinw/git/CSVG/qink/.moc/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/colinw/git/CSVG/qink -I/home/colinw/git/CSVG/qink -I/home/colinw/git/CSVG/qinclude -I/home/colinw/git/CSVG/include -I/home/colinw/git/CSVG/include -I/home/colinw/git/CQApp/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CQPropertyTree/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/CFile/include -I/home/colinw/git/COS/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CRGBName/include -I/home/colinw/git/CCSS/include -I/home/colinw/git/CXML/include -I/home/colinw/git/CJavaScript/include -I/usr/include/tcl -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/9 -I/usr/include/x86_64-linux-gnu/c++/9 -I/usr/include/c++/9/backward -I/usr/lib/gcc/x86_64-linux-gnu/9/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include CQInkscapeFillStrokePalette.h -o .moc/moc_CQInkscapeFillStrokePalette.cpp
 
 .moc/moc_CQInkscapeModeToolBar.cpp: CQInkscapeModeToolBar.h \
 		.moc/moc_predefs.h \
@@ -593,6 +605,20 @@ compiler_moc_header_clean:
 		.moc/moc_predefs.h \
 		/usr/lib/qt5/bin/moc
 	@echo moc CQInkscapeStatusBar.h && /usr/lib/qt5/bin/moc $(DEFINES) --include /home/colinw/git/CSVG/qink/.moc/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/colinw/git/CSVG/qink -I/home/colinw/git/CSVG/qink -I/home/colinw/git/CSVG/qinclude -I/home/colinw/git/CSVG/include -I/home/colinw/git/CSVG/include -I/home/colinw/git/CQApp/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CQPropertyTree/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/CFile/include -I/home/colinw/git/COS/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CRGBName/include -I/home/colinw/git/CCSS/include -I/home/colinw/git/CXML/include -I/home/colinw/git/CJavaScript/include -I/usr/include/tcl -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/9 -I/usr/include/x86_64-linux-gnu/c++/9 -I/usr/include/c++/9/backward -I/usr/lib/gcc/x86_64-linux-gnu/9/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include CQInkscapeStatusBar.h -o .moc/moc_CQInkscapeStatusBar.cpp
+
+.moc/moc_CQInkscapeTransformPalette.cpp: CQInkscapeTransformPalette.h \
+		CQInkscapePalette.h \
+		../../CUtil/include/CLineJoinType.h \
+		../../CUtil/include/CLineCapType.h \
+		.moc/moc_predefs.h \
+		/usr/lib/qt5/bin/moc
+	@echo moc CQInkscapeTransformPalette.h && /usr/lib/qt5/bin/moc $(DEFINES) --include /home/colinw/git/CSVG/qink/.moc/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/colinw/git/CSVG/qink -I/home/colinw/git/CSVG/qink -I/home/colinw/git/CSVG/qinclude -I/home/colinw/git/CSVG/include -I/home/colinw/git/CSVG/include -I/home/colinw/git/CQApp/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CQPropertyTree/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/CFile/include -I/home/colinw/git/COS/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CRGBName/include -I/home/colinw/git/CCSS/include -I/home/colinw/git/CXML/include -I/home/colinw/git/CJavaScript/include -I/usr/include/tcl -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/9 -I/usr/include/x86_64-linux-gnu/c++/9 -I/usr/include/c++/9/backward -I/usr/lib/gcc/x86_64-linux-gnu/9/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include CQInkscapeTransformPalette.h -o .moc/moc_CQInkscapeTransformPalette.cpp
+
+.moc/moc_CQInkscapeUnitsEdit.cpp: CQInkscapeUnitsEdit.h \
+		../../CUtil/include/CScreenUnits.h \
+		.moc/moc_predefs.h \
+		/usr/lib/qt5/bin/moc
+	@echo moc CQInkscapeUnitsEdit.h && /usr/lib/qt5/bin/moc $(DEFINES) --include /home/colinw/git/CSVG/qink/.moc/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/colinw/git/CSVG/qink -I/home/colinw/git/CSVG/qink -I/home/colinw/git/CSVG/qinclude -I/home/colinw/git/CSVG/include -I/home/colinw/git/CSVG/include -I/home/colinw/git/CQApp/include -I/home/colinw/git/CQUtil/include -I/home/colinw/git/CQPropertyTree/include -I/home/colinw/git/CFont/include -I/home/colinw/git/CImageLib/include -I/home/colinw/git/CReadLine/include -I/home/colinw/git/CFileUtil/include -I/home/colinw/git/CFile/include -I/home/colinw/git/COS/include -I/home/colinw/git/CUtil/include -I/home/colinw/git/CMath/include -I/home/colinw/git/CStrUtil/include -I/home/colinw/git/CRegExp/include -I/home/colinw/git/CRGBName/include -I/home/colinw/git/CCSS/include -I/home/colinw/git/CXML/include -I/home/colinw/git/CJavaScript/include -I/usr/include/tcl -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/9 -I/usr/include/x86_64-linux-gnu/c++/9 -I/usr/include/c++/9/backward -I/usr/lib/gcc/x86_64-linux-gnu/9/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include CQInkscapeUnitsEdit.h -o .moc/moc_CQInkscapeUnitsEdit.cpp
 
 .moc/moc_CQInkscapeWindow.cpp: CQInkscapeWindow.h \
 		../../CMath/include/CPoint2D.h \
@@ -868,7 +894,7 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../../COS/include/COSExec.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQInkscapeConsole.o CQInkscapeConsole.cpp
 
-../obj/CQInkscapeFillStroke.o: CQInkscapeFillStroke.cpp CQInkscapeFillStroke.h \
+../obj/CQInkscapeFillStrokePalette.o: CQInkscapeFillStrokePalette.cpp CQInkscapeFillStrokePalette.h \
 		CQInkscapePalette.h \
 		../../CUtil/include/CLineJoinType.h \
 		../../CUtil/include/CLineCapType.h \
@@ -956,7 +982,7 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../../CUtil/include/CEvent.h \
 		../../CUtil/include/CKeyType.h \
 		../../CQUtil/include/CQUtilMeta.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQInkscapeFillStroke.o CQInkscapeFillStroke.cpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQInkscapeFillStrokePalette.o CQInkscapeFillStrokePalette.cpp
 
 ../obj/CQInkscapeMain.o: CQInkscapeMain.cpp CQInkscapeWindow.h \
 		../../CMath/include/CPoint2D.h \
@@ -1325,6 +1351,68 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		CQTclCmd.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQInkscapeTclCmd.o CQInkscapeTclCmd.cpp
 
+../obj/CQInkscapeTransformPalette.o: CQInkscapeTransformPalette.cpp CQInkscapeTransformPalette.h \
+		CQInkscapePalette.h \
+		../../CUtil/include/CLineJoinType.h \
+		../../CUtil/include/CLineCapType.h \
+		CQInkscapeWindow.h \
+		../../CMath/include/CPoint2D.h \
+		CQInkscapeUnitsEdit.h \
+		../../CUtil/include/CScreenUnits.h \
+		../include/CSVGObject.h \
+		../include/CSVGTypes.h \
+		../../CUtil/include/COptVal.h \
+		../include/CSVGStroke.h \
+		../include/CSVGFill.h \
+		../include/CSVGColor.h \
+		../include/CSVGTmpl.h \
+		../../CUtil/include/CRGBA.h \
+		../../CUtil/include/CRGB.h \
+		../../CUtil/include/CRGBName.h \
+		../include/CSVGInheritVal.h \
+		../../CUtil/include/CFillType.h \
+		../include/CSVGClip.h \
+		../include/CSVGLineDash.h \
+		../include/CSVGTimeValue.h \
+		../include/CSVGEventValue.h \
+		../include/CSVGXLink.h \
+		../../CMath/include/CMatrixStack2D.h \
+		../../CMath/include/CMatrix2D.h \
+		../../CMath/include/CVector2D.h \
+		../../CMath/include/CMathGen.h \
+		../../CMath/include/CIPoint2D.h \
+		../../CMath/include/CMathUtil.h \
+		../../COS/include/COSNaN.h \
+		../include/CSVGPreserveAspect.h \
+		../../CUtil/include/CAlignType.h \
+		../include/CSVGAnimation.h \
+		../include/CSVGFontDef.h \
+		../../CFont/include/CFontStyle.h \
+		../../CUtil/include/CFlags.h \
+		../include/CSVGPathPart.h \
+		../../CMath/include/CBBox2D.h \
+		../../CMath/include/CSize2D.h \
+		../../CMath/include/CISize2D.h \
+		../include/CSVGObjectMarker.h \
+		../include/CSVGVisitor.h \
+		../include/CObjTypeOld.h \
+		../../CMath/include/CAngle.h \
+		../../CQUtil/include/CQTabWidget.h \
+		../../CQUtil/include/CQRealSpin.h \
+		../../CQUtil/include/CQUtil.h \
+		../../CUtil/include/CEvent.h \
+		../../CUtil/include/CKeyType.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CQUtil/include/CQUtilMeta.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQInkscapeTransformPalette.o CQInkscapeTransformPalette.cpp
+
+../obj/CQInkscapeUnitsEdit.o: CQInkscapeUnitsEdit.cpp CQInkscapeUnitsEdit.h \
+		../../CUtil/include/CScreenUnits.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQInkscapeUnitsEdit.o CQInkscapeUnitsEdit.cpp
+
 ../obj/CQInkscapeWindow.o: CQInkscapeWindow.cpp CQInkscapeWindow.h \
 		../../CMath/include/CPoint2D.h \
 		CQInkscapeCanvas.h \
@@ -1344,11 +1432,12 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		CQInkscapePaletteArea.h \
 		CQInkscapeStatusBar.h \
 		CQInkscapeColorBar.h \
-		CQInkscapeFillStroke.h \
+		CQInkscapeFillStrokePalette.h \
 		CQInkscapePalette.h \
 		../../CUtil/include/CLineJoinType.h \
 		../../CUtil/include/CLineCapType.h \
 		CQInkscapeObjectProperties.h \
+		CQInkscapeTransformPalette.h \
 		CQInkscapeConsole.h \
 		CQTclCommand.h \
 		CQCommand.h \
@@ -1576,8 +1665,8 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 ../obj/moc_CQInkscapeConsole.o: .moc/moc_CQInkscapeConsole.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQInkscapeConsole.o .moc/moc_CQInkscapeConsole.cpp
 
-../obj/moc_CQInkscapeFillStroke.o: .moc/moc_CQInkscapeFillStroke.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQInkscapeFillStroke.o .moc/moc_CQInkscapeFillStroke.cpp
+../obj/moc_CQInkscapeFillStrokePalette.o: .moc/moc_CQInkscapeFillStrokePalette.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQInkscapeFillStrokePalette.o .moc/moc_CQInkscapeFillStrokePalette.cpp
 
 ../obj/moc_CQInkscapeModeToolBar.o: .moc/moc_CQInkscapeModeToolBar.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQInkscapeModeToolBar.o .moc/moc_CQInkscapeModeToolBar.cpp
@@ -1599,6 +1688,12 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 
 ../obj/moc_CQInkscapeStatusBar.o: .moc/moc_CQInkscapeStatusBar.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQInkscapeStatusBar.o .moc/moc_CQInkscapeStatusBar.cpp
+
+../obj/moc_CQInkscapeTransformPalette.o: .moc/moc_CQInkscapeTransformPalette.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQInkscapeTransformPalette.o .moc/moc_CQInkscapeTransformPalette.cpp
+
+../obj/moc_CQInkscapeUnitsEdit.o: .moc/moc_CQInkscapeUnitsEdit.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQInkscapeUnitsEdit.o .moc/moc_CQInkscapeUnitsEdit.cpp
 
 ../obj/moc_CQInkscapeWindow.o: .moc/moc_CQInkscapeWindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/moc_CQInkscapeWindow.o .moc/moc_CQInkscapeWindow.cpp
