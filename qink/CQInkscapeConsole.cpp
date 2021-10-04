@@ -277,7 +277,8 @@ exec(CQTclCmd::CmdArgs &argv)
     return true;
   }
 
-  auto *svg = area()->console()->window()->svg();
+  auto *window = area()->console()->window();
+  auto *svg    = window->svg();
 
   CSVGObject *parentObj = nullptr;
 
@@ -361,7 +362,8 @@ exec(CQTclCmd::CmdArgs &argv)
   auto name = argv.getParseStr ("name");
   auto hier = argv.getParseBool("hier");
 
-  auto *svg = area()->console()->window()->svg();
+  auto *window = area()->console()->window();
+  auto *svg    = window->svg();
 
   CSVGObject::ObjectArray objects;
 
@@ -465,7 +467,8 @@ exec(CQTclCmd::CmdArgs &argv)
   auto value = argv.getParseStr ("value");
 //auto hier  = argv.getParseBool("hier");
 
-  auto *svg = area()->console()->window()->svg();
+  auto *window = area()->console()->window();
+  auto *svg    = window->svg();
 
   CSVGObject::ObjectArray objects;
 
@@ -488,7 +491,7 @@ exec(CQTclCmd::CmdArgs &argv)
 
   qtcl()->setResult(values);
 
-  area()->console()->window()->redraw(/*update*/true);
+  window->redraw(/*update*/true);
 
   return true;
 }
@@ -535,7 +538,8 @@ exec(CQTclCmd::CmdArgs &argv)
     return true;
   }
 
-  auto *svg = area()->console()->window()->svg();
+  auto *window = area()->console()->window();
+  auto *svg    = window->svg();
 
   CSVGObject *parentObj = nullptr;
 
@@ -564,7 +568,7 @@ exec(CQTclCmd::CmdArgs &argv)
 
   qtcl()->setResult(QString::fromStdString(id1));
 
-  area()->console()->window()->redraw(/*update*/true);
+  window->redraw(/*update*/true);
 
   return true;
 }
@@ -598,7 +602,8 @@ exec(CQTclCmd::CmdArgs &argv)
 
   auto id = argv.getParseStr("id");
 
-  auto *svg = area()->console()->window()->svg();
+  auto *window = area()->console()->window();
+  auto *svg    = window->svg();
 
   CSVGObject::ObjectArray objects;
 
@@ -607,7 +612,7 @@ exec(CQTclCmd::CmdArgs &argv)
   for (auto *obj : objects)
     obj->ungroupObject();
 
-  area()->console()->window()->redraw(/*update*/true);
+  window->redraw(/*update*/true);
 
   return true;
 }
@@ -638,7 +643,8 @@ exec(CQTclCmd::CmdArgs &argv)
   if (! argv.parse(rc))
     return rc;
 
-  auto *svg = area()->console()->window()->svg();
+  auto *window = area()->console()->window();
+  auto *svg    = window->svg();
 
   CSVG::ObjectList objects;
 
@@ -690,7 +696,8 @@ exec(CQTclCmd::CmdArgs &argv)
   auto to = argv.getParseStr("to");
   auto by = argv.getParseStr("by");
 
-  auto *svg = area()->console()->window()->svg();
+  auto *window = area()->console()->window();
+  auto *svg    = window->svg();
 
   CSVGObject::ObjectArray objects;
 
@@ -739,7 +746,7 @@ exec(CQTclCmd::CmdArgs &argv)
     }
   }
 
-  area()->console()->window()->redraw(/*update*/true);
+  window->redraw(/*update*/true);
 
   return true;
 }
@@ -775,7 +782,8 @@ exec(CQTclCmd::CmdArgs &argv)
   auto id = argv.getParseStr("id");
   auto by = argv.getParseStr("by");
 
-  auto *svg = area()->console()->window()->svg();
+  auto *window = area()->console()->window();
+  auto *svg    = window->svg();
 
   CSVGObject::ObjectArray objects;
 
@@ -796,7 +804,7 @@ exec(CQTclCmd::CmdArgs &argv)
       obj->scaleBy(s);
   }
 
-  area()->console()->window()->redraw(/*update*/true);
+  window->redraw(/*update*/true);
 
   return true;
 }
@@ -834,7 +842,8 @@ exec(CQTclCmd::CmdArgs &argv)
   auto by = argv.getParseStr("by");
   auto at = argv.getParseStr("at");
 
-  auto *svg = area()->console()->window()->svg();
+  auto *window = area()->console()->window();
+  auto *svg    = window->svg();
 
   CSVGObject::ObjectArray objects;
 
@@ -874,7 +883,7 @@ exec(CQTclCmd::CmdArgs &argv)
     }
   }
 
-  area()->console()->window()->redraw(/*update*/true);
+  window->redraw(/*update*/true);
 
   return true;
 }
@@ -908,7 +917,8 @@ exec(CQTclCmd::CmdArgs &argv)
 
   auto file = argv.getParseStr("file");
 
-  auto *svg = area()->console()->window()->svg();
+  auto *window = area()->console()->window();
+  auto *svg    = window->svg();
 
   std::ofstream os(file.toStdString());
 

@@ -292,6 +292,9 @@ mousePressEvent(QMouseEvent *me)
           if (obj == svg_->getRoot())
             continue;
 
+          if (! obj->isDrawable())
+            continue;
+
           CBBox2D bbox;
 
           if (! obj->getFlatTransformedBBox(bbox))
@@ -326,6 +329,8 @@ mousePressEvent(QMouseEvent *me)
 
           if (! obj->getSelected()) {
             obj->setSelected(true);
+
+            window_->updateCurrentObject();
 
             window_->redraw(true);
           }

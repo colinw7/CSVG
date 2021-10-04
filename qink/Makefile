@@ -1222,7 +1222,15 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../include/CSVGObjectMarker.h \
 		../include/CSVGVisitor.h \
 		../include/CObjTypeOld.h \
-		../../CMath/include/CAngle.h
+		../../CMath/include/CAngle.h \
+		../../CQUtil/include/CQUtil.h \
+		../../CUtil/include/CEvent.h \
+		../../CUtil/include/CKeyType.h \
+		../../CUtil/include/CLineDash.h \
+		../../CUtil/include/CILineDash.h \
+		../../CMath/include/CIBBox2D.h \
+		../../CMath/include/CIVector2D.h \
+		../../CQUtil/include/CQUtilMeta.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../obj/CQInkscapeObjectProperties.o CQInkscapeObjectProperties.cpp
 
 ../obj/CQInkscapePaletteArea.o: CQInkscapePaletteArea.cpp CQInkscapePaletteArea.h \
@@ -1399,6 +1407,7 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 		../../CMath/include/CAngle.h \
 		../../CQUtil/include/CQTabWidget.h \
 		../../CQUtil/include/CQRealSpin.h \
+		../../CQUtil/include/CQAngleSpinBox.h \
 		../../CQUtil/include/CQUtil.h \
 		../../CUtil/include/CEvent.h \
 		../../CUtil/include/CKeyType.h \

@@ -5,6 +5,7 @@
 #include <CSVGMask.h>
 #include <CSVGClipPath.h>
 #include <CSVGBuffer.h>
+#include <CSVGTitle.h>
 #include <CSVG.h>
 #include <CSVGLog.h>
 
@@ -2344,7 +2345,7 @@ child(int i) const
 
 bool
 CSVGObject::
-getAllChildren(ObjectArray &objects)
+getAllChildren(ObjectArray &objects) const
 {
   for (const auto &c : children())
     objects.push_back(c);
@@ -2357,7 +2358,7 @@ getAllChildren(ObjectArray &objects)
 
 bool
 CSVGObject::
-getAllChildrenOfType(CSVGObjTypeId id, ObjectArray &objects)
+getAllChildrenOfType(CSVGObjTypeId id, ObjectArray &objects) const
 {
   getChildrenOfType(id, objects);
 
@@ -2369,7 +2370,7 @@ getAllChildrenOfType(CSVGObjTypeId id, ObjectArray &objects)
 
 bool
 CSVGObject::
-getChildrenOfType(CSVGObjTypeId id, ObjectArray &objects)
+getChildrenOfType(CSVGObjTypeId id, ObjectArray &objects) const
 {
   for (const auto &c : children())
     if (c->isObjType(id))
@@ -2380,7 +2381,7 @@ getChildrenOfType(CSVGObjTypeId id, ObjectArray &objects)
 
 bool
 CSVGObject::
-getAllChildrenOfId(const std::string &id, ObjectArray &objects)
+getAllChildrenOfId(const std::string &id, ObjectArray &objects) const
 {
   getChildrenOfId(id, objects);
 
@@ -2392,7 +2393,7 @@ getAllChildrenOfId(const std::string &id, ObjectArray &objects)
 
 bool
 CSVGObject::
-getHierChildrenOfId(const std::string &id, ObjectArray &objects)
+getHierChildrenOfId(const std::string &id, ObjectArray &objects) const
 {
   if (id == "")
     return false;
@@ -2419,7 +2420,7 @@ getHierChildrenOfId(const std::string &id, ObjectArray &objects)
 
 bool
 CSVGObject::
-getChildrenOfId(const std::string &id, ObjectArray &objects)
+getChildrenOfId(const std::string &id, ObjectArray &objects) const
 {
   for (const auto &c : children())
     if (c->getId() == id)
@@ -2947,23 +2948,41 @@ void
 CSVGObject::
 moveDelta(const CVector2D &)
 {
+  if (isDrawable())
+    CSVGLog() << "moveDelta: not implemented";
 }
 
 void
 CSVGObject::
-resizeTo(const CSize2D &)
+resizeTo(const CSize2D &s)
 {
-  if (isDrawable())
-    CSVGLog() << "resizeTo: not implemented";
+  CBBox2D bbox;
+
+  if (! getFlatTransformedBBox(bbox))
+    return;
+
+  double sx = s.getWidth ()/bbox.getWidth ();
+  double sy = s.getHeight()/bbox.getHeight();
+
+  scaleBy(sx, sy);
 }
 
 void
 CSVGObject::
 rotateBy(double da)
 {
+  CBBox2D bbox;
+
+  if (! getBBox(bbox))
+    return;
+
+  auto c = bbox.getCenter();
+
   CMatrixStack2D m;
 
+  m.translate(c.x, c.y);
   m.rotate(da);
+  m.translate(-c.x, -c.y);
 
   m.append(getTransform());
 
@@ -3226,6 +3245,54 @@ setClasses(const std::vector<std::string> &classes)
 {
   classes_ = classes;
 }
+
+//---
+
+bool
+CSVGObject::
+getTitle(std::string &str) const
+{
+  std::vector<CSVGObject *> children;
+
+  getChildrenOfType(CSVGObjTypeId::TITLE, children);
+
+  for (const auto *child : children) {
+    const auto *title = dynamic_cast<const CSVGTitle *>(child);
+    if (! title) continue;
+
+    str = title->getText();
+
+    return true;
+  }
+
+  return false;
+}
+
+void
+CSVGObject::
+setTitle(const std::string &str)
+{
+  std::vector<CSVGObject *> children;
+
+  getChildrenOfType(CSVGObjTypeId::TITLE, children);
+
+  for (auto *child : children) {
+    auto *title = dynamic_cast<CSVGTitle *>(child);
+    if (! title) continue;
+
+    title->setText(str);
+
+    return;
+  }
+
+  auto *title = svg_.createTitle();
+
+  title->setText(str);
+
+  addChildObject(title);
+}
+
+//---
 
 bool
 CSVGObject::

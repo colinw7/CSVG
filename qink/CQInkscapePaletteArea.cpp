@@ -8,6 +8,8 @@
 #include <QVBoxLayout>
 #include <QMouseEvent>
 #include <QStylePainter>
+#include <QMenu>
+#include <QContextMenuEvent>
 
 namespace CQInkscape {
 
@@ -17,15 +19,24 @@ PaletteArea(Window *window) :
 {
   setObjectName("paletteArea");
 
-  auto *slayout = CQUtil::makeLayout<QHBoxLayout>(this, 0, 0);
+  auto *layout = CQUtil::makeLayout<QHBoxLayout>(this, 0, 0);
 
   handle_ = new PaletteHandle(this);
+  frame_  = new PaletteFrame (this);
 
-  slayout->addWidget(handle_);
+  layout->addWidget(handle_);
+  layout->addWidget(frame_);
+}
 
-  layout_ = CQUtil::makeLayout<QVBoxLayout>(0, 0);
+void
+PaletteArea::
+setLayoutType(const LayoutType &t)
+{
+  layoutType_ = t;
 
-  slayout->addLayout(layout_);
+  updateLayout();
+
+  update();
 }
 
 void
@@ -34,15 +45,100 @@ addPalette(Palette *palette)
 {
   palettes_.push_back(palette);
 
-  layout_->addWidget(palette);
+  palette->setParent(frame_);
+
+  if (currentPalette_ < 0)
+    currentPalette_ = 0;
+
+  headerDatas_.resize(palettes_.size());
 }
 
 void
 PaletteArea::
-showPalettes()
+updateLayout()
 {
-  for (const auto &palette : palettes_)
-    palette->show();
+  QFontMetrics fm(font());
+
+  headerHeight_ = fm.height() + 4;
+
+  //---
+
+  if      (layoutType() == LayoutType::ALL) {
+    for (const auto &palette : palettes_)
+      palette->setVisible(true);
+
+    int y = 0;
+    int w = frame_->width();
+
+    int i = 0;
+
+    for (const auto &palette : palettes_) {
+      auto size = palette->sizeHint();
+
+      QRect r(QPoint(0, y), QSize(w, size.height()));
+
+      palette->setGeometry(r);
+
+      headerDatas_[i].rect = r;
+
+      y += r.height();
+
+      ++i;
+    }
+  }
+  else if (layoutType() == LayoutType::SINGLE) {
+    int i = 0;
+
+    for (const auto &palette : palettes_) {
+      palette->setVisible(false);
+
+      headerDatas_[i].rect = QRect();
+
+      ++i;
+    }
+
+    int y = (currentPalette_ >= 0 ? headerHeight()*(currentPalette_ + 1) : 0);
+    int w = frame_->width();
+    int h = frame_->height() - palettes_.size()*headerHeight();
+
+    if (currentPalette_ >= 0) {
+      auto *palette = palettes_[currentPalette_];
+
+      palette->setVisible(true);
+
+      QRect r(QPoint(0, y), QSize(w, h));
+
+      palette->setGeometry(r);
+
+      headerDatas_[currentPalette_].rect = r;
+    }
+  }
+}
+
+int
+PaletteArea::
+maxPaletteWidth() const
+{
+  int w = 0;
+
+  if      (layoutType() == LayoutType::ALL) {
+    for (const auto &palette : palettes_) {
+      auto size = palette->sizeHint();
+
+      w = std::max(w, size.width());
+    }
+  }
+  else if (layoutType() == LayoutType::SINGLE) {
+    if (currentPalette_ >= 0) {
+      auto *palette = palettes_[currentPalette_];
+
+      auto size = palette->sizeHint();
+
+      w = std::max(w, size.width());
+    }
+  }
+
+  return w;
 }
 
 bool
@@ -62,6 +158,119 @@ moveHandle(int dx)
   return true;
 }
 
+void
+PaletteArea::
+resizeEvent(QResizeEvent *)
+{
+  updateLayout();
+}
+
+void
+PaletteArea::
+paintEvent(QPaintEvent *)
+{
+  QPainter painter(this);
+
+  painter.fillRect(this->rect(), palette().color(QPalette::Window));
+}
+
+void
+PaletteArea::
+drawHeaders(QPainter *painter)
+{
+  if (layoutType() == LayoutType::ALL) {
+    for (auto &headerData : headerDatas_)
+      headerData.hrect = QRect();
+
+    return;
+  }
+
+  //---
+
+  QFontMetrics fm(font());
+
+  int fa = fm.ascent ();
+  int fd = fm.descent();
+
+  int i = 0;
+  int y = 0;
+
+  for (const auto &palette : palettes_) {
+    QRect r(0, y, width(), headerHeight());
+
+    QColor bg;
+
+    if      (i == insidePalette_)
+      bg = QColor(255, 255, 255);
+    else if (i == currentPalette_)
+      bg = QColor(240, 240, 240);
+    else
+      bg = QColor(240, 240, 255);
+
+    painter->fillRect(r, bg);
+
+    int xt = 2;
+    int yt = y + headerHeight()/2.0 + (fa - fd)/2;
+
+    painter->drawText(xt, yt, palette->name());
+
+    if (i == currentPalette_)
+      y += palette->height();
+
+    y += headerHeight();
+
+    headerDatas_[i].hrect = r;
+
+    ++i;
+  }
+}
+
+void
+PaletteArea::
+headerPress(const QPoint &p)
+{
+  bool changed = false;
+
+  int i = 0;
+
+  for (const auto &headerData : headerDatas_) {
+    if (headerData.hrect.contains(p)) {
+      currentPalette_ = i;
+      changed = true;
+      break;
+    }
+
+    ++i;
+  }
+
+  if (changed)
+    updateLayout();
+}
+
+void
+PaletteArea::
+headerMove(const QPoint &p)
+{
+  int insidePalette = -1;
+
+  int i = 0;
+
+  for (const auto &headerData : headerDatas_) {
+    if (headerData.hrect.contains(p)) {
+      insidePalette = i;
+      break;
+    }
+
+    ++i;
+  }
+
+  if (insidePalette != insidePalette_) {
+    insidePalette_ = insidePalette;
+
+    frame_->update();
+  }
+}
+
 QSize
 PaletteArea::
 sizeHint() const
@@ -70,10 +279,7 @@ sizeHint() const
 
   if (width < 0) {
     // get width of palettes (TODO: palette sides)
-    width = 0;
-
-    for (const auto &palette : palettes_)
-      width += palette->sizeHint().width();
+    width = maxPaletteWidth();
 
     width += handle_->width();
   }
@@ -101,6 +307,8 @@ PaletteHandle::
 paintEvent(QPaintEvent *)
 {
   QStylePainter ps(this);
+
+  ps.fillRect(rect(), palette().color(QPalette::Dark));
 
   QStyleOption opt;
 
@@ -169,6 +377,105 @@ leaveEvent(QEvent *)
   mouseOver_ = false;
 
   update();
+}
+
+//------
+
+PaletteFrame::
+PaletteFrame(PaletteArea *area) :
+ area_(area)
+{
+  setObjectName("paletteArea");
+
+  setContextMenuPolicy(Qt::DefaultContextMenu);
+
+  setMouseTracking(true);
+}
+
+void
+PaletteFrame::
+contextMenuEvent(QContextMenuEvent *e)
+{
+  auto *menu = new QMenu;
+
+  auto *allAction = menu->addAction("All");
+  auto *oneAction = menu->addAction("One");
+
+  connect(allAction, SIGNAL(triggered()), this, SLOT(layoutAllSlot()));
+  connect(oneAction, SIGNAL(triggered()), this, SLOT(layoutOneSlot()));
+
+  //---
+
+  (void) menu->exec(e->globalPos());
+
+  delete menu;
+}
+
+void
+PaletteFrame::
+layoutAllSlot()
+{
+  area_->setLayoutType(PaletteArea::LayoutType::ALL);
+}
+
+void
+PaletteFrame::
+layoutOneSlot()
+{
+  area_->setLayoutType(PaletteArea::LayoutType::SINGLE);
+}
+
+void
+PaletteFrame::
+mousePressEvent(QMouseEvent *e)
+{
+  area_->headerPress(e->pos());
+}
+
+void
+PaletteFrame::
+mouseMoveEvent(QMouseEvent *e)
+{
+  area_->headerMove(e->pos());
+}
+
+void
+PaletteFrame::
+enterEvent(QEvent *)
+{
+}
+
+void
+PaletteFrame::
+leaveEvent(QEvent *)
+{
+  area_->headerMove(QPoint(-1, -1));
+}
+
+void
+PaletteFrame::
+resizeEvent(QResizeEvent *)
+{
+  area_->updateLayout();
+}
+
+void
+PaletteFrame::
+paintEvent(QPaintEvent *)
+{
+  QPainter painter(this);
+
+  area_->drawHeaders(&painter);
+}
+
+QSize
+PaletteFrame::
+sizeHint() const
+{
+  int w = area_->maxPaletteWidth();
+  int h = area_->height();
+
+  return QSize(w, h);
 }
 
 }

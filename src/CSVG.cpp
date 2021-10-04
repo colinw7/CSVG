@@ -4024,18 +4024,7 @@ bool
 CSVG::
 getTitle(std::string &str)
 {
-  std::vector<CSVGObject *> objects;
-
-  getRoot()->getChildrenOfType(CSVGObjTypeId::TITLE, objects);
-
-  if (objects.empty())
-    return false;
-
-  auto *title = dynamic_cast<CSVGTitle *>(objects[0]);
-
-  str = title->getText();
-
-  return true;
+  return getRoot()->getTitle(str);
 }
 
 CBBox2D

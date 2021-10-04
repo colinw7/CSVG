@@ -13,6 +13,8 @@ namespace CQInkscape {
 class UnitsEdit : public QComboBox {
   Q_OBJECT
 
+  Q_PROPERTY(bool percent READ isPercent WRITE setPercent)
+
  public:
   using Units = CScreenUnits::Units;
 
@@ -22,19 +24,25 @@ class UnitsEdit : public QComboBox {
   const Units &units() const;
   void setUnits(const Units &units);
 
+  bool isPercent() const { return percent_; }
+  void setPercent(bool b);
+
   QSize sizeHint() const override;
 
  signals:
   void unitsChanged();
 
  private:
+  void updateItems();
+
   void updateTip();
 
  private slots:
   void indexChanged();
 
  private:
-  Units units_ { Units::PX };
+  Units units_   { Units::PX };
+  bool  percent_ { false };
 };
 
 }

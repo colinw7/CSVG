@@ -159,7 +159,7 @@ complete(const QString &text, int pos, QString &newText, CompleteMode completeMo
 
   std::string command;
   int         commandPos { -1 };
-  bool        commandInside = false;
+//bool        commandInside = false;
   std::string option;
   int         optionPos { -1 };
   bool        optionInside = false;
@@ -168,7 +168,7 @@ complete(const QString &text, int pos, QString &newText, CompleteMode completeMo
   if      (token && token->type() == CTclToken::Type::COMMAND) {
     command       = str;
     commandPos    = token->pos();
-    commandInside = true;
+  //commandInside = true;
   }
   // complete option
   else if (str[0] == '-') {

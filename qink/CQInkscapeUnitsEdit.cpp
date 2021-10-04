@@ -10,20 +10,9 @@ UnitsEdit(QWidget *parent) :
 
   setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-  auto unitNames = QStringList() << "cm" << "in" << "pt" << "pc" << "mm" << "px";
-  auto tipNames  = QStringList() << "centimeters" << "inches" << "points" <<
-                                    "picsa" << "millimeters" << "pixels";
-
-  addItems(unitNames);
-
-  assert(unitNames.size() == tipNames.size());
-
-  for (int i = 0; i < count(); ++i)
-    setItemData(i, tipNames[i], Qt::ToolTipRole);
+  updateItems();
 
   connect(this, SIGNAL(currentIndexChanged(int)), this, SLOT(indexChanged()));
-
-  updateTip();
 }
 
 const UnitsEdit::Units &
@@ -54,11 +43,60 @@ setUnits(const Units &units)
 
 void
 UnitsEdit::
+setPercent(bool b)
+{
+  if (b != percent_) {
+    percent_ = b;
+
+    updateItems();
+  }
+}
+
+void
+UnitsEdit::
+updateItems()
+{
+  QStringList unitNames, tipNames;
+
+  if (isPercent()) {
+     unitNames << "%";
+     tipNames  << "Percent";
+  }
+
+  unitNames << "cm" << "in" << "pt" << "pc" << "mm" << "px";
+  tipNames  << "centimeters" << "inches" << "points" << "picsa" << "millimeters" << "pixels";
+
+  disconnect(this, SIGNAL(currentIndexChanged(int)), this, SLOT(indexChanged()));
+
+  clear();
+
+  addItems(unitNames);
+
+  assert(unitNames.size() == tipNames.size());
+
+  for (int i = 0; i < count(); ++i)
+    setItemData(i, tipNames[i], Qt::ToolTipRole);
+
+  connect(this, SIGNAL(currentIndexChanged(int)), this, SLOT(indexChanged()));
+
+  updateTip();
+}
+
+void
+UnitsEdit::
 indexChanged()
 {
   auto ustr = currentText();
 
-  switch (currentIndex()) {
+  int ind = currentIndex();
+
+  if (isPercent()) {
+    if (ind == 0) units_ = CScreenUnits::Units::CM;
+
+    --ind;
+  }
+
+  switch (ind) {
     case 0: units_ = CScreenUnits::Units::CM; break;
     case 1: units_ = CScreenUnits::Units::IN; break;
     case 2: units_ = CScreenUnits::Units::PT; break;

@@ -54,6 +54,8 @@ class Window : public QFrame {
 
   QString currentFile() const { return currentFile_; }
 
+  void updateCurrentObject();
+
   CSVGObject *currentObject() const { return currentObj_; }
   void setCurrentObject(CSVGObject *obj);
 
@@ -84,7 +86,7 @@ class Window : public QFrame {
 
   void resizeEvent(QResizeEvent *) override;
 
-  QSize sizeHint() const override { return QSize(1600, 1600); }
+  QSize sizeHint() const override { return QSize(2000, 1600); }
 
   void updatePlacement();
 

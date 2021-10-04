@@ -215,8 +215,6 @@ updatePlacement()
   paletteArea_->move(canvasWidth + modeToolBarWidth, topHeight);
 
   paletteArea_->resize(paletteSize);
-
-  paletteArea_->showPalettes();
 }
 
 CSVG *
@@ -243,14 +241,31 @@ addFiles(const QStringList &files)
 
 void
 Window::
+updateCurrentObject()
+{
+  CSVG::ObjectList objects;
+
+  svg()->getSelectedObjects(objects);
+
+  for (auto &obj : objects) {
+    setCurrentObject(obj);
+    return;
+  }
+
+  setCurrentObject(nullptr);
+}
+
+void
+Window::
 setCurrentObject(CSVGObject *obj)
 {
   currentObj_ = obj;
 
   mouseToolBar_->updateState();
 
-  fillStrokePalette_->setObject(currentObj_);
-  transformPalette_ ->setObject(currentObj_);
+  fillStrokePalette_      ->setObject(currentObj_);
+  objectPropertiesPalette_->setObject(currentObj_);
+  transformPalette_       ->setObject(currentObj_);
 
   updateStatus();
 }
@@ -388,6 +403,8 @@ selectAll()
   for (auto &obj : objects)
     obj->setSelected(true);
 
+  updateCurrentObject();
+
   redraw(true);
 }
 
@@ -408,6 +425,8 @@ selectNone()
 
   for (auto &obj : objects)
     obj->setSelected(false);
+
+  updateCurrentObject();
 
   redraw(true);
 }
@@ -438,6 +457,8 @@ selectParent()
 
   for (auto &obj : parentObjects)
     obj->setSelected(true);
+
+  updateCurrentObject();
 
   redraw(true);
 }

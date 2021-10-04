@@ -213,6 +213,10 @@ PosLabel(Window *window) :
   font.setPointSizeF(font.pointSizeF()/1.5);
 
   setFont(font);
+
+  QFontMetrics fm(font);
+
+  setFixedWidth(fm.width("X: XXX.XXX") + 8);
 }
 
 void

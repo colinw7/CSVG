@@ -27,8 +27,10 @@ namespace CQInkscape {
 
 FillStrokePalette::
 FillStrokePalette(Window *window) :
- Palette(window, "Fill/Stroke")
+ Palette(window, "Fill and Stroke")
 {
+  setObjectName("fillStroke");
+
   auto *layout = CQUtil::makeLayout<QVBoxLayout>(this, 2, 2);
 
   auto *tab = CQUtil::makeWidget<CQTabWidget>(this, "tab");

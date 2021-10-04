@@ -5,6 +5,8 @@
 
 class CSVGObject;
 
+class QLineEdit;
+
 namespace CQInkscape {
 
 class ObjectProperties : public Palette {
@@ -15,8 +17,14 @@ class ObjectProperties : public Palette {
 
   void setObject(CSVGObject *obj);
 
+ private slots:
+  void setSlot();
+
  private:
-  CSVGObject *object_ { nullptr };
+  CSVGObject* object_    { nullptr };
+  QLineEdit*  idEdit_    { nullptr };
+  QLineEdit*  labelEdit_ { nullptr };
+  QLineEdit*  titleEdit_ { nullptr };
 };
 
 }

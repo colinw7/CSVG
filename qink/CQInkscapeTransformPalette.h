@@ -7,7 +7,9 @@
 
 class CSVGObject;
 
+class CQTabWidget;
 class CQRealSpin;
+class CQAngleSpinBox;
 class QCheckBox;
 
 namespace CQInkscape {
@@ -26,17 +28,39 @@ class TransformPalette : public Palette {
 
   void setObject(CSVGObject *obj);
 
+ private slots:
+  void clearSlot();
+  void applySlot();
+
  private:
-  MoveTransform*   move_   { nullptr };
-  ScaleTransform*  scale_  { nullptr };
-  RotateTransform* rotate_ { nullptr };
-  SkewTransform*   skew_   { nullptr };
-  MatrixTransform* matrix_ { nullptr };
+  MoveTransform*   move_      { nullptr };
+  ScaleTransform*  scale_     { nullptr };
+  RotateTransform* rotate_    { nullptr };
+  SkewTransform*   skew_      { nullptr };
+  MatrixTransform* matrix_    { nullptr };
+  CQTabWidget*     tab_       { nullptr };
+  QCheckBox*       eachCheck_ { nullptr };
 };
 
 //---
 
-class MoveTransform : public QFrame {
+class TransformFrame : public QFrame {
+  Q_OBJECT
+
+ public:
+  TransformFrame(Window *window);
+
+  virtual void clear() = 0;
+  virtual void apply() = 0;
+
+ protected:
+  Window*     window_ { nullptr };
+  CSVGObject* object_ { nullptr };
+};
+
+//---
+
+class MoveTransform : public TransformFrame {
   Q_OBJECT
 
  public:
@@ -44,8 +68,16 @@ class MoveTransform : public QFrame {
 
   void setObject(CSVGObject *obj);
 
+  void clear() override;
+  void apply() override;
+
+ private slots:
+  void relSlot(int);
+
  private:
-  Window*     window_   { nullptr };
+  void updateState();
+
+ private:
   CQRealSpin* hEdit_    { nullptr };
   CQRealSpin* vEdit_    { nullptr };
   QCheckBox*  relCheck_ { nullptr };
@@ -53,7 +85,7 @@ class MoveTransform : public QFrame {
 
 //---
 
-class ScaleTransform : public QFrame {
+class ScaleTransform : public TransformFrame {
   Q_OBJECT
 
  public:
@@ -61,8 +93,13 @@ class ScaleTransform : public QFrame {
 
   void setObject(CSVGObject *obj);
 
+  void clear() override;
+  void apply() override;
+
  private:
-  Window*     window_    { nullptr };
+  void updateState();
+
+ private:
   CQRealSpin* wEdit_     { nullptr };
   CQRealSpin* hEdit_     { nullptr };
   QCheckBox*  propCheck_ { nullptr };
@@ -70,7 +107,7 @@ class ScaleTransform : public QFrame {
 
 //---
 
-class RotateTransform : public QFrame {
+class RotateTransform : public TransformFrame {
   Q_OBJECT
 
  public:
@@ -78,14 +115,16 @@ class RotateTransform : public QFrame {
 
   void setObject(CSVGObject *obj);
 
+  void clear() override;
+  void apply() override;
+
  private:
-  Window*     window_ { nullptr };
-  CQRealSpin* aEdit_  { nullptr };
+  CQAngleSpinBox* aEdit_  { nullptr };
 };
 
 //---
 
-class SkewTransform : public QFrame {
+class SkewTransform : public TransformFrame {
   Q_OBJECT
 
  public:
@@ -93,15 +132,17 @@ class SkewTransform : public QFrame {
 
   void setObject(CSVGObject *obj);
 
+  void clear() override;
+  void apply() override;
+
  private:
-  Window*     window_ { nullptr };
   CQRealSpin* hEdit_  { nullptr };
   CQRealSpin* vEdit_  { nullptr };
 };
 
 //---
 
-class MatrixTransform : public QFrame {
+class MatrixTransform : public TransformFrame {
   Q_OBJECT
 
  public:
@@ -109,8 +150,8 @@ class MatrixTransform : public QFrame {
 
   void setObject(CSVGObject *obj);
 
- private:
-  Window* window_ { nullptr };
+  void clear() override;
+  void apply() override;
 };
 
 }

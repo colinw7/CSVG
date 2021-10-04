@@ -297,14 +297,14 @@ class CSVGObject {
 
   void deleteChildObject(CSVGObject *object);
 
-  bool getAllChildren(ObjectArray &objects);
+  bool getAllChildren(ObjectArray &objects) const;
 
-  bool getAllChildrenOfType(CSVGObjTypeId id, ObjectArray &objects);
-  bool getChildrenOfType   (CSVGObjTypeId id, ObjectArray &objects);
+  bool getAllChildrenOfType(CSVGObjTypeId id, ObjectArray &objects) const;
+  bool getChildrenOfType   (CSVGObjTypeId id, ObjectArray &objects) const;
 
-  bool getAllChildrenOfId (const std::string &id, ObjectArray &objects);
-  bool getHierChildrenOfId(const std::string &id, ObjectArray &objects);
-  bool getChildrenOfId    (const std::string &id, ObjectArray &objects);
+  bool getAllChildrenOfId (const std::string &id, ObjectArray &objects) const;
+  bool getHierChildrenOfId(const std::string &id, ObjectArray &objects) const;
+  bool getChildrenOfId    (const std::string &id, ObjectArray &objects) const;
 
   bool hasChildren(bool includeAnimated=true) const;
 
@@ -689,6 +689,11 @@ class CSVGObject {
 
   bool isExternalResourcesRequired() const { return externalResourcesRequired_; }
   void setExternalResourcesRequired(bool b) { externalResourcesRequired_ = b; }
+
+  //---
+
+  bool getTitle(std::string &str) const;
+  void setTitle(const std::string &str);
 
   //---
 

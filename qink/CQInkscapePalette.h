@@ -15,6 +15,8 @@ class Palette : public QFrame {
 
   Window *window() const { return window_; }
 
+  QString name() const { return name_; }
+
  protected:
   Window*  window_ { nullptr };
   QString  name_;
