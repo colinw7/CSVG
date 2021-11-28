@@ -1,8 +1,9 @@
 #include <CQInkscapeMouseToolBar.h>
 #include <CQInkscapeWindow.h>
 
-#include <CSVGRect.h>
+#include <CSVGCircle.h>
 #include <CSVGEllipse.h>
+#include <CSVGRect.h>
 
 #include <CQImageButton.h>
 #include <CQPixmapCache.h>
@@ -37,7 +38,7 @@ MouseToolBar(Window *window) :
     return frame;
   };
 
-  selectFrame_       = makeFrame("select");
+  selectData_.frame  = makeFrame("select");
   pointSelectFrame_  = makeFrame("pointSelect");
   zoomFrame_         = makeFrame("zoom");
   rectData_.frame    = makeFrame("rect");
@@ -110,9 +111,15 @@ MouseToolBar(Window *window) :
   };
 
   // select
-  makeButton(selectFrame_, "SELECT_MODE_POINT", "Point Select");
-  makeButton(selectFrame_, "SELECT_MODE_RECT" , "Rect Select");
-  addStretch(selectFrame_);
+  makeButton(selectData_.frame, "SELECT_MODE_POINT", "Point Select");
+  makeButton(selectData_.frame, "SELECT_MODE_RECT" , "Rect Select");
+
+  selectData_.xEdit = makeRealEdit(selectData_.frame, "X", "X"     , SLOT(selectXSlot()));
+  selectData_.yEdit = makeRealEdit(selectData_.frame, "Y", "Y"     , SLOT(selectYSlot()));
+  selectData_.wEdit = makeRealEdit(selectData_.frame, "W", "Width" , SLOT(selectWidthSlot()));
+  selectData_.hEdit = makeRealEdit(selectData_.frame, "H", "Height", SLOT(selectHeightSlot()));
+
+  addStretch(selectData_.frame);
 
   // point select (path)
   addStretch(pointSelectFrame_);
@@ -165,21 +172,44 @@ updateState()
   int ind1 = 0;
 
   switch (mode) {
-    case Window::Mode::SELECT_OBJECT : ind = 0; break;
-    case Window::Mode::SELECT_POINT  : ind = 1; break;
-    case Window::Mode::ZOOM          : ind = 2; break;
-    case Window::Mode::CREATE_RECT   : ind = 3; break;
-    case Window::Mode::CREATE_ELLIPSE: ind = 4; break;
-    case Window::Mode::CREATE_PATH   : ind = 5; break;
-    case Window::Mode::CREATE_TEXT   : ind = 6; break;
+    case Window::Mode::SELECT_OBJECT : ind1 = 0; break;
+    case Window::Mode::SELECT_POINT  : ind1 = 1; break;
+    case Window::Mode::ZOOM          : ind1 = 2; break;
+    case Window::Mode::CREATE_RECT   : ind1 = 3; break;
+    case Window::Mode::CREATE_ELLIPSE: ind1 = 4; break;
+    case Window::Mode::CREATE_PATH   : ind1 = 5; break;
+    case Window::Mode::CREATE_TEXT   : ind1 = 6; break;
   }
 
   if (ind1 != ind)
-    stack_->setCurrentIndex(ind);
+    stack_->setCurrentIndex(ind1);
+
+  //---
 
   auto *object = window()->currentObject();
 
-  if      (mode == Window::Mode::CREATE_RECT) {
+  if      (mode == Window::Mode::SELECT_OBJECT) {
+    bool enabled = object;
+
+    CBBox2D bbox;
+
+    if (object && object->getFlatTransformedBBox(bbox)) {
+      selectData_.xEdit->setValue(bbox.getXMin());
+      selectData_.yEdit->setValue(bbox.getYMin());
+      selectData_.wEdit->setValue(bbox.getWidth());
+      selectData_.hEdit->setValue(bbox.getHeight());
+    }
+
+    selectData_.xEdit->setEnabled(enabled);
+    selectData_.yEdit->setEnabled(enabled);
+    selectData_.wEdit->setEnabled(enabled);
+    selectData_.hEdit->setEnabled(enabled);
+  }
+  else if (mode == Window::Mode::SELECT_POINT) {
+  }
+  else if (mode == Window::Mode::ZOOM) {
+  }
+  else if (mode == Window::Mode::CREATE_RECT) {
     auto *rect = dynamic_cast<CSVGRect *>(object);
     if (! rect) return;
 
@@ -190,11 +220,45 @@ updateState()
   }
   else if (mode == Window::Mode::CREATE_ELLIPSE) {
     auto *ellipse = dynamic_cast<CSVGEllipse *>(object);
-    if (! ellipse) return;
+    auto *circle  = dynamic_cast<CSVGCircle  *>(object);
 
-    ellipseData_.rxEdit->setValue(ellipse->getRadiusX().pxValue());
-    ellipseData_.ryEdit->setValue(ellipse->getRadiusY().pxValue());
+    if      (ellipse) {
+      ellipseData_.rxEdit->setValue(ellipse->getRadiusX().pxValue());
+      ellipseData_.ryEdit->setValue(ellipse->getRadiusY().pxValue());
+    }
+    else if (circle) {
+      ellipseData_.rxEdit->setValue(circle->getRadius().pxValue());
+      ellipseData_.ryEdit->setValue(circle->getRadius().pxValue());
+    }
   }
+  else if (mode == Window::Mode::CREATE_PATH) {
+  }
+  else if (mode == Window::Mode::CREATE_TEXT) {
+  }
+}
+
+void
+MouseToolBar::
+selectXSlot()
+{
+}
+
+void
+MouseToolBar::
+selectYSlot()
+{
+}
+
+void
+MouseToolBar::
+selectWidthSlot()
+{
+}
+
+void
+MouseToolBar::
+selectHeightSlot()
+{
 }
 
 void

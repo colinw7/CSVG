@@ -21,6 +21,11 @@ class MouseToolBar : public QFrame {
   void updateState();
 
  private slots:
+  void selectXSlot();
+  void selectYSlot();
+  void selectWidthSlot();
+  void selectHeightSlot();
+
   void zoomInSlot();
   void zoomOutSlot();
   void zoomFitSlot();
@@ -40,6 +45,14 @@ class MouseToolBar : public QFrame {
 
   QStackedWidget *stack_ { nullptr };
 
+  struct SelectData {
+    QFrame*     frame { nullptr };
+    CQRealSpin* xEdit { nullptr };
+    CQRealSpin* yEdit { nullptr };
+    CQRealSpin* wEdit { nullptr };
+    CQRealSpin* hEdit { nullptr };
+  };
+
   struct RectData {
     QFrame*     frame  { nullptr };
     CQRealSpin* wEdit  { nullptr };
@@ -56,7 +69,7 @@ class MouseToolBar : public QFrame {
     CQRealSpin* endEdit   { nullptr };
   };
 
-  QFrame*     selectFrame_      { nullptr };
+  SelectData  selectData_;
   QFrame*     pointSelectFrame_ { nullptr };
   QFrame*     zoomFrame_        { nullptr };
   RectData    rectData_;
