@@ -13,6 +13,7 @@ all: dirs $(LIB_DIR)/libCSVG.a
 dirs:
 	@if [ ! -e ../obj ]; then mkdir ../obj; fi
 	@if [ ! -e ../lib ]; then mkdir ../lib; fi
+	@if [ ! -e ../bin ]; then mkdir ../bin; fi
 
 ifeq ($(CSVG_JAVASCRIPT),1)
 JAVASCRIPT_SRC = \
