@@ -352,7 +352,7 @@ addRootIds(const Ids &ids)
   if (! rootIds_.empty()) {
     rootInd_ = 0;
 
-    setRootId(rootIds_[rootInd_]);
+    setRootId(rootIds_[size_t(rootInd_)]);
   }
   else {
     setRootId("");
@@ -372,7 +372,7 @@ nextFile()
       ++fileInd_;
 
       if (fileInd_ >= int(files_.size()))
-        fileInd_ = files_.size() - 1;
+        fileInd_ = int(files_.size() - 1);
     }
 
     loadFile();
@@ -384,10 +384,10 @@ nextFile()
       ++rootInd_;
 
       if (rootInd_ >= int(rootIds_.size()))
-        rootInd_ = rootIds_.size() - 1;
+        rootInd_ = int(rootIds_.size() - 1);
     }
 
-    setRootId(rootIds_[rootInd_]);
+    setRootId(rootIds_[size_t(rootInd_)]);
 
     updateAltRoot();
 
@@ -425,7 +425,7 @@ prevFile()
         rootInd_ = 0;
     }
 
-    setRootId(rootIds_[rootInd_]);
+    setRootId(rootIds_[size_t(rootInd_)]);
 
     updateAltRoot();
 
@@ -458,7 +458,7 @@ loadFile()
 
   auto *svg = this->svg();
 
-  auto filename = files_[fileInd_].toStdString();
+  auto filename = files_[size_t(fileInd_)].toStdString();
 
   if      (isImage()) {
     svg->read(filename);
@@ -524,7 +524,7 @@ updateTitle()
   if (fileInd_ < 0 || fileInd_ >= int(files_.size()))
     return;
 
-  auto filename = files_[fileInd_];
+  auto filename = files_[size_t(fileInd_)];
 
   auto title = filename;
 
@@ -932,7 +932,7 @@ sizeHint() const
   double h = CScreenUnitsMgrInst->screenHeight();
 
   if (w > h)
-    return QSize(0.50*w, 0.75*h);
+    return QSize(int(0.50*w), int(0.75*h));
   else
-    return QSize(0.50*w, 0.50*h);
+    return QSize(int(0.50*w), int(0.50*h));
 }

@@ -224,7 +224,7 @@ setStrokeDash(const CLineDash &dash)
   CSVGLineDash::Dashes dashes;
 
   for (uint i = 0; i < dash.getNumLengths(); ++i)
-    dashes.push_back(dash.getLength(i));
+    dashes.push_back(dash.getLength(int(i)));
 
   sdash.setDashes(dashes);
 

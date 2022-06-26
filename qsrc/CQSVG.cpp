@@ -552,14 +552,14 @@ CSVGPathArcTo *
 CQSVG::
 createPathArcTo(double rx, double ry, double xa, double fa, double fs, double x2, double y2)
 {
-  return new CQSVGPathArcTo(*this, rx, ry, xa, fa, fs, x2, y2);
+  return new CQSVGPathArcTo(*this, rx, ry, xa, int(fa), int(fs), x2, y2);
 }
 
 CSVGPathRArcTo *
 CQSVG::
 createPathRArcTo(double rx, double ry, double xa, double fa, double fs, double x2, double y2)
 {
-  return new CQSVGPathRArcTo(*this, rx, ry, xa, fa, fs, x2, y2);
+  return new CQSVGPathRArcTo(*this, rx, ry, xa, int(fa), int(fs), x2, y2);
 }
 
 CSVGPathBezier2To *

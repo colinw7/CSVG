@@ -147,7 +147,7 @@ class CSVGObject {
 
   virtual const CObjType &getObjType() const = 0;
 
-  CSVGObjTypeId getObjTypeId() const { return (CSVGObjTypeId) getObjType().getId(); }
+  CSVGObjTypeId getObjTypeId() const { return CSVGObjTypeId(getObjType().getId()); }
 
   std::string getObjName() const { return getObjType().getName(); }
 
@@ -310,7 +310,7 @@ class CSVGObject {
 
   bool hasAnimation() const;
 
-  uint numChildren() const { return objects_.size(); }
+  uint numChildren() const { return uint(objects_.size()); }
 
   const ObjectList &children() const { return objects_; }
   CSVGObject *child(int i) const;

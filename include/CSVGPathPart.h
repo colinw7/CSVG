@@ -64,9 +64,9 @@ class CSVGPathPartList : public CSVGPrintBase<CSVGPathPartList> {
 
   bool empty() const { return parts_.empty(); }
 
-  int size() const { return parts_.size(); }
+  int size() const { return int(parts_.size()); }
 
-  Part *part(int i) const { return parts_[i]; }
+  Part *part(int i) const { return parts_[size_t(i)]; }
 
   void draw(CSVGBuffer *buffer, std::vector<CPoint2D> &points, std::vector<double> &angles) const;
 
@@ -349,10 +349,10 @@ class CSVGPathArcTo : public CSVGPathPart {
   void setXA(double x) { xa_ = x; }
 
   int getFA() const { return fa_; }
-  void setFA(double f) { fa_ = f; }
+  void setFA(int f) { fa_ = f; }
 
   int getFS() const { return fs_; }
-  void setFS(double f) { fs_ = f; }
+  void setFS(int f) { fs_ = f; }
 
   const CPoint2D &getPoint2() const { return point2_; }
   void setPoint2(const CPoint2D &p) { point2_ = p; }
@@ -405,10 +405,10 @@ class CSVGPathRArcTo : public CSVGPathPart {
   void setXA(double x) { xa_ = x; }
 
   int getFA() const { return fa_; }
-  void setFA(double f) { fa_ = f; }
+  void setFA(int f) { fa_ = f; }
 
   int getFS() const { return fs_; }
-  void setFS(double f) { fs_ = f; }
+  void setFS(int f) { fs_ = f; }
 
   const CPoint2D &getPoint2() const { return point2_; }
   void setPoint2(const CPoint2D &p) { point2_ = p; }

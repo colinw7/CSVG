@@ -46,18 +46,18 @@ class CSVGLineDash : public CSVGEqBase<CSVGLineDash>, public CSVGPrintBase<CSVGL
 
   bool isDashed() const { return type_ == Type::DASHED; }
 
-  int numDashes() const { return dashes_.size(); }
+  int numDashes() const { return int(dashes_.size()); }
 
   const CScreenUnits &dash(int i) const {
     assert(i >= 0 && i < int(dashes_.size()));
-    return dashes_[i];
+    return dashes_[size_t(i)];
   }
 
   friend bool operator==(const CSVGLineDash &lhs, const CSVGLineDash &rhs) {
     if (lhs.type() != rhs.type()) return false;
 
-    int nl = lhs.dashes().size();
-    int nr = rhs.dashes().size();
+    int nl = int(lhs.dashes().size());
+    int nr = int(rhs.dashes().size());
     if (nl != nr) return false;
 
     for (int i = 0; i < nl; ++i)
@@ -71,7 +71,7 @@ class CSVGLineDash : public CSVGEqBase<CSVGLineDash>, public CSVGPrintBase<CSVGL
     if      (isNone  ()) os << "none";
     else if (isSolid ()) os << "solid";
     else {
-      int n = dashes().size();
+      int n = int(dashes().size());
 
       for (int i = 0; i < n; ++i) {
         if (i > 0) os << " ";

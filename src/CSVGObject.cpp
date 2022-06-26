@@ -1968,7 +1968,7 @@ getIntegerNameValue(const std::string &name) const
   if (! CStrUtil::toInteger(str.getValue(), &i))
     return COptInt();
 
-  return COptInt(i);
+  return COptInt(int(i));
 }
 
 //---
@@ -3304,7 +3304,7 @@ decodeXLink(const std::string &str, CSVGObject **object, CSVGBuffer **buffer)
   //---
 
   // check for inline image data
-  uint len = str.size();
+  uint len = uint(str.size());
 
   if (len >= 5 && str.substr(0, 5) == "data:") {
     // get format

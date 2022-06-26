@@ -60,7 +60,7 @@ redraw()
   double bw = svg_->getWidth ()*scale_;
   double bh = svg_->getHeight()*scale_;
 
-  renderer_->setPixelRange(bw, bh);
+  renderer_->setPixelRange(int(bw), int(bh));
 
   renderer_->setBackground(svg_->CSVG::background());
 
@@ -348,10 +348,10 @@ drawRect(const CBBox2D &bbox, const QColor &c)
 
   opainter_->setPen(c);
 
-  opainter_->drawLine(p1.x, p1.y, p2.x, p1.y);
-  opainter_->drawLine(p2.x, p1.y, p2.x, p2.y);
-  opainter_->drawLine(p2.x, p2.y, p1.x, p2.y);
-  opainter_->drawLine(p1.x, p2.y, p1.x, p1.y);
+  opainter_->drawLine(int(p1.x), int(p1.y), int(p2.x), int(p1.y));
+  opainter_->drawLine(int(p2.x), int(p1.y), int(p2.x), int(p2.y));
+  opainter_->drawLine(int(p2.x), int(p2.y), int(p1.x), int(p2.y));
+  opainter_->drawLine(int(p1.x), int(p2.y), int(p1.x), int(p1.y));
 }
 
 void
@@ -362,7 +362,7 @@ drawLine(const CPoint2D &p1, const CPoint2D &p2, const QColor &c)
 
   opainter_->setPen(c);
 
-  opainter_->drawLine(p1.x, p1.y, p2.x, p2.y);
+  opainter_->drawLine(int(p1.x), int(p1.y), int(p2.x), int(p2.y));
 }
 
 void

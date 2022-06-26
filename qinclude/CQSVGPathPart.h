@@ -173,8 +173,8 @@ class CQSVGPathArcTo : public CQSVGPathPart, public CSVGPathArcTo {
   Q_PROPERTY(double rx READ getRX WRITE setRX)
   Q_PROPERTY(double ry READ getRY WRITE setRY)
   Q_PROPERTY(double xa READ getXA WRITE setXA)
-  Q_PROPERTY(double fa READ getFA WRITE setFA)
-  Q_PROPERTY(double fs READ getFS WRITE setFS)
+  Q_PROPERTY(int    fa READ getFA WRITE setFA)
+  Q_PROPERTY(int    fs READ getFS WRITE setFS)
   Q_PROPERTY(double x2 READ getX2 WRITE setX2)
   Q_PROPERTY(double y2 READ getY2 WRITE setY2)
 
@@ -193,11 +193,11 @@ class CQSVGPathArcTo : public CQSVGPathPart, public CSVGPathArcTo {
   double getXA() const { return CSVGPathArcTo::getXA(); }
   void setXA(double r) { CSVGPathArcTo::setXA(r); }
 
-  double getFA() const { return CSVGPathArcTo::getFA(); }
-  void setFA(double r) { CSVGPathArcTo::setFA(r); }
+  int getFA() const { return CSVGPathArcTo::getFA(); }
+  void setFA(int i) { CSVGPathArcTo::setFA(i); }
 
-  double getFS() const { return CSVGPathArcTo::getFS(); }
-  void setFS(double r) { CSVGPathArcTo::setFS(r); }
+  int getFS() const { return CSVGPathArcTo::getFS(); }
+  void setFS(int i) { CSVGPathArcTo::setFS(i); }
 
   double getX2() const { return CSVGPathArcTo::getPoint2().x; }
   void setX2(double x) { CSVGPathArcTo::setPoint2(CPoint2D(x, getY2())); }
@@ -214,8 +214,8 @@ class CQSVGPathRArcTo : public CQSVGPathPart, public CSVGPathRArcTo {
   Q_PROPERTY(double rx READ getRX WRITE setRX)
   Q_PROPERTY(double ry READ getRY WRITE setRY)
   Q_PROPERTY(double xa READ getXA WRITE setXA)
-  Q_PROPERTY(double fa READ getFA WRITE setFA)
-  Q_PROPERTY(double fs READ getFS WRITE setFS)
+  Q_PROPERTY(int    fa READ getFA WRITE setFA)
+  Q_PROPERTY(int    fs READ getFS WRITE setFS)
   Q_PROPERTY(double x2 READ getX2 WRITE setX2)
   Q_PROPERTY(double y2 READ getY2 WRITE setY2)
 
@@ -234,11 +234,11 @@ class CQSVGPathRArcTo : public CQSVGPathPart, public CSVGPathRArcTo {
   double getXA() const { return CSVGPathRArcTo::getXA(); }
   void setXA(double r) { CSVGPathRArcTo::setXA(r); }
 
-  double getFA() const { return CSVGPathRArcTo::getFA(); }
-  void setFA(double r) { CSVGPathRArcTo::setFA(r); }
+  int getFA() const { return CSVGPathRArcTo::getFA(); }
+  void setFA(int i) { CSVGPathRArcTo::setFA(i); }
 
-  double getFS() const { return CSVGPathRArcTo::getFS(); }
-  void setFS(double r) { CSVGPathRArcTo::setFS(r); }
+  int getFS() const { return CSVGPathRArcTo::getFS(); }
+  void setFS(int i) { CSVGPathRArcTo::setFS(i); }
 
   double getX2() const { return CSVGPathRArcTo::getPoint2().x; }
   void setX2(double x) { CSVGPathRArcTo::setPoint2(CPoint2D(x, getY2())); }

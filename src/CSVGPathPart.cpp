@@ -1506,7 +1506,7 @@ interp(double s, const CPoint2D &p1, const CPoint2D & /*p2*/, CPoint2D &pi, doub
   pi = CPoint2D(xi, yi);
   a  = bezier.gradient(s);
 
-  return yi;
+  return true;
 }
 
 void
@@ -1595,7 +1595,7 @@ interp(double s, const CPoint2D &p1, const CPoint2D & /*p2*/, CPoint2D &pi, doub
   pi = CPoint2D(xi, yi);
   a  = bezier.gradient(s);
 
-  return yi;
+  return true;
 }
 
 void
@@ -1686,7 +1686,7 @@ interp(double s, const CPoint2D &p1, const CPoint2D & /*p2*/, CPoint2D &pi, doub
   pi = CPoint2D(xi, yi);
   a  = bezier.gradient(s);
 
-  return yi;
+  return true;
 }
 
 void
@@ -1780,7 +1780,7 @@ interp(double s, const CPoint2D &p1, const CPoint2D & /*p2*/, CPoint2D &pi, doub
   pi = CPoint2D(xi, yi);
   a  = bezier.gradient(s);
 
-  return yi;
+  return true;
 }
 
 void
