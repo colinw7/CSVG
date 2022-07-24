@@ -24,7 +24,7 @@ execSlot()
 
   emit exec(str);
 
-  QString str1 = str.simplified();
+  QString str1 = str.trimmed();
 
   if (str1.length())
     history_->addCommand(str1.toStdString());
