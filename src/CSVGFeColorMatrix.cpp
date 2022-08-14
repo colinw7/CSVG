@@ -64,7 +64,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   else if (svg_.realListOption(opt_name, opt_value, "values", reals)) {
     values_ = reals;
 
-    uint num_values = values_.size();
+    auto num_values = values_.size();
 
     if (getType() == CSVGColorMatrixType::MATRIX && num_values != 20)
       std::cerr << "Invalid matrix values" << std::endl;

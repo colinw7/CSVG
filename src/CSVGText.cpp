@@ -341,7 +341,7 @@ draw()
       }
 
       if (text.size() > 1)
-        dx = (tl.getValue() - w)/(text.size() - 1);
+        dx = double(tl.getValue() - w)/double(text.size() - 1);
     }
 
     //---

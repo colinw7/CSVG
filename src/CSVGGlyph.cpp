@@ -52,13 +52,13 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   else if (svg_.stringOption(opt_name, opt_value, "lang", str))
     lang_ = str;
   else if (svg_.integerOption(opt_name, opt_value, "horiz-adv-x", &integer))
-    horizAdvX_ = integer;
+    horizAdvX_ = int(integer);
   else if (svg_.integerOption(opt_name, opt_value, "vert-adv-y", &integer))
-    vertAdvY_ = integer;
+    vertAdvY_ = int(integer);
   else if (svg_.integerOption(opt_name, opt_value, "vert-origin-x", &integer))
-    vertOriginX_ = integer;
+    vertOriginX_ = int(integer);
   else if (svg_.integerOption(opt_name, opt_value, "vert-origin-y", &integer))
-    vertOriginY_ = integer;
+    vertOriginY_ = int(integer);
   else
     return CSVGObject::processOption(opt_name, opt_value);
 

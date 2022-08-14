@@ -14,7 +14,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   long integer;
 
   if (svg_.integerOption(opt_name, opt_value, "horiz-adv-x", &integer))
-    hax_ = integer;
+    hax_ = int(integer);
   else
     return CSVGGlyph::processOption(opt_name, opt_value);
 

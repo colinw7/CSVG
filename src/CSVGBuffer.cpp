@@ -507,8 +507,8 @@ convolveMatrixBuffers(CSVGBuffer *inBuffer, const CBBox2D &bbox, const CSVGConvo
   if (! data.kernelMatrix.empty()) {
     CImageConvolveData idata;
 
-    idata.xsize         = data.xorder;
-    idata.ysize         = data.yorder;
+    idata.xsize         = int(data.xorder);
+    idata.ysize         = int(data.yorder);
     idata.kernel        = data.kernelMatrix;
     idata.preserveAlpha = data.preserveAlpha;
 
@@ -591,7 +591,7 @@ floodBuffers(const CRGBA &c, const CBBox2D &bbox, CSVGBuffer *outBuffer)
   double h1 = fabs(p2.y - p1.y);
 
   // create image to flood
-  auto dst_image = createImage(outBuffer->svg_, w1, h1);
+  auto dst_image = createImage(outBuffer->svg_, int(w1), int(h1));
 
   // flood
   dst_image->set(c);
@@ -600,11 +600,11 @@ floodBuffers(const CRGBA &c, const CBBox2D &bbox, CSVGBuffer *outBuffer)
   auto *outRenderer = outBuffer->getRenderer();
 
   if (outRenderer) {
-    outRenderer->setSize(p1.x + w1, p1.y + h1);
+    outRenderer->setSize(int(p1.x + w1), int(p1.y + h1));
 
     outRenderer->clear(CRGBA(0, 0, 0, 0));
 
-    outRenderer->addImage(p1.x, p1.y, dst_image.getPtr());
+    outRenderer->addImage(int(p1.x), int(p1.y), dst_image.getPtr());
   }
 }
 
@@ -742,7 +742,7 @@ imageBuffers(CSVGBuffer *inBuffer, const CBBox2D &bbox, CSVGPreserveAspect prese
     dst_image = CSVGImageDataP(outBuffer->svg_.getCurrentBuffer()->getImage()->dup());
 
     // add to dest image (centered ?)
-    src_image->subCopyTo(dst_image.getPtr(), 0, 0, -1, -1, x1, y1);
+    src_image->subCopyTo(dst_image.getPtr(), 0, 0, -1, -1, int(x1), int(y1));
   }
 
   auto *orenderer = outBuffer->getRenderer();
@@ -782,7 +782,7 @@ maskBuffers(CSVGBuffer *oldBuffer, CSVGBuffer *buffer,
   // combine mask with image
   CSVGImageDataP dest_image(oldBuffer->getImage());
 
-  dest_image->copyAlpha(mask_image1.getPtr(), x, y);
+  dest_image->copyAlpha(mask_image1.getPtr(), int(x), int(y));
 
   if (oldBuffer->svg_.getDebugMask()) {
     auto maskBufferName = "alpha_mask_" + object->getUniqueName();
@@ -1312,12 +1312,13 @@ addClippedBuffer(CSVGBuffer *buffer, double x, double y,
     auto *renderer = getRenderer();
 
     if (renderer)
-      renderer->addClippedImage(buffer->getRenderer(), x, y, px1, py1, px2, py2);
+      renderer->addClippedImage(buffer->getRenderer(), int(x), int(y),
+                                int(px1), int(py1), int(px2), int(py2));
   }
   else {
     auto image = buffer->getImage();
 
-    image->clipOutside(px1, py1, px2, py2);
+    image->clipOutside(int(px1), int(py1), int(px2), int(py2));
 
     addImage(x - px1, y - py1, image);
   }
@@ -1331,7 +1332,7 @@ setClippedBuffer(CSVGBuffer *buffer, double px1, double py1, double px2, double 
 
   if (! buffer->isAlpha()) {
     if (renderer)
-      renderer->setClippedImage(buffer->getRenderer(), px1, py1, px2, py2);
+      renderer->setClippedImage(buffer->getRenderer(), int(px1), int(py1), int(px2), int(py2));
   }
   else {
     CSVGImageDataP image;
@@ -1341,7 +1342,7 @@ setClippedBuffer(CSVGBuffer *buffer, double px1, double py1, double px2, double 
     if (brenderer) {
       image = CSVGImageDataP(brenderer->getImage());
 
-      image->clipOutside(px1, py1, px2, py2);
+      image->clipOutside(int(px1), int(py1), int(px2), int(py2));
     }
 
     if (renderer)
@@ -1667,9 +1668,9 @@ beginDraw(double w, double h, const CBBox2D &bbox)
 
   renderer_->setBackground(svg_.background());
 
-  renderer_->setSize(w, h);
+  renderer_->setSize(int(w), int(h));
 
-  renderer_->setPixelRange(w, h);
+  renderer_->setPixelRange(int(w), int(h));
 
   startDraw();
 
@@ -2925,7 +2926,7 @@ void
 CSVGBuffer::
 drawPolygon(const std::vector<CPoint2D> &points)
 {
-  int num_points = points.size();
+  auto num_points = points.size();
 
   if (! num_points)
     return;
@@ -2936,7 +2937,7 @@ drawPolygon(const std::vector<CPoint2D> &points)
 
   pathMoveTo(points[0].x, points[0].y);
 
-  for (int i = 1; i < num_points; ++i)
+  for (uint i = 1; i < num_points; ++i)
     pathLineTo(points[i].x, points[i].y);
 
   pathClose();
@@ -2947,8 +2948,9 @@ drawPolygon(const std::vector<CPoint2D> &points)
 
   std::vector<double> angles;
 
-  for (int i1 = num_points - 1, i2 = 0; i2 < num_points; i1 = i2++) {
-    double a = std::atan2(points[i2].y - points[i1].y, points[i2].x - points[i1].x);
+  for (int i1 = int(num_points - 1), i2 = 0; i2 < int(num_points); i1 = i2++) {
+    double a = std::atan2(points[uint(i2)].y - points[uint(i1)].y,
+                          points[uint(i2)].x - points[uint(i1)].x);
 
     angles.push_back(a);
   }
@@ -2960,7 +2962,7 @@ void
 CSVGBuffer::
 fillPolygon(const std::vector<CPoint2D> &points)
 {
-  uint num_points = points.size();
+  auto num_points = points.size();
 
   if (! num_points)
     return;
@@ -3007,7 +3009,7 @@ drawText(double x, double y, const std::string &text, const CSVGFontDef &fontDef
     transform.scale    (font_size/units, font_size/units);
     transform.translate(x, y);
 
-    uint len = text.size();
+    auto len = text.size();
 
     for (uint i = 0; i < len; ++i) {
       auto *glyph = svg_.getCharGlyph(text[i]);
@@ -3031,7 +3033,7 @@ drawText(double x, double y, const std::string &text, const CSVGFontDef &fontDef
 
     auto transform1 = transform;
 
-    if (fontDef.getAngle()) {
+    if (fontDef.getAngle() != 0.0) {
       transform1.rotate(fontDef.getAngle(), CPoint2D(x, y));
 
       setTransform(transform1);
@@ -3081,7 +3083,7 @@ fillText(double x, double y, const std::string &text, const CSVGFontDef &fontDef
     transform.scale    (font_size/units, font_size/units);
     transform.translate(x, y);
 
-    uint len = text.size();
+    auto len = text.size();
 
     for (uint i = 0; i < len; ++i) {
       auto *glyph = svg_.getCharGlyph(text[i]);
@@ -3105,7 +3107,7 @@ fillText(double x, double y, const std::string &text, const CSVGFontDef &fontDef
 
     auto transform1 = transform;
 
-    if (fontDef.getAngle()) {
+    if (fontDef.getAngle() != 0.0) {
       transform1.rotate(fontDef.getAngle(), CPoint2D(x, y));
 
       setTransform(transform1);
@@ -3189,7 +3191,7 @@ drawMarkers(const std::vector<CPoint2D> &points, const std::vector<double> &angl
 
   // draw markers
   if (startMarker || midMarker || endMarker) {
-    uint num = points.size();
+    auto num = points.size();
 
     if (num <= 0)
       return;

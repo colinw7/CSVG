@@ -49,7 +49,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   else if (svg_.stringOption (opt_name, opt_value, "unicode-range", str))
     unicodeRange_ = str;
   else if (svg_.integerOption(opt_name, opt_value, "units-per-em", &integer))
-    unitsPerEm_ = integer;
+    unitsPerEm_ = int(integer);
   else if (svg_.stringOption (opt_name, opt_value, "panose-1", str))
     panose_ = str;
   else if (svg_.stringOption (opt_name, opt_value, "stemv", str))
@@ -65,11 +65,11 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   else if (svg_.stringOption (opt_name, opt_value, "accent-height", str))
     accentHeight_ = str;
   else if (svg_.integerOption(opt_name, opt_value, "ascent", &integer))
-    ascent_ = integer;
+    ascent_ = int(integer);
   else if (svg_.integerOption(opt_name, opt_value, "descent", &integer))
-    descent_ = integer;
+    descent_ = int(integer);
   else if (svg_.integerOption(opt_name, opt_value, "baseline", &integer))
-    baseline_ = integer;
+    baseline_ = int(integer);
   else if (svg_.stringOption (opt_name, opt_value, "widths", str))
     widths_ = str;
   else if (svg_.stringOption (opt_name, opt_value, "bbox", str))

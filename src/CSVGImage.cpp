@@ -176,7 +176,7 @@ draw()
   double pw = fabs(x2 - x1);
   double ph = fabs(y2 - y1);
 
-  oldBuffer->addReshapeImage(getImageBuffer(), x1, y1, pw, ph);
+  oldBuffer->addReshapeImage(getImageBuffer(), x1, y1, int(pw), int(ph));
 
   return true;
 }

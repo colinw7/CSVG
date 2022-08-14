@@ -134,7 +134,7 @@ getBBox(CBBox2D &bbox) const
   if (! hasViewBox()) {
     CBBox2D bbox1;
 
-    uint num_points = points_.size();
+    auto num_points = points_.size();
 
     for (uint i = 0; i < num_points; ++i)
       bbox1.add(points_[i]);
@@ -151,7 +151,7 @@ void
 CSVGPolygon::
 moveDelta(const CVector2D &delta)
 {
-  uint num_points = points_.size();
+  auto num_points = points_.size();
 
   for (uint i = 0; i < num_points; ++i)
     points_[i] += delta;
@@ -177,7 +177,7 @@ resizeTo(const CSize2D &size)
   double sx = (w1 > 0 ? w2/w1 : 1.0);
   double sy = (h1 > 0 ? h2/h1 : 1.0);
 
-  uint num_points = points_.size();
+  auto num_points = points_.size();
 
   for (uint i = 0; i < num_points; ++i) {
     points_[i].x = (points_[i].x - x1)*sx + x1;
@@ -195,7 +195,7 @@ rotateBy(double da)
 
   auto c = bbox.getCenter();
 
-  uint num_points = points_.size();
+  auto num_points = points_.size();
 
   for (uint i = 0; i < num_points; ++i)
     points_[i] = points_[i].rotate(c, da);

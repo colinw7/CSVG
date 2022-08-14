@@ -30,6 +30,12 @@ class CSVGAnimateBase : public CSVGObject {
   std::string getTo() const { return to_.getValue(""); }
   void setTo(const std::string &s) { to_ = s; }
 
+  std::string getBy() const { return by_.getValue(""); }
+  void setBy(const std::string &s) { by_ = s; }
+
+  std::string getValues() const { return values_.getValue(""); }
+  void setValues(const std::string &s) { values_ = s; }
+
   std::string getFill() const { return fill_.getValue(""); }
   void setFill(const std::string &s) { fill_ = s; }
 

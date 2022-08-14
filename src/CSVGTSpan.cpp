@@ -129,7 +129,7 @@ draw()
 
       //---
 
-      getDrawPos(x, y, i);
+      getDrawPos(x, y, int(i));
 
       double y1 = y;
 
@@ -195,7 +195,7 @@ getDrawPos(double &x, double &y, int i) const
     Reals reals = dx_.getValue();
 
     if (i < int(reals.size()))
-      x += reals[i];
+      x += reals[uint(i)];
   }
 
   if      (y_ .isValid())
@@ -204,7 +204,7 @@ getDrawPos(double &x, double &y, int i) const
     Reals reals = dy_.getValue();
 
     if (i < int(reals.size()))
-      y += reals[i];
+      y += reals[uint(i)];
   }
 }
 

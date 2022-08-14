@@ -430,7 +430,7 @@ read(const std::string &filename, CSVGObject *rootBlock)
       if (id == "xml-stylesheet") {
         CSVGXmlStyleSheet xmlStyleSheet;
 
-        uint numOptions = exec->getNumOptions();
+        auto numOptions = exec->getNumOptions();
 
         for (uint j = 0; j < numOptions; ++j) {
           const auto &opt = exec->getOption(j);
@@ -1268,14 +1268,14 @@ CSVGPathArcTo *
 CSVG::
 createPathArcTo(double rx, double ry, double xa, double fa, double fs, double x2, double y2)
 {
-  return new CSVGPathArcTo(*this, rx, ry, xa, fa, fs, x2, y2);
+  return new CSVGPathArcTo(*this, rx, ry, xa, int(fa), int(fs), x2, y2);
 }
 
 CSVGPathRArcTo *
 CSVG::
 createPathRArcTo(double rx, double ry, double xa, double fa, double fs, double x2, double y2)
 {
-  return new CSVGPathRArcTo(*this, rx, ry, xa, fa, fs, x2, y2);
+  return new CSVGPathRArcTo(*this, rx, ry, xa, int(fa), int(fs), x2, y2);
 }
 
 CSVGPathBezier2To *
@@ -1439,7 +1439,7 @@ CSVG::
 drawToRenderer(CSVGRenderer *renderer, int w, int h, const CPoint2D &offset,
                double xscale, double yscale)
 {
-  renderer->setSize(xscale*w, yscale*h);
+  renderer->setSize(int(xscale*w), int(yscale*h));
 
   setRenderer(renderer);
 
@@ -2225,7 +2225,7 @@ coordListOption(const std::string &optName, const std::string &optValue,
   parse.skipSpace();
 
   while (! parse.eof()) {
-    int pos = parse.getPos();
+    auto pos = parse.getPos();
 
     while (! parse.eof() && ! parse.isSpace() && ! parse.isChar(','))
       parse.skipChar();
@@ -2344,7 +2344,7 @@ decodeLengthListValue(const std::string &str, std::vector<CScreenUnits> &lengths
   parse.skipSpace();
 
   while (! parse.eof()) {
-    int pos = parse.getPos();
+    auto pos = parse.getPos();
 
     while (! parse.eof() && ! parse.isSpace() && ! parse.isChar(','))
       parse.skipChar();
@@ -3033,7 +3033,7 @@ pointListOption(const std::string &optName, const std::string &optValue,
 
   //---
 
-  uint num_xy = reals.size()/2;
+  auto num_xy = reals.size()/2;
 
   for (uint i = 0, j = 0; j < num_xy; i += 2, ++j) {
     points.push_back(CPoint2D(reals[i], reals[i + 1]));
@@ -3061,7 +3061,7 @@ stringToReals(const std::string &str, std::vector<double> &reals)
 
   CStrUtil::addWords(str, words, " ,\n\t");
 
-  uint num_reals = words.size();
+  auto num_reals = words.size();
 
   reals.resize(num_reals);
 
@@ -3646,7 +3646,7 @@ decodeDashString(const std::string &dashStr, std::vector<CScreenUnits> &lengths,
 
   CStrUtil::addWords(dashStr, words, " ,");
 
-  uint num_words = words.size();
+  auto num_words = words.size();
 
   bool duplicate = (num_words & 1);
 

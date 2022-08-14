@@ -67,14 +67,14 @@ int
 CSVGImageData::
 getWidth() const
 {
-  return image_->getWidth();
+  return int(image_->getWidth());
 }
 
 int
 CSVGImageData::
 getHeight() const
 {
-  return image_->getHeight();
+  return int(image_->getHeight());
 }
 
 void

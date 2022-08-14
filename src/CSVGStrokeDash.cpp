@@ -28,7 +28,7 @@ setLineDash(const CLineDash &d)
   dashes_.clear();
 
   for (uint i = 0; i < d.getNumLengths(); ++i)
-    dashes_.push_back(d.getLength(i));
+    dashes_.push_back(d.getLength(int(i)));
 
   offset_ = d.getOffset();
 }

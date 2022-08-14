@@ -122,7 +122,7 @@ draw()
   const auto &parts = path->getPartList();
 
   double l   = parts.getLength();
-  int    len = text.length();
+  auto   len = text.length();
 
   double s1   = 0, s2   = 0;
   int    pos1 = 0, pos2 = 0;
@@ -153,13 +153,13 @@ draw()
 
   //---
 
-  while (pos1 < len) {
+  while (pos1 < int(len)) {
     s1   = s2;
     pos1 = pos2;
 
     (void) CUtf8::readNextChar(text, pos2);
 
-    std::string text1 = text.substr(pos1, pos2 - pos1);
+    std::string text1 = text.substr(uint(pos1), uint(pos2 - pos1));
 
     //---
 
@@ -197,7 +197,7 @@ std::cerr << "New angles " << ai1 << " " << ai2 << std::endl;
 
     auto fontDef1 = fontDef;
 
-    if (ai) {
+    if (ai != 0.0) {
       fontDef1.setFamily   (fontDef.getFamily());
       fontDef1.setStyle    (fontDef.getStyle ());
       fontDef1.setSize     (fontDef.getSize  ()),

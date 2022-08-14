@@ -70,12 +70,12 @@ addResizedImage(CSVGRenderer *src, double x, double y, double w, double h)
 {
   auto *image2 = src->getImage();
 
-  image2->reshape(w, h);
+  image2->reshape(int(w), int(h));
 
   auto *image1 = getImage();
 
   // TODO: handle out of bounds
-  image1->combine(x, y, image2);
+  image1->combine(int(x), int(y), image2);
 
   setImage(image1);
 }
@@ -147,7 +147,7 @@ gaussianBlur(CSVGRenderer *dst, CBBox2D &bbox, double stdDevX, double stdDevY)
     windowToPixel(bbox.getLL(), p1);
     windowToPixel(bbox.getUR(), p2);
 
-    src_image->setWindow(p1.x, p1.y, p2.x, p2.y);
+    src_image->setWindow(int(p1.x), int(p1.y), int(p2.x), int(p2.y));
   }
 
   src_image->gaussianBlur(dst_image, stdDevX, stdDevY);

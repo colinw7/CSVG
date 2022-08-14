@@ -63,7 +63,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
     }
   }
   else if (svg_.integerOption(opt_name, opt_value, "numOctaves", &integer))
-    numOctaves_ = integer;
+    numOctaves_ = int(integer);
   else if (svg_.realOption(opt_name, opt_value, "seed", &real))
     seed_ = real;
   else if (svg_.stringOption (opt_name, opt_value, "stitchTiles", str))
@@ -113,7 +113,7 @@ drawElement()
   double baseFreqY = getBaseFreqY(baseFreqX);
 
   CSVGBuffer::turbulenceBuffers(inBuffer, inBBox, isFractalNoise(), baseFreqX, baseFreqY,
-                                getNumOctaves(), getSeed(), outBuffer);
+                                getNumOctaves(), int(getSeed()), outBuffer);
 
   //---
 

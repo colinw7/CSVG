@@ -52,7 +52,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   if      (svg_.pointListOption(opt_name, opt_value, "points", points)) {
     points_.clear();
 
-    uint num_points = points.size();
+    auto num_points = points.size();
 
     for (uint i = 0; i < num_points; ++i)
       addPoint(points[i]);
@@ -77,7 +77,7 @@ draw()
   if (svg_.getDebug())
     CSVGLog() << *this;
 
-  int num_points = points_.size();
+  auto num_points = points_.size();
 
   if (! num_points)
     return false;
@@ -88,7 +88,7 @@ draw()
 
   buffer->pathInit();
 
-  for (int i = 0; i < num_points; ++i) {
+  for (uint i = 0; i < num_points; ++i) {
     if (i == 0)
       buffer->pathMoveTo(points_[i].x, points_[i].y);
     else
@@ -120,7 +120,7 @@ draw()
 
   std::vector<double> angles;
 
-  for (int i = 0; i < num_points; ++i) {
+  for (uint i = 0; i < num_points; ++i) {
     double a = 0;
 
     if      (i > 0)
@@ -143,7 +143,7 @@ getBBox(CBBox2D &bbox) const
   if (! hasViewBox()) {
     CBBox2D bbox1;
 
-    uint num_points = points_.size();
+    auto num_points = points_.size();
 
     for (uint i = 0; i < num_points; ++i)
       bbox1.add(points_[i]);
@@ -160,7 +160,7 @@ void
 CSVGPolyLine::
 moveDelta(const CVector2D &delta)
 {
-  uint num_points = points_.size();
+  auto num_points = points_.size();
 
   for (uint i = 0; i < num_points; ++i)
     points_[i] += delta;
@@ -186,7 +186,7 @@ resizeTo(const CSize2D &size)
   double sx = (w1 > 0 ? w2/w1 : 1.0);
   double sy = (h1 > 0 ? h2/h1 : 1.0);
 
-  uint num_points = points_.size();
+  auto num_points = points_.size();
 
   for (uint i = 0; i < num_points; ++i) {
     points_[i].x = (points_[i].x - x1)*sx + x1;
@@ -204,7 +204,7 @@ rotateBy(double da)
 
   auto c = bbox.getCenter();
 
-  uint num_points = points_.size();
+  auto num_points = points_.size();
 
   for (uint i = 0; i < num_points; ++i)
     points_[i] = points_[i].rotate(c, da);

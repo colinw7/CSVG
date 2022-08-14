@@ -34,7 +34,6 @@ class CSVGAnimateTransform : public CSVGAnimateBase, public CSVGPrintBase<CSVGAn
   COptString additive_;
   COptString accumulate_;
   COptString calcMode_;
-  COptString values_;
   COptString keySplines_;
 };
 

@@ -43,7 +43,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
     glyph2_ = str;
   }
   else if (svg_.integerOption(opt_name, opt_value, "k", &integer)) {
-    k_ = integer;
+    k_ = int(integer);
   }
   else
     return CSVGObject::processOption(opt_name, opt_value);

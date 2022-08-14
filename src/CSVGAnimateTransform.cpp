@@ -45,7 +45,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
 
   std::string str;
 
-  if      (svg_.stringOption(opt_name, opt_value, "type"    , str))
+  if      (svg_.stringOption(opt_name, opt_value, "type", str))
     type_ = str;
   else if (svg_.stringOption(opt_name, opt_value, "additive", str))
     additive_ = str;
@@ -53,8 +53,6 @@ processOption(const std::string &opt_name, const std::string &opt_value)
     accumulate_ = str;
   else if (svg_.stringOption(opt_name, opt_value, "calcMode", str))
     calcMode_ = str;
-  else if (svg_.stringOption(opt_name, opt_value, "values", str))
-    values_ = str;
   else if (svg_.stringOption(opt_name, opt_value, "keySplines", str))
     keySplines_ = str;
   else
@@ -68,10 +66,58 @@ CSVGAnimateTransform::
 animate(double t)
 {
   if (getAttributeName() == "transform") {
-    std::vector<double> fromValues, toValues;
+    std::vector<double> fromValues, byValues, toValues;
 
-    svg_.stringToReals(getFrom(), fromValues);
-    svg_.stringToReals(getTo  (), toValues  );
+    if      (from_.isValid() && to_.isValid()) {
+      svg_.stringToReals(getFrom(), fromValues);
+      svg_.stringToReals(getTo  (), toValues  );
+
+      auto n = std::min(fromValues.size(), toValues.size());
+
+      byValues.resize(n);
+
+      if (by_.isValid())
+        svg_.stringToReals(getBy(), byValues);
+    }
+    else if (values_.isValid()) {
+      std::vector<std::string> fields;
+
+      CStrUtil::addFields(getValues(), fields, ";");
+
+      if (fields.size() < 1) {
+        std::cerr << "Invalid values data\n";
+        return;
+      }
+
+      auto parseWords = [&](int ind, std::vector<double> &values) {
+        std::vector<std::string> words;
+        CStrUtil::addWords(fields[size_t(ind)], words);
+
+        for (const auto &word : words) {
+          double r;
+
+          if (! CStrUtil::toReal(word, &r))
+            r = 0.0;
+
+          values.push_back(r);
+        }
+      };
+
+      parseWords(0, fromValues); // from
+
+      int ind = 1;
+
+      if (fields.size() == 3) { // by
+        parseWords(0, byValues);
+
+        ++ind;
+      }
+
+      parseWords(ind, toValues); // to
+    }
+    else {
+      std::cerr << "CSVGAnimateTransform: no from/to or values specified\n";
+    }
 
     if      (getType() == "translate") {
       if (fromValues.size() == 1) fromValues.push_back(fromValues[0]);
