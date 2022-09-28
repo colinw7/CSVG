@@ -95,7 +95,7 @@ paintEvent(QPaintEvent *)
   painter.drawText(x, y + fm.ascent(), "Fill:"  ); y += fm.height();
   painter.drawText(x, y + fm.ascent(), "Stroke:");
 
-  x += fm.width("Stroke:") + 4;
+  x += fm.horizontalAdvance("Stroke:") + 4;
   y  = 2;
 
   auto fh = fm.height();
@@ -131,7 +131,7 @@ paintEvent(QPaintEvent *)
     else {
       painter.drawText(xf, y + fm.ascent(), "None");
 
-      xf += fm.width("None") + 2;
+      xf += fm.horizontalAdvance("None") + 2;
     }
 
     //---
@@ -170,13 +170,13 @@ paintEvent(QPaintEvent *)
 
         painter.drawText(xs, y + fm.ascent(), widthStr);
 
-        xs += fm.width(widthStr) + 2;
+        xs += fm.horizontalAdvance(widthStr) + 2;
       }
     }
     else {
       painter.drawText(xs, y + fm.ascent(), "None");
 
-      xs += fm.width("None");
+      xs += fm.horizontalAdvance("None");
     }
 
     width_ = std::max(xf, xs);
@@ -185,7 +185,7 @@ paintEvent(QPaintEvent *)
     painter.drawText(x, y + fm.ascent(), "N/A"); y += fm.height();
     painter.drawText(x, y + fm.ascent(), "N/A");
 
-    x += fm.width("N/A");
+    x += fm.horizontalAdvance("N/A");
 
     width_ = x;
   }
@@ -216,7 +216,7 @@ PosLabel(Window *window) :
 
   QFontMetrics fm(font);
 
-  setFixedWidth(fm.width("X: XXX.XXX") + 8);
+  setFixedWidth(fm.horizontalAdvance("X: XXX.XXX") + 8);
 }
 
 void

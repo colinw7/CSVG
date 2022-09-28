@@ -35,7 +35,7 @@ textSize(const std::string &text, double *w, double *a, double *d) const
 {
   QFontMetricsF fm(qfont_);
 
-  if (w) *w = fm.width(text.c_str());
+  if (w) *w = fm.horizontalAdvance(text.c_str());
   if (a) *a = fm.ascent();
   if (d) *d = fm.descent();
 }

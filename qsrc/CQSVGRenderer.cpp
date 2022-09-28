@@ -5,6 +5,7 @@
 #include <CQUtil.h>
 #include <CLinearGradient.h>
 #include <CRadialGradient.h>
+#include <QPainterPath>
 
 namespace {
   CRGBA getPixel(const QImage &image, int x, int y) {
@@ -172,7 +173,7 @@ setDataRange(double xmin, double ymin, double xmax, double ymax)
   range_.setWindowRange(xmin, ymin, xmax, ymax);
 
   if (drawing_) {
-    painter_->setWorldMatrix(CQUtil::toQMatrix(range_.getMatrix()*viewMatrix_));
+    painter_->setWorldTransform(CQUtil::toQTransform(range_.getMatrix()*viewMatrix_));
 
     transform_  = painter_->worldTransform();
     itransform_ = transform_.inverted();
@@ -253,7 +254,7 @@ startDraw()
                              QPainter::TextAntialiasing |
                              QPainter::SmoothPixmapTransform);
 
-  painter_->setWorldMatrix(CQUtil::toQMatrix(range_.getMatrix()*viewMatrix_));
+  painter_->setWorldTransform(CQUtil::toQTransform(range_.getMatrix()*viewMatrix_));
 }
 
 void
@@ -276,7 +277,7 @@ setViewMatrix(const CMatrix2D &m)
   viewMatrix_ = m;
 
   if (drawing_) {
-    painter_->setWorldMatrix(CQUtil::toQMatrix(range_.getMatrix()*viewMatrix_));
+    painter_->setWorldTransform(CQUtil::toQTransform(range_.getMatrix()*viewMatrix_));
 
     transform_  = painter_->worldTransform();
     itransform_ = transform_.inverted();
@@ -796,7 +797,7 @@ setFillMatrix(const CMatrix2D &m)
 {
   assert(drawing_);
 
-  fillBrush_.setMatrix(CQUtil::toQMatrix(m));
+  fillBrush_.setTransform(CQUtil::toQTransform(m));
 
   painter_->setBrush(fillBrush_);
 }
@@ -912,7 +913,7 @@ textBounds(const std::string &str, CBBox2D &bbox)
 
   QFontMetrics fm(qfont_);
 
-  int w = fm.width(qstr);
+  int w = fm.horizontalAdvance(qstr);
   int h = fm.height();
 
   bbox = CBBox2D(CPoint2D(0, 0), CPoint2D(w, h));

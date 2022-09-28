@@ -219,8 +219,8 @@ sizeHint() const
 {
   QFontMetrics fm(font());
 
-  int w = fm.width("X")*20;
-  int h = fm.height()  *20;
+  int w = fm.horizontalAdvance("X")*20;
+  int h = fm.height()*20;
 
   int s = std::max(w, h);
 
