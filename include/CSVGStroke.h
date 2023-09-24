@@ -112,7 +112,7 @@ class CSVGStroke {
 
   // fill object
   bool getFillObjectValid() const { return fillObject_.isValid(); }
-  CSVGObject *getFillObject() const { return fillObject_.getValue(0); }
+  CSVGObject *getFillObject() const { return fillObject_.getValue(nullptr); }
 
   void setFillObject(CSVGObject *fillObject) { fillObject_ = fillObject; }
 

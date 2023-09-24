@@ -803,7 +803,7 @@ class CSVG {
       clip   .reset();
       fontDef.reset();
 
-      object = 0;
+      object = nullptr;
     }
 
     CSVGStroke  stroke;
