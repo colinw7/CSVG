@@ -200,22 +200,22 @@ void
 CSVGLinearGradient::
 setFillBuffer(CSVGBuffer *buffer, CSVGObject *obj, const COptReal &opacity)
 {
-  CAutoPtr<CLinearGradient> lg;
+  using GradientP = std::unique_ptr<CLinearGradient>;
 
-  lg = createGradient(obj, opacity);
+  auto lg = GradientP(createGradient(obj, opacity));
 
-  buffer->setFillGradient(lg);
+  buffer->setFillGradient(lg.get());
 }
 
 void
 CSVGLinearGradient::
 setStrokeBuffer(CSVGBuffer *buffer, CSVGObject *obj, const COptReal &opacity)
 {
-  CAutoPtr<CLinearGradient> lg;
+  using GradientP = std::unique_ptr<CLinearGradient>;
 
-  lg = createGradient(obj, opacity);
+  auto lg = GradientP(createGradient(obj, opacity));
 
-  buffer->setStrokeFillGradient(lg);
+  buffer->setStrokeFillGradient(lg.get());
 }
 
 CLinearGradient *

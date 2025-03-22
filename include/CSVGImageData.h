@@ -5,7 +5,6 @@
 #include <CImagePtr.h>
 #include <CFileType.h>
 #include <CRGBA.h>
-#include <CRefPtr.h>
 #include <vector>
 
 struct CImageTileData;
@@ -111,6 +110,6 @@ class CSVGImageData {
   int       y2_ { -1 };
 };
 
-using CSVGImageDataP = CRefPtr<CSVGImageData>;
+using CSVGImageDataP = std::shared_ptr<CSVGImageData>;
 
 #endif

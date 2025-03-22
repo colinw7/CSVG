@@ -490,7 +490,7 @@ loadFile()
 
     delete renderer;
 
-    svg->setRenderer(0);
+    svg->setRenderer(nullptr);
   }
   else if (isPrint()) {
     svg->print(std::cout, true);

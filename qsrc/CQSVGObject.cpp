@@ -13,6 +13,7 @@
 #include <CQPropertyItem.h>
 #include <CQFontUtil.h>
 #include <CQUtil.h>
+#include <CQUtilRGBA.h>
 #include <QPainter>
 
 CQSVGObject::

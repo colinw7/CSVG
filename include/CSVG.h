@@ -18,7 +18,6 @@
 #include <CMatrixStack2D.h>
 #include <CBBox2D.h>
 #include <CFillType.h>
-#include <CAutoPtr.h>
 #include <CGenGradient.h>
 #include <CFontStyle.h>
 #include <CFile.h>
@@ -832,9 +831,9 @@ class CSVG {
   using NameObjectMap    = std::map<std::string, CSVGObject *>;
   using StyleDataStack   = std::vector<StyleData>;
   using BlockDataStack   = std::vector<CSVGBlockData>;
-  using BufferMgrP       = CAutoPtr<CSVGBufferMgr>;
-  using BlockP           = CAutoPtr<CSVGBlock>;
-  using XMLP             = CAutoPtr<CXML>;
+  using BufferMgrP       = std::unique_ptr<CSVGBufferMgr>;
+  using BlockP           = std::unique_ptr<CSVGBlock>;
+  using XMLP             = std::unique_ptr<CXML>;
   using OptXmlStyleSheet = COptValT<CSVGXmlStyleSheet>;
   using CSSList          = std::vector<CCSS>;
 

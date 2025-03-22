@@ -209,22 +209,22 @@ void
 CSVGRadialGradient::
 setFillBuffer(CSVGBuffer *buffer, CSVGObject *obj, const COptReal &opacity)
 {
-  CAutoPtr<CRadialGradient> rg;
+  using GradientP = std::unique_ptr<CRadialGradient>;
 
-  rg = createGradient(obj, opacity);
+  auto rg = GradientP(createGradient(obj, opacity));
 
-  buffer->setFillGradient(rg);
+  buffer->setFillGradient(rg.get());
 }
 
 void
 CSVGRadialGradient::
 setStrokeBuffer(CSVGBuffer *buffer, CSVGObject *obj, const COptReal &opacity)
 {
-  CAutoPtr<CRadialGradient> rg;
+  using GradientP = std::unique_ptr<CRadialGradient>;
 
-  rg = createGradient(obj, opacity);
+  auto rg = GradientP(createGradient(obj, opacity));
 
-  buffer->setStrokeFillGradient(rg);
+  buffer->setStrokeFillGradient(rg.get());
 }
 
 CRadialGradient *

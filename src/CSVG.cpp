@@ -96,9 +96,9 @@ CSVG(CSVGRenderer *renderer) :
  renderer_ (renderer),
  styleData_(*this)
 {
-  xml_ = new CXML();
+  xml_ = std::make_unique<CXML>();
 
-  bufferMgr_ = new CSVGBufferMgr(*this);
+  bufferMgr_ = std::make_unique<CSVGBufferMgr>(*this);
 
   //---
 
@@ -157,13 +157,13 @@ CSVG::
 getRootBlock() const
 {
   // get root block
-  if (! block_.isValid()) {
+  if (! block_) {
     auto *th = const_cast<CSVG *>(this);
 
-    th->block_ = th->createBlock();
+    th->block_ = BlockP(th->createBlock());
   }
 
-  return block_;
+  return block_.get();
 }
 
 CPoint2D
@@ -370,10 +370,10 @@ void
 CSVG::
 clear()
 {
-  if (bufferMgr_.isValid())
+  if (bufferMgr_)
     bufferMgr_->clear();
 
-  if (xml_.isValid())
+  if (xml_)
     xml_->clear();
 
   buffer_ = nullptr;

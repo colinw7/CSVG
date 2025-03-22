@@ -32,7 +32,7 @@ class CQSVGPathMoveTo : public CQSVGPathPart, public CSVGPathMoveTo {
  public:
   CQSVGPathMoveTo(CQSVG &svg, double x, double y);
 
-  CSVGPathPartType getType() const { return CSVGPathMoveTo::getType(); }
+  CSVGPathPartType getType() const override { return CSVGPathMoveTo::getType(); }
 
   double getX() const { return CSVGPathMoveTo::getPoint().x; }
   double getY() const { return CSVGPathMoveTo::getPoint().y; }
@@ -52,7 +52,7 @@ class CQSVGPathRMoveTo : public CQSVGPathPart, public CSVGPathRMoveTo {
  public:
   CQSVGPathRMoveTo(CQSVG &svg, double x, double y);
 
-  CSVGPathPartType getType() const { return CSVGPathRMoveTo::getType(); }
+  CSVGPathPartType getType() const override { return CSVGPathRMoveTo::getType(); }
 
   double getDX() const { return CSVGPathRMoveTo::getPoint().x; }
   double getDY() const { return CSVGPathRMoveTo::getPoint().y; }
@@ -72,7 +72,7 @@ class CQSVGPathLineTo : public CQSVGPathPart, public CSVGPathLineTo {
  public:
   CQSVGPathLineTo(CQSVG &svg, double x, double y);
 
-  CSVGPathPartType getType() const { return CSVGPathLineTo::getType(); }
+  CSVGPathPartType getType() const override { return CSVGPathLineTo::getType(); }
 
   double getX() const { return CSVGPathLineTo::getPoint().x; }
   double getY() const { return CSVGPathLineTo::getPoint().y; }
@@ -92,7 +92,7 @@ class CQSVGPathRLineTo : public CQSVGPathPart, public CSVGPathRLineTo {
  public:
   CQSVGPathRLineTo(CQSVG &svg, double x, double y);
 
-  CSVGPathPartType getType() const { return CSVGPathRLineTo::getType(); }
+  CSVGPathPartType getType() const override { return CSVGPathRLineTo::getType(); }
 
   double getDX() const { return CSVGPathRLineTo::getPoint().x; }
   double getDY() const { return CSVGPathRLineTo::getPoint().y; }
@@ -111,7 +111,7 @@ class CQSVGPathHLineTo : public CQSVGPathPart, public CSVGPathHLineTo {
  public:
   CQSVGPathHLineTo(CQSVG &svg, double x);
 
-  CSVGPathPartType getType() const { return CSVGPathHLineTo::getType(); }
+  CSVGPathPartType getType() const override { return CSVGPathHLineTo::getType(); }
 
   double getX() const { return CSVGPathHLineTo::getX(); }
   void setX(double x) { CSVGPathHLineTo::setX(x); }
@@ -127,7 +127,7 @@ class CQSVGPathRHLineTo : public CQSVGPathPart, public CSVGPathRHLineTo {
  public:
   CQSVGPathRHLineTo(CQSVG &svg, double dx);
 
-  CSVGPathPartType getType() const { return CSVGPathRHLineTo::getType(); }
+  CSVGPathPartType getType() const override { return CSVGPathRHLineTo::getType(); }
 
   double getDX() const { return CSVGPathRHLineTo::getDX(); }
   void setDX(double x) { CSVGPathRHLineTo::setDX(x); }
@@ -143,7 +143,7 @@ class CQSVGPathVLineTo : public CQSVGPathPart, public CSVGPathVLineTo {
  public:
   CQSVGPathVLineTo(CQSVG &svg, double y);
 
-  CSVGPathPartType getType() const { return CSVGPathVLineTo::getType(); }
+  CSVGPathPartType getType() const override { return CSVGPathVLineTo::getType(); }
 
   double getY() const { return CSVGPathVLineTo::getY(); }
   void setY(double y) { CSVGPathVLineTo::setY(y); }
@@ -159,7 +159,7 @@ class CQSVGPathRVLineTo : public CQSVGPathPart, public CSVGPathRVLineTo {
  public:
   CQSVGPathRVLineTo(CQSVG &svg, double dy);
 
-  CSVGPathPartType getType() const { return CSVGPathRVLineTo::getType(); }
+  CSVGPathPartType getType() const override { return CSVGPathRVLineTo::getType(); }
 
   double getDY() const { return CSVGPathRVLineTo::getDY(); }
   void setDY(double y) { CSVGPathRVLineTo::setDY(y); }
@@ -182,7 +182,7 @@ class CQSVGPathArcTo : public CQSVGPathPart, public CSVGPathArcTo {
   CQSVGPathArcTo(CQSVG &svg, double rx, double ry, double xa,
                  int fa, int fs, double x2, double y2);
 
-  CSVGPathPartType getType() const { return CSVGPathArcTo::getType(); }
+  CSVGPathPartType getType() const override { return CSVGPathArcTo::getType(); }
 
   double getRX() const { return CSVGPathArcTo::getRadiusX(); }
   void setRX(double r) { CSVGPathArcTo::setRadiusX(r); }
@@ -223,7 +223,7 @@ class CQSVGPathRArcTo : public CQSVGPathPart, public CSVGPathRArcTo {
   CQSVGPathRArcTo(CQSVG &svg, double rx, double ry, double xa,
                   int fa, int fs, double x2, double y2);
 
-  CSVGPathPartType getType() const { return CSVGPathRArcTo::getType(); }
+  CSVGPathPartType getType() const override { return CSVGPathRArcTo::getType(); }
 
   double getRX() const { return CSVGPathRArcTo::getRadiusX(); }
   void setRX(double r) { CSVGPathRArcTo::setRadiusX(r); }
@@ -260,7 +260,7 @@ class CQSVGPathBezier2To : public CQSVGPathPart, public CSVGPathBezier2To {
  public:
   CQSVGPathBezier2To(CQSVG &svg, double x1, double y1, double x2, double y2);
 
-  CSVGPathPartType getType() const { return CSVGPathBezier2To::getType(); }
+  CSVGPathPartType getType() const override { return CSVGPathBezier2To::getType(); }
 
   double getX1() const { return CSVGPathBezier2To::getPoint1().x; }
   void setX1(double x) { CSVGPathBezier2To::setPoint1(CPoint2D(x, getY1())); }
@@ -286,7 +286,7 @@ class CQSVGPathMBezier2To : public CQSVGPathPart, public CSVGPathMBezier2To {
  public:
   CQSVGPathMBezier2To(CQSVG &svg, double x2, double y2);
 
-  CSVGPathPartType getType() const { return CSVGPathMBezier2To::getType(); }
+  CSVGPathPartType getType() const override { return CSVGPathMBezier2To::getType(); }
 
   double getX2() const { return CSVGPathMBezier2To::getPoint2().x; }
   void setX2(double x) { CSVGPathMBezier2To::setPoint2(CPoint2D(x, getY2())); }
@@ -308,7 +308,7 @@ class CQSVGPathRBezier2To : public CQSVGPathPart, public CSVGPathRBezier2To {
  public:
   CQSVGPathRBezier2To(CQSVG &svg, double x1, double y1, double x2, double y2);
 
-  CSVGPathPartType getType() const { return CSVGPathRBezier2To::getType(); }
+  CSVGPathPartType getType() const override { return CSVGPathRBezier2To::getType(); }
 
   double getX1() const { return CSVGPathRBezier2To::getPoint1().x; }
   void setX1(double x) { CSVGPathRBezier2To::setPoint1(CPoint2D(x, getY1())); }
@@ -334,7 +334,7 @@ class CQSVGPathMRBezier2To : public CQSVGPathPart, public CSVGPathMRBezier2To {
  public:
   CQSVGPathMRBezier2To(CQSVG &svg, double x2, double y2);
 
-  CSVGPathPartType getType() const { return CSVGPathMRBezier2To::getType(); }
+  CSVGPathPartType getType() const override { return CSVGPathMRBezier2To::getType(); }
 
   double getX2() const { return CSVGPathMRBezier2To::getPoint2().x; }
   void setX2(double x) { CSVGPathMRBezier2To::setPoint2(CPoint2D(x, getY2())); }
@@ -359,7 +359,7 @@ class CQSVGPathBezier3To : public CQSVGPathPart, public CSVGPathBezier3To {
   CQSVGPathBezier3To(CQSVG &svg, double x1, double y1, double x2, double y2,
                      double x3, double y3);
 
-  CSVGPathPartType getType() const { return CSVGPathBezier3To::getType(); }
+  CSVGPathPartType getType() const override { return CSVGPathBezier3To::getType(); }
 
   double getX1() const { return CSVGPathBezier3To::getPoint1().x; }
   void setX1(double x) { CSVGPathBezier3To::setPoint1(CPoint2D(x, getY1())); }
@@ -393,7 +393,7 @@ class CQSVGPathMBezier3To : public CQSVGPathPart, public CSVGPathMBezier3To {
  public:
   CQSVGPathMBezier3To(CQSVG &svg, double x2, double y2, double x3, double y3);
 
-  CSVGPathPartType getType() const { return CSVGPathMBezier3To::getType(); }
+  CSVGPathPartType getType() const override { return CSVGPathMBezier3To::getType(); }
 
   double getX2() const { return CSVGPathMBezier3To::getPoint2().x; }
   void setX2(double x) { CSVGPathMBezier3To::setPoint2(CPoint2D(x, getY2())); }
@@ -424,7 +424,7 @@ class CQSVGPathRBezier3To : public CQSVGPathPart, public CSVGPathRBezier3To {
   CQSVGPathRBezier3To(CQSVG &svg, double x1, double y1, double x2, double y2,
                       double x3, double y3);
 
-  CSVGPathPartType getType() const { return CSVGPathRBezier3To::getType(); }
+  CSVGPathPartType getType() const override { return CSVGPathRBezier3To::getType(); }
 
   double getX1() const { return CSVGPathRBezier3To::getPoint1().x; }
   void setX1(double x) { CSVGPathRBezier3To::setPoint1(CPoint2D(x, getY1())); }
@@ -458,7 +458,7 @@ class CQSVGPathMRBezier3To : public CQSVGPathPart, public CSVGPathMRBezier3To {
  public:
   CQSVGPathMRBezier3To(CQSVG &svg, double x2, double y2, double x3, double y3);
 
-  CSVGPathPartType getType() const { return CSVGPathMRBezier3To::getType(); }
+  CSVGPathPartType getType() const override { return CSVGPathMRBezier3To::getType(); }
 
   double getX2() const { return CSVGPathMRBezier3To::getPoint2().x; }
   void setX2(double x) { CSVGPathMRBezier3To::setPoint2(CPoint2D(x, getY2())); }
@@ -481,7 +481,7 @@ class CQSVGPathClosePath : public CQSVGPathPart, public CSVGPathClosePath {
  public:
   CQSVGPathClosePath(CQSVG &svg, bool relative);
 
-  CSVGPathPartType getType() const { return CSVGPathClosePath::getType(); }
+  CSVGPathPartType getType() const override { return CSVGPathClosePath::getType(); }
 };
 
 #endif

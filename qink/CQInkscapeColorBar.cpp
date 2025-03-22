@@ -3,6 +3,7 @@
 
 #include <CSVGObject.h>
 #include <CQUtil.h>
+#include <CQUtilRGBA.h>
 
 #include <QPainter>
 #include <QMenu>

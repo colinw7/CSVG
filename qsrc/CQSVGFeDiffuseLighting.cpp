@@ -1,5 +1,6 @@
 #include <CQSVGFeDiffuseLighting.h>
 #include <CQUtil.h>
+#include <CQUtilRGBA.h>
 #include <CQSVG.h>
 #include <CQPropertyTree.h>
 

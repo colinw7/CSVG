@@ -5,6 +5,7 @@
 #include <CQSVGUtil.h>
 #include <CQImage.h>
 #include <CQUtil.h>
+#include <CQUtilGeom.h>
 
 #include <QVBoxLayout>
 #include <QComboBox>

@@ -4,6 +4,7 @@
 #include <CSVGObject.h>
 
 #include <CQUtil.h>
+#include <CQUtilRGBA.h>
 
 #include <QLabel>
 #include <QHBoxLayout>

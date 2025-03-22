@@ -80,10 +80,10 @@ class ConsoleScrollArea : public CQTclCommand::ScrollArea {
 //---
 
 #define CQINKSCAPE_TCL_CMD(NAME) \
-CQTCL_CMD(NAME, TclCmdProc, ConsoleScrollArea)
+CQTCL_AREA_CMD(NAME, ConsoleScrollArea)
 
 #define CQINKSCAPE_INST_TCL_CMD(NAME) \
-CQTCL_INST_TCL_CMD(NAME, TclCmdProc, ConsoleScrollArea)
+CQTCL_INST_AREA_CMD(NAME, ConsoleScrollArea)
 
 //---
 

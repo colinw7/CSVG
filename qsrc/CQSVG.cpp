@@ -55,6 +55,7 @@
 #include <CQSVGWindow.h>
 #include <CQSVGPathPart.h>
 #include <CQSVGFontObj.h>
+#include <CQUtilRGBA.h>
 #include <QTimer>
 
 CQSVG::

@@ -15,6 +15,7 @@
 #include <CQLineJoin.h>
 #include <CQRealSpin.h>
 #include <CQUtil.h>
+#include <CQUtilRGBA.h>
 
 #include <QVBoxLayout>
 #include <QStackedWidget>
