@@ -133,11 +133,11 @@ drawElement()
   return true;
 }
 
-COptString
+std::optional<std::string>
 CSVGFeTurbulence::
 getNameValue(const std::string &name) const
 {
-  COptString str;
+  std::optional<std::string> str;
 
   if      (name == "baseFrequencyX") {
     str = CStrUtil::toString(getBaseFreqX());
@@ -172,7 +172,7 @@ print(std::ostream &os, bool hier) const
 
     printValues(os);
 
-    os << "/>" << std::endl;
+    os << "/>\n";
   }
   else
     os << "feTurbulence ";
@@ -188,10 +188,10 @@ printValues(std::ostream &os, bool flat) const
 
   printNameValue(os, "type", type_);
 
-  if      (baseFreqX_.isValid() && ! baseFreqY_.isValid())
+  if      (baseFreqX_ && ! baseFreqY_)
     printNameValue(os, "baseFrequency", baseFreqX_);
-  else if (baseFreqX_.isValid() && baseFreqY_.isValid())
-    os << " baseFrequency=\"" << baseFreqX_.getValue() << " " << baseFreqY_.getValue() << "\"";
+  else if (baseFreqX_ && baseFreqY_)
+    os << " baseFrequency=\"" << baseFreqX_.value() << " " << baseFreqY_.value() << "\"";
 
   printNameValue(os, "numOctaves"   , numOctaves_);
   printNameValue(os, "seed"         , seed_);

@@ -145,7 +145,7 @@ print(std::ostream &os, bool hier) const
 
     printValues(os);
 
-    os << "/>" << std::endl;
+    os << "/>\n";
   }
   else
     os << "feBlend ";
@@ -159,7 +159,7 @@ printValues(std::ostream &os, bool flat) const
 
   CSVGFilterBase::printValues(os, flat);
 
-  if (mode_.isValid()) {
+  if (mode_) {
     auto mode = getMode();
 
     if      (mode == CSVGBlendMode::NORMAL  ) os << " mode=\"normal\"";

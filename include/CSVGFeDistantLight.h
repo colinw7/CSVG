@@ -12,10 +12,10 @@ class CSVGFeDistantLight : public CSVGFilterBase, public CSVGPrintBase<CSVGFeDis
 
   CSVGFeDistantLight *dup() const override;
 
-  double getElevation() const { return elevation_.getValue(0); }
+  double getElevation() const { return elevation_.value_or(0); }
   void setElevation(double r) { elevation_ = r; }
 
-  double getAzimuth() const { return azimuth_.getValue(0); }
+  double getAzimuth() const { return azimuth_.value_or(0); }
   void setAzimuth(double r) { azimuth_ = r; }
 
   bool processOption(const std::string &name, const std::string &value) override;
@@ -29,8 +29,8 @@ class CSVGFeDistantLight : public CSVGFilterBase, public CSVGPrintBase<CSVGFeDis
   void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
-  COptReal elevation_;
-  COptReal azimuth_;
+  std::optional<double> elevation_;
+  std::optional<double> azimuth_;
 };
 
 #endif

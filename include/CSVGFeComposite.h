@@ -14,7 +14,7 @@ class CSVGFeComposite : public CSVGFilterBase, public CSVGPrintBase<CSVGFeCompos
 
   CSVGFeComposite *dup() const override;
 
-  CRGBACombineFunc getType() const { return type_.getValue(CRGBA_COMBINE_OVER); }
+  CRGBACombineFunc getType() const { return type_.value_or(CRGBA_COMBINE_OVER); }
   void setType(CRGBACombineFunc t) { type_ = t; }
 
   std::string getFilterIn1() const;
@@ -26,16 +26,16 @@ class CSVGFeComposite : public CSVGFilterBase, public CSVGPrintBase<CSVGFeCompos
   std::string getFilterOut() const;
   void setFilterOut(const std::string &s) { filterOut_ = s; }
 
-  double getK1() const { return k1_.getValue(0); }
+  double getK1() const { return k1_.value_or(0); }
   void setK1(double r) { k1_ = r; }
 
-  double getK2() const { return k2_.getValue(0); }
+  double getK2() const { return k2_.value_or(0); }
   void setK2(double r) { k2_ = r; }
 
-  double getK3() const { return k3_.getValue(0); }
+  double getK3() const { return k3_.value_or(0); }
   void setK3(double r) { k3_ = r; }
 
-  double getK4() const { return k4_.getValue(0); }
+  double getK4() const { return k4_.value_or(0); }
   void setK4(double r) { k4_ = r; }
 
   bool processOption(const std::string &name, const std::string &value) override;
@@ -49,11 +49,11 @@ class CSVGFeComposite : public CSVGFilterBase, public CSVGPrintBase<CSVGFeCompos
   void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
-  COptValT<CRGBACombineFunc> type_;
-  COptString                 filterIn1_;
-  COptString                 filterIn2_;
-  COptString                 filterOut_;
-  COptReal                   k1_, k2_, k3_, k4_;
+  std::optional<CRGBACombineFunc> type_;
+  std::optional<std::string>      filterIn1_;
+  std::optional<std::string>      filterIn2_;
+  std::optional<std::string>      filterOut_;
+  std::optional<double>           k1_, k2_, k3_, k4_;
 };
 
 #endif

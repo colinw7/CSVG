@@ -74,10 +74,10 @@ processOption(const std::string &opt_name, const std::string &opt_value)
 
 std::string
 CSVGFilterBase::
-calcFilterIn(const COptString &filterIn) const
+calcFilterIn(const std::optional<std::string> &filterIn) const
 {
-  if (filterIn.isValid())
-    return filterIn.getValue();
+  if (filterIn)
+    return filterIn.value();
 
   auto *filter = getParentFilter();
 
@@ -86,14 +86,14 @@ calcFilterIn(const COptString &filterIn) const
 
 std::string
 CSVGFilterBase::
-calcFilterOut(const COptString &filterOut) const
+calcFilterOut(const std::optional<std::string> &filterOut) const
 {
   auto *filter = getParentFilter();
 
   std::string name = "FilterGraphic";
 
-  if (filterOut.isValid())
-    name = filterOut.getValue();
+  if (filterOut)
+    name = filterOut.value();
 
   if (filter)
     filter->setLastFilterName(name);
@@ -310,6 +310,6 @@ printValues(std::ostream &os, bool /*flat*/) const
   printNameLength    (os, "height"        , height_);
   printNameValue     (os, "filterRes"     , filterRes_);
 
-  if (! xlink_.getValue().isNull())
+  if (! xlink_.value().isNull())
     printNameXLink(os, "xlink:href", xlink_);
 }

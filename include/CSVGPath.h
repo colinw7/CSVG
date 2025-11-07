@@ -21,8 +21,8 @@ class CSVGPath : public CSVGObject, public CSVGPrintBase<CSVGPath> {
 
   void setPartList(const CSVGPathPartList &parts) { parts_ = parts; }
 
-  bool hasPathLength() const { return pathLength_.isValid(); }
-  double getPathLength() const { return pathLength_.getValue(0); }
+  bool hasPathLength() const { return !!pathLength_; }
+  double getPathLength() const { return pathLength_.value_or(0); }
   void setPathLength(double r) { pathLength_ = r; }
 
   bool draw() override;
@@ -41,8 +41,8 @@ class CSVGPath : public CSVGObject, public CSVGPrintBase<CSVGPath> {
   void moveDelta(const CVector2D &d) override;
 
  protected:
-  CSVGPathPartList parts_;
-  COptReal         pathLength_;
+  CSVGPathPartList      parts_;
+  std::optional<double> pathLength_;
 };
 
 #endif

@@ -21,9 +21,9 @@ class CSVGMPath : public CSVGObject, public CSVGPrintBase<CSVGMPath> {
   const CSVGPathPartList &getPartList() const override { return parts_; }
   void setPartList(const CSVGPathPartList &parts) { parts_ = parts; }
 
-  const CSVGXLink &xlink() const { return xlink_.getValue(); }
+  const CSVGXLink &xlink() const { return xlink_.value(); }
 
-  std::string getLinkName() const { return (xlink_.isValid() ? xlink_.getValue().str() : ""); }
+  std::string getLinkName() const { return (xlink_ ? xlink_.value().str() : ""); }
   void setLinkName(const std::string &str);
 
   bool draw() override;
@@ -37,8 +37,8 @@ class CSVGMPath : public CSVGObject, public CSVGPrintBase<CSVGMPath> {
   void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  protected:
-  CSVGPathPartList    parts_;
-  COptValT<CSVGXLink> xlink_;
+  CSVGPathPartList         parts_;
+  std::optional<CSVGXLink> xlink_;
 };
 
 #endif

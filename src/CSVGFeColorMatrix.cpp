@@ -67,11 +67,11 @@ processOption(const std::string &opt_name, const std::string &opt_value)
     auto num_values = values_.size();
 
     if (getType() == CSVGColorMatrixType::MATRIX && num_values != 20)
-      std::cerr << "Invalid matrix values" << std::endl;
+      std::cerr << "Invalid matrix values\n";
     if (getType() == CSVGColorMatrixType::SATURATE && num_values != 1)
-      std::cerr << "Invalid saturate values" << std::endl;
+      std::cerr << "Invalid saturate values\n";
     if (getType() == CSVGColorMatrixType::HUE_ROTATE && num_values != 1)
-      std::cerr << "Invalid hueRotate values" << std::endl;
+      std::cerr << "Invalid hueRotate values\n";
   }
   else
     return CSVGFilterBase::processOption(opt_name, opt_value);
@@ -141,7 +141,7 @@ print(std::ostream &os, bool hier) const
 
     printValues(os);
 
-    os << "/>" << std::endl;
+    os << "/>\n";
   }
   else
     os << "feColorMatrix ";
@@ -158,7 +158,7 @@ printValues(std::ostream &os, bool flat) const
   printNameValue(os, "in"    , filterIn_ );
   printNameValue(os, "result", filterOut_);
 
-  if (type_.isValid()) {
+  if (type_) {
     auto type = getType();
 
     os << " type=\"";

@@ -13,13 +13,13 @@ class CSVGFePointLight : public CSVGFilterBase, public CSVGPrintBase<CSVGFePoint
 
   CSVGFePointLight *dup() const override;
 
-  double getX() const { return x_.getValue(0); }
+  double getX() const { return x_.value_or(0); }
   void setX(double r) { x_ = r; }
 
-  double getY() const { return y_.getValue(0); }
+  double getY() const { return y_.value_or(0); }
   void setY(double r) { y_ = r; }
 
-  double getZ() const { return z_.getValue(0); }
+  double getZ() const { return z_.value_or(0); }
   void setZ(double r) { z_ = r; }
 
   CPoint3D getPoint() const { return CPoint3D(getX(), getY(), getZ()); }
@@ -35,9 +35,9 @@ class CSVGFePointLight : public CSVGFilterBase, public CSVGPrintBase<CSVGFePoint
   void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
-  COptReal x_;
-  COptReal y_;
-  COptReal z_;
+  std::optional<double> x_;
+  std::optional<double> y_;
+  std::optional<double> z_;
 };
 
 #endif

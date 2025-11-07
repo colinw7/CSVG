@@ -75,22 +75,22 @@ drawElement()
 
   if (filter && filter->lastElement()) {
     filter->lastElement()->getSubRegion(bbox);
-    //std::cerr << "flood last sub region: " << bbox << std::endl;
+    //std::cerr << "flood last sub region: " << bbox << "\n";
   }
   else {
     getSubRegion(bbox);
-    //std::cerr << "flood element sub region: " << bbox << std::endl;
+    //std::cerr << "flood element sub region: " << bbox << "\n";
   }
 
   //---
 
   CRGBA c(0, 0, 0, 0);
 
-  if (color_.isValid())
-    c = color_.getValue().getValue().rgba();
+  if (color_)
+    c = color_.value().getValue().rgba();
 
-  if (opacity_.isValid())
-    c.setAlpha(opacity_.getValue());
+  if (opacity_)
+    c.setAlpha(opacity_.value());
 
   CSVGBuffer::floodBuffers(c, bbox, outBuffer);
 
@@ -119,7 +119,7 @@ print(std::ostream &os, bool hier) const
 
     printValues(os);
 
-    os << "/>" << std::endl;
+    os << "/>\n";
   }
   else
     os << "feFlood ";
@@ -136,8 +136,8 @@ printValues(std::ostream &os, bool flat) const
   printNameValue(os, "in"    , filterIn_ );
   printNameValue(os, "result", filterOut_);
 
-  if (color_.isValid())
-    os << " flood-color=\"" << color_.getValue().getValue() << "\"";
+  if (color_)
+    os << " flood-color=\"" << color_.value().getValue() << "\"";
 
   printNameValue(os, "flood-opacity", opacity_);
 }

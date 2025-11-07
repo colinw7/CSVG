@@ -46,7 +46,7 @@ void
 CSVGSet::
 animate(double /*t*/)
 {
-  if (attributeName_.isValid() && to_.isValid()) {
+  if (attributeName_ && to_) {
     getParent()->processOption(getAttributeName(), getTo());
 
     svg_.redraw();
@@ -62,7 +62,7 @@ print(std::ostream &os, bool hier) const
 
     CSVGAnimateBase::printValues(os);
 
-    os << "/>" << std::endl;
+    os << "/>\n";
   }
   else
     os << "set ";

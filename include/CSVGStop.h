@@ -13,16 +13,16 @@ class CSVGStop : public CSVGObject, public CSVGPrintBase<CSVGStop> {
 
   CSVGStop *dup() const override;
 
-  bool hasOffset() const { return offset_.isValid(); }
-  CScreenUnits getOffset() const { return offset_.getValue(CScreenUnits(0)); }
+  bool hasOffset() const { return !!offset_; }
+  CScreenUnits getOffset() const { return offset_.value_or(CScreenUnits(0)); }
   void setOffset(double offset) { offset_ = CScreenUnits(offset); }
 
-  bool hasColor() const { return color_.isValid(); }
-  Color getColor() const { return color_.getValue(Color()); }
+  bool hasColor() const { return !!color_; }
+  Color getColor() const { return color_.value_or(Color()); }
   void setColor(const Color &color) { color_ = color; }
 
-  bool hasOpacity() const { return opacity_.isValid(); }
-  double getOpacity() const { return opacity_.getValue(1); }
+  bool hasOpacity() const { return !!opacity_; }
+  double getOpacity() const { return opacity_.value_or(1); }
   void setOpacity(double opacity) { opacity_ = opacity; }
 
   bool processOption(const std::string &name, const std::string &value) override;
@@ -38,9 +38,9 @@ class CSVGStop : public CSVGObject, public CSVGPrintBase<CSVGStop> {
   void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
-  COptValT<CScreenUnits> offset_;
-  COptValT<Color>        color_;
-  COptReal               opacity_;
+  std::optional<CScreenUnits> offset_;
+  std::optional<Color>        color_;
+  std::optional<double>       opacity_;
 };
 
 #endif

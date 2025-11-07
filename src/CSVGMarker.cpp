@@ -89,11 +89,11 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   return true;
 }
 
-COptString
+std::optional<std::string>
 CSVGMarker::
 getNameValue(const std::string &name) const
 {
-  COptString str;
+  std::optional<std::string> str;
 
   if (name == "orientAngle")
     str = CSVG::encodeAngleString(getOrientAngle());
@@ -166,8 +166,8 @@ drawMarker(double x, double y, double autoAngle)
       if (svg_.currentDrawObject()) {
         auto lw1 = svg_.currentDrawObject()->getFlatStrokeWidth();
 
-        if (lw1.isValid() && ! lw1.getValue().isInherit())
-          lw = lw1.getValue().getValue();
+        if (lw1 && ! lw1.value().isInherit())
+          lw = lw1.value().getValue();
       }
 
       xs = markerWidth*lw/w1;
@@ -194,11 +194,11 @@ drawMarker(double x, double y, double autoAngle)
     ys = h1/markerHeight;
   }
 
-  matrix.translate(x - refX*xs, y - refY*ys);
+  matrix.addTranslation(x - refX*xs, y - refY*ys);
 
-  matrix.rotate(angle.degrees(), CPoint2D(refX*xs, refY*ys));
+  matrix.addRotation(angle.degrees(), CPoint2D(refX*xs, refY*ys));
 
-  matrix.scale(xs, ys);
+  matrix.addScale(xs, ys);
 
   currentBuffer->setTransform(matrix);
 
@@ -262,11 +262,11 @@ print(std::ostream &os, bool hier) const
 
     printValues(os);
 
-    os << ">" << std::endl;
+    os << ">\n";
 
     printChildren(os, hier);
 
-    os << "</marker>" << std::endl;
+    os << "</marker>\n";
   }
   else
     os << "marker";

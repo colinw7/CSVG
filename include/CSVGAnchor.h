@@ -15,9 +15,9 @@ class CSVGAnchor : public CSVGObject, public CSVGPrintBase<CSVGAnchor> {
 
   CSVGAnchor *dup() const override;
 
-  const CSVGXLink &xlink() const { return xlink_.getValue(); }
+  const CSVGXLink &xlink() const { return xlink_.value(); }
 
-  std::string getLinkName() const { return (xlink_.isValid() ? xlink_.getValue().str() : ""); }
+  std::string getLinkName() const { return (xlink_ ? xlink_.value().str() : ""); }
   void setLinkName(const std::string &str);
 
   bool processOption(const std::string &name, const std::string &value) override;
@@ -31,8 +31,8 @@ class CSVGAnchor : public CSVGObject, public CSVGPrintBase<CSVGAnchor> {
   void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
-  COptValT<CSVGXLink> xlink_;
-  std::string         title_;
+  std::optional<CSVGXLink> xlink_;
+  std::string              title_;
 };
 
 #endif

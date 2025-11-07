@@ -105,7 +105,7 @@ class CSVGBuffer {
   bool isAlpha() const { return alpha_; }
   void setAlpha(bool b);
 
-  double opacity() const { return opacity_.getValue(1); }
+  double opacity() const { return opacity_.value_or(1); }
   void setOpacity(double r);
 
   //------
@@ -359,26 +359,26 @@ class CSVGBuffer {
   CSVGBuffer &operator=(const CSVGBuffer &rhs);
 
  private:
-  using OptPoint2D = COptValT<CPoint2D>;
+  using OptPoint2D = std::optional<CPoint2D>;
 
-  CSVG&          svg_;
-  std::string    name_;
-  CSVGBuffer*    refBuffer_    { nullptr };
-  CSVGBuffer*    parentBuffer_ { nullptr };
-  CSVGRenderer*  renderer_     { nullptr };
-  bool           alpha_        { false };
-  COptReal       opacity_;
-  CMatrixStack2D transform_;
-  CLineDash      lineDash_;
-  CPoint2D       origin_       { 0, 0 };
-  CBBox2D        bbox_;
-  OptPoint2D     pathLastControlPoint1_;
-  OptPoint2D     pathLastControlPoint2_;
-  bool           clip_         { false };
-  bool           hasClipPath_  { false };
-  bool           isStroked_    { true };
-  bool           isFilled_     { true };
-  bool           drawing_      { false };
+  CSVG&                 svg_;
+  std::string           name_;
+  CSVGBuffer*           refBuffer_    { nullptr };
+  CSVGBuffer*           parentBuffer_ { nullptr };
+  CSVGRenderer*         renderer_     { nullptr };
+  bool                  alpha_        { false };
+  std::optional<double> opacity_;
+  CMatrixStack2D        transform_;
+  CLineDash             lineDash_;
+  CPoint2D              origin_       { 0, 0 };
+  CBBox2D               bbox_;
+  OptPoint2D            pathLastControlPoint1_;
+  OptPoint2D            pathLastControlPoint2_;
+  bool                  clip_         { false };
+  bool                  hasClipPath_  { false };
+  bool                  isStroked_    { true };
+  bool                  isFilled_     { true };
+  bool                  drawing_      { false };
 };
 
 #endif

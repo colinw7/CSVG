@@ -92,7 +92,7 @@ draw()
   if (svg_.getDebug())
     CSVGLog() << *this;
 
-  auto *obj = (xlink_.isValid() ? xlink_.getValue().getObject() : nullptr);
+  auto *obj = (xlink_ ? xlink_.value().getObject() : nullptr);
   if (! obj) return false;
 
   auto *path = dynamic_cast<CSVGPath *>(obj);
@@ -185,11 +185,11 @@ draw()
 
 #if 0
     if (pi1 == pi2) {
-std::cerr << "Adjust angles " << ai1 << " " << ai2 << std::endl;
+std::cerr << "Adjust angles " << ai1 << " " << ai2 << "\n";
       adjustAngles(ai1, ai2);
 
       ai = (ai1 + ai2)/2;
-std::cerr << "New angles " << ai1 << " " << ai2 << std::endl;
+std::cerr << "New angles " << ai1 << " " << ai2 << "\n";
     }
 #endif
 
@@ -241,10 +241,10 @@ print(std::ostream &os, bool hier) const
     os << ">";
 
     if (hasChildren()) {
-      os << std::endl;
+      os << "\n";
 
       if (hasText())
-        os << getText() << std::endl;
+        os << getText() << "\n";
 
       printChildren(os, hier);
     }
@@ -252,7 +252,7 @@ print(std::ostream &os, bool hier) const
       os << getText();
     }
 
-    os << "</textPath>" << std::endl;
+    os << "</textPath>\n";
   }
   else
     os << "textPath ";
@@ -264,7 +264,7 @@ printValues(std::ostream &os, bool flat) const
 {
   printNamePercent(os, "startOffset", startOffset_);
 
-  if (! xlink_.getValue().isNull())
+  if (! xlink_.value().isNull())
     printNameXLink (os, "xlink:href", xlink_);
 
   CSVGObject::printValues(os, flat);

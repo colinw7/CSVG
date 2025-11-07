@@ -110,7 +110,7 @@ void
 CSVGLinearGradient::
 addLinkStops()
 {
-  auto *object = xlink_.getValue().getObject();
+  auto *object = xlink_.value().getObject();
 
   if (! object) {
     //CSVGLog() << "No object for linear gradient link";
@@ -121,10 +121,10 @@ addLinkStops()
   auto *lg = dynamic_cast<CSVGLinearGradient *>(object);
 
   if      (lg) {
-    if (lg->x1_.isValid()) x1_ = lg->x1_;
-    if (lg->y1_.isValid()) y1_ = lg->y1_;
-    if (lg->x2_.isValid()) x2_ = lg->x2_;
-    if (lg->y2_.isValid()) y2_ = lg->y2_;
+    if (lg->x1_) x1_ = lg->x1_;
+    if (lg->y1_) y1_ = lg->y1_;
+    if (lg->x2_) x2_ = lg->x2_;
+    if (lg->y2_) y2_ = lg->y2_;
 
     if (lg->getGTransformValid()) gtransform_ = lg->getGTransform();
     if (lg->getUnitsValid     ()) units_      = lg->getUnits();
@@ -163,11 +163,11 @@ print(std::ostream &os, bool hier) const
 
     printValues(os);
 
-    os << ">" << std::endl;
+    os << ">\n";
 
     printChildren(os, hier);
 
-    os << "</linearGradient>" << std::endl;
+    os << "</linearGradient>\n";
   }
   else
     os << "linearGradient ";
@@ -190,7 +190,7 @@ printValues(std::ostream &os, bool flat) const
   if (getSpreadValid())
     os << " spreadMethod=\"" << CSVG::encodeGradientSpread(getSpread()) << "\"";
 
-  if (! xlink_.getValue().isNull())
+  if (! xlink_.value().isNull())
     printNameXLink(os, "xlink:href", xlink_);
 
   CSVGObject::printValues(os, flat);
@@ -198,7 +198,7 @@ printValues(std::ostream &os, bool flat) const
 
 void
 CSVGLinearGradient::
-setFillBuffer(CSVGBuffer *buffer, CSVGObject *obj, const COptReal &opacity)
+setFillBuffer(CSVGBuffer *buffer, CSVGObject *obj, const std::optional<double> &opacity)
 {
   using GradientP = std::unique_ptr<CLinearGradient>;
 
@@ -209,7 +209,7 @@ setFillBuffer(CSVGBuffer *buffer, CSVGObject *obj, const COptReal &opacity)
 
 void
 CSVGLinearGradient::
-setStrokeBuffer(CSVGBuffer *buffer, CSVGObject *obj, const COptReal &opacity)
+setStrokeBuffer(CSVGBuffer *buffer, CSVGObject *obj, const std::optional<double> &opacity)
 {
   using GradientP = std::unique_ptr<CLinearGradient>;
 
@@ -220,7 +220,7 @@ setStrokeBuffer(CSVGBuffer *buffer, CSVGObject *obj, const COptReal &opacity)
 
 CLinearGradient *
 CSVGLinearGradient::
-createGradient(CSVGObject *obj, const COptReal &opacity)
+createGradient(CSVGObject *obj, const std::optional<double> &opacity)
 {
   double x1, y1, x2, y2;
 
@@ -232,7 +232,7 @@ createGradient(CSVGObject *obj, const COptReal &opacity)
 
   gradient->setLine(x1, y1, x2, y2);
 
-  if (spread_.isValid())
+  if (spread_)
     gradient->setSpread(getSpread());
 
   for (const auto &s : stops()) {
@@ -248,7 +248,7 @@ createGradient(CSVGObject *obj, const COptReal &opacity)
     if (s->hasOpacity())
       alpha = s->getOpacity();
     else
-      alpha = opacity.getValue(1.0);
+      alpha = opacity.value_or(1.0);
 
     rgba.setAlpha(alpha);
 

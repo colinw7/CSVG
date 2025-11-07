@@ -48,11 +48,11 @@ void
 CSVGAnimate::
 animate(double t)
 {
-  //std::cerr << "CSVGAnimate: " << currentTime_ << ":" << t << std::endl;
-  if (! attributeName_.isValid())
+  //std::cerr << "CSVGAnimate: " << currentTime_ << ":" << t << "\n";
+  if (! attributeName_)
     return;
 
-  if      (from_.isValid() && to_.isValid()) {
+  if      (from_ && to_) {
     std::string ystr;
 
     if (getParent()->interpValue(getAttributeName(), getFrom(), getTo(), t, ystr)) {
@@ -61,10 +61,10 @@ animate(double t)
       svg_.redraw();
     }
   }
-  else if (values_.isValid()) {
+  else if (values_) {
     std::vector<std::string> words;
 
-    CStrUtil::addFields(values_.getValue(), words, ";");
+    CStrUtil::addFields(values_.value(), words, ";");
 
     if (words.size() >= 2) {
       std::string ystr;
@@ -90,7 +90,7 @@ print(std::ostream &os, bool hier) const
 
     CSVGAnimate::printValues(os);
 
-    os << "/>" << std::endl;
+    os << "/>\n";
   }
   else
     os << "animate ";

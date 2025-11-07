@@ -16,13 +16,13 @@
 #include <CScreenUnits.h>
 #include <CBBox2D.h>
 #include <CMatrixStack2D.h>
-#include <COptVal.h>
 #include <CAlignType.h>
 #include <CObjTypeOld.h>
 #include <CAngle.h>
 
 #include <list>
 #include <set>
+#include <optional>
 
 #define CSVG_OBJECT_DEF(name, id) \
 const CObjType &getObjType() const override { \
@@ -83,7 +83,7 @@ class CSVGObject {
   //---
 
   //! get/set id
-  bool hasId() const { return (id_.isValid() && id_.getValue().size()); }
+  bool hasId() const { return (id_ && id_.value().size()); }
   std::string getId(bool autoName=false) const;
   void setId(const std::string &id);
 
@@ -99,7 +99,7 @@ class CSVGObject {
   //---
 
   //! get/set classes (class property)
-  Classes getClasses() const { return classes_.getValue(Classes()); }
+  Classes getClasses() const { return classes_.value_or(Classes()); }
   void setClasses(const Classes &classes);
 
   //---
@@ -180,8 +180,8 @@ class CSVGObject {
   //---
 
   //! get/set filter
-  bool hasFilter() const { return filter_.isValid(); }
-  CSVGFilter *getFilter() const { return filter_.getValue(nullptr); }
+  bool hasFilter() const { return !!filter_; }
+  CSVGFilter *getFilter() const { return filter_.value_or(nullptr); }
   void setFilter(CSVGFilter *filter) { filter_ = filter; }
 
   //! get/set filtered
@@ -243,8 +243,8 @@ class CSVGObject {
   //---
 
   //! get/set view box (viewBox property)
-  bool hasViewBox() const { return viewBox_.isValid(); }
-  CBBox2D getViewBox() const { return viewBox_.getValue(CBBox2D()); }
+  bool hasViewBox() const { return !! viewBox_; }
+  CBBox2D getViewBox() const { return viewBox_.value_or(CBBox2D()); }
   void setViewBox(const CBBox2D &box) { viewBox_ = box; }
 
   //---
@@ -399,7 +399,7 @@ class CSVGObject {
   //------
 
   // text
-  virtual bool hasText() const { return text_.isValid(); }
+  virtual bool hasText() const { return !!text_; }
   virtual std::string getText() const;
   virtual void setText(const std::string &text);
 
@@ -407,8 +407,8 @@ class CSVGObject {
 
   // get/set opacity
   void setOpacity(const Opacity opacity) { opacity_ = opacity; }
-  bool getOpacityValid() const { return opacity_.isValid(); }
-  Opacity getOpacity() const { return opacity_.getValue(Opacity(1.0)); }
+  bool getOpacityValid() const { return !!opacity_; }
+  Opacity getOpacity() const { return opacity_.value_or(Opacity(1.0)); }
 
   //------
 
@@ -464,18 +464,18 @@ class CSVGObject {
 
   //---
 
-  CSVGStroke            getFlatStroke          () const;
-  COptValT<Color>       getFlatStrokeColor     () const;
-  COptValT<Opacity>     getFlatStrokeOpacity   () const;
-  COptValT<FillType>    getFlatStrokeRule      () const;
-  COptString            getFlatStrokeUrl       () const;
-  COptValT<CSVGObject*> getFlatStrokeFillObject() const;
-  COptValT<Width>       getFlatStrokeWidth     () const;
-  COptValT<DashArray>   getFlatStrokeDashArray () const;
-  COptValT<DashOffset>  getFlatStrokeDashOffset() const;
-  COptValT<LineCap>     getFlatStrokeLineCap   () const;
-  COptValT<LineJoin>    getFlatStrokeLineJoin  () const;
-  COptValT<MiterLimit>  getFlatStrokeMiterLimit() const;
+  CSVGStroke                 getFlatStroke          () const;
+  std::optional<Color>       getFlatStrokeColor     () const;
+  std::optional<Opacity>     getFlatStrokeOpacity   () const;
+  std::optional<FillType>    getFlatStrokeRule      () const;
+  std::optional<std::string> getFlatStrokeUrl       () const;
+  std::optional<CSVGObject*> getFlatStrokeFillObject() const;
+  std::optional<Width>       getFlatStrokeWidth     () const;
+  std::optional<DashArray>   getFlatStrokeDashArray () const;
+  std::optional<DashOffset>  getFlatStrokeDashOffset() const;
+  std::optional<LineCap>     getFlatStrokeLineCap   () const;
+  std::optional<LineJoin>    getFlatStrokeLineJoin  () const;
+  std::optional<MiterLimit>  getFlatStrokeMiterLimit() const;
 
   //------
 
@@ -508,11 +508,11 @@ class CSVGObject {
 
   CSVGFill getFlatFill() const;
 
-  COptValT<Color>        getFlatFillColor     () const;
-  COptValT<Opacity>      getFlatFillOpacity   () const;
-  COptValT<FillType>     getFlatFillRule      () const;
-  COptString             getFlatFillUrl       () const;
-  COptValT<CSVGObject *> getFlatFillFillObject() const;
+  std::optional<Color>        getFlatFillColor     () const;
+  std::optional<Opacity>      getFlatFillOpacity   () const;
+  std::optional<FillType>     getFlatFillRule      () const;
+  std::optional<std::string>  getFlatFillUrl       () const;
+  std::optional<CSVGObject *> getFlatFillFillObject() const;
 
   //------
 
@@ -525,36 +525,36 @@ class CSVGObject {
 
   CSVGFontDef getFlatFontDef() const;
 
-  COptValT<FontFamily> getFlatFontFamily() const;
-  CFontStyles          getFlatFontStyle() const;
-  COptValT<FontSize>   getFlatFontSize() const;
+  std::optional<FontFamily> getFlatFontFamily() const;
+  CFontStyles               getFlatFontStyle() const;
+  std::optional<FontSize>   getFlatFontSize() const;
 
   //------
 
   //! get/set overflow
   void setOverflow(const std::string &str);
 
-  bool hasOverflow() const { return overflow_.isValid(); }
+  bool hasOverflow() const { return !!overflow_; }
   CSVGOverflowType getOverflow() const {
-    return overflow_.getValue(Overflow(CSVGOverflowType::VISIBLE)).getValue(); }
+    return overflow_.value_or(Overflow(CSVGOverflowType::VISIBLE)).getValue(); }
   void setOverflow(CSVGOverflowType o) { overflow_ = Overflow(o); }
 
   //---
 
   //! get/set visible
-  bool hasVisibility() const { return visibility_.isValid(); }
-  std::string getVisibility() const { return visibility_.getValue(""); }
+  bool hasVisibility() const { return !!visibility_; }
+  std::string getVisibility() const { return visibility_.value_or(""); }
   void setVisibility(const std::string &str) { visibility_ = str; }
 
   //! get/set display
-  std::string getDisplay() const { return display_.getValue(""); }
+  std::string getDisplay() const { return display_.value_or(""); }
   void setDisplay(const std::string &str) { display_ = str; }
 
   //---
 
   //! get/set current color
-  bool hasCurrentColor() const { return currentColor_.isValid(); }
-  CSVGColor currentColor() const { return currentColor_.getValue(CSVGColor()); }
+  bool hasCurrentColor() const { return !!currentColor_; }
+  CSVGColor currentColor() const { return currentColor_.value_or(CSVGColor()); }
   void setCurrentColor(const CSVGColor &c) { currentColor_ = c; }
 
   CRGBA getFlatCurrentColor() const;
@@ -591,9 +591,9 @@ class CSVGObject {
 
   bool hasNameValue(const std::string &name) const;
 
-  virtual COptString getNameValue       (const std::string &name) const;
-  virtual COptReal   getRealNameValue   (const std::string &name) const;
-  virtual COptInt    getIntegerNameValue(const std::string &name) const;
+  virtual std::optional<std::string> getNameValue       (const std::string &name) const;
+  virtual std::optional<double>      getRealNameValue   (const std::string &name) const;
+  virtual std::optional<int>         getIntegerNameValue(const std::string &name) const;
 
   const NameValues &nameValues() const { return nameValues_; }
 
@@ -603,7 +603,7 @@ class CSVGObject {
 
   bool hasStyleValue(const std::string &name) const;
 
-  COptString getStyleValue(const std::string &name) const;
+  std::optional<std::string> getStyleValue(const std::string &name) const;
 
   const NameValues &styleValues() const { return styleValues_; }
 
@@ -645,7 +645,7 @@ class CSVGObject {
   //---
 
   CSVGTextDecoration getTextDecoration() const {
-    return textDecoration_.getValue(CSVGTextDecoration::NONE);
+    return textDecoration_.value_or(CSVGTextDecoration::NONE);
   }
   void setTextDecoration(const std::string &str);
 
@@ -654,7 +654,7 @@ class CSVGObject {
   }
 
   std::string getWritingMode() const {
-    return getNameValue("writing-mode").getValue("lr-tb");
+    return getNameValue("writing-mode").value_or("lr-tb");
   }
 
   void setHGlyphOrient(const std::string &o) {
@@ -662,7 +662,7 @@ class CSVGObject {
   }
 
   std::string getHGlyphOrient() const {
-    return getNameValue("glyph-orientation-horizontal").getValue("auto");
+    return getNameValue("glyph-orientation-horizontal").value_or("auto");
   }
 
   void setVGlyphOrient(const std::string &o) {
@@ -670,14 +670,14 @@ class CSVGObject {
   }
 
   std::string getVGlyphOrient() const {
-    return getNameValue("glyph-orientation-vertical").getValue("auto");
+    return getNameValue("glyph-orientation-vertical").value_or("auto");
   }
 
-  bool hasLetterSpacing() const { return letterSpacing_.isValid(); }
-  CScreenUnits getLetterSpacing() const { return letterSpacing_.getValue(CScreenUnits(0)); }
+  bool hasLetterSpacing() const { return !!letterSpacing_; }
+  CScreenUnits getLetterSpacing() const { return letterSpacing_.value_or(CScreenUnits(0)); }
 
-  bool hasWordSpacing() const { return wordSpacing_.isValid(); }
-  CScreenUnits getWordSpacing() const { return wordSpacing_.getValue(CScreenUnits(0)); }
+  bool hasWordSpacing() const { return !!wordSpacing_; }
+  CScreenUnits getWordSpacing() const { return wordSpacing_.value_or(CScreenUnits(0)); }
 
   //---
 
@@ -745,28 +745,29 @@ class CSVGObject {
   void printTransform(std::ostream &os, const CMatrixStack2D &m) const;
 
   void printNameTransform(std::ostream &os, const std::string &name,
-                          const COptValT<CMatrixStack2D> &m) const {
-    if (m.isValid()) {
-      os << " " << name << "=\""; printTransform(os, m.getValue()); os << "\"";
+                          const std::optional<CMatrixStack2D> &m) const {
+    if (m) {
+      os << " " << name << "=\""; printTransform(os, m.value()); os << "\"";
     }
   }
 
   template<typename T>
-  void printNameValue(std::ostream &os, const std::string &name, const COptValT<T> &value) const {
-    if (value.isValid())
-      os << " " << name << "=\"" << value.getValue() << "\"";
+  void printNameValue(std::ostream &os, const std::string &name,
+                      const std::optional<T> &value) const {
+    if (value)
+      os << " " << name << "=\"" << value.value() << "\"";
   }
 
   template<typename T>
   void printNameValues(std::ostream &os, const std::string &name,
-                       const COptValT< std::vector<T> > &values) const {
-    if (values.isValid()) {
+                       const std::optional< std::vector<T> > &values) const {
+    if (values) {
       os << " " << name << "=\"";
 
-      for (uint i = 0; i < values.getValue().size(); ++i) {
+      for (uint i = 0; i < values.value().size(); ++i) {
          if (i > 0) os << " ";
 
-         os << values.getValue()[i];
+         os << values.value()[i];
       }
 
       os << "\"";
@@ -790,45 +791,45 @@ class CSVGObject {
                       const CSVGPathPartList &parts) const;
 
   void printNameLength(std::ostream &os, const std::string &name,
-                       const COptValT<CScreenUnits> &length) const {
-    if (length.isValid()) {
-      os << " " << name << "=\"" << length.getValue() << "\"";
+                       const std::optional<CScreenUnits> &length) const {
+    if (length) {
+      os << " " << name << "=\"" << length.value() << "\"";
     }
   }
 
   void printNameTime(std::ostream &os, const std::string &name,
-                     const COptValT<CSVGTimeValue> &time) const {
-    if (time.isValid()) {
-      os << " " << name << "=\"" << time.getValue() << "\"";
+                     const std::optional<CSVGTimeValue> &time) const {
+    if (time) {
+      os << " " << name << "=\"" << time.value() << "\"";
     }
   }
 
   void printNameEvent(std::ostream &os, const std::string &name,
-                      const COptValT<CSVGEventValue> &event) const {
-    if (event.isValid()) {
-      os << " " << name << "=\"" << event.getValue() << "\"";
+                      const std::optional<CSVGEventValue> &event) const {
+    if (event) {
+      os << " " << name << "=\"" << event.value() << "\"";
     }
   }
 
   void printNameXLink(std::ostream &os, const std::string &name,
-                      const COptValT<CSVGXLink> &xlink) const {
-    if (xlink.isValid()) {
-      os << " " << name << "=\"" << xlink.getValue().str() << "\"";
+                      const std::optional<CSVGXLink> &xlink) const {
+    if (xlink) {
+      os << " " << name << "=\"" << xlink.value().str() << "\"";
     }
   }
 
   void printNamePreserveAspect(std::ostream &os, const std::string &name,
-                               const COptValT<CSVGPreserveAspect> &a) const {
-    if (a.isValid()) {
-      os << " " << name << "=\"" << a.getValue() << "\"";
+                               const std::optional<CSVGPreserveAspect> &a) const {
+    if (a) {
+      os << " " << name << "=\"" << a.value() << "\"";
     }
   }
 
   void printNameCoordUnits(std::ostream &os, const std::string &name,
-                           const COptValT<CSVGCoordUnits> &units) const;
+                           const std::optional<CSVGCoordUnits> &units) const;
 
   void printNamePercent(std::ostream &os, const std::string &name,
-                        const COptValT<CScreenUnits> &units) const;
+                        const std::optional<CScreenUnits> &units) const;
 
   //------
 
@@ -851,48 +852,48 @@ class CSVGObject {
   using StringVector = std::vector<std::string>;
   using TextAnchor   = CSVGInheritValT<CHAlignType>;
 
-  CSVG&                        svg_;
-  COptString                   id_;
-  COptValT<StringVector>       classes_;
-  CSVGObject*                  parent_ { nullptr };
-  uint                         ind_;
-  COptValT<Opacity>            opacity_;
-  COptString                   text_;
-  CSVGStroke                   stroke_;
-  CSVGFill                     fill_;
-  COptValT<Overflow>           overflow_;
-  COptString                   visibility_;
-  COptString                   display_;
-  COptValT<CSVGColor>          currentColor_;
-  CSVGFill                     viewportFill_;
-  CSVGClip                     clip_;
-  CSVGFontDef                  fontDef_;
-  COptValT<TextAnchor>         textAnchor_;
-  COptValT<CSVGTextDecoration> textDecoration_;
-  COptValT<CScreenUnits>       letterSpacing_;
-  COptValT<CScreenUnits>       wordSpacing_;
-  NameValues                   nameValues_;
-  NameValues                   styleValues_;
-  SkipNames                    skipNames_;
-  CMatrixStack2D               transform_;
-  CSVGEnableBackground         enableBackground_ { CSVGEnableBackground::ACCUMULATE };
-  CBBox2D                      enableBackgroundRect_;
-  bool                         externalResourcesRequired_ { false };
-  ObjectList                   objects_;
-  CSVGAnimation                animation_;
-  COptValT<CSVGFilter*>        filter_;
-  bool                         filtered_ { true };
-  CSVGMask*                    mask_     { nullptr };
-  bool                         masked_   { true };
-  CSVGClipPath*                clipPath_ { nullptr };
-  bool                         clipped_  { true };
-  CSVGObjectMarker             marker_;
-  COptValT<CBBox2D>            viewBox_;
-  mutable COptValT<CBBox2D>    bbox_;
-  bool                         selected_ { false };
-  bool                         inside_   { false };
-  CXMLTag*                     xmlTag_   { nullptr };
-  COptString                   outBuffer_;
+  CSVG&                             svg_;
+  std::optional<std::string>        id_;
+  std::optional<StringVector>       classes_;
+  CSVGObject*                       parent_ { nullptr };
+  uint                              ind_;
+  std::optional<Opacity>            opacity_;
+  std::optional<std::string>        text_;
+  CSVGStroke                        stroke_;
+  CSVGFill                          fill_;
+  std::optional<Overflow>           overflow_;
+  std::optional<std::string>        visibility_;
+  std::optional<std::string>        display_;
+  std::optional<CSVGColor>          currentColor_;
+  CSVGFill                          viewportFill_;
+  CSVGClip                          clip_;
+  CSVGFontDef                       fontDef_;
+  std::optional<TextAnchor>         textAnchor_;
+  std::optional<CSVGTextDecoration> textDecoration_;
+  std::optional<CScreenUnits>       letterSpacing_;
+  std::optional<CScreenUnits>       wordSpacing_;
+  NameValues                        nameValues_;
+  NameValues                        styleValues_;
+  SkipNames                         skipNames_;
+  CMatrixStack2D                    transform_;
+  CSVGEnableBackground              enableBackground_ { CSVGEnableBackground::ACCUMULATE };
+  CBBox2D                           enableBackgroundRect_;
+  bool                              externalResourcesRequired_ { false };
+  ObjectList                        objects_;
+  CSVGAnimation                     animation_;
+  std::optional<CSVGFilter*>        filter_;
+  bool                              filtered_ { true };
+  CSVGMask*                         mask_     { nullptr };
+  bool                              masked_   { true };
+  CSVGClipPath*                     clipPath_ { nullptr };
+  bool                              clipped_  { true };
+  CSVGObjectMarker                  marker_;
+  std::optional<CBBox2D>            viewBox_;
+  mutable std::optional<CBBox2D>    bbox_;
+  bool                              selected_ { false };
+  bool                              inside_   { false };
+  CXMLTag*                          xmlTag_   { nullptr };
+  std::optional<std::string>        outBuffer_;
 };
 
 #endif

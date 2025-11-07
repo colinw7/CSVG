@@ -62,7 +62,7 @@ print(std::ostream &os, bool hier) const
 
     printChildren(os, hier);
 
-    os << "</desc>" << std::endl;
+    os << "</desc>\n";
   }
   else
     os << "desc";

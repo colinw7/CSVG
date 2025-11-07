@@ -16,24 +16,24 @@ class CSVGEllipse : public CSVGObject, public CSVGPrintBase<CSVGEllipse> {
 
   // ellipse (x/y center, x/y radius)
 
-  bool hasCenterX() const { return cx_.isValid(); }
-  CScreenUnits getCenterX() const { return cx_.getValue(CScreenUnits(0)); }
+  bool hasCenterX() const { return !!cx_; }
+  CScreenUnits getCenterX() const { return cx_.value_or(CScreenUnits(0)); }
   void setCenterX(const CScreenUnits &x, bool update=true) { cx_ = x;
     if (update) updateBBox();
   }
 
-  bool hasCenterY() const { return cy_.isValid(); }
-  CScreenUnits getCenterY() const { return cy_.getValue(CScreenUnits(0)); }
+  bool hasCenterY() const { return !!cy_; }
+  CScreenUnits getCenterY() const { return cy_.value_or(CScreenUnits(0)); }
   void setCenterY(const CScreenUnits &y, bool update=true) { cy_ = y;
     if (update) updateBBox();
   }
 
-  bool hasRadiusX() const { return rx_.isValid(); }
-  CScreenUnits getRadiusX() const { return rx_.getValue(CScreenUnits(1)); }
+  bool hasRadiusX() const { return !!rx_; }
+  CScreenUnits getRadiusX() const { return rx_.value_or(CScreenUnits(1)); }
   void setRadiusX(const CScreenUnits &r) { rx_ = r; updateBBox(); }
 
-  bool hasRadiusY() const { return ry_.isValid(); }
-  CScreenUnits getRadiusY() const { return ry_.getValue(CScreenUnits(1)); }
+  bool hasRadiusY() const { return !!ry_; }
+  CScreenUnits getRadiusY() const { return ry_.value_or(CScreenUnits(1)); }
   void setRadiusY(const CScreenUnits &r) { ry_ = r; updateBBox(); }
 
   CPoint2D getCenter() const;
@@ -78,10 +78,10 @@ class CSVGEllipse : public CSVGObject, public CSVGPrintBase<CSVGEllipse> {
   void moveDelta(const CVector2D &delta) override;
 
  private:
-  COptScreenUnits cx_;
-  COptScreenUnits cy_;
-  COptScreenUnits rx_;
-  COptScreenUnits ry_;
+  std::optional<CScreenUnits> cx_;
+  std::optional<CScreenUnits> cy_;
+  std::optional<CScreenUnits> rx_;
+  std::optional<CScreenUnits> ry_;
 
   mutable CBBox2D          bbox_;
   mutable CSVGPathPartList parts_;

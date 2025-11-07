@@ -16,34 +16,34 @@ class CSVGFilter : public CSVGObject, public CSVGPrintBase<CSVGFilter> {
   CSVGFilter *dup() const override;
 
   CSVGCoordUnits getFilterUnits() const {
-    return filterUnits_.getValue(CSVGCoordUnits::OBJECT_BBOX); }
+    return filterUnits_.value_or(CSVGCoordUnits::OBJECT_BBOX); }
   void setFilterUnits(CSVGCoordUnits units) { filterUnits_ = units; }
 
   CSVGCoordUnits getPrimitiveUnits() const {
-    return primitiveUnits_.getValue(CSVGCoordUnits::USER_SPACE); }
+    return primitiveUnits_.value_or(CSVGCoordUnits::USER_SPACE); }
   void setPrimitiveUnits(CSVGCoordUnits units) { primitiveUnits_ = units; }
 
-  bool hasX() const { return x_.isValid(); }
-  CScreenUnits getX(const CScreenUnits &x=CScreenUnits(0)) const { return x_.getValue(x); }
+  bool hasX() const { return !!x_; }
+  CScreenUnits getX(const CScreenUnits &x=CScreenUnits(0)) const { return x_.value_or(x); }
   void setX(const CScreenUnits &x) { x_ = x; }
 
-  bool hasY() const { return y_.isValid(); }
-  CScreenUnits getY(const CScreenUnits &y=CScreenUnits(0)) const { return y_.getValue(y); }
+  bool hasY() const { return !!y_; }
+  CScreenUnits getY(const CScreenUnits &y=CScreenUnits(0)) const { return y_.value_or(y); }
   void setY(const CScreenUnits &y) { y_ = y; }
 
-  bool hasWidth() const { return width_.isValid(); }
+  bool hasWidth() const { return !!width_; }
   CScreenUnits getWidth(const CScreenUnits &w=CScreenUnits(0)) const {
-    return width_.getValue(w); }
+    return width_.value_or(w); }
   void setWidth(const CScreenUnits &w) { width_ = w; }
 
-  bool hasHeight() const { return height_.isValid(); }
+  bool hasHeight() const { return !!height_; }
   CScreenUnits getHeight(const CScreenUnits &h=CScreenUnits(0)) const {
-    return height_.getValue(h); }
+    return height_.value_or(h); }
   void setHeight(const CScreenUnits &h) { height_ = h; }
 
-  const CSVGXLink &xlink() const { return xlink_.getValue(); }
+  const CSVGXLink &xlink() const { return xlink_.value(); }
 
-  std::string getLinkName() const { return (xlink_.isValid() ? xlink_.getValue().str() : ""); }
+  std::string getLinkName() const { return (xlink_ ? xlink_.value().str() : ""); }
   void setLinkName(const std::string &str);
 
   bool processOption(const std::string &name, const std::string &value) override;
@@ -86,20 +86,20 @@ class CSVGFilter : public CSVGObject, public CSVGPrintBase<CSVGFilter> {
   CSVGFilter &operator=(const CSVGFilter &rhs);
 
  private:
-  CSVGObject*              object_ { nullptr };
-  COptValT<CSVGCoordUnits> filterUnits_;
-  COptValT<CSVGCoordUnits> primitiveUnits_;
-  COptValT<CScreenUnits>   x_;
-  COptValT<CScreenUnits>   y_;
-  COptValT<CScreenUnits>   width_;
-  COptValT<CScreenUnits>   height_;
-  COptString               filterRes_;
-  COptValT<CSVGXLink>      xlink_;
-  CBBox2D                  contentsBBox_;
-  bool                     oldDrawing_ { false };
-  std::string              lastFilterName_;
-  CSVGFilterBase*          lastElement_ { nullptr };
-  CPoint2D                 offset_;
+  CSVGObject*                   object_ { nullptr };
+  std::optional<CSVGCoordUnits> filterUnits_;
+  std::optional<CSVGCoordUnits> primitiveUnits_;
+  std::optional<CScreenUnits>   x_;
+  std::optional<CScreenUnits>   y_;
+  std::optional<CScreenUnits>   width_;
+  std::optional<CScreenUnits>   height_;
+  std::optional<std::string>    filterRes_;
+  std::optional<CSVGXLink>      xlink_;
+  CBBox2D                       contentsBBox_;
+  bool                          oldDrawing_ { false };
+  std::string                   lastFilterName_;
+  CSVGFilterBase*               lastElement_ { nullptr };
+  CPoint2D                      offset_;
 };
 
 #endif

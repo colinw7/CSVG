@@ -32,7 +32,7 @@ processOption(const std::string &, const std::string &)
   return true;
 }
 
-COptString
+std::optional<std::string>
 CSVGAudio::
 getNameValue(const std::string &name) const
 {
@@ -58,7 +58,7 @@ print(std::ostream &os, bool hier) const
     os << ">";
 
     if (hasChildren()) {
-      os << std::endl;
+      os << "\n";
 
       printChildren(os, hier);
     }
@@ -66,7 +66,7 @@ print(std::ostream &os, bool hier) const
       os << getText();
     }
 
-    os << "</audio>" << std::endl;
+    os << "</audio>\n";
   }
   else
     os << "audio";

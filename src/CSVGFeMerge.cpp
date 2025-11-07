@@ -118,11 +118,11 @@ print(std::ostream &os, bool hier) const
 
     printValues(os);
 
-    os << ">" << std::endl;
+    os << ">\n";
 
     printChildren(os, hier);
 
-    os << "</feMerge>" << std::endl;
+    os << "</feMerge>\n";
   }
   else
     os << "feMerge";

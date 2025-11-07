@@ -84,11 +84,11 @@ print(std::ostream &os, bool hier) const
 
     printValues(os);
 
-    os << ">" << std::endl;
+    os << ">\n";
 
     printChildren(os, hier);
 
-    os << "</g>" << std::endl;
+    os << "</g>\n";
   }
   else
     os << "group";

@@ -9,9 +9,9 @@ class CSVGText : public CSVGObject, public CSVGPrintBase<CSVGText> {
   using Coords  = std::vector<CScreenUnits>;
   using Lengths = std::vector<CScreenUnits>;
 
-  using OptReals   = COptValT<Reals>;
-  using OptCoords  = COptValT<Coords>;
-  using OptLengths = COptValT<Lengths>;
+  using OptReals   = std::optional<Reals>;
+  using OptCoords  = std::optional<Coords>;
+  using OptLengths = std::optional<Lengths>;
 
   enum class LengthAdjustType {
     LENGTHADJUST_UNKNOWN          = 0,
@@ -39,13 +39,13 @@ class CSVGText : public CSVGObject, public CSVGPrintBase<CSVGText> {
   CScreenUnits getDY() const;
   void setDY(const CScreenUnits &y);
 
-  Reals getRotate() const { return rotate_.getValue(Reals()); }
+  Reals getRotate() const { return rotate_.value_or(Reals()); }
   void setRotate(const Reals &r) { rotate_ = r; }
 
-  std::string getTextLength() const { return textLength_.getValue(""); }
+  std::string getTextLength() const { return textLength_.value_or(""); }
   void setTextLength(const std::string &s) { textLength_ = s; }
 
-  std::string getLengthAdjust() const { return lengthAdjust_.getValue("spacing"); }
+  std::string getLengthAdjust() const { return lengthAdjust_.value_or("spacing"); }
   void setLengthAdjust(const std::string &s) { lengthAdjust_ = s; }
 
   int getLengthAdjustValue() const {
@@ -65,7 +65,7 @@ class CSVGText : public CSVGObject, public CSVGPrintBase<CSVGText> {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  COptString getNameValue(const std::string &name) const override;
+  std::optional<std::string> getNameValue(const std::string &name) const override;
 
   bool draw() override;
 
@@ -86,14 +86,14 @@ class CSVGText : public CSVGObject, public CSVGPrintBase<CSVGText> {
   void moveDelta(const CVector2D &delta) override;
 
  private:
-  OptCoords  x_;
-  OptCoords  y_;
-  OptLengths dx_;
-  OptLengths dy_;
-  OptReals   rotate_;
-  COptString textLength_;
-  COptString lengthAdjust_;
-  CPoint2D   lastPos_;
+  OptCoords                  x_;
+  OptCoords                  y_;
+  OptLengths                 dx_;
+  OptLengths                 dy_;
+  OptReals                   rotate_;
+  std::optional<std::string> textLength_;
+  std::optional<std::string> lengthAdjust_;
+  CPoint2D                   lastPos_;
 };
 
 #endif

@@ -47,11 +47,11 @@ print(std::ostream &os, bool hier) const
 
       printValues(os);
 
-      os << ">" << std::endl;
+      os << ">\n";
 
       printChildren(os, hier);
 
-      os << "</defs>" << std::endl;
+      os << "</defs>\n";
     }
   }
   else

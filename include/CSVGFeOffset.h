@@ -14,18 +14,18 @@ class CSVGFeOffset : public CSVGFilterBase, public CSVGPrintBase<CSVGFeOffset> {
 
   CSVGFeOffset *dup() const override;
 
-  bool hasFilterIn() const { return filterIn_.isValid(); }
+  bool hasFilterIn() const { return !!filterIn_; }
   std::string getFilterIn() const;
   void setFilterIn(const std::string &s) { filterIn_ = s; }
 
-  bool hasFilterOut() const { return filterOut_.isValid(); }
+  bool hasFilterOut() const { return !!filterOut_; }
   std::string getFilterOut() const;
   void setFilterOut(const std::string &s) { filterOut_ = s; }
 
-  double getDX() const { return dx_.getValue(0); }
+  double getDX() const { return dx_.value_or(0); }
   void setDX(double d) { dx_ = d; }
 
-  double getDY() const { return dy_.getValue(0); }
+  double getDY() const { return dy_.value_or(0); }
   void setDY(double d) { dy_ = d; }
 
   bool processOption(const std::string &name, const std::string &value) override;
@@ -43,11 +43,11 @@ class CSVGFeOffset : public CSVGFilterBase, public CSVGPrintBase<CSVGFeOffset> {
   void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
-  COptString filterIn_;
-  COptString filterOut_;
-  COptReal   dx_;
-  COptReal   dy_;
-  bool       drawing_ { false };
+  std::optional<std::string> filterIn_;
+  std::optional<std::string> filterOut_;
+  std::optional<double>      dx_;
+  std::optional<double>      dy_;
+  bool                       drawing_ { false };
 };
 
 #endif

@@ -102,8 +102,8 @@ drawMask(const CSVGObject *object)
   if (getContentUnits() == CSVGCoordUnits::OBJECT_BBOX) {
     CMatrixStack2D matrix;
 
-    matrix.translate(x - getX()  , y - getY()   );
-    matrix.scale    (w/getWidth(), h/getHeight());
+    matrix.addTranslation(x - getX()  , y - getY()   );
+    matrix.addScale      (w/getWidth(), h/getHeight());
 
     transform1 = matrix;
 
@@ -153,11 +153,11 @@ print(std::ostream &os, bool hier) const
 
     printValues(os);
 
-    os << ">" << std::endl;
+    os << ">\n";
 
     printChildren(os, hier);
 
-    os << "</mask>" << std::endl;
+    os << "</mask>\n";
   }
   else
     os << "mask ";

@@ -63,11 +63,11 @@ CSVGJTransformList(CSVG *svg, const CMatrixStack2D &stack) :
 {
 }
 
-COptLong
+std::optional<long>
 CSVGJTransformList::
 length() const
 {
-  return COptLong(matrixStack().length());
+  return std::optional<long>(matrixStack().length());
 }
 
 CJValueP
@@ -1190,9 +1190,9 @@ setProperty(CJavaScript *js, const std::string &key, CJValueP value)
         js->throwException(CJExceptionType::SYNTAX_ERR);
     }
     else {
-      COptValT<CScreenUnits> length = CSVG::decodeLengthValue(value->toString());
+      std::optional<CScreenUnits> length = CSVG::decodeLengthValue(value->toString());
 
-      if (length.isValid())
+      if (length)
         length_ = length.getValue();
       else
         js->throwException(CJExceptionType::SYNTAX_ERR);
@@ -1207,9 +1207,9 @@ CSVGJLength::
 getLength() const
 {
   if (obj_) {
-    COptString value = obj_->getNameValue(name_);
+    std::optional<std::string> value = obj_->getNameValue(name_);
 
-    COptValT<CScreenUnits> length = CSVG::decodeLengthValue(value.getValue(""));
+    std::optional<CScreenUnits> length = CSVG::decodeLengthValue(value.getValue(""));
 
     return length.getValue(CScreenUnits());
   }
@@ -1450,9 +1450,9 @@ setProperty(CJavaScript *js, const std::string &key, CJValueP value)
         js->throwException(CJExceptionType::SYNTAX_ERR);
     }
     else {
-      COptValT<CAngle> angle = CSVG::decodeAngleString(value->toString());
+      std::optional<CAngle> angle = CSVG::decodeAngleString(value->toString());
 
-      if (angle.isValid())
+      if (angle)
         angle_ = angle.getValue();
       else
         js->throwException(CJExceptionType::SYNTAX_ERR);
@@ -1467,9 +1467,9 @@ CSVGJAngle::
 getAngle() const
 {
   if (obj_) {
-    COptString value = obj_->getNameValue(name_);
+    std::optional<std::string> value = obj_->getNameValue(name_);
 
-    COptValT<CAngle> angle = CSVG::decodeAngleString(value.getValue(""));
+    std::optional<CAngle> angle = CSVG::decodeAngleString(value.getValue(""));
 
     return angle.getValue(CAngle());
   }
@@ -1580,7 +1580,7 @@ getColor() const
 {
 #if 0
   if (obj_) {
-    COptString value = obj_->getNameValue(name_);
+    std::optional<std::string> value = obj_->getNameValue(name_);
 
     CSVGColor color;
     bool      inherit;

@@ -15,7 +15,7 @@ class CSVGScript : public CSVGObject, public CSVGPrintBase<CSVGScript> {
 
   CSVGScript *dup() const override;
 
-  std::string getType() const { return type_.getValue(""); }
+  std::string getType() const { return type_.value_or(""); }
 
   bool processOption(const std::string &name, const std::string &value) override;
 
@@ -32,8 +32,8 @@ class CSVGScript : public CSVGObject, public CSVGPrintBase<CSVGScript> {
   void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
-  COptString          type_;
-  COptValT<CSVGXLink> xlink_;
+  std::optional<std::string> type_;
+  std::optional<CSVGXLink>   xlink_;
 };
 
 #endif

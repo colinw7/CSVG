@@ -5,7 +5,7 @@
 
 #include <CScreenUnits.h>
 #include <CLineDash.h>
-#include <COptVal.h>
+#include <optional>
 
 class CSVGStrokeDash : public CSVGPrintBase<CSVGStrokeDash> {
  public:
@@ -22,8 +22,8 @@ class CSVGStrokeDash : public CSVGPrintBase<CSVGStrokeDash> {
 
   bool isNone() const { return ! isSolid() && dashes_.empty(); }
 
-  bool hasOffset() const { return offset_.isValid(); }
-  CScreenUnits offset() const { return offset_.getValue(CScreenUnits(0)); }
+  bool hasOffset() const { return !!offset_; }
+  CScreenUnits offset() const { return offset_.value_or(CScreenUnits(0)); }
   void setOffset(const CScreenUnits &v) { offset_ = v; }
 
   void addDash(const CScreenUnits &dash) { dashes_.push_back(dash); }
@@ -51,7 +51,7 @@ class CSVGStrokeDash : public CSVGPrintBase<CSVGStrokeDash> {
     else {
       printDashes(os);
 
-      os << offset_;
+      os << offset_.value();
     }
   }
 
@@ -65,13 +65,13 @@ class CSVGStrokeDash : public CSVGPrintBase<CSVGStrokeDash> {
   }
 
   void printOffset(std::ostream &os) const {
-    os << offset_;
+    os << offset_.value();
   }
 
  private:
-  bool                   solid_ { true };
-  Dashes                 dashes_;
-  COptValT<CScreenUnits> offset_;
+  bool                        solid_ { true };
+  Dashes                      dashes_;
+  std::optional<CScreenUnits> offset_;
 };
 
 #endif

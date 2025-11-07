@@ -16,9 +16,9 @@ class CSVGGlyph : public CSVGObject, public CSVGPrintBase<CSVGGlyph> {
 
   CSVGGlyph *dup() const override;
 
-  std::string getUnicode() const { return unicode_  .getValue(""); }
-  std::string getName   () const { return glyphName_.getValue(""); }
-  int         getDx     () const { return horizAdvX_.getValue(0 ); }
+  std::string getUnicode() const { return unicode_  .value_or(""); }
+  std::string getName   () const { return glyphName_.value_or(""); }
+  int         getDx     () const { return horizAdvX_.value_or(0 ); }
 
   const CSVGPathPartList &getPartList() const override { return parts_; }
   void setPartList(const CSVGPathPartList &parts) { parts_ = parts; }
@@ -34,16 +34,16 @@ class CSVGGlyph : public CSVGObject, public CSVGPrintBase<CSVGGlyph> {
   void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  protected:
-  COptString       unicode_;
-  COptString       glyphName_;
-  CSVGPathPartList parts_;
-  COptString       orientation_;
-  COptString       arabicForm_;
-  COptString       lang_;
-  COptInt          horizAdvX_;
-  COptInt          vertAdvY_;
-  COptInt          vertOriginX_;
-  COptInt          vertOriginY_;
+  std::optional<std::string> unicode_;
+  std::optional<std::string> glyphName_;
+  CSVGPathPartList           parts_;
+  std::optional<std::string> orientation_;
+  std::optional<std::string> arabicForm_;
+  std::optional<std::string> lang_;
+  std::optional<int>         horizAdvX_;
+  std::optional<int>         vertAdvY_;
+  std::optional<int>         vertOriginX_;
+  std::optional<int>         vertOriginY_;
 };
 
 #endif

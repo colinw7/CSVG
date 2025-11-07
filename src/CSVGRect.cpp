@@ -116,7 +116,7 @@ void
 CSVGRect::
 updateBBox()
 {
-  double lw = getFlatStrokeWidth().getValue(Width(1)).getValue(1);
+  double lw = getFlatStrokeWidth().value_or(Width(1)).getValue(1);
 
   auto drawBox = getDrawBBox();
 
@@ -206,7 +206,7 @@ draw()
         buffer->drawRoundedRectangle(bbox, rx, ry);
     }
     else {
-      //std::cerr << "rectangle not filled or stroked" << std::endl;
+      //std::cerr << "rectangle not filled or stroked\n";
       //buffer->fillRoundedRectangle(bbox, rx, ry);
     }
   }
@@ -220,7 +220,7 @@ draw()
         buffer->drawRectangle(bbox);
     }
     else {
-      //std::cerr << "rectangle not filled or stroked" << std::endl;
+      //std::cerr << "rectangle not filled or stroked\n";
       //buffer->fillRectangle(bbox);
     }
   }
@@ -325,14 +325,14 @@ print(std::ostream &os, bool hier) const
     printValues(os);
 
     if (hasChildren()) {
-      os << ">" << std::endl;
+      os << ">\n";
 
       printChildren(os, hier);
 
-      os << "</rect>" << std::endl;
+      os << "</rect>\n";
     }
     else
-      os << "/>" << std::endl;
+      os << "/>\n";
   }
   else
     os << "rect (" << getId() << ") bbox " << bbox_;

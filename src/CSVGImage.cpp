@@ -185,26 +185,26 @@ bool
 CSVGImage::
 initImage() const
 {
-  if (! xlink_.isValid())
+  if (! xlink_)
     return false;
 
   auto *imageBuffer = getImageBuffer();
 
-  if      (xlink_.getValue().isObject()) {
-    auto *object = xlink_.getValue().getObject();
+  if      (xlink_.value().isObject()) {
+    auto *object = xlink_.value().getObject();
 
     auto *objImageBuffer = object->toBufferImage();
 
     // TODO: don't cache image as could be rescaled
-    //th->xlink_.getValue().setObject(0);
+    //th->xlink_.value().setObject(0);
 
     if (objImageBuffer)
       imageBuffer->setImageBuffer(objImageBuffer);
 
     return true;
   }
-  else if (xlink_.getValue().isImage()) {
-    imageBuffer->setImageBuffer(xlink_.getValue().getImageBuffer());
+  else if (xlink_.value().isImage()) {
+    imageBuffer->setImageBuffer(xlink_.value().getImageBuffer());
 
     return true;
   }
@@ -216,13 +216,13 @@ CSVGObject *
 CSVGImage::
 getObject() const
 {
-  if (! xlink_.isValid())
+  if (! xlink_)
     return nullptr;
 
-  if (! xlink_.getValue().isObject())
+  if (! xlink_.value().isObject())
     return nullptr;
 
-  return xlink_.getValue().getObject();
+  return xlink_.value().getObject();
 }
 
 CSVGBuffer *
@@ -274,7 +274,7 @@ print(std::ostream &os, bool hier) const
 
     printValues(os);
 
-    os << "/>" << std::endl;
+    os << "/>\n";
   }
   else
     os << "image " << getPosition() << " " << getSizeInternal();
@@ -293,7 +293,7 @@ printValues(std::ostream &os, bool flat) const
 
   printNamePreserveAspect(os, "preserveAspectRatio", preserveAspect_);
 
-  if (! xlink_.getValue().isNull())
+  if (! xlink_.value().isNull())
     printNameXLink(os, "xlink:href", xlink_);
 
   printNameValue(os, "color-profile", colorProfile_);

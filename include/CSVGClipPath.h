@@ -20,8 +20,8 @@ class CSVGClipPath : public CSVGObject, public CSVGPrintBase<CSVGClipPath> {
   const CSVGPathPartList &getPartList() const override { return parts_; }
   void setPartList(const CSVGPathPartList &parts) { parts_ = parts; }
 
-  bool getUnitsValid() const { return clipPathUnits_.isValid(); }
-  CSVGCoordUnits getUnits() const { return clipPathUnits_.getValue(CSVGCoordUnits::USER_SPACE); }
+  bool getUnitsValid() const { return !!clipPathUnits_; }
+  CSVGCoordUnits getUnits() const { return clipPathUnits_.value_or(CSVGCoordUnits::USER_SPACE); }
   void setUnits(CSVGCoordUnits units) { clipPathUnits_ = units; }
 
   bool processOption(const std::string &name, const std::string &value) override;
@@ -39,13 +39,13 @@ class CSVGClipPath : public CSVGObject, public CSVGPrintBase<CSVGClipPath> {
   void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
-  CSVGPathPartList         parts_;
-  COptValT<CSVGCoordUnits> clipPathUnits_;
-  COptString               markerEnd_;
-  COptString               x_;
-  COptString               y_;
-  COptString               width_;
-  COptString               height_;
+  CSVGPathPartList              parts_;
+  std::optional<CSVGCoordUnits> clipPathUnits_;
+  std::optional<std::string>    markerEnd_;
+  std::optional<std::string>    x_;
+  std::optional<std::string>    y_;
+  std::optional<std::string>    width_;
+  std::optional<std::string>    height_;
 };
 
 #endif

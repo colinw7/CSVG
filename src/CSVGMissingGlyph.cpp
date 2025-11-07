@@ -39,10 +39,10 @@ print(std::ostream &os, bool hier) const
 
     os << " d=\"" << parts_ << "\"";
 
-    os << "/>" << std::endl;
+    os << "/>\n";
   }
   else {
-    os << "missing-glyph " << "(" << parts_ << ")";
+    os << "missing-glyph (" << parts_ << ")";
   }
 }
 

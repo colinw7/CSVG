@@ -95,13 +95,13 @@ drawElement()
 
   CSVGConvolveData convolveData;
 
-  if (order_.isValid()) {
-    if      (order_.getValue().size() > 1) {
-      convolveData.xorder = order_.getValue()[0];
-      convolveData.yorder = order_.getValue()[1];
+  if (order_) {
+    if      (order_.value().size() > 1) {
+      convolveData.xorder = order_.value()[0];
+      convolveData.yorder = order_.value()[1];
     }
-    else if (order_.getValue().size() > 0) {
-      convolveData.xorder = order_.getValue()[0];
+    else if (order_.value().size() > 0) {
+      convolveData.xorder = order_.value()[0];
       convolveData.yorder = convolveData.xorder;
     }
   }
@@ -144,7 +144,7 @@ print(std::ostream &os, bool hier) const
 
     printValues(os);
 
-    os << "/>" << std::endl;
+    os << "/>\n";
   }
   else
     os << "feConvolveMatrix ";

@@ -12,13 +12,13 @@ class CSVGAnimateTransform : public CSVGAnimateBase, public CSVGPrintBase<CSVGAn
 
   CSVGAnimateTransform *dup() const override;
 
-  std::string getType() const { return type_.getValue(""); }
+  std::string getType() const { return type_.value_or(""); }
   void setType(const std::string &s) { type_ = s; }
 
-  std::string getAdditive() const { return additive_.getValue(""); }
+  std::string getAdditive() const { return additive_.value_or(""); }
   void setAdditive(const std::string &s) { additive_ = s; }
 
-  std::string getAccumulate() const { return accumulate_.getValue(""); }
+  std::string getAccumulate() const { return accumulate_.value_or(""); }
   void setAccumulate(const std::string &s) { accumulate_ = s; }
 
   bool processOption(const std::string &name, const std::string &value) override;
@@ -30,11 +30,11 @@ class CSVGAnimateTransform : public CSVGAnimateBase, public CSVGPrintBase<CSVGAn
   void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
-  COptString type_;
-  COptString additive_;
-  COptString accumulate_;
-  COptString calcMode_;
-  COptString keySplines_;
+  std::optional<std::string> type_;
+  std::optional<std::string> additive_;
+  std::optional<std::string> accumulate_;
+  std::optional<std::string> calcMode_;
+  std::optional<std::string> keySplines_;
 };
 
 #endif

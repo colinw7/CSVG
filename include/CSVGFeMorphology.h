@@ -18,7 +18,7 @@ class CSVGFeMorphology : public CSVGFilterBase, public CSVGPrintBase<CSVGFeMorph
   void setFilterIn(const std::string &s) { filterIn_ = s; }
 
   CSVGMorphologyOperator getOperator() const {
-    return operator_.getValue(CSVGMorphologyOperator::ERODE); }
+    return operator_.value_or(CSVGMorphologyOperator::ERODE); }
   void setOperator(CSVGMorphologyOperator o) { operator_ = o; }
 
   bool processOption(const std::string &name, const std::string &value) override;
@@ -32,9 +32,9 @@ class CSVGFeMorphology : public CSVGFilterBase, public CSVGPrintBase<CSVGFeMorph
   void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
-  COptString                       filterIn_;
-  COptValT<CSVGMorphologyOperator> operator_;
-  COptString                       radius_;
+  std::optional<std::string>            filterIn_;
+  std::optional<CSVGMorphologyOperator> operator_;
+  std::optional<std::string>            radius_;
 };
 
 #endif

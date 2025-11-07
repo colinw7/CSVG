@@ -16,20 +16,20 @@ class CSVGCircle : public CSVGObject, public CSVGPrintBase<CSVGCircle> {
 
   // circle (x/y center, radius)
 
-  bool hasCenterX() const { return cx_.isValid(); }
-  CScreenUnits getCenterX() const { return cx_.getValue(CScreenUnits(0)); }
+  bool hasCenterX() const { return !!cx_; }
+  CScreenUnits getCenterX() const { return cx_.value_or(CScreenUnits(0)); }
   void setCenterX(const CScreenUnits &x, bool update=true) { cx_ = x;
     if (update) updateBBox();
   }
 
-  bool hasCenterY() const { return cy_.isValid(); }
-  CScreenUnits getCenterY() const { return cy_.getValue(CScreenUnits(0)); }
+  bool hasCenterY() const { return !!cy_; }
+  CScreenUnits getCenterY() const { return cy_.value_or(CScreenUnits(0)); }
   void setCenterY(const CScreenUnits &y, bool update=true) { cy_ = y;
     if (update) updateBBox();
   }
 
-  bool hasRadius() const { return radius_.isValid(); }
-  CScreenUnits getRadius() const { return radius_.getValue(CScreenUnits(1)); }
+  bool hasRadius() const { return !!radius_; }
+  CScreenUnits getRadius() const { return radius_.value_or(CScreenUnits(1)); }
   void setRadius(const CScreenUnits &r) { radius_ = r; updateBBox(); }
 
   CPoint2D getCenter() const;
@@ -39,7 +39,7 @@ class CSVGCircle : public CSVGObject, public CSVGPrintBase<CSVGCircle> {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  COptString getNameValue(const std::string &name) const override;
+  std::optional<std::string> getNameValue(const std::string &name) const override;
 
   //---
 
@@ -71,9 +71,9 @@ class CSVGCircle : public CSVGObject, public CSVGPrintBase<CSVGCircle> {
   void moveDelta(const CVector2D &delta) override;
 
  private:
-  COptScreenUnits cx_;
-  COptScreenUnits cy_;
-  COptScreenUnits radius_;
+  std::optional<CScreenUnits> cx_;
+  std::optional<CScreenUnits> cy_;
+  std::optional<CScreenUnits> radius_;
 
   mutable CBBox2D          bbox_;
   mutable CSVGPathPartList parts_;

@@ -96,11 +96,11 @@ print(std::ostream &os, bool hier) const
 
     printValues(os);
 
-    os << ">" << std::endl;
+    os << ">\n";
 
     printChildren(os, hier);
 
-    os << "</pattern>" << std::endl;
+    os << "</pattern>\n";
   }
   else
     os << "pattern ";
@@ -118,7 +118,7 @@ printValues(std::ostream &os, bool flat) const
   printNamePercent(os, "width" , width_ );
   printNamePercent(os, "height", height_);
 
-  if (! xlink_.getValue().isNull())
+  if (! xlink_.value().isNull())
     printNameXLink(os, "xlink:href", xlink_);
 
   printNameCoordUnits(os, "patternUnits"       , units_);
@@ -135,8 +135,8 @@ setFillImage(CSVGObject *parent, CSVGBuffer *buffer,
   auto *linkPattern = dynamic_cast< CSVGPattern *>(getObject());
 
   if (linkPattern) {
-    if (patternTransform_.isValid())
-      buffer->setFillMatrix(patternTransform_.getValue().getMatrix());
+    if (patternTransform_)
+      buffer->setFillMatrix(patternTransform_.value().getMatrix());
 
     return linkPattern->setFillImage(parent, buffer, x1, y1, w1, h1);
   }
@@ -201,17 +201,17 @@ setFillImage(CSVGObject *parent, CSVGBuffer *buffer,
   CMatrixStack2D matrix;
 
   if      (hasViewBox()) {
-    auto viewBox = viewBox_.getValue();
+    auto viewBox = viewBox_.value();
 
-    //matrix.translate(0, 0);
-    matrix.scale(*w1/viewBox.getWidth(), *h1/viewBox.getHeight());
+    //matrix.addTranslation(0, 0);
+    matrix.addScale(*w1/viewBox.getWidth(), *h1/viewBox.getHeight());
 
     svg_.setTransform(matrix);
   }
   else if (getContentUnits() == CSVGCoordUnits::OBJECT_BBOX) {
     if (parent) {
-      //matrix.translate(0, 0);
-      matrix.scale(pw, ph);
+      //matrix.translation(0, 0);
+      matrix.addScale(pw, ph);
 
       svg_.setTransform(matrix);
     }
@@ -246,8 +246,8 @@ setFillImage(CSVGObject *parent, CSVGBuffer *buffer,
 
   buffer->setFillBuffer(*x1, *y1, patternBuffer);
 
-  if (patternTransform_.isValid())
-    buffer->setFillMatrix(patternTransform_.getValue().getMatrix());
+  if (patternTransform_)
+    buffer->setFillMatrix(patternTransform_.value().getMatrix());
 }
 
 void
@@ -309,17 +309,17 @@ setStrokeImage(CSVGObject *parent, CSVGBuffer *buffer, double *w1, double *h1)
 
   if      (getContentUnits() == CSVGCoordUnits::OBJECT_BBOX) {
     if (parent) {
-      //matrix.translate(0, 0);
-      matrix.scale(*w1/w, *h1/h);
+      //matrix.addTranslation(0, 0);
+      matrix.addScale(*w1/w, *h1/h);
 
       svg_.setTransform(matrix);
     }
   }
   else if (hasViewBox()) {
-    auto viewBox = viewBox_.getValue();
+    auto viewBox = viewBox_.value();
 
-    //matrix.translate(0, 0);
-    matrix.scale(*w1/viewBox.getWidth(), *h1/viewBox.getHeight());
+    //matrix.addTranslation(0, 0);
+    matrix.addScale(*w1/viewBox.getWidth(), *h1/viewBox.getHeight());
 
     svg_.setTransform(matrix);
   }
@@ -348,8 +348,8 @@ CSVGObject *
 CSVGPattern::
 getObject()
 {
-  if (! xlink_.isValid())
+  if (! xlink_)
     return nullptr;
 
-  return xlink_.getValue().getObject();
+  return xlink_.value().getObject();
 }

@@ -124,11 +124,11 @@ print(std::ostream &os, bool hier) const
 
     printValues(os);
 
-    os << ">" << std::endl;
+    os << ">\n";
 
     printChildren(os, hier);
 
-    os << "</feComponentTransfer>" << std::endl;
+    os << "</feComponentTransfer>\n";
   }
   else
     os << "feComponentTransfer ";

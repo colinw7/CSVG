@@ -12,8 +12,8 @@ getLineDash(double l) const
 
     double offset = 0.0;
 
-    if (offset_.isValid())
-      offset = offset_.getValue().pxValue(l);
+    if (offset_)
+      offset = offset_.value().pxValue(l);
 
     return CLineDash(lengths, offset);
   }

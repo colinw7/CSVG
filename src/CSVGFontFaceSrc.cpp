@@ -43,15 +43,15 @@ print(std::ostream &os, bool hier) const
 
     printValues(os);
 
-    os << ">" << std::endl;
+    os << ">\n";
 
     if (hasChildren()) {
       printChildren(os, hier);
 
-      os << "</font-face-src>" << std::endl;
+      os << "</font-face-src>\n";
     }
     else
-      os << "/>" << std::endl;
+      os << "/>\n";
   }
   else
     os << "font-face-src";

@@ -126,10 +126,10 @@ CScreenUnits
 CSVGText::
 getX() const
 {
-  if (! x_.isValid() || x_.getValue().empty())
+  if (! x_ || x_.value().empty())
     return 0;
 
-  return x_.getValue().front();
+  return x_.value().front();
 }
 
 void
@@ -145,10 +145,10 @@ CScreenUnits
 CSVGText::
 getY() const
 {
-  if (! y_.isValid() || y_.getValue().empty())
+  if (! y_ || y_.value().empty())
     return 0;
 
-  return y_.getValue().front();
+  return y_.value().front();
 }
 
 void
@@ -164,10 +164,10 @@ CScreenUnits
 CSVGText::
 getDX() const
 {
-  if (! dx_.isValid() || dx_.getValue().empty())
+  if (! dx_ || dx_.value().empty())
     return 0;
 
-  return dx_.getValue().front();
+  return dx_.value().front();
 }
 
 void
@@ -183,10 +183,10 @@ CScreenUnits
 CSVGText::
 getDY() const
 {
-  if (! dy_.isValid() || dy_.getValue().empty())
+  if (! dy_ || dy_.value().empty())
     return 0;
 
-  return dy_.getValue().front();
+  return dy_.value().front();
 }
 
 void
@@ -245,31 +245,31 @@ moveDelta(const CVector2D &delta)
   setY(y + delta.y());
 }
 
-COptString
+std::optional<std::string>
 CSVGText::
 getNameValue(const std::string &name) const
 {
-  COptString str;
+  std::optional<std::string> str;
 
   if      (name == "x") {
-    if (x_.isValid())
-      str = valuesToString(x_.getValue());
+    if (x_)
+      str = valuesToString(x_.value());
   }
   else if (name == "y") {
-    if (y_.isValid())
-      str = valuesToString(y_.getValue());
+    if (y_)
+      str = valuesToString(y_.value());
   }
   else if (name == "dx") {
-    if (dx_.isValid())
-      str = valuesToString(dx_.getValue());
+    if (dx_)
+      str = valuesToString(dx_.value());
   }
   else if (name == "dy") {
-    if (dy_.isValid())
-      str = valuesToString(dy_.getValue());
+    if (dy_)
+      str = valuesToString(dy_.value());
   }
   else if (name == "rotate") {
-    if (rotate_.isValid())
-      str = valuesToString(rotate_.getValue());
+    if (rotate_)
+      str = valuesToString(rotate_.value());
   }
   else if (name == "lengthAdjust") {
     str = CStrUtil::toString(getLengthAdjustValue());
@@ -303,7 +303,7 @@ draw()
 
   //---
 
-  if      (textLength_.isValid()) {
+  if      (textLength_) {
     double w, a, d;
 
     fontDef.textSize(text, &w, &a, &d);
@@ -314,7 +314,7 @@ draw()
 
     //---
 
-    COptReal tl;
+    std::optional<double> tl;
     double   r;
 
     if (CStrUtil::toReal(getTextLength(), &r))
@@ -327,9 +327,9 @@ draw()
     double dx = 0;
     double fs = 1;
 
-    if (tl.isValid()) {
+    if (tl) {
       if (scaleFont) {
-        fs = tl.getValue()/w;
+        fs = tl.value()/w;
 
         fontDef1.setFamily   (fontDef.getFamily());
         fontDef1.setStyle    (fontDef.getStyle());
@@ -341,7 +341,7 @@ draw()
       }
 
       if (text.size() > 1)
-        dx = double(tl.getValue() - w)/double(text.size() - 1);
+        dx = double(tl.value() - w)/double(text.size() - 1);
     }
 
     //---
@@ -434,7 +434,7 @@ draw()
     }
   }
   else if (topBottom) {
-    COptReal fa;
+    std::optional<double> fa;
     double   r;
 
     if      (getVGlyphOrient() == "auto")
@@ -444,11 +444,11 @@ draw()
 
     auto fontDef1 = fontDef;
 
-    if (fa.isValid()) {
+    if (fa) {
       fontDef1.setFamily   (fontDef.getFamily());
       fontDef1.setStyle    (fontDef.getStyle ());
       fontDef1.setSize     (fontDef.getSize  ()),
-      fontDef1.setAngle    (fa.getValue());
+      fontDef1.setAngle    (fa.value());
     //fontDef1.setCharAngle(fontDef.getCharAngle());
     }
 
@@ -467,7 +467,7 @@ draw()
 
       //---
 
-      double dy = w1*sin(fa.getValue()) + (a1 + d1)*std::cos(fa.getValue());
+      double dy = w1*sin(fa.value()) + (a1 + d1)*std::cos(fa.value());
 
       y += dy;
 
@@ -503,10 +503,10 @@ print(std::ostream &os, bool hier) const
     os << ">";
 
     if (hasChildren()) {
-      os << std::endl;
+      os << "\n";
 
       if (hasText())
-        os << getText() << std::endl;
+        os << getText() << "\n";
 
       printChildren(os, hier);
     }
@@ -514,7 +514,7 @@ print(std::ostream &os, bool hier) const
       os << getText();
     }
 
-    os << "</text>" << std::endl;
+    os << "</text>\n";
   }
   else
     os << "text " << getPosition()  << " " << CStrUtil::single_quote(getText());

@@ -15,12 +15,12 @@ class CSVGTextPath : public CSVGObject, public CSVGPrintBase<CSVGTextPath> {
 
   CSVGTextPath *dup() const override;
 
-  CScreenUnits getStartOffset() const { return startOffset_.getValue(CScreenUnits(0)); }
+  CScreenUnits getStartOffset() const { return startOffset_.value_or(CScreenUnits(0)); }
   void setStartOffset(const CScreenUnits &l) { startOffset_ = l; }
 
-  const CSVGXLink &xlink() const { return xlink_.getValue(); }
+  const CSVGXLink &xlink() const { return xlink_.value(); }
 
-  std::string getLinkName() const { return (xlink_.isValid() ? xlink_.getValue().str() : ""); }
+  std::string getLinkName() const { return (xlink_ ? xlink_.value().str() : ""); }
   void setLinkName(const std::string &str);
 
   bool processOption(const std::string &name, const std::string &value) override;
@@ -37,8 +37,8 @@ class CSVGTextPath : public CSVGObject, public CSVGPrintBase<CSVGTextPath> {
   CSVGText *getParentText() const;
 
  private:
-  COptValT<CScreenUnits> startOffset_;
-  COptValT<CSVGXLink>    xlink_;
+  std::optional<CScreenUnits> startOffset_;
+  std::optional<CSVGXLink>    xlink_;
 };
 
 #endif

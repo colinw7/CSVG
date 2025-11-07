@@ -14,7 +14,7 @@ class CSVGFeBlend : public CSVGFilterBase, public CSVGPrintBase<CSVGFeBlend> {
 
   CSVGFeBlend *dup() const override;
 
-  CSVGBlendMode getMode() const { return mode_.getValue(CSVGBlendMode::NORMAL); }
+  CSVGBlendMode getMode() const { return mode_.value_or(CSVGBlendMode::NORMAL); }
   void setMode(CSVGBlendMode m) { mode_ = m; }
 
   std::string getFilterIn1() const;
@@ -37,10 +37,10 @@ class CSVGFeBlend : public CSVGFilterBase, public CSVGPrintBase<CSVGFeBlend> {
   void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
-  COptValT<CSVGBlendMode> mode_;
-  COptString              filterIn1_;
-  COptString              filterIn2_;
-  COptString              filterOut_;
+  std::optional<CSVGBlendMode> mode_;
+  std::optional<std::string>   filterIn1_;
+  std::optional<std::string>   filterIn2_;
+  std::optional<std::string>   filterOut_;
 };
 
 #endif

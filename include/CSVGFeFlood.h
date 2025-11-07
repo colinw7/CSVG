@@ -20,7 +20,7 @@ class CSVGFeFlood : public CSVGFilterBase, public CSVGPrintBase<CSVGFeFlood> {
   std::string getFilterOut() const;
   void setFilterOut(const std::string &s) { filterOut_ = s; }
 
-  double getOpacity() const { return opacity_.getValue(1); }
+  double getOpacity() const { return opacity_.value_or(1); }
   void setOpacity(double r) { opacity_ = r; }
 
   bool processOption(const std::string &name, const std::string &value) override;
@@ -34,10 +34,10 @@ class CSVGFeFlood : public CSVGFilterBase, public CSVGPrintBase<CSVGFeFlood> {
   void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
-  COptString      filterIn_;
-  COptString      filterOut_;
-  COptValT<Color> color_;
-  COptReal        opacity_;
+  std::optional<std::string> filterIn_;
+  std::optional<std::string> filterOut_;
+  std::optional<Color>       color_;
+  std::optional<double>      opacity_;
 };
 
 #endif

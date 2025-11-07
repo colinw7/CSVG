@@ -4,7 +4,7 @@
 #include <CSVGColor.h>
 #include <CSVGInheritVal.h>
 #include <CFillType.h>
-#include <COptVal.h>
+#include <optional>
 
 class CSVG;
 class CSVGObject;
@@ -40,57 +40,53 @@ class CSVGFill {
   }
 
   bool isSet() const {
-    return color_     .isValid() ||
-           opacity_   .isValid() ||
-           rule_      .isValid() ||
-           url_       .isValid() ||
-           fillObject_.isValid();
+    return color_ || opacity_ || rule_ || url_ || fillObject_;
   }
 
   CSVG& svg() const { return svg_; }
 
   // color
-  bool getColorValid() const { return color_.isValid(); }
-  Color getColor() const { return color_.getValue(Color()); }
+  bool getColorValid() const { return !!color_; }
+  Color getColor() const { return color_.value_or(Color()); }
 
   void setColor(const std::string &colorStr);
   void setColor(const Color &c) { color_ = c; }
 
-  void resetColor() { color_.setInvalid(); }
+  void resetColor() { color_.reset(); }
 
   // opacity
-  bool getOpacityValid() const { return opacity_.isValid(); }
-  Opacity getOpacity() const { return opacity_.getValue(Opacity(1.0)); }
+  bool getOpacityValid() const { return !!opacity_; }
+  Opacity getOpacity() const { return opacity_.value_or(Opacity(1.0)); }
 
   void setOpacity(const std::string &opacity_str);
   void setOpacity(const Opacity &opacity) { opacity_ = opacity; }
 
-  void resetOpacity() { opacity_.setInvalid(); }
+  void resetOpacity() { opacity_.reset(); }
 
   // rule
-  bool getRuleValid() const { return rule_.isValid(); }
-  FillType getRule() const { return rule_.getValue(FillType(FILL_TYPE_EVEN_ODD)); }
+  bool getRuleValid() const { return !!rule_; }
+  FillType getRule() const { return rule_.value_or(FillType(FILL_TYPE_EVEN_ODD)); }
 
   void setRule(const std::string &rule_str);
   void setRule(const FillType &rule) { rule_ = rule; }
 
-  void resetRule() { rule_.setInvalid(); }
+  void resetRule() { rule_.reset(); }
 
   // url
-  bool getUrlValid() const { return url_.isValid(); }
-  std::string getUrl() const { return url_.getValue(""); }
+  bool getUrlValid() const { return !!url_; }
+  std::string getUrl() const { return url_.value_or(""); }
 
   void setUrl(const std::string &url) { url_ = url; }
 
-  void resetUrl() { url_.setInvalid(); }
+  void resetUrl() { url_.reset(); }
 
   // fill object
-  bool getFillObjectValid() const { return fillObject_.isValid(); }
-  CSVGObject *getFillObject() const { return fillObject_.getValue(nullptr); }
+  bool getFillObjectValid() const { return !!fillObject_; }
+  CSVGObject *getFillObject() const { return fillObject_.value_or(nullptr); }
 
   void setFillObject(CSVGObject *fillObject) { fillObject_ = fillObject; }
 
-  void resetFillObject() { fillObject_.setInvalid(); }
+  void resetFillObject() { fillObject_.reset(); }
 
   //---
 
@@ -108,12 +104,12 @@ class CSVGFill {
   void print(std::ostream &os) const;
 
  private:
-  CSVG &                 svg_;
-  COptValT<Color>        color_;
-  COptValT<Opacity>      opacity_;
-  COptValT<FillType>     rule_;
-  COptString             url_;
-  COptValT<CSVGObject *> fillObject_;
+  CSVG &                      svg_;
+  std::optional<Color>        color_;
+  std::optional<Opacity>      opacity_;
+  std::optional<FillType>     rule_;
+  std::optional<std::string>  url_;
+  std::optional<CSVGObject *> fillObject_;
 };
 
 #endif

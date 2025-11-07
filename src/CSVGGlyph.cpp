@@ -86,10 +86,11 @@ print(std::ostream &os, bool hier) const
 
     printValues(os);
 
-    os << "/>" << std::endl;
+    os << "/>\n";
   }
   else {
-    os << "glyph " << unicode_ << " " << glyphName_ << "(" << parts_ << ")";
+    os << "glyph " << unicode_.value_or("") << " " <<
+          glyphName_.value_or("") << "(" << parts_ << ")";
   }
 }
 

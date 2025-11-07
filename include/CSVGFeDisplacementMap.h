@@ -26,13 +26,13 @@ class CSVGFeDisplacementMap : public CSVGFilterBase, public CSVGPrintBase<CSVGFe
   std::string getFilterOut() const;
   void setFilterOut(const std::string &s) { filterOut_ = s; }
 
-  double getScale() const { return scale_.getValue(1); }
+  double getScale() const { return scale_.value_or(1); }
   void setScale(double r) { scale_ = r; }
 
-  std::string getXChannel() const { return xChannelSelector_.getValue("R"); }
+  std::string getXChannel() const { return xChannelSelector_.value_or("R"); }
   void setXChannel(const std::string &c) { xChannelSelector_ = c; }
 
-  std::string getYChannel() const { return yChannelSelector_.getValue("R"); }
+  std::string getYChannel() const { return yChannelSelector_.value_or("R"); }
   void setYChannel(const std::string &c) { yChannelSelector_ = c; }
 
   bool processOption(const std::string &name, const std::string &value) override;
@@ -46,12 +46,12 @@ class CSVGFeDisplacementMap : public CSVGFilterBase, public CSVGPrintBase<CSVGFe
   void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
-  COptString filterIn1_;
-  COptString filterIn2_;
-  COptString filterOut_;
-  COptReal   scale_;
-  COptString xChannelSelector_;
-  COptString yChannelSelector_;
+  std::optional<std::string> filterIn1_;
+  std::optional<std::string> filterIn2_;
+  std::optional<std::string> filterOut_;
+  std::optional<double>      scale_;
+  std::optional<std::string> xChannelSelector_;
+  std::optional<std::string> yChannelSelector_;
 };
 
 #endif

@@ -133,11 +133,11 @@ void
 CSVGFill::
 reset()
 {
-  color_     .setInvalid();
-  opacity_   .setInvalid();
-  rule_      .setInvalid();
-  url_       .setInvalid();
-  fillObject_.setInvalid();
+  color_     .reset();
+  opacity_   .reset();
+  rule_      .reset();
+  url_       .reset();
+  fillObject_.reset();
 }
 
 void
@@ -151,7 +151,7 @@ update(const CSVGFill &fill)
     setColor(fill.getColor());
   else if (styleObject) {
     if (styleObject->getFillColorValid() && ! styleObject->getFillColor().isInherit())
-      setColor(styleObject->getFlatFillColor().getValue());
+      setColor(styleObject->getFlatFillColor().value());
   }
 
   // opacity
@@ -159,7 +159,7 @@ update(const CSVGFill &fill)
     setOpacity(fill.getOpacity());
   else if (styleObject) {
     if (styleObject->getFillOpacityValid() && ! styleObject->getFillOpacity().isInherit())
-      setOpacity(styleObject->getFlatFillOpacity().getValue());
+      setOpacity(styleObject->getFlatFillOpacity().value());
   }
 
   // rule
@@ -167,7 +167,7 @@ update(const CSVGFill &fill)
     setRule(fill.getRule());
   else if (styleObject) {
     if (styleObject->getFillRuleValid())
-      setRule(styleObject->getFlatFillRule().getValue());
+      setRule(styleObject->getFlatFillRule().value());
   }
 
   // url
@@ -175,7 +175,7 @@ update(const CSVGFill &fill)
     setUrl(fill.getUrl());
   else if (styleObject) {
     if (styleObject->getFillUrlValid())
-      setUrl(styleObject->getFlatFillUrl().getValue());
+      setUrl(styleObject->getFlatFillUrl().value());
   }
 
   // fill object
@@ -183,7 +183,7 @@ update(const CSVGFill &fill)
     setFillObject(fill.getFillObject());
   else if (styleObject) {
     if (styleObject->getFillFillObjectValid())
-      setFillObject(styleObject->getFlatFillFillObject().getValue());
+      setFillObject(styleObject->getFlatFillFillObject().value());
   }
 
   //---
@@ -194,7 +194,7 @@ update(const CSVGFill &fill)
       std::cerr << "(" << styleObject->getId() << ")";
     std::cerr << ":";
     print(std::cerr);
-    std::cerr << std::endl;
+    std::cerr << "\n";
   }
 }
 

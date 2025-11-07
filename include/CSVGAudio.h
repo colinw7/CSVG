@@ -14,7 +14,7 @@ class CSVGAudio : public CSVGObject, public CSVGPrintBase<CSVGAudio> {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  COptString getNameValue(const std::string &name) const override;
+  std::optional<std::string> getNameValue(const std::string &name) const override;
 
   bool draw() override;
 

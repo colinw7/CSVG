@@ -26,7 +26,7 @@ class CSVGJElement : public CJObj {
 
   std::string toString() const override;
 
-  COptReal toReal() const override { return COptReal(); }
+  std::optional<double> toReal() const override { return std::optional<double>(); }
 
   bool toBoolean() const override { return false; }
 

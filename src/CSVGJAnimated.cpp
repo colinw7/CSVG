@@ -61,13 +61,13 @@ getProperty(CJavaScript *js, const std::string &name) const
 {
   // readonly attribute boolean animVal
   if      (name == "animVal") {
-    COptString str = obj_->getNameValue(name_);
+    std::optional<std::string> str = obj_->getNameValue(name_);
 
     return js->createStringValue(str.getValue(""));
   }
   // attribute boolean baseVal
   else if (name == "baseVal") {
-    COptString str = obj_->getNameValue(name_);
+    std::optional<std::string> str = obj_->getNameValue(name_);
 
     return js->createStringValue(str.getValue(""));
   }
@@ -122,7 +122,7 @@ getProperty(CJavaScript *js, const std::string &name) const
 {
   // readonly attribute boolean animVal
   if      (name == "animVal") {
-    COptString str = obj_->getNameValue(name_);
+    std::optional<std::string> str = obj_->getNameValue(name_);
 
     CSVGJNumberList::Reals reals;
 
@@ -132,7 +132,7 @@ getProperty(CJavaScript *js, const std::string &name) const
   }
   // attribute boolean baseVal
   else if (name == "baseVal") {
-    COptString str = obj_->getNameValue(name_);
+    std::optional<std::string> str = obj_->getNameValue(name_);
 
     CSVGJNumberList::Reals reals;
 
@@ -191,13 +191,13 @@ getProperty(CJavaScript *js, const std::string &name) const
 {
   // readonly attribute boolean animVal
   if      (name == "animVal") {
-    COptReal real = obj_->getRealNameValue(name_);
+    std::optional<double> real = obj_->getRealNameValue(name_);
 
     return CJValueP(new CSVGJNumber(svg_, real.getValue(0)));
   }
   // attribute boolean baseVal
   else if (name == "baseVal") {
-    COptReal real = obj_->getRealNameValue(name_);
+    std::optional<double> real = obj_->getRealNameValue(name_);
 
     return CJValueP(new CSVGJNumber(svg_, real.getValue(0)));
   }
@@ -252,7 +252,7 @@ getProperty(CJavaScript *js, const std::string &name) const
 {
   // readonly attribute boolean animVal
   if      (name == "animVal") {
-    COptString str = obj_->getNameValue(name_);
+    std::optional<std::string> str = obj_->getNameValue(name_);
 
     std::vector<CScreenUnits> lengths;
 
@@ -262,7 +262,7 @@ getProperty(CJavaScript *js, const std::string &name) const
   }
   // attribute boolean baseVal
   else if (name == "baseVal") {
-    COptString str = obj_->getNameValue(name_);
+    std::optional<std::string> str = obj_->getNameValue(name_);
 
     std::vector<CScreenUnits> lengths;
 
@@ -321,9 +321,9 @@ getProperty(CJavaScript *js, const std::string &name) const
 {
   // readonly attribute boolean animVal
   if      (name == "animVal") {
-    COptString str = obj_->getNameValue(name_);
+    std::optional<std::string> str = obj_->getNameValue(name_);
 
-    COptValT<CScreenUnits> length = CSVG::decodeLengthValue(str.getValue(""));
+    std::optional<CScreenUnits> length = CSVG::decodeLengthValue(str.getValue(""));
 
     return CJValueP(new CSVGJLength(svg_, length.getValue(CScreenUnits())));
   }
@@ -382,13 +382,13 @@ getProperty(CJavaScript *js, const std::string &name) const
 {
   // readonly attribute boolean animVal
   if      (name == "animVal") {
-    COptString str = obj_->getNameValue(name_);
+    std::optional<std::string> str = obj_->getNameValue(name_);
 
     return js->createStringValue(str.getValue(""));
   }
   // attribute boolean baseVal
   else if (name == "baseVal") {
-    COptString str = obj_->getNameValue(name_);
+    std::optional<std::string> str = obj_->getNameValue(name_);
 
     return js->createStringValue(str.getValue(""));
   }
@@ -443,7 +443,7 @@ getProperty(CJavaScript *js, const std::string &name) const
 {
   // readonly attribute boolean animVal
   if      (name == "animVal") {
-    COptString str = obj_->getNameValue(name_);
+    std::optional<std::string> str = obj_->getNameValue(name_);
 
     CBBox2D bbox;
 
@@ -453,7 +453,7 @@ getProperty(CJavaScript *js, const std::string &name) const
   }
   // attribute boolean baseVal
   else if (name == "baseVal") {
-    COptString str = obj_->getNameValue(name_);
+    std::optional<std::string> str = obj_->getNameValue(name_);
 
     CBBox2D bbox;
 
@@ -512,7 +512,7 @@ getProperty(CJavaScript *js, const std::string &name) const
 {
   // readonly attribute boolean animVal
   if      (name == "animVal") {
-    COptString str = obj_->getNameValue(name_);
+    std::optional<std::string> str = obj_->getNameValue(name_);
 
     return js->createStringValue(str.getValue(""));
   }
@@ -522,7 +522,7 @@ getProperty(CJavaScript *js, const std::string &name) const
       return CJValueP(new CSVGJTransformList(svg_, obj_));
     }
     else {
-      COptString str = obj_->getNameValue(name_);
+      std::optional<std::string> str = obj_->getNameValue(name_);
 
       return js->createStringValue(str.getValue(""));
     }
@@ -578,7 +578,7 @@ getProperty(CJavaScript *js, const std::string &name) const
 {
   // readonly attribute boolean animVal
   if      (name == "animVal") {
-    COptString str = obj_->getNameValue(name_);
+    std::optional<std::string> str = obj_->getNameValue(name_);
 
     CSVGPreserveAspect preserveAspect;
 
@@ -588,7 +588,7 @@ getProperty(CJavaScript *js, const std::string &name) const
   }
   // attribute boolean baseVal
   else if (name == "baseVal") {
-    COptString str = obj_->getNameValue(name_);
+    std::optional<std::string> str = obj_->getNameValue(name_);
 
     CSVGPreserveAspect preserveAspect;
 
@@ -664,7 +664,7 @@ CJValueP
 CSVGJPreserveAspectRatio::
 getProperty(CJavaScript *js, const std::string &name) const
 {
-  COptString str;
+  std::optional<std::string> str;
 
   if      (name == "align") {
     return js->createNumberValue(long(preserveAspect_.alignValue()));
@@ -723,13 +723,13 @@ getProperty(CJavaScript *js, const std::string &name) const
 {
   // readonly attribute boolean animVal
   if      (name == "animVal") {
-    COptInt value = obj_->getIntegerNameValue(name_);
+    std::optional<int> value = obj_->getIntegerNameValue(name_);
 
     return js->createNumberValue(long(value.getValue(0)));
   }
   // attribute boolean baseVal
   else if (name == "baseVal") {
-    COptInt value = obj_->getIntegerNameValue(name_);
+    std::optional<int> value = obj_->getIntegerNameValue(name_);
 
     return js->createNumberValue(long(value.getValue(0)));
   }
@@ -784,7 +784,7 @@ getProperty(CJavaScript *js, const std::string &name) const
 {
   // readonly attribute boolean animVal
   if      (name == "animVal") {
-    COptString str = obj_->getNameValue(name_);
+    std::optional<std::string> str = obj_->getNameValue(name_);
 
     bool b;
 
@@ -794,7 +794,7 @@ getProperty(CJavaScript *js, const std::string &name) const
   }
   // attribute boolean baseVal
   else if (name == "baseVal") {
-    COptString str = obj_->getNameValue(name_);
+    std::optional<std::string> str = obj_->getNameValue(name_);
 
     bool b;
 
@@ -853,9 +853,9 @@ getProperty(CJavaScript *js, const std::string &name) const
 {
   // readonly attribute boolean animVal
   if      (name == "animVal") {
-    COptString str = obj_->getNameValue(name_);
+    std::optional<std::string> str = obj_->getNameValue(name_);
 
-    COptValT<CAngle> angle = CSVG::decodeAngleString(str.getValue(""));
+    std::optional<CAngle> angle = CSVG::decodeAngleString(str.getValue(""));
 
     return CJValueP(new CSVGJAngle(svg_, angle.getValue(CAngle())));
   }

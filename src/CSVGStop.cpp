@@ -66,7 +66,7 @@ print(std::ostream &os, bool hier) const
 
     printValues(os);
 
-    os << "/>" << std::endl;
+    os << "/>\n";
   }
   else
     os << "stop " << getOffset();
@@ -80,8 +80,8 @@ printValues(std::ostream &os, bool flat) const
 
   printNamePercent(os, "offset", offset_);
 
-  if (color_.isValid())
-    os << " stop-color=\"" << color_.getValue() << "\"";
+  if (color_)
+    os << " stop-color=\"" << color_.value() << "\"";
 
   printNameValue(os, "stop-opacity", opacity_);
 }

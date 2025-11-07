@@ -42,9 +42,9 @@ getLinkObject() const
 {
   CSVGObject *object = nullptr;
 
-  if (xlink_.isValid()) {
-    if (xlink_.getValue().isObject())
-      object = xlink_.getValue().getObject();
+  if (xlink_) {
+    if (xlink_.value().isObject())
+      object = xlink_.value().getObject();
   }
 
   return object;
@@ -107,21 +107,21 @@ termParse()
 
       object1->getBBox(box);
 
-      if (x_.isValid() || y_.isValid()) {
+      if (x_ || y_) {
         CVector2D delta(0, 0);
 
-        if (x_.isValid()) delta.setX(x_.getValue());
-        if (y_.isValid()) delta.setY(y_.getValue());
+        if (x_) delta.setX(x_.value());
+        if (y_) delta.setY(y_.value());
 
         object1->moveDelta(delta);
       }
 
-      if (width_.isValid() || height_.isValid()) {
+      if (width_ || height_) {
         auto size = box.getSize();
 
-        if (width_ .isValid())
+        if (width_ )
           size.width  = getWidth();
-        if (height_.isValid())
+        if (height_)
           size.height = getHeight();
 
         object1->resizeTo(size);
@@ -132,8 +132,8 @@ termParse()
 
       addChildObject(object1);
 
-      if (xlink_.isValid())
-        xlink_.getValue().setObject(0);
+      if (xlink_)
+        xlink_.value().setObject(0);
     }
 
     return;
@@ -141,18 +141,18 @@ termParse()
 #endif
 
 #if 0
-  if (x_.isValid() || y_.isValid()) {
+  if (x_ || y_) {
     auto transform = adjustedTransform() const
 
     setTransform(transform);
   }
 
-  if (width_.isValid() || height_.isValid()) {
+  if (width_ || height_) {
     //auto size = box.getSize();
 
-    //if (width_ .isValid())
+    //if (width_ )
     //  size.width  = getWidth();
-    //if (height_.isValid())
+    //if (height_)
     //  size.height = getHeight();
 
     // TODO
@@ -183,11 +183,11 @@ getBBox(CBBox2D &bbox) const
 
     CPoint2D delta(0, 0);
 
-    if (x_.isValid())
-      delta.setX(x_.getValue());
+    if (x_)
+      delta.setX(x_.value());
 
-    if (y_.isValid())
-      delta.setY(y_.getValue());
+    if (y_)
+      delta.setY(y_.value());
 
     bbox.moveBy(delta);
   }
@@ -208,24 +208,24 @@ CMatrixStack2D
 CSVGUse::
 adjustedTransform(const CMatrixStack2D &transform) const
 {
-  if (x_.isValid() && ! y_.isValid())
+  if (x_ && ! y_)
     return transform;
 
   //---
 
   CPoint2D delta(0, 0);
 
-  if (x_.isValid())
-    delta.setX(x_.getValue());
+  if (x_)
+    delta.setX(x_.value());
 
-  if (y_.isValid())
-    delta.setY(y_.getValue());
+  if (y_)
+    delta.setY(y_.value());
 
   CMatrixStack2D transform1;
 
   transform1.append(transform);
 
-  transform1.translate(delta.x, delta.y);
+  transform1.addTranslation(delta.x, delta.y);
 
   return transform1;
 }
@@ -423,11 +423,11 @@ draw()
       svg_.popBuffer();
     }
   }
-  else if (xlink_.isValid()) {
-    if (xlink_.getValue().isImage()) {
+  else if (xlink_) {
+    if (xlink_.value().isImage()) {
       auto *buffer = svg_.getCurrentBuffer();
 
-      buffer->drawImage(0, 0, xlink_.getValue().getImageBuffer());
+      buffer->drawImage(0, 0, xlink_.value().getImageBuffer());
     }
   }
 
@@ -469,7 +469,7 @@ print(std::ostream &os, bool hier) const
 
     printValues(os);
 
-    os << "/>" << std::endl;
+    os << "/>\n";
   }
   else
     os << "use";
@@ -484,7 +484,7 @@ printValues(std::ostream &os, bool flat) const
   printNameValue(os, "width" , width_);
   printNameValue(os, "height", height_);
 
-  if (! xlink_.getValue().isNull())
+  if (! xlink_.value().isNull())
     printNameXLink(os, "xlink:href", xlink_);
 
   CSVGObject::printValues(os, flat);

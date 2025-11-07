@@ -90,8 +90,8 @@ drawPath(CSVGObject* obj)
   if (getUnits() == CSVGCoordUnits::OBJECT_BBOX) {
     CMatrixStack2D m;
 
-    m.translate(x, y);
-    m.scale    (w, h);
+    m.addTranslation(x, y);
+    m.addScale      (w, h);
 
     transform1 = m;
 
@@ -136,14 +136,14 @@ print(std::ostream &os, bool hier) const
     printValues(os);
 
     if (hasChildren()) {
-      os << ">" << std::endl;
+      os << ">\n";
 
       printChildren(os, hier);
 
-      os << "</clipPath>" << std::endl;
+      os << "</clipPath>\n";
     }
     else
-      os << "/>" << std::endl;
+      os << "/>\n";
   }
   else {
     os << "clipPath (";

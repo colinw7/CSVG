@@ -343,8 +343,8 @@ setAltRoot(CSVGObject *o)
     // place block so object appears top left
     CMatrixStack2D altM;
 
-    altM.scale(scale, scale);
-    altM.translate(-flatX, -flatY);
+    altM.addScale      (scale, scale);
+    altM.addTranslation(-flatX, -flatY);
     //altM.matrix(im1);
 
     altData_.block->setTransform(altM);
@@ -441,8 +441,8 @@ read(const std::string &filename, CSVGObject *rootBlock)
             xmlStyleSheet.is_css = (opt.getValue() == "text/css");
         }
 
-        if (xmlStyleSheet.is_css.getValue(false) && ! xmlStyleSheet.ref.getValue("").empty())
-          readCSSFile(xmlStyleSheet.ref.getValue());
+        if (xmlStyleSheet.is_css.value_or(false) && ! xmlStyleSheet.ref.value_or("").empty())
+          readCSSFile(xmlStyleSheet.ref.value());
 
         xmlStyleSheet_ = xmlStyleSheet;
       }
@@ -1606,7 +1606,7 @@ printBufferStack(const std::string &desc) const
   if (buffer_)
     std::cerr << " " << buffer_->getName();
 
-  std::cerr << std::endl;
+  std::cerr << "\n";
 }
 
 CSVGBuffer *
@@ -1686,7 +1686,7 @@ beginDrawBuffer(CSVGBuffer *buffer, const CBBox2D &pixelBox, const CBBox2D &view
   blockData_ = blockData;
 
   if (getenv("CSVG_DEBUG_BLOCK_DATA"))
-    std::cerr << "beginDrawBuffer:" << std::endl << blockData_ << std::endl;
+    std::cerr << "beginDrawBuffer:\n" << blockData_ << "\n";
 
   //---
 
@@ -1717,7 +1717,7 @@ endDrawBuffer(CSVGBuffer *buffer)
   blockDataStack_.pop_back();
 
   if (getenv("CSVG_DEBUG_BLOCK_DATA"))
-    std::cerr << "endDrawBuffer:" << std::endl << blockData_ << std::endl;
+    std::cerr << "endDrawBuffer:\n" << blockData_ << "\n";
 
   //---
 
@@ -2307,10 +2307,10 @@ decodeCoordValue(const std::string &str, CScreenUnits &length)
   else {
     auto optLength = decodeLengthValue(str);
 
-    if (! optLength.isValid())
+    if (! optLength)
       return false;
 
-    length = optLength.getValue();
+    length = optLength.value();
   }
 
   return true;
@@ -2353,10 +2353,10 @@ decodeLengthListValue(const std::string &str, std::vector<CScreenUnits> &lengths
 
     auto optLength = decodeLengthValue(str1);
 
-    if (! optLength.isValid())
+    if (! optLength)
       return false;
 
-    lengths.push_back(optLength.getValue());
+    lengths.push_back(optLength.value());
 
     parse.skipSpace();
 
@@ -2421,13 +2421,13 @@ fontSizeOption(const std::string &optName, const std::string &optValue,
   else {
     auto optLength = decodeLengthValue(optValue);
 
-    if (! optLength.isValid()) {
+    if (! optLength) {
       std::string msg = "Illegal font size value '" + optValue + "' for " + name;
       syntaxError(msg);
       return false;
     }
 
-    length = optLength.getValue();
+    length = optLength.value();
   }
 
   return true;
@@ -2450,13 +2450,13 @@ letterSpacingOption(const std::string &optName, const std::string &optValue,
   else {
     auto optLength = decodeLengthValue(optValue);
 
-    if (! optLength.isValid()) {
+    if (! optLength) {
       std::string msg = "Illegal font size value '" + optValue + "' for " + name;
       syntaxError(msg);
       return false;
     }
 
-    length = optLength.getValue();
+    length = optLength.value();
   }
 
   return true;
@@ -2479,13 +2479,13 @@ wordSpacingOption(const std::string &optName, const std::string &optValue,
   else {
     auto optLength = decodeLengthValue(optValue);
 
-    if (! optLength.isValid()) {
+    if (! optLength) {
       std::string msg = "Illegal font size value '" + optValue + "' for " + name;
       syntaxError(msg);
       return false;
     }
 
-    length = optLength.getValue();
+    length = optLength.value();
   }
 
   return true;
@@ -2501,18 +2501,18 @@ lengthOption(const std::string &optName, const std::string &optValue,
 
   auto optLength = decodeLengthValue(optValue);
 
-  if (! optLength.isValid()) {
+  if (! optLength) {
     std::string msg = "Illegal length value '" + optValue + "' for " + name;
     syntaxError(msg);
     return false;
   }
 
-  length = optLength.getValue();
+  length = optLength.value();
 
   return true;
 }
 
-COptValT<CScreenUnits>
+std::optional<CScreenUnits>
 CSVG::
 decodeLengthValue(const std::string &str)
 {
@@ -2537,7 +2537,7 @@ decodeLengthValue(const std::string &str)
   // em, font size of the element
   if      (CRegExpUtil::parse(str, em_pattern, matchStrs)) {
     if (! CStrUtil::toReal(matchStrs[0], &value))
-      return COptValT<CScreenUnits>();
+      return std::optional<CScreenUnits>();
 
     lvalue = CScreenUnits(CScreenUnits::Units::EM, value);
 
@@ -2546,7 +2546,7 @@ decodeLengthValue(const std::string &str)
   // ex, x-height of the element’s font
   else if (CRegExpUtil::parse(str, ex_pattern, matchStrs)) {
     if (! CStrUtil::toReal(matchStrs[0], &value))
-      return COptValT<CScreenUnits>();
+      return std::optional<CScreenUnits>();
 
     lvalue = CScreenUnits(CScreenUnits::Units::EX, value);
 
@@ -2555,7 +2555,7 @@ decodeLengthValue(const std::string &str)
   // pt, points, 1pt = 1/72th of 1in
   else if (CRegExpUtil::parse(str, pt_pattern, matchStrs)) {
     if (! CStrUtil::toReal(matchStrs[0], &value))
-      return COptValT<CScreenUnits>();
+      return std::optional<CScreenUnits>();
 
     //double ivalue = value;
     //mmToPixel((25.4*value)/72.0, &value);
@@ -2565,7 +2565,7 @@ decodeLengthValue(const std::string &str)
   // pc, picas, 1pc = 1/6th of 1in
   else if (CRegExpUtil::parse(str, pc_pattern, matchStrs)) {
     if (! CStrUtil::toReal(matchStrs[0], &value))
-      return COptValT<CScreenUnits>();
+      return std::optional<CScreenUnits>();
 
     //double ivalue = value;
     //mmToPixel((25.4*value)/6.0, &value);
@@ -2575,7 +2575,7 @@ decodeLengthValue(const std::string &str)
   // cm, centimeters, 1cm = 96px/2.54
   else if (CRegExpUtil::parse(str, cm_pattern, matchStrs)) {
     if (! CStrUtil::toReal(matchStrs[0], &value))
-      return COptValT<CScreenUnits>();
+      return std::optional<CScreenUnits>();
 
     //double ivalue = value;
     //mmToPixel(10*value, &value);
@@ -2585,7 +2585,7 @@ decodeLengthValue(const std::string &str)
   // mm, millimeters, 1mm = 1/10th of 1cm
   else if (CRegExpUtil::parse(str, mm_pattern, matchStrs)) {
     if (! CStrUtil::toReal(matchStrs[0], &value))
-      return COptValT<CScreenUnits>();
+      return std::optional<CScreenUnits>();
 
     //double ivalue = value;
     //mmToPixel(value, &value);
@@ -2595,7 +2595,7 @@ decodeLengthValue(const std::string &str)
   // in, inches, 1in = 2.54cm = 96px
   else if (CRegExpUtil::parse(str, in_pattern, matchStrs)) {
     if (! CStrUtil::toReal(matchStrs[0], &value))
-      return COptValT<CScreenUnits>();
+      return std::optional<CScreenUnits>();
 
     //double ivalue = value;
     //mmToPixel(25.4*value, &value);
@@ -2605,7 +2605,7 @@ decodeLengthValue(const std::string &str)
   // px, pixels, 1px = 1/96th of 1in
   else if (CRegExpUtil::parse(str, px_pattern, matchStrs)) {
     if (! CStrUtil::toReal(matchStrs[0], &value))
-      return COptValT<CScreenUnits>();
+      return std::optional<CScreenUnits>();
 
     //lvalue = CScreenUnits(CScreenUnits::Units::PX, value);
     lvalue = CScreenUnits(CScreenUnits::Units::IN, value/96.0);
@@ -2613,19 +2613,19 @@ decodeLengthValue(const std::string &str)
   // %
   else if (CRegExpUtil::parse(str, ph_pattern, matchStrs)) {
     if (! CStrUtil::toReal(matchStrs[0], &value))
-      return COptValT<CScreenUnits>();
+      return std::optional<CScreenUnits>();
 
     lvalue = CScreenUnits(CScreenUnits::Units::PERCENT, value);
   }
   // default (document units) pixels
   else {
     if (! CStrUtil::toReal(str, &value))
-      return COptValT<CScreenUnits>();
+      return std::optional<CScreenUnits>();
 
     lvalue = CScreenUnits(CScreenUnits::Units::PX, value);
   }
 
-  return COptValT<CScreenUnits>(lvalue);
+  return std::optional<CScreenUnits>(lvalue);
 }
 
 //--------------
@@ -2690,18 +2690,18 @@ orientOption(const std::string &optName, const std::string &optValue,
 
   auto optOrient = decodeOrientString(optValue);
 
-  if (! optOrient.isValid()) {
+  if (! optOrient) {
     std::string msg = "Illegal orient value '" + optValue + "' for " + name;
     syntaxError(msg);
     return false;
   }
 
-  orient = optOrient.getValue();
+  orient = optOrient.value();
 
   return true;
 }
 
-COptValT<CSVGOrient>
+std::optional<CSVGOrient>
 CSVG::
 decodeOrientString(const std::string &str)
 {
@@ -2709,17 +2709,17 @@ decodeOrientString(const std::string &str)
 
   if (str == "auto") {
     orient.setIsAuto(true);
-    return COptValT<CSVGOrient>(orient);
+    return std::optional<CSVGOrient>(orient);
   }
 
   auto angle = decodeAngleString(str);
 
-  if (! angle.isValid())
-    return COptValT<CSVGOrient>();
+  if (! angle)
+    return std::optional<CSVGOrient>();
 
-  orient.setAngle(angle.getValue());
+  orient.setAngle(angle.value());
 
-  return COptValT<CSVGOrient>(orient);
+  return std::optional<CSVGOrient>(orient);
 }
 
 std::string
@@ -2744,13 +2744,13 @@ angleOption(const std::string &optName, const std::string &optValue,
 
   auto optAngle = decodeAngleString(optValue);
 
-  if (! optAngle.isValid()) {
+  if (! optAngle) {
     std::string msg = "Invalid angle value '" + optValue + "' for " + name;
     syntaxError(msg);
     return false;
   }
 
-  angle = optAngle.getValue();
+  angle = optAngle.value();
 
   return true;
 }
@@ -2761,7 +2761,7 @@ angleOption(const std::string &optName, const std::string &optValue,
 // When an <angle> is used in an SVG presentation attribute, the syntax must match
 // the following pattern:
 //   angle ::= number ("deg" | "grad" | "rad")?
-COptValT<CAngle>
+std::optional<CAngle>
 CSVG::
 decodeAngleString(const std::string &str)
 {
@@ -2772,7 +2772,7 @@ decodeAngleString(const std::string &str)
   double r;
 
   if (! parse.readReal(&r))
-    return COptValT<CAngle>();
+    return std::optional<CAngle>();
 
   CAngle angle;
 
@@ -2785,7 +2785,7 @@ decodeAngleString(const std::string &str)
   else
     angle.setDegrees(r); // TODO: handle bad chars after real
 
-  return COptValT<CAngle>(angle);
+  return std::optional<CAngle>(angle);
 }
 
 std::string
@@ -3312,9 +3312,9 @@ decodeTransform(const std::string &str, CMatrixStack2D &matrix)
       //------
 
       if (isEqualScale)
-        matrix.scale(sx);
+        matrix.addScale(sx);
       else
-        matrix.scale(sx, sy);
+        matrix.addScale(sx, sy);
     }
     else if (keyword == "translate") {
       if (! parse.isChar('('))
@@ -3349,7 +3349,7 @@ decodeTransform(const std::string &str, CMatrixStack2D &matrix)
 
       //------
 
-      matrix.translate(dx, dy);
+      matrix.addTranslation(dx, dy);
     }
     else if (keyword == "rotate") {
       if (! parse.isChar('('))
@@ -3396,9 +3396,9 @@ decodeTransform(const std::string &str, CMatrixStack2D &matrix)
       //------
 
       if (translate)
-        matrix.rotate(CMathGen::DegToRad(a), CPoint2D(cx, cy));
+        matrix.addRotation(CMathGen::DegToRad(a), CPoint2D(cx, cy));
       else
-        matrix.rotate(CMathGen::DegToRad(a));
+        matrix.addRotation(CMathGen::DegToRad(a));
     }
     else if (keyword == "skewX") {
       if (! parse.isChar('('))
@@ -3424,7 +3424,7 @@ decodeTransform(const std::string &str, CMatrixStack2D &matrix)
 
       //------
 
-      matrix.skewX(CMathGen::DegToRad(angle));
+      matrix.addSkewX(CMathGen::DegToRad(angle));
     }
     else if (keyword == "skewY") {
       if (! parse.isChar('('))
@@ -3450,7 +3450,7 @@ decodeTransform(const std::string &str, CMatrixStack2D &matrix)
 
       //------
 
-      matrix.skewY(CMathGen::DegToRad(angle));
+      matrix.addSkewY(CMathGen::DegToRad(angle));
     }
     else if (keyword == "matrix") {
       if (! parse.isChar('('))
@@ -3655,10 +3655,10 @@ decodeDashString(const std::string &dashStr, std::vector<CScreenUnits> &lengths,
 
     auto optLength = decodeLengthValue(word);
 
-    if (! optLength.isValid())
+    if (! optLength)
       return false;
 
-    lengths.push_back(optLength.getValue());
+    lengths.push_back(optLength.value());
   }
 
   if (duplicate) {
@@ -4288,16 +4288,16 @@ void
 CSVG::
 printFlat(std::ostream &os, bool force) const
 {
-  if (xmlStyleSheet_.isValid()) {
+  if (xmlStyleSheet_) {
     os << "<?xml-stylesheet";
 
-    if (xmlStyleSheet_.getValue().ref.isValid())
-      os << " href=\"" << xmlStyleSheet_.getValue().ref.getValue() << "\"";
+    if (xmlStyleSheet_.value().ref)
+      os << " href=\"" << xmlStyleSheet_.value().ref.value() << "\"";
 
-    if (xmlStyleSheet_.getValue().is_css.isValid())
+    if (xmlStyleSheet_.value().is_css)
       os << " type=\"text/css\"";
 
-    os << "?>" << std::endl;
+    os << "?>\n";
   }
 
   getRoot()->printFlat(os, force, -1);

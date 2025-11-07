@@ -78,14 +78,14 @@ print(std::ostream &os, bool hier) const
     printValues(os);
 
     if (hasChildren()) {
-      os << ">" << std::endl;
+      os << ">\n";
 
       printChildren(os, hier);
 
-      os << "</symbol>" << std::endl;
+      os << "</symbol>\n";
     }
     else
-      os << "/>" << std::endl;
+      os << "/>\n";
   }
   else
     os << "symbol";

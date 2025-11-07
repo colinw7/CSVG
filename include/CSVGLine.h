@@ -12,16 +12,16 @@ class CSVGLine : public CSVGObject, public CSVGPrintBase<CSVGLine> {
 
   CSVGLine *dup() const override;
 
-  CScreenUnits getX1(double x=0) const { return x1_.getValue(CScreenUnits(x)); }
+  CScreenUnits getX1(double x=0) const { return x1_.value_or(CScreenUnits(x)); }
   void setX1(const CScreenUnits &x1) { x1_ = x1; }
 
-  CScreenUnits getY1(double y=0) const { return y1_.getValue(CScreenUnits(y)); }
+  CScreenUnits getY1(double y=0) const { return y1_.value_or(CScreenUnits(y)); }
   void setY1(const CScreenUnits &y1) { y1_ = y1; }
 
-  CScreenUnits getX2(double x=0) const { return x2_.getValue(CScreenUnits(x)); }
+  CScreenUnits getX2(double x=0) const { return x2_.value_or(CScreenUnits(x)); }
   void setX2(const CScreenUnits &x2) { x2_ = x2; }
 
-  CScreenUnits getY2(double y=0) const { return y2_.getValue(CScreenUnits(y)); }
+  CScreenUnits getY2(double y=0) const { return y2_.value_or(CScreenUnits(y)); }
   void setY2(const CScreenUnits &y2) { y2_ = y2; }
 
   CPoint2D getStart(const CSize2D &size=CSize2D(1, 1)) const {
@@ -56,10 +56,10 @@ class CSVGLine : public CSVGObject, public CSVGPrintBase<CSVGLine> {
   void moveDelta(const CVector2D &delta) override;
 
  private:
-  COptValT<CScreenUnits> x1_;
-  COptValT<CScreenUnits> y1_;
-  COptValT<CScreenUnits> x2_;
-  COptValT<CScreenUnits> y2_;
+  std::optional<CScreenUnits> x1_;
+  std::optional<CScreenUnits> y1_;
+  std::optional<CScreenUnits> x2_;
+  std::optional<CScreenUnits> y2_;
 };
 
 #endif

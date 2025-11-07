@@ -257,8 +257,8 @@ getRenderer() const
 
     th->renderer_ = svg_.createRenderer();
 
-    if (opacity_.isValid())
-      th->renderer_->setOpacity(opacity_.getValue());
+    if (opacity_)
+      th->renderer_->setOpacity(opacity_.value());
   }
 
   return renderer_;
@@ -1853,7 +1853,7 @@ setStroke(const CSVGStroke &stroke)
   if (fillObject) {
     setStrokeFilled(true);
 
-    COptReal opacity;
+    std::optional<double> opacity;
 
     if (stroke.getOpacityValid() && ! stroke.getOpacity().isInherit())
       opacity = stroke.getOpacity().getValue();
@@ -2096,7 +2096,7 @@ setFill(const CSVGFill &fill)
   auto *fillObject = fill.calcFillObject();
 
   if (fillObject) {
-    COptReal opacity;
+    std::optional<double> opacity;
 
     if (fill.getOpacityValid())
       opacity = fill.getOpacity().getValue();
@@ -2391,8 +2391,8 @@ pathInit()
 
   renderer_->pathInit();
 
-  pathLastControlPoint1_.setInvalid();
-  pathLastControlPoint2_.setInvalid();
+  pathLastControlPoint1_.reset();
+  pathLastControlPoint2_.reset();
 }
 
 void
@@ -2601,10 +2601,10 @@ pathGetLastControlPoint(CPoint2D &p) const
 
   //---
 
-  if (! pathLastControlPoint1_.isValid())
+  if (! pathLastControlPoint1_)
     return false;
 
-  p = pathLastControlPoint1_.getValue();
+  p = pathLastControlPoint1_.value();
 
   return true;
 }
@@ -2618,10 +2618,10 @@ pathGetLastMControlPoint(CPoint2D &p) const
 
   //---
 
-  if (! pathLastControlPoint1_.isValid())
+  if (! pathLastControlPoint1_)
     return false;
 
-  p = pathMirrorPoint(pathLastControlPoint1_.getValue());
+  p = pathMirrorPoint(pathLastControlPoint1_.value());
 
   return true;
 }
@@ -2635,10 +2635,10 @@ pathGetLastMRControlPoint(CPoint2D &p) const
 
   //---
 
-  if (! pathLastControlPoint1_.isValid())
+  if (! pathLastControlPoint1_)
     return false;
 
-  p = pathMirrorPoint(pathLastControlPoint1_.getValue());
+  p = pathMirrorPoint(pathLastControlPoint1_.value());
 
   CPoint2D cp;
 
@@ -2988,8 +2988,8 @@ drawText(double x, double y, const std::string &text, const CSVGFontDef &fontDef
 
     double font_size = 10.0;
 
-    transform.scale    (font_size/units, font_size/units);
-    transform.translate(x, y);
+    transform.addScale      (font_size/units, font_size/units);
+    transform.addTranslation(x, y);
 
     auto len = text.size();
 
@@ -3004,7 +3004,7 @@ drawText(double x, double y, const std::string &text, const CSVGFontDef &fontDef
 
         x += font_size;
 
-        transform.translate(x, y);
+        transform.addTranslation(x, y);
       }
     }
 
@@ -3016,7 +3016,7 @@ drawText(double x, double y, const std::string &text, const CSVGFontDef &fontDef
     auto transform1 = transform;
 
     if (fontDef.getAngle() != 0.0) {
-      transform1.rotate(fontDef.getAngle(), CPoint2D(x, y));
+      transform1.addRotation(fontDef.getAngle(), CPoint2D(x, y));
 
       setTransform(transform1);
     }
@@ -3062,8 +3062,8 @@ fillText(double x, double y, const std::string &text, const CSVGFontDef &fontDef
 
     double font_size = 10.0;
 
-    transform.scale    (font_size/units, font_size/units);
-    transform.translate(x, y);
+    transform.addScale      (font_size/units, font_size/units);
+    transform.addTranslation(x, y);
 
     auto len = text.size();
 
@@ -3078,7 +3078,7 @@ fillText(double x, double y, const std::string &text, const CSVGFontDef &fontDef
 
         x += font_size;
 
-        transform.translate(x, y);
+        transform.addTranslation(x, y);
       }
     }
 
@@ -3090,7 +3090,7 @@ fillText(double x, double y, const std::string &text, const CSVGFontDef &fontDef
     auto transform1 = transform;
 
     if (fontDef.getAngle() != 0.0) {
-      transform1.rotate(fontDef.getAngle(), CPoint2D(x, y));
+      transform1.addRotation(fontDef.getAngle(), CPoint2D(x, y));
 
       setTransform(transform1);
     }

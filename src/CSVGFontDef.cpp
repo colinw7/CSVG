@@ -36,10 +36,10 @@ void
 CSVGFontDef::
 reset()
 {
-  family_.setInvalid();
-  size_  .setInvalid();
-  style_ .setInvalid();
-  angle_ .setInvalid();
+  family_.reset();
+  size_  .reset();
+  style_ .reset();
+  angle_ .reset();
 
   resetObj();
 }
@@ -71,9 +71,9 @@ setWeight(const std::string &weightDef)
   auto weight = CFontStyles(svg_.decodeFontWeightString(weightDef, inherit));
 
   if (hasStyle())
-    style_.setValue(getStyle() | weight);
+    style_ = (getStyle() | weight);
   else
-    style_.setValue(weight);
+    style_ = weight;
 
   resetObj();
 }
@@ -87,9 +87,9 @@ setStyle(const std::string &styleDef)
   auto style = CFontStyles(svg_.decodeFontStyleString(styleDef, inherit));
 
   if (hasStyle())
-    style_.setValue(getStyle() | style);
+    style_ = (getStyle() | style);
   else
-    style_.setValue(style);
+    style_ = style;
 
   resetObj();
 }
@@ -98,7 +98,7 @@ void
 CSVGFontDef::
 setStyle(CFontStyles s)
 {
-  style_.setValue(s);
+  style_ = s;
 
   resetObj();
 }
@@ -114,7 +114,7 @@ void
 CSVGFontDef::
 setUnderline(bool b)
 {
-  style_.setValue(getStyle().addRemove(CFONT_STYLE_UNDERLINE, b));
+  style_ = getStyle().addRemove(CFONT_STYLE_UNDERLINE, b);
 }
 
 bool
@@ -128,7 +128,7 @@ void
 CSVGFontDef::
 setOverline(bool b)
 {
-  style_.setValue(getStyle().addRemove(CFONT_STYLE_OVERLINE, b));
+  style_ = getStyle().addRemove(CFONT_STYLE_OVERLINE, b);
 }
 
 bool
@@ -142,7 +142,7 @@ void
 CSVGFontDef::
 setLineThrough(bool b)
 {
-  style_.setValue(getStyle().addRemove(CFONT_STYLE_STRIKEOUT, b));
+  style_ = getStyle().addRemove(CFONT_STYLE_STRIKEOUT, b);
 }
 
 bool
@@ -156,7 +156,7 @@ void
 CSVGFontDef::
 setSubscript(bool b)
 {
-  style_.setValue(getStyle().addRemove(CFONT_STYLE_SUBSCRIPT, b));
+  style_ = getStyle().addRemove(CFONT_STYLE_SUBSCRIPT, b);
 }
 
 bool
@@ -170,7 +170,7 @@ void
 CSVGFontDef::
 setSuperscript(bool b)
 {
-  style_.setValue(getStyle().addRemove(CFONT_STYLE_SUPERSCRIPT, b));
+  style_ = getStyle().addRemove(CFONT_STYLE_SUPERSCRIPT, b);
 }
 
 void
@@ -214,36 +214,36 @@ print(std::ostream &os) const
 {
   bool output = false;
 
-  if (family_.isValid()) {
+  if (family_) {
     os << "font-family:";
 
-    if (family_.getValue().isInherit())
+    if (family_.value().isInherit())
       os << "inherit";
     else
-      os << family_.getValue().getValue();
+      os << family_.value().getValue();
 
     os << ";";
 
     output = true;
   }
 
-  if (size_.isValid()) {
+  if (size_) {
     if (output) os << " ";
 
     os << "font-size:";
 
-    if (size_.getValue().isInherit())
+    if (size_.value().isInherit())
       os << "inherit";
     else
-      os << size_.getValue().getValue();
+      os << size_.value().getValue();
 
     os << ";";
 
     output = true;
   }
 
-  if (style_.isValid()) {
-    auto styles = style_.getValue();
+  if (style_) {
+    auto styles = style_.value();
 
     if (styles & CFONT_STYLE_BOLD) {
       if (output) os << " ";

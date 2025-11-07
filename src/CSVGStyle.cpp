@@ -37,7 +37,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
     if (str == "text/css")
       type_ = CSVGStyleType::TEXT_CSS;
     else
-      std::cerr << "Invalid type " << str << std::endl;
+      std::cerr << "Invalid type " << str << "\n";
 
     return true;
   }
@@ -81,13 +81,13 @@ setText(const std::string &text)
     }
 
     if (! svg_.readCSSString(str))
-      std::cerr << "Invalid Style: " << str << std::endl;
+      std::cerr << "Invalid Style: " << str << "\n";
   }
   else {
     if (! svg_.readCSSString(text))
-      std::cerr << "Invalid Style Text: " << text << std::endl;
+      std::cerr << "Invalid Style Text: " << text << "\n";
 
-    //std::cerr << "Invalid Text: " << text << std::endl;
+    //std::cerr << "Invalid Text: " << text << "\n";
   }
 
   text_ = text;
@@ -109,13 +109,13 @@ print(std::ostream &os, bool hier) const
 
     printValues(os);
 
-    os << ">" << std::endl;
+    os << ">\n";
 
     os << getText();
 
     printChildren(os, hier);
 
-    os << "</style>" << std::endl;
+    os << "</style>\n";
   }
   else
     os << "style";

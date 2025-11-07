@@ -20,10 +20,10 @@ class CSVGFeGaussianBlur : public CSVGFilterBase, public CSVGPrintBase<CSVGFeGau
   std::string getFilterOut() const;
   void setFilterOut(const std::string &s) { filterOut_ = s; }
 
-  double getStdDevX() const { return stdDevX_.getValue(0); }
+  double getStdDevX() const { return stdDevX_.value_or(0); }
   void setStdDevX(double d) { stdDevX_ = d; }
 
-  double getStdDevY() const { return stdDevY_.getValue(getStdDevX()); }
+  double getStdDevY() const { return stdDevY_.value_or(getStdDevX()); }
   void setStdDevY(double d) { stdDevX_ = d; }
 
   bool processOption(const std::string &name, const std::string &value) override;
@@ -37,10 +37,10 @@ class CSVGFeGaussianBlur : public CSVGFilterBase, public CSVGPrintBase<CSVGFeGau
   void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
-  COptString filterIn_;
-  COptString filterOut_;
-  COptReal   stdDevX_;
-  COptReal   stdDevY_;
+  std::optional<std::string> filterIn_;
+  std::optional<std::string> filterOut_;
+  std::optional<double>      stdDevX_;
+  std::optional<double>      stdDevY_;
 };
 
 #endif

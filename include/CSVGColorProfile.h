@@ -23,10 +23,10 @@ class CSVGColorProfile : public CSVGObject, public CSVGPrintBase<CSVGColorProfil
   void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
-  COptString          local_;
-  COptString          name_;
-  COptString          intent_;
-  COptValT<CSVGXLink> xlink_;
+  std::optional<std::string> local_;
+  std::optional<std::string> name_;
+  std::optional<std::string> intent_;
+  std::optional<CSVGXLink>   xlink_;
 };
 
 #endif

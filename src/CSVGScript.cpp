@@ -52,8 +52,8 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   else if (svg_.stringOption(opt_name, opt_value, "xlink:href", str)) {
     xlink_ = CSVGXLink(this, str);
 
-    if (xlink_.isValid())
-      (void) xlink_.getValue().isObject(); // resolve
+    if (xlink_)
+      (void) xlink_.value().isObject(); // resolve
   }
   else
     return CSVGObject::processOption(opt_name, opt_value);
@@ -138,17 +138,17 @@ print(std::ostream &os, bool hier) const
     printValues(os);
 
     if (hasText() || hasChildren()) {
-      os << ">" << std::endl;
+      os << ">\n";
 
       if (hasText())
-        os << getText() << std::endl;
+        os << getText() << "\n";
 
       printChildren(os, hier);
 
-      os << "</script>" << std::endl;
+      os << "</script>\n";
     }
     else
-      os << "/>" << std::endl;
+      os << "/>\n";
   }
   else
     os << "script";

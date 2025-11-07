@@ -70,13 +70,13 @@ class CSVGJTransformList : public CJObj {
     return ss.str();
   }
 
-  COptReal toReal() const override { return COptReal(); }
+  std::optional<double> toReal() const override { return std::optional<double>(); }
 
   bool toBoolean() const override { return false; }
 
   bool hasIndex() const override { return true; }
 
-  COptLong length() const override;
+  std::optional<long> length() const override;
 
   CJValueP indexValue(long i) const override;
 
@@ -131,7 +131,7 @@ class CSVGJTransform : public CJObj {
     return ss.str();
   }
 
-  COptReal toReal() const override { return COptReal(); }
+  std::optional<double> toReal() const override { return std::optional<double>(); }
 
   bool toBoolean() const override { return false; }
 
@@ -185,7 +185,7 @@ class CSVGJMatrix : public CJObj {
     return ss.str();
   }
 
-  COptReal toReal() const override { return COptReal(); }
+  std::optional<double> toReal() const override { return std::optional<double>(); }
 
   bool toBoolean() const override { return false; }
 
@@ -238,7 +238,7 @@ class CSVGJRect : public CJObj {
     return ss.str();
   }
 
-  COptReal toReal() const override { return COptReal(); }
+  std::optional<double> toReal() const override { return std::optional<double>(); }
 
   bool toBoolean() const override { return false; }
 
@@ -291,7 +291,7 @@ class CSVGJNumberList : public CJObj {
     return ss.str();
   }
 
-  COptReal toReal() const override { return COptReal(); }
+  std::optional<double> toReal() const override { return std::optional<double>(); }
 
   bool toBoolean() const override { return false; }
 
@@ -339,7 +339,7 @@ class CSVGJNumber : public CJObj {
     return ss.str();
   }
 
-  COptReal toReal() const override { return COptReal(r_); }
+  std::optional<double> toReal() const override { return std::optional<double>(r_); }
 
   bool toBoolean() const override { return (r_ != 0.0); }
 
@@ -392,7 +392,7 @@ class CSVGJLengthList : public CJObj {
     return ss.str();
   }
 
-  COptReal toReal() const override { return COptReal(); }
+  std::optional<double> toReal() const override { return std::optional<double>(); }
 
   bool toBoolean() const override { return false; }
 
@@ -448,7 +448,7 @@ class CSVGJLength : public CJObj {
     return ss.str();
   }
 
-  COptReal toReal() const override { return COptReal(); }
+  std::optional<double> toReal() const override { return std::optional<double>(); }
 
   bool toBoolean() const override { return false; }
 
@@ -500,7 +500,7 @@ class CSVGJStringList : public CJObj {
     return ss.str();
   }
 
-  COptReal toReal() const override { return COptReal(); }
+  std::optional<double> toReal() const override { return std::optional<double>(); }
 
   bool toBoolean() const override { return false; }
 
@@ -555,7 +555,7 @@ class CSVGJAngle : public CJObj {
     return ss.str();
   }
 
-  COptReal toReal() const override { return COptReal(angle_.degrees()); }
+  std::optional<double> toReal() const override { return std::optional<double>(angle_.degrees()); }
 
   bool toBoolean() const override { return false; }
 
@@ -626,7 +626,7 @@ class CSVGJColor : public CJObj {
     return ss.str();
   }
 
-  COptReal toReal() const override { return COptReal(); }
+  std::optional<double> toReal() const override { return std::optional<double>(); }
 
   bool toBoolean() const override { return false; }
 

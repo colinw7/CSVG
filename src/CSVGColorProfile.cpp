@@ -61,15 +61,15 @@ print(std::ostream &os, bool hier) const
 
     printValues(os);
 
-    os << ">" << std::endl;
+    os << ">\n";
 
     if (hasChildren()) {
       printChildren(os, hier);
 
-      os << "</color-profile>" << std::endl;
+      os << "</color-profile>\n";
     }
     else
-      os << "/>" << std::endl;
+      os << "/>\n";
   }
   else
     os << "color-profile";
@@ -83,7 +83,7 @@ printValues(std::ostream &os, bool flat) const
   printNameValue(os, "name"            , name_);
   printNameValue(os, "rendering-intent", intent_);
 
-  if (! xlink_.getValue().isNull())
+  if (! xlink_.value().isNull())
     printNameXLink(os, "xlink:href", xlink_);
 
   CSVGObject::printValues(os, flat);

@@ -31,8 +31,8 @@ class CSVGFeTile : public CSVGFilterBase, public CSVGPrintBase<CSVGFeTile> {
   void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
-  COptString filterIn_;
-  COptString filterOut_;
+  std::optional<std::string> filterIn_;
+  std::optional<std::string> filterOut_;
 };
 
 #endif

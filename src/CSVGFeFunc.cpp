@@ -42,7 +42,7 @@ processOption(const std::string &opt_name, const std::string &opt_value)
     else if (str == "gamma"   ) type_ = CSVGFilterFuncType::GAMMA;
     else if (str == "table"   ) type_ = CSVGFilterFuncType::TABLE;
     else if (str == "discrete") type_ = CSVGFilterFuncType::DISCRETE;
-    else std::cerr << "Unrecognised type " << str << std::endl;
+    else std::cerr << "Unrecognised type " << str << "\n";
   }
   else if (svg_.realOption(opt_name, opt_value, "slope", &real))
     slope_ = real;
@@ -85,7 +85,7 @@ print(std::ostream &os, bool hier) const
 
     printValues(os);
 
-    os << "/>" << std::endl;
+    os << "/>\n";
   }
   else
     os << getTagName() << " ";
@@ -97,7 +97,7 @@ printValues(std::ostream &os, bool flat) const
 {
   CSVGObject::printValues(os, flat);
 
-  if (type_.isValid()) {
+  if (type_) {
     os << " type=\"";
 
     if      (getType() == CSVGFilterFuncType::IDENTITY) os << "identity";

@@ -18,30 +18,30 @@ class CSVGRect : public CSVGObject, public CSVGPrintBase<CSVGRect> {
 
   // bbox (x, y, width, height)
 
-  bool hasX() const { return x_.isValid(); }
-  CScreenUnits getX() const { return x_.getValue(CScreenUnits(0)); }
+  bool hasX() const { return !!x_; }
+  CScreenUnits getX() const { return x_.value_or(CScreenUnits(0)); }
   void setX(const CScreenUnits &x) { x_ = x; updateBBox(); }
 
-  bool hasY() const { return y_.isValid(); }
-  CScreenUnits getY() const { return y_.getValue(CScreenUnits(0)); }
+  bool hasY() const { return !!y_; }
+  CScreenUnits getY() const { return y_.value_or(CScreenUnits(0)); }
   void setY(const CScreenUnits &y) { y_ = y; updateBBox(); }
 
-  bool hasWidth() const { return width_.isValid(); }
-  CScreenUnits getWidth() const { return width_.getValue(CScreenUnits(0)); }
+  bool hasWidth() const { return !!width_; }
+  CScreenUnits getWidth() const { return width_.value_or(CScreenUnits(0)); }
   void setWidth(const CScreenUnits &w) { width_ = w; updateBBox(); }
 
-  bool hasHeight() const { return height_.isValid(); }
-  CScreenUnits getHeight() const { return height_ .getValue(CScreenUnits(0)); }
+  bool hasHeight() const { return !!height_; }
+  CScreenUnits getHeight() const { return height_ .value_or(CScreenUnits(0)); }
   void setHeight(const CScreenUnits &h) { height_ = h; updateBBox(); }
 
   //---
 
-  bool hasRX() const { return rx_.isValid(); }
-  double getRX() { return rx_.getValue(0); }
+  bool hasRX() const { return !!rx_; }
+  double getRX() { return rx_.value_or(0); }
   void setRX(double x) { rx_ = x; } // no bbox change
 
-  bool hasRY() const { return ry_.isValid(); }
-  double getRY() { return ry_.getValue(0); }
+  bool hasRY() const { return !!ry_; }
+  double getRY() { return ry_.value_or(0); }
   void setRY(double y) { ry_ = y; } // no bbox change
 
   //---
@@ -85,12 +85,12 @@ class CSVGRect : public CSVGObject, public CSVGPrintBase<CSVGRect> {
   void moveDelta(const CVector2D &delta) override;
 
  private:
-  COptValT<CScreenUnits> x_;
-  COptValT<CScreenUnits> y_;
-  COptValT<CScreenUnits> width_;
-  COptValT<CScreenUnits> height_;
-  COptReal               rx_;
-  COptReal               ry_;
+  std::optional<CScreenUnits> x_;
+  std::optional<CScreenUnits> y_;
+  std::optional<CScreenUnits> width_;
+  std::optional<CScreenUnits> height_;
+  std::optional<double>       rx_;
+  std::optional<double>       ry_;
 
   mutable CBBox2D          bbox_;
   mutable CSVGPathPartList parts_;

@@ -55,7 +55,7 @@ draw()
   if (svg_.getDebug())
     CSVGLog() << *this;
 
-  bbox_.setInvalid();
+  bbox_.reset();
 
   // zero length path with line cap square or round draw square of circle shape to match line width
   double l = parts_.getLength();
@@ -96,7 +96,7 @@ drawZeroLength()
     drawCap = false;
 
   auto   c = getFlatStrokeColor();
-  double r = getFlatStrokeWidth().getValue(Width(1)).getValue()/2;
+  double r = getFlatStrokeWidth().value_or(Width(1)).getValue()/2;
 
   auto *buffer = svg_.getCurrentBuffer();
 
@@ -121,8 +121,8 @@ drawZeroLength()
 
   buffer->resetFill();
 
-  if (c.isValid())
-    buffer->setFillColor(c.getValue().getValue().rgba());
+  if (c)
+    buffer->setFillColor(c.value().getValue().rgba());
 
   auto lineCap = stroke_.getLineCap().getValue();
 
@@ -162,14 +162,14 @@ print(std::ostream &os, bool hier) const
     printValues(os, /*flat*/false);
 
     if (hasChildren()) {
-      os << ">" << std::endl;
+      os << ">\n";
 
       printChildren(os, hier);
 
-      os << "</path>" << std::endl;
+      os << "</path>\n";
     }
     else
-      os << "/>" << std::endl;
+      os << "/>\n";
   }
   else {
     os << "path (" << getId() << ") parts (" << parts_ << ")";
@@ -192,7 +192,7 @@ getBBox(CBBox2D &bbox) const
 {
   bool rc = true;
 
-  if (! bbox_.isValid()) {
+  if (! bbox_) {
     if (hasViewBox())
       bbox = getViewBox();
     else {
@@ -201,14 +201,14 @@ getBBox(CBBox2D &bbox) const
       rc = parts_.getBBox(currentBuffer, bbox);
     }
 
-    double lw = getFlatStrokeWidth().getValue(Width(1)).getValue(1);
+    double lw = getFlatStrokeWidth().value_or(Width(1)).getValue(1);
 
     bbox.expand(lw);
 
     bbox_ = bbox;
   }
   else
-    bbox = bbox_.getValue();
+    bbox = bbox_.value();
 
   return rc;
 }

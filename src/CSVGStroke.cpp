@@ -121,9 +121,9 @@ CSVGStroke::
 calcFillObject() const
 {
   if      (getUrlValid())
-    return svg_.lookupObjectById(url_.getValue());
+    return svg_.lookupObjectById(url_.value());
   else if (getFillObjectValid())
-    return fillObject_.getValue();
+    return fillObject_.value();
   else
     return nullptr;
 }
@@ -181,10 +181,10 @@ setDashOffset(const std::string &offsetStr)
   else {
     auto lvalue = svg_.decodeLengthValue(offsetStr);
 
-    if (! lvalue.isValid())
+    if (! lvalue)
       return;
 
-    lineOffset_ = DashOffset(lvalue.getValue());
+    lineOffset_ = DashOffset(lvalue.value());
   }
 }
 
@@ -253,10 +253,10 @@ setMiterLimit(const std::string &limitStr)
   else {
     auto lvalue = svg_.decodeLengthValue(limitStr);
 
-    if (! lvalue.isValid())
+    if (! lvalue)
       return;
 
-    miterlimit = lvalue.getValue().pxValue(1);
+    miterlimit = lvalue.value().pxValue(1);
   }
 
   setMiterLimit(! inherit ? MiterLimit(miterlimit) : MiterLimit::makeInherit());
@@ -266,17 +266,17 @@ void
 CSVGStroke::
 reset()
 {
-  color_     .setInvalid();
-  opacity_   .setInvalid();
-  rule_      .setInvalid();
-  url_       .setInvalid();
-  fillObject_.setInvalid();
-  width_     .setInvalid();
-  lineDash_  .setInvalid();
-  lineOffset_.setInvalid();
-  lineCap_   .setInvalid();
-  lineJoin_  .setInvalid();
-  mlimit_    .setInvalid();
+  color_     .reset();
+  opacity_   .reset();
+  rule_      .reset();
+  url_       .reset();
+  fillObject_.reset();
+  width_     .reset();
+  lineDash_  .reset();
+  lineOffset_.reset();
+  lineCap_   .reset();
+  lineJoin_  .reset();
+  mlimit_    .reset();
 }
 
 void
@@ -290,7 +290,7 @@ update(const CSVGStroke &stroke)
     setColor(stroke.getColor());
   else if (styleObject) {
     if (styleObject->getStrokeColorValid() && ! styleObject->getStrokeColor().isInherit())
-      setColor(styleObject->getFlatStrokeColor().getValue());
+      setColor(styleObject->getFlatStrokeColor().value());
   }
 
   // opacity
@@ -298,7 +298,7 @@ update(const CSVGStroke &stroke)
     setOpacity(stroke.getOpacity());
   else if (styleObject) {
     if (styleObject->getStrokeOpacityValid() && ! styleObject->getStrokeOpacity().isInherit())
-      opacity_ = styleObject->getFlatStrokeOpacity().getValue();
+      opacity_ = styleObject->getFlatStrokeOpacity().value();
   }
 
   // rule
@@ -306,7 +306,7 @@ update(const CSVGStroke &stroke)
     setRule(stroke.getRule());
   else if (styleObject) {
     if (styleObject->getStrokeRuleValid())
-      rule_ = styleObject->getFlatStrokeRule().getValue();
+      rule_ = styleObject->getFlatStrokeRule().value();
   }
 
   // url
@@ -314,7 +314,7 @@ update(const CSVGStroke &stroke)
     setUrl(stroke.getUrl());
   else if (styleObject) {
     if (styleObject->getStrokeUrlValid())
-      url_ = styleObject->getFlatStrokeUrl().getValue();
+      url_ = styleObject->getFlatStrokeUrl().value();
   }
 
   // fill object
@@ -322,7 +322,7 @@ update(const CSVGStroke &stroke)
     setFillObject(stroke.getFillObject());
   else if (styleObject) {
     if (styleObject->getStrokeFillObjectValid())
-      fillObject_ = styleObject->getFlatStrokeFillObject().getValue();
+      fillObject_ = styleObject->getFlatStrokeFillObject().value();
   }
 
   // width
@@ -330,7 +330,7 @@ update(const CSVGStroke &stroke)
     setWidth(stroke.getWidth());
   else if (styleObject) {
     if (styleObject->getStrokeWidthValid())
-      setWidth(styleObject->getFlatStrokeWidth().getValue());
+      setWidth(styleObject->getFlatStrokeWidth().value());
   }
 
   // dash array
@@ -338,7 +338,7 @@ update(const CSVGStroke &stroke)
     setDashArray(stroke.getDashArray());
   else if (styleObject) {
     if (styleObject->getStrokeDashArrayValid())
-      setDashArray(styleObject->getFlatStrokeDashArray().getValue());
+      setDashArray(styleObject->getFlatStrokeDashArray().value());
   }
 
   // dash offset
@@ -346,7 +346,7 @@ update(const CSVGStroke &stroke)
     setDashOffset(stroke.getDashOffset());
   else if (styleObject) {
     if (styleObject->getStrokeDashOffsetValid())
-      setDashOffset(styleObject->getFlatStrokeDashOffset().getValue());
+      setDashOffset(styleObject->getFlatStrokeDashOffset().value());
   }
 
   // line cap
@@ -354,7 +354,7 @@ update(const CSVGStroke &stroke)
     setLineCap(stroke.getLineCap());
   else if (styleObject) {
     if (styleObject->getStrokeLineCapValid())
-      setLineCap(styleObject->getFlatStrokeLineCap().getValue());
+      setLineCap(styleObject->getFlatStrokeLineCap().value());
   }
 
   // line join
@@ -362,7 +362,7 @@ update(const CSVGStroke &stroke)
     setLineJoin(stroke.getLineJoin());
   else if (styleObject) {
     if (styleObject->getStrokeLineJoinValid())
-      setLineJoin(styleObject->getFlatStrokeLineJoin().getValue());
+      setLineJoin(styleObject->getFlatStrokeLineJoin().value());
   }
 
   // miter limit
@@ -370,7 +370,7 @@ update(const CSVGStroke &stroke)
     setMiterLimit(stroke.getMiterLimit());
   else if (styleObject) {
     if (styleObject->getStrokeMiterLimitValid())
-      setMiterLimit(styleObject->getFlatStrokeMiterLimit().getValue());
+      setMiterLimit(styleObject->getFlatStrokeMiterLimit().value());
   }
 
   //---
@@ -381,7 +381,7 @@ update(const CSVGStroke &stroke)
       std::cerr << "(" << styleObject->getId() << ")";
     std::cerr << ":";
     print(std::cerr);
-    std::cerr << std::endl;
+    std::cerr << "\n";
   }
 }
 

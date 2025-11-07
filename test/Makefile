@@ -42,7 +42,7 @@ OBJS = $(patsubst %.cpp,$(OBJ_DIR)/%.o,$(SRC))
 
 CPPFLAGS = \
 $(CDEBUG) \
--std=c++14 \
+-std=c++17 \
 -I. \
 -I$(INC_DIR) \
 -I../../CCSS/include \

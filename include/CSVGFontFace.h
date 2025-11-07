@@ -12,7 +12,7 @@ class CSVGFontFace : public CSVGObject, public CSVGPrintBase<CSVGFontFace> {
 
   CSVGFontFace *dup() const override;
 
-  int getUnits() const { return unitsPerEm_.getValue(1000); }
+  int getUnits() const { return unitsPerEm_.value_or(1000); }
 
   bool processOption(const std::string &name, const std::string &value) override;
 
@@ -25,40 +25,40 @@ class CSVGFontFace : public CSVGObject, public CSVGPrintBase<CSVGFontFace> {
   void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
-  COptString fontFamily_;
-  COptString fontStyle_;
-  COptString fontVariant_;
-  COptString fontWeight_;
-  COptString fontStretch_;
-  COptString fontSize_;
-  COptString unicodeRange_;
-  COptInt    unitsPerEm_;
-  COptString panose_;
-  COptString stemv_;
-  COptString stemh_;
-  COptString slope_;
-  COptString capHeight_;
-  COptString xheight_;
-  COptString accentHeight_;
-  COptInt    ascent_;
-  COptInt    descent_;
-  COptInt    baseline_;
-  COptString widths_;
-  COptString bbox_;
-  COptString ideographic_;
-  COptBool   alphabetic_;
-  COptString mathematical_;
-  COptString hanging_;
-  COptString vIdeographic_;
-  COptString vAlphabetic_;
-  COptString vMathematical_;
-  COptString vHanging_;
-  COptString underlinePosition_;
-  COptString underlineThickness_;
-  COptString strikethroughPosition_;
-  COptString strikethroughThickness_;
-  COptString overlinePosition_;
-  COptString overlineThickness_;
+  std::optional<std::string> fontFamily_;
+  std::optional<std::string> fontStyle_;
+  std::optional<std::string> fontVariant_;
+  std::optional<std::string> fontWeight_;
+  std::optional<std::string> fontStretch_;
+  std::optional<std::string> fontSize_;
+  std::optional<std::string> unicodeRange_;
+  std::optional<int>         unitsPerEm_;
+  std::optional<std::string> panose_;
+  std::optional<std::string> stemv_;
+  std::optional<std::string> stemh_;
+  std::optional<std::string> slope_;
+  std::optional<std::string> capHeight_;
+  std::optional<std::string> xheight_;
+  std::optional<std::string> accentHeight_;
+  std::optional<int>         ascent_;
+  std::optional<int>         descent_;
+  std::optional<int>         baseline_;
+  std::optional<std::string> widths_;
+  std::optional<std::string> bbox_;
+  std::optional<std::string> ideographic_;
+  std::optional<bool>        alphabetic_;
+  std::optional<std::string> mathematical_;
+  std::optional<std::string> hanging_;
+  std::optional<std::string> vIdeographic_;
+  std::optional<std::string> vAlphabetic_;
+  std::optional<std::string> vMathematical_;
+  std::optional<std::string> vHanging_;
+  std::optional<std::string> underlinePosition_;
+  std::optional<std::string> underlineThickness_;
+  std::optional<std::string> strikethroughPosition_;
+  std::optional<std::string> strikethroughThickness_;
+  std::optional<std::string> overlinePosition_;
+  std::optional<std::string> overlineThickness_;
 };
 
 #endif

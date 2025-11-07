@@ -189,19 +189,19 @@ getDrawPos(double &x, double &y, int i) const
   x = lastPos.x;
   y = lastPos.y;
 
-  if      (x_ .isValid())
-    x = x_.getValue();
-  else if (dx_.isValid()) {
-    Reals reals = dx_.getValue();
+  if      (x_ )
+    x = x_.value();
+  else if (dx_) {
+    Reals reals = dx_.value();
 
     if (i < int(reals.size()))
       x += reals[uint(i)];
   }
 
-  if      (y_ .isValid())
-    y = y_.getValue();
-  else if (dy_.isValid()) {
-    Reals reals = dy_.getValue();
+  if      (y_ )
+    y = y_.value();
+  else if (dy_) {
+    Reals reals = dy_.value();
 
     if (i < int(reals.size()))
       y += reals[uint(i)];
@@ -232,10 +232,10 @@ print(std::ostream &os, bool hier) const
     os << ">";
 
     if (hasChildren()) {
-      os << std::endl;
+      os << "\n";
 
       if (hasText())
-        os << getText() << std::endl;
+        os << getText() << "\n";
 
       printChildren(os, hier);
     }
@@ -243,7 +243,7 @@ print(std::ostream &os, bool hier) const
       os << getText();
     }
 
-    os << "</tspan>" << std::endl;
+    os << "</tspan>\n";
   }
   else
     os << "tspan " << getX() << getY() << " " << CStrUtil::single_quote(getText());

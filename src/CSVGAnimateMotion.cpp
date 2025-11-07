@@ -72,7 +72,7 @@ void
 CSVGAnimateMotion::
 animate(double t)
 {
-  //std::cerr << "CSVGAnimateMotion: " << t_ << ":" << t << std::endl;
+  //std::cerr << "CSVGAnimateMotion: " << t_ << ":" << t << "\n";
   auto *parent = getParent();
 
   ObjectArray objects;
@@ -91,10 +91,10 @@ animate(double t)
 
     parent->moveTo(p);
 
-    if (rotate_.getValue("") == "auto")
+    if (rotate_.value_or("") == "auto")
       parent->rotateAt(a, p);
     else {
-      if (CStrUtil::toReal(rotate_.getValue(""), &a))
+      if (CStrUtil::toReal(rotate_.value_or(""), &a))
         parent->rotateAt(a, p);
     }
 
@@ -121,10 +121,10 @@ animate(double t)
 
       parent->moveTo(p);
 
-      if (rotate_.getValue("") == "auto")
+      if (rotate_.value_or("") == "auto")
         parent->rotateAt(a, p);
       else {
-        if (CStrUtil::toReal(rotate_.getValue(""), &a))
+        if (CStrUtil::toReal(rotate_.value_or(""), &a))
           parent->rotateAt(a, p);
       }
 
@@ -166,14 +166,14 @@ print(std::ostream &os, bool hier) const
     printNameValue(os, "origin"   , origin_   );
 
     if (hasChildren()) {
-      os << ">" << std::endl;
+      os << ">\n";
 
       printChildren(os, hier);
 
-      os << "</animateMotion>" << std::endl;
+      os << "</animateMotion>\n";
     }
     else
-      os << "/>" << std::endl;
+      os << "/>\n";
   }
   else
     os << "animateMotion ";

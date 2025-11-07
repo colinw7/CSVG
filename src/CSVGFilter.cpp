@@ -310,11 +310,11 @@ print(std::ostream &os, bool hier) const
 
     printValues(os);
 
-    os << ">" << std::endl;
+    os << ">\n";
 
     printChildren(os, hier);
 
-    os << "</filter>" << std::endl;
+    os << "</filter>\n";
   }
   else
     os << "filter ";
@@ -336,6 +336,6 @@ printValues(std::ostream &os, bool flat) const
 
   printNameValue(os, "filterRes" , filterRes_);
 
-  if (! xlink_.getValue().isNull())
+  if (! xlink_.value().isNull())
     printNameXLink(os, "xlink:href", xlink_);
 }

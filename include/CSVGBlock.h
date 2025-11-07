@@ -46,9 +46,9 @@ class CSVGBlock : public CSVGObject, public CSVGPrintBase<CSVGBlock> {
   //---
 
   //! get/set preserve aspect
-  bool hasPreserveAspect() const { return preserveAspect_.isValid(); }
+  bool hasPreserveAspect() const { return !!preserveAspect_; }
   CSVGPreserveAspect preserveAspect(const CSVGPreserveAspect &a=CSVGPreserveAspect()) const {
-    return preserveAspect_.getValue(a); }
+    return preserveAspect_.value_or(a); }
   void setPreserveAspect(const CSVGPreserveAspect &a) { preserveAspect_ = a; }
 
   //---
@@ -93,7 +93,7 @@ class CSVGBlock : public CSVGObject, public CSVGPrintBase<CSVGBlock> {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  COptString getNameValue(const std::string &name) const override;
+  std::optional<std::string> getNameValue(const std::string &name) const override;
 
   bool propagateFlat() const override { return false; }
 
@@ -116,13 +116,13 @@ class CSVGBlock : public CSVGObject, public CSVGPrintBase<CSVGBlock> {
   void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
-  COptReal                     x_;
-  COptReal                     y_;
-  COptValT<CScreenUnits>       width_;
-  COptValT<CScreenUnits>       height_;
-  COptValT<CSVGPreserveAspect> preserveAspect_;
-  mutable CSVGBuffer*          oldBuffer_ { nullptr };
-  mutable CSVGBlockData        blockData_;
+  std::optional<double>             x_;
+  std::optional<double>             y_;
+  std::optional<CScreenUnits>       width_;
+  std::optional<CScreenUnits>       height_;
+  std::optional<CSVGPreserveAspect> preserveAspect_;
+  mutable CSVGBuffer*               oldBuffer_ { nullptr };
+  mutable CSVGBlockData             blockData_;
 };
 
 #endif

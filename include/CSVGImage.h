@@ -15,21 +15,21 @@ class CSVGImage : public CSVGObject, public CSVGPrintBase<CSVGImage> {
 
   CSVGImage *dup() const override;
 
-  const CSVGXLink &xlink() const { return xlink_.getValue(); }
+  const CSVGXLink &xlink() const { return xlink_.value(); }
 
-  std::string getLinkName() const { return (xlink_.isValid() ? xlink_.getValue().str() : ""); }
+  std::string getLinkName() const { return (xlink_ ? xlink_.value().str() : ""); }
   void setLinkName(const std::string &str);
 
-  double getX() const { return x_.getValue(0); }
+  double getX() const { return x_.value_or(0); }
   void setX(double x) { x_ = x; }
 
-  double getY() const { return y_.getValue(0); }
+  double getY() const { return y_.value_or(0); }
   void setY(double y) { y_ = y; }
 
-  double getWidth () const { return w_.getValue(CScreenUnits(100)).px().value(); }
+  double getWidth () const { return w_.value_or(CScreenUnits(100)).px().value(); }
   void setWidth(double w) { w_ = CScreenUnits(w); }
 
-  double getHeight() const { return h_.getValue(CScreenUnits(100)).px().value(); }
+  double getHeight() const { return h_.value_or(CScreenUnits(100)).px().value(); }
   void setHeight(double h) { h_ = CScreenUnits(h); }
 
   CPoint2D getPosition() const { return CPoint2D(getX(), getY()); }
@@ -40,7 +40,7 @@ class CSVGImage : public CSVGObject, public CSVGPrintBase<CSVGImage> {
   void setSize(const CSize2D &size);
 
   CSVGPreserveAspect preserveAspect() const {
-    return preserveAspect_.getValue(CSVGPreserveAspect()); }
+    return preserveAspect_.value_or(CSVGPreserveAspect()); }
   void setPreserveAspect(const CSVGPreserveAspect &a) { preserveAspect_ = a; }
 
   bool processOption(const std::string &name, const std::string &value) override;
@@ -71,13 +71,13 @@ class CSVGImage : public CSVGObject, public CSVGPrintBase<CSVGImage> {
   void moveDelta(const CVector2D &delta) override;
 
  private:
-  COptValT<CSVGXLink>          xlink_;
-  COptReal                     x_;
-  COptReal                     y_;
-  COptValT<CScreenUnits>       w_;
-  COptValT<CScreenUnits>       h_;
-  COptValT<CSVGPreserveAspect> preserveAspect_;
-  COptString                   colorProfile_;
+  std::optional<CSVGXLink>          xlink_;
+  std::optional<double>             x_;
+  std::optional<double>             y_;
+  std::optional<CScreenUnits>       w_;
+  std::optional<CScreenUnits>       h_;
+  std::optional<CSVGPreserveAspect> preserveAspect_;
+  std::optional<std::string>        colorProfile_;
 };
 
 #endif

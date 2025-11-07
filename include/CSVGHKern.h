@@ -25,9 +25,9 @@ class CSVGHKern : public CSVGObject, public CSVGPrintBase<CSVGHKern> {
   void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
-  COptString glyph1_;
-  COptString glyph2_;
-  COptInt    k_;
+  std::optional<std::string> glyph1_;
+  std::optional<std::string> glyph2_;
+  std::optional<int>         k_;
 };
 
 #endif

@@ -128,11 +128,11 @@ updateBBox()
   parts_ = CSVGPathPartList();
 }
 
-COptString
+std::optional<std::string>
 CSVGCircle::
 getNameValue(const std::string &name) const
 {
-  COptString str;
+  std::optional<std::string> str;
 
   auto bbox = getDrawBBox();
 

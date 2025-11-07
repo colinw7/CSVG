@@ -81,7 +81,7 @@ drawElement()
 
   int r = 1;
 
-  if (! radius_.isValid() || ! CStrUtil::toInteger(radius_.getValue(), &r))
+  if (! radius_ || ! CStrUtil::toInteger(radius_.value(), &r))
     r = 1;
 
   CSVGBuffer::morphologyBuffers(inBuffer, inBBox, getOperator(), r);
@@ -113,7 +113,7 @@ print(std::ostream &os, bool hier) const
 
     printValues(os);
 
-    os << "/>" << std::endl;
+    os << "/>\n";
   }
   else
     os << "feMorphology ";
@@ -129,7 +129,7 @@ printValues(std::ostream &os, bool flat) const
 
   printNameValue(os, "in", filterIn_);
 
-  if (operator_.isValid()) {
+  if (operator_) {
     auto op = getOperator();
 
     if      (op == CSVGMorphologyOperator::ERODE ) os << " operator=\"erode\"";

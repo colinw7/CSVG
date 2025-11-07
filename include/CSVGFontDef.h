@@ -4,7 +4,7 @@
 #include <CSVGInheritVal.h>
 #include <CScreenUnits.h>
 #include <CFontStyle.h>
-#include <COptVal.h>
+#include <optional>
 
 class CSVG;
 class CSVGFontObj;
@@ -20,28 +20,26 @@ class CSVGFontDef {
 
   CSVGFontDef &operator=(const CSVGFontDef &font_def);
 
-  bool isSet() const {
-    return (family_.isValid() || size_.isValid() || style_.isValid());
-  }
+  bool isSet() const { return (family_ || size_ || style_); }
 
   const CSVG &svg() const { return svg_; }
 
   void reset();
 
-  bool hasFamily() const { return family_.isValid(); }
-  Family getFamily() const { return family_.getValue(Family("serif")); }
+  bool hasFamily() const { return !!family_; }
+  Family getFamily() const { return family_.value_or(Family("serif")); }
   void setFamily(const Family &family);
 
-  bool hasSize() const { return size_.isValid(); }
-  FontSize getSize() const { return size_.getValue(FontSize(CScreenUnits(12))); }
+  bool hasSize() const { return !!size_; }
+  FontSize getSize() const { return size_.value_or(FontSize(CScreenUnits(12))); }
   void setSize(const FontSize &lvalue);
 
-  bool hasStyle() const { return style_.isValid(); }
-  CFontStyles getStyle() const { return style_.getValue(CFontStyles(CFONT_STYLE_NORMAL)); }
+  bool hasStyle() const { return !!style_; }
+  CFontStyles getStyle() const { return style_.value_or(CFontStyles(CFONT_STYLE_NORMAL)); }
   void setStyle(CFontStyles s);
 
-  bool hasAngle() const { return angle_.isValid(); }
-  double getAngle() const { return angle_.getValue(0); }
+  bool hasAngle() const { return !!angle_; }
+  double getAngle() const { return angle_.value_or(0); }
   void setAngle(double a);
 
   void setStyle (const std::string &styleDef);
@@ -72,12 +70,12 @@ class CSVGFontDef {
   void resetObj();
 
  private:
-  CSVG&                 svg_;
-  COptValT<Family>      family_;
-  COptValT<FontSize>    size_;
-  COptValT<CFontStyles> style_;
-  COptReal              angle_;
-  mutable CSVGFontObj*  obj_ { nullptr };
+  CSVG&                      svg_;
+  std::optional<Family>      family_;
+  std::optional<FontSize>    size_;
+  std::optional<CFontStyles> style_;
+  std::optional<double>      angle_;
+  mutable CSVGFontObj*       obj_ { nullptr };
 };
 
 #endif

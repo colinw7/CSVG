@@ -145,11 +145,11 @@ print(std::ostream &os, bool hier) const
 
     printValues(os);
 
-    os << ">" << std::endl;
+    os << ">\n";
 
     printChildren(os, hier);
 
-    os << "</font>" << std::endl;
+    os << "</font>\n";
   }
   else
     os << "font";

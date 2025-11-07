@@ -14,7 +14,7 @@ class CSVGTBreak : public CSVGObject, public CSVGPrintBase<CSVGTBreak> {
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  COptString getNameValue(const std::string &name) const override;
+  std::optional<std::string> getNameValue(const std::string &name) const override;
 
   bool draw() override;
 

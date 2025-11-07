@@ -13,7 +13,7 @@ bool
 CSVGPathPart::
 interp(double s, const CPoint2D &p1, const CPoint2D &p2, CPoint2D &pi, double &a) const
 {
-std::cerr << "CSVGPathPart::interp " << id() << std::endl;
+std::cerr << "CSVGPathPart::interp " << id() << "\n";
   double xi = CMathUtil::map(s, 0, 1, p1.x, p2.x);
   double yi = CMathUtil::map(s, 0, 1, p1.y, p2.y);
 
@@ -27,7 +27,7 @@ double
 CSVGPathPart::
 getLength(const CPoint2D &) const
 {
-std::cerr << "CSVGPathPart::getLength " << id() << std::endl;
+std::cerr << "CSVGPathPart::getLength " << id() << "\n";
   return 0;
 }
 
@@ -35,7 +35,7 @@ CPoint2D
 CSVGPathPart::
 getEndPoint(const CPoint2D &p) const
 {
-std::cerr << "CSVGPathPart::getEndPoint " << id() << std::endl;
+std::cerr << "CSVGPathPart::getEndPoint " << id() << "\n";
   return p;
 }
 
@@ -155,8 +155,8 @@ double
 CSVGPathPartList::
 getLength() const
 {
-  if (length_.isValid())
-    return length_.getValue();
+  if (length_)
+    return length_.value();
 
   //---
 
@@ -304,7 +304,7 @@ void
 CSVGPathPartList::
 invalidate()
 {
-  length_.setInvalid();
+  length_.reset();
 }
 
 //------
@@ -856,8 +856,8 @@ double
 CSVGPathArcTo::
 getLength(const CPoint2D &p) const
 {
-  if (length_.isValid())
-    return length_.getValue();
+  if (length_)
+    return length_.value();
 
   //---
 
@@ -996,8 +996,8 @@ double
 CSVGPathRArcTo::
 getLength(const CPoint2D &p) const
 {
-  if (length_.isValid())
-    return length_.getValue();
+  if (length_)
+    return length_.value();
 
   //---
 
@@ -1123,8 +1123,8 @@ double
 CSVGPathBezier2To::
 getLength(const CPoint2D &p) const
 {
-  if (length_.isValid())
-    return length_.getValue();
+  if (length_)
+    return length_.value();
 
   //---
 
@@ -1210,8 +1210,8 @@ double
 CSVGPathMBezier2To::
 getLength(const CPoint2D &p) const
 {
-  if (length_.isValid())
-    return length_.getValue();
+  if (length_)
+    return length_.value();
 
   //---
 
@@ -1296,8 +1296,8 @@ double
 CSVGPathRBezier2To::
 getLength(const CPoint2D &p) const
 {
-  if (length_.isValid())
-    return length_.getValue();
+  if (length_)
+    return length_.value();
 
   //---
 
@@ -1388,8 +1388,8 @@ double
 CSVGPathMRBezier2To::
 getLength(const CPoint2D &p) const
 {
-  if (length_.isValid())
-    return length_.getValue();
+  if (length_)
+    return length_.value();
 
   //---
 
@@ -1477,8 +1477,8 @@ double
 CSVGPathBezier3To::
 getLength(const CPoint2D &p) const
 {
-  if (length_.isValid())
-    return length_.getValue();
+  if (length_)
+    return length_.value();
 
   //---
 
@@ -1566,8 +1566,8 @@ double
 CSVGPathMBezier3To::
 getLength(const CPoint2D &p) const
 {
-  if (length_.isValid())
-    return length_.getValue();
+  if (length_)
+    return length_.value();
 
   //---
 
@@ -1653,8 +1653,8 @@ double
 CSVGPathRBezier3To::
 getLength(const CPoint2D &) const
 {
-  if (length_.isValid())
-    return length_.getValue();
+  if (length_)
+    return length_.value();
 
   //---
 
@@ -1747,8 +1747,8 @@ double
 CSVGPathMRBezier3To::
 getLength(const CPoint2D &) const
 {
-  if (length_.isValid())
-    return length_.getValue();
+  if (length_)
+    return length_.value();
 
   //---
 

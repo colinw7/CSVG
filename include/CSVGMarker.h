@@ -13,24 +13,24 @@ class CSVGMarker : public CSVGObject, public CSVGPrintBase<CSVGMarker> {
 
   CSVGMarker *dup() const override;
 
-  double getRefX() const { return refX_.getValue(0); }
+  double getRefX() const { return refX_.value_or(0); }
   void setRefX(double r) { refX_ = r; }
 
-  double getRefY() const { return refY_.getValue(0); }
+  double getRefY() const { return refY_.value_or(0); }
   void setRefY(double r) { refY_ = r; }
 
-  bool hasMarkerUnits() const { return markerUnits_.isValid(); }
+  bool hasMarkerUnits() const { return !!markerUnits_; }
   CSVGCoordUnits getMarkerUnits() const {
-    return markerUnits_.getValue(CSVGCoordUnits::STROKE_WIDTH); }
+    return markerUnits_.value_or(CSVGCoordUnits::STROKE_WIDTH); }
   void setMarkerUnits(CSVGCoordUnits units) { markerUnits_ = units; }
 
-  CScreenUnits getMarkerWidth() const { return markerWidth_.getValue(CScreenUnits(3)); }
+  CScreenUnits getMarkerWidth() const { return markerWidth_.value_or(CScreenUnits(3)); }
   void setMarkerWidth(const CScreenUnits &l) { markerWidth_ = l; }
 
-  CScreenUnits getMarkerHeight() const { return markerHeight_.getValue(CScreenUnits(3)); }
+  CScreenUnits getMarkerHeight() const { return markerHeight_.value_or(CScreenUnits(3)); }
   void setMarkerHeight(const CScreenUnits &l) { markerHeight_ = l; }
 
-  CSVGOrient getOrient() const { return orient_.getValue(CSVGOrient()); }
+  CSVGOrient getOrient() const { return orient_.value_or(CSVGOrient()); }
   void setOrient(const CSVGOrient &orient) { orient_ = orient; }
 
   CAngle getOrientAngle() const { return getOrient().angle(); }
@@ -48,12 +48,12 @@ class CSVGMarker : public CSVGObject, public CSVGPrintBase<CSVGMarker> {
   }
 
   CSVGPreserveAspect preserveAspect() const {
-    return preserveAspect_.getValue(CSVGPreserveAspect()); }
+    return preserveAspect_.value_or(CSVGPreserveAspect()); }
   void setPreserveAspect(const CSVGPreserveAspect &a) { preserveAspect_ = a; }
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  COptString getNameValue(const std::string &name) const override;
+  std::optional<std::string> getNameValue(const std::string &name) const override;
 
   bool canFlatten() const override { return false; }
 
@@ -70,13 +70,13 @@ class CSVGMarker : public CSVGObject, public CSVGPrintBase<CSVGMarker> {
   void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
-  COptReal                     refX_;
-  COptReal                     refY_;
-  COptValT<CSVGCoordUnits>     markerUnits_;
-  COptValT<CScreenUnits>       markerWidth_;
-  COptValT<CScreenUnits>       markerHeight_;
-  COptValT<CSVGOrient>         orient_;
-  COptValT<CSVGPreserveAspect> preserveAspect_;
+  std::optional<double>             refX_;
+  std::optional<double>             refY_;
+  std::optional<CSVGCoordUnits>     markerUnits_;
+  std::optional<CScreenUnits>       markerWidth_;
+  std::optional<CScreenUnits>       markerHeight_;
+  std::optional<CSVGOrient>         orient_;
+  std::optional<CSVGPreserveAspect> preserveAspect_;
 };
 
 #endif

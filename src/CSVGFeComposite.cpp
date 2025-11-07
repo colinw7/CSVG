@@ -156,7 +156,7 @@ print(std::ostream &os, bool hier) const
 
     printValues(os);
 
-    os << "/>" << std::endl;
+    os << "/>\n";
   }
   else
     os << "feComposite ";
@@ -174,15 +174,15 @@ printValues(std::ostream &os, bool flat) const
   printNameValue(os, "in2"   , filterIn2_);
   printNameValue(os, "result", filterOut_);
 
-  if (type_.isValid()) {
+  if (type_) {
     os << " operator=\"";
 
-    if      (type_.getValue() == CRGBA_COMBINE_OVER      ) os << "over";
-    else if (type_.getValue() == CRGBA_COMBINE_IN        ) os << "in";
-    else if (type_.getValue() == CRGBA_COMBINE_OUT       ) os << "out";
-    else if (type_.getValue() == CRGBA_COMBINE_ATOP      ) os << "atop";
-    else if (type_.getValue() == CRGBA_COMBINE_XOR       ) os << "xor";
-    else if (type_.getValue() == CRGBA_COMBINE_ARITHMETIC) os << "arithmetic";
+    if      (type_.value() == CRGBA_COMBINE_OVER      ) os << "over";
+    else if (type_.value() == CRGBA_COMBINE_IN        ) os << "in";
+    else if (type_.value() == CRGBA_COMBINE_OUT       ) os << "out";
+    else if (type_.value() == CRGBA_COMBINE_ATOP      ) os << "atop";
+    else if (type_.value() == CRGBA_COMBINE_XOR       ) os << "xor";
+    else if (type_.value() == CRGBA_COMBINE_ARITHMETIC) os << "arithmetic";
 
     os << "\"";
   }

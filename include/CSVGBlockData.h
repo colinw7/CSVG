@@ -53,18 +53,18 @@ class CSVGBlockData : public CSVGPrintBase<CSVGBlockData> {
   void updateViewMatrix() {
     CMatrixStack2D matrix;
 
-    matrix.translate(offset_.x, offset_.y);
-    matrix.scale(xscale_, yscale_);
+    matrix.addTranslation(offset_.x, offset_.y);
+    matrix.addScale(xscale_, yscale_);
 
     viewMatrix_ = matrix;
   }
 
   void print(std::ostream &os) const {
-    os << "Pixel BBox: " << pixelBBox_ << std::endl;
-    os << "View  BBox: " << viewBBox_ << std::endl;
-    os << "Offset    : " << offset_ << std::endl;
-    os << "Scale     : " << xscale_ << " " << yscale_ << std::endl;
-    os << "Aspect    : " << preserveAspect_ << std::endl;
+    os << "Pixel BBox: " << pixelBBox_ << "\n";
+    os << "View  BBox: " << viewBBox_ << "\n";
+    os << "Offset    : " << offset_ << "\n";
+    os << "Scale     : " << xscale_ << " " << yscale_ << "\n";
+    os << "Aspect    : " << preserveAspect_ << "\n";
   }
 
  private:

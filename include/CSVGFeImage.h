@@ -19,7 +19,7 @@ class CSVGFeImage : public CSVGFilterBase, public CSVGPrintBase<CSVGFeImage> {
   void setFilterOut(const std::string &s) { filterOut_ = s; }
 
   CSVGPreserveAspect getPreserveAspect() const {
-    return preserveAspect_.getValue(CSVGPreserveAspect()); }
+    return preserveAspect_.value_or(CSVGPreserveAspect()); }
   void setPreserveAspect(const CSVGPreserveAspect &a) { preserveAspect_ = a; }
 
   bool processOption(const std::string &name, const std::string &value) override;
@@ -33,8 +33,8 @@ class CSVGFeImage : public CSVGFilterBase, public CSVGPrintBase<CSVGFeImage> {
   void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
-  COptString                   filterOut_;
-  COptValT<CSVGPreserveAspect> preserveAspect_;
+  std::optional<std::string>        filterOut_;
+  std::optional<CSVGPreserveAspect> preserveAspect_;
 };
 
 #endif

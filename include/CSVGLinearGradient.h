@@ -4,6 +4,7 @@
 #include <CSVGObject.h>
 #include <CSVGTypes.h>
 #include <CGenGradient.h>
+#include <optional>
 
 class CSVGStop;
 class CLinearGradient;
@@ -21,7 +22,7 @@ class CSVGLinearGradient : public CSVGObject, public CSVGPrintBase<CSVGLinearGra
   CSVGLinearGradient *dup() const override;
 
   bool getBBox(CBBox2D &bbox) const override {
-    if (! x1_.isValid() || ! y1_.isValid() || ! x2_.isValid() || ! y2_.isValid())
+    if (! x1_ || ! y1_ || ! x2_ || ! y2_)
       return false;
 
     double s = 1;
@@ -34,16 +35,16 @@ class CSVGLinearGradient : public CSVGObject, public CSVGPrintBase<CSVGLinearGra
     return true;
   }
 
-  CScreenUnits getX1(double x=0) const { return x1_.getValue(CScreenUnits(x)); }
+  CScreenUnits getX1(double x=0) const { return x1_.value_or(CScreenUnits(x)); }
   void setX1(const CScreenUnits &x1) { x1_ = x1; }
 
-  CScreenUnits getY1(double y=0) const { return y1_.getValue(CScreenUnits(y)); }
+  CScreenUnits getY1(double y=0) const { return y1_.value_or(CScreenUnits(y)); }
   void setY1(const CScreenUnits &y1) { y1_ = y1; }
 
-  CScreenUnits getX2(double x=1) const { return x2_.getValue(CScreenUnits(x)); }
+  CScreenUnits getX2(double x=1) const { return x2_.value_or(CScreenUnits(x)); }
   void setX2(const CScreenUnits &x2) { x2_ = x2; }
 
-  CScreenUnits getY2(double y=0) const { return y2_.getValue(CScreenUnits(y)); }
+  CScreenUnits getY2(double y=0) const { return y2_.value_or(CScreenUnits(y)); }
   void setY2(const CScreenUnits &y2) { y2_ = y2; }
 
   void setBBox(const CBBox2D &bbox) {
@@ -53,16 +54,16 @@ class CSVGLinearGradient : public CSVGObject, public CSVGPrintBase<CSVGLinearGra
     setY2(CScreenUnits(bbox.getYMax()));
   }
 
-  bool getGTransformValid() const { return gtransform_.isValid(); }
-  CMatrixStack2D getGTransform() const { return gtransform_.getValue(); }
+  bool getGTransformValid() const { return !!gtransform_; }
+  CMatrixStack2D getGTransform() const { return gtransform_.value(); }
   void setGTransform(const CMatrixStack2D &gtransform) { gtransform_ = gtransform; }
 
-  bool getUnitsValid() const { return units_.isValid(); }
-  CSVGCoordUnits getUnits() const { return units_.getValue(CSVGCoordUnits::OBJECT_BBOX); }
+  bool getUnitsValid() const { return !!units_; }
+  CSVGCoordUnits getUnits() const { return units_.value_or(CSVGCoordUnits::OBJECT_BBOX); }
   void setUnits(CSVGCoordUnits units) { units_ = units; }
 
-  bool getSpreadValid() const { return spread_.isValid(); }
-  CGradientSpreadType getSpread() const { return spread_.getValue(CGRADIENT_SPREAD_PAD); }
+  bool getSpreadValid() const { return !!spread_; }
+  CGradientSpreadType getSpread() const { return spread_.value_or(CGRADIENT_SPREAD_PAD); }
   void setSpread(CGradientSpreadType spread) { spread_ = spread; }
 
   void addStop(CSVGStop *stop) { stops_.push_back(stop); }
@@ -87,23 +88,23 @@ class CSVGLinearGradient : public CSVGObject, public CSVGPrintBase<CSVGLinearGra
 
   void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
-  void setFillBuffer  (CSVGBuffer *buffer, CSVGObject *obj, const COptReal &opacity);
-  void setStrokeBuffer(CSVGBuffer *buffer, CSVGObject *obj, const COptReal &opacity);
+  void setFillBuffer  (CSVGBuffer *buffer, CSVGObject *obj, const std::optional<double> &opacity);
+  void setStrokeBuffer(CSVGBuffer *buffer, CSVGObject *obj, const std::optional<double> &opacity);
 
-  CLinearGradient *createGradient(CSVGObject *obj, const COptReal &opacity);
+  CLinearGradient *createGradient(CSVGObject *obj, const std::optional<double> &opacity);
 
   void getEndPoints(CSVGObject *obj, double *x1, double *y1, double *x2, double *y2) const;
 
  private:
-  COptValT<CScreenUnits>        x1_;
-  COptValT<CScreenUnits>        y1_;
-  COptValT<CScreenUnits>        x2_;
-  COptValT<CScreenUnits>        y2_;
-  StopList                      stops_;
-  COptValT<CMatrixStack2D>      gtransform_;
-  COptValT<CSVGCoordUnits>      units_;
-  COptValT<CGradientSpreadType> spread_;
-  COptValT<CSVGXLink>           xlink_;
+  std::optional<CScreenUnits>        x1_;
+  std::optional<CScreenUnits>        y1_;
+  std::optional<CScreenUnits>        x2_;
+  std::optional<CScreenUnits>        y2_;
+  StopList                           stops_;
+  std::optional<CMatrixStack2D>      gtransform_;
+  std::optional<CSVGCoordUnits>      units_;
+  std::optional<CGradientSpreadType> spread_;
+  std::optional<CSVGXLink>           xlink_;
 };
 
 #endif

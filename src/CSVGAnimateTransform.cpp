@@ -68,7 +68,7 @@ animate(double t)
   if (getAttributeName() == "transform") {
     std::vector<double> fromValues, byValues, toValues;
 
-    if      (from_.isValid() && to_.isValid()) {
+    if      (from_ && to_) {
       svg_.stringToReals(getFrom(), fromValues);
       svg_.stringToReals(getTo  (), toValues  );
 
@@ -76,10 +76,10 @@ animate(double t)
 
       byValues.resize(n);
 
-      if (by_.isValid())
+      if (by_)
         svg_.stringToReals(getBy(), byValues);
     }
-    else if (values_.isValid()) {
+    else if (values_) {
       std::vector<std::string> fields;
 
       CStrUtil::addFields(getValues(), fields, ";");
@@ -130,7 +130,7 @@ animate(double t)
       double ys = CMathUtil::map(t, 0, 1, fromValues[1], toValues[1]);
 
       //std::cerr << "CSVGAnimateTransform: translate " << currentTime_ << ":" <<
-      //             xs << " " << ys << std::endl;
+      //             xs << " " << ys << "\n";
       CMatrixStack2D m;
 
       if (getAdditive() == "sum")
@@ -138,7 +138,7 @@ animate(double t)
       else
         m = getParent()->getAnimation().getTransform();
 
-      m.translate(xs, ys);
+      m.addTranslation(xs, ys);
 
       getParent()->setTransform(m);
 
@@ -155,7 +155,7 @@ animate(double t)
       double x = CMathUtil::map(t, 0, 1, fromValues[1], toValues[1]);
       double y = CMathUtil::map(t, 0, 1, fromValues[2], toValues[2]);
 
-      //std::cerr << "CSVGAnimateTransform: transform " << currentTime_ << ":" << a << std::endl;
+      //std::cerr << "CSVGAnimateTransform: transform " << currentTime_ << ":" << a << "\n";
       CMatrixStack2D m;
 
       if (getAdditive() == "sum")
@@ -163,7 +163,7 @@ animate(double t)
       else
         m = getParent()->getAnimation().getTransform();
 
-      m.rotate(CMathGen::DegToRad(a), CPoint2D(x, y));
+      m.addRotation(CMathGen::DegToRad(a), CPoint2D(x, y));
 
       getParent()->setTransform(m);
 
@@ -180,7 +180,7 @@ animate(double t)
       double ys = CMathUtil::map(t, 0, 1, fromValues[1], toValues[1]);
 
       //std::cerr << "CSVGAnimateTransform: scale " << currentTime_ << ":" <<
-      //             xs << " " << ys << std::endl;
+      //             xs << " " << ys << "\n";
       CMatrixStack2D m;
 
       if (getAdditive() == "sum")
@@ -188,7 +188,7 @@ animate(double t)
       else
         m = getParent()->getAnimation().getTransform();
 
-      m.scale(xs, ys);
+      m.addScale(xs, ys);
 
       getParent()->setTransform(m);
 
@@ -212,7 +212,7 @@ print(std::ostream &os, bool hier) const
     printNameValue(os, "type"    , type_    );
     printNameValue(os, "additive", additive_);
 
-    os << "/>" << std::endl;
+    os << "/>\n";
   }
   else
     os << "animateTransform ";

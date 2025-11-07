@@ -116,7 +116,7 @@ void
 CSVGRadialGradient::
 addLinkStops()
 {
-  auto *object = xlink_.getValue().getObject();
+  auto *object = xlink_.value().getObject();
 
   if (! object) {
     //CSVGLog() << "No object for radial gradient link";
@@ -127,11 +127,11 @@ addLinkStops()
   auto *lg = dynamic_cast<CSVGLinearGradient *>(object);
 
   if      (rg) {
-    if (rg->cx_    .isValid()) cx_     = rg->cx_;
-    if (rg->cy_    .isValid()) cy_     = rg->cy_;
-    if (rg->radius_.isValid()) radius_ = rg->radius_;
-    if (rg->focusX_.isValid()) focusX_ = rg->focusX_;
-    if (rg->focusY_.isValid()) focusY_ = rg->focusY_;
+    if (rg->cx_    ) cx_     = rg->cx_;
+    if (rg->cy_    ) cy_     = rg->cy_;
+    if (rg->radius_) radius_ = rg->radius_;
+    if (rg->focusX_) focusX_ = rg->focusX_;
+    if (rg->focusY_) focusY_ = rg->focusY_;
 
     if (rg->getGTransformValid()) gtransform_ = rg->getGTransform();
     if (rg->getUnitsValid     ()) units_      = rg->getUnits();
@@ -170,11 +170,11 @@ print(std::ostream &os, bool hier) const
 
     printValues(os);
 
-    os << ">" << std::endl;
+    os << ">\n";
 
     printChildren(os, hier);
 
-    os << "</radialGradient>" << std::endl;
+    os << "</radialGradient>\n";
   }
   else
     os << "radialGradient ";
@@ -201,13 +201,13 @@ printValues(std::ostream &os, bool flat) const
   if (getSpreadValid())
     os << " spreadMethod=\"" << CSVG::encodeGradientSpread(getSpread()) << "\"";
 
-  if (! xlink_.getValue().isNull())
+  if (! xlink_.value().isNull())
     printNameXLink(os, "xlink:href", xlink_);
 }
 
 void
 CSVGRadialGradient::
-setFillBuffer(CSVGBuffer *buffer, CSVGObject *obj, const COptReal &opacity)
+setFillBuffer(CSVGBuffer *buffer, CSVGObject *obj, const std::optional<double> &opacity)
 {
   using GradientP = std::unique_ptr<CRadialGradient>;
 
@@ -218,7 +218,7 @@ setFillBuffer(CSVGBuffer *buffer, CSVGObject *obj, const COptReal &opacity)
 
 void
 CSVGRadialGradient::
-setStrokeBuffer(CSVGBuffer *buffer, CSVGObject *obj, const COptReal &opacity)
+setStrokeBuffer(CSVGBuffer *buffer, CSVGObject *obj, const std::optional<double> &opacity)
 {
   using GradientP = std::unique_ptr<CRadialGradient>;
 
@@ -229,7 +229,7 @@ setStrokeBuffer(CSVGBuffer *buffer, CSVGObject *obj, const COptReal &opacity)
 
 CRadialGradient *
 CSVGRadialGradient::
-createGradient(CSVGObject *obj, const COptReal &opacity)
+createGradient(CSVGObject *obj, const std::optional<double> &opacity)
 {
   double xc, yc, r, xf, yf;
 
@@ -241,7 +241,7 @@ createGradient(CSVGObject *obj, const COptReal &opacity)
   gradient->setRadius(r);
   gradient->setFocus (xf, yf);
 
-  if (spread_.isValid())
+  if (spread_)
     gradient->setSpread(getSpread());
 
   for (const auto &s : stops()) {
@@ -257,7 +257,7 @@ createGradient(CSVGObject *obj, const COptReal &opacity)
     if (s->hasOpacity())
       alpha = s->getOpacity();
     else
-      alpha = opacity.getValue(1.0);
+      alpha = opacity.value_or(1.0);
 
     rgba.setAlpha(alpha);
 

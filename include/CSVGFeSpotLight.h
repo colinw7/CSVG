@@ -13,33 +13,33 @@ class CSVGFeSpotLight : public CSVGFilterBase, public CSVGPrintBase<CSVGFeSpotLi
 
   CSVGFeSpotLight *dup() const override;
 
-  double getX() const { return x_.getValue(0); }
+  double getX() const { return x_.value_or(0); }
   void setX(double r) { x_ = r; }
 
-  double getY() const { return y_.getValue(0); }
+  double getY() const { return y_.value_or(0); }
   void setY(double r) { y_ = r; }
 
-  double getZ() const { return z_.getValue(0); }
+  double getZ() const { return z_.value_or(0); }
   void setZ(double r) { z_ = r; }
 
   CPoint3D getPoint() const { return CPoint3D(getX(), getY(), getZ()); }
 
-  double getPointsAtX() const { return pointsAtX_.getValue(0); }
+  double getPointsAtX() const { return pointsAtX_.value_or(0); }
   void setPointsAtX(double r) { pointsAtX_ = r; }
 
-  double getPointsAtY() const { return pointsAtY_.getValue(0); }
+  double getPointsAtY() const { return pointsAtY_.value_or(0); }
   void setPointsAtY(double r) { pointsAtY_ = r; }
 
-  double getPointsAtZ() const { return pointsAtZ_.getValue(0); }
+  double getPointsAtZ() const { return pointsAtZ_.value_or(0); }
   void setPointsAtZ(double r) { pointsAtZ_ = r; }
 
   CPoint3D getPointsAt() const { return CPoint3D(getPointsAtX(), getPointsAtY(), getPointsAtZ()); }
 
-  double getSpecularExponent() const { return specularExponent_.getValue(0); }
+  double getSpecularExponent() const { return specularExponent_.value_or(0); }
   void setSpecularExponent(double r) { specularExponent_ = r; }
 
-  bool hasLimitingConeAngle() const { return limitingConeAngle_.isValid(); }
-  double getLimitingConeAngle() const { return limitingConeAngle_.getValue(0); }
+  bool hasLimitingConeAngle() const { return !!limitingConeAngle_; }
+  double getLimitingConeAngle() const { return limitingConeAngle_.value_or(0); }
   void setLimitingConeAngle(double r) { limitingConeAngle_ = r; }
 
   bool processOption(const std::string &name, const std::string &value) override;
@@ -53,14 +53,14 @@ class CSVGFeSpotLight : public CSVGFilterBase, public CSVGPrintBase<CSVGFeSpotLi
   void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
-  COptReal x_;
-  COptReal y_;
-  COptReal z_;
-  COptReal pointsAtX_;
-  COptReal pointsAtY_;
-  COptReal pointsAtZ_;
-  COptReal specularExponent_;
-  COptReal limitingConeAngle_;
+  std::optional<double> x_;
+  std::optional<double> y_;
+  std::optional<double> z_;
+  std::optional<double> pointsAtX_;
+  std::optional<double> pointsAtY_;
+  std::optional<double> pointsAtZ_;
+  std::optional<double> specularExponent_;
+  std::optional<double> limitingConeAngle_;
 };
 
 #endif

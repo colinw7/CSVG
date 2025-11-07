@@ -52,10 +52,10 @@ setTime(double t)
   if (objects_.empty())
     return;
 
-  if (! t_.isValid())
+  if (! t_)
     t_ = parent_->getTransform();
   else
-    parent_->setTransform(t_.getValue());
+    parent_->setTransform(t_.value());
 
   for (const auto &c : objects())
     c->setTime(t);
@@ -68,10 +68,10 @@ tick(double dt)
   if (objects_.empty())
     return;
 
-  if (! t_.isValid())
+  if (! t_)
     t_ = parent_->getTransform();
   else
-    parent_->setTransform(t_.getValue());
+    parent_->setTransform(t_.value());
 
   for (const auto &c : objects())
     c->tick(dt);

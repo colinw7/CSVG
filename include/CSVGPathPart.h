@@ -5,7 +5,6 @@
 #include <CSVGTmpl.h>
 
 #include <CBBox2D.h>
-#include <COptVal.h>
 #include <vector>
 
 class CSVG;
@@ -86,9 +85,9 @@ class CSVGPathPartList : public CSVGPrintBase<CSVGPathPartList> {
   void invalidate();
 
  private:
-  Parts            parts_;
-  mutable COptReal length_;
-  mutable CPoint2D currentPoint_;
+  Parts                         parts_;
+  mutable std::optional<double> length_;
+  mutable CPoint2D              currentPoint_;
 };
 
 //---
@@ -373,7 +372,7 @@ class CSVGPathArcTo : public CSVGPathPart {
   void print(std::ostream &os) const override;
 
   void invalidate() {
-    length_.setInvalid();
+    length_.reset();
   }
 
  private:
@@ -384,7 +383,7 @@ class CSVGPathArcTo : public CSVGPathPart {
   int      fs_ { 0 };
   CPoint2D point2_;
 
-  mutable COptReal length_;
+  mutable std::optional<double> length_;
 };
 
 //---
@@ -436,7 +435,7 @@ class CSVGPathRArcTo : public CSVGPathPart {
   int      fs_ { 0 };
   CPoint2D point2_;
 
-  mutable COptReal length_;
+  mutable std::optional<double> length_;
 };
 
 //---
@@ -469,9 +468,9 @@ class CSVGPathBezier2To : public CSVGPathPart {
   void print(std::ostream &os) const override;
 
  private:
-  CPoint2D         point1_;
-  CPoint2D         point2_;
-  mutable COptReal length_;
+  CPoint2D                      point1_;
+  CPoint2D                      point2_;
+  mutable std::optional<double> length_;
 };
 
 //---
@@ -501,9 +500,9 @@ class CSVGPathMBezier2To : public CSVGPathPart {
   void print(std::ostream &os) const override;
 
  private:
-  CPoint2D         point1_;
-  CPoint2D         point2_;
-  mutable COptReal length_;
+  CPoint2D                      point1_;
+  CPoint2D                      point2_;
+  mutable std::optional<double> length_;
 };
 
 //---
@@ -536,9 +535,9 @@ class CSVGPathRBezier2To : public CSVGPathPart {
   void print(std::ostream &os) const override;
 
  private:
-  CPoint2D         point1_;
-  CPoint2D         point2_;
-  mutable COptReal length_;
+  CPoint2D                      point1_;
+  CPoint2D                      point2_;
+  mutable std::optional<double> length_;
 };
 
 //---
@@ -568,9 +567,9 @@ class CSVGPathMRBezier2To : public CSVGPathPart {
   void print(std::ostream &os) const override;
 
  private:
-  CPoint2D         point1_;
-  CPoint2D         point2_;
-  mutable COptReal length_;
+  CPoint2D                      point1_;
+  CPoint2D                      point2_;
+  mutable std::optional<double> length_;
 };
 
 //---
@@ -606,10 +605,10 @@ class CSVGPathBezier3To : public CSVGPathPart {
   void print(std::ostream &os) const override;
 
  private:
-  CPoint2D         point1_;
-  CPoint2D         point2_;
-  CPoint2D         point3_;
-  mutable COptReal length_;
+  CPoint2D                      point1_;
+  CPoint2D                      point2_;
+  CPoint2D                      point3_;
+  mutable std::optional<double> length_;
 };
 
 //---
@@ -642,10 +641,10 @@ class CSVGPathMBezier3To : public CSVGPathPart {
   void print(std::ostream &os) const override;
 
  private:
-  CPoint2D         point1_;
-  CPoint2D         point2_;
-  CPoint2D         point3_;
-  mutable COptReal length_;
+  CPoint2D                      point1_;
+  CPoint2D                      point2_;
+  CPoint2D                      point3_;
+  mutable std::optional<double> length_;
 };
 
 //---
@@ -681,10 +680,10 @@ class CSVGPathRBezier3To : public CSVGPathPart {
   void print(std::ostream &os) const override;
 
  private:
-  CPoint2D         point1_;
-  CPoint2D         point2_;
-  CPoint2D         point3_;
-  mutable COptReal length_;
+  CPoint2D                      point1_;
+  CPoint2D                      point2_;
+  CPoint2D                      point3_;
+  mutable std::optional<double> length_;
 };
 
 //---
@@ -717,10 +716,10 @@ class CSVGPathMRBezier3To : public CSVGPathPart {
   void print(std::ostream &os) const override;
 
  private:
-  CPoint2D         point1_;
-  CPoint2D         point2_;
-  CPoint2D         point3_;
-  mutable COptReal length_;
+  CPoint2D                      point1_;
+  CPoint2D                      point2_;
+  CPoint2D                      point3_;
+  mutable std::optional<double> length_;
 };
 
 //---

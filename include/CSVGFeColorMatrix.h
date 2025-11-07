@@ -23,7 +23,7 @@ class CSVGFeColorMatrix : public CSVGFilterBase, public CSVGPrintBase<CSVGFeColo
   std::string getFilterOut() const;
   void setFilterOut(const std::string &s) { filterOut_ = s; }
 
-  CSVGColorMatrixType getType() const { return type_.getValue(CSVGColorMatrixType::MATRIX); }
+  CSVGColorMatrixType getType() const { return type_.value_or(CSVGColorMatrixType::MATRIX); }
   void setType(CSVGColorMatrixType t) { type_ = t; }
 
   const ValueList &getValues() const { return values_; }
@@ -40,10 +40,10 @@ class CSVGFeColorMatrix : public CSVGFilterBase, public CSVGPrintBase<CSVGFeColo
   void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
-  COptString                    filterIn_;
-  COptString                    filterOut_;
-  COptValT<CSVGColorMatrixType> type_;
-  ValueList                     values_;
+  std::optional<std::string>         filterIn_;
+  std::optional<std::string>         filterOut_;
+  std::optional<CSVGColorMatrixType> type_;
+  ValueList                          values_;
 };
 
 #endif

@@ -12,9 +12,9 @@ class CSVGAnimateColor : public CSVGAnimateBase, public CSVGPrintBase<CSVGAnimat
 
   CSVGAnimateColor *dup() const override;
 
-  std::string getType() const { return type_.getValue(""); }
+  std::string getType() const { return type_.value_or(""); }
 
-  std::string getAdditive() const { return additive_.getValue(""); }
+  std::string getAdditive() const { return additive_.value_or(""); }
 
   bool processOption(const std::string &name, const std::string &value) override;
 
@@ -27,8 +27,8 @@ class CSVGAnimateColor : public CSVGAnimateBase, public CSVGPrintBase<CSVGAnimat
   void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
-  COptString type_;
-  COptString additive_;
+  std::optional<std::string> type_;
+  std::optional<std::string> additive_;
 };
 
 #endif

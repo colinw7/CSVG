@@ -59,7 +59,7 @@ print(std::ostream &os, bool hier) const
 
     printValues(os);
 
-    os << "/>" << std::endl;
+    os << "/>\n";
   }
   else
     os << "font-face-uri";
@@ -69,7 +69,7 @@ void
 CSVGFontFaceUri::
 printValues(std::ostream &os, bool flat) const
 {
-  if (! xlink_.getValue().isNull())
+  if (! xlink_.value().isNull())
     printNameXLink(os, "xlink:href", xlink_);
 
   CSVGObject::printValues(os, flat);

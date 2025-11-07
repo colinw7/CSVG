@@ -28,8 +28,8 @@ std::string
 CSVGFeMergeNode::
 getFilterIn() const
 {
-  if (filterIn_.isValid())
-    return filterIn_.getValue();
+  if (filterIn_)
+    return filterIn_.value();
 
   auto *filter = getParentFilter();
 
@@ -44,8 +44,8 @@ getFilterOut() const
 
   std::string name = "FilterGraphic";
 
-  if (filterOut_.isValid())
-    name = filterOut_.getValue();
+  if (filterOut_)
+    name = filterOut_.value();
 
   if (filter)
     filter->setLastFilterName(name);
@@ -87,7 +87,7 @@ print(std::ostream &os, bool hier) const
 
     printValues(os);
 
-    os << "/>" << std::endl;
+    os << "/>\n";
   }
   else
     os << "feMergeNode";
@@ -99,9 +99,9 @@ printValues(std::ostream &os, bool flat) const
 {
   CSVGObject::printValues(os, flat);
 
-  if (filterIn_.isValid())
-    os << " in=\"" << filterIn_.getValue() << "\"";
+  if (filterIn_)
+    os << " in=\"" << filterIn_.value() << "\"";
 
-  if (filterOut_.isValid())
-    os << " result=\"" << filterOut_.getValue() << "\"";
+  if (filterOut_)
+    os << " result=\"" << filterOut_.value() << "\"";
 }

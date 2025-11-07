@@ -108,8 +108,8 @@ class CXMLTag;
 class CXMLToken;
 
 struct CSVGXmlStyleSheet {
-  COptString ref;
-  COptBool   is_css;
+  std::optional<std::string> ref;
+  std::optional<bool>        is_css;
 };
 
 class CSVG {
@@ -588,7 +588,7 @@ class CSVG {
   // length args
   bool lengthOption(const std::string &opt_name, const std::string &opt_value,
                     const std::string &name, CScreenUnits &length);
-  static COptValT<CScreenUnits> decodeLengthValue(const std::string &str);
+  static std::optional<CScreenUnits> decodeLengthValue(const std::string &str);
 
   bool lengthListOption(const std::string &opt_name, const std::string &opt_value,
                         const std::string &name, std::vector<CScreenUnits> &lengths);
@@ -608,13 +608,13 @@ class CSVG {
   // orient arg
   bool orientOption(const std::string &opt_name, const std::string &opt_value,
                     const std::string &name, CSVGOrient &orient);
-  static COptValT<CSVGOrient> decodeOrientString(const std::string &str);
+  static std::optional<CSVGOrient> decodeOrientString(const std::string &str);
   static std::string encodeOrientString(const CSVGOrient &orient);
 
   static void printNameOrient(std::ostream &os, const std::string &name,
-                              const COptValT<CSVGOrient> &o) {
-    if (o.isValid())
-      os << " " << name << "=\"" + encodeOrientString(o.getValue()) + "\"";
+                              const std::optional<CSVGOrient> &o) {
+    if (o)
+      os << " " << name << "=\"" + encodeOrientString(o.value()) + "\"";
   }
 
   //---
@@ -622,13 +622,13 @@ class CSVG {
   // angle arg
   bool angleOption(const std::string &opt_name, const std::string &opt_value,
                    const std::string &name, CAngle &angle);
-  static COptValT<CAngle> decodeAngleString(const std::string &str);
+  static std::optional<CAngle> decodeAngleString(const std::string &str);
   static std::string encodeAngleString(const CAngle &angle);
 
   static void printNameAngle(std::ostream &os, const std::string &name,
-                             const COptValT<CAngle> &a) {
-    if (a.isValid())
-      os << " " << name << "=\"" + encodeAngleString(a.getValue()) + "\"";
+                             const std::optional<CAngle> &a) {
+    if (a)
+      os << " " << name << "=\"" + encodeAngleString(a.value()) + "\"";
   }
 
   //---
@@ -834,7 +834,7 @@ class CSVG {
   using BufferMgrP       = std::unique_ptr<CSVGBufferMgr>;
   using BlockP           = std::unique_ptr<CSVGBlock>;
   using XMLP             = std::unique_ptr<CXML>;
-  using OptXmlStyleSheet = COptValT<CSVGXmlStyleSheet>;
+  using OptXmlStyleSheet = std::optional<CSVGXmlStyleSheet>;
   using CSSList          = std::vector<CCSS>;
 
   static NameToRGBA colors_;

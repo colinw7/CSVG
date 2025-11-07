@@ -132,12 +132,12 @@ execNameFn(CJavaScript *, const std::string &name, const Values &values)
     return CJValueP();
   }
   else if (name == "createTextNode") {
-    std::cerr << "CSVGJDocument::createTextNode not implemented" << std::endl;
+    std::cerr << "CSVGJDocument::createTextNode not implemented\n";
 
     return CJValueP();
   }
   else if (name == "createEvent") {
-    std::cerr << "CSVGJDocument::createEvent not implemented" << std::endl;
+    std::cerr << "CSVGJDocument::createEvent not implemented\n";
 
     return CJValueP();
   }

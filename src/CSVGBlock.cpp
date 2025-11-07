@@ -82,13 +82,13 @@ processOption(const std::string &opt_name, const std::string &opt_value)
     //notHandled(opt_name, opt_value);
   }
   else if (svg_.coordOption (opt_name, opt_value, "x", &real))
-    x_.setValue(real);
+    x_ = real;
   else if (svg_.coordOption (opt_name, opt_value, "y", &real))
-    y_.setValue(real);
+    y_ = real;
   else if (svg_.lengthOption(opt_name, opt_value, "width", length))
-    width_.setValue(length);
+    width_ = length;
   else if (svg_.lengthOption(opt_name, opt_value, "height", length))
-    height_.setValue(length);
+    height_ = length;
   else if (svg_.bboxOption  (opt_name, opt_value, "viewBox", bbox))
     viewBox_ = bbox;
   else if (svg_.preserveAspectOption(opt_name, opt_value, "preserveAspectRatio", preserveAspect))
@@ -125,11 +125,11 @@ processOption(const std::string &opt_name, const std::string &opt_value)
   return true;
 }
 
-COptString
+std::optional<std::string>
 CSVGBlock::
 getNameValue(const std::string &name) const
 {
-  COptString s;
+  std::optional<std::string> s;
 
   if (name == "preserveAspectRatio") {
     s = preserveAspect().toString();
@@ -144,14 +144,14 @@ double
 CSVGBlock::
 getX() const
 {
-  return (x_.isValid() ? x_.getValue() : 0.0);
+  return (x_ ? x_.value() : 0.0);
 }
 
 double
 CSVGBlock::
 getY() const
 {
-  return (y_.isValid() ? y_.getValue() : 0.0);
+  return (y_ ? y_.value() : 0.0);
 }
 
 double
@@ -163,10 +163,10 @@ getWidth() const
   // auto bbox = getViewBox();
   //if (bbox.isSet()) w = bbox.getWidth();
 
-  if      (width_.isValid())
-    return width_.getValue().px(CScreenUnits(w)).value();
-  else if (height_.isValid())
-    return height_.getValue().px(CScreenUnits(w)).value();
+  if      (width_)
+    return width_.value().px(CScreenUnits(w)).value();
+  else if (height_)
+    return height_.value().px(CScreenUnits(w)).value();
   else
     return w;
 }
@@ -180,10 +180,10 @@ getHeight() const
   //auto bbox = getViewBox();
   //if (bbox.isSet()) h = bbox.getHeight();
 
-  if      (height_.isValid())
-    return height_.getValue().px(CScreenUnits(h)).value();
-  else if (width_.isValid())
-    return width_.getValue().px(CScreenUnits(h)).value();
+  if      (height_)
+    return height_.value().px(CScreenUnits(h)).value();
+  else if (width_)
+    return width_.value().px(CScreenUnits(h)).value();
   else
     return h;
 }
@@ -192,8 +192,8 @@ void
 CSVGBlock::
 setSize(const CSize2D &size)
 {
-  width_ .setValue(CScreenUnits(size.getWidth ()));
-  height_.setValue(CScreenUnits(size.getHeight()));
+  width_  = CScreenUnits(size.getWidth ());
+  height_ = CScreenUnits(size.getHeight());
 }
 
 void
@@ -460,21 +460,21 @@ printRoot(std::ostream &os, const std::vector<CCSS> &cssList, bool hier) const
 
     printValues(os);
 
-    os << ">" << std::endl;
+    os << ">\n";
 
     for (const auto &css : cssList) {
       if (css.hasStyleData()) {
-        os << "<style type=\"text/css\"><![CDATA[" << std::endl;
+        os << "<style type=\"text/css\"><![CDATA[\n";
 
         css.print(os);
 
-        os << "]]></style>" << std::endl;
+        os << "]]></style>\n";
       }
     }
 
     printChildren(os, hier);
 
-    os << "</svg>" << std::endl;
+    os << "</svg>\n";
   }
   else
     os << "svg " << getWidth() << " " << getHeight();
@@ -489,11 +489,11 @@ print(std::ostream &os, bool hier) const
 
     printValues(os);
 
-    os << ">" << std::endl;
+    os << ">\n";
 
     printChildren(os, hier);
 
-    os << "</svg>" << std::endl;
+    os << "</svg>\n";
   }
   else
     os << "svg " << getWidth() << " " << getHeight();

@@ -127,7 +127,7 @@ print(std::ostream &os, bool hier) const
 
     printValues(os);
 
-    os << "/>" << std::endl;
+    os << "/>\n";
   }
   else
     os << "feGaussianBlur ";
@@ -144,10 +144,10 @@ printValues(std::ostream &os, bool flat) const
   printNameValue(os, "in"          , filterIn_ );
   printNameValue(os, "result"      , filterOut_);
 
-  if      (stdDevX_.isValid() && ! stdDevY_.isValid())
+  if      (stdDevX_ && ! stdDevY_)
     printNameValue(os, "stdDeviation", stdDevX_);
-  else if (stdDevX_.isValid() && stdDevY_.isValid())
-    os << " stdDeviation=\"" << stdDevX_.getValue() << " " << stdDevY_.getValue() << "\"";
+  else if (stdDevX_ && stdDevY_)
+    os << " stdDeviation=\"" << stdDevX_.value() << " " << stdDevY_.value() << "\"";
 }
 
 std::ostream &

@@ -174,7 +174,7 @@ std::string
 CSVGObject::
 getText() const
 {
-  return text_.getValue("");
+  return text_.value_or("");
 }
 
 void
@@ -251,8 +251,8 @@ getFlatStroke() const
 
   auto color = getFlatStrokeColor();
 
-  if (color.isValid())
-    stroke.setColor(color.getValue());
+  if (color)
+    stroke.setColor(color.value());
   else
     stroke.resetColor();
 
@@ -260,8 +260,8 @@ getFlatStroke() const
 
   auto opacity = getFlatStrokeOpacity();
 
-  if (opacity.isValid())
-    stroke.setOpacity(opacity.getValue());
+  if (opacity)
+    stroke.setOpacity(opacity.value());
   else
     stroke.resetOpacity();
 
@@ -269,8 +269,8 @@ getFlatStroke() const
 
   auto rule = getFlatStrokeRule();
 
-  if (rule.isValid())
-    stroke.setRule(rule.getValue());
+  if (rule)
+    stroke.setRule(rule.value());
   else
     stroke.resetRule();
 
@@ -278,8 +278,8 @@ getFlatStroke() const
 
   auto url = getFlatStrokeUrl();
 
-  if (url.isValid())
-    stroke.setUrl(url.getValue());
+  if (url)
+    stroke.setUrl(url.value());
   else
     stroke.resetUrl();
 
@@ -287,8 +287,8 @@ getFlatStroke() const
 
   auto obj = getFlatStrokeFillObject();
 
-  if (obj.isValid())
-    stroke.setFillObject(obj.getValue());
+  if (obj)
+    stroke.setFillObject(obj.value());
   else
     stroke.resetFillObject();
 
@@ -296,8 +296,8 @@ getFlatStroke() const
 
   auto width = getFlatStrokeWidth();
 
-  if (width.isValid())
-    stroke.setWidth(width.getValue());
+  if (width)
+    stroke.setWidth(width.value());
   else
     stroke.resetWidth();
 
@@ -305,8 +305,8 @@ getFlatStroke() const
 
   auto dash = getFlatStrokeDashArray();
 
-  if (dash.isValid())
-    stroke.setDashArray(dash.getValue());
+  if (dash)
+    stroke.setDashArray(dash.value());
   else
     stroke.resetDashArray();
 
@@ -314,8 +314,8 @@ getFlatStroke() const
 
   auto offset = getFlatStrokeDashOffset();
 
-  if (offset.isValid())
-    stroke.setDashOffset(offset.getValue());
+  if (offset)
+    stroke.setDashOffset(offset.value());
   else
     stroke.resetDashOffset();
 
@@ -323,8 +323,8 @@ getFlatStroke() const
 
   auto lineCap = getFlatStrokeLineCap();
 
-  if (lineCap.isValid())
-    stroke.setLineCap(lineCap.getValue());
+  if (lineCap)
+    stroke.setLineCap(lineCap.value());
   else
     stroke.resetLineCap();
 
@@ -332,8 +332,8 @@ getFlatStroke() const
 
   auto lineJoin = getFlatStrokeLineJoin();
 
-  if (lineJoin.isValid())
-    stroke.setLineJoin(lineJoin.getValue());
+  if (lineJoin)
+    stroke.setLineJoin(lineJoin.value());
   else
     stroke.resetLineJoin();
 
@@ -341,79 +341,79 @@ getFlatStroke() const
 
   auto mlimit = getFlatStrokeMiterLimit();
 
-  if (mlimit.isValid())
-    stroke.setMiterLimit(mlimit.getValue());
+  if (mlimit)
+    stroke.setMiterLimit(mlimit.value());
   else
     stroke.resetMiterLimit();
 
   return stroke;
 }
 
-COptValT<CSVGObject::Color>
+std::optional<CSVGObject::Color>
 CSVGObject::
 getFlatStrokeColor() const
 {
   // if color set use it
   if (stroke_.getColorValid())
-    return COptValT<Color>(stroke_.getColor());
+    return std::optional<Color>(stroke_.getColor());
 
   auto *parent = getParent();
 
   while (parent) {
     if (parent->stroke_.getColorValid())
-      return COptValT<Color>(parent->stroke_.getColor());
+      return std::optional<Color>(parent->stroke_.getColor());
 
     parent = parent->getParent();
   }
 
-  return COptValT<Color>();
+  return std::optional<Color>();
 }
 
-COptValT<CSVGObject::Opacity>
+std::optional<CSVGObject::Opacity>
 CSVGObject::
 getFlatStrokeOpacity() const
 {
   // if opacity set use it
   if (stroke_.getOpacityValid())
-    return COptValT<Opacity>(stroke_.getOpacity());
+    return std::optional<Opacity>(stroke_.getOpacity());
 
   auto *parent = getParent();
 
   while (parent) {
     if (parent->stroke_.getOpacityValid())
-      return COptValT<Opacity>(parent->stroke_.getOpacity());
+      return std::optional<Opacity>(parent->stroke_.getOpacity());
 
     parent = parent->getParent();
   }
 
-  return COptValT<Opacity>();
+  return std::optional<Opacity>();
 }
 
-COptValT<CSVGObject::FillType>
+std::optional<CSVGObject::FillType>
 CSVGObject::
 getFlatStrokeRule() const
 {
   if (stroke_.getRuleValid())
-    return COptValT<FillType>(stroke_.getRule());
+    return std::optional<FillType>(stroke_.getRule());
 
   auto *parent = getParent();
 
   while (parent) {
     if (parent->stroke_.getRuleValid())
-      return COptValT<FillType>(parent->getFlatStrokeRule());
+      return std::optional<FillType>(parent->getFlatStrokeRule());
 
     parent = parent->getParent();
   }
 
-  return COptValT<FillType>();
+  return std::optional<FillType>();
 }
 
-COptString
+std::optional<std::string>
 CSVGObject::
 getFlatStrokeUrl() const
 {
   if (stroke_.getUrlValid())
-    return COptString(stroke_.getUrl());
+    return std::optional<std::string>(stroke_.getUrl());
 
   auto *parent = getParent();
 
@@ -424,140 +424,140 @@ getFlatStrokeUrl() const
     parent = parent->getParent();
   }
 
-  return COptString();
+  return std::optional<std::string>();
 }
 
-COptValT<CSVGObject*>
+std::optional<CSVGObject*>
 CSVGObject::
 getFlatStrokeFillObject() const
 {
   if (stroke_.getFillObjectValid())
-    return COptValT<CSVGObject*>(stroke_.getFillObject());
+    return std::optional<CSVGObject*>(stroke_.getFillObject());
 
   auto *parent = getParent();
 
   while (parent) {
     if (parent->stroke_.getFillObjectValid())
-      return COptValT<CSVGObject*>(parent->getFlatStrokeFillObject());
+      return std::optional<CSVGObject*>(parent->getFlatStrokeFillObject());
 
     parent = parent->getParent();
   }
 
-  return COptValT<CSVGObject*>();
+  return std::optional<CSVGObject*>();
 }
 
-COptValT<CSVGObject::Width>
+std::optional<CSVGObject::Width>
 CSVGObject::
 getFlatStrokeWidth() const
 {
   if (stroke_.getWidthValid())
-    return COptValT<Width>(stroke_.getWidth());
+    return std::optional<Width>(stroke_.getWidth());
 
   auto *parent = getParent();
 
   while (parent) {
     if (parent->stroke_.getWidthValid())
-      return COptValT<Width>(parent->getFlatStrokeWidth());
+      return std::optional<Width>(parent->getFlatStrokeWidth());
 
     parent = parent->getParent();
   }
 
-  return COptValT<Width>();
+  return std::optional<Width>();
 }
 
-COptValT<CSVGObject::DashArray>
+std::optional<CSVGObject::DashArray>
 CSVGObject::
 getFlatStrokeDashArray() const
 {
   if (stroke_.getDashArrayValid())
-    return COptValT<DashArray>(stroke_.getDashArray());
+    return std::optional<DashArray>(stroke_.getDashArray());
 
   auto *parent = getParent();
 
   while (parent) {
     if (parent->stroke_.getDashArrayValid())
-      return COptValT<DashArray>(parent->getFlatStrokeDashArray());
+      return std::optional<DashArray>(parent->getFlatStrokeDashArray());
 
     parent = parent->getParent();
   }
 
-  return COptValT<DashArray>();
+  return std::optional<DashArray>();
 }
 
-COptValT<CSVGObject::DashOffset>
+std::optional<CSVGObject::DashOffset>
 CSVGObject::
 getFlatStrokeDashOffset() const
 {
   if (stroke_.getDashOffsetValid())
-    return COptValT<DashOffset>(stroke_.getDashOffset());
+    return std::optional<DashOffset>(stroke_.getDashOffset());
 
   auto *parent = getParent();
 
   while (parent) {
     if (parent->stroke_.getDashOffsetValid())
-      return COptValT<DashOffset>(parent->getFlatStrokeDashOffset());
+      return std::optional<DashOffset>(parent->getFlatStrokeDashOffset());
 
     parent = parent->getParent();
   }
 
-  return COptValT<DashOffset>();
+  return std::optional<DashOffset>();
 }
 
-COptValT<CSVGObject::LineCap>
+std::optional<CSVGObject::LineCap>
 CSVGObject::
 getFlatStrokeLineCap() const
 {
   if (stroke_.getLineCapValid())
-    return COptValT<LineCap>(stroke_.getLineCap());
+    return std::optional<LineCap>(stroke_.getLineCap());
 
   auto *parent = getParent();
 
   while (parent) {
     if (parent->stroke_.getLineCapValid())
-      return COptValT<LineCap>(parent->getFlatStrokeLineCap());
+      return std::optional<LineCap>(parent->getFlatStrokeLineCap());
 
     parent = parent->getParent();
   }
 
-  return COptValT<LineCap>();
+  return std::optional<LineCap>();
 }
 
-COptValT<CSVGObject::LineJoin>
+std::optional<CSVGObject::LineJoin>
 CSVGObject::
 getFlatStrokeLineJoin() const
 {
   if (stroke_.getLineJoinValid())
-    return COptValT<LineJoin>(stroke_.getLineJoin());
+    return std::optional<LineJoin>(stroke_.getLineJoin());
 
   auto *parent = getParent();
 
   while (parent) {
     if (parent->stroke_.getLineJoinValid())
-      return COptValT<LineJoin>(parent->getFlatStrokeLineJoin());
+      return std::optional<LineJoin>(parent->getFlatStrokeLineJoin());
 
     parent = parent->getParent();
   }
 
-  return COptValT<LineJoin>();
+  return std::optional<LineJoin>();
 }
 
-COptValT<CSVGObject::MiterLimit>
+std::optional<CSVGObject::MiterLimit>
 CSVGObject::
 getFlatStrokeMiterLimit() const
 {
   if (stroke_.getMiterLimitValid())
-    return COptValT<MiterLimit>(stroke_.getMiterLimit());
+    return std::optional<MiterLimit>(stroke_.getMiterLimit());
 
   auto *parent = getParent();
 
   while (parent) {
     if (parent->stroke_.getMiterLimitValid())
-      return COptValT<MiterLimit>(parent->getFlatStrokeMiterLimit());
+      return std::optional<MiterLimit>(parent->getFlatStrokeMiterLimit());
 
     parent = parent->getParent();
   }
 
-  return COptValT<MiterLimit>();
+  return std::optional<MiterLimit>();
 }
 
 //------
@@ -570,8 +570,8 @@ getFlatFill() const
 
   auto color = getFlatFillColor();
 
-  if (color.isValid())
-    fill.setColor(color.getValue());
+  if (color)
+    fill.setColor(color.value());
   else
     fill.resetColor();
 
@@ -579,8 +579,8 @@ getFlatFill() const
 
   auto opacity = getFlatFillOpacity();
 
-  if (opacity.isValid())
-    fill.setOpacity(opacity.getValue());
+  if (opacity)
+    fill.setOpacity(opacity.value());
   else
     fill.resetOpacity();
 
@@ -588,8 +588,8 @@ getFlatFill() const
 
   auto rule = getFlatFillRule();
 
-  if (rule.isValid())
-    fill.setRule(rule.getValue());
+  if (rule)
+    fill.setRule(rule.value());
   else
     fill.resetRule();
 
@@ -597,8 +597,8 @@ getFlatFill() const
 
   auto url = getFlatFillUrl();
 
-  if (url.isValid())
-    fill.setUrl(url.getValue());
+  if (url)
+    fill.setUrl(url.value());
   else
     fill.resetUrl();
 
@@ -606,112 +606,112 @@ getFlatFill() const
 
   auto obj = getFlatFillFillObject();
 
-  if (obj.isValid())
-    fill.setFillObject(obj.getValue());
+  if (obj)
+    fill.setFillObject(obj.value());
   else
     fill.resetFillObject();
 
   return fill;
 }
 
-COptValT<CSVGObject::Color>
+std::optional<CSVGObject::Color>
 CSVGObject::
 getFlatFillColor() const
 {
   // if color set use it
   if (fill_.getColorValid() && ! fill_.getColor().isInherit())
-    return COptValT<Color>(fill_.getColor());
+    return std::optional<Color>(fill_.getColor());
 
   auto *parent = getParent();
 
   while (parent) {
     if (parent->fill_.getColorValid())
-      return COptValT<Color>(parent->fill_.getColor());
+      return std::optional<Color>(parent->fill_.getColor());
 
     parent = parent->getParent();
   }
 
-  return COptValT<Color>();
+  return std::optional<Color>();
 }
 
-COptValT<CSVGObject::Opacity>
+std::optional<CSVGObject::Opacity>
 CSVGObject::
 getFlatFillOpacity() const
 {
   // if opacity set use it
   if (fill_.getOpacityValid() && ! fill_.getOpacity().isInherit())
-    return COptValT<Opacity>(fill_.getOpacity());
+    return std::optional<Opacity>(fill_.getOpacity());
 
   auto *parent = getParent();
 
   while (parent) {
     if (parent->fill_.getOpacityValid())
-      return COptValT<Opacity>(parent->fill_.getOpacity());
+      return std::optional<Opacity>(parent->fill_.getOpacity());
 
     parent = parent->getParent();
   }
 
-  return COptValT<Opacity>();
+  return std::optional<Opacity>();
 }
 
-COptValT<CSVGObject::FillType>
+std::optional<CSVGObject::FillType>
 CSVGObject::
 getFlatFillRule() const
 {
   // if opacity set use it
   if (fill_.getRuleValid() && ! fill_.getRule().isInherit())
-    return COptValT<FillType>(fill_.getRule());
+    return std::optional<FillType>(fill_.getRule());
 
   auto *parent = getParent();
 
   while (parent) {
     if (parent->fill_.getRuleValid())
-      return COptValT<FillType>(parent->fill_.getRule());
+      return std::optional<FillType>(parent->fill_.getRule());
 
     parent = parent->getParent();
   }
 
-  return COptValT<FillType>();
+  return std::optional<FillType>();
 }
 
-COptString
+std::optional<std::string>
 CSVGObject::
 getFlatFillUrl() const
 {
   // if opacity set use it
   if (fill_.getUrlValid())
-    return COptString(fill_.getUrl());
+    return std::optional<std::string>(fill_.getUrl());
 
   auto *parent = getParent();
 
   while (parent) {
     if (parent->fill_.getUrlValid())
-      return COptString(parent->fill_.getUrl());
+      return std::optional<std::string>(parent->fill_.getUrl());
 
     parent = parent->getParent();
   }
 
-  return COptString();
+  return std::optional<std::string>();
 }
 
-COptValT<CSVGObject *>
+std::optional<CSVGObject *>
 CSVGObject::
 getFlatFillFillObject() const
 {
   // if opacity set use it
   if (fill_.getFillObjectValid())
-    return COptValT<CSVGObject *>(fill_.getFillObject());
+    return std::optional<CSVGObject *>(fill_.getFillObject());
 
   auto *parent = getParent();
 
   while (parent) {
     if (parent->fill_.getFillObjectValid())
-      return COptValT<CSVGObject *>(parent->fill_.getFillObject());
+      return std::optional<CSVGObject *>(parent->fill_.getFillObject());
 
     parent = parent->getParent();
   }
 
-  return COptValT<CSVGObject *>();
+  return std::optional<CSVGObject *>();
 }
 
 CSVGFontDef
@@ -724,23 +724,23 @@ getFlatFontDef() const
 
   CSVGFontDef fontDef(svg_);
 
-  if (fontFamily.isValid())
-    fontDef.setFamily(fontFamily.getValue());
+  if (fontFamily)
+    fontDef.setFamily(fontFamily.value());
 
-  if (fontSize.isValid())
-    fontDef.setSize(fontSize.getValue());
+  if (fontSize)
+    fontDef.setSize(fontSize.value());
 
   fontDef.setStyle(fontStyles);
 
   return fontDef;
 }
 
-COptValT<CSVGObject::FontFamily>
+std::optional<CSVGObject::FontFamily>
 CSVGObject::
 getFlatFontFamily() const
 {
   if (fontDef_.hasFamily())
-    return COptValT<FontFamily>(fontDef_.getFamily());
+    return std::optional<FontFamily>(fontDef_.getFamily());
 
   auto *parent = getParent();
 
@@ -751,7 +751,7 @@ getFlatFontFamily() const
     parent = parent->getParent();
   }
 
-  return COptValT<FontFamily>(FontFamily("serif"));
+  return std::optional<FontFamily>(FontFamily("serif"));
 }
 
 CFontStyles
@@ -773,12 +773,12 @@ getFlatFontStyle() const
   return CFontStyles(CFONT_STYLE_NORMAL);
 }
 
-COptValT<CSVGObject::FontSize>
+std::optional<CSVGObject::FontSize>
 CSVGObject::
 getFlatFontSize() const
 {
   if (fontDef_.hasSize())
-    return COptValT<FontSize>(fontDef_.getSize());
+    return std::optional<FontSize>(fontDef_.getSize());
 
   auto *parent = getParent();
 
@@ -789,7 +789,7 @@ getFlatFontSize() const
     parent = parent->getParent();
   }
 
-  return COptValT<FontSize>(FontSize(CScreenUnits(12)));
+  return std::optional<FontSize>(FontSize(CScreenUnits(12)));
 }
 
 // [[ <family-name> | <generic-family> ],]* [<family-name> | <generic-family>] | inherit
@@ -1758,7 +1758,7 @@ parseFont(const std::string &str)
 
     auto length = svg_.decodeLengthValue(word);
 
-    if (! length.isValid()) {
+    if (! length) {
       CSVGLog() << "Illegal font length value '" << word << "'";
       return false;
     }
@@ -1903,11 +1903,11 @@ hasNameValue(const std::string &name) const
   return (p != nameValues_.end());
 }
 
-COptString
+std::optional<std::string>
 CSVGObject::
 getNameValue(const std::string &name) const
 {
-  COptString str;
+  std::optional<std::string> str;
 
   if      (name == "className") {
     auto classes = getClasses();
@@ -1939,36 +1939,36 @@ getNameValue(const std::string &name) const
   return str;
 }
 
-COptReal
+std::optional<double>
 CSVGObject::
 getRealNameValue(const std::string &name) const
 {
   auto str = getNameValue(name);
 
-  if (! str.isValid()) return COptReal();
+  if (! str) return std::optional<double>();
 
   double r;
 
-  if (! CStrUtil::toReal(str.getValue(), &r))
-    return COptReal();
+  if (! CStrUtil::toReal(str.value(), &r))
+    return std::optional<double>();
 
-  return COptReal(r);
+  return std::optional<double>(r);
 }
 
-COptInt
+std::optional<int>
 CSVGObject::
 getIntegerNameValue(const std::string &name) const
 {
   auto str = getNameValue(name);
 
-  if (! str.isValid()) return COptInt();
+  if (! str) return std::optional<int>();
 
   long i;
 
-  if (! CStrUtil::toInteger(str.getValue(), &i))
-    return COptInt();
+  if (! CStrUtil::toInteger(str.value(), &i))
+    return std::optional<int>();
 
-  return COptInt(int(i));
+  return std::optional<int>(int(i));
 }
 
 //---
@@ -2061,11 +2061,11 @@ hasStyleValue(const std::string &name) const
   return (p != styleValues_.end());
 }
 
-COptString
+std::optional<std::string>
 CSVGObject::
 getStyleValue(const std::string &name) const
 {
-  COptString str;
+  std::optional<std::string> str;
 
   auto p = nameValues_.find(name);
 
@@ -2199,13 +2199,13 @@ CHAlignType
 CSVGObject::
 getFlatTextAnchor() const
 {
-  if (textAnchor_.isValid())
-    return textAnchor_.getValue().getValue();
+  if (textAnchor_)
+    return textAnchor_.value().getValue();
 
   auto *parent = getParent();
 
   while (parent) {
-    if (parent->textAnchor_.isValid())
+    if (parent->textAnchor_)
       return parent->getFlatTextAnchor();
 
     parent = parent->getParent();
@@ -2839,7 +2839,7 @@ setVisible(bool b)
   if (! b)
     visibility_ = "hidden";
   else
-    visibility_.setInvalid();
+    visibility_.reset();
 }
 
 CSVGBuffer *
@@ -2879,7 +2879,7 @@ toNamedBufferImage(const std::string &bufferName)
   if (! getBBox(bbox))
     return nullptr;
 
-  COptValT<CSVGFilter*> saveFilter;
+  std::optional<CSVGFilter*> saveFilter;
 
   std::swap(saveFilter, filter_);
 
@@ -2980,9 +2980,9 @@ rotateBy(double da)
 
   CMatrixStack2D m;
 
-  m.translate(c.x, c.y);
-  m.rotate(da);
-  m.translate(-c.x, -c.y);
+  m.addTranslation(c.x, c.y);
+  m.addRotation   (da);
+  m.addTranslation(-c.x, -c.y);
 
   m.append(getTransform());
 
@@ -2995,7 +2995,7 @@ rotateAt(double a, const CPoint2D &c)
 {
   CMatrixStack2D m;
 
-  m.rotate(a, c);
+  m.addRotation(a, c);
 
   m.append(getTransform());
 
@@ -3008,7 +3008,7 @@ scaleBy(double s)
 {
   CMatrixStack2D m;
 
-  m.scale(s, s);
+  m.addScale(s, s);
 
   m.append(getTransform());
 
@@ -3021,7 +3021,7 @@ scaleBy(double xs, double ys)
 {
   CMatrixStack2D m;
 
-  m.scale(xs, ys);
+  m.addScale(xs, ys);
 
   m.append(getTransform());
 
@@ -3222,7 +3222,7 @@ std::string
 CSVGObject::
 getId(bool autoName) const
 {
-  auto id = id_.getValue("");
+  auto id = id_.value_or("");
 
   if (id == "" && autoName)
     id = const_cast<CSVGObject *>(this)->autoName();
@@ -3612,7 +3612,7 @@ execEvent(CSVGEventType type)
 {
   auto execNamedEvent = [&](const std::string &name) {
     if (hasNameValue(name))
-      svg_.execJsEvent(this, getNameValue(name).getValue());
+      svg_.execJsEvent(this, getNameValue(name).value());
   };
 
   if      (type == CSVGEventType::LOAD)
@@ -4001,13 +4001,13 @@ void
 CSVGObject::
 printTextContent(std::ostream &os) const
 {
-  if (textAnchor_.isValid()) {
+  if (textAnchor_) {
     os << " text-anchor=\"";
 
-    if (textAnchor_.getValue().isInherit())
+    if (textAnchor_.value().isInherit())
       os << "inherit";
     else {
-      auto value = textAnchor_.getValue().getValue();
+      auto value = textAnchor_.value().getValue();
 
       if      (value == CHALIGN_TYPE_LEFT  ) os << "start";
       else if (value == CHALIGN_TYPE_CENTER) os << "middle";
@@ -4158,22 +4158,22 @@ printNameParts(std::ostream &os, const std::string &name, const CSVGPathPartList
 void
 CSVGObject::
 printNameCoordUnits(std::ostream &os, const std::string &name,
-                    const COptValT<CSVGCoordUnits> &units) const
+                    const std::optional<CSVGCoordUnits> &units) const
 {
-  if (units.isValid())
-    os << " " << name << "=\"" << CSVG::encodeUnitsString(units.getValue()) << "\"";
+  if (units)
+    os << " " << name << "=\"" << CSVG::encodeUnitsString(units.value()) << "\"";
 }
 
 void
 CSVGObject::
 printNamePercent(std::ostream &os, const std::string &name,
-                 const COptValT<CScreenUnits> &units) const
+                 const std::optional<CScreenUnits> &units) const
 {
-  if (units.isValid()) {
-    if (units.getValue().units() == CScreenUnits::Units::RATIO)
-      os << " " << name << "=\"" << units.getValue().ratioValue() << "\"";
+  if (units) {
+    if (units.value().units() == CScreenUnits::Units::RATIO)
+      os << " " << name << "=\"" << units.value().ratioValue() << "\"";
     else
-      os << " " << name << "=\"" << units.getValue() << "\"";
+      os << " " << name << "=\"" << units.value() << "\"";
   }
 }
 

@@ -13,34 +13,34 @@ class CSVGPattern : public CSVGObject, public CSVGPrintBase<CSVGPattern> {
 
   CSVGPattern *dup() const override;
 
-  bool getXValid() const { return x_.isValid(); }
-  CScreenUnits getX() const { return x_.getValue(CScreenUnits(0)); }
+  bool getXValid() const { return !!x_; }
+  CScreenUnits getX() const { return x_.value_or(CScreenUnits(0)); }
   void setX(const CScreenUnits &x) { x_ = x; }
 
-  bool getYValid() const { return y_.isValid(); }
-  CScreenUnits getY() const { return y_.getValue(CScreenUnits(0)); }
+  bool getYValid() const { return !!y_; }
+  CScreenUnits getY() const { return y_.value_or(CScreenUnits(0)); }
   void setY(const CScreenUnits &y) { y_ = y; }
 
-  bool getWidthValid() const { return width_.isValid(); }
-  CScreenUnits getWidth() const { return width_.getValue(CScreenUnits(0)); }
+  bool getWidthValid() const { return !!width_; }
+  CScreenUnits getWidth() const { return width_.value_or(CScreenUnits(0)); }
   void setWidth(const CScreenUnits &w) { width_ = w; }
 
-  bool getHeightValid() const { return height_.isValid(); }
-  CScreenUnits getHeight() const { return height_.getValue(CScreenUnits(0)); }
+  bool getHeightValid() const { return !!height_; }
+  CScreenUnits getHeight() const { return height_.value_or(CScreenUnits(0)); }
   void setHeight(const CScreenUnits &h) { height_ = h; }
 
-  bool getUnitsValid() const { return units_.isValid(); }
-  CSVGCoordUnits getUnits() const { return units_.getValue(CSVGCoordUnits::USER_SPACE); }
+  bool getUnitsValid() const { return !!units_; }
+  CSVGCoordUnits getUnits() const { return units_.value_or(CSVGCoordUnits::USER_SPACE); }
   void setUnits(CSVGCoordUnits units) { units_ = units; }
 
-  bool getContentUnitsValid() const { return contentUnits_.isValid(); }
+  bool getContentUnitsValid() const { return !!contentUnits_; }
   CSVGCoordUnits getContentUnits() const {
-    return contentUnits_.getValue(CSVGCoordUnits::USER_SPACE); }
+    return contentUnits_.value_or(CSVGCoordUnits::USER_SPACE); }
   void setContentUnits(CSVGCoordUnits units) { contentUnits_ = units; }
 
-  const CSVGXLink &xlink() const { return xlink_.getValue(); }
+  const CSVGXLink &xlink() const { return xlink_.value(); }
 
-  std::string getLinkName() const { return (xlink_.isValid() ? xlink_.getValue().str() : ""); }
+  std::string getLinkName() const { return (xlink_ ? xlink_.value().str() : ""); }
   void setLinkName(const std::string &str);
 
   bool processOption(const std::string &name, const std::string &value) override;
@@ -65,14 +65,14 @@ class CSVGPattern : public CSVGObject, public CSVGPrintBase<CSVGPattern> {
   CSVGPattern &operator=(const CSVGPattern &rhs);
 
  private:
-  COptValT<CScreenUnits>   x_;
-  COptValT<CScreenUnits>   y_;
-  COptValT<CScreenUnits>   width_;
-  COptValT<CScreenUnits>   height_;
-  COptValT<CSVGCoordUnits> units_;
-  COptValT<CSVGCoordUnits> contentUnits_;
-  COptValT<CMatrixStack2D> patternTransform_;
-  COptValT<CSVGXLink>      xlink_;
+  std::optional<CScreenUnits>   x_;
+  std::optional<CScreenUnits>   y_;
+  std::optional<CScreenUnits>   width_;
+  std::optional<CScreenUnits>   height_;
+  std::optional<CSVGCoordUnits> units_;
+  std::optional<CSVGCoordUnits> contentUnits_;
+  std::optional<CMatrixStack2D> patternTransform_;
+  std::optional<CSVGXLink>      xlink_;
 };
 
 #endif

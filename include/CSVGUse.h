@@ -13,23 +13,23 @@ class CSVGUse : public CSVGObject, public CSVGPrintBase<CSVGUse> {
 
   CSVGUse *dup() const override;
 
-  const CSVGXLink &xlink() const { return xlink_.getValue(); }
+  const CSVGXLink &xlink() const { return xlink_.value(); }
 
-  std::string getLinkName() const { return (xlink_.isValid() ? xlink_.getValue().str() : ""); }
+  std::string getLinkName() const { return (xlink_ ? xlink_.value().str() : ""); }
   void setLinkName(const std::string &str);
 
   CSVGObject *getLinkObject() const;
 
-  double getX() const { return x_.getValue(0); }
+  double getX() const { return x_.value_or(0); }
   void setX(double x) { x_ = x; }
 
-  double getY() const { return y_.getValue(0); }
+  double getY() const { return y_.value_or(0); }
   void setY(double y) { y_ = y; }
 
-  double getWidth() const { return width_.isValid() ? width_ .getValue().px().value() : 1; }
+  double getWidth() const { return width_ ? width_ .value().px().value() : 1; }
   void setWidth(double w) { width_ = CScreenUnits(w); }
 
-  double getHeight() const { return height_.isValid() ? height_.getValue().px().value() : 1; }
+  double getHeight() const { return height_ ? height_.value().px().value() : 1; }
   void setHeight(double h) { height_ = CScreenUnits(h); }
 
   bool processOption(const std::string &name, const std::string &value) override;
@@ -62,11 +62,11 @@ class CSVGUse : public CSVGObject, public CSVGPrintBase<CSVGUse> {
   void moveDelta(const CVector2D &delta) override;
 
  private:
-  COptValT<CSVGXLink>    xlink_;
-  COptReal               x_;
-  COptReal               y_;
-  COptValT<CScreenUnits> width_;
-  COptValT<CScreenUnits> height_;
+  std::optional<CSVGXLink>    xlink_;
+  std::optional<double>       x_;
+  std::optional<double>       y_;
+  std::optional<CScreenUnits> width_;
+  std::optional<CScreenUnits> height_;
 };
 
 #endif

@@ -18,7 +18,7 @@ class CSVGMissingGlyph : public CSVGGlyph {
   friend std::ostream &operator<<(std::ostream &os, const CSVGMissingGlyph &glyph);
 
  private:
-  COptInt hax_;
+  std::optional<int> hax_;
 };
 
 #endif

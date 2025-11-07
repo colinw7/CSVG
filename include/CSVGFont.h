@@ -41,16 +41,16 @@ class CSVGFont : public CSVGObject, public CSVGPrintBase<CSVGFont> {
   CSVGFont &operator=(const CSVGFont &rhs);
 
  private:
-  COptReal          hxo_;
-  COptReal          hyo_;
-  COptReal          hdx_;
-  COptReal          vdy_;
-  COptReal          vxo_;
-  COptReal          vyo_;
-  CSVGFontFace     *font_face_     { nullptr };
-  CSVGMissingGlyph *missing_glyph_ { nullptr };
-  CharGlyphMap      char_glyph_map_;
-  UnicodeGlyphMap   unicode_glyph_map_;
+  std::optional<double> hxo_;
+  std::optional<double> hyo_;
+  std::optional<double> hdx_;
+  std::optional<double> vdy_;
+  std::optional<double> vxo_;
+  std::optional<double> vyo_;
+  CSVGFontFace*         font_face_     { nullptr };
+  CSVGMissingGlyph*     missing_glyph_ { nullptr };
+  CharGlyphMap          char_glyph_map_;
+  UnicodeGlyphMap       unicode_glyph_map_;
 };
 
 #endif

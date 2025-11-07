@@ -14,25 +14,25 @@ class CSVGFeTurbulence : public CSVGFilterBase, public CSVGPrintBase<CSVGFeTurbu
 
   CSVGFeTurbulence *dup() const override;
 
-  std::string getType() const { return type_.getValue("turbulence"); }
+  std::string getType() const { return type_.value_or("turbulence"); }
   void setType(const std::string &s) { type_ = s; }
 
   bool isFractalNoise() const { return (getType() == "fractalNoise"); }
   void setFractalNoise(bool b) { setType(b ? "fractalNoise" : "turbulence"); }
 
-  double getBaseFreqX(double r=0) const { return baseFreqX_.getValue(r); }
+  double getBaseFreqX(double r=0) const { return baseFreqX_.value_or(r); }
   void setBaseFreqX(double r) { baseFreqX_ = r; }
 
-  double getBaseFreqY(double r=0) const { return baseFreqY_.getValue(r); }
+  double getBaseFreqY(double r=0) const { return baseFreqY_.value_or(r); }
   void setBaseFreqY(double r) { baseFreqY_ = r; }
 
-  int getNumOctaves() const { return numOctaves_.getValue(1); }
+  int getNumOctaves() const { return numOctaves_.value_or(1); }
   void setNumOctaves(int n) { numOctaves_ = n; }
 
-  double getSeed() const { return seed_.getValue(0); }
+  double getSeed() const { return seed_.value_or(0); }
   void setSeed(double r) { seed_ = r; }
 
-  std::string getStitchTiles() const { return stitchTiles_.getValue("noStitch"); }
+  std::string getStitchTiles() const { return stitchTiles_.value_or("noStitch"); }
   void setStitchTiles(const std::string &s) { stitchTiles_ = s; }
 
   std::string getFilterIn() const;
@@ -43,7 +43,7 @@ class CSVGFeTurbulence : public CSVGFilterBase, public CSVGPrintBase<CSVGFeTurbu
 
   bool processOption(const std::string &name, const std::string &value) override;
 
-  COptString getNameValue(const std::string &name) const override;
+  std::optional<std::string> getNameValue(const std::string &name) const override;
 
   bool drawElement() override;
 
@@ -54,14 +54,14 @@ class CSVGFeTurbulence : public CSVGFilterBase, public CSVGPrintBase<CSVGFeTurbu
   void accept(CSVGVisitor *visitor) override { visitor->visit(this); }
 
  private:
-  COptString type_;
-  COptReal   baseFreqX_;
-  COptReal   baseFreqY_;
-  COptInt    numOctaves_;
-  COptReal   seed_;
-  COptString stitchTiles_;
-  COptString filterIn_;
-  COptString filterOut_;
+  std::optional<std::string> type_;
+  std::optional<double>      baseFreqX_;
+  std::optional<double>      baseFreqY_;
+  std::optional<int>         numOctaves_;
+  std::optional<double>      seed_;
+  std::optional<std::string> stitchTiles_;
+  std::optional<std::string> filterIn_;
+  std::optional<std::string> filterOut_;
 };
 
 #endif

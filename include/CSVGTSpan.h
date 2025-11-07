@@ -17,16 +17,16 @@ class CSVGTSpan : public CSVGObject, public CSVGPrintBase<CSVGTSpan> {
 
   CSVGTSpan *dup() const override;
 
-  double getX() const { return x_.getValue(0); }
+  double getX() const { return x_.value_or(0); }
   void setX(double x) { x_ = x; }
 
-  double getY() const { return y_.getValue(0); }
+  double getY() const { return y_.value_or(0); }
   void setY(double y) { y_ = y; }
 
-  Reals getDX() const { return dx_.isValid() ? dx_.getValue() : Reals(); }
+  Reals getDX() const { return dx_ ? dx_.value() : Reals(); }
   void setDX(const Reals &x) { dx_ = x; }
 
-  Reals getDY() const { return dy_.isValid() ? dy_.getValue() : Reals(); }
+  Reals getDY() const { return dy_ ? dy_.value() : Reals(); }
   void setDY(const Reals &y) { dy_ = y; }
 
   bool hasFont() const override { return true; }
@@ -56,10 +56,10 @@ class CSVGTSpan : public CSVGObject, public CSVGPrintBase<CSVGTSpan> {
   CSVGTSpan &operator=(const CSVGTSpan &rhs);
 
  private:
-  COptReal        x_;
-  COptReal        y_;
-  COptValT<Reals> dx_;
-  COptValT<Reals> dy_;
+  std::optional<double> x_;
+  std::optional<double> y_;
+  std::optional<Reals>  dx_;
+  std::optional<Reals>  dy_;
 };
 
 #endif
