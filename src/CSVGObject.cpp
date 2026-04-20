@@ -4065,7 +4065,7 @@ printTransform(std::ostream &os, const CMatrixStack2D &m) const
 
   for (const auto &t : m.transformStack()) {
     switch (t.type()) {
-      case CMatrixTransformType::TRANSLATE: {
+      case CMatrix2DTransformType::TRANSLATE: {
         if (output) os << " ";
 
         os << "translate(" << t.dx() << " " << t.dy() << ")";
@@ -4074,11 +4074,11 @@ printTransform(std::ostream &os, const CMatrixStack2D &m) const
 
         break;
       }
-      case CMatrixTransformType::SCALE1:
-      case CMatrixTransformType::SCALE2: {
+      case CMatrix2DTransformType::SCALE1:
+      case CMatrix2DTransformType::SCALE2: {
         if (output) os << " ";
 
-        if (t.type() == CMatrixTransformType::SCALE1)
+        if (t.type() == CMatrix2DTransformType::SCALE1)
           os << "scale(" << t.xscale() << ")";
         else
           os << "scale(" << t.xscale() << " " << t.yscale() << ")";
@@ -4087,11 +4087,11 @@ printTransform(std::ostream &os, const CMatrixStack2D &m) const
 
         break;
       }
-      case CMatrixTransformType::ROTATE:
-      case CMatrixTransformType::ROTATE_ORIGIN: {
+      case CMatrix2DTransformType::ROTATE:
+      case CMatrix2DTransformType::ROTATE_ORIGIN: {
         if (output) os << " ";
 
-        if (t.type() == CMatrixTransformType::ROTATE)
+        if (t.type() == CMatrix2DTransformType::ROTATE)
           os << "rotate(" << CMathGen::RadToDeg(t.angle()) << ")";
         else
           os << "rotate(" << CMathGen::RadToDeg(t.angle()) << " " <<
@@ -4101,7 +4101,7 @@ printTransform(std::ostream &os, const CMatrixStack2D &m) const
 
         break;
       }
-      case CMatrixTransformType::SKEWX: {
+      case CMatrix2DTransformType::SKEWX: {
         if (output) os << " ";
 
         os << "skewX(" << CMathGen::RadToDeg(t.angle()) << ")";
@@ -4110,7 +4110,7 @@ printTransform(std::ostream &os, const CMatrixStack2D &m) const
 
         break;
       }
-      case CMatrixTransformType::SKEWY: {
+      case CMatrix2DTransformType::SKEWY: {
         if (output) os << " ";
 
         os << "skewY(" << CMathGen::RadToDeg(t.angle()) << ")";

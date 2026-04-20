@@ -269,18 +269,18 @@ CSVGJTransform::
 getProperty(CJavaScript *js, const std::string &key) const
 {
   if      (key == "type") {
-    CMatrixTransformType type = CMatrixTransformType::MATRIX;
+    auto type = CMatrix2DTransformType::MATRIX;
 
     if (matrix_)
-      type = CMatrixTransformType::MATRIX;
+      type = CMatrix2DTransformType::MATRIX;
     else {
       type = transform().type();
 
-      if (type == CMatrixTransformType::SCALE1 || type == CMatrixTransformType::SCALE2)
-        type = CMatrixTransformType::SCALE1;
+      if (type == CMatrix2DTransformType::SCALE1 || type == CMatrix2DTransformType::SCALE2)
+        type = CMatrix2DTransformType::SCALE1;
 
-      if (type == CMatrixTransformType::ROTATE || type == CMatrixTransformType::ROTATE_ORIGIN)
-        type = CMatrixTransformType::ROTATE;
+      if (type == CMatrix2DTransformType::ROTATE || type == CMatrix2DTransformType::ROTATE_ORIGIN)
+        type = CMatrix2DTransformType::ROTATE;
     }
 
     return js->createNumberValue(long(type));

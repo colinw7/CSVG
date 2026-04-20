@@ -1,0 +1,56 @@
+Primitive Primitive0
+  Points
+    0.125 0.125 0
+    0.875 0.125 0
+    0.875 0.875 0
+    0.125 0.875 0
+  End
+  Faces
+    1 2 3
+    1 3 4
+  End
+End
+Object Object0
+  Primitive Primitive0
+End
+Primitive Primitive1
+  Points
+    0.125 0.125 0
+    0.875 0.125 0
+    0.875 0.875 0
+    0.125 0.875 0
+    0.125 0.125 0.1
+    0.875 0.125 0.1
+    0.875 0.875 0.1
+    0.125 0.875 0.1
+  End
+  Faces
+    4 1 5 8 
+    2 1 5 6 
+    3 2 6 7 
+    3 4 8 7 
+  End
+End
+Object Object1
+  Primitive Primitive1
+End
+Primitive Primitive2
+  Points
+    0.125 0.125 0.1
+    0.875 0.125 0.1
+    0.875 0.875 0.1
+    0.125 0.875 0.1
+  End
+  Faces
+    1 2 3
+    1 3 4
+  End
+End
+Object Object2
+  Primitive Primitive2
+End
+Scene
+  Object Object0
+  Object Object1
+  Object Object2
+End

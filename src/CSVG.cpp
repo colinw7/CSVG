@@ -3502,7 +3502,7 @@ decodeTransform(const std::string &str, CMatrixStack2D &matrix)
 
       //------
 
-      matrix.matrix(m00, m01, m10, m11, tx, ty);
+      matrix.addMatrix(m00, m01, m10, m11, tx, ty);
     }
     else
       return false;

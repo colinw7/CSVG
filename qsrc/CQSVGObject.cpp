@@ -172,7 +172,7 @@ double
 CQSVGObject::
 strokeOpacity() const
 {
-  return obj_->getFlatStrokeOpacity().getValue(CSVGObject::Opacity(1)).getValue();
+  return obj_->getFlatStrokeOpacity().value_or(CSVGObject::Opacity(1)).getValue();
 }
 
 void
@@ -186,7 +186,7 @@ double
 CQSVGObject::
 strokeWidth() const
 {
-  return obj_->getFlatStrokeWidth().getValue(CSVGObject::Width(1)).getValue(0);
+  return obj_->getFlatStrokeWidth().value_or(CSVGObject::Width(1)).getValue(0);
 }
 
 void
@@ -200,7 +200,7 @@ CLineDash
 CQSVGObject::
 strokeDash() const
 {
-  auto sdash = obj_->getFlatStrokeDashArray().getValue(CSVGObject::DashArray()).getValue();
+  auto sdash = obj_->getFlatStrokeDashArray().value_or(CSVGObject::DashArray()).getValue();
 
   CLineDash dash;
 
@@ -236,7 +236,7 @@ double
 CQSVGObject::
 strokeOffset() const
 {
-  auto dash = obj_->getFlatStrokeDashOffset().getValue(CSVGObject::DashOffset(0)).getValue();
+  auto dash = obj_->getFlatStrokeDashOffset().value_or(CSVGObject::DashOffset(0)).getValue();
 
   return dash.pxValue(0);
 }
@@ -339,7 +339,7 @@ double
 CQSVGObject::
 fillOpacity() const
 {
-  return obj_->getFlatFillOpacity().getValue(CSVGObject::Opacity(1)).getValue();
+  return obj_->getFlatFillOpacity().value_or(CSVGObject::Opacity(1)).getValue();
 }
 
 void
@@ -392,7 +392,7 @@ QString
 CQSVGObject::
 getFontFamily() const
 {
-  return obj_->getFlatFontFamily().getValue().getValue().c_str();
+  return obj_->getFlatFontFamily().value().getValue().c_str();
 }
 
 void
@@ -406,7 +406,7 @@ double
 CQSVGObject::
 getFontSize() const
 {
-  return obj_->getFlatFontSize().getValue().getValue().px().value();
+  return obj_->getFlatFontSize().value().getValue().px().value();
 }
 
 void
